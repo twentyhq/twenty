@@ -7283,9 +7283,11 @@ msgstr "Puoi impostare qualsiasi combinazione di IMAP (ricezione email), SMTP (i
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Non puoi modificare questa connessione perché ha tabelle tracciate.\n"
+msgstr ""
+"Non puoi modificare questa connessione perché ha tabelle tracciate.\n"
 "Se hai bisogno di apportare modifiche, crea una nuova connessione o desincronizza prima le tabelle."
 
 #. js-lingui-id: zEM7Ne

@@ -7283,9 +7283,11 @@ msgstr "您可以根据需要设置 IMAP（接收电子邮件）、SMTP（发送
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "您不能编辑此连接，因为它具有跟踪表。\n"
+msgstr ""
+"您不能编辑此连接，因为它具有跟踪表。\n"
 "如果您需要进行更改，请创建新连接或首先取消同步表。"
 
 #. js-lingui-id: zEM7Ne

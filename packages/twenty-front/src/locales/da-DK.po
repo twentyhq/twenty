@@ -7283,9 +7283,11 @@ msgstr "Du kan sætte op enhver kombination af IMAP (modtage e-mails), SMTP (sen
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Du kan ikke redigere denne forbindelse, da den har sporede tabeller.\n"
+msgstr ""
+"Du kan ikke redigere denne forbindelse, da den har sporede tabeller.\n"
 "Hvis du har brug for at foretage ændringer, skal du oprette en ny forbindelse eller afsynkronisere tabellerne først."
 
 #. js-lingui-id: zEM7Ne

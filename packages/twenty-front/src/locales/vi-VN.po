@@ -7283,9 +7283,11 @@ msgstr "Bạn có thể thiết lập bất kỳ sự kết hợp nào của IMA
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Bạn không thể chỉnh sửa kết nối này vì nó có các bảng đang theo dõi.\n"
+msgstr ""
+"Bạn không thể chỉnh sửa kết nối này vì nó có các bảng đang theo dõi.\n"
 "Nếu bạn cần thực hiện thay đổi, vui lòng tạo một kết nối mới hoặc hủy đồng bộ các bảng trước."
 
 #. js-lingui-id: zEM7Ne

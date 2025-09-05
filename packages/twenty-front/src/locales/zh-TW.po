@@ -7283,9 +7283,11 @@ msgstr "您可以根據需要設置 IMAP（接收電子郵件）、SMTP（發送
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "您無法編輯此連接，因為它有跟蹤的表格。\n"
+msgstr ""
+"您無法編輯此連接，因為它有跟蹤的表格。\n"
 "如果您需要更改，請創建新的連接或先取消同步表格。"
 
 #. js-lingui-id: zEM7Ne

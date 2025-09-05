@@ -7283,9 +7283,11 @@ msgstr "IMAP（メールの受信）、SMTP（メールの送信）、CalDAV（�
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "この接続は追跡されたテーブルがあるため編集できません。\n"
+msgstr ""
+"この接続は追跡されたテーブルがあるため編集できません。\n"
 "変更を加えるには、新しい接続を作成するか、テーブルの同期を外してください。"
 
 #. js-lingui-id: zEM7Ne

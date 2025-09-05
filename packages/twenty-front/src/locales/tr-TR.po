@@ -7283,9 +7283,11 @@ msgstr "IMAP (e-posta alma), SMTP (e-posta gönderme) ve CalDAV (takvim senkroni
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Bağlantıyı düzenleyemezsiniz çünkü izlendiğini tablolara sahiptir.\n"
+msgstr ""
+"Bağlantıyı düzenleyemezsiniz çünkü izlendiğini tablolara sahiptir.\n"
 "Değişiklik yapmanız gerekiyorsa, lütfen yeni bir bağlantı oluşturun veya önce tabloların eşzamanlılığını kaldırın."
 
 #. js-lingui-id: zEM7Ne
