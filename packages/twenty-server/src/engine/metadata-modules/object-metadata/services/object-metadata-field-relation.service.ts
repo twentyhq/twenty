@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  capitalize,
-  computeMorphRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
@@ -524,23 +521,11 @@ export class ObjectMetadataFieldRelationService {
 
   public async updateMorphRelationsJoinColumnName({
     existingObjectMetadata,
-    objectMetadataForUpdate,
     queryRunner,
   }: {
     existingObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon' | 'fieldsById'
-    >;
-    objectMetadataForUpdate: Pick<
-      ObjectMetadataItemWithFieldMaps,
-      | 'nameSingular'
-      | 'isCustom'
-      | 'workspaceId'
-      | 'id'
-      | 'labelSingular'
-      | 'labelPlural'
-      | 'icon'
-      | 'fieldsById'
     >;
     queryRunner: QueryRunner;
   }): Promise<
@@ -567,10 +552,8 @@ export class ObjectMetadataFieldRelationService {
 
     if (morphRelationFieldMetadataToUpdate.length > 0) {
       for (const morphRelationFieldMetadata of morphRelationFieldMetadataToUpdate) {
-        const newJoinColumnName = computeMorphRelationFieldJoinColumnName({
+        const newJoinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: morphRelationFieldMetadata.name,
-          targetObjectMetadataNameSingular:
-            objectMetadataForUpdate.nameSingular,
         });
 
         await fieldMetadataRepository.save({

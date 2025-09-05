@@ -2,7 +2,7 @@ type ComputeRelationFieldJoinColumnNameArgs = {
   name: string;
 };
 
-export const computeRelationFieldJoinColumnName = ({
+export const computeMorphOrRelationFieldJoinColumnName = ({
   name,
 }: ComputeRelationFieldJoinColumnNameArgs) => {
   return `${name}Id`;

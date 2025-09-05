@@ -1,4 +1,3 @@
-import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -18,6 +17,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
         createOneObject: { id: objectMetadataPersonId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'personForMorphRelation',
         namePlural: 'peopleForMorphRelation',
@@ -34,6 +34,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
         createOneObject: { id: objectMetadataCompanyId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'companyForMorphRelation',
         namePlural: 'companiesForMorphRelation',
@@ -50,6 +51,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
         createOneObject: { id: objectMetadataOpportunityId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'opportunityForMorphRelation',
         namePlural: 'opportunitiesForMorphRelation',
@@ -63,12 +65,15 @@ describe('createOne FieldMetadataService morph relation fields', () => {
   });
   afterEach(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectMetadataPersonId },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectMetadataOpportunityId },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectMetadataCompanyId },
     });
   });
@@ -137,7 +142,6 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     });
 
     expect(createdField.id).toBeDefined();
-    expect(createdField.name).toBe('owner');
 
     const morphRelationTargetIds = createdField.morphRelations.map(
       (relation) => relation.targetObjectMetadata.id,
@@ -157,12 +161,10 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       expect(createdField.settings?.joinColumnName).toBe(
         'ownerPersonForMorphRelationId',
       );
+      expect(createdField.name).toBe('ownerPersonForMorphRelation');
     } else {
       expect(createdField.settings?.joinColumnName).toBeUndefined();
+      expect(createdField.name).toBe('ownerPeopleForMorphRelation');
     }
-
-    await deleteOneFieldMetadata({
-      input: { idToDelete: createdField.id },
-    }).catch();
   });
 });

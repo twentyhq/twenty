@@ -691,7 +691,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.objectMetadataFieldRelationService.updateMorphRelationsJoinColumnName(
           {
             existingObjectMetadata,
-            objectMetadataForUpdate,
             queryRunner,
           },
         );

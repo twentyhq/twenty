@@ -6,10 +6,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import {
-  computeMorphRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
@@ -43,6 +40,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
     return gqlField;
   }
 
+  // We could factorize morph relation fields mapping to be passing through the RELATION handler too as now they share
+  // the same name and join column name logic
   if (
     fieldType === FieldMetadataType.MORPH_RELATION &&
     (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
@@ -97,12 +96,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
-        const joinColumnName = computeMorphRelationFieldJoinColumnName({
-          name: fieldMetadata.name,
-          targetObjectMetadataNameSingular:
-            morphRelation.targetObjectMetadata.nameSingular,
-        });
-        if (gqlField === joinColumnName) {
+        if (gqlField === fieldMetadata.settings?.joinColumnName) {
           gqlMorphField += `${gqlField}
     `;
           continue;

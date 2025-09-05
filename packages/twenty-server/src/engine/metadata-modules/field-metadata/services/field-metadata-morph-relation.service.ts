@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  computeMorphRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -20,7 +17,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morh-relation-field-name.util';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
@@ -104,10 +101,8 @@ export class FieldMetadataMorphRelationService {
               name: currentMorphRelationFieldName,
             },
             relationCreationPayload: relationCreationPayload,
-            joinColumnName: computeMorphRelationFieldJoinColumnName({
-              name: fieldMetadataForCreate.name,
-              targetObjectMetadataNameSingular:
-                targetObjectMetadata.nameSingular,
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+              name: currentMorphRelationFieldName,
             }),
           },
         );
@@ -155,7 +150,7 @@ export class FieldMetadataMorphRelationService {
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },
-            joinColumnName: computeRelationFieldJoinColumnName({
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
               name: targetFieldMetadataToCreate.name,
             }),
           },
