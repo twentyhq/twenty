@@ -4,6 +4,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledTbody = styled.tbody`
+  // TODO: re-implement horizontal scroll here after table have been refactored to divs
   td:nth-of-type(1) {
     position: sticky;
     left: 0px;

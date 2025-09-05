@@ -17,6 +17,7 @@ export const ChipFieldDisplay = () => {
 
   const isMobile = useIsMobile();
 
+  // TODO: reimplement scrolled horizontally here.
   const isLabelIdentifierCompact = isMobile;
 
   if (!isDefined(recordValue)) {

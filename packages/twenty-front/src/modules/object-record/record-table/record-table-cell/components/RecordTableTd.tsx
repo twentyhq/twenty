@@ -32,6 +32,8 @@ const StyledTd = styled.td<{
 
   background: ${({ backgroundColor, isDragging }) =>
     isDragging ? 'transparent' : backgroundColor};
+
+  // TODO: reimplement horizontal scroll here once we have refactored body with divs
 `;
 
 export const RecordTableTd = ({

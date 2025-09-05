@@ -19,6 +19,7 @@ export const RecordTableRecordGroupStickyEffect = () => {
 
   useEffect(() => {
     setIsRecordTableScrolledHorizontally(scrollLeft > 0);
+    // TODO: see if we need to reimplement setting classes here.
   }, [currentRecordGroupId, scrollLeft, setIsRecordTableScrolledHorizontally]);
 
   return <></>;

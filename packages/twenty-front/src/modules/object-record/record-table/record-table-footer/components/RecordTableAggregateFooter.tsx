@@ -20,6 +20,7 @@ const StyledTableRow = styled.tr<{
   position: sticky;
   border: none;
 
+  // TODO: see how we reimplement horizontal scrolling after all table has been refactored
   td {
     border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
     z-index: ${TABLE_Z_INDEX.footer.default};
