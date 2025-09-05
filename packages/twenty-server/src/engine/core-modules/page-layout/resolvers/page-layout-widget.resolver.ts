@@ -1,7 +1,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
@@ -75,9 +74,7 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    const result = await this.pageLayoutWidgetService.destroy(id, workspace.id);
-
-    return isDefined(result) && result;
+    return this.pageLayoutWidgetService.destroy(id, workspace.id);
   }
 
   @Mutation(() => PageLayoutWidgetDTO)

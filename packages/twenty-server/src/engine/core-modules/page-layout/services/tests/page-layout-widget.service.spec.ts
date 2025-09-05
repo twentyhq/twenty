@@ -316,15 +316,13 @@ describe('PageLayoutWidgetService', () => {
 
       jest
         .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(mockPageLayoutWidget);
+        .mockResolvedValueOnce(mockPageLayoutWidget)
+        .mockResolvedValueOnce(updatedWidget);
       jest.spyOn(pageLayoutWidgetRepository, 'update').mockResolvedValue({
         affected: 1,
         generatedMaps: [],
         raw: {},
       });
-      jest
-        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
-        .mockResolvedValue(updatedWidget);
 
       const result = await pageLayoutWidgetService.update(
         id,
@@ -332,19 +330,23 @@ describe('PageLayoutWidgetService', () => {
         updateData,
       );
 
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(1, {
         where: {
           id,
           workspaceId,
         },
       });
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(2, {
+        where: {
+          id,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+      });
       expect(pageLayoutWidgetRepository.update).toHaveBeenCalledWith(
         { id },
         updateData,
-      );
-      expect(pageLayoutWidgetService.findByIdOrThrow).toHaveBeenCalledWith(
-        id,
-        workspaceId,
       );
       expect(result).toEqual(updatedWidget);
     });
@@ -374,7 +376,7 @@ describe('PageLayoutWidgetService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
+        .spyOn(pageLayoutWidgetRepository, 'findOne')
         .mockResolvedValue(mockPageLayoutWidget);
       jest
         .spyOn(pageLayoutWidgetRepository, 'softDelete')
@@ -382,10 +384,13 @@ describe('PageLayoutWidgetService', () => {
 
       const result = await pageLayoutWidgetService.delete(id, workspaceId);
 
-      expect(pageLayoutWidgetService.findByIdOrThrow).toHaveBeenCalledWith(
-        id,
-        workspaceId,
-      );
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+      });
       expect(pageLayoutWidgetRepository.softDelete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockPageLayoutWidget);
     });
@@ -394,18 +399,17 @@ describe('PageLayoutWidgetService', () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest
-        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
-        .mockRejectedValue(
-          new PageLayoutWidgetException(
-            'Page layout widget not found',
-            PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-          ),
-        );
+      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
         pageLayoutWidgetService.delete(id, workspaceId),
       ).rejects.toThrow(PageLayoutWidgetException);
+      await expect(
+        pageLayoutWidgetService.delete(id, workspaceId),
+      ).rejects.toHaveProperty(
+        'code',
+        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
+      );
     });
   });
 
@@ -460,17 +464,16 @@ describe('PageLayoutWidgetService', () => {
 
       jest
         .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(deletedWidget);
+        .mockResolvedValueOnce(deletedWidget) // First call in restore method to check if deleted
+        .mockResolvedValueOnce(mockPageLayoutWidget); // Second call in findByIdOrThrow
       jest
         .spyOn(pageLayoutWidgetRepository, 'restore')
         .mockResolvedValue({ affected: 1, generatedMaps: [], raw: {} });
-      jest
-        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayoutWidget);
 
       const result = await pageLayoutWidgetService.restore(id, workspaceId);
 
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(1, {
         select: {
           id: true,
           deletedAt: true,
@@ -481,11 +484,14 @@ describe('PageLayoutWidgetService', () => {
         },
         withDeleted: true,
       });
+      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(2, {
+        where: {
+          id,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+      });
       expect(pageLayoutWidgetRepository.restore).toHaveBeenCalledWith(id);
-      expect(pageLayoutWidgetService.findByIdOrThrow).toHaveBeenCalledWith(
-        id,
-        workspaceId,
-      );
       expect(result).toEqual(mockPageLayoutWidget);
     });
 

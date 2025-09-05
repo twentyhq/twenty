@@ -78,6 +78,10 @@ describe('Page Layout Widget Resolver', () => {
     });
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(async () => {
     await cleanupPageLayoutWidgetRecordsWithGraphQL(testPageLayoutTabId);
   });
@@ -295,6 +299,7 @@ describe('Page Layout Widget Resolver', () => {
     it('should delete an existing page layout widget (soft delete)', async () => {
       const input = {
         title: 'Widget',
+        type: WidgetType.VIEW,
         pageLayoutTabId: testPageLayoutTabId,
         gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
       };
@@ -348,6 +353,7 @@ describe('Page Layout Widget Resolver', () => {
     it('should destroy an existing page layout widget (hard delete)', async () => {
       const input = {
         title: 'Widget',
+        type: WidgetType.VIEW,
         pageLayoutTabId: testPageLayoutTabId,
         gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
       };

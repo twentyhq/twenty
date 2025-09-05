@@ -133,6 +133,7 @@ export class PageLayoutWidgetService {
       where: {
         id,
         workspaceId,
+        deletedAt: IsNull(),
       },
     });
 

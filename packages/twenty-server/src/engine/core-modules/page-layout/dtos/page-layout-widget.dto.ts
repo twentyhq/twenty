@@ -5,7 +5,6 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-import { GridPosition } from 'src/engine/core-modules/page-layout/types/grid-position.type';
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
 
@@ -45,7 +44,7 @@ export class PageLayoutWidgetDTO {
   objectMetadataId: string | null;
 
   @Field(() => GridPositionDTO, { nullable: false })
-  gridPosition: GridPosition;
+  gridPosition: GridPositionDTO;
 
   @Field(() => GraphQLJSON, { nullable: true })
   configuration: Record<string, unknown> | null;
