@@ -137,8 +137,7 @@ describe('update-one-field-metadata-related-record', () => {
       await updateFeatureFlag({
         expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: true,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        value: false,
       });
     }
   });
