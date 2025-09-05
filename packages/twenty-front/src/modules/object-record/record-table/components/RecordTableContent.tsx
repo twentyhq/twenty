@@ -1,6 +1,6 @@
 import { RecordTableStickyBottomEffect } from '@/object-record/record-table/components/RecordTableStickyBottomEffect';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
-import { StyledTable } from '@/object-record/record-table/components/RecordTableStyles';
+import { StyledTableDiv } from '@/object-record/record-table/components/RecordTableStyles';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-const StyledTableWithPointerEvents = styled(StyledTable)<{
+const StyledTableWithPointerEvents = styled(StyledTableDiv)<{
   isDragging: boolean;
 }>`
   & > * {

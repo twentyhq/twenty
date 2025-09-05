@@ -1,9 +1,9 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const isRecordTableScrolledLeftComponentState =
+export const isRecordTableScrolledVerticallyComponentState =
   createComponentState<boolean>({
-    key: 'isRecordTableScrolledLeftComponentState',
+    key: 'isRecordTableScrolledVerticallyComponentState',
     componentInstanceContext: RecordTableComponentInstanceContext,
     defaultValue: true,
   });
