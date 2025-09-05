@@ -8,7 +8,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -34,15 +33,13 @@ import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/co
 import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
 
 @Command({
-  name: 'migrate:views-to-core',
-  description:
-    'Migrate views from workspace schemas to core schema and enable IS_CORE_VIEW_SYNCING_ENABLED feature flag',
+  name: 'upgrade:1-5:migrate-views-to-core',
+  description: 'Migrate views from workspace schemas to core schema',
 })
 export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,

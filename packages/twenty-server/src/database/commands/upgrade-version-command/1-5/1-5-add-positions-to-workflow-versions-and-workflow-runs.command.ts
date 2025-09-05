@@ -41,7 +41,7 @@ export type AddPositionsToWorkflowVersionsAndWorkflowRunsOptions =
   name: 'upgrade:1-5:add-positions-to-workflow-versions-and-workflow-runs',
   description: 'Add positions to workflow versions and workflow runs',
 })
-export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class AddPositionsToWorkflowVersionsAndWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,

@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
-import { MigrateViewsToCoreCommand } from 'src/database/commands/views-migration/migrate-views-to-core.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
@@ -50,7 +49,6 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
   ],
   providers: [
     DataSeedWorkspaceCommand,
-    MigrateViewsToCoreCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,
   ],
