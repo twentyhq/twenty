@@ -112,8 +112,6 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       relationType: RelationType.MANY_TO_ONE,
     });
 
-    console.log(morphRelationField.type, morphRelationField.name);
-    expect(morphRelationField.morphRelations).toMatchInlineSnapshot(`null`);
     expect(morphRelationField.morphRelations.length).toBe(2);
 
     const { data } = await updateOneObjectMetadata({
@@ -152,7 +150,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     });
 
     expect(fieldAfterRenaming.settings.joinColumnName).toBe(
-      'ownerPersonForRename2Id',
+      'ownerPersonForRenameSecondId',
     );
   });
 });

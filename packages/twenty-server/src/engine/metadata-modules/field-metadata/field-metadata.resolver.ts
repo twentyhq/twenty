@@ -190,9 +190,6 @@ export class FieldMetadataResolver {
     flatFieldMetadata: FlatFieldMetadata,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO[] | null> {
-    const { name, type } = flatFieldMetadata;
-
-    console.log('MorphRelations resolver', { name, type });
     if (
       !isFlatFieldMetadataOfType(
         flatFieldMetadata,

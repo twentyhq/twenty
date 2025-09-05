@@ -209,7 +209,7 @@ export class FieldMetadataServiceV2 {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
   }): Promise<FieldMetadataEntity[]> {
-    if (!createFieldInputs.length) {
+    if (createFieldInputs.length === 0) {
       return [];
     }
 
@@ -286,11 +286,8 @@ export class FieldMetadataServiceV2 {
     return this.fieldMetadataRepository.find({
       where: {
         name: In(
-          allTranspiledTranspilationInputs.flatMap(
-            ({ result: flatFieldMetadatas }) =>
-              flatFieldMetadatas.map(
-                (flatFieldMetadata) => flatFieldMetadata.name,
-              ),
+          allTranspiledTranspilationInputs.map(
+            ({ result: flatFieldMetadatas }) => flatFieldMetadatas[0].name,
           ),
         ),
         workspaceId,

@@ -45,6 +45,5 @@ export class WorkspaceMetadataVersionService {
     await this.workspaceMetadataCacheService.recomputeMetadataCache({
       workspaceId,
     });
-    console.log('INCREMENT', { newMetadataVersion });
   }
 }
