@@ -41,10 +41,10 @@ describe('View Field Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myFieldTestObject',
+        namePlural: 'myFieldTestObjects',
+        labelSingular: 'My Field Test Object',
+        labelPlural: 'My Field Test Objects',
         icon: 'Icon123',
       },
     });

@@ -39,10 +39,10 @@ describe('View Filter Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myFilterTestObject',
+        namePlural: 'myFilterTestObjects',
+        labelSingular: 'My Filter Test Object',
+        labelPlural: 'My Filter Test Objects',
         icon: 'Icon123',
       },
     });

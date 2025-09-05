@@ -11,7 +11,6 @@ import {
   PageLayoutException,
   PageLayoutExceptionCode,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
-import { type CustomException } from 'src/utils/custom-exception';
 
 @Catch(PageLayoutException)
 export class PageLayoutRestApiExceptionFilter implements ExceptionFilter {
@@ -26,20 +25,20 @@ export class PageLayoutRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
-          exception as CustomException,
+          exception,
           response,
           404,
         );
       case PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA:
         return this.httpExceptionHandlerService.handleError(
-          exception as CustomException,
+          exception,
           response,
           400,
         );
       default:
         // TODO: change to 500 when we have input validation
         return this.httpExceptionHandlerService.handleError(
-          exception as CustomException,
+          exception,
           response,
           400,
         );

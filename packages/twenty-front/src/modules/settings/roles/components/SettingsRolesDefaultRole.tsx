@@ -76,7 +76,7 @@ export const SettingsRoleDefaultRole = ({
       <Card rounded>
         <SettingsOptionCardContentSelect
           Icon={IconUserPin}
-          title="Default Role"
+          title={t`Default Role`}
           description={t`Set a default role for this workspace`}
         >
           <Select

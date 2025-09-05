@@ -49,11 +49,27 @@ export class WorkspaceAgentComparator {
 
       switch (difference.type) {
         case 'CREATE': {
+          const fromAgent = fromFlatAgents.find(
+            (agent) => keyFactory(agent) === universalIdentifier,
+          );
           const toAgent = toFlatAgents.find(
             (agent) => keyFactory(agent) === universalIdentifier,
           );
 
-          if (toAgent) {
+          if (!toAgent) {
+            break;
+          }
+
+          if (fromAgent) {
+            fromAgent &&
+              results.push({
+                action: ComparatorAction.UPDATE,
+                object: {
+                  ...toAgent,
+                  id: fromAgent.id,
+                },
+              });
+          } else {
             results.push({
               action: ComparatorAction.CREATE,
               object: toAgent,

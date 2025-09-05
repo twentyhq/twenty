@@ -16,6 +16,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-group.input';
 import { type ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
+import {
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-group.exception';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-group-rest-api-exception.filter';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -44,8 +51,25 @@ export class ViewGroupController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewGroupDTO | null> {
-    return this.viewGroupService.findById(id, workspace.id);
+  ): Promise<ViewGroupDTO> {
+    const viewGroup = await this.viewGroupService.findById(id, workspace.id);
+
+    if (!isDefined(viewGroup)) {
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          ),
+        },
+      );
+    }
+
+    return viewGroup;
   }
 
   @Post()

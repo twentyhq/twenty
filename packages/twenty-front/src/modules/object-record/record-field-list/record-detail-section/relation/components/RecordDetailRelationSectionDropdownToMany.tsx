@@ -146,6 +146,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={handleCreateNew}
+          objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
           onChange={updateRelation}
           onSubmit={() => {
             closeDropdown(dropdownId);

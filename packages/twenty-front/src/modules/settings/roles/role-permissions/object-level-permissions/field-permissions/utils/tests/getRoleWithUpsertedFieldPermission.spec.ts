@@ -8,9 +8,14 @@ const BASE_ROLE_MOCK: Role = {
   canSoftDeleteAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canUpdateAllSettings: true,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
   id: '1',
   isEditable: true,
   label: 'Role base',
+  agents: [],
+  apiKeys: [],
   workspaceMembers: [],
 };
 

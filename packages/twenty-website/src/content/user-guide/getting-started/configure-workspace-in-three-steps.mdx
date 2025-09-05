@@ -9,7 +9,7 @@ sectionInfo: Discover Twenty, an open-source CRM.
 Every business works differently. That’s why Twenty lets you shape the CRM around your needs—not force your processes into ours.  
 **Start with these three steps to set it up your way.**
 
-# Bring your data in
+# 1. Bring your data in
 Bringing your existing data into Twenty gives your team context from the start. 
 We're here to help you make this transition as smooth as possible. Do not hesitate to reach out.
 
@@ -24,7 +24,7 @@ You can do so under Settings → Accounts.
 You control which contacts are imported in Twenty and what gets shared with the rest of your team: full message content, subject and the metadata (sender, date, subject), or just the metadata. This is the same for your meetings.
 You can configure the visibility and the contact creation preferences under Settings → Email / Calendar.
 
-### Using another provider?
+#### Using another provider?
 This is currently under beta: you can activate this feature under Settings → Releases → Lab tab.
 You can add email accounts from any provider that supports IMAP and send emails with SMTP. Synchronizing calendars with CalDAV is coming soon!
 
@@ -45,21 +45,23 @@ Below are a few guidelines:
 Creating relations via csv based on fields other than the Twenty id for the other objects will be supported during the Fall 2025. 
 - Review errors before starting the import: Potential errors are detected once the field mapping is completed. You can edit the wrong values - highlighted in yellow - directly in the UI.  
 
+Read [this article](https://twenty.com/user-guide/section/integrations/import-export-data) to learn more about Data import / export via csv.  
+
 **Please reach out to get any help importing your data.**
 
-# Customize your data model
+# 2. Customize your data model
 Twenty offers the flexibility you need to shape the data model that will best support your day-to-day.   
 Create objects and fields of any type, inlcuding relations between your different objects. You can do so under Settings → Data Model.
 Here are a few tips:
 - **You are not limited in the number of custom fields nor custom objects**. Adding custom objects and fields will not lead to upgrading your plan.
-- **People and Companies are the two fields from where you will be able to access the emails and meetings**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
+- **People and Companies are the two objects from where you will be able to access the emails and meetings**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
   - It is best to use the People object for your prospects and partners, creating a field on the People object named ```Person Type```, instead of creating a Partner custom object (from where you will not be able to access the emails exchanged with this person).
   - Create different views under People, one to display partners and one to display prospects. 
-- Two People cannot have the same email address. Two Companies cannot have hte same domain. 
+- Two People cannot have the same email address. Two Companies cannot have the same domain. 
 - You can deactivate fields and objects you do not want to use.
 - You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
 
-# Create your first Favourite view
+# 3. Create your first Favourite view
 Creating different views is key to make the data actionable for your team.
 Here is how to proceed:
 -  **Add or hide columns**

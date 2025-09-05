@@ -42,10 +42,10 @@ describe('View Sort Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'mySortTestObject',
+        namePlural: 'mySortTestObjects',
+        labelSingular: 'My Sort Test Object',
+        labelPlural: 'My Sort Test Objects',
         icon: 'Icon123',
       },
     });

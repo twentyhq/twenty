@@ -1,7 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
+import {
+  formatExpiration,
+  isExpired,
+} from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -64,7 +67,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
 
       <StyledTruncatedCell
         color={
-          formattedExpiration === 'Expired'
+          isExpired(apiKey.expiresAt || null)
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }

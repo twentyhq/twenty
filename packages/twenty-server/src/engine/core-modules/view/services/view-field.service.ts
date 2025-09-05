@@ -107,9 +107,29 @@ export class ViewFieldService {
       );
     }
 
-    const viewField = this.viewFieldRepository.create(viewFieldData);
+    try {
+      const viewField = this.viewFieldRepository.create(viewFieldData);
 
-    return this.viewFieldRepository.save(viewField);
+      return await this.viewFieldRepository.save(viewField);
+    } catch (error) {
+      if (
+        error.message.includes('duplicate key value violates unique constraint')
+      ) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+          ),
+          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+            ),
+          },
+        );
+      }
+
+      throw error;
+    }
   }
 
   async update(
