@@ -105,7 +105,7 @@ export const SettingsDataModelFieldDateForm = ({
       />
       <AnimatedExpandableContainer
         isExpanded={showCustomFormatTextInput}
-        dimension={'height'}
+        dimension="height"
         animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
         mode="scroll-height"
         containAnimation={false}

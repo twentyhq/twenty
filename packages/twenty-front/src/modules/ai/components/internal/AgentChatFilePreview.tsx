@@ -1,10 +1,10 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
-import { type File as FileDocument } from '~/generated-metadata/graphql';
-import { Chip, ChipVariant, AvatarChip } from 'twenty-ui/components';
+import { AvatarChip, Chip, ChipVariant } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { type File as FileDocument } from '~/generated-metadata/graphql';
 
 export const AgentChatFilePreview = ({
   file,
@@ -38,7 +38,7 @@ export const AgentChatFilePreview = ({
             Icon={IconX}
             IconColor={theme.font.color.secondary}
             onClick={onRemove}
-            divider={'left'}
+            divider="left"
           />
         ) : undefined
       }

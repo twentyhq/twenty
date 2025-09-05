@@ -422,7 +422,7 @@ export const WorkflowEditActionServerlessFunction = ({
               <CodeEditor
                 height="100%"
                 value={formValues.code?.[INDEX_FILE_PATH]}
-                language={'typescript'}
+                language="typescript"
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 setMarkers={getWrongExportedFunctionMarkers}

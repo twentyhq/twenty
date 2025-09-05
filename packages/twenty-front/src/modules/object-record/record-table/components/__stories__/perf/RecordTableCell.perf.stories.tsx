@@ -165,7 +165,7 @@ const meta: Meta = {
                 triggerEvent: 'CLICK',
               }}
             >
-              <RecordTableComponentInstance recordTableId={'recordTableId'}>
+              <RecordTableComponentInstance recordTableId="recordTableId">
                 <RecordTableBodyContextProvider
                   value={{
                     onOpenTableCell: () => {},

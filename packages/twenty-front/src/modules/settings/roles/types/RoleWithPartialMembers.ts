@@ -1,6 +1,5 @@
 import { type Role, type WorkspaceMember } from '~/generated/graphql';
 
-// Workspace member without personal preferences (what we get from partial queries)
 export type PartialWorkspaceMember = Omit<
   WorkspaceMember,
   | 'colorScheme'
@@ -14,7 +13,6 @@ export type PartialWorkspaceMember = Omit<
   | 'userId'
 >;
 
-// Role with partial workspace members (what we get from getRoles query)
 export type RoleWithPartialMembers = Omit<Role, 'workspaceMembers'> & {
   workspaceMembers: PartialWorkspaceMember[];
 };

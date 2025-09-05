@@ -245,7 +245,7 @@ export const SettingsWorkspaceMembers = () => {
                 <TableHeader>
                   <Trans>Email</Trans>
                 </TableHeader>
-                <TableHeader align={'center'}>
+                <TableHeader align="center">
                   <Trans>Expires in</Trans>
                 </TableHeader>
                 <TableHeader></TableHeader>
@@ -268,13 +268,13 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceInvitation.email}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell align={'center'}>
+                    <TableCell align="center">
                       <Status
-                        color={'gray'}
+                        color="gray"
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
                       />
                     </TableCell>
-                    <TableCell align={'right'}>
+                    <TableCell align="right">
                       <StyledButtonContainer>
                         <IconButton
                           onClick={() => {
@@ -331,7 +331,7 @@ export const SettingsWorkspaceMembers = () => {
               <TableHeader>
                 <Trans>Email</Trans>
               </TableHeader>
-              <TableHeader align={'right'}></TableHeader>
+              <TableHeader align="right"></TableHeader>
             </TableRow>
             <StyledTableRows>
               {filteredWorkspaceMembers.length > 0 ? (
@@ -372,7 +372,7 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceMember.userEmail}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell align={'right'}>
+                    <TableCell align="right">
                       {currentWorkspaceMember?.id !== workspaceMember.id && (
                         <StyledButtonContainer>
                           <IconButton
