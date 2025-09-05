@@ -25,9 +25,8 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        // Get current tab's widgets
         const currentTab = pageLayoutDraft.tabs.find(
-          (t) => t.id === activeTabId,
+          (tab) => tab.id === activeTabId,
         );
         const currentWidgets = currentTab?.widgets || [];
 

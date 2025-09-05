@@ -13,11 +13,8 @@ export const createUpdatedTabLayouts = (
   return {
     ...allTabLayouts,
     [activeTabId]: {
-      desktop: [...(currentTabLayouts.desktop || []), newLayout],
-      mobile: [
-        ...(currentTabLayouts.mobile || []),
-        { ...newLayout, w: 1, x: 0 },
-      ],
+      desktop: [...currentTabLayouts.desktop, newLayout],
+      mobile: [...currentTabLayouts.mobile, { ...newLayout, w: 1, x: 0 }],
     },
   };
 };
