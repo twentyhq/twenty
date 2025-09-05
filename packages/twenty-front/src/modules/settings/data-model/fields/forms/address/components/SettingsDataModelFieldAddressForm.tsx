@@ -128,7 +128,7 @@ export const SettingsDataModelFieldAddressForm = ({
                   }),
                 )}
                 values={values}
-                dropdownId={'addressSubFieldsId'}
+                dropdownId="addressSubFieldsId"
                 onChange={onChange}
                 callToActionButton={{
                   text: t`Reset to default`,

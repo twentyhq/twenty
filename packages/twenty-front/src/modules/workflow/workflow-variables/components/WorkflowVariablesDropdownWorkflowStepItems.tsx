@@ -43,7 +43,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text={'Select Step'} />
+        <OverflowingTextWithTooltip text="Select Step" />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

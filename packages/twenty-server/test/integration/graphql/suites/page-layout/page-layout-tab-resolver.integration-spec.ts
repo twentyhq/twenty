@@ -1,5 +1,6 @@
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID } from 'test/integration/constants/test-page-layout-tab-ids.constants';
 import { createPageLayoutTabOperationFactory } from 'test/integration/graphql/utils/create-page-layout-tab-operation-factory.util';
+import { deletePageLayoutOperationFactory } from 'test/integration/graphql/utils/delete-page-layout-operation-factory.util';
 import { deletePageLayoutTabOperationFactory } from 'test/integration/graphql/utils/delete-page-layout-tab-operation-factory.util';
 import { destroyPageLayoutTabOperationFactory } from 'test/integration/graphql/utils/destroy-page-layout-tab-operation-factory.util';
 import { findPageLayoutTabOperationFactory } from 'test/integration/graphql/utils/find-page-layout-tab-operation-factory.util';
@@ -399,6 +400,47 @@ describe('Page Layout Tab Resolver', () => {
         generatePageLayoutTabExceptionMessage(
           PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
           TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID,
+        ),
+      );
+    });
+
+    it('should throw an error when restoring tab with deleted parent page layout', async () => {
+      const separatePageLayout = await createTestPageLayoutWithGraphQL({
+        name: 'Page Layout for Tab Restore Test',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: testObjectMetadataId,
+      });
+
+      const input = {
+        title: 'Tab with Deleted Page Layout',
+        pageLayoutId: separatePageLayout.id,
+        position: 0,
+      };
+
+      const tab = await createTestPageLayoutTabWithGraphQL(input);
+
+      const deleteTabOperation = deletePageLayoutTabOperationFactory({
+        pageLayoutTabId: tab.id,
+      });
+
+      await makeGraphqlAPIRequest(deleteTabOperation);
+
+      const deletePageLayoutOperation = deletePageLayoutOperationFactory({
+        pageLayoutId: separatePageLayout.id,
+      });
+
+      await makeGraphqlAPIRequest(deletePageLayoutOperation);
+
+      const restoreOperation = restorePageLayoutTabOperationFactory({
+        pageLayoutTabId: tab.id,
+      });
+      const restoreResponse = await makeGraphqlAPIRequest(restoreOperation);
+
+      assertGraphQLErrorResponse(
+        restoreResponse,
+        ErrorCode.BAD_USER_INPUT,
+        generatePageLayoutTabExceptionMessage(
+          PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
         ),
       );
     });

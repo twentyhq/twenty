@@ -42,7 +42,7 @@ export const SettingsConnectedAccountsTableRow = ({
           {account.handle}
         </StyledNameCell>
       </TableCell>
-      <TableCell align={'right'}>
+      <TableCell align="right">
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       </TableCell>
     </StyledTableRow>

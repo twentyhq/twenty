@@ -1,10 +1,12 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
 import { H2Title, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 
@@ -36,7 +38,11 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
       />
       {shouldDisplayAddFieldButton && (
         <StyledDiv>
-          <UndecoratedLink to={'./new-field/select'}>
+          <UndecoratedLink
+            to={getSettingsPath(SettingsPath.ObjectNewFieldSelect, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
+          >
             <Button
               Icon={IconPlus}
               title={t`Add Field`}

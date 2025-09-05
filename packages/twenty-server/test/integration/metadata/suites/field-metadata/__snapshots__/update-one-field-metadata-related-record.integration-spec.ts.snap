@@ -1,48 +1,66 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`update-one-field-metadata-related-record MULTI_SELECT should delete related view filter if all select field options got deleted 1`] = `
-[
-  {
-    "extensions": {
-      "code": "NOT_FOUND",
-      "subCode": "RECORD_NOT_FOUND",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Record not found",
-    "name": "NotFoundError",
-  },
-]
-`;
-
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {
-  "displayValue": "2 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
 {
-  "displayValue": "10 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1","OPTION_2","OPTION_3","OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle partial deletion of selected options in view filter 1`] = `
 {
-  "displayValue": "6 options",
-  "id": Any<String>,
-  "value": "["OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle reordering of options while maintaining view filter values 1`] = `
 {
-  "displayValue": "2 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
@@ -59,81 +77,100 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should throw erro
 ]
 `;
 
-exports[`update-one-field-metadata-related-record MULTI_SELECT should update display value with options label if less than 3 options are selected 1`] = `
-{
-  "displayValue": "Option 8, Option 9",
-  "id": Any<String>,
-  "value": "["OPTION_8","OPTION_9"]",
-}
-`;
-
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related multi selected options view filter 1`] = `
 {
-  "displayValue": "10 options",
-  "id": Any<String>,
-  "value": "["OPTION_0_UPDATED","OPTION_1","OPTION_2_UPDATED","OPTION_3","OPTION_4_UPDATED","OPTION_5","OPTION_6_UPDATED","OPTION_7","OPTION_8_UPDATED","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related solo selected option view filter 1`] = `
 {
-  "displayValue": "Option 5 updated",
-  "id": Any<String>,
-  "value": "["OPTION_5_UPDATED"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
 }
-`;
-
-exports[`update-one-field-metadata-related-record MULTI_SELECT should update the display value on an option label change only 1`] = `
-{
-  "displayValue": "Option 0 updated, Option 1 updated, Option 2 updated",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1","OPTION_2"]",
-}
-`;
-
-exports[`update-one-field-metadata-related-record SELECT should delete related view filter if all select field options got deleted 1`] = `
-[
-  {
-    "extensions": {
-      "code": "NOT_FOUND",
-      "subCode": "RECORD_NOT_FOUND",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Record not found",
-    "name": "NotFoundError",
-  },
-]
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {
-  "displayValue": "2 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
 {
-  "displayValue": "10 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1","OPTION_2","OPTION_3","OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle partial deletion of selected options in view filter 1`] = `
 {
-  "displayValue": "6 options",
-  "id": Any<String>,
-  "value": "["OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle reordering of options while maintaining view filter values 1`] = `
 {
-  "displayValue": "2 options",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
@@ -150,34 +187,35 @@ exports[`update-one-field-metadata-related-record SELECT should throw error if v
 ]
 `;
 
-exports[`update-one-field-metadata-related-record SELECT should update display value with options label if less than 3 options are selected 1`] = `
-{
-  "displayValue": "Option 8, Option 9",
-  "id": Any<String>,
-  "value": "["OPTION_8","OPTION_9"]",
-}
-`;
-
 exports[`update-one-field-metadata-related-record SELECT should update related multi selected options view filter 1`] = `
 {
-  "displayValue": "10 options",
-  "id": Any<String>,
-  "value": "["OPTION_0_UPDATED","OPTION_1","OPTION_2_UPDATED","OPTION_3","OPTION_4_UPDATED","OPTION_5","OPTION_6_UPDATED","OPTION_7","OPTION_8_UPDATED","OPTION_9"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should update related solo selected option view filter 1`] = `
 {
-  "displayValue": "Option 5 updated",
-  "id": Any<String>,
-  "value": "["OPTION_5_UPDATED"]",
-}
-`;
-
-exports[`update-one-field-metadata-related-record SELECT should update the display value on an option label change only 1`] = `
-{
-  "displayValue": "Option 0 updated, Option 1 updated, Option 2 updated",
-  "id": Any<String>,
-  "value": "["OPTION_0","OPTION_1","OPTION_2"]",
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
 }
 `;

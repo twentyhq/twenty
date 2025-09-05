@@ -45,7 +45,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
             avatar: withAvatar ? (
               <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />
             ) : (
-              <Avatar avatarUrl={''} placeholder="L" />
+              <Avatar avatarUrl="" placeholder="L" />
             ),
           }),
           labels: (withAvatar: boolean) =>

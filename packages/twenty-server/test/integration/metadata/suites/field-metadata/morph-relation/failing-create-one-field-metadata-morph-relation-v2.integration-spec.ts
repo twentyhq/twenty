@@ -436,7 +436,6 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
         expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         value: false,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
       });
     }
   });

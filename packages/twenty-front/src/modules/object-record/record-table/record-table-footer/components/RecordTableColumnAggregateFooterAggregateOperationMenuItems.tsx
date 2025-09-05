@@ -3,6 +3,7 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
@@ -15,6 +16,8 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations: ExtendedAggregateOperations[];
   children?: ReactNode;
 }) => {
+  const { t } = useLingui();
+
   const {
     updateViewFieldAggregateOperation,
     currentViewFieldAggregateOperation,
@@ -45,13 +48,13 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
       ))}
       {children}
       <MenuItem
-        key={'none'}
+        key="none"
         onClick={async () => {
           await updateViewFieldAggregateOperation(null);
           resetContent();
           closeDropdown(dropdownId);
         }}
-        text={'None'}
+        text={t`None`}
         RightIcon={
           !isDefined(currentViewFieldAggregateOperation) ? IconCheck : undefined
         }
