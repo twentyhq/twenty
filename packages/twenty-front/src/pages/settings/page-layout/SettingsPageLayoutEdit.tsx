@@ -363,7 +363,7 @@ export const SettingsPageLayoutEdit = () => {
           <ResponsiveGridLayout
             className="layout"
             layouts={
-              !activeTabId
+              isEmptyState || !activeTabId
                 ? EMPTY_LAYOUT
                 : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
             }
