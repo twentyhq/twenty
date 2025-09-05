@@ -91,7 +91,7 @@ export const getWorkspaceMemberDataSeeds = (
   if (process.env.NODE_ENV === 'test') {
     return originalWorkspaceMembers;
   }
-  
+
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
     // Apple workspace gets all workspace members (original + random)
     return WORKSPACE_MEMBER_DATA_SEEDS;
