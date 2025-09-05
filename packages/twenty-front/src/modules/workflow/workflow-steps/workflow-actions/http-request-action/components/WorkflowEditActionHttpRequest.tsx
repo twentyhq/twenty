@@ -12,6 +12,7 @@ import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDraw
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useKeyValuePairs } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -112,10 +113,12 @@ export const WorkflowEditActionHttpRequest = ({
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
-
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
+  const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
+    formData.headers as Record<string, string>,
+  );
   const handleTestRequest = async () => {
     if (actionOptions.readonly === true) {
       return;
@@ -183,13 +186,20 @@ export const WorkflowEditActionHttpRequest = ({
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
+              uniqueNotEditableKeys={['content-type']}
+              pairs={keyValuePairs}
+              setPairs={setKeyValuePairs}
             />
 
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value) => handleFieldChange('body', value)}
+                onChange={(value, type = 'body') =>
+                  handleFieldChange(type, value)
+                }
                 readonly={actionOptions.readonly}
+                headers={formData.headers}
+                setHeadersPairs={setKeyValuePairs}
               />
             )}
 

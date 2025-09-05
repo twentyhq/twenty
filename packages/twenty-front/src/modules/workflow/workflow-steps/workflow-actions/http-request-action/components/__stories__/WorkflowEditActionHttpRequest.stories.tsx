@@ -48,7 +48,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
       url: 'https://api.example.com/data',
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'content-type': 'application/json',
         Authorization: 'Bearer token123',
       },
       body: {
@@ -165,7 +165,7 @@ export const WithArrayStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `[
   "frontend",
@@ -215,7 +215,7 @@ export const WithObjectStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `{
   "hey": "frontend",
@@ -245,17 +245,17 @@ export const WithObjectStringBody: Story = {
 
     const textboxes = await waitFor(() => {
       const elements = canvas.getAllByRole('textbox');
-      expect(elements.length).toBe(14);
+      expect(elements.length).toBe(12);
       return elements;
     });
 
-    expect(textboxes[5]).toHaveTextContent('hey');
-    expect(textboxes[7]).toHaveTextContent('oh');
-    expect(textboxes[9]).toHaveTextContent('amazing');
+    expect(textboxes[3]).toHaveTextContent('hey');
+    expect(textboxes[5]).toHaveTextContent('oh');
+    expect(textboxes[7]).toHaveTextContent('amazing');
 
-    expect(textboxes[6]).toHaveTextContent('frontend');
-    expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Salary');
+    expect(textboxes[4]).toHaveTextContent('frontend');
+    expect(textboxes[6]).toHaveTextContent('backend');
+    expect(textboxes[8]).toHaveTextContent('database Salary');
   },
 };
 
@@ -271,7 +271,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `[
   "frontend",
@@ -302,7 +302,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
+      expect(textboxes[3]).toHaveTextContent(
         '[ "frontend", Salary, "database"]',
       );
     });
@@ -321,7 +321,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `{
   "speciality": "frontend",
@@ -351,7 +351,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
+      expect(textboxes[3]).toHaveTextContent(
         '{ "speciality": "frontend", "salary": Salary}',
       );
     });
