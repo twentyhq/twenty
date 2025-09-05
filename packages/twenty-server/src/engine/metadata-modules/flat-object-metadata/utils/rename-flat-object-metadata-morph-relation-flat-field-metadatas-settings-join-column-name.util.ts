@@ -21,6 +21,7 @@ const searchAndReplaceLast = ({
   replace: string;
 }) => {
   const lastIndex = source.lastIndexOf(search);
+
   if (lastIndex === -1) return source;
 
   return (

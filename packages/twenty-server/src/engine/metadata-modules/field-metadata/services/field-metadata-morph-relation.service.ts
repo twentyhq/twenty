@@ -178,6 +178,7 @@ export class FieldMetadataMorphRelationService {
     return fieldsCreated;
   }
 
+  // Rename and move outside of here
   async findCachedFieldMetadataMorphRelation({
     flatFieldMetadata,
     workspaceId,
@@ -185,13 +186,17 @@ export class FieldMetadataMorphRelationService {
     flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>; // I don't receive a real flatFIeldMetadata here there's not relation
     workspaceId: string;
   }): Promise<RelationDTO[]> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      metadataVersion,
+    } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
           workspaceId,
         },
       );
 
+    console.log('READ', { metadataVersion });
     const sourceFlatObjectMetadata =
       findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,

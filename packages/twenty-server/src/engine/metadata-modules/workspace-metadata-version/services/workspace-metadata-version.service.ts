@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -45,5 +45,6 @@ export class WorkspaceMetadataVersionService {
     await this.workspaceMetadataCacheService.recomputeMetadataCache({
       workspaceId,
     });
+    console.log('INCREMENT', { newMetadataVersion });
   }
 }
