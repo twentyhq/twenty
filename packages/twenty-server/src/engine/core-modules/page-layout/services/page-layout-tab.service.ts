@@ -182,6 +182,7 @@ export class PageLayoutTabService {
       select: {
         id: true,
         deletedAt: true,
+        pageLayoutId: true,
       },
       where: {
         id,
@@ -207,6 +208,26 @@ export class PageLayoutTabService {
         ),
         PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
       );
+    }
+
+    try {
+      await this.pageLayoutService.findByIdOrThrow(
+        pageLayoutTab.pageLayoutId,
+        workspaceId,
+      );
+    } catch (error) {
+      if (
+        error instanceof PageLayoutException &&
+        error.code === PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND
+      ) {
+        throw new PageLayoutTabException(
+          generatePageLayoutTabExceptionMessage(
+            PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          ),
+          PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+        );
+      }
+      throw error;
     }
 
     await this.pageLayoutTabRepository.restore(id);
