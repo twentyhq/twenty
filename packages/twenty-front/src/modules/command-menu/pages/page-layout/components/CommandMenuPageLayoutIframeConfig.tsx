@@ -119,6 +119,8 @@ export const CommandMenuPageLayoutIframeConfig = () => {
           title={isEditMode ? 'Save Changes' : 'Create Widget'}
           onClick={handleSubmit}
           disabled={!isFormValid}
+          variant="primary"
+          size="small"
         />
       </StyledButtonContainer>
     </StyledContainer>
