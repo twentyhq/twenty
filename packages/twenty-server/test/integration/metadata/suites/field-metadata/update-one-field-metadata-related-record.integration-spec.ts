@@ -117,11 +117,11 @@ describe('update-one-field-metadata-related-record', () => {
   };
 
   afterEach(async () => {
-      if (isDefined(idToDelete)) {
-        await deleteOneObjectMetadata({
-          input: { idToDelete: idToDelete },
-        });
-      }
+    if (isDefined(idToDelete)) {
+      await deleteOneObjectMetadata({
+        input: { idToDelete: idToDelete },
+      });
+    }
   });
 
   describe.each(testFieldMetadataType)('%s', (fieldType) => {
