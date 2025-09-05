@@ -16,9 +16,6 @@ export class PageLayoutDTO {
   @Field({ nullable: false })
   name: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  workspaceId: string;
-
   @Field(() => PageLayoutType, {
     nullable: false,
     defaultValue: PageLayoutType.RECORD_PAGE,

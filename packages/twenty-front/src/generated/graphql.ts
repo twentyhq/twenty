@@ -2397,7 +2397,6 @@ export type PageLayout = {
   tabs?: Maybe<Array<PageLayoutTab>>;
   type: PageLayoutType;
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['UUID'];
 };
 
 export type PageLayoutTab = {
@@ -2409,7 +2408,6 @@ export type PageLayoutTab = {
   position: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['UUID'];
 };
 
 export enum PageLayoutType {
@@ -2430,7 +2428,6 @@ export type PageLayoutWidget = {
   title: Scalars['String'];
   type: WidgetType;
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['UUID'];
 };
 
 export type PermissionFlag = {
