@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  capitalize,
   computeMorphRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -20,6 +19,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morh-relation-field-name.util';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -91,12 +91,17 @@ export class FieldMetadataMorphRelationService {
         );
       }
 
+      const currentMorphRelationFieldName = computeMorphRelationFieldName({
+        fieldName: fieldMetadataForCreate.name,
+        relationType: relationCreationPayload.type,
+        targetObjectMetadata,
+      });
       const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
           {
             fieldMetadataInput: {
               ...fieldMetadataForCreate,
-              name: `${fieldMetadataForCreate.name}${capitalize(targetObjectMetadata.nameSingular)}`,
+              name: currentMorphRelationFieldName,
             },
             relationCreationPayload: relationCreationPayload,
             joinColumnName: computeMorphRelationFieldJoinColumnName({
@@ -224,6 +229,7 @@ export class FieldMetadataMorphRelationService {
           morphFlatFieldMetadata.relationTargetObjectMetadataId
         ];
 
+      // TODO prastoin check if we can send relationTarget flat field metadata
       if (!isDefined(targetFlatObjectMetadataWithFlatFieldMaps)) {
         throw new FlatObjectMetadataMapsException(
           'Morph relation dataloader could not find related object metadata in cache',

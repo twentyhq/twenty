@@ -20,4 +20,19 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
     ],
     targetObjectMetadataNames: ['surveyResult', 'rocket'],
   },
+  {
+    type: FieldMetadataType.MORPH_RELATION,
+    label: 'Helper of the Pet (rocket or survey)',
+    name: 'helper',
+    icon: 'IconRelationManyToOne',
+    morphRelationsCreationPayload: [
+      {
+        type: RelationType.ONE_TO_MANY,
+        targetObjectMetadataId: 'to-be-resolved-later',
+        targetFieldLabel: 'Helped by',
+        targetFieldIcon: 'IconRelationOneToMany',
+      },
+    ],
+    targetObjectMetadataNames: ['surveyResult', 'rocket'],
+  },
 ];
