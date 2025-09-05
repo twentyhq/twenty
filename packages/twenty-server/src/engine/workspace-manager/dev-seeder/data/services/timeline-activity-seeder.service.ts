@@ -5,10 +5,16 @@ import chunk from 'lodash.chunk';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
-import { getCalendarEventParticipantDataSeeds } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
+import {
+  CalendarEventParticipantDataSeed,
+  getCalendarEventParticipantDataSeeds,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import { COMPANY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
-import { getMessageParticipantDataSeeds } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
+import {
+  getMessageParticipantDataSeeds,
+  MessageParticipantDataSeed,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import { NOTE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { NOTE_TARGET_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -383,8 +389,8 @@ export class TimelineActivitySeederService {
     index: number;
     activityIndex: number;
     linkedObjectMetadataId: string;
-    calendarEventParticipants: Record<string, unknown>[];
-    messageParticipants: Record<string, unknown>[];
+    calendarEventParticipants: CalendarEventParticipantDataSeed[];
+    messageParticipants: MessageParticipantDataSeed[];
   }): TimelineActivitySeedData[] {
     const targetInfos = this.getActivityTargetInfos(
       activityType,
@@ -412,8 +418,8 @@ export class TimelineActivitySeederService {
   private getActivityTargetInfos(
     activityType: 'note' | 'task' | 'calendarEvent' | 'message',
     recordSeed: Record<string, unknown>,
-    calendarEventParticipants: Record<string, unknown>[],
-    messageParticipants: Record<string, unknown>[],
+    calendarEventParticipants: CalendarEventParticipantDataSeed[],
+    messageParticipants: MessageParticipantDataSeed[],
   ): ActivityTargetInfo[] {
     const targetGetters = {
       note: () => this.getNoteTargetInfos(recordSeed),
@@ -483,7 +489,7 @@ export class TimelineActivitySeederService {
 
   private getCalendarEventTargetInfos(
     recordSeed: Record<string, unknown>,
-    calendarEventParticipants: Record<string, unknown>[],
+    calendarEventParticipants: CalendarEventParticipantDataSeed[],
   ): ActivityTargetInfo[] {
     const eventParticipants = calendarEventParticipants.filter(
       (participant) => participant.calendarEventId === recordSeed.id,
@@ -495,7 +501,7 @@ export class TimelineActivitySeederService {
       if (participant.personId) {
         targetInfos.push({
           targetType: 'person',
-          targetId: participant.personId as string,
+          targetId: participant.personId,
         });
 
         const person = PERSON_DATA_SEEDS.find(
@@ -516,7 +522,7 @@ export class TimelineActivitySeederService {
 
   private getMessageTargetInfos(
     recordSeed: Record<string, unknown>,
-    messageParticipants: Record<string, unknown>[],
+    messageParticipants: MessageParticipantDataSeed[],
   ): ActivityTargetInfo[] {
     const filteredMessageParticipants = messageParticipants.filter(
       (participant) => participant.messageId === recordSeed.id,
@@ -528,7 +534,7 @@ export class TimelineActivitySeederService {
       if (participant.personId) {
         targetInfos.push({
           targetType: 'person',
-          targetId: participant.personId as string,
+          targetId: participant.personId,
         });
 
         const person = PERSON_DATA_SEEDS.find(
@@ -538,7 +544,7 @@ export class TimelineActivitySeederService {
         if (person?.companyId) {
           targetInfos.push({
             targetType: 'company',
-            targetId: person.companyId as string,
+            targetId: person.companyId,
           });
         }
       }

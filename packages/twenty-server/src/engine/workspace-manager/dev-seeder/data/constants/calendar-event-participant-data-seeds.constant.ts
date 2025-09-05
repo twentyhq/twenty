@@ -6,7 +6,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
-type CalendarEventParticipantDataSeed = {
+export type CalendarEventParticipantDataSeed = {
   id: string;
   calendarEventId: string;
   handle: string;
@@ -271,40 +271,40 @@ const CREATE_EVENT_PARTICIPANTS = (
   return { participants: PARTICIPANTS, nextIndex: participantIndex };
 };
 
-const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
-  (workspaceId: string): CalendarEventParticipantDataSeed[] => {
-    const PARTICIPANT_SEEDS: CalendarEventParticipantDataSeed[] = [];
-    let PARTICIPANT_INDEX = 1;
+const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS = (
+  workspaceId: string,
+): CalendarEventParticipantDataSeed[] => {
+  const PARTICIPANT_SEEDS: CalendarEventParticipantDataSeed[] = [];
+  let PARTICIPANT_INDEX = 1;
 
-    const EVENT_IDS = Object.keys(CALENDAR_EVENT_DATA_SEED_IDS).map(
-      (key) =>
-        CALENDAR_EVENT_DATA_SEED_IDS[
-          key as keyof typeof CALENDAR_EVENT_DATA_SEED_IDS
-        ],
+  const EVENT_IDS = Object.keys(CALENDAR_EVENT_DATA_SEED_IDS).map(
+    (key) =>
+      CALENDAR_EVENT_DATA_SEED_IDS[
+        key as keyof typeof CALENDAR_EVENT_DATA_SEED_IDS
+      ],
+  );
+
+  const PERSON_IDS = Object.keys(PERSON_DATA_SEED_IDS).map(
+    (key) => PERSON_DATA_SEED_IDS[key as keyof typeof PERSON_DATA_SEED_IDS],
+  );
+  const WORKSPACE_MEMBER_IDS = getWorkspaceMemberDataSeeds(workspaceId).map(
+    (member) => member.id,
+  );
+
+  for (const EVENT_ID of EVENT_IDS) {
+    const RESULT = CREATE_EVENT_PARTICIPANTS(
+      EVENT_ID,
+      PERSON_IDS,
+      WORKSPACE_MEMBER_IDS,
+      PARTICIPANT_INDEX,
     );
 
-    const PERSON_IDS = Object.keys(PERSON_DATA_SEED_IDS).map(
-      (key) => PERSON_DATA_SEED_IDS[key as keyof typeof PERSON_DATA_SEED_IDS],
-    );
-    const WORKSPACE_MEMBER_IDS = getWorkspaceMemberDataSeeds(workspaceId).map(
-      (member) => member.id,
-    );
+    PARTICIPANT_SEEDS.push(...RESULT.participants);
+    PARTICIPANT_INDEX = RESULT.nextIndex;
+  }
 
-    for (const EVENT_ID of EVENT_IDS) {
-      const RESULT = CREATE_EVENT_PARTICIPANTS(
-        EVENT_ID,
-        PERSON_IDS,
-        WORKSPACE_MEMBER_IDS,
-        PARTICIPANT_INDEX,
-      );
-
-      PARTICIPANT_SEEDS.push(...RESULT.participants);
-      PARTICIPANT_INDEX = RESULT.nextIndex;
-    }
-
-    return PARTICIPANT_SEEDS;
-  };
-
+  return PARTICIPANT_SEEDS;
+};
 
 export const getCalendarEventParticipantDataSeeds = (
   workspaceId: string,

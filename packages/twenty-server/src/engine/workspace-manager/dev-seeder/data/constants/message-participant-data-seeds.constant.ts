@@ -1,11 +1,11 @@
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import {
-    WORKSPACE_MEMBER_DATA_SEED_IDS,
-    getWorkspaceMemberDataSeeds,
+  WORKSPACE_MEMBER_DATA_SEED_IDS,
+  getWorkspaceMemberDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-type MessageParticipantDataSeed = {
+export type MessageParticipantDataSeed = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -293,7 +293,6 @@ const GENERATE_MESSAGE_PARTICIPANT_SEEDS = (
 
   return PARTICIPANT_SEEDS;
 };
-
 
 export const getMessageParticipantDataSeeds = (
   workspaceId: string,
