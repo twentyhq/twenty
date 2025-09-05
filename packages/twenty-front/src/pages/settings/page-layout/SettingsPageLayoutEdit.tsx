@@ -158,10 +158,11 @@ export const SettingsPageLayoutEdit = () => {
     'page-layout-tabs',
   );
 
-  // Derive widgets and tabs from draft state
   const activeTabWidgets = useMemo(() => {
-    if (!activeTabId || activeTabId === 'add-new-tab') return [];
-    const activeTab = pageLayoutDraft.tabs.find((t) => t.id === activeTabId);
+    if (!activeTabId) return [];
+    const activeTab = pageLayoutDraft.tabs.find(
+      (tab) => tab.id === activeTabId,
+    );
     return activeTab?.widgets || [];
   }, [pageLayoutDraft.tabs, activeTabId]);
 
@@ -217,27 +218,6 @@ export const SettingsPageLayoutEdit = () => {
       activeTabId,
     ],
   );
-
-  const activeTabLayouts = useMemo(() => {
-    if (!activeTabId) return { desktop: [], mobile: [] };
-
-    const activeTab = pageLayoutDraft.tabs.find(
-      (tab) => tab.id === activeTabId,
-    );
-    if (!activeTab) return { desktop: [], mobile: [] };
-
-    const desktopLayouts = activeTab.widgets.map((w) => ({
-      i: w.id,
-      x: w.gridPosition.column,
-      y: w.gridPosition.row,
-      w: w.gridPosition.columnSpan,
-      h: w.gridPosition.rowSpan,
-    }));
-
-    const mobileLayouts = desktopLayouts.map((l) => ({ ...l, w: 1, x: 0 }));
-
-    return { desktop: desktopLayouts, mobile: mobileLayouts };
-  }, [activeTabId, pageLayoutDraft.tabs]);
 
   const isEmptyState = activeTabWidgets.length === 0;
 
@@ -383,11 +363,9 @@ export const SettingsPageLayoutEdit = () => {
           <ResponsiveGridLayout
             className="layout"
             layouts={
-              isEmptyState
+              !activeTabId
                 ? EMPTY_LAYOUT
-                : activeTabLayouts.desktop.length > 0
-                  ? activeTabLayouts
-                  : pageLayoutCurrentLayouts[activeTabId || ''] || EMPTY_LAYOUT
+                : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
             }
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
