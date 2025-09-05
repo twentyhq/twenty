@@ -50,7 +50,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   private async loadActiveOrSuspendedWorkspace() {
     return await this.workspaceRepository.find({
-      select: ['id', 'version'],
+      select: ['id', 'version', 'displayName'],
       where: {
         activationStatus: In([
           WorkspaceActivationStatus.ACTIVE,
@@ -70,7 +70,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     return activeWorkspaceOrSuspendedWorkspaceCount.length === 0;
   }
 
-  private async runCoreMigrations(): Promise<void> {
+  async runCoreMigrations(): Promise<void> {
     this.logger.log('Running global database migrations');
 
     try {
@@ -88,9 +88,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     }
   }
 
-  private async areAllWorkspacesInPreviousMinorVersionOrAbove(
+  private async workspacesThatAreBelowFromWorkspaceVersion(
     fromWorkspaceVersion: SemVer,
-  ): Promise<boolean> {
+  ): Promise<Pick<Workspace, 'id' | 'displayName' | 'version'>[]> {
     try {
       const allActiveOrSuspendedWorkspaces =
         await this.loadActiveOrSuspendedWorkspace();
@@ -100,13 +100,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
           'No workspaces found. Running migrations for fresh installation.',
         );
 
-        return true;
+        return [];
       }
 
-      const areAllWorkspacesInPreviousMinorVersionOrAbove =
-        allActiveOrSuspendedWorkspaces.every((workspace) => {
+      const workspacesThatAreBelowFromWorkspaceVersion =
+        allActiveOrSuspendedWorkspaces.filter((workspace) => {
           if (!isDefined(workspace.version)) {
-            return false;
+            return true;
           }
 
           const versionCompareResult = compareVersionMajorAndMinor(
@@ -115,17 +115,17 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
           );
 
           if (versionCompareResult === 'lower') {
-            return false;
+            return true;
           }
 
-          return true;
+          return false;
         });
 
-      return areAllWorkspacesInPreviousMinorVersionOrAbove;
+      return workspacesThatAreBelowFromWorkspaceVersion;
     } catch (error) {
       this.logger.error('Error checking workspaces below version:', error);
 
-      return false;
+      throw error;
     }
   }
 
@@ -192,18 +192,21 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const areAllWorkspacesInPreviousMinorVersionOrAbove =
-      await this.areAllWorkspacesInPreviousMinorVersionOrAbove(
+    const workspacesThatAreBelowFromWorkspaceVersion =
+      await this.workspacesThatAreBelowFromWorkspaceVersion(
         this.fromWorkspaceVersion,
       );
 
-    if (!areAllWorkspacesInPreviousMinorVersionOrAbove) {
-      this.logger.log(
-        chalk.red(
-          `Not able to run upgrade command, aborting the whole upgrade operation.
+    if (workspacesThatAreBelowFromWorkspaceVersion.length > 0) {
+      this.migrationReport.fail.push(
+        ...workspacesThatAreBelowFromWorkspaceVersion.map((workspace) => ({
+          error: new Error(
+            `Not able to run upgrade command, aborting the whole upgrade operation.
           Please check that all workspaces are at least at the previous minor version ${this.fromWorkspaceVersion.version}
           If the workspaces are not at the previous minor version, please go back to the previous minor version and run the upgrade command again.`,
-        ),
+          ),
+          workspaceId: workspace.id,
+        })),
       );
 
       return;
@@ -254,12 +257,6 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         return;
       }
       case 'higher': {
-        this.logger.log(
-          chalk.blue(
-            `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
-          ),
-        );
-
         return;
       }
       default: {

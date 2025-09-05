@@ -183,6 +183,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
-    return super.runMigrationCommand(passedParams, options);
+    return await super.runMigrationCommand(passedParams, options);
   }
 }
