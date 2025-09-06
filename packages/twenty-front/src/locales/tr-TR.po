@@ -6399,6 +6399,11 @@ msgstr "Sistem ayarları - Pazar"
 msgid "Table"
 msgstr "Tablo"
 
+#. js-lingui-id: 38Or+7
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Tabs"
+msgstr ""
+
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
