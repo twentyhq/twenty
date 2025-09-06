@@ -1,19 +1,10 @@
 import { type Layouts } from 'react-grid-layout';
-import { type Widget } from '../mocks/mockWidgets';
-
-export type WidgetWithGridPosition = Widget & {
-  gridPosition: {
-    row: number;
-    column: number;
-    rowSpan: number;
-    columnSpan: number;
-  };
-};
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 
 export const convertLayoutsToWidgets = (
-  widgets: Widget[],
+  widgets: PageLayoutWidget[],
   layouts: Layouts,
-): WidgetWithGridPosition[] => {
+): PageLayoutWidget[] => {
   const activeLayouts = layouts.desktop || layouts.mobile || [];
 
   return widgets.map((widget) => {

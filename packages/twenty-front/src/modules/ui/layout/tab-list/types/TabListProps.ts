@@ -7,4 +7,5 @@ export type TabListProps = {
   className?: string;
   isInRightDrawer?: boolean;
   componentInstanceId: string;
+  onAddTab?: () => void;
 };

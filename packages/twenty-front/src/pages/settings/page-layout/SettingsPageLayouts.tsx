@@ -1,4 +1,5 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -20,10 +21,9 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 180px 120px 100px 36px 36px;
+  grid-template-columns: 1fr 180px 80px 80px 36px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -84,6 +84,7 @@ export const SettingsPageLayouts = () => {
             <StyledTableRow>
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Type`}</TableHeader>
+              <TableHeader>{t`Tabs`}</TableHeader>
               <TableHeader>{t`Widgets`}</TableHeader>
               <TableHeader></TableHeader>
               <TableHeader></TableHeader>
@@ -101,7 +102,13 @@ export const SettingsPageLayouts = () => {
                   {layout.name}
                 </StyledNameTableCell>
                 <TableCell>{layout.type}</TableCell>
-                <TableCell>{layout.widgets.length}</TableCell>
+                <TableCell>{layout.tabs.length}</TableCell>
+                <TableCell>
+                  {layout.tabs.reduce(
+                    (total, tab) => total + tab.widgets.length,
+                    0,
+                  )}
+                </TableCell>
                 <StyledActionTableCell
                   onClick={(event) => {
                     event.stopPropagation();

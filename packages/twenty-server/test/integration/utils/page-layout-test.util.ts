@@ -14,7 +14,6 @@ export const assertPageLayoutStructure = (
   expect(pageLayout.id).toEqual(expect.any(String));
   expect(pageLayout.name).toEqual(expect.any(String));
   expect(Object.values(PageLayoutType)).toContain(pageLayout.type);
-  expect(pageLayout.workspaceId).toEqual(expect.any(String));
   expect(pageLayout.createdAt).toEqual(expect.any(String));
   expect(pageLayout.updatedAt).toEqual(expect.any(String));
 

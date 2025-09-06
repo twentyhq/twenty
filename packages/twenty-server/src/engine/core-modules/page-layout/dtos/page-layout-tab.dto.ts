@@ -18,9 +18,6 @@ export class PageLayoutTabDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutId: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  workspaceId: string;
-
   @Field()
   createdAt: Date;
 

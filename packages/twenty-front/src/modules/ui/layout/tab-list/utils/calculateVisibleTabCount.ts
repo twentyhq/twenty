@@ -8,6 +8,7 @@ type CalculateVisibleTabCountParams = {
   tabWidthsById: TabWidthsById;
   containerWidth: number;
   moreButtonWidth: number;
+  addButtonWidth?: number;
 };
 
 export const calculateVisibleTabCount = ({
@@ -15,12 +16,17 @@ export const calculateVisibleTabCount = ({
   tabWidthsById,
   containerWidth,
   moreButtonWidth,
+  addButtonWidth = 0,
 }: CalculateVisibleTabCountParams): number => {
   if (Object.keys(tabWidthsById).length === 0 || containerWidth === 0) {
     return visibleTabs.length;
   }
 
-  const availableWidth = containerWidth - TAB_LIST_LEFT_PADDING;
+  // Subtract add button width if present
+  const availableWidth =
+    containerWidth -
+    TAB_LIST_LEFT_PADDING -
+    (addButtonWidth > 0 ? addButtonWidth + TAB_LIST_GAP : 0);
 
   let totalWidth = 0;
   for (let i = 0; i < visibleTabs.length; i++) {

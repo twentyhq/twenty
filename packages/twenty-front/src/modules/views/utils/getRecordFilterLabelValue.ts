@@ -4,6 +4,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
+import { parseJson } from 'twenty-shared/utils';
 
 export const getRecordFilterLabelValue = ({
   recordFilter,
@@ -30,7 +31,7 @@ export const getRecordFilterLabelValue = ({
     }
   }
   if (recordFilter.type === 'SELECT' || recordFilter.type === 'MULTI_SELECT') {
-    const valueArray = JSON.parse(recordFilter.value);
+    const valueArray = parseJson<string[]>(recordFilter.value);
 
     if (!Array.isArray(valueArray)) {
       return '';

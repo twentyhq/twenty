@@ -11,6 +11,7 @@ export const RecordTableCellsEmpty = () => {
     <RecordTableTd
       isSelected={isSelected}
       key={recordField.fieldMetadataItemId}
+      width={recordField.size}
     />
   ));
 };

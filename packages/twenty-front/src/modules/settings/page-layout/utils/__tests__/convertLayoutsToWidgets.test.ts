@@ -1,25 +1,48 @@
-import { GraphSubType, WidgetType, type Widget } from '../../mocks/mockWidgets';
+import { GraphSubType, WidgetType } from '../../mocks/mockWidgets';
+import { type PageLayoutWidget } from '../../states/savedPageLayoutsState';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
-  const mockWidgets: Widget[] = [
+  const mockWidgets: PageLayoutWidget[] = [
     {
       id: 'widget-1',
+      pageLayoutTabId: 'tab-1',
       title: 'Widget 1',
       type: WidgetType.GRAPH,
+      objectMetadataId: null,
+      gridPosition: {
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 2,
+      },
       configuration: {
         graphType: GraphSubType.NUMBER,
       },
       data: { value: 100 },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
     },
     {
       id: 'widget-2',
+      pageLayoutTabId: 'tab-1',
       title: 'Widget 2',
       type: WidgetType.GRAPH,
+      objectMetadataId: null,
+      gridPosition: {
+        row: 0,
+        column: 2,
+        rowSpan: 2,
+        columnSpan: 2,
+      },
       configuration: {
         graphType: GraphSubType.PIE,
       },
       data: { items: [] },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
     },
   ];
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -11,7 +12,13 @@ export const RecordTableStickyEffect = () => {
     scrollWrapperScrollTopComponentState,
   );
 
+  const setIsRecordTableScrolledVertically = useSetRecoilComponentState(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
   useEffect(() => {
+    setIsRecordTableScrolledVertically(scrollTop > 0);
+
     if (scrollTop > 0) {
       document
         .getElementById('record-table-header')
@@ -21,18 +28,19 @@ export const RecordTableStickyEffect = () => {
         .getElementById('record-table-header')
         ?.classList.remove('header-sticky');
     }
-  }, [scrollTop]);
+  }, [scrollTop, setIsRecordTableScrolledVertically]);
 
   const scrollLeft = useRecoilComponentValue(
     scrollWrapperScrollLeftComponentState,
   );
 
-  const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
-    isRecordTableScrolledLeftComponentState,
+  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
+    isRecordTableScrolledHorizontallyComponentState,
   );
 
   useEffect(() => {
-    setIsRecordTableScrolledLeft(scrollLeft === 0);
+    setIsRecordTableScrolledHorizontally(scrollLeft > 0);
+
     if (scrollLeft > 0) {
       document
         .getElementById('record-table-body')
@@ -54,7 +62,7 @@ export const RecordTableStickyEffect = () => {
         .getElementById('record-table-footer')
         ?.classList.remove('first-columns-sticky');
     }
-  }, [scrollLeft, setIsRecordTableScrolledLeft]);
+  }, [scrollLeft, setIsRecordTableScrolledHorizontally]);
 
   return <></>;
 };

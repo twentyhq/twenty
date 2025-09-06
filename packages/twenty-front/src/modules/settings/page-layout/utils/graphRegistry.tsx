@@ -3,9 +3,10 @@ import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/Gra
 import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
 import { type ReactNode } from 'react';
-import { GraphSubType, type Widget } from '../mocks/mockWidgets';
+import { GraphSubType } from '../mocks/mockWidgets';
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 
-type GraphRenderer = (widget: Widget) => ReactNode;
+type GraphRenderer = (widget: PageLayoutWidget) => ReactNode;
 
 const graphRenderers: Record<GraphSubType, GraphRenderer> = {
   [GraphSubType.NUMBER]: (widget) => (
@@ -50,14 +51,18 @@ const graphRenderers: Record<GraphSubType, GraphRenderer> = {
   ),
 };
 
-export const renderGraphWidget = (widget: Widget): ReactNode => {
-  const graphType = widget.configuration?.graphType as GraphSubType | undefined;
+export const renderGraphWidget = (widget: PageLayoutWidget): ReactNode => {
+  const graphType = widget.configuration?.graphType;
 
-  if (!graphType) {
+  if (!graphType || typeof graphType !== 'string') {
     return null;
   }
 
-  const renderer = graphRenderers[graphType];
+  if (!Object.values(GraphSubType).includes(graphType as GraphSubType)) {
+    return null;
+  }
+
+  const renderer = graphRenderers[graphType as GraphSubType];
   if (!renderer) {
     return null;
   }

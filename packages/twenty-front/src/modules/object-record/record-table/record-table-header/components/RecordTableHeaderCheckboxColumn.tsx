@@ -17,21 +17,20 @@ const StyledContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 24px;
+  min-width: 24px;
   padding-right: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-const StyledColumnHeaderCell = styled.th<{
+const StyledColumnHeaderCell = styled.div<{
   isFirstRowActiveOrFocused: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
-    isFirstRowActiveOrFocused
-      ? 'none'
-      : `1px solid ${theme.border.color.light}`};
-  width: 28px;
+
+  min-width: 32px;
   box-sizing: border-box;
+
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
@@ -85,6 +84,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
   return (
     <StyledColumnHeaderCell
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      className="header-cell"
     >
       <StyledContainer data-select-disable>
         <Checkbox

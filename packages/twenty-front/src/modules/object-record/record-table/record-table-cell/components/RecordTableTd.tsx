@@ -1,22 +1,23 @@
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
-import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme';
 
-export const RECORD_TABLE_TD_WIDTH = '32px';
+export const DEFAULT_RECORD_TABLE_TD_WIDTH = 32;
 
 const StyledTd = styled.td<{
   backgroundColor: string;
   borderColor: string;
   isDragging?: boolean;
   fontColor: string;
-  sticky?: boolean;
-  freezeFirstColumns?: boolean;
-  left?: number;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  width?: number;
+  width: number;
 }>`
+  min-width: ${({ width }) => width}px;
+  width: ${({ width }) => width}px;
+  max-width: ${({ width }) => width}px;
+
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
@@ -26,46 +27,31 @@ const StyledTd = styled.td<{
     hasRightBorder && !isDragging ? `1px solid ${borderColor}` : 'none'};
 
   padding: 0;
-  transition: transform 0.3s ease;
 
   text-align: left;
 
   background: ${({ backgroundColor, isDragging }) =>
     isDragging ? 'transparent' : backgroundColor};
 
-  ${({ freezeFirstColumns }) =>
-    freezeFirstColumns
-      ? `@media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${RECORD_TABLE_TD_WIDTH};
-      max-width: ${RECORD_TABLE_TD_WIDTH};
-    }`
-      : ''}
+  // TODO: reimplement horizontal scroll here once we have refactored body with divs
 `;
 
 export const RecordTableTd = ({
   children,
   isSelected,
   isDragging,
-  sticky,
-  freezeFirstColumns,
-  left,
   hasRightBorder = true,
   hasBottomBorder = true,
-  width,
-  colSpan,
+  width = DEFAULT_RECORD_TABLE_TD_WIDTH,
   ...dragHandleProps
 }: {
   className?: string;
   children?: ReactNode;
   isSelected?: boolean;
   isDragging?: boolean;
-  sticky?: boolean;
-  freezeFirstColumns?: boolean;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  left?: number;
   width?: number;
-  colSpan?: number;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
@@ -83,13 +69,9 @@ export const RecordTableTd = ({
       backgroundColor={tdBackgroundColor}
       borderColor={borderColor}
       fontColor={fontColor}
-      sticky={sticky}
-      freezeFirstColumns={freezeFirstColumns}
-      left={left}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
       width={width}
-      colSpan={colSpan}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
     >

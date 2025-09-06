@@ -1,4 +1,4 @@
-import { StyledTable } from '@/object-record/record-table/components/RecordTableStyles';
+import { StyledTableDiv } from '@/object-record/record-table/components/RecordTableStyles';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import styled from '@emotion/styled';
@@ -14,9 +14,9 @@ export interface RecordTableEmptyProps {
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => (
   <StyledEmptyStateContainer>
-    <StyledTable ref={tableBodyRef}>
+    <StyledTableDiv ref={tableBodyRef}>
       <RecordTableHeader />
-    </StyledTable>
+    </StyledTableDiv>
     <RecordTableEmptyState />
   </StyledEmptyStateContainer>
 );

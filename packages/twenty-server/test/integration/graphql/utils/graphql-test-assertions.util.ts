@@ -36,7 +36,7 @@ export const assertGraphQLErrorResponse = <T extends Record<string, unknown>>(
   expect(response.body.errors).toHaveLength(1);
 
   if (expectedErrorCode && response.body.errors) {
-    expect(response.body.errors[0].extensions.code).toBe(expectedErrorCode);
+    expect(response.body.errors[0].extensions?.code).toBe(expectedErrorCode);
   }
 
   if (expectedErrorMessage && response.body.errors) {

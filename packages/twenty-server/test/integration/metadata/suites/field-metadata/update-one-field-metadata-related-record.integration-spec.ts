@@ -261,7 +261,14 @@ describe('update-one-field-metadata-related-record', () => {
           expect.arrayContaining(updatedViewFilter.value as string[]),
         );
 
-        expect(updatedViewFilter.value).toMatchSnapshot();
+        expect({
+          value: updatedViewFilter.value,
+          operand: updatedViewFilter.operand,
+          viewFilterGroupId: updatedViewFilter.viewFilterGroupId,
+          positionInViewFilterGroup:
+            updatedViewFilter.positionInViewFilterGroup,
+          subFieldName: updatedViewFilter.subFieldName,
+        }).toMatchSnapshot();
       },
     );
 
