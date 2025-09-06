@@ -10,9 +10,7 @@ import { v4 } from 'uuid';
 import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -20,16 +18,11 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
-import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -216,109 +209,6 @@ export class FieldMetadataRelationService {
     }
 
     return fieldMetadataInput;
-  }
-
-  // TODO refactor and rename
-  async findCachedFieldMetadataRelation({
-    flatFieldMetadata,
-    workspaceId,
-  }: {
-    flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
-    workspaceId: string;
-  }): Promise<RelationDTO> {
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspaceId,
-      );
-
-    const {
-      id: fieldMetadataId,
-      objectMetadataId,
-      relationTargetFieldMetadataId,
-      relationTargetObjectMetadataId,
-    } = flatFieldMetadata;
-
-    if (
-      !isDefined(relationTargetObjectMetadataId) ||
-      !isDefined(relationTargetFieldMetadataId)
-    ) {
-      throw new FieldMetadataException(
-        `Relation target object metadata id or relation target field metadata id not found for field metadata ${fieldMetadataId}`,
-        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-      );
-    }
-
-    const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
-    const targetObjectMetadata =
-      objectMetadataMaps.byId[relationTargetObjectMetadataId];
-    const sourceFieldMetadata =
-      sourceObjectMetadata?.fieldsById[fieldMetadataId];
-    const targetFieldMetadata =
-      targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
-
-    if (
-      !isDefined(sourceObjectMetadata) ||
-      !isDefined(targetObjectMetadata) ||
-      !isDefined(sourceFieldMetadata) ||
-      !isDefined(targetFieldMetadata)
-    ) {
-      throw new FieldMetadataException(
-        `Field relation metadata not found for field metadata ${fieldMetadataId}`,
-        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-      );
-    }
-
-    // Morph relation specific:
-    // to keep the fieldMetadata API simple
-    // we decided to override the targetFieldMetadata with the existing one
-    // in case the relation target is a morph relation
-    const isRelationTargetMorphRelation =
-      isFieldMetadataTypeMorphRelation(targetFieldMetadata);
-
-    const targetObjectMetadataFields = Object.values(
-      targetObjectMetadata.fieldsById,
-    );
-
-    //TODO have a look
-    const targetObjectMetadataWithoutDuplicates =
-      filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
-        targetObjectMetadataFields,
-      );
-    const targetFieldMetadataSelected =
-      targetObjectMetadataWithoutDuplicates.find(
-        (fieldMetadata) => fieldMetadata.name === targetFieldMetadata.name,
-      );
-    ///
-
-    if (!isDefined(targetFieldMetadataSelected)) {
-      throw new FieldMetadataException(
-        `Target field metadata not found for field metadata ${fieldMetadataId}`,
-        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-      );
-    }
-
-    const targetFieldMetadataOverride = isRelationTargetMorphRelation
-      ? targetFieldMetadataSelected
-      : targetFieldMetadata;
-
-    return {
-      type: flatFieldMetadata.settings.relationType,
-      sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-        getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-          sourceObjectMetadata,
-        ),
-      ),
-      sourceFieldMetadata:
-        fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
-      targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-        getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-          targetObjectMetadata,
-        ),
-      ),
-      targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
-        targetFieldMetadataOverride,
-      ),
-    };
   }
 
   // TODO refactor and strictly type
