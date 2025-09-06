@@ -26,6 +26,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -53,8 +54,9 @@ export class AdminPanelResolver {
   @Mutation(() => ImpersonateOutput)
   async impersonate(
     @Args() { workspaceId, userId }: ImpersonateInput,
+    @AuthUser() adminUser: { id: string },
   ): Promise<ImpersonateOutput> {
-    return await this.adminService.impersonate(userId, workspaceId);
+    return await this.adminService.impersonate(userId, workspaceId, adminUser.id);
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)

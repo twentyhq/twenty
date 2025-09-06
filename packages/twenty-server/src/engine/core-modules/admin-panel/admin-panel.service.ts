@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 
 import axios from 'axios';
 import semver from 'semver';
@@ -11,6 +12,8 @@ import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-pan
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -19,6 +22,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -32,11 +36,32 @@ export class AdminPanelService {
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly auditService: AuditService,
+    private readonly logger: LoggerService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async impersonate(userId: string, workspaceId: string) {
+  async impersonate(
+    userId: string,
+    workspaceId: string,
+    impersonatorUserId: string,
+  ) {
+    try {
+      z.string().uuid().parse(userId);
+      z.string().uuid().parse(workspaceId);
+      z.string().uuid().parse(impersonatorUserId);
+    } catch {
+      throw new AuthException('Invalid input', AuthExceptionCode.INVALID_INPUT);
+    }
+
+    const correlationId = randomUUID();
+
+    this.logger.log(
+      `Impersonation attempt: correlationId=${correlationId}, targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
+      'AdminPanelService.impersonate',
+    );
+
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -53,25 +78,66 @@ export class AdminPanelService {
     userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
-        'User not found or impersonation not enable on workspace',
-        AuthExceptionCode.INVALID_INPUT,
+        'User not found in workspace or impersonation not enabled',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       ),
     );
 
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      user.userWorkspaces[0].workspace.id,
-    );
+    try {
+      const attemptAnalytics = this.auditService.createContext({
+        workspaceId: user.userWorkspaces[0].workspace.id,
+        userId: impersonatorUserId,
+      });
+      await attemptAnalytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_attempt',
+        message: `Attempting impersonation for target ${user.id}`,
+        correlationId,
+      } as { eventName: string; message: string; correlationId: string });
 
-    return {
-      workspace: {
-        id: user.userWorkspaces[0].workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-          user.userWorkspaces[0].workspace,
-        ),
-      },
-      loginToken,
-    };
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+        user.userWorkspaces[0].workspace.id,
+        undefined,
+        {
+          isImpersonation: true,
+          impersonatorUserId,
+        },
+      );
+
+      const analytics = this.auditService.createContext({
+        workspaceId: user.userWorkspaces[0].workspace.id,
+        userId: impersonatorUserId,
+      });
+      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_generated',
+        message: `Impersonation login token generated for target ${user.id}`,
+        correlationId,
+      } as { eventName: string; message: string; correlationId: string });
+
+      this.logger.log(
+        `Impersonation token generated successfully for targetUserId=${userId}`,
+        'AdminPanelService.impersonate',
+      );
+
+      return {
+        workspace: {
+          id: user.userWorkspaces[0].workspace.id,
+          workspaceUrls: this.domainManagerService.getWorkspaceUrls(
+            user.userWorkspaces[0].workspace,
+          ),
+        },
+        loginToken,
+      };
+    } catch (error: unknown) {
+      this.logger.error(
+        `Impersonation token generation failed: correlationId=${correlationId}, targetUserId=${userId}`,
+        'AdminPanelService.impersonate',
+      );
+      throw new AuthException(
+        'Impersonation failed',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
   }
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
