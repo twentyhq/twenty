@@ -22,6 +22,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -49,6 +51,7 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
@@ -113,6 +116,8 @@ export class AuthResolver {
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
+    private readonly auditService: AuditService,
+    private readonly logger: LoggerService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
@@ -540,6 +545,8 @@ export class AuthResolver {
       sub: email,
       workspaceId,
       authProvider,
+      isImpersonation,
+      impersonatorUserId,
     } = await this.loginTokenService.verifyLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
     );
@@ -567,11 +574,48 @@ export class AuthResolver {
         userId: user.id,
         workspaceId,
       });
+      
+    if (isImpersonation === true) {
+      this.logger.log(
+        `Impersonation token exchange attempt for ${email} by ${impersonatorUserId}`,
+        'AuthResolver.getAuthTokensFromLoginToken',
+      );
+      if (workspace.allowImpersonation !== true) {
+        throw new AuthException(
+          'Impersonation not allowed on this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+      if (!impersonatorUserId) {
+        throw new AuthException(
+          'Invalid impersonation token (missing origin)',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
-    await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
-      workspace,
-      currentUserWorkspace.twoFactorAuthenticationMethods,
-    );
+      const impersonatorUser = await this.userRepository.findOne({ where: { id: impersonatorUserId } });
+
+      if (!impersonatorUser || impersonatorUser.canImpersonate !== true) {
+        throw new AuthException(
+          'Impersonation token origin not authorized',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      const analytics = this.auditService.createContext({
+        workspaceId: workspace.id,
+        userId: impersonatorUserId,
+      });
+      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_exchanged',
+        message: 'Impersonation token exchanged',
+      });
+    } else {
+      await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
+        workspace,
+        currentUserWorkspace.twoFactorAuthenticationMethods,
+      );
+    }
 
     return await this.authService.verify(email, workspace.id, authProvider);
   }

@@ -75,6 +75,35 @@ describe('LoginTokenService', () => {
     });
   });
 
+  describe('generateLoginToken with impersonation', () => {
+    it('should include isImpersonation flag in JWT payload', async () => {
+      const email = 'test@example.com';
+      const mockSecret = 'mock-secret';
+      const mockToken = 'mock-token';
+      const workspaceId = 'workspace-id';
+      
+      jest
+        .spyOn(jwtWrapperService, 'generateAppSecret')
+        .mockReturnValue(mockSecret);
+      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+
+      const result = await service.generateLoginToken(email, workspaceId, undefined, { isImpersonation: true });
+
+      expect(result).toEqual({
+        token: mockToken,
+        expiresAt: expect.any(Date),
+      });
+      expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
+        'LOGIN',
+        workspaceId,
+      );
+      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+        { sub: email, workspaceId, type: 'LOGIN', isImpersonation: true },
+        { secret: mockSecret, expiresIn: expect.any(String) },
+      );
+    });
+  });
+
   describe('verifyLoginToken', () => {
     it('should verify a login token successfully', async () => {
       const mockToken = 'valid-token';

@@ -108,7 +108,7 @@ describe('AdminPanelService', () => {
       expiresAt: new Date(),
     });
 
-    const result = await service.impersonate('user-id', 'workspace-id');
+    const result = await service.impersonate('user-id', 'workspace-id', 'user-id');
 
     expect(UserFindOneMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -149,10 +149,10 @@ describe('AdminPanelService', () => {
     UserFindOneMock.mockReturnValueOnce(null);
 
     await expect(
-      service.impersonate('invalid-user-id', 'workspace-id'),
+      service.impersonate('invalid-user-id', 'workspace-id', 'user-id'),
     ).rejects.toThrow(
       new AuthException(
-        'User not found or impersonation not enable on workspace',
+        'User not found or impersonation not enabled on workspace',
         AuthExceptionCode.INVALID_INPUT,
       ),
     );
