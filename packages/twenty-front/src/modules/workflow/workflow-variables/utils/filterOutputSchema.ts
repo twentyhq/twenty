@@ -1,14 +1,17 @@
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import {
-  type BaseOutputSchema,
-  type FieldOutputSchema,
-  type OutputSchema,
-  type RecordOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
-import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
+  type BaseOutputSchemaV2,
+  type Node,
+} from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import {
+  type FieldOutputSchemaV2,
+  type RecordOutputSchemaV2,
+} from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isBaseOutputSchemaV2';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
-import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const isValidRecordOutputSchema = ({
@@ -18,7 +21,7 @@ const isValidRecordOutputSchema = ({
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  outputSchema: RecordOutputSchema;
+  outputSchema: RecordOutputSchemaV2;
 }): boolean => {
   if (shouldDisplayRecordObjects && !shouldDisplayRecordFields) {
     return isDefined(outputSchema.object);
@@ -32,11 +35,11 @@ const filterRecordOutputSchema = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
 }: {
-  outputSchema: RecordOutputSchema;
+  outputSchema: RecordOutputSchemaV2;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-}): RecordOutputSchema | undefined => {
-  const filteredFields: Record<string, FieldOutputSchema> = {};
+}): RecordOutputSchemaV2 | undefined => {
+  const filteredFields: Record<string, FieldOutputSchemaV2> = {};
   let hasValidFields = false;
 
   for (const key in outputSchema.fields) {
@@ -60,7 +63,7 @@ const filterRecordOutputSchema = ({
       filteredFields[key] = {
         ...field,
         value: validSubSchema,
-      };
+      } as FieldOutputSchemaV2;
       hasValidFields = true;
     }
   }
@@ -80,7 +83,7 @@ const filterRecordOutputSchema = ({
     return {
       _outputSchemaType: 'RECORD',
       fields: filteredFields,
-    } as RecordOutputSchema;
+    } as RecordOutputSchemaV2;
   }
 
   return undefined;
@@ -91,11 +94,11 @@ const filterBaseOutputSchema = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
 }: {
-  outputSchema: BaseOutputSchema;
+  outputSchema: BaseOutputSchemaV2;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-}): BaseOutputSchema | undefined => {
-  const filteredSchema: BaseOutputSchema = {};
+}): BaseOutputSchemaV2 | undefined => {
+  const filteredSchema: BaseOutputSchemaV2 = {};
   let hasValidFields = false;
 
   for (const key in outputSchema) {
@@ -118,7 +121,7 @@ const filterBaseOutputSchema = ({
       filteredSchema[key] = {
         ...field,
         value: validSubSchema,
-      };
+      } as Node;
       hasValidFields = true;
     }
   }
@@ -134,10 +137,10 @@ const filterRecordOutputSchemaFieldsByType = ({
   outputSchema,
   fieldTypesToExclude,
 }: {
-  outputSchema: RecordOutputSchema;
+  outputSchema: RecordOutputSchemaV2;
   fieldTypesToExclude: InputSchemaPropertyType[];
-}): RecordOutputSchema => {
-  const filteredFields: Record<string, FieldOutputSchema> = {};
+}): RecordOutputSchemaV2 => {
+  const filteredFields: Record<string, FieldOutputSchemaV2> = {};
 
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
@@ -164,15 +167,18 @@ export const filterOutputSchema = ({
 }: {
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  outputSchema?: OutputSchema;
+  outputSchema?: OutputSchemaV2;
   fieldTypesToExclude?: InputSchemaPropertyType[];
-}): OutputSchema | undefined => {
+}): OutputSchemaV2 | undefined => {
   if (!isDefined(outputSchema)) {
     return undefined;
   }
 
   if (!shouldDisplayRecordObjects || shouldDisplayRecordFields) {
-    if (isRecordOutputSchema(outputSchema) && isDefined(fieldTypesToExclude)) {
+    if (
+      isRecordOutputSchemaV2(outputSchema) &&
+      isDefined(fieldTypesToExclude)
+    ) {
       return filterRecordOutputSchemaFieldsByType({
         outputSchema,
         fieldTypesToExclude,
@@ -184,13 +190,13 @@ export const filterOutputSchema = ({
 
   if (isLinkOutputSchema(outputSchema)) {
     return outputSchema;
-  } else if (isRecordOutputSchema(outputSchema)) {
+  } else if (isRecordOutputSchemaV2(outputSchema)) {
     return filterRecordOutputSchema({
       outputSchema,
       shouldDisplayRecordFields,
       shouldDisplayRecordObjects,
     });
-  } else if (isBaseOutputSchema(outputSchema)) {
+  } else if (isBaseOutputSchemaV2(outputSchema)) {
     return filterBaseOutputSchema({
       outputSchema,
       shouldDisplayRecordFields,
