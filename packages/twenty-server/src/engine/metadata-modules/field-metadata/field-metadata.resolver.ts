@@ -8,7 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -37,8 +36,6 @@ import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -69,7 +66,7 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -164,18 +161,13 @@ export class FieldMetadataResolver {
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
     @AuthWorkspace() workspace: Workspace,
-    @Parent() flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>,
+    @Parent() { id: fieldMetadataId, objectMetadataId }: FieldMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null> {
-    if (
-      !isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
-    ) {
-      return null;
-    }
-
     try {
       return await context.loaders.relationLoader.load({
-        flatFieldMetadata,
+        fieldMetadataId,
+        objectMetadataId,
         workspaceId: workspace.id,
       });
     } catch (error) {
@@ -186,22 +178,13 @@ export class FieldMetadataResolver {
   @ResolveField(() => [RelationDTO], { nullable: true })
   async morphRelations(
     @AuthWorkspace() workspace: Workspace,
-    @Parent()
-    flatFieldMetadata: FlatFieldMetadata,
+    @Parent() { id: fieldMetadataId, objectMetadataId }: FieldMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO[] | null> {
-    if (
-      !isFlatFieldMetadataOfType(
-        flatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
-      return null;
-    }
-
     try {
       return await context.loaders.morphRelationLoader.load({
-        flatFieldMetadata,
+        fieldMetadataId,
+        objectMetadataId,
         workspaceId: workspace.id,
       });
     } catch (error) {

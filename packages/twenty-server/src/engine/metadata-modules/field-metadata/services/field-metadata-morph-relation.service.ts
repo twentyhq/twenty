@@ -9,7 +9,6 @@ import { v4 } from 'uuid';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -19,17 +18,6 @@ import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morh-relation-field-name.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
-import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import {
-  FlatObjectMetadataMapsException,
-  FlatObjectMetadataMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
-import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -176,93 +164,5 @@ export class FieldMetadataMorphRelationService {
     }
 
     return fieldsCreated;
-  }
-
-  // Rename and move outside of here
-  async findCachedFieldMetadataMorphRelation({
-    flatFieldMetadata,
-    workspaceId,
-  }: {
-    flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>; // I don't receive a real flatFIeldMetadata here there's not relation
-    workspaceId: string;
-  }): Promise<RelationDTO[]> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
-        {
-          workspaceId,
-        },
-      );
-
-    const sourceFlatObjectMetadata =
-      findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataId: flatFieldMetadata.objectMetadataId,
-      });
-
-    const relatedMorphFlatFieldMetadatas =
-      findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
-        flatFieldMetadata,
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      }).filter(
-        (
-          flatFieldMetadata,
-        ): flatFieldMetadata is FlatFieldMetadata<FieldMetadataType.MORPH_RELATION> =>
-          isFlatFieldMetadataOfType(
-            flatFieldMetadata,
-            FieldMetadataType.MORPH_RELATION,
-          ),
-      );
-    const allMorphFlatFieldMetadatas = [
-      flatFieldMetadata,
-      ...relatedMorphFlatFieldMetadatas,
-    ];
-
-    return allMorphFlatFieldMetadatas.map((morphFlatFieldMetadata) => {
-      const targetFlatObjectMetadataWithFlatFieldMaps =
-        existingFlatObjectMetadataMaps.byId[
-          morphFlatFieldMetadata.relationTargetObjectMetadataId
-        ];
-
-      // TODO prastoin check if we can send relationTarget flat field metadata
-      if (!isDefined(targetFlatObjectMetadataWithFlatFieldMaps)) {
-        throw new FlatObjectMetadataMapsException(
-          'Morph relation dataloader could not find related object metadata in cache',
-          FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
-
-      const targetFlatFieldMetadata =
-        targetFlatObjectMetadataWithFlatFieldMaps.fieldsById[
-          morphFlatFieldMetadata.relationTargetFieldMetadataId
-        ];
-
-      if (!isDefined(targetFlatFieldMetadata)) {
-        throw new FlatObjectMetadataMapsException(
-          'Morph relation dataloader could not find related object metadata in cache',
-          FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
-
-      const targetFlatObjecMetadata =
-        fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata(
-          targetFlatObjectMetadataWithFlatFieldMaps,
-        );
-
-      return {
-        type: flatFieldMetadata.settings.relationType,
-        sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
-          sourceFlatObjectMetadata,
-        ),
-        sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-          morphFlatFieldMetadata,
-        ),
-        targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
-          targetFlatObjecMetadata,
-        ),
-        targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-          targetFlatFieldMetadata,
-        ),
-      };
-    });
   }
 }
