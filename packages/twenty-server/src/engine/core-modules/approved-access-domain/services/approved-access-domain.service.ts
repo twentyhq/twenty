@@ -19,7 +19,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { isWorkDomain } from 'src/utils/is-work-email';
+import { isValidDomain } from 'src/utils/isValidDomain';
 
 @Injectable()
 export class ApprovedAccessDomainService {
@@ -151,9 +151,9 @@ export class ApprovedAccessDomainService {
     fromWorkspaceMember: WorkspaceMemberWorkspaceEntity,
     emailToValidateDomain: string,
   ): Promise<ApprovedAccessDomainEntity> {
-    if (!isWorkDomain(domain)) {
+    if (!isValidDomain(domain)) {
       throw new ApprovedAccessDomainException(
-        'Approved access domain must be a company domain',
+        'Approved access domain must be a valid domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
       );
     }
