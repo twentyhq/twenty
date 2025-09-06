@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import {
-    FlatObjectMetadataMapsException,
-    FlatObjectMetadataMapsExceptionCode,
+  FlatObjectMetadataMapsException,
+  FlatObjectMetadataMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
