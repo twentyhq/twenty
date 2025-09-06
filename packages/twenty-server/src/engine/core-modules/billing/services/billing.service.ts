@@ -69,37 +69,15 @@ export class BillingService {
     return !hasAnySubscription;
   }
 
-  async updateMeteredSubscriptionPrice(workspaceId: string, priceId: string) {
+  async setMeteredSubscriptionPrice(workspaceId: string, priceId: string) {
     const subscription =
       await this.billingSubscriptionService.getCurrentActiveBillingSubscriptionOrThrow(
         { workspaceId },
       );
 
-    await this.billingSubscriptionItemService.updateMeteredSubscriptionItemPrice(
+    await this.billingSubscriptionItemService.setMeteredSubscriptionPrice(
       subscription.id,
       priceId,
-    );
-  }
-
-  async listMeteredBillingPricesByWorkspaceIdAndProductKey(
-    workspaceId: string,
-    productKey: BillingProductKey = BillingProductKey.WORKFLOW_NODE_EXECUTION,
-  ) {
-    const subscription =
-      await this.billingSubscriptionService.getCurrentActiveBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
-    const planKey = getPlanKeyFromSubscription(subscription);
-    const products =
-      await this.billingProductService.getProductsByPlan(planKey);
-    const targetProduct = products.find(
-      ({ metadata }) => metadata.productKey === productKey,
-    );
-
-    return (
-      targetProduct?.billingPrices.filter(
-        ({ active, interval }) => active && interval === subscription.interval,
-      ) ?? []
     );
   }
 

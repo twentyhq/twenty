@@ -13,6 +13,7 @@ import { StripePriceService } from 'src/engine/core-modules/billing/stripe/servi
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-sdk/stripe-sdk.module';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
@@ -28,6 +29,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
     StripeWebhookService,
     StripeCheckoutService,
     StripeSubscriptionService,
+    StripeSubscriptionScheduleService,
     StripeBillingPortalService,
     StripeBillingMeterService,
     StripeCustomerService,
@@ -46,6 +48,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
     StripeSubscriptionService,
     StripeProductService,
     StripeBillingMeterEventService,
+    StripeSubscriptionScheduleService,
   ],
 })
 export class StripeModule {}

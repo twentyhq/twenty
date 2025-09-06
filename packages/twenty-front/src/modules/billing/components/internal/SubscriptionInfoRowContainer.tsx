@@ -2,18 +2,21 @@ import { type IconComponent } from 'twenty-ui/display';
 import React from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
   label: string;
-  value: React.ReactNode;
+  currentValue: React.ReactNode;
+  nextValue?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 `;
 
 const StyledIconLabelContainer = styled.div`
@@ -21,7 +24,7 @@ const StyledIconLabelContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  width: 120px;
+  min-width: 0; /* allow label ellipsis within grid column */
 `;
 
 const StyledLabelContainer = styled.div`
@@ -30,10 +33,27 @@ const StyledLabelContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledHeaderText = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
+  if (!show) return null;
+  return (
+    <StyledContainer>
+      <div />
+      <StyledHeaderText>{t`Current`}</StyledHeaderText>
+      <StyledHeaderText>{t`Next`}</StyledHeaderText>
+    </StyledContainer>
+  );
+};
+
 export const SubscriptionInfoRowContainer = ({
   Icon,
   label,
-  value,
+  currentValue,
+  nextValue,
 }: SubscriptionInfoRowContainerProps) => {
   const theme = useTheme();
   return (
@@ -42,7 +62,8 @@ export const SubscriptionInfoRowContainer = ({
         <Icon size={theme.icon.size.md} />
         <StyledLabelContainer>{label}</StyledLabelContainer>
       </StyledIconLabelContainer>
-      {value}
+      {currentValue}
+      <div>{nextValue ?? ''}</div>
     </StyledContainer>
   );
 };

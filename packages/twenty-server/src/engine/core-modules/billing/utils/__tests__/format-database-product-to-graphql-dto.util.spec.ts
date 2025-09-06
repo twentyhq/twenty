@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
@@ -44,7 +43,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           billingPrices: [
             {
               interval: SubscriptionInterval.Month,
-              tiersMode: BillingPriceTiersMode.GRADUATED,
               tiers: [
                 {
                   up_to: 10,
@@ -124,7 +122,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           billingPrices: [
             {
               interval: SubscriptionInterval.Month,
-              tiersMode: BillingPriceTiersMode.GRADUATED,
               tiers: [
                 {
                   up_to: 10,
@@ -138,7 +135,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           ],
           prices: [
             {
-              tiersMode: BillingPriceTiersMode.GRADUATED,
               tiers: [
                 {
                   upTo: 10,
@@ -179,7 +175,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           billingPrices: [
             {
               interval: null,
-              tiersMode: null,
               tiers: null,
               stripePriceId: null,
               priceUsageType: BillingUsageType.METERED,
@@ -229,7 +224,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           billingPrices: [
             {
               interval: null,
-              tiersMode: null,
               tiers: null,
               stripePriceId: null,
               priceUsageType: BillingUsageType.METERED,
@@ -237,7 +231,6 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           ],
           prices: [
             {
-              tiersMode: null,
               tiers: [],
               recurringInterval: SubscriptionInterval.Month,
               stripePriceId: null,

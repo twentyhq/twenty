@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
+import Stripe from 'stripe';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import {
@@ -14,6 +16,13 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { findOrThrow } from 'src/utils/find-or-throw.util';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 
 @Injectable()
 export class BillingSubscriptionItemService {
@@ -23,10 +32,13 @@ export class BillingSubscriptionItemService {
     @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingPlanService: BillingPlanService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
   ) {}
 
-  async updateMeteredSubscriptionItemPrice(
+  async setMeteredSubscriptionPrice(
     subscriptionId: string,
     newPriceId: string,
   ) {
@@ -40,7 +52,11 @@ export class BillingSubscriptionItemService {
             }),
           },
         },
-        relations: ['billingProduct', 'billingProduct.billingPrices'],
+        relations: [
+          'billingProduct',
+          'billingProduct.billingPrices',
+          'billingSubscription',
+        ],
       });
 
     if (!subscriptionItem) {
@@ -50,22 +66,23 @@ export class BillingSubscriptionItemService {
       );
     }
 
-    const currentBillingPrice = subscriptionItem
+    const currentBillingMeteredPrice = subscriptionItem
       ? this.findMatchingPrice(subscriptionItem)
       : null;
 
-    if (!currentBillingPrice) {
+    if (!currentBillingMeteredPrice) {
       throw new BillingException(
         `Cannot find price for product ${subscriptionItem.stripeProductId}`,
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }
 
-    const newPrice = await this.billingPriceRepository.findOne({
+    const newMeteredPrice = await this.billingPriceRepository.findOne({
       where: { stripePriceId: newPriceId },
+      relations: ['billingProduct'],
     });
 
-    if (!newPrice) {
+    if (!newMeteredPrice) {
       throw new BillingException(
         `Cannot find price with id ${newPriceId}`,
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
@@ -73,16 +90,20 @@ export class BillingSubscriptionItemService {
       );
     }
 
+    billingValidator.assertIsMeteredPrice(newMeteredPrice);
+
     if (
       !this.isFirstPriceTiersLowerThatSecondPriceTier(
-        currentBillingPrice,
-        newPrice,
+        currentBillingMeteredPrice,
+        newMeteredPrice,
       )
     ) {
-      throw new BillingException(
-        'Cannot update price of subscription item because the new tier is lower than the current tier.',
-        BillingExceptionCode.BILLING_PRICE_UPDATE_REQUIRES_INCREASE,
-      );
+      return this.schedulePriceMeteredUpdate(subscriptionItem, newMeteredPrice);
+
+      // throw new BillingException(
+      //   'Cannot update price of subscription item because the new tier is lower than the current tier.',
+      //   BillingExceptionCode.BILLING_PRICE_UPDATE_REQUIRES_INCREASE,
+      // );
     }
 
     await this.stripeSubscriptionService.updateSubscriptionItems(
@@ -93,6 +114,135 @@ export class BillingSubscriptionItemService {
           stripePriceId: newPriceId,
         },
       ],
+    );
+  }
+
+  private generateNextPhase(
+    currentLicensedItem: Stripe.SubscriptionSchedule.Phase.Item,
+    newPrice: BillingPrice,
+    subscription: SubscriptionWithSchedule,
+    subscriptionItem: BillingSubscriptionItem,
+  ) {
+    return {
+      items: [
+        {
+          price:
+            typeof currentLicensedItem.price === 'string'
+              ? currentLicensedItem.price
+              : currentLicensedItem.price.id,
+          quantity: currentLicensedItem.quantity,
+        },
+        { price: newPrice.stripePriceId },
+      ],
+      start_date: subscription.current_period_end,
+      billing_thresholds:
+        this.stripeSubscriptionService.getBillingThresholdsByInterval(
+          subscriptionItem.billingSubscription.interval,
+        ),
+      proration_behavior: 'none' as const,
+    };
+  }
+
+  private async generateUpdatedPhase(
+    existingItemsPhases: Array<Stripe.SubscriptionSchedule.Phase>,
+    newPrice: BillingPrice,
+    subscription: SubscriptionWithSchedule,
+    subscriptionItem: BillingSubscriptionItem,
+  ) {
+    const pricesPerPlanResult =
+      await this.billingPlanService.getPricesPerPlanByInterval({
+        planKey: getPlanKeyFromSubscription(
+          subscriptionItem.billingSubscription,
+        ),
+        interval: SubscriptionInterval.Month,
+      });
+
+    const { tiers: currentMeteredBillingPriceTiers } =
+      await this.billingPriceRepository.findOneByOrFail({
+        stripePriceId: subscriptionItem.stripePriceId,
+      });
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(
+      currentMeteredBillingPriceTiers,
+    );
+
+    const targetMeteredPrice =
+      await this.billingSubscriptionService.findMeteredMatchingPrice(
+        pricesPerPlanResult.meteredProductsPrices,
+        newPrice.stripePriceId,
+        subscriptionItem.stripeProductId,
+        SubscriptionInterval.Month,
+        SubscriptionInterval.Year,
+      );
+
+    const nextPhaseLicenseItem = findOrThrow(
+      existingItemsPhases[1].items,
+      (item) => isDefined(item.quantity),
+    );
+
+    return {
+      start_date: subscription.schedule.phases[1].start_date,
+      billing_thresholds:
+        this.stripeSubscriptionService.getBillingThresholdsByInterval(
+          SubscriptionInterval.Month,
+        ),
+      items: [
+        {
+          price:
+            typeof nextPhaseLicenseItem.price === 'string'
+              ? nextPhaseLicenseItem.price
+              : nextPhaseLicenseItem.price.id,
+          quantity: nextPhaseLicenseItem.quantity,
+        },
+        { price: targetMeteredPrice.stripePriceId },
+      ],
+    };
+  }
+
+  private async schedulePriceMeteredUpdate(
+    subscriptionItem: BillingSubscriptionItem,
+    newPrice: BillingPrice,
+  ) {
+    const subscription =
+      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+        subscriptionItem.stripeSubscriptionId,
+      );
+
+    const currentLicensedItem = findOrThrow(
+      subscription.schedule.phases[0].items,
+      (item) => item.price !== subscriptionItem.stripePriceId,
+    );
+
+    const secondPhase =
+      subscription.schedule.phases.length === 1
+        ? this.generateNextPhase(
+            currentLicensedItem,
+            newPrice,
+            subscription,
+            subscriptionItem,
+          )
+        : await this.generateUpdatedPhase(
+            subscription.schedule.phases,
+            newPrice,
+            subscription,
+            subscriptionItem,
+          );
+
+    return await this.stripeSubscriptionScheduleService.updateSchedule(
+      subscription.schedule.id,
+      {
+        phases: [
+          {
+            start_date: subscription.schedule.phases[0].start_date,
+            end_date: subscription.schedule.phases[0].end_date,
+            items: subscription.schedule.phases[0].items.map((it) => ({
+              price: typeof it.price === 'string' ? it.price : it.price!.id,
+              quantity: it.quantity ?? undefined,
+            })),
+          },
+          secondPhase,
+        ],
+      },
     );
   }
 
