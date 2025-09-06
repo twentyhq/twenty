@@ -12,7 +12,6 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
@@ -20,7 +19,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { throwIfNotDefined } from 'twenty-shared/utils';
@@ -29,26 +27,24 @@ import { LightIconButton } from 'twenty-ui/input';
 
 const COLUMN_MIN_WIDTH = 104;
 
-const StyledColumnHeaderCell = styled.th<{
+const StyledColumnHeaderCell = styled.div<{
   columnWidth: number;
   isResizing?: boolean;
   isFirstRowActiveOrFocused: boolean;
 }>`
-  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
-    isFirstRowActiveOrFocused
-      ? 'none'
-      : `1px solid ${theme.border.color.light}`};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
+
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
       `}
-  position: relative;
   user-select: none;
   ${({ theme }) => {
     return `
@@ -96,8 +92,6 @@ const StyledColumnHeadContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  position: relative;
-  z-index: 1;
 
   & > :first-of-type {
     flex: 1;
@@ -202,10 +196,6 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const isRecordTableScrolledLeft = useRecoilComponentValue(
-    isRecordTableScrolledLeftComponentState,
-  );
-
   const isMobile = useIsMobile();
 
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
@@ -213,8 +203,7 @@ export const RecordTableHeaderCell = ({
   const isLabelIdentifier =
     recordField.fieldMetadataItemId === labelIdentifierFieldMetadataItem?.id;
 
-  const disableColumnResize =
-    isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
+  const disableColumnResize = isLabelIdentifier || isMobile;
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -241,22 +230,27 @@ export const RecordTableHeaderCell = ({
     0,
   );
 
+  const widthOffsetWhileResizing =
+    resizedFieldMetadataItemId === recordField.fieldMetadataItemId
+      ? resizeFieldOffset
+      : 0;
+
+  const baseWidth = recordField?.size ?? 0;
+
+  const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
+
+  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
+
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
   return (
     <StyledColumnHeaderCell
+      className="header-cell"
       key={recordField.fieldMetadataItemId}
       isResizing={
         resizedFieldMetadataItemId === recordField.fieldMetadataItemId
       }
-      columnWidth={Math.max(
-        (recordField?.size ?? 0) +
-          (resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-            ? resizeFieldOffset
-            : 0) +
-          24,
-        COLUMN_MIN_WIDTH,
-      )}
+      columnWidth={columnWidth}
       onMouseEnter={() => setIconVisibility(true)}
       onMouseLeave={() => setIconVisibility(false)}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}

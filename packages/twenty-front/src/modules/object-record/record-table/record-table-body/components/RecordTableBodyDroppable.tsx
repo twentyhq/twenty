@@ -2,9 +2,18 @@ import { RecordTableBody } from '@/object-record/record-table/record-table-body/
 import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { type ReactNode, useState } from 'react';
 import { v4 } from 'uuid';
+
+const StyledTable = styled.table`
+  table-layout: fixed;
+
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-spacing: 0;
+  width: 100%;
+`;
 
 type RecordTableBodyDroppableProps = {
   children: ReactNode;
@@ -30,19 +39,21 @@ export const RecordTableBodyDroppable = ({
       isDropDisabled={isDropDisabled}
     >
       {(provided) => (
-        <RecordTableBody
-          id={recordTableBodyId}
-          ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.droppableProps}
-          onMouseLeave={() => setRecordTableHoverPosition(null)}
-        >
-          <RecordTableBodyDroppableContextProvider
-            value={{ droppablePlaceholder: provided.placeholder }}
+        <StyledTable>
+          <RecordTableBody
+            id={recordTableBodyId}
+            ref={provided.innerRef}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...provided.droppableProps}
+            onMouseLeave={() => setRecordTableHoverPosition(null)}
           >
-            {children}
-          </RecordTableBodyDroppableContextProvider>
-        </RecordTableBody>
+            <RecordTableBodyDroppableContextProvider
+              value={{ droppablePlaceholder: provided.placeholder }}
+            >
+              {children}
+            </RecordTableBodyDroppableContextProvider>
+          </RecordTableBody>
+        </StyledTable>
       )}
     </Droppable>
   );
