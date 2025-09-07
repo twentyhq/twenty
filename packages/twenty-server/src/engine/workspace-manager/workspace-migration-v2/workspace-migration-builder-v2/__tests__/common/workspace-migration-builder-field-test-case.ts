@@ -6,7 +6,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { COMPANY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/company-flat-fields.mock';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { getMorphOrRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
+import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { OPPORTUNITY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/opportunity-flat-fields.mock';
 import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/pet-flat-fields.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -30,7 +30,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const targetRelationId = faker.string.uuid();
         const sourceRelationId = faker.string.uuid();
         const draftSourceRelationFlatField =
-          getMorphOrRelationTargetFlatFieldMetadataMock({
+          getRelationTargetFlatFieldMetadataMock({
             id: sourceRelationId,
             universalIdentifier: 'field-metadata-unique-identifier-1',
             objectMetadataId: PET_FLAT_OBJECT_MOCK.id,

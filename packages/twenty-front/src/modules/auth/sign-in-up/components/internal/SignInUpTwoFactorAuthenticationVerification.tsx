@@ -177,7 +177,7 @@ const StyledActionBackLinkContainer = styled.div`
 `;
 
 export const SignInUpTOTPVerification = () => {
-  const [IsLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { getAuthTokensFromOTP } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -191,7 +191,7 @@ export const SignInUpTOTPVerification = () => {
   const { form } = useTwoFactorAuthenticationForm();
 
   const submitOTP = async (values: OTPFormValues) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const captchaToken = await readCaptchaToken();
 
@@ -209,9 +209,8 @@ export const SignInUpTOTPVerification = () => {
           dedupeKey: 'invalid-otp-dedupe-key',
         },
       });
-    }
-    finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -265,11 +264,11 @@ export const SignInUpTOTPVerification = () => {
         />
       </StyledMainContentContainer>
       <MainButton
-        title={'Submit'}
+        title={t`Submit`}
         type="submit"
-        variant={'primary'}
+        variant="primary"
         fullWidth
-        disabled={IsLoading}
+        disabled={isLoading}
       />
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>

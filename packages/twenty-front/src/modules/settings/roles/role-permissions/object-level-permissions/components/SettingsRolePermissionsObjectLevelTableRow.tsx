@@ -81,7 +81,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectMetadataItemId={objectMetadataItem.id}
         />
       </TableCell>
-      <TableCell align={'right'}>
+      <TableCell align="right">
         <IconChevronRight
           size={theme.icon.size.md}
           color={theme.font.color.tertiary}

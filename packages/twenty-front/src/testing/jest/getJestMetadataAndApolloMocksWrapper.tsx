@@ -31,9 +31,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
         value={{ instanceId: 'snack-bar-manager' }}
       >
         <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={'instanceId'}
-          >
+          <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}
             >

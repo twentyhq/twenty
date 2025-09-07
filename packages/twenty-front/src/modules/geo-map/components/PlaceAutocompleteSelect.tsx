@@ -57,7 +57,7 @@ export const PlaceAutocompleteSelect = ({
                   <MenuItemSelectTag
                     key={option.value}
                     text={option.label}
-                    color={'transparent'}
+                    color="transparent"
                     onClick={() => onChange(option.value)}
                   />
                 </SelectableListItem>

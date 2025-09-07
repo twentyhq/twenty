@@ -71,9 +71,9 @@ export const SettingsProfile = () => {
               Icon={<IconShield />}
               Status={
                 has2FAMethod ? (
-                  <Status text={'Active'} color={'turquoise'} />
+                  <Status text={t`Active`} color="turquoise" />
                 ) : (
-                  <Status text={'Deactivated'} color={'gray'} />
+                  <Status text={t`Deactivated`} color="gray" />
                 )
               }
             />

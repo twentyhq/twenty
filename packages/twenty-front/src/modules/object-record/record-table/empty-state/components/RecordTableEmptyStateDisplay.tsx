@@ -60,7 +60,7 @@ export const RecordTableEmptyStateDisplay = (
         <Button
           Icon={props.ButtonIcon}
           title={props.buttonTitle}
-          variant={'secondary'}
+          variant="secondary"
           onClick={props.onClick}
           disabled={props.buttonIsDisabled}
         />

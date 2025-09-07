@@ -1,6 +1,6 @@
-import { GraphWidgetGaugeChart } from '@/dashboards/graphs/components/GraphWidgetGaugeChart';
-import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidgetNumberChart';
-import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
+import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/GraphWidgetGaugeChart';
+import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
+import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutWidgetPlaceholder } from '../PageLayoutWidgetPlaceholder';

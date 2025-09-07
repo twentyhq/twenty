@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { In, Not } from 'typeorm';
+import { In } from 'typeorm';
 
 import { type TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -94,6 +94,7 @@ export class TimelineMessagingService {
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
       );
+
     const threadParticipants = await messageParticipantRepository
       .createQueryBuilder()
       .select('messageParticipant')
@@ -183,32 +184,11 @@ export class TimelineMessagingService {
         'messageThread',
       );
 
-    const threadsWithoutWorkspaceMember = await messageThreadRepository.find({
-      select: {
-        id: true,
-      },
-      where: {
-        id: In(messageThreadIds),
-        messages: {
-          messageChannelMessageAssociations: {
-            messageChannel: {
-              connectedAccount: {
-                accountOwnerId: Not(workspaceMemberId),
-              },
-            },
-          },
-        },
-      },
-    });
-
-    const threadIdsWithoutWorkspaceMember = threadsWithoutWorkspaceMember.map(
-      (thread) => thread.id,
-    );
-
     const threadVisibility = await messageThreadRepository
       .createQueryBuilder()
       .select('messageThread.id', 'id')
       .addSelect('messageChannel.visibility', 'visibility')
+      .addSelect('connectedAccount.accountOwnerId', 'accountOwnerId')
       .leftJoin('messageThread.messages', 'message')
       .leftJoin(
         'message.messageChannelMessageAssociations',
@@ -218,46 +198,34 @@ export class TimelineMessagingService {
         'messageChannelMessageAssociation.messageChannel',
         'messageChannel',
       )
+      .leftJoin('messageChannel.connectedAccount', 'connectedAccount')
       .where('messageThread.id = ANY(:messageThreadIds)', {
-        messageThreadIds: threadIdsWithoutWorkspaceMember,
+        messageThreadIds: messageThreadIds,
       })
       .getRawMany();
 
     const visibilityValues = Object.values(MessageChannelVisibility);
 
-    const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner:
-      | {
-          [key: string]: MessageChannelVisibility;
-        }
-      | undefined = threadVisibility?.reduce(
-      (threadVisibilityAcc, threadVisibility) => {
-        threadVisibilityAcc[threadVisibility.id] =
-          visibilityValues[
-            Math.max(
-              visibilityValues.indexOf(threadVisibility.visibility),
-              visibilityValues.indexOf(
-                threadVisibilityAcc[threadVisibility.id] ??
-                  MessageChannelVisibility.METADATA,
-              ),
-            )
-          ];
-
-        return threadVisibilityAcc;
-      },
-      {},
-    );
-
     const threadVisibilityByThreadId: {
       [key: string]: MessageChannelVisibility;
-    } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
-      // If the workspace member is not the owner of the thread, use the visibility value from the query
-      // @ts-expect-error legacy noImplicitAny
-      threadVisibilityAcc[messageThreadId] =
-        threadIdsWithoutWorkspaceMember.includes(messageThreadId)
-          ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner?.[
-              messageThreadId
-            ] ?? MessageChannelVisibility.METADATA)
-          : MessageChannelVisibility.SHARE_EVERYTHING;
+    } = threadVisibility.reduce((threadVisibilityAcc, threadVisibility) => {
+      if (threadVisibility.accountOwnerId === workspaceMemberId) {
+        threadVisibilityAcc[threadVisibility.id] =
+          MessageChannelVisibility.SHARE_EVERYTHING;
+
+        return threadVisibilityAcc;
+      }
+
+      threadVisibilityAcc[threadVisibility.id] =
+        visibilityValues[
+          Math.max(
+            visibilityValues.indexOf(threadVisibility.visibility),
+            visibilityValues.indexOf(
+              threadVisibilityAcc[threadVisibility.id] ??
+                MessageChannelVisibility.METADATA,
+            ),
+          )
+        ];
 
       return threadVisibilityAcc;
     }, {});

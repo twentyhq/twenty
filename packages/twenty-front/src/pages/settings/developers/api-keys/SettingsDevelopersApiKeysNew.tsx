@@ -39,7 +39,11 @@ export const SettingsDevelopersApiKeysNew = () => {
         const defaultRole = data.getRoles.find(
           (role) => role.id === currentWorkspace?.defaultRole?.id,
         );
-        if (isDefined(defaultRole) && !formValues.roleId) {
+        if (
+          isDefined(defaultRole) &&
+          defaultRole.canBeAssignedToApiKeys &&
+          !formValues.roleId
+        ) {
           setFormValues((prev) => ({
             ...prev,
             roleId: defaultRole.id,

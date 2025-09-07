@@ -25,9 +25,9 @@ export const SettingsWorkspaceDomainCard = () => {
         Status={
           currentWorkspace?.customDomain &&
           currentWorkspace?.isCustomDomainEnabled ? (
-            <Status text={t`Active`} color={'turquoise'} />
+            <Status text={t`Active`} color="turquoise" />
           ) : currentWorkspace?.customDomain ? (
-            <Status text={t`Inactive`} color={'orange'} />
+            <Status text={t`Inactive`} color="orange" />
           ) : undefined
         }
       />

@@ -20,7 +20,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { Chip, AvatarChip } from 'twenty-ui/components';
+import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -92,6 +92,7 @@ export const SettingsAdminWorkspaceContent = ({
         return executeImpersonationRedirect(
           workspace.workspaceUrls,
           loginToken.token,
+          '_blank',
         );
       },
       onError: (error) => {

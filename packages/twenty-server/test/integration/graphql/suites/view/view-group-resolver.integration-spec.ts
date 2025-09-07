@@ -40,11 +40,12 @@ describe('View Group Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myGroupTestObject',
+        namePlural: 'myGroupTestObjects',
+        labelSingular: 'My Group Test Object',
+        labelPlural: 'My Group Test Objects',
         icon: 'Icon123',
       },
     });
@@ -56,6 +57,7 @@ describe('View Group Resolver', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         name: 'testField',
         label: 'Test Field',
@@ -70,8 +72,10 @@ describe('View Group Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -83,10 +87,6 @@ describe('View Group Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewGroups', () => {

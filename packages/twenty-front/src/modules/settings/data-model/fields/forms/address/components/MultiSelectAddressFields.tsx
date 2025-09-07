@@ -106,7 +106,7 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                       key={`${option.value}`}
                       selected={values?.includes(option?.value) || false}
                       text={option.label}
-                      color={'transparent'}
+                      color="transparent"
                       onClick={() =>
                         onChange?.(onOptionSelected(option.value, values))
                       }

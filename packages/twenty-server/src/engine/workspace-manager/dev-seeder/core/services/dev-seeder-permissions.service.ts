@@ -12,7 +12,10 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import {
+  RANDOM_USER_WORKSPACE_IDS,
+  USER_WORKSPACE_DATA_SEED_IDS,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -89,7 +92,10 @@ export class DevSeederPermissionsService {
     if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
       limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
-      memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      memberUserWorkspaceIds = [
+        USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        ...Object.values(RANDOM_USER_WORKSPACE_IDS),
+      ];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
       const guestRole = await this.roleService.createGuestRole({
