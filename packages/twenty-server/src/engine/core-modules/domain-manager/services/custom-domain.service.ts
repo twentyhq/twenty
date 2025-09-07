@@ -199,11 +199,11 @@ export class CustomDomainService {
 
       await this.workspaceRepository.save(workspace);
 
-      const analytics = this.auditService.createContext({
+      const auditService = this.auditService.createContext({
         workspaceId: workspace.id,
       });
 
-      analytics.insertWorkspaceEvent(
+      auditService.insertWorkspaceEvent(
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
