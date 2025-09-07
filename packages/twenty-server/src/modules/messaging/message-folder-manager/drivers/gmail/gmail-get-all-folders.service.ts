@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { gmail_v1 } from 'googleapis';
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   MessageFolder,
   MessageFolderDriver,
@@ -23,24 +20,12 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
     private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
-  private isExcludedCategoryFolder(labelId: string): boolean {
+  private isIncludedByDefault(labelId: string): boolean {
     const excludedCategoryIds = MESSAGING_GMAIL_EXCLUDED_CATEGORIES.map(
       (category) => computeGmailCategoryLabelId(category),
     );
 
-    return excludedCategoryIds.includes(labelId);
-  }
-
-  private isIncludedFolder(label: gmail_v1.Schema$Label): boolean {
-    if (!isDefined(label.id)) {
-      return false;
-    }
-
-    const isTargetSystemFolder =
-      label.type === 'system' && (label.id === 'INBOX' || label.id === 'SENT');
-    const isUserFolder = label.type === 'user';
-
-    return isTargetSystemFolder || isUserFolder;
+    return !excludedCategoryIds.includes(labelId);
   }
 
   async getAllMessageFolders(
@@ -74,21 +59,12 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
           continue;
         }
 
-        if (this.isExcludedCategoryFolder(label.id)) {
-          continue;
-        }
-
-        if (!this.isIncludedFolder(label)) {
-          continue;
-        }
-
         const isSentFolder = label.id === 'SENT';
-        const isSyncedByDefault = label.id === 'INBOX' || label.id === 'SENT';
 
         folders.push({
           externalId: label.id,
           name: label.name,
-          isSynced: isSyncedByDefault,
+          isSynced: this.isIncludedByDefault(label.id),
           isSentFolder,
         });
       }

@@ -201,9 +201,31 @@ export class TimelineMessagingService {
       },
     });
 
+    const threadsAssociatedToWorkspaceMember =
+      await messageThreadRepository.find({
+        select: {
+          id: true,
+        },
+        where: {
+          id: In(messageThreadIds),
+          messages: {
+            messageChannelMessageAssociations: {
+              messageChannel: {
+                connectedAccount: {
+                  accountOwnerId: workspaceMemberId,
+                },
+              },
+            },
+          },
+        },
+      });
+
     const threadIdsWithoutWorkspaceMember = threadsWithoutWorkspaceMember.map(
       (thread) => thread.id,
     );
+
+    const threadIdsAssociatedToWorkspaceMember =
+      threadsAssociatedToWorkspaceMember.map((thread) => thread.id);
 
     const threadVisibility = await messageThreadRepository
       .createQueryBuilder()
@@ -251,13 +273,19 @@ export class TimelineMessagingService {
       [key: string]: MessageChannelVisibility;
     } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
       // If the workspace member is not the owner of the thread, use the visibility value from the query
-      // @ts-expect-error legacy noImplicitAny
-      threadVisibilityAcc[messageThreadId] =
-        threadIdsWithoutWorkspaceMember.includes(messageThreadId)
-          ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner?.[
-              messageThreadId
-            ] ?? MessageChannelVisibility.METADATA)
-          : MessageChannelVisibility.SHARE_EVERYTHING;
+      if (threadIdsAssociatedToWorkspaceMember.includes(messageThreadId)) {
+        // @ts-expect-error legacy noImplicitAny
+        threadVisibilityAcc[messageThreadId] =
+          MessageChannelVisibility.SHARE_EVERYTHING;
+      } else {
+        // @ts-expect-error legacy noImplicitAny
+        threadVisibilityAcc[messageThreadId] =
+          threadIdsWithoutWorkspaceMember.includes(messageThreadId)
+            ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotOwner?.[
+                messageThreadId
+              ] ?? MessageChannelVisibility.METADATA)
+            : MessageChannelVisibility.METADATA;
+      }
 
       return threadVisibilityAcc;
     }, {});

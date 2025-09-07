@@ -15,8 +15,8 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/mess
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
-import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
+import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-excude-search-filter.util';
 import { mapGmailDefaultFolderToCategoryOrUndefined } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/map-gmail-default-folder-to-category';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
@@ -48,7 +48,9 @@ export class GmailGetMessageListService {
     let hasMoreMessages = true;
 
     const messageExternalIds: string[] = [];
-    const excludedCategories = this.computeExcludedCategories(messageFolders);
+
+    const excludedSearchFilter =
+      computeGmailExcludeSearchFilter(messageFolders);
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -56,8 +58,7 @@ export class GmailGetMessageListService {
           userId: 'me',
           maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
-          q: computeGmailCategoryExcludeSearchFilter(excludedCategories),
-          labelIds: this.getCustomLabelIds(messageFolders),
+          q: excludedSearchFilter,
         })
         .catch((error) => {
           this.logger.error(
