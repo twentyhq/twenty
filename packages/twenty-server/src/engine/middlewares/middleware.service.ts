@@ -21,6 +21,7 @@ import {
 } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
+import { PreferredCalendar } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Injectable()
 export class MiddlewareService {
@@ -131,6 +132,9 @@ export class MiddlewareService {
       request.locale =
         (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
         SOURCE_LOCALE;
+      request.preferredCalendar =
+        (request.headers['x-preferred-calendar'] as PreferredCalendar) ??
+        PreferredCalendar.Gregorian;
 
       return;
     }
@@ -168,6 +172,10 @@ export class MiddlewareService {
       data.userWorkspace?.locale ??
       (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
       SOURCE_LOCALE;
+    request.preferredCalendar =
+      data.userWorkspace?.preferredCalendar ??
+      (request.headers['x-preferred-calendar'] as PreferredCalendar) ??
+      PreferredCalendar.Gregorian;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -19,7 +19,10 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import {
+  PreferredCalendar,
+  UserWorkspace,
+} from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -59,11 +62,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     workspaceId,
     isExistingUser,
     pictureUrl,
+    preferredCalendar = PreferredCalendar.Gregorian,
   }: {
     userId: string;
     workspaceId: string;
     isExistingUser: boolean;
     pictureUrl?: string;
+    preferredCalendar?: PreferredCalendar;
   }): Promise<UserWorkspace> {
     const defaultAvatarUrl = await this.computeDefaultAvatarUrl(
       userId,
@@ -76,6 +81,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       userId,
       workspaceId,
       defaultAvatarUrl,
+      preferredCalendar,
     });
 
     return this.userWorkspaceRepository.save(userWorkspace);

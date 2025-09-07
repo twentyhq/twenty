@@ -33,6 +33,15 @@ registerEnumType(PermissionsOnAllObjectRecords, {
   name: 'PermissionsOnAllObjectRecords',
 });
 
+export enum PreferredCalendar {
+  Gregorian = 'gregorian',
+  Persian = 'persian',
+}
+
+registerEnumType(PreferredCalendar, {
+  name: 'PreferredCalendar',
+});
+
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
 @Index(
@@ -78,6 +87,10 @@ export class UserWorkspace {
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
+
+  @Field(() => PreferredCalendar, { nullable: false })
+  @Column({ type: 'varchar', default: PreferredCalendar.Gregorian })
+  preferredCalendar: PreferredCalendar;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
