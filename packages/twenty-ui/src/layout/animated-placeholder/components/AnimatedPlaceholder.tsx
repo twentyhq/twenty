@@ -5,7 +5,8 @@ import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkB
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useEventListener } from '@ui/utilities/events/hooks/useEventListener';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -46,46 +47,49 @@ interface AnimatedPlaceholderProps {
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   const theme = useTheme();
 
-  const x = useMotionValue(window.innerWidth / 2);
-  const y = useMotionValue(window.innerHeight / 2);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
-  const translateX = useTransform(x, [0, window.innerWidth], [-2, 2]);
-  const translateY = useTransform(y, [0, window.innerHeight], [-2, 2]);
+  const translateX = useTransform(x, [0, windowSize.width || 1], [-2, 2]);
+  const translateY = useTransform(y, [0, windowSize.height || 1], [-2, 2]);
 
   useEffect(() => {
-    const handleMove = (event: MouseEvent | TouchEvent) => {
-      const clientX =
-        'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY =
-        'touches' in event ? event.touches[0].clientY : event.clientY;
+    if (typeof window === 'undefined') return;
 
-      x.set(clientX);
-      y.set(clientY);
-    };
-
-    const handleLeave = () => {
-      animate(x, window.innerWidth / 2, {
-        type: 'spring',
-        stiffness: 100,
-        damping: 10,
-      });
-      animate(y, window.innerHeight / 2, {
-        type: 'spring',
-        stiffness: 100,
-        damping: 10,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('touchmove', handleMove);
-    window.document.addEventListener('mouseleave', handleLeave);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('touchmove', handleMove);
-      window.document.removeEventListener('mouseleave', handleLeave);
-    };
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    x.set(window.innerWidth / 2);
+    y.set(window.innerHeight / 2);
   }, [x, y]);
+
+  const handleMove = (event: MouseEvent | TouchEvent) => {
+    const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+
+    x.set(clientX);
+    y.set(clientY);
+  };
+
+  const handleLeave = () => {
+    animate(x, windowSize.width / 2, {
+      type: 'spring',
+      stiffness: 100,
+      damping: 10,
+    });
+    animate(y, windowSize.height / 2, {
+      type: 'spring',
+      stiffness: 100,
+      damping: 10,
+    });
+  };
+
+  useEventListener('mousemove', handleMove);
+  useEventListener('touchmove', handleMove);
+  useEventListener(
+    'mouseleave',
+    handleLeave,
+    typeof window !== 'undefined' ? window.document : undefined,
+  );
 
   return (
     <StyledContainer>
