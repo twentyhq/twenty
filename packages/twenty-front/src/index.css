@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -7,6 +9,12 @@ body {
 
 html {
   font-size: 13px;
+  font-family: 'Inter', sans-serif;
+}
+
+html[lang='fa-IR'],
+html[lang='fa-IR'] body {
+  font-family: 'Vazirmatn', sans-serif;
 }
 
 button {
