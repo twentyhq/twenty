@@ -10,4 +10,7 @@ export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
   const { messages } = await import(`../../locales/generated/${locale}.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = locale;
+  }
 };
