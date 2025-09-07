@@ -94,6 +94,7 @@ export class TimelineMessagingService {
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
       );
+
     const threadParticipants = await messageParticipantRepository
       .createQueryBuilder()
       .select('messageParticipant')
@@ -187,10 +188,7 @@ export class TimelineMessagingService {
       .createQueryBuilder()
       .select('messageThread.id', 'id')
       .addSelect('messageChannel.visibility', 'visibility')
-      .addSelect(
-        'messageChannel.connectedAccount.accountOwnerId',
-        'accountOwnerId',
-      )
+      .addSelect('connectedAccount.accountOwnerId', 'accountOwnerId')
       .leftJoin('messageThread.messages', 'message')
       .leftJoin(
         'message.messageChannelMessageAssociations',
@@ -200,6 +198,7 @@ export class TimelineMessagingService {
         'messageChannelMessageAssociation.messageChannel',
         'messageChannel',
       )
+      .leftJoin('messageChannel.connectedAccount', 'connectedAccount')
       .where('messageThread.id = ANY(:messageThreadIds)', {
         messageThreadIds: messageThreadIds,
       })
