@@ -23,7 +23,7 @@ const StyledBackDrop = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  left: 0;
+  inset-inline-start: 0;
   position: fixed;
   top: 0;
   width: 100%;

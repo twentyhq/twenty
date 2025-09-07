@@ -12,11 +12,11 @@ const StyledMainContainer = styled.div`
   flex-direction: row;
   gap: 8px;
   min-height: 0;
-  padding-left: 0;
+  padding-inline-start: 0;
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: 12px;
+    padding-inline-start: 12px;
     padding-bottom: 0;
   }
 `;

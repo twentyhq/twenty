@@ -54,7 +54,7 @@ const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  margin-inline-start: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledTable = styled(Table)<{ hasMoreRows?: boolean }>`
@@ -65,7 +65,7 @@ const StyledTable = styled(Table)<{ hasMoreRows?: boolean }>`
 const StyledIconWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-inline-end: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTextContainerWithEllipsis = styled.div`

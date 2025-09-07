@@ -43,7 +43,7 @@ const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-inline-start: ${({ theme }) => theme.spacing(4)};
   }
 `;
 
