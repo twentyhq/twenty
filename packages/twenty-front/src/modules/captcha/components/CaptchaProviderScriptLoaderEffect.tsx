@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
 import { captchaState } from '@/client-config/states/captchaState';
+import { useScriptLoader } from '~/hooks/useScriptLoader';
 import { CaptchaDriverType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -15,37 +16,22 @@ export const CaptchaProviderScriptLoaderEffect = () => {
   );
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
-  useEffect(() => {
-    if (!captcha?.provider || !captcha.siteKey) {
-      return;
-    }
+  const scriptUrl =
+    captcha?.provider && captcha.siteKey
+      ? getCaptchaUrlByProvider(captcha.provider, captcha.siteKey)
+      : null;
 
-    const scriptUrl = getCaptchaUrlByProvider(
-      captcha.provider,
-      captcha.siteKey,
-    );
-    if (!scriptUrl) {
-      return;
+  const handleLoad = useCallback(() => {
+    if (captcha?.provider === CaptchaDriverType.GOOGLE_RECAPTCHA) {
+      window.grecaptcha?.ready(() => {
+        setIsCaptchaScriptLoaded(true);
+      });
+    } else {
+      setIsCaptchaScriptLoaded(true);
     }
+  }, [captcha?.provider, setIsCaptchaScriptLoaded]);
 
-    let scriptElement: HTMLScriptElement | null = document.querySelector(
-      `script[src="${scriptUrl}"]`,
-    );
-    if (!scriptElement) {
-      scriptElement = document.createElement('script');
-      scriptElement.src = scriptUrl;
-      scriptElement.onload = () => {
-        if (captcha.provider === CaptchaDriverType.GOOGLE_RECAPTCHA) {
-          window.grecaptcha?.ready(() => {
-            setIsCaptchaScriptLoaded(true);
-          });
-        } else {
-          setIsCaptchaScriptLoaded(true);
-        }
-      };
-      document.body.appendChild(scriptElement);
-    }
-  }, [captcha?.provider, captcha?.siteKey, setIsCaptchaScriptLoaded]);
+  useScriptLoader({ src: scriptUrl, onLoad: handleLoad });
 
   useEffect(() => {
     if (isUndefinedOrNull(captcha?.provider) || !isCaptchaScriptLoaded) {
