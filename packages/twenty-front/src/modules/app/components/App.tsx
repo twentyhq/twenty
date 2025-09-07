@@ -8,14 +8,26 @@ import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manage
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { useEffect, useState } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 
-initialI18nActivate();
-
 export const App = () => {
+  const [isI18nInitialized, setIsI18nInitialized] = useState(false);
+
+  useEffect(() => {
+    void initialI18nActivate().then(() => {
+      setIsI18nInitialized(true);
+    });
+  }, []);
+
+  if (!isI18nInitialized) {
+    return <Loader />;
+  }
+
   return (
     <RecoilRoot>
       <AppErrorBoundary

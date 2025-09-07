@@ -3,7 +3,7 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-export const initialI18nActivate = () => {
+export const initialI18nActivate = async (): Promise<void> => {
   const urlLocale = fromUrl('locale');
   const storageLocale = fromStorage('locale');
   const navigatorLocale = fromNavigator();
@@ -40,5 +40,5 @@ export const initialI18nActivate = () => {
     locale = normalizedNavigatorLocale;
   }
 
-  dynamicActivate(locale);
+  await dynamicActivate(locale);
 };
