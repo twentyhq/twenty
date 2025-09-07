@@ -21,13 +21,13 @@ const StyledSectionHeader = styled.div`
 
   height: ${({ theme }) => theme.spacing(6)};
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-inline-start: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-inline-end: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow =

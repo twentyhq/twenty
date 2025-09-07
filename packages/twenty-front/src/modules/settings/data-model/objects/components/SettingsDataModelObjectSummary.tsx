@@ -37,7 +37,7 @@ const StyledOverflowingTextWithTooltip = styled.div`
 
 const StyledNumber = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-inline-end: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIconContainer = styled.div`

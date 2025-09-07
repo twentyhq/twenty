@@ -24,7 +24,7 @@ const StyledContainer = styled.div`
 
 const StyledLinkContainer = styled.div`
   flex: 1;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-inline-end: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledButtonCopy = styled.div`

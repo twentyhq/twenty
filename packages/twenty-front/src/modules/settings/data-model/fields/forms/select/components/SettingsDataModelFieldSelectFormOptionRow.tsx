@@ -46,8 +46,8 @@ const StyledColorSample = styled(ColorSample)`
   margin-top: ${({ theme }) => theme.spacing(1)};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 
-  margin-right: ${({ theme }) => theme.spacing(3.5)};
-  margin-left: ${({ theme }) => theme.spacing(3.5)};
+  margin-inline-end: ${({ theme }) => theme.spacing(3.5)};
+  margin-inline-start: ${({ theme }) => theme.spacing(3.5)};
 `;
 
 const StyledOptionInput = styled(SettingsTextInput)`
@@ -59,11 +59,11 @@ const StyledOptionInput = styled(SettingsTextInput)`
 `;
 
 const StyledIconGripVertical = styled(IconGripVertical)`
-  margin-right: ${({ theme }) => theme.spacing(0.75)};
+  margin-inline-end: ${({ theme }) => theme.spacing(0.75)};
 `;
 
 const StyledLightIconButton = styled(LightIconButton)`
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-inline-start: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDataModelFieldSelectFormOptionRow = ({

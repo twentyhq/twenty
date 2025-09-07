@@ -36,7 +36,7 @@ const StyledDescription = styled.div`
 `;
 
 const StyledToggle = styled(Toggle)`
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const SettingsAccountsToggleSettingCard = ({

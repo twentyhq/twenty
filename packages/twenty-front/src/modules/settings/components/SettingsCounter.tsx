@@ -16,7 +16,7 @@ const StyledCounterContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  margin-left: auto;
+  margin-inline-start: auto;
   width: ${({ theme }) => theme.spacing(30)};
 `;
 

@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 
 const StyledTableHeader = styled(TableHeader)`
-  padding-right: ${({ theme }) => theme.spacing(14)};
+  padding-inline-end: ${({ theme }) => theme.spacing(14)};
 `;
 
 export const SettingsConnectedAccountsTableHeader = () => {

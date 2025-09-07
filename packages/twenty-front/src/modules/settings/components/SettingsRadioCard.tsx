@@ -20,7 +20,7 @@ const StyledRadioCardContent = styled(CardContent)`
 `;
 
 const StyledRadio = styled(Radio)`
-  margin-left: auto;
+  margin-inline-start: auto;
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 

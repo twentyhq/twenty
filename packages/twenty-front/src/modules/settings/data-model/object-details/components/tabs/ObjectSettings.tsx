@@ -22,7 +22,7 @@ const StyledContentContainer = styled.div`
 `;
 
 const StyledFormSection = styled(Section)`
-  padding-left: 0 !important;
+  padding-inline-start: 0 !important;
 `;
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {

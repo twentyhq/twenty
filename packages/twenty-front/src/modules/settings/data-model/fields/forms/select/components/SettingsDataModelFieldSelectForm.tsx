@@ -60,7 +60,7 @@ const StyledOptionsLabel = styled.div<{
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-  margin-left: ${({ theme, isAdvancedModeEnabled }) =>
+  margin-inline-start: ${({ theme, isAdvancedModeEnabled }) =>
     theme.spacing(isAdvancedModeEnabled ? 10 : 0)};
 `;
 
@@ -85,7 +85,7 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
+  border-inline-end: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
 
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
@@ -93,7 +93,7 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledIconPoint = styled(IconPoint)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
+  margin-inline-end: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledFooter = styled(CardFooter)`

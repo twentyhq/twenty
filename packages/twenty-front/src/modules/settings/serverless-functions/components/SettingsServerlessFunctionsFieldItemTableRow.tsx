@@ -16,11 +16,14 @@ const StyledNameTableCell = styled(TableCell)`
 
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-inline-end: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
+  [dir='rtl'] & {
+    transform: scaleX(-1);
+  }
 `;
 
 export const SettingsServerlessFunctionsFieldItemTableRow = ({
