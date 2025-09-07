@@ -11,6 +11,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
+import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
@@ -23,6 +24,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
     TerminusModule,
     FeatureFlagModule,
     AuditModule,
+    TelemetryModule,
   ],
   providers: [AdminPanelResolver, AdminPanelService, AdminPanelHealthService],
   exports: [AdminPanelService],

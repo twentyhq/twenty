@@ -574,51 +574,51 @@ export class AuthResolver {
         userId: user.id,
         workspaceId,
       });
-
-    if (isImpersonation === true) {
-      this.logger.log(
-        `Impersonation token exchange attempt for ${email} by ${impersonatorUserId}`,
-        'AuthResolver.getAuthTokensFromLoginToken',
-      );
-      if (workspace.allowImpersonation !== true) {
-        throw new AuthException(
-          'Impersonation not allowed on this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-      if (!impersonatorUserId) {
-        throw new AuthException(
-          'Invalid impersonation token (missing origin)',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      const impersonatorUser = await this.userRepository.findOne({
-        where: { id: impersonatorUserId },
-      });
-
-      if (!impersonatorUser || impersonatorUser.canImpersonate !== true) {
-        throw new AuthException(
-          'Impersonation token origin not authorized',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      const analytics = this.auditService.createContext({
-        workspaceId: workspace.id,
-        userId: impersonatorUserId,
-      });
-
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'server.impersonation.login_token_exchanged',
-        message: 'Impersonation token exchanged',
-      });
-    } else {
+      
+    if (isImpersonation !== true) {
       await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
         workspace,
         currentUserWorkspace.twoFactorAuthenticationMethods,
       );
+      return await this.authService.verify(email, workspace.id, authProvider);
     }
+
+    this.logger.log(
+      `Impersonation token exchange attempt for ${email} by ${impersonatorUserId}`,
+      'AuthResolver.getAuthTokensFromLoginToken',
+    );
+
+    if (workspace.allowImpersonation !== true) {
+      throw new AuthException(
+        'Impersonation not allowed on this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (!impersonatorUserId) {
+      throw new AuthException(
+        'Invalid impersonation token (missing origin)',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const impersonatorUser = await this.userRepository.findOne({ where: { id: impersonatorUserId } });
+
+    if (!impersonatorUser || impersonatorUser.canImpersonate !== true) {
+      throw new AuthException(
+        'Impersonation token origin not authorized',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const analytics = this.auditService.createContext({
+      workspaceId: workspace.id,
+      userId: impersonatorUserId,
+    });
+    await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      eventName: 'server.impersonation.login_token_exchanged',
+      message: 'Impersonation token exchanged',
+    });
 
     return await this.authService.verify(email, workspace.id, authProvider);
   }
