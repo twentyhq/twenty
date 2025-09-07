@@ -55,6 +55,10 @@ export class MessagingMessageCleanerService {
           },
         });
 
+      if (messageChannelMessageAssociationsToDelete.length <= 0) {
+        continue;
+      }
+
       await messageChannelMessageAssociationRepository.delete(
         messageChannelMessageAssociationsToDelete.map(({ id }) => id),
       );
@@ -76,6 +80,10 @@ export class MessagingMessageCleanerService {
         },
       });
 
+      if (orphanMessages.length <= 0) {
+        continue;
+      }
+
       this.logger.log(
         `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
       );
@@ -90,6 +98,10 @@ export class MessagingMessageCleanerService {
           },
         },
       });
+
+      if (orphanMessageThreads.length <= 0) {
+        continue;
+      }
 
       this.logger.log(
         `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
