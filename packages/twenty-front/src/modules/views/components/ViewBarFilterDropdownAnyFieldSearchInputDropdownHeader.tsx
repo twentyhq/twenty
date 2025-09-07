@@ -2,7 +2,8 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
+import { isRtl } from '~/localization/utils/isRtl';
 
 export const ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader = () => {
   const { t } = useLingui();
@@ -18,7 +19,7 @@ export const ViewBarFilterDropdownAnyFieldSearchInputDropdownHeader = () => {
       StartComponent={
         <DropdownMenuHeaderLeftComponent
           onClick={handleBackButtonClick}
-          Icon={IconChevronLeft}
+          Icon={isRtl() ? IconChevronRight : IconChevronLeft}
         />
       }
     >

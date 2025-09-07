@@ -7,7 +7,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
 import { useLingui } from '@lingui/react/macro';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
+import { isRtl } from '~/localization/utils/isRtl';
 
 export const ViewBarFilterDropdownFilterInputMenuHeader = () => {
   const { t } = useLingui();
@@ -37,7 +38,7 @@ export const ViewBarFilterDropdownFilterInputMenuHeader = () => {
       StartComponent={
         <DropdownMenuHeaderLeftComponent
           onClick={handleBackButtonClick}
-          Icon={IconChevronLeft}
+          Icon={isRtl() ? IconChevronRight : IconChevronLeft}
         />
       }
     >

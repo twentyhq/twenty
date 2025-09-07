@@ -11,8 +11,14 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronLeftPipe,
+  IconChevronRightPipe,
+} from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { isRtl } from '~/localization/utils/isRtl';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   OnboardingStatus,
@@ -72,11 +78,14 @@ export const BookCall = () => {
       <StyledModalFooter>
         {isPlanRequired ? (
           <Link to={AppPath.PlanRequired}>
-            <LightButton Icon={IconChevronLeft} title={t`Back`} />
+            <LightButton
+              Icon={isRtl() ? IconChevronRight : IconChevronLeft}
+              title={t`Back`}
+            />
           </Link>
         ) : (
           <LightButton
-            Icon={IconChevronRightPipe}
+            Icon={isRtl() ? IconChevronLeftPipe : IconChevronRightPipe}
             title={t`Skip`}
             onClick={handleCompleteOnboarding}
           />

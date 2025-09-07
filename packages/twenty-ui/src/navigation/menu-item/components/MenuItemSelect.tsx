@@ -1,7 +1,14 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { i18n } from '@lingui/core';
+import { isRtlLocale } from 'twenty-shared/utils';
 
-import { IconCheck, IconChevronRight, type IconComponent } from '@ui/display';
+import {
+  IconCheck,
+  IconChevronLeft,
+  IconChevronRight,
+  type IconComponent,
+} from '@ui/display';
 import { type ReactNode } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
@@ -56,6 +63,7 @@ export const MenuItemSelect = ({
   contextualText,
 }: MenuItemSelectProps) => {
   const theme = useTheme();
+  const ChevronIcon = isRtlLocale(i18n.locale) ? IconChevronLeft : IconChevronRight;
 
   return (
     <StyledMenuItemSelect
@@ -75,10 +83,7 @@ export const MenuItemSelect = ({
       {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
 
       {hasSubMenu && (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          color={theme.font.color.tertiary}
-        />
+        <ChevronIcon size={theme.icon.size.sm} color={theme.font.color.tertiary} />
       )}
     </StyledMenuItemSelect>
   );
