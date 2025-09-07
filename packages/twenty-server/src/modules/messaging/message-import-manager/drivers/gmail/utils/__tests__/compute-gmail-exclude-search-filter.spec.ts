@@ -1,4 +1,4 @@
-import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-excude-search-filter.util';
+import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 
 describe('computeGmailExcludeSearchFilter', () => {
   it('should return correct exclude search filter with empty label array', () => {

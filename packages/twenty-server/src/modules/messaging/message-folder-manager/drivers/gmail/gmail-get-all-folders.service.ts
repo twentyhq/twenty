@@ -6,9 +6,9 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
-import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 
 @Injectable()
 export class GmailGetAllFoldersService implements MessageFolderDriver {
@@ -19,7 +19,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
     private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
-  private isIncludedByDefault(labelId: string): boolean {
+  private isSyncedByDefault(labelId: string): boolean {
     return !MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.includes(labelId);
   }
 
@@ -59,7 +59,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
         folders.push({
           externalId: label.id,
           name: label.name,
-          isSynced: this.isIncludedByDefault(label.id),
+          isSynced: this.isSyncedByDefault(label.id),
           isSentFolder,
         });
       }
