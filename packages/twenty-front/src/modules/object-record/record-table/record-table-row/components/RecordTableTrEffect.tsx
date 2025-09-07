@@ -1,13 +1,17 @@
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
-import { useEffect } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 type RecordTableTrEffectProps = {
   recordId: string;
+  rowRef: RefObject<HTMLTableRowElement>;
 };
 
-export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
+export const RecordTableTrEffect = ({
+  recordId,
+  rowRef,
+}: RecordTableTrEffectProps) => {
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const setIsRowVisible = useSetRecoilComponentFamilyState(
@@ -38,16 +42,14 @@ export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
 
     const observer = new IntersectionObserver(callback, options);
 
-    observer.observe(
-      document.querySelector(
-        `[data-virtualized-id="${recordId}"]`,
-      ) as HTMLElement,
-    );
+    if (rowRef.current) {
+      observer.observe(rowRef.current);
+    }
 
     return () => {
       observer.disconnect();
     };
-  }, [recordId, scrollWrapperHTMLElement, setIsRowVisible]);
+  }, [recordId, rowRef, scrollWrapperHTMLElement, setIsRowVisible]);
 
   return <></>;
 };
