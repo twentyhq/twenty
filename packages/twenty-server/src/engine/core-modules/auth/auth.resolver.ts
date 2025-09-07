@@ -557,7 +557,7 @@ export class AuthResolver {
       tokenPayload.workspaceId,
     );
 
-    if (tokenPayload.isImpersonation === true) {
+    if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
       await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,

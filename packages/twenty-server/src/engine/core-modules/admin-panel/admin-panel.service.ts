@@ -87,7 +87,6 @@ export class AdminPanelService {
         user.userWorkspaces[0].workspace.id,
         AuthProviderEnum.Impersonation,
         {
-          isImpersonation: true,
           impersonatorUserId,
         },
       );

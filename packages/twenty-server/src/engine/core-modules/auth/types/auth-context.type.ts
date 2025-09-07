@@ -43,8 +43,7 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
-  authProvider?: AuthProviderEnum;
-  isImpersonation?: boolean;
+  authProvider: AuthProviderEnum;
   impersonatorUserId?: string;
 };
 
@@ -83,7 +82,7 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   workspaceMemberId?: string;
   userWorkspaceId: string;
-  authProvider?: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

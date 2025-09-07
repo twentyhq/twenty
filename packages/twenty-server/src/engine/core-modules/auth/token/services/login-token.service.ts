@@ -23,14 +23,13 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
     authProvider: AuthProviderEnum,
-    options?: { isImpersonation?: boolean; impersonatorUserId?: string },
+    options?: { impersonatorUserId?: string },
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
       authProvider,
-      isImpersonation: options?.isImpersonation,
       impersonatorUserId: options?.impersonatorUserId,
     };
 

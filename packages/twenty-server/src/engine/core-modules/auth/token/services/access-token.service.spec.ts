@@ -13,6 +13,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -131,7 +132,11 @@ describe('AccessTokenService', () => {
         } as any);
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateAccessToken({ userId, workspaceId });
+      const result = await service.generateAccessToken({
+        userId,
+        workspaceId,
+        authProvider: AuthProviderEnum.Password,
+      });
 
       expect(result).toEqual({
         token: mockToken,
@@ -155,6 +160,7 @@ describe('AccessTokenService', () => {
         service.generateAccessToken({
           userId: 'non-existent-user',
           workspaceId: 'workspace-id',
+          authProvider: AuthProviderEnum.Password,
         }),
       ).rejects.toThrow(AuthException);
     });
