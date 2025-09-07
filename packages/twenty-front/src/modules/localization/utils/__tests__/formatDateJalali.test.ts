@@ -12,4 +12,10 @@ describe('formatDateJalali', () => {
     const iso = formatDateJalali(jalali, { locale: 'fa-IR', parse: true });
     expect(iso).toBe('2024-03-20T00:00:00.000Z');
   });
+
+  it('returns ISO date string when locale is LTR', () => {
+    const iso = '2024-03-20T00:00:00.000Z';
+    const result = formatDateJalali(iso, { locale: 'en-US' });
+    expect(result).toBe('2024-03-20');
+  });
 });
