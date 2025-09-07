@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 
 import axios from 'axios';
 import semver from 'semver';
@@ -55,13 +54,6 @@ export class AdminPanelService {
       throw new AuthException('Invalid input', AuthExceptionCode.INVALID_INPUT);
     }
 
-    const correlationId = randomUUID();
-
-    this.logger.log(
-      `Impersonation attempt: correlationId=${correlationId}, targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
-      'AdminPanelService.impersonate',
-    );
-
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -88,11 +80,11 @@ export class AdminPanelService {
         workspaceId: user.userWorkspaces[0].workspace.id,
         userId: impersonatorUserId,
       });
+
       await attemptAnalytics.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_attempt',
-        message: `Attempting impersonation for target ${user.id}`,
-        correlationId,
-      } as { eventName: string; message: string; correlationId: string });
+        message: `Attempting impersonation for target ${user.id}, impersonatorUserId=${impersonatorUserId}`,
+      } as { eventName: string; message: string });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
@@ -108,16 +100,11 @@ export class AdminPanelService {
         workspaceId: user.userWorkspaces[0].workspace.id,
         userId: impersonatorUserId,
       });
+
       await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_generated',
-        message: `Impersonation login token generated for target ${user.id}`,
-        correlationId,
-      } as { eventName: string; message: string; correlationId: string });
-
-      this.logger.log(
-        `Impersonation token generated successfully for targetUserId=${userId}`,
-        'AdminPanelService.impersonate',
-      );
+        message: `Impersonation login token generated for target ${user.id}, impersonatorUserId=${impersonatorUserId}`,
+      } as { eventName: string; message: string });
 
       return {
         workspace: {
@@ -128,9 +115,9 @@ export class AdminPanelService {
         },
         loginToken,
       };
-    } catch (error: unknown) {
+    } catch {
       this.logger.error(
-        `Impersonation token generation failed: correlationId=${correlationId}, targetUserId=${userId}`,
+        `Impersonation token generation failed: targetUserId=${userId}, attempting`,
         'AdminPanelService.impersonate',
       );
       throw new AuthException(

@@ -56,7 +56,11 @@ export class AdminPanelResolver {
     @Args() { workspaceId, userId }: ImpersonateInput,
     @AuthUser() adminUser: { id: string },
   ): Promise<ImpersonateOutput> {
-    return await this.adminService.impersonate(userId, workspaceId, adminUser.id);
+    return await this.adminService.impersonate(
+      userId,
+      workspaceId,
+      adminUser.id,
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)

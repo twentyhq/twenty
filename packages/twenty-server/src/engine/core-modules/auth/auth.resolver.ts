@@ -574,7 +574,7 @@ export class AuthResolver {
         userId: user.id,
         workspaceId,
       });
-      
+
     if (isImpersonation === true) {
       this.logger.log(
         `Impersonation token exchange attempt for ${email} by ${impersonatorUserId}`,
@@ -593,7 +593,9 @@ export class AuthResolver {
         );
       }
 
-      const impersonatorUser = await this.userRepository.findOne({ where: { id: impersonatorUserId } });
+      const impersonatorUser = await this.userRepository.findOne({
+        where: { id: impersonatorUserId },
+      });
 
       if (!impersonatorUser || impersonatorUser.canImpersonate !== true) {
         throw new AuthException(
@@ -606,6 +608,7 @@ export class AuthResolver {
         workspaceId: workspace.id,
         userId: impersonatorUserId,
       });
+
       await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_exchanged',
         message: 'Impersonation token exchanged',

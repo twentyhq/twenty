@@ -108,7 +108,11 @@ describe('AdminPanelService', () => {
       expiresAt: new Date(),
     });
 
-    const result = await service.impersonate('user-id', 'workspace-id', 'user-id');
+    const result = await service.impersonate(
+      'user-id',
+      'workspace-id',
+      'user-id',
+    );
 
     expect(UserFindOneMock).toHaveBeenCalledWith(
       expect.objectContaining({
