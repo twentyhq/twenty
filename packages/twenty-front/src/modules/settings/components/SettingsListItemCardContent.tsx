@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight, type IconComponent } from 'twenty-ui/display';
+import { isRtl } from '~/localization/utils/isRtl';
 import { CardContent } from 'twenty-ui/layout';
 
 const StyledRow = styled(CardContent, {
@@ -30,12 +31,6 @@ const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
-  [dir='rtl'] & {
-    transform: scaleX(-1);
-  }
 `;
 
 const StyledContent = styled.div`
@@ -77,6 +72,7 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const theme = useTheme();
+  const ChevronIcon = isRtl() ? IconChevronLeft : IconChevronRight;
 
   const content = (
     <StyledRow onClick={onClick} divider={divider} to={!!to}>
@@ -93,7 +89,7 @@ export const SettingsListItemCardContent = ({
       <StyledRightContainer>
         {rightComponent}
         {!!to && (
-          <StyledIconChevronRight
+          <ChevronIcon
             size={theme.icon.size.md}
             color={theme.font.color.tertiary}
           />

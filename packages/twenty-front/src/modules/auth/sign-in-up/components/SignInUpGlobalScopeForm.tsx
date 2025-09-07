@@ -31,6 +31,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
   HorizontalSeparator,
+  IconChevronLeft,
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
@@ -38,6 +39,7 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { type AvailableWorkspace } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isRtl } from '~/localization/utils/isRtl';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -151,6 +153,7 @@ export const SignInUpGlobalScopeForm = () => {
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
+  const ChevronIcon = isRtl() ? IconChevronLeft : IconChevronRight;
 
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
@@ -231,7 +234,7 @@ export const SignInUpGlobalScopeForm = () => {
                       </StyledWorkspaceUrl>
                     </StyledWorkspaceTextContainer>
                     <StyledChevronIcon>
-                      <IconChevronRight size={theme.icon.size.md} />
+                      <ChevronIcon size={theme.icon.size.md} />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
                 </StyledWorkspaceItem>
@@ -246,7 +249,7 @@ export const SignInUpGlobalScopeForm = () => {
                   <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
                 </StyledWorkspaceTextContainer>
                 <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
+                  <ChevronIcon size={theme.icon.size.md} />
                 </StyledChevronIcon>
               </StyledWorkspaceContent>
             </StyledWorkspaceItem>

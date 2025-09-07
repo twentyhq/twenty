@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
+import { isRtl } from '~/localization/utils/isRtl';
 
 export type MobileBreadcrumbProps = {
   className?: string;
@@ -46,6 +47,8 @@ export const MobileBreadcrumb = ({
 
   const { openSettingsMenu } = useOpenSettingsMenu();
 
+  const ChevronIcon = isRtl() ? IconChevronRight : IconChevronLeft;
+
   const handleBackToSettingsClick = () => {
     openSettingsMenu();
   };
@@ -61,14 +64,14 @@ export const MobileBreadcrumb = ({
     <StyledWrapper className={className}>
       {shouldRedirectToSettings ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <ChevronIcon size={theme.icon.size.md} />
           <StyledText onClick={handleBackToSettingsClick}>
             Back to Settings
           </StyledText>
         </>
       ) : previousLink?.href ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <ChevronIcon size={theme.icon.size.md} />
           <StyledLink title={text} to={previousLink.href}>
             Back to {previousLink.children}
           </StyledLink>
