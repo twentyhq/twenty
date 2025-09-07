@@ -3,6 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { i18n } from '@lingui/core';
 
 export const ExportNoteActionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -36,7 +37,7 @@ export const ExportNoteActionSingleRecordAction = () => {
       '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToPdf'
     );
 
-    await exportBlockNoteEditorToPdf(parsedBody, filename);
+    await exportBlockNoteEditorToPdf(parsedBody, filename, i18n.locale);
 
     // TODO later: implement DOCX export
     // const { exportBlockNoteEditorToDocx } = await import(
