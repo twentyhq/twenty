@@ -22,6 +22,12 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
       return import('date-fns/locale/en-US');
     case 'es-ES':
       return import('date-fns/locale/es');
+    case 'fa-IR':
+      return (typeof require !== 'undefined'
+        ? Promise.resolve({
+            default: require('date-fns-jalali/locale/fa-IR').faIR,
+          })
+        : import('date-fns-jalali/locale/fa-IR')) as Promise<{ default: Locale }>;
     case 'fi-FI':
       return import('date-fns/locale/fi');
     case 'fr-FR':

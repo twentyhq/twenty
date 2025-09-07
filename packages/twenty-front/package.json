@@ -66,6 +66,7 @@
     "apollo-upload-client": "^17.0.0",
     "buffer": "^6.0.3",
     "date-fns": "^2.30.0",
+    "date-fns-jalali": "^4.1.0-0",
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "graphiql": "^3.1.1",
