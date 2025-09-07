@@ -24,6 +24,7 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
+import { RtlEffect } from '@/app/effect-components/RtlEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
@@ -49,6 +50,7 @@ export const AppRouterProviders = () => {
                     <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
                         <UserThemeProviderEffect />
+                        <RtlEffect />
                         <SnackBarProvider>
                           <ErrorMessageEffect />
                           <DialogComponentInstanceContext.Provider

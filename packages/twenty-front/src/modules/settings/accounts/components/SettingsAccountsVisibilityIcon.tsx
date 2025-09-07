@@ -23,7 +23,7 @@ const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
 `;
 
 const StyledMetadataSkeleton = styled(StyledSubjectSkeleton)`
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-inline-end: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledBodySkeleton = styled(StyledSubjectSkeleton)`

@@ -29,7 +29,7 @@ const StyledSettingsOptionCardToggleButton = styled(Toggle)<{
 }>`
   align-self: ${({ toggleCentered }) =>
     toggleCentered ? 'center' : 'flex-start'};
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 const StyledSettingsOptionCardToggleCover = styled.span`

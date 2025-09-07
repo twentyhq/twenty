@@ -36,7 +36,7 @@ const StyledDescription = styled.div`
 `;
 
 const StyledRadio = styled(Radio)`
-  margin-left: auto;
+  margin-inline-start: auto;
 `;
 
 export const SettingsAccountsRadioSettingsCard = <

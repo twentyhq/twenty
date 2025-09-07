@@ -20,7 +20,7 @@ export const StyledAvailableStandardObjectTableRow = styled(TableRow)`
 const StyledCheckboxTableCell = styled(TableCell)`
   justify-content: center;
   padding: 0;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-inline-start: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledNameTableCell = styled(TableCell)`

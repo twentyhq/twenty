@@ -13,7 +13,7 @@ const StyledPermissionCell = styled(TableCell)`
   display: flex;
   flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-inline-start: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledPermissionContent = styled.div`
@@ -36,7 +36,7 @@ const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-inline-end: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`

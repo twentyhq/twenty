@@ -20,7 +20,7 @@ const StyledTitle = styled.div`
   display: flex;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-right: auto;
+  margin-inline-end: auto;
 `;
 
 export const SettingsSummaryCard = ({

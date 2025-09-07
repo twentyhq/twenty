@@ -22,7 +22,7 @@ const StyledButton = styled.button`
   color: ${({ theme }) => theme.font.color.secondary};
   gap: ${({ theme }) => theme.spacing(2)};
   padding: 0 ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-inline-start: ${({ theme }) => theme.spacing(2)};
   cursor: pointer;
   display: flex;
   flex: 1 0 0;

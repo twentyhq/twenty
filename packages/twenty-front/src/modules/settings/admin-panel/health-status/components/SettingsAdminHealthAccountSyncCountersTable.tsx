@@ -4,8 +4,8 @@ import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-inline-start: ${({ theme }) => theme.spacing(2)};
+  padding-inline-end: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAdminHealthAccountSyncCountersTable = ({

@@ -34,10 +34,10 @@ const StyledAvatarGroup = styled.div`
   justify-content: flex-end;
 
   > * {
-    margin-left: -5px;
+    margin-inline-start: -5px;
 
     &:first-of-type {
-      margin-left: 0;
+      margin-inline-start: 0;
     }
   }
 `;
@@ -52,6 +52,12 @@ const StyledTableRow = styled(TableRow)`
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
     cursor: pointer;
+  }
+`;
+
+const StyledIconChevronRight = styled(IconChevronRight)`
+  [dir='rtl'] & {
+    transform: scaleX(-1);
   }
 `;
 
@@ -125,7 +131,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
         <StyledAssignedText>{role.workspaceMembers.length}</StyledAssignedText>
       </TableCell>
       <TableCell align="right" color={theme.font.color.tertiary}>
-        <IconChevronRight size={theme.icon.size.md} />
+        <StyledIconChevronRight size={theme.icon.size.md} />
       </TableCell>
     </StyledTableRow>
   );

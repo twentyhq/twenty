@@ -25,14 +25,16 @@ const StyledTable = styled(Table)`
 const StyledTableCell = styled(TableCell)`
   overflow: hidden;
   display: block;
-  padding: 0 ${({ theme }) => theme.spacing(3)} 0 0;
+  padding-block: 0;
+  padding-inline-end: ${({ theme }) => theme.spacing(3)};
+  padding-inline-start: 0;
 
   &:first-of-type {
-    padding-left: 0;
+    padding-inline-start: 0;
   }
 
   &:last-of-type {
-    padding-right: 0;
+    padding-inline-end: 0;
   }
 `;
 

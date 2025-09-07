@@ -58,11 +58,14 @@ const StyledTitle = styled.div<{ disabled?: boolean }>`
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.light};
+  [dir='rtl'] & {
+    transform: scaleX(-1);
+  }
 `;
 
 const StyledDescription = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-inline-start: ${({ theme }) => theme.spacing(7)};
 `;
 
 const StyledIconContainer = styled.div`

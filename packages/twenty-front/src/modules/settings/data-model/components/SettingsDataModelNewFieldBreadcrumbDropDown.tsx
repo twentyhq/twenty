@@ -30,7 +30,7 @@ const StyledButtonContainer = styled.div`
 const StyledDownChevron = styled(IconChevronDown)`
   color: ${({ theme }) => theme.font.color.primary};
   position: absolute;
-  right: ${({ theme }) => theme.spacing(1.5)};
+  inset-inline-end: ${({ theme }) => theme.spacing(1.5)};
   top: 50%;
   transform: translateY(-50%);
 `;
@@ -56,12 +56,12 @@ const StyledMenuItem = styled(MenuItem)<{
 `;
 
 const StyledSpan = styled.span`
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-inline-start: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledButton = styled(Button)`
   color: ${({ theme }) => theme.font.color.primary};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding-inline-end: ${({ theme }) => theme.spacing(6)};
 `;
 
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {

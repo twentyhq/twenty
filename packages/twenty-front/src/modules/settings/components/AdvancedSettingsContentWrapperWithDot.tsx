@@ -18,7 +18,7 @@ const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
   display: flex;
   position: absolute;
   height: 100%;
-  left: ${({ theme }) => theme.spacing(-5)};
+  inset-inline-start: ${({ theme }) => theme.spacing(-5)};
 
   ${({ dotPosition }) => {
     if (dotPosition === 'top') {
@@ -33,7 +33,7 @@ const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
 `;
 
 const StyledIconPoint = styled(IconPoint)`
-  margin-right: 0;
+  margin-inline-end: 0;
 `;
 
 export const AdvancedSettingsContentWrapperWithDot = ({
