@@ -79,7 +79,7 @@ export class MessagingMessageCleanerService {
 
       const orphanMessageThreads = await messageThreadRepository.find({
         where: {
-          id: In(orphanMessages.map(({ id }) => id)),
+          id: In(orphanMessages.map(({ messageThreadId }) => messageThreadId)),
           messages: {
             id: IsNull(),
           },
