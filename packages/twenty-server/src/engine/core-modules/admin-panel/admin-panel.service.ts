@@ -66,18 +66,18 @@ export class AdminPanelService {
       ),
     );
 
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId: user.userWorkspaces[0].workspace.id,
       userId: impersonatorUserId,
     });
 
-    await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'server.impersonation.attempt',
       message: `Impersonation attempt: targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
     });
 
     try {
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_attempt',
         message: `Impersonation token generation attempt for user ${userId}`,
       });
@@ -91,7 +91,7 @@ export class AdminPanelService {
         },
       );
 
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_generated',
         message: `Impersonation token generated successfully for user ${userId}`,
       });
@@ -106,7 +106,7 @@ export class AdminPanelService {
         loginToken,
       };
     } catch {
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.login_token_failed',
         message: `Impersonation token generation failed for targetUserId=${userId}`,
       });

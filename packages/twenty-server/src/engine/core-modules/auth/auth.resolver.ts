@@ -641,12 +641,12 @@ export class AuthResolver {
   ): Promise<void> {
     const { impersonatorUserId } = tokenPayload;
 
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId: workspace.id,
       userId: impersonatorUserId,
     });
 
-    await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'server.impersonation.token_exchange_attempt',
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserId}`,
     });
@@ -659,7 +659,7 @@ export class AuthResolver {
     }
 
     if (!impersonatorUserId) {
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.token_exchange_failed',
         message: `Invalid impersonation token (missing impersonator user ID) for ${targetUserEmail}`,
       });
@@ -674,7 +674,7 @@ export class AuthResolver {
     });
 
     if (!impersonatorUser) {
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.token_exchange_failed',
         message: `Impersonator user not found: ${impersonatorUserId} for ${targetUserEmail}`,
       });
@@ -685,7 +685,7 @@ export class AuthResolver {
     }
 
     if (impersonatorUser.canImpersonate !== true) {
-      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'server.impersonation.token_exchange_failed',
         message: `User not authorized to impersonate: ${impersonatorUserId} for ${targetUserEmail}`,
       });
@@ -702,12 +702,12 @@ export class AuthResolver {
     workspaceId: string,
     impersonatorUserId: string,
   ): Promise<void> {
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId,
       userId: impersonatorUserId,
     });
 
-    await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'server.impersonation.login_token_exchanged',
       message: 'Impersonation token exchanged',
     });

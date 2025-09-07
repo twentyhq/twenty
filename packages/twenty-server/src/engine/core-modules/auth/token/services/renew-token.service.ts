@@ -59,6 +59,7 @@ export class RenewTokenService {
       targetedTokenTypeFromPayload ?? JwtTokenTypeEnum.ACCESS;
 
     // Support legacy tokens where authProvider might be undefined
+    // TODO: remove in November 2025
     const resolvedAuthProvider = authProvider ?? AuthProviderEnum.Password;
 
     const accessToken =
