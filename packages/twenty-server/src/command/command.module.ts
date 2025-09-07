@@ -8,6 +8,7 @@ import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-c
 import { WorkspaceHealthCommandModule } from 'src/engine/workspace-manager/workspace-health/commands/workspace-health-command.module';
 import { WorkspaceMigrationRunnerCommandsModule } from 'src/engine/workspace-manager/workspace-migration-runner/commands/workspace-migration-runner-commands.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     DatabaseCommandModule,
     WorkspaceCleanerModule,
     WorkspaceHealthCommandModule,
+    MessagingMessageCleanerModule,
     WorkspaceMigrationRunnerCommandsModule,
     ObjectMetadataModule,
     FieldMetadataModule,
