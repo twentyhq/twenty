@@ -48,6 +48,20 @@ describe('sortByProperty', () => {
         'John',
       ]);
     });
+
+    it('should sort using provided locale', () => {
+      const persianUsers = [
+        { name: 'پ' },
+        { name: 'ب' },
+        { name: 'ا' },
+      ];
+
+      const sorted = [...persianUsers].sort(
+        sortByProperty('name', 'asc', 'fa'),
+      );
+
+      expect(sorted.map((u) => u.name)).toEqual(['ا', 'ب', 'پ']);
+    });
   });
 
   describe('number property sorting', () => {
