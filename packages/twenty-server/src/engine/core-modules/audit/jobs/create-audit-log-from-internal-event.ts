@@ -26,26 +26,26 @@ export class CreateAuditLogFromInternalEvent {
             }
           : eventData.properties;
 
-      const analytics = this.auditService.createContext({
+      const auditService = this.auditService.createContext({
         workspaceId: workspaceEventBatch.workspaceId,
         userId: eventData.userId,
       });
 
       // Since these are object record events, we use createObjectEvent
       if (workspaceEventBatch.name.endsWith('.updated')) {
-        analytics.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
+        auditService.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.created')) {
-        analytics.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+        auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.deleted')) {
-        analytics.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
+        auditService.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
