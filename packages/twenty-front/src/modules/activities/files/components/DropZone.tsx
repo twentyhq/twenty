@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
@@ -85,9 +86,11 @@ export const DropZone = ({
             stroke={theme.icon.stroke.sm}
             size={theme.icon.size.lg}
           />
-          <StyledUploadDragTitle>Upload files</StyledUploadDragTitle>
+          <StyledUploadDragTitle>
+            <Trans>Upload files</Trans>
+          </StyledUploadDragTitle>
           <StyledUploadDragSubTitle>
-            Drag and Drop Here
+            <Trans>Drag and Drop Here</Trans>
           </StyledUploadDragSubTitle>
         </>
       )}

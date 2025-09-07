@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -109,7 +110,11 @@ export const TaskRow = ({ task }: { task: Task }) => {
           />
         </StyledCheckboxContainer>
         <StyledTaskTitle completed={task.status === 'DONE'}>
-          {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
+          {task.title || (
+            <StyledPlaceholder>
+              <Trans>Task title</Trans>
+            </StyledPlaceholder>
+          )}
         </StyledTaskTitle>
         <StyledTaskBody>
           <OverflowingTextWithTooltip text={body} />
