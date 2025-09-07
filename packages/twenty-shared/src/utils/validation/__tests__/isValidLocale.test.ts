@@ -7,8 +7,13 @@ describe('isValidLocale', () => {
     });
   });
 
+  it('should explicitly validate fa-IR locale', () => {
+    expect(isValidLocale('fa-IR')).toBe(true);
+  });
+
   it('should return false for invalid locales', () => {
     expect(isValidLocale('invalidLocale')).toBe(false);
+    expect(isValidLocale('fa')).toBe(false);
     expect(isValidLocale(null)).toBe(false);
   });
 });

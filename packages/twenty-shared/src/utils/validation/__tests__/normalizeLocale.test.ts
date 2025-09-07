@@ -11,6 +11,7 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('en')).toBe('en');
     expect(normalizeLocale('fr-FR')).toBe('fr-FR');
     expect(normalizeLocale('es-ES')).toBe('es-ES');
+    expect(normalizeLocale('fa-IR')).toBe('fa-IR');
   });
 
   it('should handle case-insensitive matches', () => {
@@ -18,6 +19,7 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('fr-fr')).toBe('fr-FR');
     expect(normalizeLocale('es-es')).toBe('es-ES');
     expect(normalizeLocale('DE-de')).toBe('de-DE');
+    expect(normalizeLocale('fa-ir')).toBe('fa-IR');
   });
 
   it('should match just the language part if full locale not found', () => {
@@ -25,6 +27,7 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('fr')).toBe('fr-FR');
     expect(normalizeLocale('es')).toBe('es-ES');
     expect(normalizeLocale('de')).toBe('de-DE');
+    expect(normalizeLocale('fa')).toBe('fa-IR');
   });
 
   it('should handle language codes that might map to multiple locales', () => {

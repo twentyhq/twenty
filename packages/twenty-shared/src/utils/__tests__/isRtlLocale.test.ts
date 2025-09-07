@@ -5,6 +5,7 @@ describe('isRtlLocale', () => {
     expect(isRtlLocale('fa')).toBe(true);
     expect(isRtlLocale('fa-IR')).toBe(true);
     expect(isRtlLocale('ar')).toBe(true);
+    expect(isRtlLocale('FA-IR')).toBe(true);
   });
 
   it('returns false for non-rtl locales', () => {
