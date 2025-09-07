@@ -150,7 +150,6 @@
     "@types/passport-microsoft": "^2.1.0",
     "@types/pluralize": "^0.0.33",
     "@types/react": "^18.2.39",
-    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.15",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^9.0.2",
