@@ -123,7 +123,11 @@ export class MessagingMessageListFetchService {
       let totalMessagesToImportCount = 0;
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}`,
+        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
+          (messageList) => {
+            messageList.nextSyncCursor;
+          },
+        )}`,
       );
 
       const messageChannelMessageAssociationRepository =
