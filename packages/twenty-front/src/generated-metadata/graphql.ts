@@ -22,6 +22,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export enum PreferredCalendar {
+  Gregorian = 'gregorian',
+  Persian = 'persian'
+}
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -3742,6 +3747,7 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   locale: Scalars['String'];
+  preferredCalendar: PreferredCalendar;
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
