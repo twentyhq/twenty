@@ -47,7 +47,11 @@ export class MicrosoftGetMessageListService {
       );
     }
 
-    for (const folder of messageFolders) {
+    const syncedMessageFolders = messageFolders.filter(
+      (folder) => folder.isSynced,
+    );
+
+    for (const folder of syncedMessageFolders) {
       const response = await this.getMessageList(connectedAccount, folder);
 
       result.push({

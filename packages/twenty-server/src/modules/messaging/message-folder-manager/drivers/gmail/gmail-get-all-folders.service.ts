@@ -6,10 +6,9 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
-import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
+import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 
 @Injectable()
 export class GmailGetAllFoldersService implements MessageFolderDriver {
@@ -21,11 +20,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   ) {}
 
   private isIncludedByDefault(labelId: string): boolean {
-    const excludedCategoryIds = MESSAGING_GMAIL_EXCLUDED_CATEGORIES.map(
-      (category) => computeGmailCategoryLabelId(category),
-    );
-
-    return !excludedCategoryIds.includes(labelId);
+    return !MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.includes(labelId);
   }
 
   async getAllMessageFolders(
