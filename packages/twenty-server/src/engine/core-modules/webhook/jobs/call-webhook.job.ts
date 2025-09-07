@@ -48,7 +48,7 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId: data.workspaceId,
     });
 
@@ -79,13 +79,13 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
       });
     } catch (err) {
-      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
