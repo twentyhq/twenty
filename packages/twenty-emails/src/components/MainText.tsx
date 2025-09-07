@@ -6,14 +6,14 @@ type MainTextProps = {
   children: JSX.Element | JSX.Element[] | string;
 };
 
-const mainTextStyle = {
-  fontFamily: emailTheme.font.family,
-  fontSize: emailTheme.font.size.md,
-  fontWeight: emailTheme.font.weight.regular,
-  color: emailTheme.font.colors.primary,
-  lineHeight: emailTheme.font.lineHeight,
-};
-
 export const MainText = ({ children }: MainTextProps) => {
+  const mainTextStyle = {
+    fontFamily: emailTheme.font.family,
+    fontSize: emailTheme.font.size.md,
+    fontWeight: emailTheme.font.weight.regular,
+    color: emailTheme.font.colors.primary,
+    lineHeight: emailTheme.font.lineHeight,
+  } as const;
+
   return <Text style={mainTextStyle}>{children}</Text>;
 };

@@ -1,6 +1,8 @@
 import { i18n, type Messages } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Container, Html } from '@react-email/components';
+import { isRtlLocale } from 'twenty-shared/utils';
+import { emailTheme } from 'src/common-style';
 
 import { BaseHead } from 'src/components/BaseHead';
 import { Footer } from 'src/components/Footer';
@@ -93,9 +95,12 @@ export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {
 
   return (
     <I18nProvider i18n={i18n}>
-      <Html lang={locale}>
+      <Html lang={locale} dir={isRtlLocale(locale) ? 'rtl' : 'ltr'}>
         <BaseHead />
-        <Container width={width || 290}>
+        <Container
+          width={width || 290}
+          style={{ fontFamily: emailTheme.font.family }}
+        >
           <Logo />
           {children}
           <Footer />

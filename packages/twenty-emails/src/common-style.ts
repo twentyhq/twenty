@@ -1,5 +1,8 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 
+import { i18n } from '@lingui/core';
+import { isRtlLocale } from 'twenty-shared/utils';
+
 const grayScale = {
   gray100: '#000000',
   gray90: '#141414',
@@ -35,7 +38,11 @@ export const emailTheme = {
       inverted: grayScale.gray0,
       blue: colors.blue40,
     },
-    family: 'Trebuchet MS', // Google Inter not working, we need to use a web safe font, see https://templates.mailchimp.com/design/typography/
+    get family() {
+      return isRtlLocale(i18n.locale)
+        ? 'Vazirmatn, Trebuchet MS'
+        : 'Trebuchet MS';
+    }, // Google Inter not working, we need to use a web safe font, see https://templates.mailchimp.com/design/typography/
     weight: {
       regular: 400,
       bold: 600,
