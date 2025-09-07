@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { User } from '@microsoft/microsoft-graph-types';
 import GraphQLJSON from 'graphql-type-json';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
@@ -15,6 +16,10 @@ import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -54,8 +59,15 @@ export class AdminPanelResolver {
   @Mutation(() => ImpersonateOutput)
   async impersonate(
     @Args() { workspaceId, userId }: ImpersonateInput,
-    @AuthUser() adminUser: { id: string },
+    @AuthUser() adminUser: User,
   ): Promise<ImpersonateOutput> {
+    if (!adminUser.id) {
+      throw new AuthException(
+        'Admin user not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
     return await this.adminService.impersonate(
       userId,
       workspaceId,

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 
 import axios from 'axios';
 import semver from 'semver';
@@ -13,6 +12,7 @@ import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -21,8 +21,6 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -38,8 +36,6 @@ export class AdminPanelService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly auditService: AuditService,
-    private readonly logger: LoggerService,
-    private readonly telemetryService: TelemetryService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -49,13 +45,6 @@ export class AdminPanelService {
     workspaceId: string,
     impersonatorUserId: string,
   ) {
-    const correlationId = randomUUID();
-
-    this.logger.log(
-      `Impersonation attempt: correlationId=${correlationId}, targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
-      'AdminPanelService.impersonate',
-    );
-
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -77,15 +66,21 @@ export class AdminPanelService {
       ),
     );
 
+    const analytics = this.auditService.createContext({
+      workspaceId: user.userWorkspaces[0].workspace.id,
+      userId: impersonatorUserId,
+    });
+
+    await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+      eventName: 'server.impersonation.attempt',
+      message: `Impersonation attempt: targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
+    });
+
     try {
-      await this.telemetryService.create(
-        {
-          action: 'server.impersonation.login_token_attempt',
-          payload: { correlationId },
-        },
-        impersonatorUserId,
-        user.userWorkspaces[0].workspace.id,
-      );
+      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_attempt',
+        message: `Impersonation token generation attempt for user ${userId}`,
+      });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
@@ -97,19 +92,10 @@ export class AdminPanelService {
         },
       );
 
-      await this.telemetryService.create(
-        {
-          action: 'server.impersonation.login_token_generated',
-          payload: { correlationId },
-        },
-        impersonatorUserId,
-        user.userWorkspaces[0].workspace.id,
-      );
-
-      this.logger.log(
-        `Impersonation token generated successfully for targetUserId=${userId}`,
-        'AdminPanelService.impersonate',
-      );
+      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_generated',
+        message: `Impersonation token generated successfully for user ${userId}`,
+      });
 
       return {
         workspace: {
@@ -120,11 +106,11 @@ export class AdminPanelService {
         },
         loginToken,
       };
-    } catch (error: unknown) {
-      this.logger.error(
-        `Impersonation token generation failed: correlationId=${correlationId}, targetUserId=${userId}`,
-        'AdminPanelService.impersonate',
-      );
+    } catch {
+      await analytics.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_failed',
+        message: `Impersonation token generation failed for targetUserId=${userId}`,
+      });
       throw new AuthException(
         'Impersonation failed',
         AuthExceptionCode.INVALID_DATA,
