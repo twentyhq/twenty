@@ -1,5 +1,6 @@
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { i18n } from '@lingui/core';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,9 +35,11 @@ export const useSortedArray = <T>(
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as string)?.localeCompare(
               b[sortFieldName] as string,
+              i18n.locale,
             )
           : (b[sortFieldName] as string)?.localeCompare(
               a[sortFieldName] as string,
+              i18n.locale,
             );
       } else if (sortFieldType === 'number') {
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
