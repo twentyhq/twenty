@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import axios from 'axios';
 
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -77,6 +78,14 @@ describe('AdminPanelService', () => {
               TwentyConfigServiceGetVariableWithMetadataMock,
           },
         },
+        {
+          provide: AuditService,
+          useValue: {
+            createContext: jest.fn().mockReturnValue({
+              insertWorkspaceEvent: jest.fn(),
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -130,6 +139,8 @@ describe('AdminPanelService', () => {
     expect(LoginTokenServiceGenerateLoginTokenMock).toHaveBeenCalledWith(
       'user@example.com',
       'workspace-id',
+      'impersonation',
+      { impersonatorUserId: 'user-id' },
     );
 
     expect(result).toEqual(
@@ -156,8 +167,8 @@ describe('AdminPanelService', () => {
       service.impersonate('invalid-user-id', 'workspace-id', 'user-id'),
     ).rejects.toThrow(
       new AuthException(
-        'User not found or impersonation not enabled on workspace',
-        AuthExceptionCode.INVALID_INPUT,
+        'User not found in workspace or impersonation not enabled',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       ),
     );
 

@@ -10,6 +10,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type User } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { RenewTokenService } from './renew-token.service';
 
@@ -86,7 +87,7 @@ describe('RenewTokenService', () => {
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
         token: mockAppToken as AppToken,
-        authProvider: undefined,
+        authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
@@ -114,9 +115,10 @@ describe('RenewTokenService', () => {
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith({
         userId: mockUser.id,
         workspaceId: mockWorkspaceId,
+        authProvider: AuthProviderEnum.Password,
       });
       expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith({
-        authProvider: undefined,
+        authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         userId: mockUser.id,
         workspaceId: mockWorkspaceId,

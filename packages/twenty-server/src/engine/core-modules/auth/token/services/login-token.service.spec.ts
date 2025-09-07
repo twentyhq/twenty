@@ -74,7 +74,13 @@ describe('LoginTokenService', () => {
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: email, workspaceId, type: 'LOGIN' },
+        {
+          sub: email,
+          workspaceId,
+          type: 'LOGIN',
+          authProvider: AuthProviderEnum.Password,
+          impersonatorUserId: undefined,
+        },
         { secret: mockSecret, expiresIn: mockExpiresIn },
       );
     });
@@ -91,6 +97,7 @@ describe('LoginTokenService', () => {
       jest
         .spyOn(jwtWrapperService, 'generateAppSecret')
         .mockReturnValue(mockSecret);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
       const result = await service.generateLoginToken(
