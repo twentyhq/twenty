@@ -130,7 +130,7 @@ export class GoogleAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-          pathname: SettingsPath.Accounts,
+          pathname: getSettingsPath(SettingsPath.Accounts),
         }),
       );
     }
