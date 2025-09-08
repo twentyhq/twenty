@@ -6394,6 +6394,11 @@ msgstr "System settings - Sunday"
 msgid "Table"
 msgstr "Table"
 
+#. js-lingui-id: 38Or+7
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Tabs"
+msgstr "Tabs"
+
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx

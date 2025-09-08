@@ -69,6 +69,7 @@ export class SyncMessageFoldersService {
       messageFolderRepository,
     });
 
+    // TODO: we should delete folders that are not in the list anymore
     for (const folder of folders) {
       const existingFolder = this.findExistingFolderInMap(
         existingFolderMap,
@@ -80,8 +81,6 @@ export class SyncMessageFoldersService {
           existingFolder.id,
           {
             name: folder.name,
-            isSynced: folder.isSynced,
-            isSentFolder: folder.isSentFolder,
             externalId: folder.externalId,
           },
           manager,

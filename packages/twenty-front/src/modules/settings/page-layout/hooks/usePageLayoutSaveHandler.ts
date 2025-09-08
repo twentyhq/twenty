@@ -6,10 +6,9 @@ import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
 import {
   savedPageLayoutsState,
+  type PageLayoutWidget,
   type SavedPageLayout,
 } from '../states/savedPageLayoutsState';
-
-type WidgetWithGridPosition = SavedPageLayout['widgets'][0];
 
 export const usePageLayoutSaveHandler = () => {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ export const usePageLayoutSaveHandler = () => {
 
   const savePageLayout = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (widgetsWithPositions?: WidgetWithGridPosition[]) => {
+      async (widgetsWithPositions?: PageLayoutWidget[]) => {
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
@@ -30,17 +29,26 @@ export const usePageLayoutSaveHandler = () => {
           ? savedPageLayouts.find((layout) => layout.id === id)
           : undefined;
 
-        const widgets = widgetsWithPositions || pageLayoutDraft.widgets;
+        const updatedTabs = widgetsWithPositions
+          ? pageLayoutDraft.tabs.map((tab) => ({
+              ...tab,
+              widgets: widgetsWithPositions.filter(
+                (w) => w.pageLayoutTabId === tab.id,
+              ),
+            }))
+          : pageLayoutDraft.tabs;
 
         const layoutToSave: SavedPageLayout = {
           id: isEditMode ? id : uuidv4(),
           name: pageLayoutDraft.name,
           type: pageLayoutDraft.type,
+          objectMetadataId: pageLayoutDraft.objectMetadataId,
+          tabs: updatedTabs,
           createdAt: isEditMode
-            ? existingLayout?.createdAt || new Date().toISOString()
+            ? (existingLayout?.createdAt ?? new Date().toISOString())
             : new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          widgets,
+          deletedAt: null,
         };
 
         set(savedPageLayoutsState, (prev) => {

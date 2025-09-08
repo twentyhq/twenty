@@ -4,12 +4,12 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   type LoginTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
@@ -22,13 +22,15 @@ export class LoginTokenService {
   async generateLoginToken(
     email: string,
     workspaceId: string,
-    authProvider?: AuthProviderEnum,
+    authProvider: AuthProviderEnum,
+    options?: { impersonatorUserId?: string },
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
       authProvider,
+      impersonatorUserId: options?.impersonatorUserId,
     };
 
     const secret = this.jwtWrapperService.generateAppSecret(

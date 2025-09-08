@@ -1,43 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-  "OPTION_2",
-  "OPTION_3",
-  "OPTION_4",
-  "OPTION_5",
-  "OPTION_6",
-  "OPTION_7",
-  "OPTION_8",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle partial deletion of selected options in view filter 1`] = `
-[
-  "OPTION_4",
-  "OPTION_5",
-  "OPTION_6",
-  "OPTION_7",
-  "OPTION_8",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle reordering of options while maintaining view filter values 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
@@ -54,64 +78,100 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should throw erro
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related multi selected options view filter 1`] = `
-[
-  "OPTION_0_UPDATED",
-  "OPTION_1",
-  "OPTION_2_UPDATED",
-  "OPTION_3",
-  "OPTION_4_UPDATED",
-  "OPTION_5",
-  "OPTION_6_UPDATED",
-  "OPTION_7",
-  "OPTION_8_UPDATED",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related solo selected option view filter 1`] = `
-[
-  "OPTION_5_UPDATED",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle adding new options while maintaining existing view filter 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-  "OPTION_2",
-  "OPTION_3",
-  "OPTION_4",
-  "OPTION_5",
-  "OPTION_6",
-  "OPTION_7",
-  "OPTION_8",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+    "OPTION_2",
+    "OPTION_3",
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle partial deletion of selected options in view filter 1`] = `
-[
-  "OPTION_4",
-  "OPTION_5",
-  "OPTION_6",
-  "OPTION_7",
-  "OPTION_8",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_4",
+    "OPTION_5",
+    "OPTION_6",
+    "OPTION_7",
+    "OPTION_8",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle reordering of options while maintaining view filter values 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0",
+    "OPTION_1",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
@@ -128,22 +188,34 @@ exports[`update-one-field-metadata-related-record SELECT should throw error if v
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should update related multi selected options view filter 1`] = `
-[
-  "OPTION_0_UPDATED",
-  "OPTION_1",
-  "OPTION_2_UPDATED",
-  "OPTION_3",
-  "OPTION_4_UPDATED",
-  "OPTION_5",
-  "OPTION_6_UPDATED",
-  "OPTION_7",
-  "OPTION_8_UPDATED",
-  "OPTION_9",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_0_UPDATED",
+    "OPTION_1",
+    "OPTION_2_UPDATED",
+    "OPTION_3",
+    "OPTION_4_UPDATED",
+    "OPTION_5",
+    "OPTION_6_UPDATED",
+    "OPTION_7",
+    "OPTION_8_UPDATED",
+    "OPTION_9",
+  ],
+  "viewFilterGroupId": null,
+}
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should update related solo selected option view filter 1`] = `
-[
-  "OPTION_5_UPDATED",
-]
+{
+  "operand": "IS",
+  "positionInViewFilterGroup": null,
+  "subFieldName": null,
+  "value": [
+    "OPTION_5_UPDATED",
+  ],
+  "viewFilterGroupId": null,
+}
 `;

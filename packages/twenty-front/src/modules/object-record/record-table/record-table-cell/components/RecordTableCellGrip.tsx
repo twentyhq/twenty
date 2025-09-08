@@ -5,7 +5,7 @@ import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { IconListViewGrip } from 'twenty-ui/input';
 
-export const TABLE_CELL_GRIP_WIDTH = '16px';
+export const TABLE_CELL_GRIP_WIDTH = 16;
 
 const StyledContainer = styled.div`
   height: 32px;
@@ -40,6 +40,7 @@ export const RecordTableCellGrip = () => {
       data-select-disable
       hasRightBorder={false}
       hasBottomBorder={false}
+      width={TABLE_CELL_GRIP_WIDTH}
     >
       <StyledContainer>
         <StyledIconWrapper className="icon" isDragging={isDragging}>
