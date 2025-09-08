@@ -7,10 +7,13 @@ const StyledLastColumnHeader = styled.div`
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
 
-  width: 100%;
+  width: fit-content;
   height: 32px;
+  max-height: 32px;
 `;
 
 export const RecordTableHeaderLastColumn = () => {
-  return <StyledLastColumnHeader></StyledLastColumnHeader>;
+  return (
+    <StyledLastColumnHeader className="header-cell"></StyledLastColumnHeader>
+  );
 };

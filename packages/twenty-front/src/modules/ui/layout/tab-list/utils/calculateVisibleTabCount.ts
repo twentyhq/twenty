@@ -2,6 +2,7 @@ import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_LEFT_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
+import { isDefined } from 'twenty-shared/utils';
 
 type CalculateVisibleTabCountParams = {
   visibleTabs: SingleTabProps[];
@@ -22,7 +23,6 @@ export const calculateVisibleTabCount = ({
     return visibleTabs.length;
   }
 
-  // Subtract add button width if present
   const availableWidth =
     containerWidth -
     TAB_LIST_LEFT_PADDING -
@@ -33,8 +33,7 @@ export const calculateVisibleTabCount = ({
     const tab = visibleTabs[i];
     const tabWidth = tabWidthsById[tab.id];
 
-    // Skip if width not measured yet
-    if (tabWidth === undefined) {
+    if (!isDefined(tabWidth)) {
       return visibleTabs.length;
     }
 
