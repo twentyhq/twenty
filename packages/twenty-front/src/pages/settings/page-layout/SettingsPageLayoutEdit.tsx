@@ -10,11 +10,11 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { useChangePageLayoutDragSelection } from '@/settings/page-layout/hooks/useChangePageLayoutDragSelection';
 import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
 import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
-import { usePageLayoutActiveTabId } from '@/settings/page-layout/hooks/usePageLayoutActiveTabId';
 import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
@@ -30,8 +30,10 @@ import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -150,7 +152,16 @@ export const SettingsPageLayoutEdit = () => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const { activeTabId, setActiveTabId } = usePageLayoutActiveTabId();
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+  );
+
+  const setActiveTabId = useSetRecoilState(
+    activeTabIdComponentState.atomFamily({
+      instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+    }),
+  );
 
   const activeTabWidgets = useMemo(() => {
     if (!activeTabId) return [];

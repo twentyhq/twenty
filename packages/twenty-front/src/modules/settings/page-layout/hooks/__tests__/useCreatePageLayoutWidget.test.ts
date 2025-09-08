@@ -1,11 +1,12 @@
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import {
   GraphSubType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
@@ -24,7 +25,7 @@ describe('useCreatePageLayoutWidget', () => {
       () => {
         const setActiveTabId = useSetRecoilState(
           activeTabIdComponentState.atomFamily({
-            instanceId: 'page-layout-tabs',
+            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
           }),
         );
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
@@ -91,13 +92,21 @@ describe('useCreatePageLayoutWidget', () => {
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const setActiveTabId = useSetRecoilState(
           activeTabIdComponentState.atomFamily({
-            instanceId: 'page-layout-tabs',
+            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
           }),
+        );
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const pageLayoutCurrentLayouts = useRecoilValue(
+          pageLayoutCurrentLayoutsState,
         );
         const createWidget = useCreatePageLayoutWidget();
         return {
           setPageLayoutDraft,
           setActiveTabId,
+          pageLayoutDraft,
+          allWidgets,
+          pageLayoutCurrentLayouts,
           createWidget,
         };
       },
@@ -143,9 +152,26 @@ describe('useCreatePageLayoutWidget', () => {
       });
     });
 
-    expect(typeof result.current.createWidget.createPageLayoutWidget).toBe(
-      'function',
-    );
+    expect(result.current.allWidgets).toHaveLength(4);
+
+    graphTypes.forEach((graphType, index) => {
+      const widget = result.current.allWidgets[index];
+      expect(widget.type).toBe(WidgetType.GRAPH);
+      expect(widget.pageLayoutTabId).toBe('tab-1');
+      expect(widget.configuration?.graphType).toBe(graphType);
+      expect(widget.id).toBe('widget-mock-uuid');
+      expect(widget.data).toBeDefined();
+    });
+
+    expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
+    expect(
+      result.current.pageLayoutCurrentLayouts['tab-1'].desktop,
+    ).toHaveLength(4);
+    expect(
+      result.current.pageLayoutCurrentLayouts['tab-1'].mobile,
+    ).toHaveLength(4);
+
+    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
   });
 
   it('should not create widget when activeTabId is null', () => {

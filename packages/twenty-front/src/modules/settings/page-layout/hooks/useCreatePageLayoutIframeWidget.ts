@@ -1,9 +1,11 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '../constants/SettingsPageLayoutTabsInstanceId';
 import { WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { usePageLayoutActiveTabId } from './usePageLayoutActiveTabId';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { addWidgetToTab } from '../utils/addWidgetToTab';
@@ -11,7 +13,10 @@ import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
 export const useCreatePageLayoutIframeWidget = () => {
-  const { activeTabId } = usePageLayoutActiveTabId();
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+  );
 
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
