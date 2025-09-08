@@ -230,6 +230,18 @@ export class OpenApiService {
         nameSingular: 'viewFilterGroup',
         namePlural: 'viewFilterGroups',
       },
+      {
+        nameSingular: 'pageLayout',
+        namePlural: 'pageLayouts',
+      },
+      {
+        nameSingular: 'pageLayoutTab',
+        namePlural: 'pageLayoutTabs',
+      },
+      {
+        nameSingular: 'pageLayoutWidget',
+        namePlural: 'pageLayoutWidgets',
+      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {
