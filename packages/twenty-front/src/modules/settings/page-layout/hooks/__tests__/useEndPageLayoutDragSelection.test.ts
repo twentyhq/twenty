@@ -4,7 +4,6 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { IconAppWindow } from 'twenty-ui/display';
-import { pageLayoutCurrentTabIdForCreationState } from '../../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraggedAreaState } from '../../states/pageLayoutDraggedAreaState';
 import { pageLayoutSelectedCellsState } from '../../states/pageLayoutSelectedCellsState';
 import { calculateGridBoundsFromSelectedCells } from '../../utils/calculateGridBoundsFromSelectedCells';
@@ -54,7 +53,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.draggedArea).toBeNull();
 
     act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection('test-tab-id');
+      result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
     expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
@@ -97,7 +96,7 @@ describe('useEndPageLayoutDragSelection', () => {
     );
 
     act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection('test-tab-id');
+      result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
     expect(calculateGridBoundsFromSelectedCells).not.toHaveBeenCalled();
@@ -128,7 +127,7 @@ describe('useEndPageLayoutDragSelection', () => {
     );
 
     act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection('test-tab-id');
+      result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
     expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
@@ -147,7 +146,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(typeof result.current.endPageLayoutDragSelection).toBe('function');
   });
 
-  it('should set the active tab for widget creation', () => {
+  it('should navigate to widget selection when bounds are valid', () => {
     const mockBounds = { x: 0, y: 0, w: 2, h: 2 };
     (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(
       mockBounds,
@@ -157,29 +156,22 @@ describe('useEndPageLayoutDragSelection', () => {
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
         selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
-        currentTabForCreation: useRecoilValue(
-          pageLayoutCurrentTabIdForCreationState,
-        ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
               set(pageLayoutSelectedCellsState, new Set(['0-0']));
-              set(pageLayoutCurrentTabIdForCreationState, null);
             },
             children,
           }),
       },
     );
 
-    expect(result.current.currentTabForCreation).toBeNull();
-
     act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection('tab-123');
+      result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
-    expect(result.current.currentTabForCreation).toBe('tab-123');
     expect(mockNavigateCommandMenu).toHaveBeenCalled();
   });
 
@@ -208,7 +200,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.selectedCells.size).toBe(1);
 
     act(() => {
-      result.current.endDragSelection.endPageLayoutDragSelection('test-tab-id');
+      result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
     expect(result.current.selectedCells.size).toBe(0);

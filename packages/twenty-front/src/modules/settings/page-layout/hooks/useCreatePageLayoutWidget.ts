@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type GraphSubType, type WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { usePageLayoutActiveTabId } from './usePageLayoutActiveTabId';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { addWidgetToTab } from '../utils/addWidgetToTab';
@@ -16,6 +16,8 @@ import {
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
 export const useCreatePageLayoutWidget = () => {
+  const { activeTabId } = usePageLayoutActiveTabId();
+
   const createPageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetType: WidgetType, graphType: GraphSubType) => {
@@ -29,9 +31,6 @@ export const useCreatePageLayoutWidget = () => {
           .getValue();
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
-          .getValue();
-        const activeTabId = snapshot
-          .getLoadable(pageLayoutCurrentTabIdForCreationState)
           .getValue();
 
         if (!activeTabId) {
@@ -95,7 +94,7 @@ export const useCreatePageLayoutWidget = () => {
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [],
+    [activeTabId],
   );
 
   return { createPageLayoutWidget };

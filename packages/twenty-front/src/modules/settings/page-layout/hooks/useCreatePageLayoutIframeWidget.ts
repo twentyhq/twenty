@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { usePageLayoutActiveTabId } from './usePageLayoutActiveTabId';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { addWidgetToTab } from '../utils/addWidgetToTab';
@@ -11,6 +11,8 @@ import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
 export const useCreatePageLayoutIframeWidget = () => {
+  const { activeTabId } = usePageLayoutActiveTabId();
+
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (title: string, url: string) => {
@@ -19,10 +21,6 @@ export const useCreatePageLayoutIframeWidget = () => {
           .getValue();
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
-          .getValue();
-
-        const activeTabId = snapshot
-          .getLoadable(pageLayoutCurrentTabIdForCreationState)
           .getValue();
 
         if (!activeTabId) {
@@ -78,7 +76,7 @@ export const useCreatePageLayoutIframeWidget = () => {
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [],
+    [activeTabId],
   );
 
   return { createPageLayoutIframeWidget };

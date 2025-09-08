@@ -3,8 +3,8 @@ import {
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutCurrentTabIdForCreationState } from '@/settings/page-layout/states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -23,7 +23,9 @@ describe('useCreatePageLayoutWidget', () => {
     const { result } = renderHook(
       () => {
         const setActiveTabId = useSetRecoilState(
-          pageLayoutCurrentTabIdForCreationState,
+          activeTabIdComponentState.atomFamily({
+            instanceId: 'page-layout-tabs',
+          }),
         );
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
@@ -88,7 +90,9 @@ describe('useCreatePageLayoutWidget', () => {
       () => {
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const setActiveTabId = useSetRecoilState(
-          pageLayoutCurrentTabIdForCreationState,
+          activeTabIdComponentState.atomFamily({
+            instanceId: 'page-layout-tabs',
+          }),
         );
         const createWidget = useCreatePageLayoutWidget();
         return {

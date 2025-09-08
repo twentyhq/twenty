@@ -17,10 +17,10 @@ import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/us
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
 import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
+import { usePageLayoutActiveTabId } from '@/settings/page-layout/hooks/usePageLayoutActiveTabId';
 import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutCurrentTabIdForCreationState } from '@/settings/page-layout/states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
 import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
@@ -30,10 +30,8 @@ import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -145,9 +143,6 @@ export const SettingsPageLayoutEdit = () => {
   const pageLayoutCurrentLayouts = useRecoilValue(
     pageLayoutCurrentLayoutsState,
   );
-  const setPageLayoutCurrentTabIdForCreation = useSetRecoilState(
-    pageLayoutCurrentTabIdForCreationState,
-  );
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const setPageLayoutEditingWidgetId = useSetRecoilState(
     pageLayoutEditingWidgetIdState,
@@ -155,10 +150,7 @@ export const SettingsPageLayoutEdit = () => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const activeTabId = useRecoilComponentValue(
-    activeTabIdComponentState,
-    'page-layout-tabs',
-  );
+  const { activeTabId, setActiveTabId } = usePageLayoutActiveTabId();
 
   const activeTabWidgets = useMemo(() => {
     if (!activeTabId) return [];
@@ -178,14 +170,13 @@ export const SettingsPageLayoutEdit = () => {
   const { endPageLayoutDragSelection } = useEndPageLayoutDragSelection();
 
   const handleOpenAddWidget = useCallback(() => {
-    setPageLayoutCurrentTabIdForCreation(activeTabId);
     navigateCommandMenu({
       page: CommandMenuPages.PageLayoutWidgetTypeSelect,
       pageTitle: 'Add Widget',
       pageIcon: IconAppWindow,
       resetNavigationStack: true,
     });
-  }, [navigateCommandMenu, activeTabId, setPageLayoutCurrentTabIdForCreation]);
+  }, [navigateCommandMenu]);
 
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange(activeTabId);
@@ -197,9 +188,6 @@ export const SettingsPageLayoutEdit = () => {
       if (!widget) return;
 
       setPageLayoutEditingWidgetId(widgetId);
-      setPageLayoutCurrentTabIdForCreation(
-        widget.pageLayoutTabId || activeTabId,
-      );
 
       if (widget.type === WidgetType.IFRAME) {
         navigateCommandMenu({
@@ -210,13 +198,7 @@ export const SettingsPageLayoutEdit = () => {
         });
       }
     },
-    [
-      allWidgets,
-      setPageLayoutEditingWidgetId,
-      navigateCommandMenu,
-      setPageLayoutCurrentTabIdForCreation,
-      activeTabId,
-    ],
+    [allWidgets, setPageLayoutEditingWidgetId, navigateCommandMenu],
   );
 
   const isEmptyState = activeTabWidgets.length === 0;
@@ -232,12 +214,6 @@ export const SettingsPageLayoutEdit = () => {
   const handleCancel = () => {
     navigateSettings(SettingsPath.PageLayout);
   };
-
-  const setActiveTabId = useSetRecoilState(
-    activeTabIdComponentState.atomFamily({
-      instanceId: 'page-layout-tabs',
-    }),
-  );
 
   const handleAddTab = useCallback(() => {
     const newTabId = createPageLayoutTab();
@@ -408,7 +384,7 @@ export const SettingsPageLayoutEdit = () => {
               selectableItemsContainerRef={gridContainerRef}
               onDragSelectionStart={startPageLayoutDragSelection}
               onDragSelectionChange={changePageLayoutDragSelection}
-              onDragSelectionEnd={() => endPageLayoutDragSelection(activeTabId)}
+              onDragSelectionEnd={() => endPageLayoutDragSelection()}
             />
           )}
         </StyledGridContainer>
