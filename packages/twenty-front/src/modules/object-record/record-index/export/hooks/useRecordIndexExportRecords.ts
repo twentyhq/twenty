@@ -86,6 +86,7 @@ export const generateCsv: GenerateExport = ({
   return json2csv(rows, {
     keys,
     emptyFieldValue: '',
+    preventCsvInjection: true,
   });
 };
 
