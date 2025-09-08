@@ -31,6 +31,7 @@ import { tokenPairState } from '../states/tokenPairState';
 
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { qrCodeState } from '@/auth/states/qrCode';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -143,6 +144,7 @@ export const useAuth = () => {
         const workspacePublicData = snapshot
           .getLoadable(workspacePublicDataState)
           .getValue();
+        const qrCodeValue = snapshot.getLoadable(qrCodeState).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -161,6 +163,7 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
+          set(qrCodeState, qrCodeValue);
           return undefined;
         });
 
