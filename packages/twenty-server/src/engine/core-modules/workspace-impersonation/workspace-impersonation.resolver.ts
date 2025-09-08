@@ -20,7 +20,7 @@ import { WorkspaceImpersonationService } from './services/workspace-impersonatio
 @UsePipes(ResolverValidationPipe)
 export class WorkspaceImpersonationResolver {
   constructor(
-    private readonly wsImpersonationService: WorkspaceImpersonationService,
+    private readonly workspaceImpersonationService: WorkspaceImpersonationService,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
@@ -40,7 +40,7 @@ export class WorkspaceImpersonationResolver {
       workspaceId: workspace.id,
     });
 
-    return await this.wsImpersonationService.impersonateWorkspaceUser({
+    return await this.workspaceImpersonationService.impersonateWorkspaceUser({
       workspaceId: workspace.id,
       impersonatorUserWorkspaceId: currentUserWorkspace.id,
       targetUserWorkspaceId,
@@ -63,7 +63,7 @@ export class WorkspaceImpersonationResolver {
       workspaceId: workspace.id,
     });
 
-    return await this.wsImpersonationService.impersonateWorkspaceUserByMemberId({
+    return await this.workspaceImpersonationService.impersonateWorkspaceUserByMemberId({
       workspaceId: workspace.id,
       impersonatorUserWorkspaceId: currentUserWorkspace.id,
       targetWorkspaceMemberId,
