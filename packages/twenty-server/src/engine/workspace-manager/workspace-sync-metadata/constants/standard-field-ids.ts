@@ -542,6 +542,7 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
 
 export const DASHBOARD_STANDARD_FIELD_IDS = {
   title: '20202020-20ee-4091-95dc-44b57eda3a89',
+  position: '20202020-38af-409b-95f0-7f08aa5f420f',
   pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
   timelineActivities: '20202020-9b0c-5d6e-7f8a-9b0c1d2e3f4a',
 } as const;

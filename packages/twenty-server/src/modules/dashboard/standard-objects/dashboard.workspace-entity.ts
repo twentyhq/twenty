@@ -12,6 +12,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { DASHBOARD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
@@ -50,6 +51,17 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()
   pageLayoutId: string | null;
+
+  @WorkspaceField({
+    standardId: DASHBOARD_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Dashboard record Position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
 
   @WorkspaceRelation({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities,
