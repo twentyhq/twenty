@@ -6,6 +6,5 @@ import { DashboardCreateOnePreQueryHook } from 'src/modules/dashboard/query-hook
 @Module({
   imports: [PageLayoutModule],
   providers: [DashboardCreateOnePreQueryHook],
-  exports: [DashboardCreateOnePreQueryHook],
 })
-export class DashboardModule {}
+export class DashboardQueryHookModule {}

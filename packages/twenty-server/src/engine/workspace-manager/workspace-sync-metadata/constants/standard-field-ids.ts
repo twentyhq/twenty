@@ -193,6 +193,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
   workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
   workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
+  dashboard: '20202020-7864-48f5-af7c-9e4b60140948',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -542,6 +543,7 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
 export const DASHBOARD_STANDARD_FIELD_IDS = {
   title: '20202020-20ee-4091-95dc-44b57eda3a89',
   pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
+  timelineActivities: '20202020-9b0c-5d6e-7f8a-9b0c1d2e3f4a',
 } as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {
