@@ -20,7 +20,10 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
       flatObjectMetadataMaps,
     });
 
-  return allMorphFlatFieldMetadatas.flatMap((flatFieldMetadata) => {
+  return [
+    morphRelationFlatFieldMetadata,
+    ...allMorphFlatFieldMetadatas,
+  ].flatMap((flatFieldMetadata) => {
     const relationTargetFlatFieldMetadata =
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
         flatFieldMetadata,
