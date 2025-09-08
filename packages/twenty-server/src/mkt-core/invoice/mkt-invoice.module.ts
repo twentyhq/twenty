@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -9,18 +10,13 @@ import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/integration/s-i
 import { SInvoiceIntegrationJob } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
 
 @Module({
-  imports: [
-    TwentyORMModule,
-    AuthModule,
-    WorkspaceCacheStorageModule,
-  ],
+  imports: [TwentyORMModule, AuthModule, WorkspaceCacheStorageModule],
   controllers: [InvoiceFileController],
   providers: [
-    SInvoiceIntegrationService, 
+    SInvoiceIntegrationService,
     SInvoiceIntegrationJob,
     MktSInvoiceFileCreateOnePreQueryHook,
     MktSInvoiceFileUpdateOnePreQueryHook,
   ],
 })
-
 export class MktInvoiceModule {}

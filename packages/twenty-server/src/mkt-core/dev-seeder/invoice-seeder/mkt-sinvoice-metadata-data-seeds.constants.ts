@@ -1,4 +1,4 @@
-import { MKT_SINVOICE_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-data-seeds.constants";
+import { MKT_SINVOICE_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-data-seeds.constants';
 
 type MktSInvoiceMetadataDataSeed = {
   id: string;

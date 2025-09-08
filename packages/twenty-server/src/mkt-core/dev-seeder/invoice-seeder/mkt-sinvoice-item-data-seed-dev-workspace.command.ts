@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +23,8 @@ type SInvoiceItemViewDefinition = ReturnType<typeof mktSInvoiceItemsAllView>;
 
 @Command({
   name: 'workspace:seed:sinvoice-item-module',
-  description: 'Seed sinvoice item module views and data for existing workspace',
+  description:
+    'Seed sinvoice item module views and data for existing workspace',
 })
 export class SeedSInvoiceItemModuleCommand extends CommandRunner {
   private readonly logger = new Logger(SeedSInvoiceItemModuleCommand.name);

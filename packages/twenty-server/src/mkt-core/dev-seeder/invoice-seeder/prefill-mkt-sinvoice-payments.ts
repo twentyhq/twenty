@@ -13,7 +13,10 @@ export const prefillMktSInvoicePayments = async (
       shouldBypassPermissionChecks: true,
     })
     .insert()
-    .into(`${schemaName}.mktSInvoicePayment`, MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS)
+    .into(
+      `${schemaName}.mktSInvoicePayment`,
+      MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS,
+    )
     .values(MKT_SINVOICE_PAYMENT_DATA_SEEDS)
     .execute();
 };

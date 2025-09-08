@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,11 +19,14 @@ interface SeedModuleOptions {
   workspaceId?: string;
 }
 
-type SInvoiceMetadataViewDefinition = ReturnType<typeof mktSInvoiceMetadataAllView>;
+type SInvoiceMetadataViewDefinition = ReturnType<
+  typeof mktSInvoiceMetadataAllView
+>;
 
 @Command({
   name: 'workspace:seed:sinvoice-metadata-module',
-  description: 'Seed sinvoice metadata module views and data for existing workspace',
+  description:
+    'Seed sinvoice metadata module views and data for existing workspace',
 })
 export class SeedSInvoiceMetadataModuleCommand extends CommandRunner {
   private readonly logger = new Logger(SeedSInvoiceMetadataModuleCommand.name);
@@ -311,7 +314,9 @@ export class SeedSInvoiceMetadataModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ SInvoice metadata view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ SInvoice metadata view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

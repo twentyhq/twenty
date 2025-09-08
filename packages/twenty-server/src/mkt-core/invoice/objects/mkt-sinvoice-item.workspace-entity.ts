@@ -65,7 +65,7 @@ export class MktSInvoiceItemWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   lineNumber?: number;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_ITEM_FIELD_IDS.selection,
     type: FieldMetadataType.NUMBER,
@@ -85,7 +85,6 @@ export class MktSInvoiceItemWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   itemCode?: string;
-
 
   @WorkspaceField({
     standardId: MKT_SINVOICE_ITEM_FIELD_IDS.itemName,

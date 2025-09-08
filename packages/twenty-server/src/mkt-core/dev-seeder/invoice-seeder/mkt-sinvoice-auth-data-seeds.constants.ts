@@ -21,19 +21,20 @@ export const MKT_SINVOICE_AUTH_DATA_SEEDS_IDS = {
   ID_5: 'b16239ca-ddf3-4a59-b17b-918a87aab9a2',
 };
 
-export const MKT_SINVOICE_AUTH_DATA_SEED_COLUMNS: (keyof MktSInvoiceAuthDataSeed)[] = [
-  'id',
-  'name',
-  'username',
-  'password',
-  'accessToken',
-  'refreshToken',
-  'expiresAt',
-  'position',
-  'createdBySource',
-  'createdByWorkspaceMemberId',
-  'createdByName',
-];
+export const MKT_SINVOICE_AUTH_DATA_SEED_COLUMNS: (keyof MktSInvoiceAuthDataSeed)[] =
+  [
+    'id',
+    'name',
+    'username',
+    'password',
+    'accessToken',
+    'refreshToken',
+    'expiresAt',
+    'position',
+    'createdBySource',
+    'createdByWorkspaceMemberId',
+    'createdByName',
+  ];
 export const MKT_SINVOICE_AUTH_DATA_SEEDS: MktSInvoiceAuthDataSeed[] = [
   {
     id: MKT_SINVOICE_AUTH_DATA_SEEDS_IDS.ID_1,

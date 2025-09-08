@@ -24,7 +24,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_SINVOICE_FILE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { SINVOICE_FILE_STATUS,SINVOICE_FILE_STATUS_OPTIONS, SINVOICE_FILE_TYPE, SINVOICE_FILE_TYPE_OPTIONS } from 'src/mkt-core/invoice/invoice.constants';
+import {
+  SINVOICE_FILE_STATUS,
+  SINVOICE_FILE_STATUS_OPTIONS,
+  SINVOICE_FILE_TYPE,
+  SINVOICE_FILE_TYPE_OPTIONS,
+} from 'src/mkt-core/invoice/invoice.constants';
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -108,7 +113,6 @@ export class MktSInvoiceFileWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   fileName?: string;
-
 
   @WorkspaceField({
     standardId: MKT_SINVOICE_FILE_FIELD_IDS.fileSize,

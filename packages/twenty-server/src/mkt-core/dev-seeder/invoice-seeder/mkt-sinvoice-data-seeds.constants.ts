@@ -1,4 +1,4 @@
-import { MKT_ORDER_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants";
+import { MKT_ORDER_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants';
 
 type MktSInvoiceDataSeed = {
   id: string;
@@ -12,7 +12,7 @@ type MktSInvoiceDataSeed = {
   adjustmentType: string;
   paymentStatus: boolean;
   cusGetInvoiceRight: boolean;
-  invoiceIssuedDate: string|null;
+  invoiceIssuedDate: string | null;
   transactionUuid: string;
   //buyerInfo
   buyerName: string;

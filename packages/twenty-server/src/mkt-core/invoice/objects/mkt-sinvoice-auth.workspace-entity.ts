@@ -1,5 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -17,13 +20,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_SINVOICE_AUTH_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { Relation } from 'typeorm';
 
 const TABLE_SINVOICE_AUTH_NAME = 'mktSInvoiceAuth';
 const NAME_FIELD_NAME = 'name';
@@ -33,8 +34,6 @@ export const SEARCH_FIELDS_FOR_MKT_SINVOICE_AUTH: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: USERNAME_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
-
-
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktSInvoiceAuth,
@@ -55,7 +54,6 @@ export class MktSInvoiceAuthWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFileText',
   })
   name: string;
-
 
   @WorkspaceField({
     standardId: MKT_SINVOICE_AUTH_FIELD_IDS.username,

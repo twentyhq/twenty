@@ -18,23 +18,24 @@ type MktSInvoicePaymentDataSeed = {
   createdByName: string;
 };
 
-export const MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS: (keyof MktSInvoicePaymentDataSeed)[] = [
-  'id',
-  'name',
-  'paymentMethodName',
-  'amount',
-  'currency',
-  'status',
-  'paymentDate',
-  'description',
+export const MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS: (keyof MktSInvoicePaymentDataSeed)[] =
+  [
+    'id',
+    'name',
+    'paymentMethodName',
+    'amount',
+    'currency',
+    'status',
+    'paymentDate',
+    'description',
 
-  'mktSInvoiceId',
+    'mktSInvoiceId',
 
-  'position',
-  'createdBySource',
-  'createdByWorkspaceMemberId',
-  'createdByName',
-];
+    'position',
+    'createdBySource',
+    'createdByWorkspaceMemberId',
+    'createdByName',
+  ];
 
 export const MKT_SINVOICE_PAYMENT_DATA_SEEDS_IDS = {
   ID_1: 'e209380e-e211-4bc9-9f7a-2993c7dfc804',
@@ -53,7 +54,8 @@ export const MKT_SINVOICE_PAYMENT_DATA_SEEDS: MktSInvoicePaymentDataSeed[] = [
     currency: 'VND',
     status: 1, // 1: Thành công, 0: Thất bại, 2: Đang xử lý
     paymentDate: '2024-12-15T10:35:00Z',
-    description: 'Thanh toán hóa đơn Gaming Setup Combo qua chuyển khoản ngân hàng',
+    description:
+      'Thanh toán hóa đơn Gaming Setup Combo qua chuyển khoản ngân hàng',
     mktSInvoiceId: MKT_SINVOICE_DATA_SEEDS_IDS.ID_1,
     position: 1,
     createdBySource: 'API',

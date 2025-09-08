@@ -28,7 +28,8 @@ export const mktSInvoiceTaxBreakdownsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.name,
+            (field) =>
+              field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.name,
           )?.id ?? '',
         position: 0,
         isVisible: true,
@@ -37,7 +38,9 @@ export const mktSInvoiceTaxBreakdownsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxPercentage,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxPercentage,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -46,7 +49,9 @@ export const mktSInvoiceTaxBreakdownsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxableAmount,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxableAmount,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -55,7 +60,9 @@ export const mktSInvoiceTaxBreakdownsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxAmount,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.taxAmount,
           )?.id ?? '',
         position: 3,
         isVisible: true,
@@ -64,7 +71,9 @@ export const mktSInvoiceTaxBreakdownsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.accountOwner,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS.accountOwner,
           )?.id ?? '',
         position: 4,
         isVisible: true,

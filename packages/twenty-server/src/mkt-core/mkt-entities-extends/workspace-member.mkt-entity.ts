@@ -253,7 +253,8 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   accountOwnerForMktSInvoices: Relation<MktSInvoiceWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoicePayments,
+    standardId:
+      WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoicePayments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Account Owner For SInvoice Payments`,
     description: msg`Account owner for SInvoice Payments`,
@@ -262,7 +263,9 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  accountOwnerForMktSInvoicePayments: Relation<MktSInvoicePaymentWorkspaceEntity[]>;
+  accountOwnerForMktSInvoicePayments: Relation<
+    MktSInvoicePaymentWorkspaceEntity[]
+  >;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceItems,
@@ -277,7 +280,8 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   accountOwnerForMktSInvoiceItems: Relation<MktSInvoiceItemWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceTaxBreakdowns,
+    standardId:
+      WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceTaxBreakdowns,
     type: RelationType.ONE_TO_MANY,
     label: msg`Account Owner For SInvoice Tax Breakdowns`,
     description: msg`Account owner for SInvoice Tax Breakdowns`,
@@ -286,10 +290,13 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  accountOwnerForMktSInvoiceTaxBreakdowns: Relation<MktSInvoiceTaxBreakdownWorkspaceEntity[]>;
+  accountOwnerForMktSInvoiceTaxBreakdowns: Relation<
+    MktSInvoiceTaxBreakdownWorkspaceEntity[]
+  >;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceMetadata,
+    standardId:
+      WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceMetadata,
     type: RelationType.ONE_TO_MANY,
     label: msg`Account Owner For SInvoice Metadata`,
     description: msg`Account owner for SInvoice Metadata`,
@@ -298,7 +305,9 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  accountOwnerForMktSInvoiceMetadata: Relation<MktSInvoiceMetadataWorkspaceEntity[]>;
+  accountOwnerForMktSInvoiceMetadata: Relation<
+    MktSInvoiceMetadataWorkspaceEntity[]
+  >;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktSInvoiceFiles,
@@ -311,7 +320,6 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   accountOwnerForMktSInvoiceFiles: Relation<MktSInvoiceFileWorkspaceEntity[]>;
-
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktTemplates,

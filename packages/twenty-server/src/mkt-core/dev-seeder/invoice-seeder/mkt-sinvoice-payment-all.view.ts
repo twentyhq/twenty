@@ -37,7 +37,9 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.paymentMethodName,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_PAYMENT_FIELD_IDS.paymentMethodName,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -46,7 +48,8 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.amount,
+            (field) =>
+              field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.amount,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -55,7 +58,8 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.currency,
+            (field) =>
+              field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.currency,
           )?.id ?? '',
         position: 3,
         isVisible: true,
@@ -64,7 +68,8 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.status,
+            (field) =>
+              field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.status,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -73,7 +78,8 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.paymentDate,
+            (field) =>
+              field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.paymentDate,
           )?.id ?? '',
         position: 5,
         isVisible: true,
@@ -82,7 +88,8 @@ export const mktSInvoicePaymentsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.description,
+            (field) =>
+              field.standardId === MKT_SINVOICE_PAYMENT_FIELD_IDS.description,
           )?.id ?? '',
         position: 6,
         isVisible: true,

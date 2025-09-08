@@ -15,7 +15,7 @@ export const mktSInvoiceAuthsAllView = (
   }
 
   return {
-      name: 'All SInvoice Auths',
+    name: 'All SInvoice Auths',
     objectMetadataId: itemObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',
@@ -37,7 +37,8 @@ export const mktSInvoiceAuthsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.username,
+            (field) =>
+              field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.username,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -46,7 +47,8 @@ export const mktSInvoiceAuthsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.expiresAt,
+            (field) =>
+              field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.expiresAt,
           )?.id ?? '',
         position: 5,
         isVisible: true,
@@ -55,7 +57,8 @@ export const mktSInvoiceAuthsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.createdBy,
+            (field) =>
+              field.standardId === MKT_SINVOICE_AUTH_FIELD_IDS.createdBy,
           )?.id ?? '',
         position: 6,
         isVisible: true,

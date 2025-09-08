@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,11 +19,14 @@ interface SeedModuleOptions {
   workspaceId?: string;
 }
 
-type SInvoicePaymentViewDefinition = ReturnType<typeof mktSInvoicePaymentsAllView>;
+type SInvoicePaymentViewDefinition = ReturnType<
+  typeof mktSInvoicePaymentsAllView
+>;
 
 @Command({
   name: 'workspace:seed:sinvoice-payment-module',
-  description: 'Seed sinvoice payment module views and data for existing workspace',
+  description:
+    'Seed sinvoice payment module views and data for existing workspace',
 })
 export class SeedSInvoicePaymentModuleCommand extends CommandRunner {
   private readonly logger = new Logger(SeedSInvoicePaymentModuleCommand.name);

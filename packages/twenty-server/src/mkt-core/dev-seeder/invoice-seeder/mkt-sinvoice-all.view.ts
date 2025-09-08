@@ -46,7 +46,8 @@ export const mktSInvoicesAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_FIELD_IDS.invoiceSeries,
+            (field) =>
+              field.standardId === MKT_SINVOICE_FIELD_IDS.invoiceSeries,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -55,7 +56,8 @@ export const mktSInvoicesAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_FIELD_IDS.paymentStatus,
+            (field) =>
+              field.standardId === MKT_SINVOICE_FIELD_IDS.paymentStatus,
           )?.id ?? '',
         position: 3,
         isVisible: true,
@@ -73,7 +75,8 @@ export const mktSInvoicesAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_FIELD_IDS.buyerAddressLine,
+            (field) =>
+              field.standardId === MKT_SINVOICE_FIELD_IDS.buyerAddressLine,
           )?.id ?? '',
         position: 5,
         isVisible: true,
@@ -82,7 +85,8 @@ export const mktSInvoicesAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_FIELD_IDS.buyerPhoneNumber,
+            (field) =>
+              field.standardId === MKT_SINVOICE_FIELD_IDS.buyerPhoneNumber,
           )?.id ?? '',
         position: 6,
         isVisible: true,
@@ -91,7 +95,8 @@ export const mktSInvoicesAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_FIELD_IDS.totalAmountWithTax,
+            (field) =>
+              field.standardId === MKT_SINVOICE_FIELD_IDS.totalAmountWithTax,
           )?.id ?? '',
         position: 7,
         isVisible: true,

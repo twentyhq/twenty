@@ -13,7 +13,10 @@ export const prefillMktSInvoiceMetadata = async (
       shouldBypassPermissionChecks: true,
     })
     .insert()
-    .into(`${schemaName}.mktSInvoiceMetadata`, MKT_SINVOICE_METADATA_DATA_SEED_COLUMNS)
+    .into(
+      `${schemaName}.mktSInvoiceMetadata`,
+      MKT_SINVOICE_METADATA_DATA_SEED_COLUMNS,
+    )
     .values(MKT_SINVOICE_METADATA_DATA_SEEDS)
     .execute();
 };

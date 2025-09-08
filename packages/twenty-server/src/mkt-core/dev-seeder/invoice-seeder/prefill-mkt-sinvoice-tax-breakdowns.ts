@@ -13,7 +13,10 @@ export const prefillMktSInvoiceTaxBreakdowns = async (
       shouldBypassPermissionChecks: true,
     })
     .insert()
-    .into(`${schemaName}.mktSInvoiceTaxBreakdown`, MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEED_COLUMNS)
+    .into(
+      `${schemaName}.mktSInvoiceTaxBreakdown`,
+      MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEED_COLUMNS,
+    )
     .values(MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEEDS)
     .execute();
 };

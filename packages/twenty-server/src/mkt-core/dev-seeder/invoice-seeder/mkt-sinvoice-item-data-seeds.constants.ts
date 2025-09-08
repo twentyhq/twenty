@@ -1,4 +1,4 @@
-import { MKT_SINVOICE_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-data-seeds.constants";
+import { MKT_SINVOICE_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-data-seeds.constants';
 
 type MktSInvoiceItemDataSeed = {
   id: string;
@@ -28,31 +28,32 @@ type MktSInvoiceItemDataSeed = {
   createdByName: string;
 };
 
-export const MKT_SINVOICE_ITEM_DATA_SEED_COLUMNS: (keyof MktSInvoiceItemDataSeed)[] = [
-  'id',
-  'name',
-  'lineNumber',
-  'selection',
-  'itemCode',
-  'itemName',
-  'unitName',
-  'quantity',
-  'unitPrice',
-  'itemTotalAmountWithoutTax',
-  'itemTotalAmountAfterDiscount',
-  'itemTotalAmountWithTax',
-  'taxPercentage',
-  'taxAmount',
-  'discount',
-  'itemDiscount',
-  'itemNote',
-  'isIncreaseItem',
-  'mktSInvoiceId',
-  'position',
-  'createdBySource',
-  'createdByWorkspaceMemberId',
-  'createdByName',
-];
+export const MKT_SINVOICE_ITEM_DATA_SEED_COLUMNS: (keyof MktSInvoiceItemDataSeed)[] =
+  [
+    'id',
+    'name',
+    'lineNumber',
+    'selection',
+    'itemCode',
+    'itemName',
+    'unitName',
+    'quantity',
+    'unitPrice',
+    'itemTotalAmountWithoutTax',
+    'itemTotalAmountAfterDiscount',
+    'itemTotalAmountWithTax',
+    'taxPercentage',
+    'taxAmount',
+    'discount',
+    'itemDiscount',
+    'itemNote',
+    'isIncreaseItem',
+    'mktSInvoiceId',
+    'position',
+    'createdBySource',
+    'createdByWorkspaceMemberId',
+    'createdByName',
+  ];
 
 export const MKT_SINVOICE_ITEM_DATA_SEEDS_IDS = {
   ID_1: 'ee2ca168-62e1-4043-ae84-8cc96fd54080',

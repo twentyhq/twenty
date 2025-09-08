@@ -262,7 +262,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   sumOfTotalLineAmountWithoutTax?: number;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.totalAmountAfterDiscount,
     type: FieldMetadataType.NUMBER,
@@ -272,7 +272,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   totalAmountAfterDiscount?: number;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.totalAmountWithoutTax,
     type: FieldMetadataType.NUMBER,
@@ -282,7 +282,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   totalAmountWithoutTax?: number;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.totalTaxAmount,
     type: FieldMetadataType.NUMBER,
@@ -302,7 +302,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   totalAmountWithTax?: number;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.totalAmountWithTaxInWords,
     type: FieldMetadataType.TEXT,
@@ -312,7 +312,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   totalAmountWithTaxInWords?: string;
-  
+
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.discountAmount,
     type: FieldMetadataType.NUMBER,

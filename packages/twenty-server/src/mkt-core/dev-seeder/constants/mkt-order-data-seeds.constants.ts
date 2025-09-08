@@ -14,7 +14,7 @@ type MktOrderDataSeed = {
   note: string;
   requireContract: boolean;
   sInvoiceStatus: SINVOICE_STATUS;
-  
+
   createdBySource: string;
   createdByWorkspaceMemberId: string | null;
   createdByName: string;

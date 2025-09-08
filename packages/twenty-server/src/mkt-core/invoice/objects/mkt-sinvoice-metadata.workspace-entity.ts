@@ -31,9 +31,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 const TABLE_NAME = 'mktSInvoiceMetadata';
 const NAME_FIELD_NAME = 'name';
 
-export const SEARCH_FIELDS_FOR_MKT_SINVOICE_METADATA: FieldTypeAndNameMetadata[] = [
-  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
+export const SEARCH_FIELDS_FOR_MKT_SINVOICE_METADATA: FieldTypeAndNameMetadata[] =
+  [{ name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT }];
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktSInvoiceMetadata,

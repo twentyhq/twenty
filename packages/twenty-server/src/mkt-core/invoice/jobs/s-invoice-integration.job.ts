@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -25,15 +25,19 @@ export class SInvoiceIntegrationJob {
 
   @Process(SInvoiceIntegrationJob.name)
   async handle(data: SInvoiceIntegrationJobData): Promise<void> {
-    this.logger.log(`[S-INVOICE JOB] Starting S-Invoice integration job for order: ${data.orderId}, workspace: ${data.workspaceId}`);
-    this.logger.log(`[S-INVOICE JOB] Job data received: ${JSON.stringify(data)}`);
+    this.logger.log(
+      `[S-INVOICE JOB] Starting S-Invoice integration job for order: ${data.orderId}, workspace: ${data.workspaceId}`,
+    );
+    this.logger.log(
+      `[S-INVOICE JOB] Job data received: ${JSON.stringify(data)}`,
+    );
 
     try {
-      this.logger.log(`[S-INVOICE JOB] Calling syncSInvoice service for order: ${data.orderId}`);
-      
-      await this.sInvoiceIntegrationService.syncSInvoice(
-        data.orderId,
+      this.logger.log(
+        `[S-INVOICE JOB] Calling syncSInvoice service for order: ${data.orderId}`,
       );
+
+      await this.sInvoiceIntegrationService.syncSInvoice(data.orderId);
 
       this.logger.log(
         `[S-INVOICE JOB] Successfully completed S-Invoice integration for order: ${data.orderId}`,
@@ -43,7 +47,10 @@ export class SInvoiceIntegrationJob {
         `[S-INVOICE JOB] Failed to process S-Invoice integration for order: ${data.orderId}`,
         error,
       );
-      this.logger.error(`[S-INVOICE JOB] Error details: ${error.message}`, error.stack);
+      this.logger.error(
+        `[S-INVOICE JOB] Error details: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

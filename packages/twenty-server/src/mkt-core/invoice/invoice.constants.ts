@@ -1,4 +1,7 @@
-import { FieldMetadataComplexOption,TagColor } from "src/engine/metadata-modules/field-metadata/dtos/options.input";
+import {
+  FieldMetadataComplexOption,
+  TagColor,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export type CreateInvoiceResponse = {
   transactionUuid?: string;
@@ -56,7 +59,7 @@ export type sInvoicePayload = {
     cusGetInvoiceRight: boolean;
     invoiceIssuedDate: number | null;
     transactionUuid: string | null;
-  },
+  };
   buyerInfo: {
     buyerName: string;
     buyerLegalName: string | null;
@@ -67,10 +70,10 @@ export type sInvoicePayload = {
     buyerIdNo: string | null;
     buyerIdType: string | null;
     buyerNotGetInvoice: string;
-  },
+  };
   payments: {
     paymentMethodName: string;
-  }[],
+  }[];
   itemInfo: {
     lineNumber: number;
     selection: number;
@@ -88,12 +91,12 @@ export type sInvoicePayload = {
     itemDiscount: any | null;
     itemNote: string | null;
     isIncreaseItem: boolean | null;
-  }[],
+  }[];
   taxBreakdowns: {
     taxPercentage: number;
     taxableAmount: number;
     taxAmount: number;
-  }[],
+  }[];
   summarizeInfo: {
     sumOfTotalLineAmountWithoutTax: number;
     totalAmountAfterDiscount: number;
@@ -102,13 +105,13 @@ export type sInvoicePayload = {
     totalAmountWithTax: number;
     totalAmountWithTaxInWords: string | null;
     discountAmount: number;
-  },
+  };
   metadata: {
     keyTag: string;
     stringValue: string;
     valueType: string;
     keyLabel: string;
-  }[],
+  }[];
 };
 
 export type GetInvoiceFileResponse = {
@@ -164,8 +167,8 @@ export const SINVOICE_FILE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
     label: 'ERROR',
     color: 'gray' as TagColor,
     position: 4,
-  }
-]
+  },
+];
 
 export enum SINVOICE_FILE_TYPE {
   PDF = 'PDF',
@@ -185,4 +188,4 @@ export const SINVOICE_FILE_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
     color: 'green' as TagColor,
     position: 1,
   },
-]
+];

@@ -80,4 +80,4 @@ export const SINVOICE_STATUS_OPTIONS = [
     color: 'green' as TagColor,
     position: 4,
   },
-]
+];

@@ -386,7 +386,7 @@ export const MKT_SINVOICE_FIELD_IDS = {
   mktSInvoiceMetadata: '34af692b-5ae6-473d-bd9c-ca873b5e96b8',
   mktSInvoiceFiles: '2e61ea3d-df09-45bb-b8fd-57369235cc93',
   mktOrder: '9c7e7a37-86c3-4374-9ec7-283a6f076f8a',
-  
+
   //summarizeInfo
   sumOfTotalLineAmountWithoutTax: '53e5992f-0aa3-4d20-98bf-1db3b0e2ed3a',
   totalAmountAfterDiscount: '53359824-1975-4116-a3a0-c6b0837c694f',
@@ -436,7 +436,6 @@ export const MKT_SINVOICE_PAYMENT_FIELD_IDS = {
   timelineActivities: '31d10198-139f-422c-b5f8-cfe5984472c5',
   searchVector: 'ffdf4ab1-f0d4-4302-8b20-83b44b0821bf',
 };
-
 
 export const MKT_SINVOICE_ITEM_FIELD_IDS = {
   //fields
@@ -510,13 +509,13 @@ export const MKT_SINVOICE_FILE_FIELD_IDS = {
   //fields
   name: '376ccf4e-750d-46fa-bbad-e8c539b681bd',
   //input fields
-  supplierTaxCode:"5cd5a395-9268-469e-baad-06dbf359a42d",
+  supplierTaxCode: '5cd5a395-9268-469e-baad-06dbf359a42d',
   invoiceNo: 'bd8bf517-634d-4e81-8132-864d39b43b4b',
   templateCode: '4e0cd8ab-0797-4f08-9b63-b1ab80a90d47',
   fileType: '92112290-485e-4d77-83e6-d7a358cfd693',
   //download fields
   fileName: '241a77a4-2dfd-4c6e-8e6b-743a8be83698',
-    //fileType
+  //fileType
   fileSize: '187a9e86-d198-443c-bf0a-8e1ae72499c0',
   filePath: '232e077e-fec8-44c9-8aa7-a1bb4bed1678',
   downloadUrl: 'dec589e7-a389-4a31-b493-011ecd4cdf93',
@@ -691,7 +690,8 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktSInvoices: 'b99f2abd-47b5-49e3-ad51-188179489dd9',
   accountOwnerForMktSInvoicePayments: '0506abb4-0afc-4c2d-8341-d284643878eb',
   accountOwnerForMktSInvoiceItems: '8070950e-f1d3-4fc3-9282-6efce02f44d7',
-  accountOwnerForMktSInvoiceTaxBreakdowns: '84fb2cfe-172c-470f-8417-164869884253',
+  accountOwnerForMktSInvoiceTaxBreakdowns:
+    '84fb2cfe-172c-470f-8417-164869884253',
   accountOwnerForMktSInvoiceMetadata: '1a930b9c-fc8e-49b6-a430-d765bfc07921',
   accountOwnerForMktSInvoiceFiles: 'f2a3e8c4-a763-42b6-9a8b-b0fab2c583f4',
   //kpi system

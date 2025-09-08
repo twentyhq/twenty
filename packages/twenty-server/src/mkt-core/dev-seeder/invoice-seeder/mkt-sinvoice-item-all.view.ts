@@ -37,7 +37,8 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.selection,
+            (field) =>
+              field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.selection,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -46,7 +47,8 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.itemName,
+            (field) =>
+              field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.itemName,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -55,7 +57,8 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.quantity,
+            (field) =>
+              field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.quantity,
           )?.id ?? '',
         position: 3,
         isVisible: true,
@@ -64,7 +67,9 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.itemTotalAmountWithTax,
+            (field) =>
+              field.standardId ===
+              MKT_SINVOICE_ITEM_FIELD_IDS.itemTotalAmountWithTax,
           )?.id ?? '',
         position: 4,
         isVisible: true,
@@ -73,7 +78,8 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.taxPercentage,
+            (field) =>
+              field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.taxPercentage,
           )?.id ?? '',
         position: 5,
         isVisible: true,
@@ -82,7 +88,8 @@ export const mktSInvoiceItemsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.itemNote,
+            (field) =>
+              field.standardId === MKT_SINVOICE_ITEM_FIELD_IDS.itemNote,
           )?.id ?? '',
         position: 6,
         isVisible: true,

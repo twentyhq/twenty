@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,14 +19,19 @@ interface SeedModuleOptions {
   workspaceId?: string;
 }
 
-type SInvoiceTaxBreakdownViewDefinition = ReturnType<typeof mktSInvoiceTaxBreakdownsAllView>;
+type SInvoiceTaxBreakdownViewDefinition = ReturnType<
+  typeof mktSInvoiceTaxBreakdownsAllView
+>;
 
 @Command({
   name: 'workspace:seed:sinvoice-tax-breakdown-module',
-  description: 'Seed sinvoice tax breakdown module views and data for existing workspace',
+  description:
+    'Seed sinvoice tax breakdown module views and data for existing workspace',
 })
 export class SeedSInvoiceTaxBreakdownModuleCommand extends CommandRunner {
-  private readonly logger = new Logger(SeedSInvoiceTaxBreakdownModuleCommand.name);
+  private readonly logger = new Logger(
+    SeedSInvoiceTaxBreakdownModuleCommand.name,
+  );
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -170,7 +175,7 @@ export class SeedSInvoiceTaxBreakdownModuleCommand extends CommandRunner {
 
         if (existingView) {
           this.logger.log(
-              `SInvoice tax breakdown view already exists for workspace ${workspaceId}. Deleting and recreating...`,
+            `SInvoice tax breakdown view already exists for workspace ${workspaceId}. Deleting and recreating...`,
           );
 
           // Delete existing view (cascade will delete viewFields)
@@ -311,7 +316,9 @@ export class SeedSInvoiceTaxBreakdownModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ SInvoice tax breakdown view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ SInvoice tax breakdown view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

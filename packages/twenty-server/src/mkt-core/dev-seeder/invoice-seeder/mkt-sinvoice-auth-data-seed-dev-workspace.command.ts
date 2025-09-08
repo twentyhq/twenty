@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +23,8 @@ type SInvoiceAuthViewDefinition = ReturnType<typeof mktSInvoiceAuthsAllView>;
 
 @Command({
   name: 'workspace:seed:sinvoice-auth-module',
-  description: 'Seed sinvoice auth module views and data for existing workspace',
+  description:
+    'Seed sinvoice auth module views and data for existing workspace',
 })
 export class SeedSInvoiceAuthModuleCommand extends CommandRunner {
   private readonly logger = new Logger(SeedSInvoiceAuthModuleCommand.name);
@@ -310,7 +311,9 @@ export class SeedSInvoiceAuthModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ SInvoice Auth view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ SInvoice Auth view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

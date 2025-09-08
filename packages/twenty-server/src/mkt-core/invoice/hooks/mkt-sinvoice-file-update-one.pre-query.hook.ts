@@ -1,8 +1,10 @@
-import { Injectable,Logger } from '@nestjs/common';
-import axios from 'axios';
+import { Injectable, Logger } from '@nestjs/common';
+
 import { createHmac } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import axios from 'axios';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -11,7 +13,11 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { GetInvoiceFileResponse,SINVOICE_FILE_STATUS,SINVOICE_FILE_TYPE } from 'src/mkt-core/invoice/invoice.constants';
+import {
+  GetInvoiceFileResponse,
+  SINVOICE_FILE_STATUS,
+  SINVOICE_FILE_TYPE,
+} from 'src/mkt-core/invoice/invoice.constants';
 import { MktSInvoiceFileWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-file.workspace-entity';
 
 @Injectable()
@@ -19,8 +25,10 @@ import { MktSInvoiceFileWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt
 export class MktSInvoiceFileUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
-  private readonly logger = new Logger(MktSInvoiceFileUpdateOnePreQueryHook.name);
-  
+  private readonly logger = new Logger(
+    MktSInvoiceFileUpdateOnePreQueryHook.name,
+  );
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -48,11 +56,12 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
 
     try {
       // Get current file data to check if we have required information
-      const fileRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceFileWorkspaceEntity>(
-        workspaceId,
-        'mktSInvoiceFile',
-        { shouldBypassPermissionChecks: true },
-      );
+      const fileRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceFileWorkspaceEntity>(
+          workspaceId,
+          'mktSInvoiceFile',
+          { shouldBypassPermissionChecks: true },
+        );
 
       const currentFile = await fileRepository.findOne({
         where: { id: fileId },
@@ -60,18 +69,26 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
 
       if (!currentFile) {
         this.logger.warn(`SInvoiceFile not found with ID: ${fileId}`);
+
         return payload;
       }
 
       // Check if we have the required information for API call
-      if (!currentFile.supplierTaxCode || !currentFile.invoiceNo || !currentFile.templateCode) {
-        this.logger.warn(`SInvoiceFile missing required fields for API call: ${fileId}`);
-        
+      if (
+        !currentFile.supplierTaxCode ||
+        !currentFile.invoiceNo ||
+        !currentFile.templateCode
+      ) {
+        this.logger.warn(
+          `SInvoiceFile missing required fields for API call: ${fileId}`,
+        );
+
         // Update with error status
         const errorInput = {
           ...input,
           status: SINVOICE_FILE_STATUS.ERROR,
-          errorMessage: 'Missing required fields: supplierTaxCode, invoiceNo, or templateCode',
+          errorMessage:
+            'Missing required fields: supplierTaxCode, invoiceNo, or templateCode',
         };
 
         return {
@@ -90,8 +107,11 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
 
       if (apiResponse.errorCode === 200 && apiResponse.fileToBytes) {
         // Save file to server filesystem
-        const savedFileInfo = await this.saveFileToServer(apiResponse, currentFile);
-        
+        const savedFileInfo = await this.saveFileToServer(
+          apiResponse,
+          currentFile,
+        );
+
         if (savedFileInfo) {
           // Success - update with file information
           const updatedInput = {
@@ -104,7 +124,9 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
             errorMessage: undefined,
           };
 
-          this.logger.log(`[S-INVOICE FILE HOOK] Successfully retrieved and saved file for SInvoiceFile: ${fileId}`);
+          this.logger.log(
+            `[S-INVOICE FILE HOOK] Successfully retrieved and saved file for SInvoiceFile: ${fileId}`,
+          );
 
           return {
             ...payload,
@@ -128,20 +150,27 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
         const errorInput = {
           ...input,
           status: SINVOICE_FILE_STATUS.FAILED,
-          errorMessage: apiResponse.description || 'Failed to retrieve invoice file from Viettel API',
+          errorMessage:
+            apiResponse.description ||
+            'Failed to retrieve invoice file from Viettel API',
         };
 
-        this.logger.error(`[S-INVOICE FILE HOOK] API error for SInvoiceFile: ${fileId}`, apiResponse);
+        this.logger.error(
+          `[S-INVOICE FILE HOOK] API error for SInvoiceFile: ${fileId}`,
+          apiResponse,
+        );
 
         return {
           ...payload,
           data: errorInput,
         };
       }
-
     } catch (error) {
-      this.logger.error(`[S-INVOICE FILE HOOK] Failed to process SInvoiceFile: ${fileId}`, error);
-      
+      this.logger.error(
+        `[S-INVOICE FILE HOOK] Failed to process SInvoiceFile: ${fileId}`,
+        error,
+      );
+
       // Update with error status
       const errorInput = {
         ...input,
@@ -162,10 +191,12 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
     templateCode: string;
     fileType: string;
   }): Promise<GetInvoiceFileResponse> {
-    const baseUrl = process.env.S_INVOICE_BASE_URL || 'https://api-vinvoice.viettel.vn';
+    const baseUrl =
+      process.env.S_INVOICE_BASE_URL || 'https://api-vinvoice.viettel.vn';
     const apiUrl = `${baseUrl}/services/einvoiceapplication/api/InvoiceAPI/InvoiceUtilsWS/getInvoiceRepresentationFile`;
-    const authorization = process.env.S_INVOICE_AUTHORIZATION || 'Basic 123456abcdeg123456abcdeg';
-    
+    const authorization =
+      process.env.S_INVOICE_AUTHORIZATION || 'Basic 123456abcdeg123456abcdeg';
+
     const requestData = {
       supplierTaxCode: request.supplierTaxCode,
       invoiceNo: request.invoiceNo,
@@ -173,23 +204,25 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
       fileType: request.fileType,
     };
 
-    this.logger.log(`[VIETTEL API] Calling API with data: ${JSON.stringify(requestData)}`);
+    this.logger.log(
+      `[VIETTEL API] Calling API with data: ${JSON.stringify(requestData)}`,
+    );
 
     try {
       const response = await axios.post(apiUrl, requestData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': authorization,
+          Authorization: authorization,
         },
         timeout: 30000, // 30 seconds timeout
       });
 
       this.logger.log(`[VIETTEL API] Response status: ${response.status}`);
-      
+
       return response.data;
     } catch (error) {
       this.logger.error(`[VIETTEL API] API call failed:`, error);
-      
+
       // Return error response in expected format
       return {
         errorCode: error.response?.status || 500,
@@ -202,13 +235,20 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
   private async saveFileToServer(
     apiResponse: GetInvoiceFileResponse,
     currentFile: MktSInvoiceFileWorkspaceEntity,
-  ): Promise<{ fileName: string; fileSize: number; filePath: string; downloadUrl: string } | null> {
+  ): Promise<{
+    fileName: string;
+    fileSize: number;
+    filePath: string;
+    downloadUrl: string;
+  } | null> {
     try {
       // Create uploads directory if it doesn't exist
-      const uploadsDir = process.env.FILE_UPLOAD_PATH || path.join(process.cwd(), 'uploads', 'invoice-files');
-      
+      const uploadsDir =
+        process.env.FILE_UPLOAD_PATH ||
+        path.join(process.cwd(), 'uploads', 'invoice-files');
+
       this.logger.log(`[FILE SAVE] Upload directory: ${uploadsDir}`);
-      
+
       if (!fs.existsSync(uploadsDir)) {
         this.logger.log(`[FILE SAVE] Creating directory: ${uploadsDir}`);
         fs.mkdirSync(uploadsDir, { recursive: true });
@@ -224,22 +264,32 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
 
       // Decode base64 content and save to file
       const fileBuffer = Buffer.from(apiResponse.fileToBytes, 'base64');
+
       fs.writeFileSync(filePath, fileBuffer);
 
       // Verify file was created
       if (fs.existsSync(filePath)) {
         const stats = fs.statSync(filePath);
-        this.logger.log(`[FILE SAVE] File created successfully. Size: ${stats.size} bytes`);
+
+        this.logger.log(
+          `[FILE SAVE] File created successfully. Size: ${stats.size} bytes`,
+        );
       } else {
         this.logger.error(`[FILE SAVE] File was not created at: ${filePath}`);
+
         return null;
       }
 
       // Generate time-limited download URL
-      const secretKey = process.env.FILE_DOWNLOAD_SECRET || 'default-secret-key';
+      const secretKey =
+        process.env.FILE_DOWNLOAD_SECRET || 'default-secret-key';
       const expiresIn = parseInt(process.env.FILE_DOWNLOAD_EXPIRES || '30'); // 30 seconds for testing
       const expires = Math.floor(Date.now() / 1000) + expiresIn;
-      const signature = this.generateSignature(fileName, expires.toString(), secretKey);
+      const signature = this.generateSignature(
+        fileName,
+        expires.toString(),
+        secretKey,
+      );
       const downloadUrl = `/api/files/invoice-files/${fileName}?expires=${expires}&signature=${signature}`;
 
       this.logger.log(`[FILE SAVE] Successfully saved file: ${filePath}`);
@@ -252,12 +302,18 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
       };
     } catch (error) {
       this.logger.error(`[FILE SAVE] Failed to save file:`, error);
+
       return null;
     }
   }
 
-  private generateSignature(fileName: string, expires: string, secretKey: string): string {
+  private generateSignature(
+    fileName: string,
+    expires: string,
+    secretKey: string,
+  ): string {
     const data = `${fileName}:${expires}`;
+
     return createHmac('sha256', secretKey).update(data).digest('hex');
   }
 }
