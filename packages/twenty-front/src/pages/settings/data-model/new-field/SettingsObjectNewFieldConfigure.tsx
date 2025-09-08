@@ -20,7 +20,7 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -74,6 +74,14 @@ export const SettingsObjectNewFieldConfigure = () => {
     },
   });
 
+  console.log(activeObjectMetadataItem)
+
+  const name = useWatch({
+    control: formConfig.control,
+    name: 'name',
+  });
+
+
   useEffect(() => {
     formConfig.setValue(
       'icon',
@@ -113,7 +121,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting;
+  const canSave = isValid && !isSubmitting  && name.trim().length > 0;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
@@ -177,6 +185,7 @@ export const SettingsObjectNewFieldConfigure = () => {
     }
   };
   if (!activeObjectMetadataItem) return null;
+
 
   return (
     <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
