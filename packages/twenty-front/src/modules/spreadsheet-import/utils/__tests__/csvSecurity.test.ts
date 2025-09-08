@@ -1,24 +1,10 @@
-import {
-  cleanZWJFromImportedValue,
-  containsCSVProtectionZWJ,
-  CSV_DANGEROUS_CHARACTERS,
-  CSV_INJECTION_PREVENTION_ZWJ,
-  sanitizeValueForCSVExport,
-} from '../csvSecurity';
+import { CSV_DANGEROUS_CHARACTERS } from '@/spreadsheet-import/constants/CsvDangerousCharacters';
+import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/constants/CsvInjectionPreventionZwj';
+import { cleanZWJFromImportedValue } from '../cleanZWJFromImportedValue';
+import { containsCSVProtectionZWJ } from '../containsCSVProtectionZWJ';
+import { sanitizeValueForCSVExport } from '../sanitizeValueForCSVExport';
 
 describe('csvSecurity', () => {
-  describe('CSV_INJECTION_PREVENTION_ZWJ constant', () => {
-    it('should be the Zero-Width Joiner character', () => {
-      expect(CSV_INJECTION_PREVENTION_ZWJ).toBe('\u200D');
-      expect(CSV_INJECTION_PREVENTION_ZWJ.length).toBe(1);
-    });
-
-    it('should be invisible when rendered', () => {
-      // ZWJ should not add visible width
-      expect(CSV_INJECTION_PREVENTION_ZWJ).toMatch(/^\u200D$/);
-    });
-  });
-
   describe('CSV_DANGEROUS_CHARACTERS regex', () => {
     it('should match dangerous characters at the start of strings', () => {
       expect(CSV_DANGEROUS_CHARACTERS.test('=formula')).toBe(true);

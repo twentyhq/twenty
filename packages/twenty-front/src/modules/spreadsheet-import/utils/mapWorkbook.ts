@@ -1,4 +1,4 @@
-import { cleanZWJFromImportedValue } from '@/spreadsheet-import/utils/csvSecurity';
+import { cleanZWJFromImportedValue } from '@/spreadsheet-import/utils/cleanZWJFromImportedValue';
 import { utils, type WorkBook } from 'xlsx-ugnis';
 
 export const mapWorkbook = (workbook: WorkBook, sheetName?: string) => {

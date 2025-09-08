@@ -94,7 +94,7 @@ const calculateTotalPrice = (basePrice: number): number => {
 ## Security Patterns
 ```typescript
 // ✅ CSV Export: Always apply security first, then formatting
-const safeValue = escapeCSVValue(sanitizeValueForCSVExport(userInput));
+const safeValue = formatValueForCSV(sanitizeValueForCSVExport(userInput));
 
 // ✅ Input validation before processing
 const sanitizedInput = validateAndSanitize(userInput);

