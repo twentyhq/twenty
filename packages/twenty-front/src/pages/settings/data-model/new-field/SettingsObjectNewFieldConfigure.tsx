@@ -74,13 +74,10 @@ export const SettingsObjectNewFieldConfigure = () => {
     },
   });
 
-  console.log(activeObjectMetadataItem)
-
   const name = useWatch({
     control: formConfig.control,
     name: 'name',
   });
-
 
   useEffect(() => {
     formConfig.setValue(
@@ -121,7 +118,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting  && name.trim().length > 0;
+  const canSave = isValid && !isSubmitting && name.trim().length > 0;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
@@ -185,7 +182,6 @@ export const SettingsObjectNewFieldConfigure = () => {
     }
   };
   if (!activeObjectMetadataItem) return null;
-
 
   return (
     <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
