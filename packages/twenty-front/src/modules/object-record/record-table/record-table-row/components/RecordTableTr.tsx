@@ -12,25 +12,23 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 import { forwardRef, type ReactNode } from 'react';
 
-const StyledTr = styled.tr<{
+const StyledTr = styled.div<{
   isDragging: boolean;
 }>`
-  border: ${({ isDragging, theme }) =>
-    isDragging
-      ? `1px solid ${theme.border.color.medium}`
-      : '1px solid transparent'};
+  border-top: ${({ isDragging, theme }) =>
+    isDragging ? `1px solid ${theme.border.color.medium}` : 'none'};
 
-  border-left: none;
-  position: relative;
+  display: flex;
+  flex-direction: row;
 
   &[data-next-row-active-or-focused='true'] {
-    td {
+    div.table-cell {
       border-bottom: none;
     }
   }
 
   &[data-focused='true'] {
-    td {
+    div.table-cell {
       &:not(:first-of-type) {
         border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
         border-top: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -51,7 +49,7 @@ const StyledTr = styled.tr<{
   }
 
   &[data-active='true'] {
-    td {
+    div.table-cell {
       &:not(:first-of-type) {
         border-bottom: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
         border-top: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
@@ -145,6 +143,7 @@ export const RecordTableTr = forwardRef<
       }}
     >
       <StyledTr
+        className="table-row"
         data-virtualized-id={recordId}
         isDragging={isDragging}
         ref={ref}

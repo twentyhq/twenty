@@ -5,7 +5,7 @@ import { ThemeContext } from 'twenty-ui/theme';
 
 export const DEFAULT_RECORD_TABLE_TD_WIDTH = 32;
 
-const StyledTd = styled.td<{
+const StyledTd = styled.div<{
   backgroundColor: string;
   borderColor: string;
   isDragging?: boolean;
@@ -74,6 +74,7 @@ export const RecordTableTd = ({
       width={width}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
+      className="table-cell"
     >
       {children}
     </StyledTd>
