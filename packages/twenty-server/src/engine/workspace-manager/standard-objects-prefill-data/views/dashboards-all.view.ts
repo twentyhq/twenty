@@ -42,7 +42,7 @@ export const dashboardsAllView = (
         fieldMetadataId:
           dashboardObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+              field.standardId === DASHBOARD_STANDARD_FIELD_IDS.createdBy,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -52,9 +52,19 @@ export const dashboardsAllView = (
         fieldMetadataId:
           dashboardObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
         position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          dashboardObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+          )?.id ?? '',
+        position: 3,
         isVisible: true,
         size: 150,
       },
