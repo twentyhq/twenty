@@ -8,13 +8,13 @@ import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-a
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
