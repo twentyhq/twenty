@@ -12,22 +12,38 @@ jest.useFakeTimers();
 
 describe('generateCsv', () => {
   it('generates a csv with formatted headers', async () => {
-    const columns = [
-      { label: 'Foo', metadata: { fieldName: 'foo' } },
-      { label: 'Empty', metadata: { fieldName: 'empty' } },
+    const columns: Pick<
+      ColumnDefinition<FieldMetadata>,
+      'size' | 'label' | 'type' | 'metadata'
+    >[] = [
+      {
+        label: 'Foo',
+        size: 100,
+        type: FieldMetadataType.TEXT,
+        metadata: { fieldName: 'foo' },
+      },
+      {
+        label: 'Empty',
+        size: 100,
+        type: FieldMetadataType.TEXT,
+        metadata: { fieldName: 'empty' },
+      },
       {
         label: 'Nested link field',
+        size: 150,
         type: FieldMetadataType.LINKS,
         metadata: { fieldName: 'nestedLinkField' },
       },
       {
         label: 'Relation',
+        size: 120,
+        type: FieldMetadataType.TEXT,
         metadata: {
           fieldName: 'relation',
           relationType: RelationType.MANY_TO_ONE,
         },
       },
-    ] as ColumnDefinition<FieldMetadata>[];
+    ];
     const rows = [
       {
         id: '1',
@@ -53,10 +69,23 @@ describe('generateCsv', () => {
 
   describe('CSV Injection Prevention with ZWJ', () => {
     it('prevents formula injection with equals sign using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Name', metadata: { fieldName: 'name' } },
-        { label: 'Formula', metadata: { fieldName: 'formula' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Name',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'name' },
+        },
+        {
+          label: 'Formula',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'formula' },
+        },
+      ];
 
       const rows = [
         {
@@ -80,9 +109,17 @@ describe('generateCsv', () => {
     });
 
     it('prevents formula injection with plus sign using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Calculation', metadata: { fieldName: 'calculation' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Calculation',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'calculation' },
+        },
+      ];
 
       const rows = [
         {
@@ -98,9 +135,17 @@ describe('generateCsv', () => {
     });
 
     it('prevents formula injection with minus sign using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Calculation', metadata: { fieldName: 'calculation' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Calculation',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'calculation' },
+        },
+      ];
 
       const rows = [
         {
@@ -116,9 +161,17 @@ describe('generateCsv', () => {
     });
 
     it('prevents formula injection with at symbol using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Reference', metadata: { fieldName: 'reference' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Reference',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'reference' },
+        },
+      ];
 
       const rows = [
         {
@@ -134,9 +187,17 @@ describe('generateCsv', () => {
     });
 
     it('prevents formula injection with tab character using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Data', metadata: { fieldName: 'data' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Data',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'data' },
+        },
+      ];
 
       const rows = [
         {
@@ -154,9 +215,17 @@ describe('generateCsv', () => {
     });
 
     it('prevents formula injection with carriage return using ZWJ prefix', () => {
-      const columns = [
-        { label: 'Data', metadata: { fieldName: 'data' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Data',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'data' },
+        },
+      ];
 
       const rows = [
         {
@@ -174,11 +243,29 @@ describe('generateCsv', () => {
     });
 
     it('handles multiple injection attempts in different fields with ZWJ prefix', () => {
-      const columns = [
-        { label: 'Field1', metadata: { fieldName: 'field1' } },
-        { label: 'Field2', metadata: { fieldName: 'field2' } },
-        { label: 'Field3', metadata: { fieldName: 'field3' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Field1',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'field1' },
+        },
+        {
+          label: 'Field2',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'field2' },
+        },
+        {
+          label: 'Field3',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'field3' },
+        },
+      ];
 
       const rows = [
         {
@@ -205,11 +292,29 @@ describe('generateCsv', () => {
     });
 
     it('preserves legitimate content that does not start with dangerous characters', () => {
-      const columns = [
-        { label: 'Name', metadata: { fieldName: 'name' } },
-        { label: 'Email', metadata: { fieldName: 'email' } },
-        { label: 'Description', metadata: { fieldName: 'description' } },
-      ] as ColumnDefinition<FieldMetadata>[];
+      const columns: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'size' | 'label' | 'type' | 'metadata'
+      >[] = [
+        {
+          label: 'Name',
+          size: 100,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'name' },
+        },
+        {
+          label: 'Email',
+          size: 120,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'email' },
+        },
+        {
+          label: 'Description',
+          size: 200,
+          type: FieldMetadataType.TEXT,
+          metadata: { fieldName: 'description' },
+        },
+      ];
 
       const rows = [
         {

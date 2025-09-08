@@ -11,8 +11,9 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
