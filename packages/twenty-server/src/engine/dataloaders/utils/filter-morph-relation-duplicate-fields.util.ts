@@ -1,4 +1,4 @@
-export const filterMorphRelationDuplicateFieldsDTO = <
+export const filterMorphRelationDuplicateFields = <
   T extends { createdAt: Date; morphId: string | null },
 >(
   fields: T[],

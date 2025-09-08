@@ -161,7 +161,12 @@ export class FieldMetadataResolver {
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
     @AuthWorkspace() workspace: Workspace,
-    @Parent() { id: fieldMetadataId, objectMetadataId }: FieldMetadataDTO,
+
+    @Parent()
+    {
+      id: fieldMetadataId,
+      objectMetadataId,
+    }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null> {
     try {
@@ -178,7 +183,7 @@ export class FieldMetadataResolver {
   @ResolveField(() => [RelationDTO], { nullable: true })
   async morphRelations(
     @AuthWorkspace() workspace: Workspace,
-    @Parent() { id: fieldMetadataId, objectMetadataId }: FieldMetadataDTO,
+    @Parent() { id: fieldMetadataId, objectMetadataId }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO[] | null> {
     try {

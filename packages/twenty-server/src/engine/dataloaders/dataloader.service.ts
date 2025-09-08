@@ -9,12 +9,10 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
-import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
@@ -71,8 +69,6 @@ export type ObjectMetadataLoaderPayload = {
 export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
-    private readonly fieldMetadataRelationService: FieldMetadataRelationService,
-    private readonly fieldMetadataMorphRelationService: FieldMetadataMorphRelationService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
@@ -332,7 +328,7 @@ export class DataloaderService {
           });
 
           const filteredFieldMetadataEntities =
-            filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
+            filterMorphRelationDuplicateFields<FieldMetadataEntity>(
               overriddenFieldMetadataEntities,
             );
 

@@ -1,7 +1,10 @@
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { type EachTestingContext } from 'twenty-shared/testing';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -123,48 +126,52 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     },
   ];
 
-  it.each(eachTestingContextArray)('$title', async ({ context }) => {
-    const contextPayload =
-      typeof context === 'function'
-        ? context({
-            objectMetadataId: createdObjectMetadataOpportunityId,
-            firstTargetObjectMetadataId: createdObjectMetadataPersonId,
-            secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
-          })
-        : context;
+  it.each(eachTestingContextFilter(eachTestingContextArray))(
+    '$title',
+    async ({ context }) => {
+      const contextPayload =
+        typeof context === 'function'
+          ? context({
+              objectMetadataId: createdObjectMetadataOpportunityId,
+              firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+              secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
+            })
+          : context;
 
-    const createdField = await createMorphRelationBetweenObjects({
-      objectMetadataId: contextPayload.objectMetadataId,
-      firstTargetObjectMetadataId: contextPayload.firstTargetObjectMetadataId,
-      secondTargetObjectMetadataId: contextPayload.secondTargetObjectMetadataId,
-      type: contextPayload.type,
-      relationType: contextPayload.relationType,
-    });
+      const createdField = await createMorphRelationBetweenObjects({
+        objectMetadataId: contextPayload.objectMetadataId,
+        firstTargetObjectMetadataId: contextPayload.firstTargetObjectMetadataId,
+        secondTargetObjectMetadataId:
+          contextPayload.secondTargetObjectMetadataId,
+        type: contextPayload.type,
+        relationType: contextPayload.relationType,
+      });
 
-    expect(createdField.id).toBeDefined();
+      expect(createdField.id).toBeDefined();
 
-    const morphRelationTargetIds = createdField.morphRelations.map(
-      (relation) => relation.targetObjectMetadata.id,
-    );
-
-    expect(morphRelationTargetIds).toContain(
-      contextPayload.firstTargetObjectMetadataId,
-    );
-    expect(morphRelationTargetIds).toContain(
-      contextPayload.secondTargetObjectMetadataId,
-    );
-
-    const isManyToOne =
-      contextPayload.relationType === RelationType.MANY_TO_ONE;
-
-    if (isManyToOne) {
-      expect(createdField.settings?.joinColumnName).toBe(
-        'ownerPersonForMorphRelationId',
+      const morphRelationTargetIds = createdField.morphRelations.map(
+        (relation) => relation.targetObjectMetadata.id,
       );
-      expect(createdField.name).toBe('ownerPersonForMorphRelation');
-    } else {
-      expect(createdField.settings?.joinColumnName).toBeUndefined();
-      expect(createdField.name).toBe('ownerPeopleForMorphRelation');
-    }
-  });
+
+      expect(morphRelationTargetIds).toContain(
+        contextPayload.firstTargetObjectMetadataId,
+      );
+      expect(morphRelationTargetIds).toContain(
+        contextPayload.secondTargetObjectMetadataId,
+      );
+
+      const isManyToOne =
+        contextPayload.relationType === RelationType.MANY_TO_ONE;
+
+      if (isManyToOne) {
+        expect(createdField.settings?.joinColumnName).toBe(
+          'ownerPersonForMorphRelationId',
+        );
+        expect(createdField.name).toBe('ownerPersonForMorphRelation');
+      } else {
+        expect(createdField.settings?.joinColumnName).toBeUndefined();
+        expect(createdField.name).toBe('ownerPeopleForMorphRelation');
+      }
+    },
+  );
 });
