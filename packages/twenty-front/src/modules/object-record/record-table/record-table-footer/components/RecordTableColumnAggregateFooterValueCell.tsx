@@ -99,7 +99,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
               dropdownId={dropdownId}
             />
             {!hasAggregateOperationForViewField && (
-              <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
+              <StyledIcon fontWeight="light" size={theme.icon.size.sm} />
             )}
           </>
         ) : (

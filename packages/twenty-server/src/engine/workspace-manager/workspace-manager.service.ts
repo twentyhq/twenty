@@ -137,17 +137,13 @@ export class WorkspaceManagerService {
       featureFlags,
     );
 
-    if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
-      this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
-
-      await prefillCoreViews({
-        coreDataSource: this.coreDataSource,
-        workspaceId,
-        objectMetadataItems: createdObjectMetadata,
-        schemaName: dataSourceMetadata.schema,
-        featureFlags,
-      });
-    }
+    await prefillCoreViews({
+      coreDataSource: this.coreDataSource,
+      workspaceId,
+      objectMetadataItems: createdObjectMetadata,
+      schemaName: dataSourceMetadata.schema,
+      featureFlags,
+    });
   }
 
   public async delete(workspaceId: string): Promise<void> {

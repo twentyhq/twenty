@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { LoginTokenService } from './login-token.service';
 
@@ -55,7 +56,11 @@ describe('LoginTokenService', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateLoginToken(email, workspaceId);
+      const result = await service.generateLoginToken(
+        email,
+        workspaceId,
+        AuthProviderEnum.Password,
+      );
 
       expect(result).toEqual({
         token: mockToken,
@@ -69,8 +74,56 @@ describe('LoginTokenService', () => {
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: email, workspaceId, type: 'LOGIN' },
+        {
+          sub: email,
+          workspaceId,
+          type: 'LOGIN',
+          authProvider: AuthProviderEnum.Password,
+          impersonatorUserId: undefined,
+        },
         { secret: mockSecret, expiresIn: mockExpiresIn },
+      );
+    });
+  });
+
+  describe('generateLoginToken with impersonation', () => {
+    it('should include impersonatorUserId in JWT payload when using Impersonation auth provider', async () => {
+      const email = 'test@example.com';
+      const mockSecret = 'mock-secret';
+      const mockToken = 'mock-token';
+      const workspaceId = 'workspace-id';
+      const impersonatorUserId = 'impersonator-id';
+
+      jest
+        .spyOn(jwtWrapperService, 'generateAppSecret')
+        .mockReturnValue(mockSecret);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+
+      const result = await service.generateLoginToken(
+        email,
+        workspaceId,
+        AuthProviderEnum.Impersonation,
+        { impersonatorUserId },
+      );
+
+      expect(result).toEqual({
+        token: mockToken,
+        expiresAt: expect.any(Date),
+      });
+      expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
+        'LOGIN',
+        workspaceId,
+      );
+      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+        {
+          sub: email,
+          workspaceId,
+          type: 'LOGIN',
+          authProvider: AuthProviderEnum.Impersonation,
+          impersonatorUserId,
+        },
+        { secret: mockSecret, expiresIn: expect.any(String) },
       );
     });
   });

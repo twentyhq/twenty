@@ -3,7 +3,7 @@ import { PageLayoutType, type SavedPageLayout } from './savedPageLayoutsState';
 
 export type DraftPageLayout = Omit<
   SavedPageLayout,
-  'id' | 'createdAt' | 'updatedAt'
+  'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
 
 export const pageLayoutDraftState = createState<DraftPageLayout>({
@@ -11,6 +11,8 @@ export const pageLayoutDraftState = createState<DraftPageLayout>({
   defaultValue: {
     name: '',
     type: PageLayoutType.DASHBOARD,
-    widgets: [],
+    workspaceId: undefined,
+    objectMetadataId: null,
+    tabs: [],
   },
 });

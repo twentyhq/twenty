@@ -91,17 +91,16 @@ export class MessagingMessageListFetchService {
           'messageFolder',
         );
 
-      const messageFoldersToSync = await messageFolderRepository.find({
+      const messageFolders = await messageFolderRepository.find({
         where: {
           messageChannelId: messageChannel.id,
-          isSynced: true,
         },
       });
 
       const messageLists =
         await this.messagingGetMessageListService.getMessageLists(
           messageChannelWithFreshTokens,
-          messageFoldersToSync,
+          messageFolders,
         );
 
       await this.cacheStorage.del(
@@ -124,7 +123,11 @@ export class MessagingMessageListFetchService {
       let totalMessagesToImportCount = 0;
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}`,
+        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
+          (messageList) => {
+            messageList.nextSyncCursor;
+          },
+        )}`,
       );
 
       const messageChannelMessageAssociationRepository =
@@ -207,25 +210,21 @@ export class MessagingMessageListFetchService {
         const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
         for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-          await messageChannelMessageAssociationRepository.delete({
-            messageChannelId: messageChannelWithFreshTokens.id,
-            messageExternalId: In(toDeleteChunk),
-          });
-
           this.logger.log(
-            `messageChannelId: ${messageChannel.id} Deleted ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+            `messageChannelId: ${messageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+          );
+
+          await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+            {
+              workspaceId,
+              messageExternalIds: toDeleteChunk.filter((messageExternalId) =>
+                isNonEmptyString(messageExternalId),
+              ),
+              messageChannelId: messageChannelWithFreshTokens.id,
+            },
           );
         }
       }
-
-      this.logger.log(
-        `messageChannelId: ${messageChannel.id} launching workspace thread cleanup`,
-      );
-
-      // TODO: Re-enable this after we have a way to clean up threads without impacting the message import
-      // await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-      //   workspaceId,
-      // );
 
       this.logger.log(
         `messageChannelId: ${messageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,

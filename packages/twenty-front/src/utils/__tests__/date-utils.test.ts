@@ -258,7 +258,7 @@ describe('French locale tests', () => {
     it('should format very recent dates as "now" in French', () => {
       const pastDate = '2023-12-31T23:59:45.000Z'; // 15 seconds ago
       const result = beautifyPastDateRelativeToNow(pastDate, fr);
-      expect(result).toBe('now'); // Lingui translation (should be "maintenant" but test setup uses English)
+      expect(result).toBe('maintenant'); // French for "now"
     });
 
     it('should format 30 seconds ago in French', () => {
