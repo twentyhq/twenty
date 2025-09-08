@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
 import { Repository } from 'typeorm';
+import { SettingsPath, getSettingsPath } from 'twenty-shared';
 
 import {
   AuthException,
@@ -115,7 +116,8 @@ export class GoogleAPIsAuthController {
         this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname: redirectLocation || '/settings/accounts',
+            pathname:
+              redirectLocation || getSettingsPath(SettingsPath.Accounts),
           })
           .toString(),
       );
@@ -127,7 +129,7 @@ export class GoogleAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-          pathname: '/settings/accounts',
+          pathname: CommonPaths.SETTINGS_ACCOUNTS,
         }),
       );
     }

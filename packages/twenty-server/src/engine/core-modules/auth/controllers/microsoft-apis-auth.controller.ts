@@ -9,6 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
+import { AppPath, SettingsPath, getSettingsPath } from 'twenty-shared';
 import { Repository } from 'typeorm';
 
 import {
@@ -122,7 +123,8 @@ export class MicrosoftAPIsAuthController {
         this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname: redirectLocation || '/settings/accounts',
+            pathname:
+              redirectLocation || getSettingsPath(SettingsPath.Accounts),
           })
           .toString(),
       );
@@ -134,7 +136,7 @@ export class MicrosoftAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-          pathname: '/verify',
+          pathname: AppPath.Verify,
         }),
       );
     }

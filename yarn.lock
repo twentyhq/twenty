@@ -51266,6 +51266,7 @@ __metadata:
     glob: "npm:^11.0.1"
     handlebars: "npm:^4.7.8"
     libphonenumber-js: "npm:^1.10.26"
+    path-to-regexp: "npm:^8.2.0"
     tsx: "npm:^4.19.3"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"

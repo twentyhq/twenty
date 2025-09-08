@@ -9,6 +9,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
+import { AppPath, getAppPath } from 'twenty-shared';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
@@ -139,7 +140,9 @@ export class ResetPasswordService {
 
     const link = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: `/reset-password/${resetToken.passwordResetToken}`,
+      pathname: getAppPath(AppPath.ResetPassword, {
+        passwordResetToken: resetToken.passwordResetToken,
+      }),
     });
 
     const emailData = {

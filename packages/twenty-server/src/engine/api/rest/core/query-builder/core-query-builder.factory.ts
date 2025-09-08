@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { SettingsPath, getSettingsPath } from 'twenty-shared';
 
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-many-query.factory';
 import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
@@ -70,7 +71,7 @@ export class CoreQueryBuilderFactory {
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname: '/settings/apis',
+            pathname: getSettingsPath(SettingsPath.ApiWebhooks),
           })
           .toString()}`,
       );

@@ -14,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
+import { AppPath } from 'twenty-shared';
 
 import {
   AuthException,
@@ -162,7 +163,7 @@ export class SSOAuthController {
             this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
               workspaceIdentityProvider?.workspace,
             ),
-          pathname: '/verify',
+          pathname: AppPath.Verify,
         }),
       );
     }

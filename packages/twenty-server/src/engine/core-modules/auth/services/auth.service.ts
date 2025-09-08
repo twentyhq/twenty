@@ -11,6 +11,7 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { AppPath } from 'twenty-shared';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -527,7 +528,7 @@ export class AuthService {
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: '/verify',
+      pathname: AppPath.Verify,
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
@@ -739,7 +740,7 @@ export class AuthService {
         ));
 
       const url = this.domainManagerService.buildBaseUrl({
-        pathname: '/welcome',
+        pathname: AppPath.SignInUp,
         searchParams: {
           tokenPair: JSON.stringify({
             accessOrWorkspaceAgnosticToken:
@@ -827,7 +828,7 @@ export class AuthService {
           this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
-        pathname: '/verify',
+        pathname: AppPath.Verify,
       });
     }
   }

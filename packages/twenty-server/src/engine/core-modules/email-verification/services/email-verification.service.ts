@@ -7,6 +7,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
+import { AppPath } from 'twenty-shared';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -55,7 +56,7 @@ export class EmailVerificationService {
       await this.emailVerificationTokenService.generateToken(userId, email);
 
     const linkPathnameAndSearchParams = {
-      pathname: 'verify-email',
+      pathname: AppPath.VerifyEmail,
       searchParams: {
         emailVerificationToken,
         email,

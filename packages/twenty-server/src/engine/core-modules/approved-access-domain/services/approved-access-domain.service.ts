@@ -7,6 +7,7 @@ import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { Repository } from 'typeorm';
+import { SettingsPath, getSettingsPath } from 'twenty-shared';
 
 import { ApprovedAccessDomain as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
@@ -59,7 +60,7 @@ export class ApprovedAccessDomainService {
 
     const link = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: `settings/security`,
+      pathname: getSettingsPath(SettingsPath.Domains),
       searchParams: {
         wtdId: approvedAccessDomain.id,
         validationToken: this.generateUniqueHash(approvedAccessDomain),

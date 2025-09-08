@@ -9,6 +9,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { AppPath, getAppPath } from 'twenty-shared';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -278,7 +279,9 @@ export class WorkspaceInvitationService {
       if (invitation.status === 'fulfilled') {
         const link = this.domainManagerService.buildWorkspaceURL({
           workspace,
-          pathname: `invite/${workspace?.inviteHash}`,
+          pathname: getAppPath(AppPath.Invite, {
+            workspaceInviteHash: workspace?.inviteHash,
+          }),
           searchParams: invitation.value.isPersonalInvitation
             ? {
                 inviteToken: invitation.value.appToken.value,

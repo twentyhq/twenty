@@ -141,11 +141,11 @@ export class SSOService {
   ) {
     const callbackURL = new URL(this.twentyConfigService.get('SERVER_URL'));
 
-    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
-
-    if (identityProvider.type === IdentityProviderType.SAML) {
-      callbackURL.pathname += `/${identityProvider.id}`;
-    }
+    callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback${
+      identityProvider.type === IdentityProviderType.SAML
+        ? `/${identityProvider.id}`
+        : ''
+    }`;
 
     return callbackURL.toString();
   }
