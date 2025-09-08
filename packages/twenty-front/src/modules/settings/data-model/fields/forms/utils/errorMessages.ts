@@ -9,7 +9,7 @@ export const getErrorMessageFromError = (error?: string) => {
     case errors.LabelEmpty:
       return 'Name cannot be empty.';
     case errors.LabelNotFormattable:
-      return 'Name should start with a letter.';
+      return 'Name contains invalid characters. Only letters, numbers, and common symbols are allowed.';
     case errors.LabelNotUnique:
       return 'This name is already used.';
     default:

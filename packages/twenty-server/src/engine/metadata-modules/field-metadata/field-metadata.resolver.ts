@@ -62,7 +62,7 @@ export class FieldMetadataResolver {
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
-  ) {}
+  ) { }
 
   @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
@@ -71,6 +71,8 @@ export class FieldMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
+
+
       return await this.fieldMetadataService.createOne({
         ...input.field,
         workspaceId,
