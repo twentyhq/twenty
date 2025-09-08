@@ -2,8 +2,8 @@ import { useRecoilCallback } from 'recoil';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 
-export const usePageLayoutWidgetUpdate = () => {
-  const handleUpdateWidget = useRecoilCallback(
+export const useUpdatePageLayoutWidget = () => {
+  const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
       (widgetId: string, updates: Partial<PageLayoutWidget>) => {
         set(pageLayoutDraftState, (prev) => ({
@@ -19,5 +19,5 @@ export const usePageLayoutWidgetUpdate = () => {
     [],
   );
 
-  return { handleUpdateWidget };
+  return { updatePageLayoutWidget };
 };

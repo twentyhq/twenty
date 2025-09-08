@@ -42,7 +42,6 @@ export const usePageLayoutSaveHandler = () => {
           id: isEditMode ? id : uuidv4(),
           name: pageLayoutDraft.name,
           type: pageLayoutDraft.type,
-          workspaceId: pageLayoutDraft.workspaceId,
           objectMetadataId: pageLayoutDraft.objectMetadataId,
           tabs: updatedTabs,
           createdAt: isEditMode
