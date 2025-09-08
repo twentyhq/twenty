@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from '../../../types';
 import { getAppPath } from '../getAppPath';
 
 describe('getAppPath', () => {

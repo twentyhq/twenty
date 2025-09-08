@@ -1,4 +1,3 @@
-import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';

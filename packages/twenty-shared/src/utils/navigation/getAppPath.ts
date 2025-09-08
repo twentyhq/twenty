@@ -1,7 +1,7 @@
-import { type AppPath } from '@/types/AppPath';
 import qs from 'qs';
 import { generatePath, type PathParam } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { type AppPath } from '../../types';
+import { isDefined } from '../validation';
 
 export const getAppPath = <T extends AppPath>(
   to: T,
