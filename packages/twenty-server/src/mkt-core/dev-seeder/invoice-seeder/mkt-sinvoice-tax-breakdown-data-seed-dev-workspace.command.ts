@@ -12,21 +12,26 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { prefillMktInvoices } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-invoices';
-import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-invoice-all.view';
+import { mktSInvoiceTaxBreakdownsAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-tax-breakdown-all.view';
+import { prefillMktSInvoiceTaxBreakdowns } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-tax-breakdowns';
 
 interface SeedModuleOptions {
   workspaceId?: string;
 }
 
-type InvoiceViewDefinition = ReturnType<typeof mktInvoicesAllView>;
+type SInvoiceTaxBreakdownViewDefinition = ReturnType<
+  typeof mktSInvoiceTaxBreakdownsAllView
+>;
 
 @Command({
-  name: 'workspace:seed:invoice-module',
-  description: 'Seed invoice module views and data for existing workspace',
+  name: 'workspace:seed:sinvoice-tax-breakdown-module',
+  description:
+    'Seed sinvoice tax breakdown module views and data for existing workspace',
 })
-export class SeedInvoiceModuleCommand extends CommandRunner {
-  private readonly logger = new Logger(SeedInvoiceModuleCommand.name);
+export class SeedSInvoiceTaxBreakdownModuleCommand extends CommandRunner {
+  private readonly logger = new Logger(
+    SeedSInvoiceTaxBreakdownModuleCommand.name,
+  );
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -40,7 +45,7 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id to seed invoice module for',
+    description: 'workspace id to seed sinvoice tax breakdown module for',
   })
   parseWorkspaceId(value: string): string {
     return value;
@@ -73,7 +78,7 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
     for (const workspace of workspaces) {
       try {
         await this.seedModuleForWorkspace(workspace.id);
-        // Lấy viewId của view 'All Invoice' sau khi seed
+        // Lấy viewId của view 'All SInvoice Tax Breakdowns' sau khi seed
         const mainDataSource =
           await this.workspaceDataSourceService.connectToMainDataSource();
         const schemaName = getWorkspaceSchemaName(workspace.id);
@@ -81,7 +86,7 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
           .createQueryBuilder()
           .select('id')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Invoices' })
+          .where('view.name = :name', { name: 'All SInvoice Tax Breakdowns' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
         const ViewId = viewRow?.id;
@@ -99,16 +104,16 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
           );
         } else {
           this.logger.warn(
-            '⚠️ Could not find viewId for All Invoices view to update Favorite records',
+            '⚠️ Could not find viewId for All SInvoice Tax Breakdowns view to update Favorite records',
           );
         }
         this.logger.log(
-          `✅ Invoice module seeded for workspace: ${workspace.id}`,
+          `✅ SInvoice tax breakdown module seeded for workspace: ${workspace.id}`,
         );
         await this.workspaceCacheStorageService.flush(workspace.id, undefined);
       } catch (error) {
         this.logger.error(
-          `❌ Failed to seed invoice module for workspace ${workspace.id}:`,
+          `❌ Failed to seed sinvoice tax breakdown module for workspace ${workspace.id}:`,
           error,
         );
       }
@@ -117,7 +122,7 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
 
   private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
-      `🚀 Starting invoice module seeding for workspace ${workspaceId}`,
+      `🚀 Starting sinvoice tax breakdown module seeding for workspace ${workspaceId}`,
     );
 
     const mainDataSource =
@@ -130,24 +135,24 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    // Find invoice object metadata
+    // Find sinvoice tax breakdown object metadata
     const itemObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === 'mktInvoice',
+      (item) => item.nameSingular === 'mktSInvoiceTaxBreakdown',
     );
 
     this.logger.log(
       `🔍 Debug - All objects in workspace: ${objectMetadataItems.map((item) => `${item.nameSingular}(${item.standardId})`).join(', ')}`,
     );
     this.logger.log(
-      `🔍 Debug - Looking for invoice object with nameSingular: 'mktInvoice'`,
+      `🔍 Debug - Looking for sinvoice tax breakdown object with nameSingular: 'mktSInvoiceTaxBreakdown'`,
     );
     this.logger.log(
-      `🔍 Debug - Invoice object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
+      `🔍 Debug - SInvoice tax breakdown object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
     );
 
     if (!itemObjectMetadata) {
       this.logger.log(
-        `Invoice object not found in workspace ${workspaceId}, skipping...`,
+        `SInvoice tax breakdown object not found in workspace ${workspaceId}, skipping...`,
       );
 
       return;
@@ -157,20 +162,20 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
 
     await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        // Check if invoice view already exists by looking for a view with name 'All Invoices'
+        // Check if sinvoice tax breakdown view already exists by looking for a view with name 'All SInvoice Tax Breakdowns'
         const existingView = await entityManager
           .createQueryBuilder(undefined, undefined, undefined, {
             shouldBypassPermissionChecks: true,
           })
           .select('*')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Invoices' })
+          .where('view.name = :name', { name: 'All SInvoice Tax Breakdowns' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
 
         if (existingView) {
           this.logger.log(
-            `Invoice view already exists for workspace ${workspaceId}. Deleting and recreating...`,
+            `SInvoice tax breakdown view already exists for workspace ${workspaceId}. Deleting and recreating...`,
           );
 
           // Delete existing view (cascade will delete viewFields)
@@ -180,32 +185,32 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
             })
             .delete()
             .from(`${schemaName}.view`)
-            .where('name = :name', { name: 'All Invoices' })
+            .where('name = :name', { name: 'All SInvoice Tax Breakdowns' })
             .andWhere('key = :key', { key: 'INDEX' })
             .execute();
         }
 
-        // Create invoice view
-        const invoiceViewDefinition: InvoiceViewDefinition =
-          mktInvoicesAllView(objectMetadataItems);
+        // Create sinvoice tax breakdown view
+        const sinvoiceTaxBreakdownViewDefinition: SInvoiceTaxBreakdownViewDefinition =
+          mktSInvoiceTaxBreakdownsAllView(objectMetadataItems);
 
-        // Seed mkt invoices
-        await prefillMktInvoices(entityManager, schemaName);
+        // Seed mkt sinvoice tax breakdown
+        await prefillMktSInvoiceTaxBreakdowns(entityManager, schemaName);
 
-        if (!invoiceViewDefinition) {
+        if (!sinvoiceTaxBreakdownViewDefinition) {
           this.logger.log(
-            `Could not create invoice view definition for workspace ${workspaceId}`,
+            `Could not create sinvoice tax breakdown view definition for workspace ${workspaceId}`,
           );
 
           return;
         }
 
         this.logger.log(
-          `🔍 Debug - View definition created with ${invoiceViewDefinition.fields?.length || 0} fields`,
+          `🔍 Debug - View definition created with ${sinvoiceTaxBreakdownViewDefinition.fields?.length || 0} fields`,
         );
 
         const viewDefinitionWithId = {
-          ...invoiceViewDefinition,
+          ...sinvoiceTaxBreakdownViewDefinition,
           id: uuidv4(),
         };
 
@@ -311,7 +316,9 @@ export class SeedInvoiceModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ Invoice view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ SInvoice tax breakdown view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

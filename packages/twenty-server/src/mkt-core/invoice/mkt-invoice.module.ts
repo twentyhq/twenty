@@ -1,16 +1,22 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-import { MktInvoiceMiddleware } from 'src/mkt-core/invoice/mkt-invoice.middleware';
-import { MktInvoiceService } from 'src/mkt-core/invoice/mkt-invoice.service';
-import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/s-invoice.integration.service';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { InvoiceFileController } from 'src/mkt-core/invoice/controllers/invoice-file.controller';
+import { MktSInvoiceFileCreateOnePreQueryHook } from 'src/mkt-core/invoice/hooks/mkt-sinvoice-file-create-one.pre-query.hook';
+import { MktSInvoiceFileUpdateOnePreQueryHook } from 'src/mkt-core/invoice/hooks/mkt-sinvoice-file-update-one.pre-query.hook';
+import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/integration/s-invoice.integration.service';
+import { SInvoiceIntegrationJob } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
 
 @Module({
-  providers: [MktInvoiceService, SInvoiceIntegrationService],
+  imports: [TwentyORMModule, AuthModule, WorkspaceCacheStorageModule],
+  controllers: [InvoiceFileController],
+  providers: [
+    SInvoiceIntegrationService,
+    SInvoiceIntegrationJob,
+    MktSInvoiceFileCreateOnePreQueryHook,
+    MktSInvoiceFileUpdateOnePreQueryHook,
+  ],
 })
-export class MktInvoiceModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(MktInvoiceMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-  }
-}
+export class MktInvoiceModule {}
