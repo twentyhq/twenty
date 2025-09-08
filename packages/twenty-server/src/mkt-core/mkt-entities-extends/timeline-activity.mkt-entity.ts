@@ -23,6 +23,7 @@ import { MktSInvoicePaymentWorkspaceEntity } from 'src/mkt-core/invoice/objects/
 import { MktSInvoiceTaxBreakdownWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-tax-breakdown.workspace-entity';
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 import { MktTagWorkspaceEntity } from 'src/mkt-core/tag/mkt-tag.workspace-entity';
@@ -174,22 +175,21 @@ export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('mktOrder')
   mktOrderId: string | null;
 
-  // Temporarily commented out due to TimelineActivityMktEntity not being a registered entity
-  // @WorkspaceRelation({
-  //   standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktOrderItem,
-  //   type: RelationType.MANY_TO_ONE,
-  //   label: msg`Order Item`,
-  //   description: msg`Event order item`,
-  //   icon: 'IconShoppingCartCog',
-  //   inverseSideTarget: () => MktOrderItemWorkspaceEntity,
-  //   inverseSideFieldKey: 'timelineActivity',
-  //   onDelete: RelationOnDeleteAction.CASCADE,
-  // })
-  // @WorkspaceIsNullable()
-  // mktOrderItem: Relation<MktOrderItemWorkspaceEntity> | null;
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktOrderItem,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Order Item`,
+    description: msg`Event order item`,
+    icon: 'IconShoppingCartCog',
+    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mktOrderItem: Relation<MktOrderItemWorkspaceEntity> | null;
 
-  // @WorkspaceJoinColumn('mktOrderItem')
-  // mktOrderItemId: string | null;
+  @WorkspaceJoinColumn('mktOrderItem')
+  mktOrderItemId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktLicense,

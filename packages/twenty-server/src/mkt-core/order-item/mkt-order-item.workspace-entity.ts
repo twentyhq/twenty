@@ -21,13 +21,14 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { MktComboWorkspaceEntity } from 'src/mkt-core/combo/mkt-combo.workspace-entity';
 import { MKT_ORDER_ITEM_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MktComboWorkspaceEntity } from 'src/mkt-core/combo/mkt-combo.workspace-entity';
 
 const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -200,23 +201,19 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('mktCombo')
   mktComboId: string | null;
 
-  // Temporarily commented out due to TimelineActivityMktEntity not being a registered entity
-  // @WorkspaceRelation({
-  //   standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
-  //   type: RelationType.MANY_TO_ONE,
-  //   label: msg`Timeline Activity`,
-  //   description: msg`Timeline Activity that owns this order item`,
-  //   icon: 'IconTimelineEvent',
-  //   inverseSideTarget: () => TimelineActivityMktEntity,
-  //   inverseSideFieldKey: 'mktOrderItem',
-  //   onDelete: RelationOnDeleteAction.SET_NULL,
-  // })
-  // @WorkspaceIsNullable()
-  // @WorkspaceIsSystem()
-  // timelineActivity: Relation<TimelineActivityMktEntity> | null;
-
-  // @WorkspaceJoinColumn('timelineActivity')
-  // timelineActivityId: string | null;
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activity`,
+    description: msg`Timeline Activity that owns this order item`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrderItem',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity> | null;
 
   @WorkspaceField({
     standardId: MKT_ORDER_ITEM_FIELD_IDS.searchVector,
