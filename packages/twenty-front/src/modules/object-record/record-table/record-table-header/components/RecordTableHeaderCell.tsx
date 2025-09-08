@@ -25,7 +25,7 @@ import { throwIfNotDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-const COLUMN_MIN_WIDTH = 104;
+const COLUMN_MIN_WIDTH = 48;
 
 const StyledColumnHeaderCell = styled.div<{
   columnWidth: number;
@@ -35,6 +35,9 @@ const StyledColumnHeaderCell = styled.div<{
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
+
+  height: 32px;
+  max-height: 32px;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};

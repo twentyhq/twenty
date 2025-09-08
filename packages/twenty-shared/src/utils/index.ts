@@ -7,8 +7,10 @@
  *                              |___/
  */
 
+export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
+export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
