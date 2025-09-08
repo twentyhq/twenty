@@ -6,6 +6,7 @@ import { MktCustomerTagWorkspaceEntity } from 'src/mkt-core/customer-tag/mkt-cus
 import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/mkt-customer.workspace-entity';
 import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invoice.workspace-entity';
 import { MktSInvoiceAuthWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-auth.workspace-entity';
+import { MktSInvoiceFileWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-file.workspace-entity';
 import { MktSInvoiceItemWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-item.workspace-entity';
 import { MktSInvoiceMetadataWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-metadata.workspace-entity';
 import { MktSInvoicePaymentWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-payment.workspace-entity';
@@ -67,6 +68,7 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktSInvoiceItemWorkspaceEntity,
   MktSInvoiceTaxBreakdownWorkspaceEntity,
   MktSInvoiceMetadataWorkspaceEntity,
+  MktSInvoiceFileWorkspaceEntity,
   // Payment
   MktPaymentMethodWorkspaceEntity,
   MktPaymentWorkspaceEntity,

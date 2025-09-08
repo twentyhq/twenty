@@ -1,3 +1,5 @@
+import { FieldMetadataComplexOption,TagColor } from "src/engine/metadata-modules/field-metadata/dtos/options.input";
+
 export type CreateInvoiceResponse = {
   transactionUuid?: string;
   invoiceNo?: string;
@@ -108,3 +110,79 @@ export type sInvoicePayload = {
     keyLabel: string;
   }[],
 };
+
+export type GetInvoiceFileResponse = {
+  errorCode: number;
+  description: string | null;
+  fileToBytes: string; // Base64 encoded PDF content
+  fileName?: string; // File name from API response
+  paymentStatus?: boolean; // Payment status from API response
+};
+
+export type GetInvoiceFileRequest = {
+  supplierTaxCode: string;
+  invoiceNo: string;
+  templateCode: string;
+  fileType: string; // "PDF"
+};
+
+export enum SINVOICE_FILE_STATUS {
+  GETTING = 'GETTING',
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  ERROR = 'ERROR',
+}
+
+export const SINVOICE_FILE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
+  {
+    value: SINVOICE_FILE_STATUS.GETTING,
+    label: 'GETTING',
+    color: 'orange' as TagColor,
+    position: 0,
+  },
+  {
+    value: SINVOICE_FILE_STATUS.PENDING,
+    label: 'PENDING',
+    color: 'blue' as TagColor,
+    position: 1,
+  },
+  {
+    value: SINVOICE_FILE_STATUS.SUCCESS,
+    label: 'SUCCESS',
+    color: 'green' as TagColor,
+    position: 2,
+  },
+  {
+    value: SINVOICE_FILE_STATUS.FAILED,
+    label: 'FAILED',
+    color: 'red' as TagColor,
+    position: 3,
+  },
+  {
+    value: SINVOICE_FILE_STATUS.ERROR,
+    label: 'ERROR',
+    color: 'gray' as TagColor,
+    position: 4,
+  }
+]
+
+export enum SINVOICE_FILE_TYPE {
+  PDF = 'PDF',
+  ZIP = 'ZIP',
+}
+
+export const SINVOICE_FILE_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
+  {
+    value: SINVOICE_FILE_TYPE.PDF,
+    label: 'PDF',
+    color: 'blue' as TagColor,
+    position: 0,
+  },
+  {
+    value: SINVOICE_FILE_TYPE.ZIP,
+    label: 'ZIP',
+    color: 'green' as TagColor,
+    position: 1,
+  },
+]

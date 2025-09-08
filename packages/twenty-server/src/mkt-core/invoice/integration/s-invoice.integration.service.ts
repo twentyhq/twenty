@@ -4,7 +4,7 @@ import axios,{ AxiosInstance } from 'axios';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CreateInvoiceResponse,sInvoicePayload,sInvoiceType,sInvoiceUpdate } from 'src/mkt-core/invoice/invoice.constants';
+import { CreateInvoiceResponse,GetInvoiceFileRequest,GetInvoiceFileResponse,sInvoicePayload,sInvoiceType,sInvoiceUpdate } from 'src/mkt-core/invoice/invoice.constants';
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { SINVOICE_STATUS as ORDER_SINVOICE_STATUS } from 'src/mkt-core/order/constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
@@ -287,4 +287,145 @@ export class SInvoiceIntegrationService {
      throw error;
    }
  }
+
+  /**
+   * get invoice file from API Viettel
+   * @param supplierTaxCode Supplier tax code
+   * @param invoiceNo Invoice number
+   * @param templateCode Template code
+   * @param fileType Type of file (PDF)
+   * @returns Promise<GetInvoiceFileResponse>
+   */
+  async getInvoiceFile(
+    supplierTaxCode: string,
+    invoiceNo: string,
+    templateCode: string,
+    fileType: string = 'PDF'
+  ): Promise<GetInvoiceFileResponse> {
+    this.logger.log(`[S-INVOICE SERVICE] Getting invoice file for invoiceNo: ${invoiceNo}`);
+    
+    try {
+      // Create Basic Auth header
+      const basicAuth = Buffer.from(
+        `${this.username}:${this.password}`,
+      ).toString('base64');
+
+      // Set headers with Basic Auth and Cookie
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${basicAuth}`,
+        Cookie: this.cookieToken,
+      };
+      const url = `/services/einvoiceapplication/api/InvoiceAPI/InvoiceUtilsWS/getInvoiceRepresentationFile`;
+
+      const requestPayload: GetInvoiceFileRequest = {
+        supplierTaxCode,
+        invoiceNo,
+        templateCode,
+        fileType
+      };
+
+      this.logger.log(
+        `[S-INVOICE SERVICE] Getting invoice file with URL: ${this.baseUrl}${url}`,
+      );
+      
+      this.logger.log(
+        `[S-INVOICE SERVICE] Request payload: ${JSON.stringify(requestPayload)}`,
+      );
+
+      const response = await this.http.post<GetInvoiceFileResponse>(url, requestPayload, {
+        headers,
+      });
+
+      const result = response.data || {};
+
+      this.logger.log(`[S-INVOICE SERVICE] Successfully retrieved invoice file for invoiceNo: ${invoiceNo}`);
+      this.logger.log(`[S-INVOICE SERVICE] Response errorCode: ${result.errorCode}`);
+
+      return result;
+
+    } catch (error: any) {
+      const errMsg = error?.response?.data || error?.message;
+      
+      this.logger.error(
+        `[S-INVOICE SERVICE] Failed to get invoice file for invoiceNo ${invoiceNo}: ${JSON.stringify(errMsg)}`,
+      );
+
+      // Return error response
+      return {
+        errorCode: errMsg?.errorCode || 500,
+        description: errMsg?.description || errMsg?.message || 'Failed to get invoice file',
+        fileToBytes: ''
+      };
+    }
+  }
+
+  /**
+   * get invoice file from database or API Viettel
+   * @param invoiceId Invoice ID
+   * @returns Promise<GetInvoiceFileResponse>
+   */
+  async getInvoiceFileById(invoiceId: string): Promise<GetInvoiceFileResponse> {
+    this.logger.log(`[S-INVOICE SERVICE] Getting invoice file for invoiceId: ${invoiceId}`);
+    
+    try {
+      const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+      if (!workspaceId) {
+        return {
+          errorCode: 400,
+          description: 'Workspace ID not found',
+          fileToBytes: ''
+        };
+      }
+
+      const sInvoiceRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceWorkspaceEntity>(
+          workspaceId,
+          'mktSInvoice',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const sInvoice = await sInvoiceRepository.findOne({
+        where: { id: invoiceId }
+      });
+
+      if (!sInvoice) {
+        this.logger.warn(`[S-INVOICE SERVICE] S-Invoice not found for ID ${invoiceId}`);
+        return {
+          errorCode: 404,
+          description: 'Invoice not found',
+          fileToBytes: ''
+        };
+      }
+
+      // Check if the required fields are present
+      if (!sInvoice.supplierTaxCode || !sInvoice.invoiceNo || !sInvoice.templateCode) {
+        this.logger.warn(`[S-INVOICE SERVICE] Missing required fields for invoice ID ${invoiceId}`);
+        return {
+          errorCode: 400,
+          description: 'Missing required invoice information',
+          fileToBytes: ''
+        };
+      }
+
+      // Call API Viettel to get invoice file
+      return await this.getInvoiceFile(
+        sInvoice.supplierTaxCode,
+        sInvoice.invoiceNo,
+        sInvoice.templateCode,
+        'PDF'
+      );
+
+    } catch (error) {
+      this.logger.error(`[S-INVOICE SERVICE] Failed to get invoice file for invoiceId ${invoiceId}: ${error}`);
+      this.logger.error(`[S-INVOICE SERVICE] Error details: ${error.message}`, error.stack);
+      
+      return {
+        errorCode: 500,
+        description: 'Internal server error',
+        fileToBytes: ''
+      };
+    }
+  }
 }

@@ -73,50 +73,6 @@ export class MktOrderUpdateOnePreQueryHook
         this.logger.error(`[S-INVOICE JOB] Failed to add S-Invoice integration job to queue for order: ${orderId}`, error);
       }
     }
-
-    // // check if status is paid
-    // if (input.status === OrderStatus.PAID) {
-    //   const workspaceId =
-    //     this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    //   if (!workspaceId) {
-    //     return payload;
-    //   }
-
-    //   // get current order to check status
-    //   const orderRepository =
-    //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
-    //       workspaceId,
-    //       'mktOrder',
-    //       { shouldBypassPermissionChecks: true },
-    //     );
-
-    //   const currentOrder = await orderRepository.findOne({
-    //     where: { id: orderId },
-    //   });
-
-    //   if (currentOrder && currentOrder.status !== OrderStatus.PAID) {
-    //     // status changed to paid, trigger license generation job
-    //     const jobData: LicenseGenerationJobData = {
-    //       orderId,
-    //       workspaceId,
-    //     };
-
-    //     //await this.messageQueueService.add('LicenseGenerationJob', jobData);
-    //   }
-
-    //   if (currentOrder && currentOrder.sInvoiceStatus !== SINVOICE_STATUS.SEND) {
-    //     // status changed to paid, trigger S-Invoice integration job
-    //     const jobData: SInvoiceIntegrationJobData = {
-    //       orderId,
-    //       workspaceId,
-    //     };
-        
-    //     this.logger.log(`Triggering S-Invoice integration job for order: ${orderId}`);
-    //     await this.messageQueueService.add('SInvoiceIntegrationJob', jobData);
-    //   }
-    // }
-
     return payload;
   }
 }

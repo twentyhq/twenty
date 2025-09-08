@@ -384,6 +384,7 @@ export const MKT_SINVOICE_FIELD_IDS = {
   mktSInvoiceItems: 'fbca73ac-126e-4ace-bd51-dd3a84548ef3',
   mktSInvoiceTaxBreakdowns: 'c4739855-bd2e-4b77-b17b-35c21958304e',
   mktSInvoiceMetadata: '34af692b-5ae6-473d-bd9c-ca873b5e96b8',
+  mktSInvoiceFiles: '2e61ea3d-df09-45bb-b8fd-57369235cc93',
   mktOrder: '9c7e7a37-86c3-4374-9ec7-283a6f076f8a',
   
   //summarizeInfo
@@ -505,6 +506,36 @@ export const MKT_SINVOICE_METADATA_FIELD_IDS = {
   searchVector: 'd8f8bc60-8cf2-4017-addf-e6165d10d163',
 };
 
+export const MKT_SINVOICE_FILE_FIELD_IDS = {
+  //fields
+  name: '376ccf4e-750d-46fa-bbad-e8c539b681bd',
+  //input fields
+  supplierTaxCode:"5cd5a395-9268-469e-baad-06dbf359a42d",
+  invoiceNo: 'bd8bf517-634d-4e81-8132-864d39b43b4b',
+  templateCode: '4e0cd8ab-0797-4f08-9b63-b1ab80a90d47',
+  fileType: '92112290-485e-4d77-83e6-d7a358cfd693',
+  //download fields
+  fileName: '241a77a4-2dfd-4c6e-8e6b-743a8be83698',
+    //fileType
+  fileSize: '187a9e86-d198-443c-bf0a-8e1ae72499c0',
+  filePath: '232e077e-fec8-44c9-8aa7-a1bb4bed1678',
+  downloadUrl: 'dec589e7-a389-4a31-b493-011ecd4cdf93',
+  downloadCount: 'c76d77b3-4062-4807-86f5-2f6eefbaed30',
+  lastDownloadedAt: '070ad544-d816-400f-a75f-d2cd79d64197',
+  status: '89829539-5c85-40d1-8c8c-05e586020d2a',
+  errorMessage: '406ca8d8-ad81-4f3c-9bf4-fcb0d0497e47',
+
+  //relations
+  mktSInvoice: 'a128856e-e82b-4c8b-95ac-bfb39af1398c',
+
+  //common relations or fields
+  position: 'df5c788f-cb53-44f8-b962-c8105cdc7e70',
+  createdBy: '0070d18d-02de-4af7-b47c-358f1e44728a',
+  accountOwner: '4066e9da-e868-46d1-b780-39019b2ecbdd',
+  timelineActivities: 'd7a20b96-c097-4c3a-9c3c-16abed770ae4',
+  searchVector: '1a8c06d0-3417-4694-baf5-387fd7bfc20f',
+};
+
 export const MKT_TEMPLATE_FIELD_IDS = {
   //fields
   name: '9b5a19c7-fa6c-4a31-ab8f-7e0e83fb678b',
@@ -601,6 +632,7 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktPayment: 'bf8a9b90-6d5e-4f40-9c30-8b7f6e5d4c50',
   mktPaymentMethod: 'cf8a9b91-6d5e-4f41-9c31-8b7f6e5d4c51',
   mktSInvoiceItem: 'fe30be83-1b86-4ec5-b584-2c059f0438b7',
+  mktSInvoiceFile: 'fdbfbbef-35e4-4971-9043-59da5c30f23e',
   //kpi system - removed timeline activity references as they're not implemented
 };
 
@@ -661,6 +693,7 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktSInvoiceItems: '8070950e-f1d3-4fc3-9282-6efce02f44d7',
   accountOwnerForMktSInvoiceTaxBreakdowns: '84fb2cfe-172c-470f-8417-164869884253',
   accountOwnerForMktSInvoiceMetadata: '1a930b9c-fc8e-49b6-a430-d765bfc07921',
+  accountOwnerForMktSInvoiceFiles: 'f2a3e8c4-a763-42b6-9a8b-b0fab2c583f4',
   //kpi system
   accountOwnerForMktKpiTemplates: '40404040-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
   changedKpiHistories: '40404040-0b1c-2d3e-4f5a-6b7c8d9e0f1a',

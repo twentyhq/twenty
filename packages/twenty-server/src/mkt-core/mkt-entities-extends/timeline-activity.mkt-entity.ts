@@ -16,6 +16,7 @@ import { MktCustomerTagWorkspaceEntity } from 'src/mkt-core/customer-tag/mkt-cus
 import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/mkt-customer.workspace-entity';
 import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invoice.workspace-entity';
 import { MktSInvoiceAuthWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-auth.workspace-entity';
+import { MktSInvoiceFileWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-file.workspace-entity';
 import { MktSInvoiceItemWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-item.workspace-entity';
 import { MktSInvoiceMetadataWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-metadata.workspace-entity';
 import { MktSInvoicePaymentWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-payment.workspace-entity';
@@ -322,6 +323,20 @@ export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
   mktSInvoiceMetadata: Relation<MktSInvoiceMetadataWorkspaceEntity> | null;
   @WorkspaceJoinColumn('mktSInvoiceMetadata')
   mktSInvoiceMetadataId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktSInvoiceFile,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`SInvoice File`,
+    description: msg`Event SInvoice File`,
+    icon: 'IconFile',
+    inverseSideTarget: () => MktSInvoiceFileWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  mktSInvoiceFile: Relation<MktSInvoiceFileWorkspaceEntity> | null;
+  @WorkspaceJoinColumn('mktSInvoiceFile')
+  mktSInvoiceFileId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktTemplate,

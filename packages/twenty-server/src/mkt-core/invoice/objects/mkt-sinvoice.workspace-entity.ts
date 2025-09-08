@@ -24,6 +24,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_SINVOICE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktSInvoiceFileWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-file.workspace-entity';
 import { MktSInvoiceItemWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-item.workspace-entity';
 import { MktSInvoiceMetadataWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-metadata.workspace-entity';
 import { MktSInvoicePaymentWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-payment.workspace-entity';
@@ -484,6 +485,19 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktSInvoiceMetadata: Relation<MktSInvoiceMetadataWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_SINVOICE_FIELD_IDS.mktSInvoiceFiles,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`SInvoice Files`,
+    description: msg`SInvoice files`,
+    icon: 'IconFile',
+    inverseSideTarget: () => MktSInvoiceFileWorkspaceEntity,
+    inverseSideFieldKey: 'mktSInvoice',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mktSInvoiceFiles: Relation<MktSInvoiceFileWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_SINVOICE_FIELD_IDS.mktOrder,
