@@ -4,7 +4,20 @@ import { useRecoilValue } from 'recoil';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated/graphql';
 
-export const useHasPermissionFlag = (permissionFlag?: PermissionFlagType) => {
+type ExtendedPermissionFlag = PermissionFlagType | 'IMPERSONATE';
+
+const ALLOWED_FLAGS: ReadonlySet<string> = new Set([
+  ...Object.values(PermissionFlagType),
+  'IMPERSONATE',
+]);
+
+const normalizeFlag = (flag: ExtendedPermissionFlag): string => {
+  return typeof flag === 'string' ? flag : (flag as unknown as string);
+};
+
+export const useHasPermissionFlag = (
+  permissionFlag?: ExtendedPermissionFlag,
+) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
@@ -12,19 +25,28 @@ export const useHasPermissionFlag = (permissionFlag?: PermissionFlagType) => {
     return true;
   }
 
+  const normalizedFlag = normalizeFlag(permissionFlag);
+
+  if (!ALLOWED_FLAGS.has(normalizedFlag)) {
+    return false;
+  }
+
+  const isWorkspaceFlag = normalizedFlag === PermissionFlagType.WORKSPACE;
+
   if (
-    permissionFlag === PermissionFlagType.WORKSPACE &&
+    isWorkspaceFlag &&
     currentWorkspace?.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
   ) {
     return true;
   }
 
-  const currentUserWorkspaceSetting = currentUserWorkspace?.permissionFlags;
-
-  if (!currentUserWorkspaceSetting) {
+  const userFlags = currentUserWorkspace?.permissionFlags;
+  if (!userFlags || userFlags.length === 0) {
     return false;
   }
 
-  return currentUserWorkspaceSetting.includes(permissionFlag);
+  const userFlagSet = new Set<string>(userFlags as unknown as string[]);
+
+  return userFlagSet.has(normalizedFlag);
 };
