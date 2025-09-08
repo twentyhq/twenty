@@ -11,7 +11,7 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export const useDefaultHomePagePath = () => {
@@ -117,7 +117,7 @@ export const useDefaultHomePagePath = () => {
     }
 
     if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
-      return `${AppPath.Settings}/${SettingsPath.ProfilePage}`;
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();
