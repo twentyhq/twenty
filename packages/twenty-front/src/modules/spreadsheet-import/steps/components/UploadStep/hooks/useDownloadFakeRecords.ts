@@ -3,6 +3,7 @@ import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-rec
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/csvSecurity';
 import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -122,7 +123,9 @@ export const useDownloadFakeRecords = () => {
 
   const formatToCsvContent = (rows: string[][]) => {
     const escapedRows = rows.map((row) => {
-      return row.map((value) => escapeCSVValue(value));
+      return row.map((value) =>
+        escapeCSVValue(sanitizeValueForCSVExport(value)),
+      );
     });
 
     const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');

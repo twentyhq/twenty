@@ -1,3 +1,4 @@
+import { cleanZWJFromImportedValue } from '@/spreadsheet-import/utils/csvSecurity';
 import { utils, type WorkBook } from 'xlsx-ugnis';
 
 export const mapWorkbook = (workbook: WorkBook, sheetName?: string) => {
@@ -7,5 +8,14 @@ export const mapWorkbook = (workbook: WorkBook, sheetName?: string) => {
     blankrows: false,
     raw: false,
   });
-  return data as string[][];
+
+  // Clean ZWJ characters from imported CSV data to restore original values
+  // This reverses the ZWJ protection applied during export
+  const cleanedData = (data as string[][]).map((row) =>
+    row.map((cell) =>
+      typeof cell === 'string' ? cleanZWJFromImportedValue(cell) : cell,
+    ),
+  );
+
+  return cleanedData;
 };

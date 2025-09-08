@@ -70,6 +70,7 @@ const processUserData = (
 
 ## Comments
 ```typescript
+// ✅ Use short-form comments, NOT JSDoc blocks
 // ✅ Explain business logic and non-obvious intentions
 // Apply 15% discount for premium users with orders > $100
 const discount = isPremiumUser && orderTotal > 100 ? 0.15 : 0;
@@ -77,14 +78,27 @@ const discount = isPremiumUser && orderTotal > 100 ? 0.15 : 0;
 // TODO: Replace with proper authentication service
 const isAuthenticated = localStorage.getItem('token') !== null;
 
-/**
- * JSDoc for public APIs
- * @param basePrice - The base price before modifications
- * @returns The final price after tax and discount
- */
+// ✅ Multi-line comments use multiple // lines (NOT /** */ blocks)
+// Calculates the total price after applying tax and discount
+// Returns the final price that should be charged to the customer
 const calculateTotalPrice = (basePrice: number): number => {
   // Implementation
 };
+
+// ❌ AVOID JSDoc blocks - use short comments instead
+/**
+ * This style is NOT preferred in this codebase
+ */
+```
+
+## Security Patterns
+```typescript
+// ✅ CSV Export: Always apply security first, then formatting
+const safeValue = escapeCSVValue(sanitizeValueForCSVExport(userInput));
+
+// ✅ Input validation before processing
+const sanitizedInput = validateAndSanitize(userInput);
+const result = processData(sanitizedInput);
 ```
 
 ## Error Handling

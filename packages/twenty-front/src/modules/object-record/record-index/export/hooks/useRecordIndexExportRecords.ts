@@ -12,6 +12,7 @@ import {
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
+import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/csvSecurity';
 import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
@@ -60,11 +61,10 @@ export const generateCsv: GenerateExport = ({
   const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
+    const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
-      title: escapeCSVValue(
-        `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`,
-      ),
+      title: escapeCSVValue(sanitizeValueForCSVExport(headerLabel)),
     };
 
     const columnType = col.type;
@@ -76,17 +76,46 @@ export const generateCsv: GenerateExport = ({
         const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
         return {
           field: `${column.field}.${key}`,
-          title: `${column.title} / ${subFieldLabel}`,
+          title: escapeCSVValue(
+            sanitizeValueForCSVExport(`${column.title} / ${subFieldLabel}`),
+          ),
         };
       });
 
     return nestedFieldsWithoutTypename;
   });
 
-  return json2csv(rows, {
+  const sanitizedRows = rows.map((row) => {
+    const sanitizedRow: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(row)) {
+      // Apply ZWJ sanitization to all string values
+      if (typeof value === 'string') {
+        sanitizedRow[key] = sanitizeValueForCSVExport(value);
+      } else if (isDefined(value) && typeof value === 'object') {
+        // Handle nested objects (like composite fields)
+        sanitizedRow[key] = {};
+        for (const [nestedKey, nestedValue] of Object.entries(value)) {
+          if (typeof nestedValue === 'string') {
+            sanitizedRow[key][nestedKey] =
+              sanitizeValueForCSVExport(nestedValue);
+          } else {
+            sanitizedRow[key][nestedKey] = nestedValue;
+          }
+        }
+      } else {
+        sanitizedRow[key] = value;
+      }
+    }
+
+    return sanitizedRow;
+  });
+
+  return json2csv(sanitizedRows, {
     keys,
     emptyFieldValue: '',
-    preventCsvInjection: true,
+    // Note: We handle CSV injection prevention manually with ZWJ approach above
+    // This preserves original which the csvSecurity option does not do
   });
 };
 
