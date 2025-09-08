@@ -25,6 +25,7 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
     case GraphqlQueryRunnerExceptionCode.NOT_IMPLEMENTED:
     case GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
+    case GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED:
       throw new UserInputError(error);
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error);

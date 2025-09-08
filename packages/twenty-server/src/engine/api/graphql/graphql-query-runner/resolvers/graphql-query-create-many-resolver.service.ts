@@ -42,6 +42,16 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
+    if (executionArgs.args.data.length > QUERY_MAX_RECORDS) {
+      throw new GraphqlQueryRunnerException(
+        `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        {
+          userFriendlyMessage: t`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        },
+      );
+    }
+
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
@@ -440,6 +450,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       })
+      .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
