@@ -72,6 +72,7 @@ export type AgentChatMessage = {
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
+  reasoningSummary?: Maybe<Scalars['String']>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
 };
@@ -4117,7 +4118,7 @@ export type GetAgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, content: string, createdAt: string, reasoningSummary?: string | null, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6230,6 +6231,7 @@ export const GetAgentChatMessagesDocument = gql`
     role
     content
     createdAt
+    reasoningSummary
     files {
       id
       name
