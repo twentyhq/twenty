@@ -1,4 +1,4 @@
-import { SINVOICE_STATUS } from 'src/mkt-core/order/constants';
+import { OrderStatus,SINVOICE_STATUS } from 'src/mkt-core/order/constants';
 
 type MktOrderDataSeed = {
   id: string;
@@ -19,14 +19,6 @@ type MktOrderDataSeed = {
   createdByWorkspaceMemberId: string | null;
   createdByName: string;
 };
-
-export enum OrderStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  FULFILLED = 'fulfilled',
-}
 
 // prettier-ignore
 export const MKT_ORDER_DATA_SEED_COLUMNS: (keyof MktOrderDataSeed)[] = [
