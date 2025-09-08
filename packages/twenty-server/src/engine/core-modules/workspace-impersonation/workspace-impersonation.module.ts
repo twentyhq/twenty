@@ -8,7 +8,6 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-
 import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace-impersonation/services/workspace-impersonation.service';
 import { WorkspaceImpersonationResolver } from 'src/engine/core-modules/workspace-impersonation/workspace-impersonation.resolver';
 
@@ -25,5 +24,3 @@ import { WorkspaceImpersonationResolver } from 'src/engine/core-modules/workspac
   exports: [WorkspaceImpersonationService],
 })
 export class WorkspaceImpersonationModule {}
-
-

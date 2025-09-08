@@ -13,7 +13,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ManageMembersDropdownMenu } from '@/settings/members/ManageMembersDropdownMenu';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -26,7 +25,8 @@ import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink'
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Avatar,
@@ -41,7 +41,6 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';

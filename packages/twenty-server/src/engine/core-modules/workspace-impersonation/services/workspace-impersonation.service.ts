@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { randomUUID } from 'crypto';
+
 import { DataSource, EntityManager } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -107,7 +108,10 @@ export class WorkspaceImpersonationService {
           where: { id: impersonatorUserWorkspaceId },
         });
 
-        if (impersonatorUserWorkspace && impersonatorUserWorkspace.userId === target.userId) {
+        if (
+          impersonatorUserWorkspace &&
+          impersonatorUserWorkspace.userId === target.userId
+        ) {
           throw new AuthException(
             'Cannot impersonate yourself',
             AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -128,7 +132,8 @@ export class WorkspaceImpersonationService {
         const hasImpersonatePermission =
           !!roleTargetWithRole &&
           this.permissionsService.checkRolePermissions(
-            (roleTargetWithRole as RoleTargetsEntity & { role: RoleEntity }).role,
+            (roleTargetWithRole as RoleTargetsEntity & { role: RoleEntity })
+              .role,
             PermissionFlagType.IMPERSONATE,
           );
 

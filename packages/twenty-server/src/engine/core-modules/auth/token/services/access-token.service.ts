@@ -59,7 +59,9 @@ export class AccessTokenService {
   >): Promise<AuthToken> {
     const isImpersonatingToken = isImpersonating === true;
     const hasImpersonationFields = Boolean(
-      impersonationType || impersonatorUserWorkspaceId || originalUserWorkspaceId,
+      impersonationType ||
+        impersonatorUserWorkspaceId ||
+        originalUserWorkspaceId,
     );
 
     if (!isImpersonatingToken && hasImpersonationFields) {

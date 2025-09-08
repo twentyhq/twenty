@@ -177,7 +177,9 @@ describe('AccessTokenService', () => {
         .mockResolvedValue({
           findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
         } as any);
-      const signSpy = jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      const signSpy = jest
+        .spyOn(jwtWrapperService, 'sign')
+        .mockReturnValue(mockToken);
 
       await service.generateAccessToken({
         userId,

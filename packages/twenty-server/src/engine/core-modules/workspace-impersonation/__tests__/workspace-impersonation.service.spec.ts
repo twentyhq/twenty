@@ -2,17 +2,15 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-
-import { WorkspaceImpersonationService } from '../services/workspace-impersonation.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace-impersonation/services/workspace-impersonation.service';
 
 const mockAuditService = {
   createContext: jest.fn().mockReturnValue({
@@ -55,7 +53,11 @@ const impersonatorUserId = 'user-impersonator';
 
 const tokenResult = {
   accessOrWorkspaceAgnosticToken: { token: 'acc', expiresAt: new Date() },
-  refreshToken: { token: 'ref', expiresAt: new Date(), targetedTokenType: JwtTokenTypeEnum.ACCESS },
+  refreshToken: {
+    token: 'ref',
+    expiresAt: new Date(),
+    targetedTokenType: JwtTokenTypeEnum.ACCESS,
+  },
 };
 
 describe('WorkspaceImpersonationService', () => {
@@ -72,10 +74,15 @@ describe('WorkspaceImpersonationService', () => {
     const manager = createMockManager(managerOverrides);
 
     // createQueryBuilder mock to return role + permissionFlags
-    const qbGetOne = jest.fn().mockResolvedValue({ role: { id: 'role-1', permissionFlags: [] } as unknown as RoleEntity });
+    const qbGetOne = jest.fn().mockResolvedValue({
+      role: { id: 'role-1', permissionFlags: [] } as unknown as RoleEntity,
+    });
+
     manager.createQueryBuilder.mockReturnValue({
-      innerJoinAndSelect: () => ({ innerJoinAndSelect: () => ({}) } as any),
-      where: () => ({ andWhere: () => ({ setLock: () => ({ getOne: qbGetOne }) }) }),
+      innerJoinAndSelect: () => ({ innerJoinAndSelect: () => ({}) }) as any,
+      where: () => ({
+        andWhere: () => ({ setLock: () => ({ getOne: qbGetOne }) }),
+      }),
     });
 
     const dataSource = createMockDataSource(manager);
@@ -87,11 +94,17 @@ describe('WorkspaceImpersonationService', () => {
         { provide: AuditService, useValue: mockAuditService },
         { provide: AccessTokenService, useValue: mockAccessTokenService },
         { provide: RefreshTokenService, useValue: mockRefreshTokenService },
-        { provide: TwentyORMGlobalManager, useValue: mockTwentyORMGlobalManager },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: mockTwentyORMGlobalManager,
+        },
         { provide: 'DataSource', useValue: dataSource },
       ],
     })
-      .overrideProvider((WorkspaceImpersonationService as any).dependencies?.dataSource ?? 'DataSource')
+      .overrideProvider(
+        (WorkspaceImpersonationService as any).dependencies?.dataSource ??
+          'DataSource',
+      )
       .useValue(dataSource)
       .compile();
 
@@ -107,8 +120,15 @@ describe('WorkspaceImpersonationService', () => {
     const { manager } = await buildModule();
 
     manager.findOne
-      .mockResolvedValueOnce({ id: targetUWId, workspaceId, userId: targetUserId } as UserWorkspace)
-      .mockResolvedValueOnce({ id: impersonatorUWId, userId: impersonatorUserId } as UserWorkspace);
+      .mockResolvedValueOnce({
+        id: targetUWId,
+        workspaceId,
+        userId: targetUserId,
+      } as UserWorkspace)
+      .mockResolvedValueOnce({
+        id: impersonatorUWId,
+        userId: impersonatorUserId,
+      } as UserWorkspace);
 
     permissionsService.checkRolePermissions.mockReturnValue(true);
 
@@ -143,8 +163,15 @@ describe('WorkspaceImpersonationService', () => {
     const { manager } = await buildModule();
 
     manager.findOne
-      .mockResolvedValueOnce({ id: targetUWId, workspaceId, userId: targetUserId } as UserWorkspace)
-      .mockResolvedValueOnce({ id: impersonatorUWId, userId: impersonatorUserId } as UserWorkspace);
+      .mockResolvedValueOnce({
+        id: targetUWId,
+        workspaceId,
+        userId: targetUserId,
+      } as UserWorkspace)
+      .mockResolvedValueOnce({
+        id: impersonatorUWId,
+        userId: impersonatorUserId,
+      } as UserWorkspace);
 
     permissionsService.checkRolePermissions.mockReturnValue(false);
 
@@ -174,13 +201,24 @@ describe('WorkspaceImpersonationService', () => {
   it('impersonates successfully by workspaceMemberId', async () => {
     const { manager } = await buildModule();
 
-    (mockTwentyORMGlobalManager.getRepositoryForWorkspace as jest.Mock).mockResolvedValue({
-      findOne: jest.fn().mockResolvedValue({ id: 'wm-1', userId: targetUserId }),
+    (
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace as jest.Mock
+    ).mockResolvedValue({
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'wm-1', userId: targetUserId }),
     });
 
     manager.findOne
-      .mockResolvedValueOnce({ id: targetUWId, workspaceId, userId: targetUserId } as UserWorkspace)
-      .mockResolvedValueOnce({ id: impersonatorUWId, userId: impersonatorUserId } as UserWorkspace);
+      .mockResolvedValueOnce({
+        id: targetUWId,
+        workspaceId,
+        userId: targetUserId,
+      } as UserWorkspace)
+      .mockResolvedValueOnce({
+        id: impersonatorUWId,
+        userId: impersonatorUserId,
+      } as UserWorkspace);
 
     permissionsService.checkRolePermissions.mockReturnValue(true);
     accessTokenService.generateAccessToken.mockResolvedValue(

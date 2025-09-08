@@ -13,7 +13,10 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-import { ImpersonateWorkspaceMemberInput, ImpersonateWorkspaceUserInput } from './dtos/impersonate-workspace-user.input';
+import {
+  ImpersonateWorkspaceMemberInput,
+  ImpersonateWorkspaceUserInput,
+} from './dtos/impersonate-workspace-user.input';
 import { WorkspaceImpersonationService } from './services/workspace-impersonation.service';
 
 @Resolver()
@@ -35,10 +38,11 @@ export class WorkspaceImpersonationResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ): Promise<AuthTokens> {
-    const currentUserWorkspace = await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-      userId: user.id,
-      workspaceId: workspace.id,
-    });
+    const currentUserWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
 
     return await this.workspaceImpersonationService.impersonateWorkspaceUser({
       workspaceId: workspace.id,
@@ -58,18 +62,18 @@ export class WorkspaceImpersonationResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ): Promise<AuthTokens> {
-    const currentUserWorkspace = await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-      userId: user.id,
-      workspaceId: workspace.id,
-    });
+    const currentUserWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
 
-    return await this.workspaceImpersonationService.impersonateWorkspaceUserByMemberId({
-      workspaceId: workspace.id,
-      impersonatorUserWorkspaceId: currentUserWorkspace.id,
-      targetWorkspaceMemberId,
-    });
+    return await this.workspaceImpersonationService.impersonateWorkspaceUserByMemberId(
+      {
+        workspaceId: workspace.id,
+        impersonatorUserWorkspaceId: currentUserWorkspace.id,
+        targetWorkspaceMemberId,
+      },
+    );
   }
 }
-
-
-

@@ -1,5 +1,5 @@
 import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
+import { type ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';

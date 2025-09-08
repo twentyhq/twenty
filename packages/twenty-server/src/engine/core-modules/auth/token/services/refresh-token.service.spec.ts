@@ -3,7 +3,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { AppToken, AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -179,7 +182,9 @@ describe('RefreshTokenService', () => {
     const userId = 'user-id';
     const tokenId = 'token-id';
 
-    (jwtWrapperService.verifyJwtToken as jest.Mock).mockResolvedValue(undefined);
+    (jwtWrapperService.verifyJwtToken as jest.Mock).mockResolvedValue(
+      undefined,
+    );
     (jwtWrapperService.decode as jest.Mock).mockReturnValue({
       sub: userId,
       jti: tokenId,
@@ -210,9 +215,13 @@ describe('RefreshTokenService', () => {
   });
 
   it('throws on malformed refresh token', async () => {
-    (jwtWrapperService.verifyJwtToken as jest.Mock).mockResolvedValue(undefined);
+    (jwtWrapperService.verifyJwtToken as jest.Mock).mockResolvedValue(
+      undefined,
+    );
     (jwtWrapperService.decode as jest.Mock).mockReturnValue({});
 
-    await expect(service.verifyRefreshToken('rtok')).rejects.toThrow(AuthException);
+    await expect(service.verifyRefreshToken('rtok')).rejects.toThrow(
+      AuthException,
+    );
   });
 });
