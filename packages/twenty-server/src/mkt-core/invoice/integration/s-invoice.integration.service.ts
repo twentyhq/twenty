@@ -14,7 +14,7 @@ import {
 } from 'src/mkt-core/invoice/invoice.constants';
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { SINVOICE_STATUS as ORDER_SINVOICE_STATUS } from 'src/mkt-core/order/constants/order-status.constants';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 @Injectable()
 export class SInvoiceIntegrationService {

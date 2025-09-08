@@ -4,19 +4,19 @@ import { In } from 'typeorm';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
+import { MktProductWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-product.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 import {
   CreateOrderWithItemsInput,
+  DeleteOrderInput,
   GetOrderInput,
   GetOrdersInput,
-  UpdateOrderInput,
-  DeleteOrderInput,
   OrderSortBy,
   SortOrder,
+  UpdateOrderInput,
 } from './dto';
-import { MktOrderWorkspaceEntity } from './mkt-order.workspace-entity';
 
 import { mapGraphQLOrderStatusToEntity } from './utils/order-status.mapper';
 

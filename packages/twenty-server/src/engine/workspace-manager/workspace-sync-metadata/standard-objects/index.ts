@@ -38,7 +38,6 @@ import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
@@ -79,6 +78,5 @@ export const standardObjectMetadataDefinitions = [
   TaskTargetWorkspaceEntity,
   ApiKeyWorkspaceEntity,
   WebhookWorkspaceEntity,
-  MktOrderWorkspaceEntity,
   ...MKT_FINAL_WORKSPACE_ENTITIES,
 ];

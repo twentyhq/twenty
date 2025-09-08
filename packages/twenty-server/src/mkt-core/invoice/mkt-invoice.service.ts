@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/s-invoice.integration.service';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
 
 type sInvoiceType = {
   id?: string;

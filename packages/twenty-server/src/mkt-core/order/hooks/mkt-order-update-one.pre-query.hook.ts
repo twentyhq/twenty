@@ -15,7 +15,7 @@ import {
   OrderStatus,
   SINVOICE_STATUS,
 } from 'src/mkt-core/order/constants/order-status.constants';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 @Injectable()
 @WorkspaceQueryHook('mktOrder.updateOne')

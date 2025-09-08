@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/mkt-license.workspace-entity';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 type licenseType = {
   licenseKey: string;
