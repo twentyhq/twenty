@@ -1,4 +1,4 @@
-import { OrderStatus,SINVOICE_STATUS } from 'src/mkt-core/order/constants';
+import { OrderStatus, SINVOICE_STATUS } from 'src/mkt-core/order/constants';
 
 type MktOrderDataSeed = {
   id: string;
