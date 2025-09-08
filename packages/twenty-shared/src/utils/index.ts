@@ -46,6 +46,7 @@ export { lowercaseUrlOriginAndRemoveTrailingSlash } from './url/lowercaseUrlOrig
 export { uuidToBase36 } from './uuidToBase36';
 export { isDefined } from './validation/isDefined';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
+export { isValidLabel } from './validation/isValidLabel';
 export { isValidLocale } from './validation/isValidLocale';
 export { isValidUuid } from './validation/isValidUuid';
 export { isValidVariable } from './validation/isValidVariable';
