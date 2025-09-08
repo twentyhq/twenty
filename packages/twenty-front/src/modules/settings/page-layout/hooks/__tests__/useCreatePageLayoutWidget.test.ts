@@ -8,13 +8,13 @@ import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDr
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
-import { usePageLayoutWidgetCreate } from '../usePageLayoutWidgetCreate';
+import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
 }));
 
-describe('usePageLayoutWidgetCreate', () => {
+describe('useCreatePageLayoutWidget', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -31,7 +31,7 @@ describe('usePageLayoutWidgetCreate', () => {
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
-        const createWidget = usePageLayoutWidgetCreate();
+        const createWidget = useCreatePageLayoutWidget();
         return {
           setActiveTabId,
           setPageLayoutDraft,
@@ -49,7 +49,6 @@ describe('usePageLayoutWidgetCreate', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
-        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {
@@ -68,7 +67,7 @@ describe('usePageLayoutWidgetCreate', () => {
     });
 
     act(() => {
-      result.current.createWidget.handleCreateWidget(
+      result.current.createWidget.createPageLayoutWidget(
         WidgetType.GRAPH,
         GraphSubType.BAR,
       );
@@ -91,7 +90,7 @@ describe('usePageLayoutWidgetCreate', () => {
         const setActiveTabId = useSetRecoilState(
           pageLayoutCurrentTabIdForCreationState,
         );
-        const createWidget = usePageLayoutWidgetCreate();
+        const createWidget = useCreatePageLayoutWidget();
         return {
           setPageLayoutDraft,
           setActiveTabId,
@@ -107,7 +106,6 @@ describe('usePageLayoutWidgetCreate', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
-        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {
@@ -134,14 +132,14 @@ describe('usePageLayoutWidgetCreate', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.handleCreateWidget(
+        result.current.createWidget.createPageLayoutWidget(
           WidgetType.GRAPH,
           graphType,
         );
       });
     });
 
-    expect(typeof result.current.createWidget.handleCreateWidget).toBe(
+    expect(typeof result.current.createWidget.createPageLayoutWidget).toBe(
       'function',
     );
   });
@@ -154,7 +152,7 @@ describe('usePageLayoutWidgetCreate', () => {
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
-        const createWidget = usePageLayoutWidgetCreate();
+        const createWidget = useCreatePageLayoutWidget();
         return { allWidgets, pageLayoutCurrentLayouts, createWidget };
       },
       {
@@ -163,7 +161,7 @@ describe('usePageLayoutWidgetCreate', () => {
     );
 
     act(() => {
-      result.current.createWidget.handleCreateWidget(
+      result.current.createWidget.createPageLayoutWidget(
         WidgetType.GRAPH,
         GraphSubType.BAR,
       );

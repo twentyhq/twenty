@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
+import { useCreatePageLayoutWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutWidget';
 import {
   GraphSubType,
   WidgetType,
@@ -53,10 +53,10 @@ const graphTypeOptions = [
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { handleCreateWidget } = usePageLayoutWidgetCreate();
+  const { createPageLayoutWidget } = useCreatePageLayoutWidget();
 
   const handleSelectGraphType = (graphType: GraphSubType) => {
-    handleCreateWidget(WidgetType.GRAPH, graphType);
+    createPageLayoutWidget(WidgetType.GRAPH, graphType);
     closeCommandMenu();
   };
 

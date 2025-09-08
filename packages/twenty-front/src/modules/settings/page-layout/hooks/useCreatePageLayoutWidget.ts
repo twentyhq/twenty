@@ -15,8 +15,8 @@ import {
 } from '../utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
-export const usePageLayoutWidgetCreate = () => {
-  const handleCreateWidget = useRecoilCallback(
+export const useCreatePageLayoutWidget = () => {
+  const createPageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetType: WidgetType, graphType: GraphSubType) => {
         const widgetData = getDefaultWidgetData(graphType);
@@ -98,5 +98,5 @@ export const usePageLayoutWidgetCreate = () => {
     [],
   );
 
-  return { handleCreateWidget };
+  return { createPageLayoutWidget };
 };

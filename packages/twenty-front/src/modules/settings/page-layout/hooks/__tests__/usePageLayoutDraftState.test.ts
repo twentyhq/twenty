@@ -26,7 +26,6 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: '   ',
         type: PageLayoutType.DASHBOARD,
-        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [],
       });
@@ -45,7 +44,6 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Updated Name',
         type: PageLayoutType.DASHBOARD,
-        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [],
       });
@@ -65,7 +63,6 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
-        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {

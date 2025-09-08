@@ -10,11 +10,13 @@ import {
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
 import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
-import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
+import { useStartPageLayoutDragSelection } from '@/settings/page-layout/hooks/useStartPageLayoutDragSelection';
+import { useChangePageLayoutDragSelection } from '@/settings/page-layout/hooks/useChangePageLayoutDragSelection';
+import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
-import { usePageLayoutTabCreate } from '@/settings/page-layout/hooks/usePageLayoutTabCreate';
-import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
+import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
+import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
 import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
@@ -171,11 +173,9 @@ export const SettingsPageLayoutEdit = () => {
     [pageLayoutDraft.tabs],
   );
 
-  const {
-    handleDragSelectionStart,
-    handleDragSelectionChange,
-    handleDragSelectionEnd,
-  } = usePageLayoutDragSelection();
+  const { startPageLayoutDragSelection } = useStartPageLayoutDragSelection();
+  const { changePageLayoutDragSelection } = useChangePageLayoutDragSelection();
+  const { endPageLayoutDragSelection } = useEndPageLayoutDragSelection();
 
   const handleOpenAddWidget = useCallback(() => {
     setPageLayoutCurrentTabIdForCreation(activeTabId);
@@ -187,9 +187,9 @@ export const SettingsPageLayoutEdit = () => {
     });
   }, [navigateCommandMenu, activeTabId, setPageLayoutCurrentTabIdForCreation]);
 
-  const { handleRemoveWidget } = usePageLayoutWidgetDelete();
+  const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange(activeTabId);
-  const { handleCreateTab } = usePageLayoutTabCreate();
+  const { createPageLayoutTab } = useCreatePageLayoutTab();
 
   const handleEditWidget = useCallback(
     (widgetId: string) => {
@@ -240,9 +240,9 @@ export const SettingsPageLayoutEdit = () => {
   );
 
   const handleAddTab = useCallback(() => {
-    const newTabId = handleCreateTab();
+    const newTabId = createPageLayoutTab();
     setActiveTabId(newTabId);
-  }, [handleCreateTab, setActiveTabId]);
+  }, [createPageLayoutTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
     return [...pageLayoutDraft.tabs]
@@ -394,7 +394,7 @@ export const SettingsPageLayoutEdit = () => {
                 <div key={widget.id} data-select-disable="true">
                   <PageLayoutWidgetPlaceholder
                     title={widget.title}
-                    onRemove={() => handleRemoveWidget(widget.id)}
+                    onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
                   >
                     {renderWidget(widget)}
@@ -406,9 +406,9 @@ export const SettingsPageLayoutEdit = () => {
           {pageLayoutCurrentBreakpoint !== 'mobile' && (
             <DragSelect
               selectableItemsContainerRef={gridContainerRef}
-              onDragSelectionStart={handleDragSelectionStart}
-              onDragSelectionChange={handleDragSelectionChange}
-              onDragSelectionEnd={handleDragSelectionEnd}
+              onDragSelectionStart={startPageLayoutDragSelection}
+              onDragSelectionChange={changePageLayoutDragSelection}
+              onDragSelectionEnd={endPageLayoutDragSelection}
             />
           )}
         </StyledGridContainer>
