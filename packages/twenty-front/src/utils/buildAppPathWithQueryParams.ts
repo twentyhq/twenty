@@ -1,4 +1,4 @@
-import { type AppPath } from 'twenty-shared/types';
+import { type AppPath } from '@/types/AppPath';
 
 export const buildAppPathWithQueryParams = (
   path: AppPath,

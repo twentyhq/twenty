@@ -1,8 +1,8 @@
 import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
 import { SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle } from '@/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle';
+import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { useDeleteOneRoleMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

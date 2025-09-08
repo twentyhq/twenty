@@ -2,11 +2,11 @@ import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

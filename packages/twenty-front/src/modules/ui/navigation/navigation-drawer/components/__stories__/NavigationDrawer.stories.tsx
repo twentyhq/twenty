@@ -1,11 +1,11 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
@@ -17,7 +17,6 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconAt,
   IconBell,
@@ -37,7 +36,7 @@ import {
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';

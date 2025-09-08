@@ -14,10 +14,11 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { AppPath } from '@/types/AppPath';
 import { PageFocusId } from '@/types/PageFocusId';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';

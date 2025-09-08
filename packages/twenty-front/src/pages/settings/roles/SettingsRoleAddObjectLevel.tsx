@@ -2,12 +2,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissionsObjectLevelObjectPicker } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
 import { Navigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsRoleAddObjectLevel = () => {
   const { roleId } = useParams();
@@ -25,14 +25,14 @@ export const SettingsRoleAddObjectLevel = () => {
       <SubMenuTopBarContainer
         title={t`1. Select an object`}
         links={[
-          { children: t`Roles`, href: getSettingsPath(SettingsPath.Roles) },
+          { children: t`Roles`, href: '/settings/roles' },
           {
             children: settingsDraftRole.label ?? '',
-            href: getSettingsPath(SettingsPath.RoleDetail, { roleId }),
+            href: `/settings/roles/${roleId}`,
           },
           {
             children: t`Add object permission`,
-            href: getSettingsPath(SettingsPath.RoleAddObjectLevel, { roleId }),
+            href: `/settings/roles/${roleId}/add-object-permission`,
           },
         ]}
       >

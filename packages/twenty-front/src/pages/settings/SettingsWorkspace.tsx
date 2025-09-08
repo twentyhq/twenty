@@ -4,11 +4,11 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsWorkspace = () => {
   const { t } = useLingui();

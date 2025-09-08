@@ -1,4 +1,5 @@
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -6,12 +7,11 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

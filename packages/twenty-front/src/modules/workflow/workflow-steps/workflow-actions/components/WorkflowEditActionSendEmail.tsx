@@ -6,6 +6,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -18,7 +19,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';

@@ -1,4 +1,4 @@
-import { GraphType, WidgetType } from '../../mocks/mockWidgets';
+import { GraphSubType, WidgetType } from '../../mocks/mockWidgets';
 import { type PageLayoutWidget } from '../../states/savedPageLayoutsState';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
@@ -17,7 +17,7 @@ describe('convertLayoutsToWidgets', () => {
         columnSpan: 2,
       },
       configuration: {
-        graphType: GraphType.NUMBER,
+        graphType: GraphSubType.NUMBER,
       },
       data: { value: 100 },
       createdAt: '2024-01-01T00:00:00Z',
@@ -37,7 +37,7 @@ describe('convertLayoutsToWidgets', () => {
         columnSpan: 2,
       },
       configuration: {
-        graphType: GraphType.PIE,
+        graphType: GraphSubType.PIE,
       },
       data: { items: [] },
       createdAt: '2024-01-01T00:00:00Z',

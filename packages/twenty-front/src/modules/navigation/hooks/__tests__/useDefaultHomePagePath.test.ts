@@ -7,8 +7,8 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { AppPath } from '@/types/AppPath';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { AppPath } from 'twenty-shared/types';
 import { ViewOpenRecordIn, ViewType } from '~/generated/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { mockedUserData } from '~/testing/mock-data/users';

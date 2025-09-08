@@ -2,12 +2,12 @@ import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDa
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSummaryCard';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseTablesListCard';
 import { useDatabaseConnection } from '@/settings/integrations/database-connection/hooks/useDatabaseConnection';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { Section } from '@react-email/components';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigateSettings();
@@ -43,7 +43,9 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
           },
           {
             children: integration.text,
-            href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+            href: getSettingsPath(SettingsPath.IntegrationDatabase, {
+              databaseKey,
+            }),
           },
           { children: connection.label },
         ]}

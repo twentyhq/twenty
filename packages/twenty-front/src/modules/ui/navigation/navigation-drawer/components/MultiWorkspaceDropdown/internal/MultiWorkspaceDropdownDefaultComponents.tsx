@@ -6,6 +6,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -21,8 +23,6 @@ import { type ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   Avatar,
   IconDotsVertical,
@@ -42,6 +42,7 @@ import {
   useSignUpInNewWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.light};

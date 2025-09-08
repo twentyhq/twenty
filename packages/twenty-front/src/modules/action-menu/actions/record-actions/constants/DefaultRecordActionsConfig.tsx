@@ -29,10 +29,11 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 import { isDefined } from 'twenty-shared/utils';
 import {

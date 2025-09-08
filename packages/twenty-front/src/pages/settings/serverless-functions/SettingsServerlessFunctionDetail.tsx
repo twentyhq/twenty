@@ -7,6 +7,7 @@ import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-fun
 import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -15,12 +16,12 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { ApolloError } from '@apollo/client';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 

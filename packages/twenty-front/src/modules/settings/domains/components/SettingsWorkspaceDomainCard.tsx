@@ -1,12 +1,12 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconWorld, Status } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();

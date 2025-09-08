@@ -12,11 +12,8 @@ import {
   ToolSet,
   type UserContent,
 } from 'ai';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -34,6 +31,7 @@ import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metad
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
@@ -206,11 +204,7 @@ export class AgentExecutionService {
                 ...record,
                 resourceUrl: this.domainManagerService.buildWorkspaceURL({
                   workspace,
-                  pathname: getAppPath(AppPath.RecordShowPage, {
-                    objectNameSingular:
-                      recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-                    objectRecordId: record.id,
-                  }),
+                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
                 }),
               };
             });

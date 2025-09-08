@@ -4,9 +4,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { AppPath } from '@/types/AppPath';
 import { type View } from '@/views/types/View';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type ProcessedFavorite = Favorite & {
   Icon?: string;

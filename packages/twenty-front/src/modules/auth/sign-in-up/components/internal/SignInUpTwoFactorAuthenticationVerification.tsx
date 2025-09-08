@@ -12,13 +12,13 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

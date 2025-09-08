@@ -8,8 +8,8 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { AppPath } from '@/types/AppPath';
 import { msg } from '@lingui/core/macro';
-import { AppPath } from 'twenty-shared/types';
 import {
   IconFileExport,
   IconHeart,

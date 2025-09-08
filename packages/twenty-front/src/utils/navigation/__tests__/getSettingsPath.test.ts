@@ -1,4 +1,4 @@
-import { SettingsPath } from '../../../types';
+import { SettingsPath } from '@/types/SettingsPath';
 import { getSettingsPath } from '../getSettingsPath';
 
 describe('getSettingsPath', () => {

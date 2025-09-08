@@ -1,5 +1,7 @@
+import { AppBasePath } from '@/types/AppBasePath';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
-import { AppBasePath, AppPath, SettingsPath } from 'twenty-shared/types';
 
 enum SettingsPathPrefixes {
   Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,

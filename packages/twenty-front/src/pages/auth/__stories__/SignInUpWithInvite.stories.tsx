@@ -11,7 +11,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from '@/types/AppPath';
 import { SignInUp } from '../SignInUp';
 
 const meta: Meta<PageDecoratorArgs> = {

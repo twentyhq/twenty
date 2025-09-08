@@ -10,19 +10,20 @@ import { useConfigVariableActions } from '@/settings/admin-panel/config-variable
 import { useConfigVariableForm } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsPath } from '@/types/SettingsPath';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath, type ConfigVariableValue } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { type ConfigVariableValue } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
   ConfigSource,
   useGetDatabaseConfigVariableQuery,
 } from '~/generated-metadata/graphql';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;

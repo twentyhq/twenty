@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from '@/types/AppPath';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 jest.mock('react-router-dom', () => ({

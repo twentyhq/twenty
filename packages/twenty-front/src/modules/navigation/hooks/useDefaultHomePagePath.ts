@@ -4,13 +4,16 @@ import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { getAppPath } from '~/utils/navigation/getAppPath';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
@@ -115,7 +118,7 @@ export const useDefaultHomePagePath = () => {
     }
 
     if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
-      return `${AppPath.Settings}/${SettingsPath.ProfilePage}`;
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();

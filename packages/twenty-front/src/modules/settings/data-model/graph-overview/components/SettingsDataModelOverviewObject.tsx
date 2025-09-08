@@ -11,11 +11,11 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
+import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =

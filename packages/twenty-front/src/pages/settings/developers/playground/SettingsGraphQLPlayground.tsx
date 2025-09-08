@@ -1,12 +1,12 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsGraphQLPlayground = () => {
   const navigateSettings = useNavigateSettings();

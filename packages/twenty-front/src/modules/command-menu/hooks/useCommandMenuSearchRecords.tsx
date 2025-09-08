@@ -10,10 +10,10 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';

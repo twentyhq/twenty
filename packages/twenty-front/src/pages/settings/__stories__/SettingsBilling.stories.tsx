@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -9,8 +9,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
-import { getSettingsPath } from 'twenty-shared/utils';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsBilling } from '../SettingsBilling';
 
 const meta: Meta<PageDecoratorArgs> = {

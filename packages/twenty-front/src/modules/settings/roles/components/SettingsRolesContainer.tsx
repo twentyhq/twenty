@@ -1,6 +1,6 @@
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';

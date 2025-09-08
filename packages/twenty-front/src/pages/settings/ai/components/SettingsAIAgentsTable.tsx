@@ -2,18 +2,17 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
+import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import {
   SettingsAIAgentTableRow,
   StyledAIAgentTableRow,

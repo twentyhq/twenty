@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { useGetWebhooksQuery } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

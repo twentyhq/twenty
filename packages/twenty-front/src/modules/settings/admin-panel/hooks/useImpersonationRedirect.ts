@@ -1,5 +1,5 @@
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from '@/types/AppPath';
 import { type WorkspaceUrls } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 

@@ -18,8 +18,6 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -63,10 +61,8 @@ export const DefaultLayout = () => {
   const isSettingsPage = useIsSettingsPage();
   const location = useLocation();
   const isPageLayoutEditor =
-    location.pathname.includes(getSettingsPath(SettingsPath.PageLayoutNew)) ||
-    location.pathname.match(
-      new RegExp(`${getSettingsPath(SettingsPath.PageLayout)}/[^/]+$`),
-    );
+    location.pathname.includes('/settings/page-layout/new') ||
+    location.pathname.match(/\/settings\/page-layout\/[^/]+$/);
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();

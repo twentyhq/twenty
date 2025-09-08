@@ -10,7 +10,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsNavigationDrawerItems = () => {
   const settingsNavigationItems: SettingsNavigationSection[] =

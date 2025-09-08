@@ -1,12 +1,12 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import { t } from '@lingui/core/macro';
 import { SettingsAIAgentsTable } from './components/SettingsAIAgentsTable';

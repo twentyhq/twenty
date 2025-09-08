@@ -1,12 +1,11 @@
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { removeWidgetFromTab } from '../utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '../utils/removeWidgetLayoutFromTab';
 
-export const useDeletePageLayoutWidget = () => {
-  const deletePageLayoutWidget = useRecoilCallback(
+export const usePageLayoutWidgetDelete = () => {
+  const handleRemoveWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetId: string) => {
         const pageLayoutDraft = snapshot
@@ -21,7 +20,7 @@ export const useDeletePageLayoutWidget = () => {
         );
         const tabId = tabWithWidget?.id;
 
-        if (isDefined(tabId)) {
+        if (tabId !== undefined) {
           const updatedLayouts = removeWidgetLayoutFromTab(
             allTabLayouts,
             tabId,
@@ -38,5 +37,5 @@ export const useDeletePageLayoutWidget = () => {
     [],
   );
 
-  return { deletePageLayoutWidget };
+  return { handleRemoveWidget };
 };

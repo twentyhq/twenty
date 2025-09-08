@@ -8,7 +8,6 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -56,7 +55,7 @@ export class EmailVerificationService {
       await this.emailVerificationTokenService.generateToken(userId, email);
 
     const linkPathnameAndSearchParams = {
-      pathname: AppPath.VerifyEmail,
+      pathname: 'verify-email',
       searchParams: {
         emailVerificationToken,
         email,

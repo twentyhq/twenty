@@ -6,12 +6,13 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -23,7 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAgentHandoffSection } from './components/SettingsAgentHandoffSection';

@@ -3,8 +3,8 @@ import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '../useAuth';
 import { useVerifyLogin } from '../useVerifyLogin';

@@ -1,5 +1,5 @@
 import {
-  GraphType,
+  GraphSubType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
@@ -26,6 +26,7 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: '   ',
         type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [],
       });
@@ -44,6 +45,7 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Updated Name',
         type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [],
       });
@@ -63,6 +65,7 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {
@@ -80,7 +83,7 @@ describe('usePageLayoutDraftState', () => {
                 title: 'New Widget',
                 type: WidgetType.GRAPH,
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-                configuration: { graphType: GraphType.BAR },
+                configuration: { graphType: GraphSubType.BAR },
                 data: {},
                 objectMetadataId: null,
                 createdAt: new Date().toISOString(),

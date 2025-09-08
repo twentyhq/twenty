@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledCardsContainer = styled.div`
   display: flex;

@@ -6,10 +6,10 @@ import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBill
 import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -17,6 +17,7 @@ import {
   SubscriptionStatus,
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
@@ -37,7 +38,7 @@ export const SettingsBilling = () => {
 
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: getSettingsPath(SettingsPath.Billing),
+      returnUrlPath: '/settings/billing',
     },
     skip: !hasSubscriptions,
   });

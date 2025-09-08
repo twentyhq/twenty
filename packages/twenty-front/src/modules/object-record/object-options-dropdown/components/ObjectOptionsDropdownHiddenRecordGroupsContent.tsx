@@ -7,6 +7,7 @@ import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-gr
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -17,10 +18,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();

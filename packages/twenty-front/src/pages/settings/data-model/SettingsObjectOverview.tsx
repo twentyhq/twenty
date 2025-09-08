@@ -1,9 +1,9 @@
 import { ReactFlowProvider } from '@xyflow/react';
 
 import { SettingsDataModelOverview } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverview';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsObjectOverview = () => {
   return (
@@ -13,7 +13,7 @@ export const SettingsObjectOverview = () => {
           children: 'Workspace',
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
+        { children: 'Objects', href: '/settings/objects' },
         {
           children: 'Overview',
         },

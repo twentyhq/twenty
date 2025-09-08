@@ -1,7 +1,6 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
-import { AppPath } from 'twenty-shared/types';
 
 import {
   AuthException,
@@ -29,7 +28,7 @@ export class GuardRedirectService {
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
-    pathname = AppPath.Verify,
+    pathname = '/verify',
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;

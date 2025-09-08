@@ -4,16 +4,16 @@ import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings } from 'twenty-ui/display';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;

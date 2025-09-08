@@ -1,17 +1,14 @@
 import { IframeWidget } from '@/dashboards/widgets/iframe/components/IframeWidget';
 import { isString } from '@sniptt/guards';
+import { type ReactNode } from 'react';
 import { WidgetType } from '../mocks/mockWidgets';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
-import { GraphWidgetRenderer } from './GraphWidgetRenderer';
+import { renderGraphWidget } from './graphRegistry';
 
-type WidgetRendererProps = {
-  widget: PageLayoutWidget;
-};
-
-export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
+export const renderWidget = (widget: PageLayoutWidget): ReactNode => {
   switch (widget.type) {
     case WidgetType.GRAPH:
-      return <GraphWidgetRenderer widget={widget} />;
+      return renderGraphWidget(widget);
 
     case WidgetType.IFRAME: {
       const url = widget.configuration?.url;

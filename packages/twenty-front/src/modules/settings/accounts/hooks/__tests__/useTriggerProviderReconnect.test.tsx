@@ -2,7 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,

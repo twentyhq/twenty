@@ -6,13 +6,13 @@ import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRo
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { ROLES_LIST_TABS } from '@/settings/roles/constants/RolesListTabs';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { SettingsPath } from '@/types/SettingsPath';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import {
   H2Title,
   IconKey,

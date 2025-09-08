@@ -10,8 +10,6 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -141,9 +139,7 @@ export class ResetPasswordService {
 
     const link = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: getAppPath(AppPath.ResetPassword, {
-        passwordResetToken: resetToken.passwordResetToken,
-      }),
+      pathname: `/reset-password/${resetToken.passwordResetToken}`,
     });
 
     const emailData = {

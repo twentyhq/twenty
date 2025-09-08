@@ -4,16 +4,17 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledCardsContainer = styled.div`
   display: flex;

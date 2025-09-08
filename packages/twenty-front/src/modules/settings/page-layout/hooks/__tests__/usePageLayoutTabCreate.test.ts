@@ -2,13 +2,13 @@ import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pag
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { useCreatePageLayoutTab } from '../useCreatePageLayoutTab';
+import { usePageLayoutTabCreate } from '../usePageLayoutTabCreate';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(),
 }));
 
-describe('useCreatePageLayoutTab', () => {
+describe('usePageLayoutTabCreate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -18,7 +18,7 @@ describe('useCreatePageLayoutTab', () => {
     uuidModule.v4.mockReturnValue('mock-uuid');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
+        createTab: usePageLayoutTabCreate(),
         pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsState),
         pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
@@ -29,7 +29,7 @@ describe('useCreatePageLayoutTab', () => {
 
     let newTabId: string;
     act(() => {
-      newTabId = result.current.createTab.createPageLayoutTab();
+      newTabId = result.current.createTab.handleCreateTab();
     });
 
     expect(result.current.pageLayoutDraft.tabs[0].id).toBe('tab-mock-uuid');
@@ -50,7 +50,7 @@ describe('useCreatePageLayoutTab', () => {
     uuidModule.v4.mockReturnValue('mock-uuid');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
+        createTab: usePageLayoutTabCreate(),
         pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
       {
@@ -59,7 +59,7 @@ describe('useCreatePageLayoutTab', () => {
     );
 
     act(() => {
-      result.current.createTab.createPageLayoutTab('Custom Tab Name');
+      result.current.createTab.handleCreateTab('Custom Tab Name');
     });
 
     expect(result.current.pageLayoutDraft.tabs[0].title).toBe(
@@ -74,7 +74,7 @@ describe('useCreatePageLayoutTab', () => {
       .mockReturnValueOnce('mock-uuid-2');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
+        createTab: usePageLayoutTabCreate(),
         pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
       {
@@ -83,11 +83,11 @@ describe('useCreatePageLayoutTab', () => {
     );
 
     act(() => {
-      result.current.createTab.createPageLayoutTab();
+      result.current.createTab.handleCreateTab();
     });
 
     act(() => {
-      result.current.createTab.createPageLayoutTab();
+      result.current.createTab.handleCreateTab();
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
@@ -104,7 +104,7 @@ describe('useCreatePageLayoutTab', () => {
       .mockReturnValueOnce('mock-uuid-2');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
+        createTab: usePageLayoutTabCreate(),
         pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsState),
       }),
       {
@@ -114,12 +114,12 @@ describe('useCreatePageLayoutTab', () => {
 
     let tabId1: string = '';
     act(() => {
-      tabId1 = result.current.createTab.createPageLayoutTab();
+      tabId1 = result.current.createTab.handleCreateTab();
     });
 
     let tabId2: string = '';
     act(() => {
-      tabId2 = result.current.createTab.createPageLayoutTab();
+      tabId2 = result.current.createTab.handleCreateTab();
     });
 
     expect(result.current.pageLayoutCurrentLayouts[tabId1]).toEqual({

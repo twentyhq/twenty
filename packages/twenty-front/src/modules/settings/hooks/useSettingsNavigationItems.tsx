@@ -1,4 +1,4 @@
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';

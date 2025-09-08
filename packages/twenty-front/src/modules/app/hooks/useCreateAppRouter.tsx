@@ -4,9 +4,9 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { AppPath } from 'twenty-shared/types';
 
 import {
   createBrowserRouter,

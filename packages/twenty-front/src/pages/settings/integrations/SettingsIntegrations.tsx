@@ -1,10 +1,10 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationGroup } from '@/settings/integrations/components/SettingsIntegrationGroup';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrations = () => {
   const { t } = useLingui();

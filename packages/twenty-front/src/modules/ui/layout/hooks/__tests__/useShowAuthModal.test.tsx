@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
+import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { AppPath } from 'twenty-shared/types';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 jest.mock('react-router-dom', () => ({

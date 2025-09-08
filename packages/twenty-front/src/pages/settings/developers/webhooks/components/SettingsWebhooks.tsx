@@ -1,15 +1,15 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledButtonContainer = styled.div`
   display: flex;

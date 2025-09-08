@@ -1,8 +1,9 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { AppPath } from '@/types/AppPath';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 export const SeeRunsWorkflowSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();

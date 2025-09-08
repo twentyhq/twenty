@@ -10,6 +10,7 @@ import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRo
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -19,13 +20,13 @@ import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined, getSettingsPath } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsRoleProps = {
   roleId: string;

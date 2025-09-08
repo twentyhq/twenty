@@ -2,13 +2,13 @@ import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

@@ -3,8 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
+import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { AppPath } from 'twenty-shared/types';
 import { OnboardingStatus } from '~/generated/graphql';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import {

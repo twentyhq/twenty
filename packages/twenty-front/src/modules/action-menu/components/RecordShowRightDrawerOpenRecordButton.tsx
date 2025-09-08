@@ -8,6 +8,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { AppPath } from '@/types/AppPath';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -18,7 +19,6 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

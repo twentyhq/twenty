@@ -6,9 +6,9 @@ import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useCreateOneRoleMutation,

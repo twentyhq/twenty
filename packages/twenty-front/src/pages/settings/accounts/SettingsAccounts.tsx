@@ -9,13 +9,13 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();

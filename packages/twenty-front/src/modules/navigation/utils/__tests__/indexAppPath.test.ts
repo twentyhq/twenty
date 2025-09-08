@@ -1,4 +1,4 @@
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from '@/types/AppPath';
 import indexAppPath from '../indexAppPath';
 
 describe('getIndexAppPath', () => {

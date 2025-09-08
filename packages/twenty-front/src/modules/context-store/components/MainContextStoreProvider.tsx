@@ -3,10 +3,10 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
+import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 

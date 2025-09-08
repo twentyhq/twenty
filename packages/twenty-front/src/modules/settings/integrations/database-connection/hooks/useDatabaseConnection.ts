@@ -6,7 +6,7 @@ import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnec
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from '@/types/AppPath';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useDatabaseConnection = ({

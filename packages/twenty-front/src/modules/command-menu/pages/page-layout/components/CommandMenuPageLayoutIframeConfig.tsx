@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutIframeWidget';
-import { useUpdatePageLayoutWidget } from '@/settings/page-layout/hooks/useUpdatePageLayoutWidget';
+import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageLayoutWidgetUpdate';
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import styled from '@emotion/styled';
@@ -34,7 +34,7 @@ const StyledButtonContainer = styled.div`
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
   const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget();
-  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
+  const { handleUpdateWidget } = usePageLayoutWidgetUpdate();
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilState(pageLayoutEditingWidgetIdState);
   const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
@@ -77,7 +77,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
     }
 
     if (isEditMode && pageLayoutEditingWidgetId !== null) {
-      updatePageLayoutWidget(pageLayoutEditingWidgetId, {
+      handleUpdateWidget(pageLayoutEditingWidgetId, {
         title: title.trim(),
         configuration: {
           ...editingWidget?.configuration,

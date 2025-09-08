@@ -42,6 +42,7 @@ export const PageLayoutInitializationEffect = ({
             set(pageLayoutDraftState, {
               name: layout.name,
               type: layout.type,
+              workspaceId: layout.workspaceId,
               objectMetadataId: layout.objectMetadataId,
               tabs: layout.tabs,
             });
@@ -81,6 +82,7 @@ export const PageLayoutInitializationEffect = ({
           set(pageLayoutDraftState, {
             name: '',
             type: PageLayoutType.DASHBOARD,
+            workspaceId: undefined,
             objectMetadataId: null,
             tabs: [defaultTab],
           });

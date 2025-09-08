@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
@@ -12,11 +12,11 @@ import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link)`
   text-decoration: none;

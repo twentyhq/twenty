@@ -2,12 +2,12 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

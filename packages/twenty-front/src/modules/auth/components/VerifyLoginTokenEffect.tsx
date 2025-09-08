@@ -4,8 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { AppPath } from '@/types/AppPath';
 import { useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

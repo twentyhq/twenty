@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 jest.mock('react-router-dom', () => ({

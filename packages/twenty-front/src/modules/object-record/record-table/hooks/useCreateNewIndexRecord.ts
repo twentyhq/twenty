@@ -9,9 +9,9 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { AppPath } from '@/types/AppPath';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

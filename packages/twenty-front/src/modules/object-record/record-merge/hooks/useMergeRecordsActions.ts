@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 

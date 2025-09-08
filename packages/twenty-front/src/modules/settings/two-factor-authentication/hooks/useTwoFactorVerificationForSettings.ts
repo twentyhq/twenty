@@ -1,12 +1,12 @@
 import { type OTPFormValues } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {

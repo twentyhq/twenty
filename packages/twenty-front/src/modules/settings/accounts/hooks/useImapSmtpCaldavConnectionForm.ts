@@ -6,8 +6,8 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
+import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParameters,
   useSaveImapSmtpCaldavAccountMutation,

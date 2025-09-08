@@ -9,8 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -117,8 +115,7 @@ export class GoogleAPIsAuthController {
         this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname:
-              redirectLocation || getSettingsPath(SettingsPath.Accounts),
+            pathname: redirectLocation || '/settings/accounts',
           })
           .toString(),
       );
@@ -130,7 +127,7 @@ export class GoogleAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-          pathname: getSettingsPath(SettingsPath.Accounts),
+          pathname: '/settings/accounts',
         }),
       );
     }

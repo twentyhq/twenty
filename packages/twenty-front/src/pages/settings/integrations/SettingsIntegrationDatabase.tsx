@@ -7,12 +7,13 @@ import { SettingsIntegrationPreview } from '@/settings/integrations/components/S
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();

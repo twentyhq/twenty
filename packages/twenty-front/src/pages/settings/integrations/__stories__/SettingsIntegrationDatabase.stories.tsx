@@ -1,15 +1,14 @@
 // TEMP_DISABLED_TEST: Removed unused imports due to commented test
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 // TEMP_DISABLED_TEST: Removed unused import due to commented test
 // import { sleep } from '~/utils/sleep';
 

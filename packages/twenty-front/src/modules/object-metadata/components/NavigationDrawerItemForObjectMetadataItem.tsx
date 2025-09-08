@@ -3,6 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
+import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -10,10 +11,9 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;

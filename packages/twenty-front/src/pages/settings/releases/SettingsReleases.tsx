@@ -1,11 +1,10 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { IconFlask, IconRocket } from 'twenty-ui/display';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsReleasesTabContent } from './components';
 import { SETTINGS_RELEASES_TABS, SETTINGS_RELEASES_TABS_ID } from './constants';
 

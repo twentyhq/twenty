@@ -8,6 +8,7 @@ import { useSearchRecordGroupField } from '@/object-record/object-options-dropdo
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
+import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -20,8 +21,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import {
   MenuItem,
@@ -29,6 +29,7 @@ import {
   UndecoratedLink,
 } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   const { t } = useLingui();

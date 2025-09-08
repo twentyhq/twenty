@@ -1,9 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
 import {
@@ -13,7 +11,7 @@ import {
 } from '../states/savedPageLayoutsState';
 
 export const usePageLayoutSaveHandler = () => {
-  const navigateSettings = useNavigateSettings();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = id && id !== 'new';
 
@@ -44,6 +42,7 @@ export const usePageLayoutSaveHandler = () => {
           id: isEditMode ? id : uuidv4(),
           name: pageLayoutDraft.name,
           type: pageLayoutDraft.type,
+          workspaceId: pageLayoutDraft.workspaceId,
           objectMetadataId: pageLayoutDraft.objectMetadataId,
           tabs: updatedTabs,
           createdAt: isEditMode
@@ -64,9 +63,9 @@ export const usePageLayoutSaveHandler = () => {
 
         set(pageLayoutPersistedState, layoutToSave);
 
-        navigateSettings(SettingsPath.PageLayout);
+        navigate('/settings/page-layout');
       },
-    [isEditMode, id, navigateSettings],
+    [isEditMode, id, navigate],
   );
 
   return { savePageLayout };

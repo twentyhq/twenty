@@ -1,5 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,8 +10,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   H2Title,
   IconChevronRight,
@@ -21,6 +20,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 1fr 180px 80px 80px 36px 36px;
@@ -59,7 +59,7 @@ export const SettingsPageLayouts = () => {
     <SubMenuTopBarContainer
       title={t`Page Layouts`}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.PageLayoutNew)}>
+        <UndecoratedLink to="/settings/page-layout/new">
           <Button
             Icon={IconPlus}
             title={t`Add layout`}
@@ -92,9 +92,7 @@ export const SettingsPageLayouts = () => {
             {savedPageLayouts.map((layout) => (
               <StyledTableRow
                 key={layout.id}
-                to={getSettingsPath(SettingsPath.PageLayoutEdit, {
-                  id: layout.id,
-                })}
+                to={`/settings/page-layout/${layout.id}`}
               >
                 <StyledNameTableCell>
                   <IconLayoutList

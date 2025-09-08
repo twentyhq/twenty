@@ -8,7 +8,7 @@ export enum WidgetType {
   GRAPH = 'GRAPH',
 }
 
-export enum GraphType {
+export enum GraphSubType {
   NUMBER = 'NUMBER',
   GAUGE = 'GAUGE',
   PIE = 'PIE',
@@ -29,7 +29,7 @@ export const mockPageLayoutWidgets: PageLayoutWidget[] = [
       columnSpan: 3,
     },
     configuration: {
-      graphType: GraphType.NUMBER,
+      graphType: GraphSubType.NUMBER,
     },
     data: {
       value: '1,234',
@@ -52,7 +52,7 @@ export const mockPageLayoutWidgets: PageLayoutWidget[] = [
       columnSpan: 3,
     },
     configuration: {
-      graphType: GraphType.GAUGE,
+      graphType: GraphSubType.GAUGE,
     },
     data: {
       value: 0.5,
@@ -77,7 +77,7 @@ export const mockPageLayoutWidgets: PageLayoutWidget[] = [
       columnSpan: 6,
     },
     configuration: {
-      graphType: GraphType.PIE,
+      graphType: GraphSubType.PIE,
     },
     data: {
       items: [
@@ -130,7 +130,7 @@ export const mockPageLayoutWidgets: PageLayoutWidget[] = [
       columnSpan: 4,
     },
     configuration: {
-      graphType: GraphType.BAR,
+      graphType: GraphSubType.BAR,
     },
     data: {
       items: [

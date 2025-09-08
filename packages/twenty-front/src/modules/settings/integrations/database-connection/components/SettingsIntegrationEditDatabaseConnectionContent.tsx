@@ -8,6 +8,7 @@ import {
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { ApolloError } from '@apollo/client';
@@ -16,8 +17,6 @@ import { useLingui } from '@lingui/react/macro';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Info } from 'twenty-ui/display';
 import { type z } from 'zod';
 import {
@@ -26,6 +25,7 @@ import {
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
@@ -111,7 +111,9 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
               },
               {
                 children: integration.text,
-                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+                href: getSettingsPath(SettingsPath.IntegrationDatabase, {
+                  databaseKey,
+                }),
               },
               { children: connection.label },
             ]}

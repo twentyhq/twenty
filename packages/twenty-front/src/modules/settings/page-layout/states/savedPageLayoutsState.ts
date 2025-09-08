@@ -43,6 +43,7 @@ export type SavedPageLayout = {
   id: string;
   name: string;
   type: PageLayoutType;
+  workspaceId?: string;
   objectMetadataId?: string | null;
   tabs: PageLayoutTab[];
   createdAt: string;

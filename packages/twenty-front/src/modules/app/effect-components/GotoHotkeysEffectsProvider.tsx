@@ -4,8 +4,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useRecoilCallback } from 'recoil';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 
 export const GotoHotkeysEffectsProvider = () => {
   const { activeNonSystemObjectMetadataItems } =
@@ -13,7 +11,7 @@ export const GotoHotkeysEffectsProvider = () => {
 
   useGoToHotkeys({
     key: 's',
-    location: getSettingsPath(SettingsPath.ProfilePage),
+    location: '/settings/profile',
     preNavigateFunction: useRecoilCallback(
       ({ set }) =>
         () => {
@@ -33,9 +31,7 @@ export const GotoHotkeysEffectsProvider = () => {
       <GoToHotkeyItemEffect
         key={`go-to-hokey-item-${objectMetadataItem.id}`}
         hotkey={objectMetadataItem.shortcut}
-        pathToNavigateTo={getAppPath(AppPath.RecordIndexPage, {
-          objectNamePlural: objectMetadataItem.namePlural,
-        })}
+        pathToNavigateTo={`/objects/${objectMetadataItem.namePlural}`}
       />
     );
   });

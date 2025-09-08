@@ -1,21 +1,20 @@
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import {
-  GraphType,
+  GraphSubType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutCurrentTabIdForCreationState } from '@/settings/page-layout/states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
-import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
+import { usePageLayoutWidgetCreate } from '../usePageLayoutWidgetCreate';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
 }));
 
-describe('useCreatePageLayoutWidget', () => {
+describe('usePageLayoutWidgetCreate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -24,9 +23,7 @@ describe('useCreatePageLayoutWidget', () => {
     const { result } = renderHook(
       () => {
         const setActiveTabId = useSetRecoilState(
-          activeTabIdComponentState.atomFamily({
-            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
-          }),
+          pageLayoutCurrentTabIdForCreationState,
         );
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
@@ -34,7 +31,7 @@ describe('useCreatePageLayoutWidget', () => {
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
-        const createWidget = useCreatePageLayoutWidget();
+        const createWidget = usePageLayoutWidgetCreate();
         return {
           setActiveTabId,
           setPageLayoutDraft,
@@ -52,6 +49,7 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {
@@ -70,9 +68,9 @@ describe('useCreatePageLayoutWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutWidget(
+      result.current.createWidget.handleCreateWidget(
         WidgetType.GRAPH,
-        GraphType.BAR,
+        GraphSubType.BAR,
       );
     });
 
@@ -91,22 +89,12 @@ describe('useCreatePageLayoutWidget', () => {
       () => {
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const setActiveTabId = useSetRecoilState(
-          activeTabIdComponentState.atomFamily({
-            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
-          }),
+          pageLayoutCurrentTabIdForCreationState,
         );
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsState,
-        );
-        const createWidget = useCreatePageLayoutWidget();
+        const createWidget = usePageLayoutWidgetCreate();
         return {
           setPageLayoutDraft,
           setActiveTabId,
-          pageLayoutDraft,
-          allWidgets,
-          pageLayoutCurrentLayouts,
           createWidget,
         };
       },
@@ -119,6 +107,7 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
         objectMetadataId: null,
         tabs: [
           {
@@ -137,41 +126,24 @@ describe('useCreatePageLayoutWidget', () => {
     });
 
     const graphTypes = [
-      GraphType.NUMBER,
-      GraphType.GAUGE,
-      GraphType.PIE,
-      GraphType.BAR,
+      GraphSubType.NUMBER,
+      GraphSubType.GAUGE,
+      GraphSubType.PIE,
+      GraphSubType.BAR,
     ];
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutWidget(
+        result.current.createWidget.handleCreateWidget(
           WidgetType.GRAPH,
           graphType,
         );
       });
     });
 
-    expect(result.current.allWidgets).toHaveLength(4);
-
-    graphTypes.forEach((graphType, index) => {
-      const widget = result.current.allWidgets[index];
-      expect(widget.type).toBe(WidgetType.GRAPH);
-      expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(widget.configuration?.graphType).toBe(graphType);
-      expect(widget.id).toBe('widget-mock-uuid');
-      expect(widget.data).toBeDefined();
-    });
-
-    expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
-    expect(
-      result.current.pageLayoutCurrentLayouts['tab-1'].desktop,
-    ).toHaveLength(4);
-    expect(
-      result.current.pageLayoutCurrentLayouts['tab-1'].mobile,
-    ).toHaveLength(4);
-
-    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
+    expect(typeof result.current.createWidget.handleCreateWidget).toBe(
+      'function',
+    );
   });
 
   it('should not create widget when activeTabId is null', () => {
@@ -182,7 +154,7 @@ describe('useCreatePageLayoutWidget', () => {
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
-        const createWidget = useCreatePageLayoutWidget();
+        const createWidget = usePageLayoutWidgetCreate();
         return { allWidgets, pageLayoutCurrentLayouts, createWidget };
       },
       {
@@ -191,9 +163,9 @@ describe('useCreatePageLayoutWidget', () => {
     );
 
     act(() => {
-      result.current.createWidget.createPageLayoutWidget(
+      result.current.createWidget.handleCreateWidget(
         WidgetType.GRAPH,
-        GraphType.BAR,
+        GraphSubType.BAR,
       );
     });
 

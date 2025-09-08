@@ -14,8 +14,8 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { appVersionState } from '@/client-config/states/appVersionState';
+import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ApolloFactory, type Options } from '../services/apollo.factory';
 

@@ -12,10 +12,10 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
+import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import {
   useCreateWebhookMutation,
   useDeleteWebhookMutation,

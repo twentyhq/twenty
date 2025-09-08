@@ -11,6 +11,7 @@ export const pageLayoutDraftState = createState<DraftPageLayout>({
   defaultValue: {
     name: '',
     type: PageLayoutType.DASHBOARD,
+    workspaceId: undefined,
     objectMetadataId: null,
     tabs: [],
   },

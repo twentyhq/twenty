@@ -1,4 +1,5 @@
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -7,7 +8,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

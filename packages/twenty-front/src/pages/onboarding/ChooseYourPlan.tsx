@@ -10,11 +10,11 @@ import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSessi
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';

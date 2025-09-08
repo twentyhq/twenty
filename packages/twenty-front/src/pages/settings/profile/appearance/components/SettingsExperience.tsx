@@ -1,15 +1,15 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { SettingsPath } from 'twenty-shared/types';
 
 import { Trans, useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { ColorSchemePicker } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
