@@ -23,14 +23,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-    metadata: {
-      label: 'Workflow Branches',
-      description: 'Create multiple branches on your workflows',
-      imagePath: 'https://twenty.com/images/lab/is-workflow-branch-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
     metadata: {
       label: 'Message Folder Control',
