@@ -108,30 +108,30 @@ export class PermissionsService {
     };
   }
 
-  public getDefaultUserWorkspacePermissions = () =>
-    ({
-      objectRecordsPermissions: {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
-      },
-      permissionFlags: {
-        [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
-        [PermissionFlagType.WORKSPACE]: false,
-        [PermissionFlagType.WORKSPACE_MEMBERS]: false,
-        [PermissionFlagType.ROLES]: false,
-        [PermissionFlagType.DATA_MODEL]: false,
-        [PermissionFlagType.ADMIN_PANEL]: false,
-        [PermissionFlagType.SECURITY]: false,
-        [PermissionFlagType.WORKFLOWS]: false,
-        [PermissionFlagType.SEND_EMAIL_TOOL]: false,
-        [PermissionFlagType.IMPORT_CSV]: false,
-        [PermissionFlagType.EXPORT_CSV]: false,
-      },
-      objectPermissions: {},
-      objectsPermissions: {},
-    }) as const satisfies UserWorkspacePermissions;
+  public getDefaultUserWorkspacePermissions = (): UserWorkspacePermissions => ({
+    objectRecordsPermissions: {
+      [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
+      [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
+      [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
+      [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
+    },
+    permissionFlags: {
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+      [PermissionFlagType.WORKSPACE]: false,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+      [PermissionFlagType.ROLES]: false,
+      [PermissionFlagType.DATA_MODEL]: false,
+      [PermissionFlagType.ADMIN_PANEL]: false,
+      [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.WORKFLOWS]: false,
+      [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+      [PermissionFlagType.IMPORT_CSV]: false,
+      [PermissionFlagType.EXPORT_CSV]: false,
+      [PermissionFlagType.IMPERSONATE]: false,
+    },
+    objectPermissions: {},
+    objectsPermissions: {},
+  });
 
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
