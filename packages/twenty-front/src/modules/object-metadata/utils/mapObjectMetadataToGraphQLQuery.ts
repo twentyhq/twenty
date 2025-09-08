@@ -70,7 +70,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
         );
       }
 
-      // TODO DOUBLE CHECK HERE NECESSITY TO HAVE AN ARAY AND RETURN TYPE
       return fieldMetadata.morphRelations.map((morphRelation) => ({
         gqlField: morphRelation.sourceFieldMetadata.name,
         fieldMetadata: fieldMetadata,
