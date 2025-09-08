@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';

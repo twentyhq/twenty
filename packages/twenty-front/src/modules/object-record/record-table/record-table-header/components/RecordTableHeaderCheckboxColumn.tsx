@@ -20,6 +20,7 @@ const StyledContainer = styled.div`
   min-width: 24px;
   padding-right: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledColumnHeaderCell = styled.div<{
@@ -31,6 +32,7 @@ const StyledColumnHeaderCell = styled.div<{
   box-sizing: border-box;
 
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  max-height: 32px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {

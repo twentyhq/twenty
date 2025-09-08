@@ -8,12 +8,12 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledCommandMenuContent = styled.div`

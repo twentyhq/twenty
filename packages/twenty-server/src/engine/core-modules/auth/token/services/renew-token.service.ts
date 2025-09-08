@@ -61,7 +61,7 @@ export class RenewTokenService {
     // Support legacy token when targetedTokenType is undefined.
     const targetedTokenType =
       targetedTokenTypeFromPayload ?? JwtTokenTypeEnum.ACCESS;
-
+    
     const resolvedAuthProvider = authProvider ?? AuthProviderEnum.Password;
 
     const accessToken =

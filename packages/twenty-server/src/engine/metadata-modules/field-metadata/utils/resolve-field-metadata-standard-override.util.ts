@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
+// TODO simplify
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,

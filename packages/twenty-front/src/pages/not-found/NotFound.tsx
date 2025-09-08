@@ -1,10 +1,11 @@
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
+import { MainButton } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,
@@ -12,7 +13,6 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`

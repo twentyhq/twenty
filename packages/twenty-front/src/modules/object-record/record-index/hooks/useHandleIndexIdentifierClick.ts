@@ -1,8 +1,8 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AppPath } from '@/types/AppPath';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 export const useHandleIndexIdentifierClick = ({
   objectMetadataItem,

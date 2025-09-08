@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import {
   IconCalendar,
   IconCheckbox,
@@ -11,6 +12,8 @@ import {
 } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { TabList } from '../TabList';
+import { type TabListProps } from '../../types/TabListProps';
+import { type SingleTabProps } from '../../types/SingleTabProps';
 
 const tabs = [
   { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },
@@ -79,4 +82,73 @@ export const Default: Story = {
       />
     </StyledInteractiveContainer>
   ),
+};
+
+type TabListWithAddProps = Pick<
+  TabListProps,
+  'componentInstanceId' | 'loading' | 'isInRightDrawer' | 'className'
+> & {
+  initialTabs: SingleTabProps[];
+};
+
+const TabListWithAdd = ({
+  componentInstanceId,
+  loading,
+  isInRightDrawer,
+  className,
+  initialTabs,
+}: TabListWithAddProps) => {
+  const [currentTabs, setCurrentTabs] = useState<SingleTabProps[]>(initialTabs);
+  const [nextTabId, setNextTabId] = useState(initialTabs.length + 1);
+
+  const handleAddTab = () => {
+    const newTab: SingleTabProps = {
+      id: `new-tab-${nextTabId}`,
+      title: `New Tab ${nextTabId}`,
+      Icon: IconCheckbox,
+    };
+    setCurrentTabs([...currentTabs, newTab]);
+    setNextTabId(nextTabId + 1);
+  };
+
+  return (
+    <StyledInteractiveContainer>
+      <p>
+        <strong>Click the + button to add new tabs!</strong>
+      </p>
+      <TabList
+        tabs={currentTabs}
+        componentInstanceId={componentInstanceId}
+        loading={loading}
+        behaveAsLinks={false}
+        isInRightDrawer={isInRightDrawer}
+        className={className}
+        onAddTab={handleAddTab}
+      />
+    </StyledInteractiveContainer>
+  );
+};
+
+export const WithAddTab: Story = {
+  args: {
+    componentInstanceId: 'tabs-with-add',
+    tabs: tabs.slice(0, 3),
+  },
+  render: (args) => (
+    <TabListWithAdd
+      componentInstanceId={args.componentInstanceId}
+      loading={args.loading}
+      isInRightDrawer={args.isInRightDrawer}
+      className={args.className}
+      initialTabs={args.tabs}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'TabList with the ability to add new tabs dynamically using the onAddTab callback. Click the + button to add new tabs.',
+      },
+    },
+  },
 };

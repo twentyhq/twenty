@@ -5,12 +5,12 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
