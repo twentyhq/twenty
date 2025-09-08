@@ -2,7 +2,7 @@ import { GraphWidgetBarChart } from '@/dashboards/widgets/graph/components/Graph
 import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/GraphWidgetGaugeChart';
 import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
-import { GraphSubType } from '../mocks/mockWidgets';
+import { GraphType } from '../mocks/mockWidgets';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 
 type GraphWidgetRendererProps = {
@@ -16,12 +16,12 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     return null;
   }
 
-  if (!Object.values(GraphSubType).includes(graphType as GraphSubType)) {
+  if (!Object.values(GraphType).includes(graphType as GraphType)) {
     return null;
   }
 
-  switch (graphType as GraphSubType) {
-    case GraphSubType.NUMBER:
+  switch (graphType as GraphType) {
+    case GraphType.NUMBER:
       return (
         <GraphWidgetNumberChart
           value={widget.data.value}
@@ -29,7 +29,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
         />
       );
 
-    case GraphSubType.GAUGE:
+    case GraphType.GAUGE:
       return (
         <GraphWidgetGaugeChart
           data={{
@@ -44,7 +44,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
         />
       );
 
-    case GraphSubType.PIE:
+    case GraphType.PIE:
       return (
         <GraphWidgetPieChart
           data={widget.data.items}
@@ -54,7 +54,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
         />
       );
 
-    case GraphSubType.BAR:
+    case GraphType.BAR:
       return (
         <GraphWidgetBarChart
           data={widget.data.items}

@@ -1,6 +1,6 @@
 import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import {
-  GraphSubType,
+  GraphType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
@@ -72,7 +72,7 @@ describe('useCreatePageLayoutWidget', () => {
     act(() => {
       result.current.createWidget.createPageLayoutWidget(
         WidgetType.GRAPH,
-        GraphSubType.BAR,
+        GraphType.BAR,
       );
     });
 
@@ -137,10 +137,10 @@ describe('useCreatePageLayoutWidget', () => {
     });
 
     const graphTypes = [
-      GraphSubType.NUMBER,
-      GraphSubType.GAUGE,
-      GraphSubType.PIE,
-      GraphSubType.BAR,
+      GraphType.NUMBER,
+      GraphType.GAUGE,
+      GraphType.PIE,
+      GraphType.BAR,
     ];
 
     graphTypes.forEach((graphType) => {
@@ -193,7 +193,7 @@ describe('useCreatePageLayoutWidget', () => {
     act(() => {
       result.current.createWidget.createPageLayoutWidget(
         WidgetType.GRAPH,
-        GraphSubType.BAR,
+        GraphType.BAR,
       );
     });
 

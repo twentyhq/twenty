@@ -1,5 +1,5 @@
 import {
-  GraphSubType,
+  GraphType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
@@ -80,7 +80,7 @@ describe('usePageLayoutDraftState', () => {
                 title: 'New Widget',
                 type: WidgetType.GRAPH,
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-                configuration: { graphType: GraphSubType.BAR },
+                configuration: { graphType: GraphType.BAR },
                 data: {},
                 objectMetadataId: null,
                 createdAt: new Date().toISOString(),
