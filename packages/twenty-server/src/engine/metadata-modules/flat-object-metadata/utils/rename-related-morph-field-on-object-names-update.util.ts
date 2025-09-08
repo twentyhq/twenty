@@ -31,56 +31,57 @@ const searchAndReplaceLast = ({
   );
 };
 
-type RenameRelatedMorphFieldOnObjectNamesUpdateArgs =
-  FromTo<FlatObjectMetadata, 'flatObjectMetadata'> & {
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  };
-export const renameRelatedMorphFieldOnObjectNamesUpdate =
-  ({
-    fromFlatObjectMetadata,
-    existingFlatObjectMetadataMaps,
-    toFlatObjectMetadata,
-  }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
-    const manyToOneMorphRelationFlatFieldMetadatas =
-      getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
-        flatObjectMetadata: fromFlatObjectMetadata,
-        existingFlatObjectMetadataMaps,
-      });
+type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
+  FlatObjectMetadata,
+  'flatObjectMetadata'
+> & {
+  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+};
+export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
+  fromFlatObjectMetadata,
+  existingFlatObjectMetadataMaps,
+  toFlatObjectMetadata,
+}: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
+  const manyToOneMorphRelationFlatFieldMetadatas =
+    getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
+      flatObjectMetadata: fromFlatObjectMetadata,
+      existingFlatObjectMetadataMaps,
+    });
 
-    const updatedFlatFieldMetadatas =
-      manyToOneMorphRelationFlatFieldMetadatas.map(
-        (morphRelationFlatFieldMetadata) => {
-          const isManyToOneRelationType =
-            morphRelationFlatFieldMetadata.settings.relationType ===
-            RelationType.MANY_TO_ONE;
-          const initialMorphRelationFieldName = searchAndReplaceLast({
-            source: morphRelationFlatFieldMetadata.name,
-            replace: '',
-            search: isManyToOneRelationType
-              ? fromFlatObjectMetadata.nameSingular
-              : fromFlatObjectMetadata.namePlural,
-          });
-          const newMorphFieldName = computeMorphRelationFieldName({
-            fieldName: initialMorphRelationFieldName,
-            relationType: morphRelationFlatFieldMetadata.settings.relationType,
-            targetObjectMetadata: toFlatObjectMetadata,
-          });
-          const newJoinColumnName = isManyToOneRelationType
-            ? computeMorphOrRelationFieldJoinColumnName({
-                name: newMorphFieldName,
-              })
-            : undefined;
+  const updatedFlatFieldMetadatas =
+    manyToOneMorphRelationFlatFieldMetadatas.map(
+      (morphRelationFlatFieldMetadata) => {
+        const isManyToOneRelationType =
+          morphRelationFlatFieldMetadata.settings.relationType ===
+          RelationType.MANY_TO_ONE;
+        const initialMorphRelationFieldName = searchAndReplaceLast({
+          source: morphRelationFlatFieldMetadata.name,
+          replace: '',
+          search: isManyToOneRelationType
+            ? fromFlatObjectMetadata.nameSingular
+            : fromFlatObjectMetadata.namePlural,
+        });
+        const newMorphFieldName = computeMorphRelationFieldName({
+          fieldName: initialMorphRelationFieldName,
+          relationType: morphRelationFlatFieldMetadata.settings.relationType,
+          targetObjectMetadata: toFlatObjectMetadata,
+        });
+        const newJoinColumnName = isManyToOneRelationType
+          ? computeMorphOrRelationFieldJoinColumnName({
+              name: newMorphFieldName,
+            })
+          : undefined;
 
-          return {
-            ...morphRelationFlatFieldMetadata,
-            name: newMorphFieldName,
-            settings: {
-              ...morphRelationFlatFieldMetadata.settings,
-              joinColumnName: newJoinColumnName,
-            },
-          };
-        },
-      );
+        return {
+          ...morphRelationFlatFieldMetadata,
+          name: newMorphFieldName,
+          settings: {
+            ...morphRelationFlatFieldMetadata.settings,
+            joinColumnName: newJoinColumnName,
+          },
+        };
+      },
+    );
 
-    return updatedFlatFieldMetadatas;
-  };
+  return updatedFlatFieldMetadatas;
+};

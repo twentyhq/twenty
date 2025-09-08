@@ -131,13 +131,11 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
       };
       const newUpdatedOtherObjectFlatFieldMetadatas =
         property === 'nameSingular' || property === 'namePlural'
-          ? renameRelatedMorphFieldOnObjectNamesUpdate(
-              {
-                existingFlatObjectMetadataMaps,
-                fromFlatObjectMetadata: updatedFlatObjectMetadata,
-                toFlatObjectMetadata: updatedFlatObjectMetadata,
-              },
-            )
+          ? renameRelatedMorphFieldOnObjectNamesUpdate({
+              existingFlatObjectMetadataMaps,
+              fromFlatObjectMetadata: updatedFlatObjectMetadata,
+              toFlatObjectMetadata: updatedFlatObjectMetadata,
+            })
           : [];
 
       return {
