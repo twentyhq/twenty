@@ -125,7 +125,7 @@ describe.each(allWorkspaceBuilderTestCases)(
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           buildOptions = {
-            inferDeletionFromMissingObjectFieldIndex: true,
+            inferDeletionFromMissingEntities: true,
             isSystemBuild: false,
           },
         } = typeof input === 'function' ? input() : input;

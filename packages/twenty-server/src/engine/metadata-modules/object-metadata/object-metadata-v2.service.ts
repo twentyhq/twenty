@@ -96,7 +96,7 @@ export class ObjectMetadataServiceV2 {
           toFlatObjectMetadataMaps,
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
+            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -198,7 +198,7 @@ export class ObjectMetadataServiceV2 {
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           buildOptions: {
-            inferDeletionFromMissingObjectFieldIndex: true,
+            inferDeletionFromMissingEntities: true,
             isSystemBuild: false,
           },
           workspaceId,
@@ -288,7 +288,7 @@ export class ObjectMetadataServiceV2 {
           toFlatObjectMetadataMaps,
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
+            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },

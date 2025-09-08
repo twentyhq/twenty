@@ -10,15 +10,15 @@ import {
   ViewExceptionCode,
   ViewExceptionMessageKey,
   generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 
 @Injectable()
 export class ViewService {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    private readonly viewV2Service: ViewV2Service,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
@@ -81,41 +81,43 @@ export class ViewService {
     return view || null;
   }
 
-  async create(viewData: Partial<ViewEntity>): Promise<ViewDTO> {
-    if (!isDefined(viewData.workspaceId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        ViewExceptionCode.INVALID_VIEW_DATA,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-          ),
-        },
-      );
-    }
+  async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
+    return await this.viewV2Service.createOne(viewData);
 
-    if (!isDefined(viewData.objectMetadataId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-        ),
-        ViewExceptionCode.INVALID_VIEW_DATA,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-          ),
-        },
-      );
-    }
+    // if (!isDefined(viewData.workspaceId)) {
+    //   throw new ViewException(
+    //     generateViewExceptionMessage(
+    //       ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+    //     ),
+    //     ViewExceptionCode.INVALID_VIEW_DATA,
+    //     {
+    //       userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+    //         ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+    //       ),
+    //     },
+    //   );
+    // }
 
-    const view = this.viewRepository.create({
-      ...viewData,
-      isCustom: true,
-    });
+    // if (!isDefined(viewData.objectMetadataId)) {
+    //   throw new ViewException(
+    //     generateViewExceptionMessage(
+    //       ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+    //     ),
+    //     ViewExceptionCode.INVALID_VIEW_DATA,
+    //     {
+    //       userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+    //         ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+    //       ),
+    //     },
+    //   );
+    // }
 
-    return this.viewRepository.save(view);
+    // const view = this.viewRepository.create({
+    //   ...viewData,
+    //   isCustom: true,
+    // });
+
+    // return this.viewRepository.save(view);
   }
 
   async update(
@@ -123,24 +125,25 @@ export class ViewService {
     workspaceId: string,
     updateData: Partial<ViewEntity>,
   ): Promise<ViewEntity> {
-    const existingView = await this.findById(id, workspaceId);
+    return await this.viewV2Service.updateOne(id, workspaceId, updateData);
+    // const existingView = await this.findById(id, workspaceId);
 
-    if (!isDefined(existingView)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
+    // if (!isDefined(existingView)) {
+    //   throw new ViewException(
+    //     generateViewExceptionMessage(
+    //       ViewExceptionMessageKey.VIEW_NOT_FOUND,
+    //       id,
+    //     ),
+    //     ViewExceptionCode.VIEW_NOT_FOUND,
+    //   );
+    // }
 
-    const updatedView = await this.viewRepository.save({
-      id,
-      ...updateData,
-    });
+    // const updatedView = await this.viewRepository.save({
+    //   id,
+    //   ...updateData,
+    // });
 
-    return { ...existingView, ...updatedView };
+    // return { ...existingView, ...updatedView };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewEntity> {
@@ -162,20 +165,21 @@ export class ViewService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const view = await this.findById(id, workspaceId);
+    return await this.viewV2Service.deleteOne(id, workspaceId);
+    // const view = await this.findById(id, workspaceId);
 
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
+    // if (!isDefined(view)) {
+    //   throw new ViewException(
+    //     generateViewExceptionMessage(
+    //       ViewExceptionMessageKey.VIEW_NOT_FOUND,
+    //       id,
+    //     ),
+    //     ViewExceptionCode.VIEW_NOT_FOUND,
+    //   );
+    // }
 
-    await this.viewRepository.delete(id);
+    // await this.viewRepository.delete(id);
 
-    return true;
+    // return true;
   }
 }

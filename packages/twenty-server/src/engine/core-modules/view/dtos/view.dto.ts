@@ -4,11 +4,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
-import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
-import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
-import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -72,19 +67,4 @@ export class ViewDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
-
-  @Field(() => [ViewFieldDTO])
-  viewFields: ViewFieldDTO[];
-
-  @Field(() => [ViewFilterDTO])
-  viewFilters: ViewFilterDTO[];
-
-  @Field(() => [ViewFilterGroupDTO])
-  viewFilterGroups: ViewFilterGroupDTO[];
-
-  @Field(() => [ViewSortDTO])
-  viewSorts: ViewSortDTO[];
-
-  @Field(() => [ViewGroupDTO])
-  viewGroups: ViewGroupDTO[];
 }

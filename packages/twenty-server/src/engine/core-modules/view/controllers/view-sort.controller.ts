@@ -16,13 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
-import {
-  ViewSortException,
-  ViewSortExceptionCode,
-  ViewSortExceptionMessageKey,
-  generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -51,25 +44,8 @@ export class ViewSortController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewSortDTO> {
-    const viewSort = await this.viewSortService.findById(id, workspace.id);
-
-    if (!isDefined(viewSort)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          id,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewSort;
+  ): Promise<ViewSortDTO | null> {
+    return this.viewSortService.findById(id, workspace.id);
   }
 
   @Post()

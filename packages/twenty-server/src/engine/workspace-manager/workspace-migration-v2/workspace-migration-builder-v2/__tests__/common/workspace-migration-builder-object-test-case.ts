@@ -44,7 +44,7 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
     context: {
       input: {
         buildOptions: {
-          inferDeletionFromMissingObjectFieldIndex: true,
+          inferDeletionFromMissingEntities: true,
           isSystemBuild: true,
         },
         fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,

@@ -20,9 +20,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -31,7 +28,10 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewFieldEntity extends SyncableEntity {
+export class ViewFieldEntity
+  extends SyncableEntity
+  implements Required<ViewFieldEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -59,7 +59,7 @@ export class ViewFieldEntity extends SyncableEntity {
     nullable: true,
     default: null,
   })
-  aggregateOperation?: AggregateOperations | null;
+  aggregateOperation: AggregateOperations | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -74,7 +74,7 @@ export class ViewFieldEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',
