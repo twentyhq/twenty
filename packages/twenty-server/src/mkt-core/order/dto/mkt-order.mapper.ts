@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
 
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 import { mapEntityOrderStatusToGraphQL } from 'src/mkt-core/order/utils/order-status.mapper';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
 import {
-  MktOrderOutput,
   MktOrderItemOutput,
+  MktOrderOutput,
   MktOrdersOutput,
   MktOrdersPageInfo,
 } from './mkt-order.output';

@@ -10,7 +10,7 @@ import {
   MKT_LICENSE_STATUS,
   MktLicenseWorkspaceEntity,
 } from 'src/mkt-core/license/mkt-license.workspace-entity';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 export interface LicenseGenerationJobData {
   orderId: string;
