@@ -194,6 +194,13 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
               }));
               scrollToBottom();
             },
+            onReasoningSummary: (message: string) => {
+              setAgentStreamingMessage((prev) => ({
+                ...prev,
+                reasoningSummary: prev.reasoningSummary + message,
+              }));
+              scrollToBottom();
+            },
             onError: (message: string) => {
               enqueueErrorSnackBar({
                 message,
@@ -227,6 +234,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
     setAgentStreamingMessage({
       toolCall: '',
       streamingText: '',
+      reasoningSummary: '',
     });
     scrollToBottom();
   };

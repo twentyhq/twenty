@@ -1,5 +1,5 @@
 export type AgentStreamingEvent = {
-  type: 'text-delta' | 'tool-call' | 'error';
+  type: 'text-delta' | 'tool-call' | 'error' | 'reasoning';
   message: string;
 };
 
@@ -7,6 +7,7 @@ export type AgentStreamingParserCallbacks = {
   onTextDelta?: (message: string) => void;
   onToolCall?: (message: string) => void;
   onError?: (message: string) => void;
+  onReasoningSummary?: (message: string) => void;
   onParseError?: (error: Error, rawLine: string) => void;
 };
 
@@ -27,6 +28,9 @@ export const parseAgentStreamingChunk = (
             break;
           case 'tool-call':
             callbacks.onToolCall?.(event.message);
+            break;
+          case 'reasoning':
+            callbacks.onReasoningSummary?.(event.message);
             break;
           case 'error':
             callbacks.onError?.(event.message);
