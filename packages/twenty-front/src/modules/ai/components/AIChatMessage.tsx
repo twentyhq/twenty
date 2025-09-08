@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
@@ -173,7 +174,11 @@ export const AIChatMessage = ({
   agentStreamingMessage,
 }: {
   message: AgentChatMessage;
-  agentStreamingMessage: { streamingText: string; toolCall: string };
+  agentStreamingMessage: {
+    streamingText: string;
+    toolCall: string;
+    reasoningSummary: string;
+  };
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
@@ -197,6 +202,16 @@ export const AIChatMessage = ({
           {agentStreamingMessage.toolCall}
         </StyledToolCallContainer>
       );
+    }
+
+    const isReasoning =
+      message.content === '' &&
+      agentStreamingMessage.streamingText === '' &&
+      agentStreamingMessage.toolCall === '' &&
+      agentStreamingMessage.reasoningSummary !== '';
+
+    if (isReasoning) {
+      return null;
     }
 
     return (
@@ -235,6 +250,25 @@ export const AIChatMessage = ({
           </StyledAvatarContainer>
         )}
         <StyledMessageContainer>
+          {message.role === AgentChatMessageRole.ASSISTANT && (
+            <ReasoningSummaryDisplay
+              reasoningSummary={
+                message.reasoningSummary ||
+                agentStreamingMessage.reasoningSummary
+              }
+              isStreaming={
+                message.content === '' &&
+                agentStreamingMessage.streamingText !== '' &&
+                agentStreamingMessage.toolCall === ''
+              }
+              isCompleted={message.content !== ''}
+              isReasoningStreaming={
+                message.content === '' &&
+                agentStreamingMessage.streamingText === '' &&
+                agentStreamingMessage.toolCall === ''
+              }
+            />
+          )}
           <StyledMessageText
             isUser={message.role === AgentChatMessageRole.USER}
           >
