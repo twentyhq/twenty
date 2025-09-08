@@ -27,7 +27,7 @@ export class PageLayoutWidgetService {
     private readonly pageLayoutTabService: PageLayoutTabService,
   ) {}
 
-  private getRepository(
+  private getPageLayoutWidgetRepository(
     transactionManager?: EntityManager,
   ): Repository<PageLayoutWidgetEntity> {
     return transactionManager
@@ -40,7 +40,7 @@ export class PageLayoutWidgetService {
     pageLayoutTabId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity[]> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     return repository.find({
       where: {
@@ -57,7 +57,7 @@ export class PageLayoutWidgetService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     const pageLayoutWidget = await repository.findOne({
       where: {
@@ -119,7 +119,7 @@ export class PageLayoutWidgetService {
         transactionManager,
       );
 
-      const repository = this.getRepository(transactionManager);
+      const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
       const pageLayoutWidget = repository.create({
         ...pageLayoutWidgetData,
@@ -149,7 +149,7 @@ export class PageLayoutWidgetService {
     updateData: UpdatePageLayoutWidgetInput,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     const existingWidget = await repository.findOne({
       where: {
@@ -188,7 +188,7 @@ export class PageLayoutWidgetService {
       transactionManager,
     );
 
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     await repository.softDelete(id);
 
@@ -200,7 +200,7 @@ export class PageLayoutWidgetService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<boolean> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     const pageLayoutWidget = await repository.findOne({
       where: {
@@ -230,7 +230,7 @@ export class PageLayoutWidgetService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
     const pageLayoutWidget = await repository.findOne({
       select: {

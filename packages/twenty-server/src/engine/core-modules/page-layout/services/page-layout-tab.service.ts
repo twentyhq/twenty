@@ -26,7 +26,7 @@ export class PageLayoutTabService {
     private readonly pageLayoutService: PageLayoutService,
   ) {}
 
-  private getRepository(
+  private getPageLayoutTabRepository(
     transactionManager?: EntityManager,
   ): Repository<PageLayoutTabEntity> {
     return transactionManager
@@ -39,7 +39,7 @@ export class PageLayoutTabService {
     pageLayoutId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutTabEntity[]> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     return repository.find({
       where: {
@@ -57,7 +57,7 @@ export class PageLayoutTabService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutTabEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     const pageLayoutTab = await repository.findOne({
       where: {
@@ -111,7 +111,7 @@ export class PageLayoutTabService {
         transactionManager,
       );
 
-      const repository = this.getRepository(transactionManager);
+      const repository = this.getPageLayoutTabRepository(transactionManager);
 
       const pageLayoutTab = repository.create({
         ...pageLayoutTabData,
@@ -141,7 +141,7 @@ export class PageLayoutTabService {
     updateData: QueryDeepPartialEntity<PageLayoutTabEntity>,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutTabEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     const existingTab = await repository.findOne({
       where: {
@@ -177,7 +177,7 @@ export class PageLayoutTabService {
       transactionManager,
     );
 
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     await repository.softDelete(id);
 
@@ -189,7 +189,7 @@ export class PageLayoutTabService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<boolean> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     const pageLayoutTab = await repository.findOne({
       where: {
@@ -219,7 +219,7 @@ export class PageLayoutTabService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutTabEntity> {
-    const repository = this.getRepository(transactionManager);
+    const repository = this.getPageLayoutTabRepository(transactionManager);
 
     const pageLayoutTab = await repository.findOne({
       select: {
