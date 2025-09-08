@@ -9,8 +9,8 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { AppPath } from '@/types/AppPath';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { AppPath } from 'twenty-shared/types';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   AppNavigationDrawer,

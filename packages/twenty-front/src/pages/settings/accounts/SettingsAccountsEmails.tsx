@@ -1,9 +1,9 @@
 import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccountsEmails = () => {

@@ -10,8 +10,6 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { type View } from '@/views/types/View';
@@ -22,6 +20,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type z } from 'zod';
@@ -29,7 +29,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>

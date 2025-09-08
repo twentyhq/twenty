@@ -1,8 +1,10 @@
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type GraphSubType, type WidgetType } from '../mocks/mockWidgets';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '../constants/SettingsPageLayoutTabsInstanceId';
+import { type GraphType, type WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
@@ -15,10 +17,15 @@ import {
 } from '../utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
-export const usePageLayoutWidgetCreate = () => {
-  const handleCreateWidget = useRecoilCallback(
+export const useCreatePageLayoutWidget = () => {
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+  );
+
+  const createPageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetType: WidgetType, graphType: GraphSubType) => {
+      (widgetType: WidgetType, graphType: GraphType) => {
         const widgetData = getDefaultWidgetData(graphType);
 
         const pageLayoutDraft = snapshot
@@ -29,9 +36,6 @@ export const usePageLayoutWidgetCreate = () => {
           .getValue();
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
-          .getValue();
-        const activeTabId = snapshot
-          .getLoadable(pageLayoutCurrentTabIdForCreationState)
           .getValue();
 
         if (!activeTabId) {
@@ -95,8 +99,8 @@ export const usePageLayoutWidgetCreate = () => {
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [],
+    [activeTabId],
   );
 
-  return { handleCreateWidget };
+  return { createPageLayoutWidget };
 };

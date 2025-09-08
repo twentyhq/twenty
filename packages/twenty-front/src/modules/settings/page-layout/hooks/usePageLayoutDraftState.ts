@@ -12,7 +12,6 @@ export const usePageLayoutDraftState = () => {
     ? !isDeeplyEqual(pageLayoutDraft, {
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
-        workspaceId: pageLayoutPersisted.workspaceId,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,
         tabs: pageLayoutPersisted.tabs,
       })
