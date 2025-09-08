@@ -37,7 +37,7 @@ export const SettingsBilling = () => {
 
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: '/settings/billing',
+      returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
     skip: !hasSubscriptions,
   });

@@ -1,4 +1,6 @@
 import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 export const SETTINGS_INTEGRATION_AI_CATEGORY: SettingsIntegrationCategory = {
   key: 'ai',
@@ -12,7 +14,7 @@ export const SETTINGS_INTEGRATION_AI_CATEGORY: SettingsIntegrationCategory = {
       },
       type: 'Add',
       text: 'Connect MCP Client',
-      link: '/settings/integrations/mcp',
+      link: getSettingsPath(SettingsPath.IntegrationMCP),
     },
   ],
 };
