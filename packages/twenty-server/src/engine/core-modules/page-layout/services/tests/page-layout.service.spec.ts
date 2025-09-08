@@ -210,6 +210,7 @@ describe('PageLayoutService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
         workspaceId,
+        undefined,
       );
       expect(result).toEqual(updatedPageLayout);
     });
@@ -262,6 +263,7 @@ describe('PageLayoutService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
         workspaceId,
+        undefined,
       );
       expect(pageLayoutRepository.softDelete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockPageLayout);
