@@ -27,7 +27,6 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
         flatObjectMetadataMaps,
       });
 
-    // Missleading should not ? TODO PRASTOIN
     if (flatFieldMetadata.id === morphRelationFlatFieldMetadata.id) {
       return [relationTargetFlatFieldMetadata];
     }

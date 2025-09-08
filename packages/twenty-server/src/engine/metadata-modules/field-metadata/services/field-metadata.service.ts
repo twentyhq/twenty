@@ -491,7 +491,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         const fieldMetadataIdsToDelete: string[] = [];
 
         const allMophFieldMetadatas =
-          await this.getMorphIdAllMorphFieldMetadatas({
+          await this.getAllMorphFieldMetadatasByMorphId({
             morphId: fieldMetadata.morphId,
             objectMetadataId: fieldMetadata.objectMetadataId,
             workspaceId,
@@ -1039,7 +1039,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     );
   }
 
-  private async getMorphIdAllMorphFieldMetadatas({
+  private async getAllMorphFieldMetadatasByMorphId({
     morphId,
     objectMetadataId,
     workspaceId,
@@ -1067,7 +1067,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       !areFieldMetadatasOfType(fieldMetadatas, FieldMetadataType.MORPH_RELATION)
     ) {
       throw new FieldMetadataException(
-        `Ecountered a non morph relation morphId related flat field metadata type`,
+        `Encountered a non morph relation morphId related flat field metadata type`,
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

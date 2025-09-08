@@ -4,8 +4,8 @@ import {
   type FromTo,
 } from 'twenty-shared/types';
 
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morh-relation-field-name.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -31,7 +31,7 @@ const searchAndReplaceLast = ({
   );
 };
 
-type RenameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnNameArgs =
+type renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadatasArgs =
   FromTo<FlatObjectMetadata, 'flatObjectMetadata'> & {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   };
@@ -40,7 +40,7 @@ export const renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadata
     fromFlatObjectMetadata,
     existingFlatObjectMetadataMaps,
     toFlatObjectMetadata,
-  }: RenameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnNameArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
+  }: renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadatasArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
     const manyToOneMorphRelationFlatFieldMetadatas =
       getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
         flatObjectMetadata: fromFlatObjectMetadata,

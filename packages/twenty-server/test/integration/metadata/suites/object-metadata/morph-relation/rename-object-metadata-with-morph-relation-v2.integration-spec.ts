@@ -102,7 +102,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     }
   });
 
-  it('should rename custom object, and update the both the field name and join column name of the morph relation that contains the object name', async () => {
+  it('should rename custom object, and update both the field name and join column name of the morph relation that contains the object name', async () => {
     const morphRelationField = await createMorphRelationBetweenObjects({
       name: 'owner',
       objectMetadataId: createdObjectMetadataOpportunityId,
