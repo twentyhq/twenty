@@ -22,10 +22,10 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 @Command({
-  name: 'migrate:1-5:remove-favorite-view-relation',
+  name: 'upgrade:1-5:remove-favorite-view-relation',
   description: 'Remove favorite view relation.',
 })
-export class RemoveFavoriteViewRelation extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class RemoveFavoriteViewRelationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,

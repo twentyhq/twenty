@@ -2,14 +2,16 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionInfoRowContainer';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
 import {
-  isMonthlyPlan as isMonthlyPlanFn,
-  isYearlyPlan as isYearlyPlanFn,
-  isProPlan as isProPlanFn,
-  isEnterprisePlan as isEnterprisePlanFn,
   getIntervalLabel,
+  isEnterprisePlan as isEnterprisePlanFn,
+  isMonthlyPlan as isMonthlyPlanFn,
+  isProPlan as isProPlanFn,
+  isYearlyPlan as isYearlyPlanFn,
 } from '@/billing/utils/subscriptionFlags';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -23,10 +25,10 @@ import {
   H2Title,
   IconArrowUp,
   IconCalendarEvent,
+  IconCalendarRepeat,
   IconCircleX,
   IconTag,
   IconUsers,
-  IconCalendarRepeat,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -42,8 +44,6 @@ import {
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 
@@ -251,7 +251,7 @@ export const SettingsBillingSubscriptionInfo = () => {
         subtitle={t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied.`}
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
       />
       <ConfirmationModal
         modalId={SWITCH_BILLING_PLAN_MODAL_ID}
@@ -263,7 +263,7 @@ export const SettingsBillingSubscriptionInfo = () => {
         }
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
       />
       <ConfirmationModal
         modalId={END_TRIAL_PERIOD_MODAL_ID}
@@ -271,7 +271,7 @@ export const SettingsBillingSubscriptionInfo = () => {
         subtitle={t`We will activate your paid plan. Do you want to proceed?`}
         onConfirmClick={endTrialPeriod}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
         loading={isEndTrialPeriodLoading}
       />
     </Section>

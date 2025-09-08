@@ -4,6 +4,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { useLingui } from '@lingui/react/macro';
 
 type FormEmailsFieldInputProps = {
   label?: string;
@@ -20,6 +21,8 @@ export const FormEmailsFieldInput = ({
   readonly,
   VariablePicker,
 }: FormEmailsFieldInputProps) => {
+  const { t } = useLingui();
+
   const handleChange = (email: string) => {
     onChange({
       primaryEmail: email,
@@ -32,10 +35,10 @@ export const FormEmailsFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
-          label="Primary Email"
+          label={t`Primary Email`}
           defaultValue={defaultValue?.primaryEmail}
           onChange={handleChange}
-          placeholder={'Primary Email'}
+          placeholder={t`Primary Email`}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />

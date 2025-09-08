@@ -12,6 +12,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -54,6 +55,33 @@ describe('CreatedByFromAuthContextService', () => {
           provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             findOne: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: WorkspaceMetadataCacheService,
+          useValue: {
+            getExistingOrRecomputeMetadataMaps: jest.fn().mockResolvedValue({
+              objectMetadataMaps: {
+                byId: {
+                  'person-id': {
+                    id: 'person-id',
+                    nameSingular: 'person',
+                    fieldsById: {
+                      createdBy: {
+                        id: 'createdBy-id',
+                        name: 'createdBy',
+                      },
+                    },
+                    fieldIdByName: {
+                      createdBy: 'createdBy-id',
+                    },
+                  },
+                },
+                idByNameSingular: {
+                  person: 'person-id',
+                },
+              },
+            }),
           },
         },
       ],

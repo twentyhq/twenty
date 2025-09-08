@@ -1,4 +1,3 @@
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
@@ -9,10 +8,11 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useState } from 'react';
+import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownProps = {
   excludedWorkspaceMemberIds: string[];
-  onSelect: (workspaceMember: CurrentWorkspaceMember) => void;
+  onSelect: (workspaceMember: PartialWorkspaceMember) => void;
 };
 
 export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({

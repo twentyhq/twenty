@@ -32,7 +32,7 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
           ),
       );
 
-      return filteredVisibleAndReadableRecordFields.toSorted(
+      return [...filteredVisibleAndReadableRecordFields].sort(
         sortByProperty('position'),
       );
     },

@@ -5,4 +5,5 @@ export type StandardAgentDefinition = Omit<
   'id' | 'workspaceId' | 'universalIdentifier' | 'standardId'
 > & {
   standardId: string;
+  standardRoleId?: string;
 };

@@ -1829,6 +1829,11 @@ msgstr "Missing required fields: at least one unique constraint have to be fully
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morph relation creation payloads must have the same relation type"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morph relation creation payloads must only contain relation to other object metadata"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -3092,6 +3097,11 @@ msgstr "View"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "View Field"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "View field already exists."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

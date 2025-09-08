@@ -1046,7 +1046,7 @@ msgstr "{connectFieldName} için tüm işlemlerde aynı kısıtlama alanlarını
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Dış ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Organizatör mü"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Gönderilen Klasör mü"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Senkronizasyon Etkin"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Senkronize Edildi"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1834,6 +1834,11 @@ msgstr "Gerekli alanlar eksik: '{connectFieldName}' için en az bir benzersiz k�
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morph ilişki oluşturma taşıyıcılarının aynı ilişki türüne sahip olması gerekir"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morf ilişkisi oluşturma yükleri yalnızca diğer nesne meta verilerine ilişkin olmalıdır"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1874,12 +1879,12 @@ msgstr "İlişkinin her iki tarafında da Ad \"{computedMetadataNameFromLabel}\"
 #. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr ""
+msgstr "İsim \"{flatFieldMetadataName}\" mevcut değil"
 
 #. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "İsim \"{flatFieldMetadataName}\" başka bir alan tarafından kullanıldığından mevcut değil"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2864,7 +2869,7 @@ msgstr "İş akışı sürüm durumu"
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
-msgstr ""
+msgstr "Bu isim başka bir alan tarafından kullanılmaktadır ve kullanılamaz."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3097,6 +3102,11 @@ msgstr "Görünüm"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Görünüm Alanı"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Alan görünümü zaten mevcut."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

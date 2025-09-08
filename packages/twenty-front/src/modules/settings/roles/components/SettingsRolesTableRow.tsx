@@ -1,4 +1,4 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -15,8 +15,8 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import { type Role } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
 const StyledAssignedText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -56,7 +56,7 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 type SettingsRolesTableRowProps = {
-  role: Role;
+  role: RoleWithPartialMembers;
 };
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
@@ -96,7 +96,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
           )}
         </StyledNameCell>
       </TableCell>
-      <TableCell align={'right'}>
+      <TableCell align="right">
         <StyledAvatarGroup>
           {enrichedWorkspaceMembers.slice(0, 5).map((workspaceMember) => (
             <React.Fragment key={workspaceMember.id}>
@@ -121,10 +121,10 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
           ))}
         </StyledAvatarGroup>
       </TableCell>
-      <TableCell align={'left'}>
+      <TableCell align="left">
         <StyledAssignedText>{role.workspaceMembers.length}</StyledAssignedText>
       </TableCell>
-      <TableCell align={'right'} color={theme.font.color.tertiary}>
+      <TableCell align="right" color={theme.font.color.tertiary}>
         <IconChevronRight size={theme.icon.size.md} />
       </TableCell>
     </StyledTableRow>

@@ -1,3 +1,4 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
@@ -7,7 +8,6 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -28,6 +28,7 @@ type MultipleRecordPickerProps = {
   componentInstanceId: string;
   onClickOutside: () => void;
   focusId: string;
+  objectMetadataItemIdForCreate?: string;
 };
 
 export const MultipleRecordPicker = ({
@@ -38,6 +39,7 @@ export const MultipleRecordPicker = ({
   layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
   focusId,
+  objectMetadataItemIdForCreate,
 }: MultipleRecordPickerProps) => {
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
@@ -56,8 +58,6 @@ export const MultipleRecordPicker = ({
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
-
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
   const resetState = useRecoilCallback(
     ({ set }) => {
@@ -106,8 +106,12 @@ export const MultipleRecordPicker = ({
     [multipleRecordPickerSearchFilterState, onCreate],
   );
 
+  const hasCreatePermissionOnObjectForCreate = useObjectPermissionsForObject(
+    objectMetadataItemIdForCreate ?? '',
+  ).canUpdateObjectRecords;
+
   const createNewButtonSection =
-    isDefined(onCreate) && !hasObjectReadOnlyPermission ? (
+    isDefined(onCreate) && hasCreatePermissionOnObjectForCreate ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}

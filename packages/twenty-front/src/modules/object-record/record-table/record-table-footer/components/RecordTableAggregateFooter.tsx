@@ -20,44 +20,45 @@ const StyledTableRow = styled.tr<{
   position: sticky;
   border: none;
 
-  &.footer-sticky {
-    td {
-      border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-      z-index: ${TABLE_Z_INDEX.footer.default};
-      position: sticky;
-      bottom: 0;
-    }
+  // TODO: see how we reimplement horizontal scrolling after all table has been refactored
+  td {
+    border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+    z-index: ${TABLE_Z_INDEX.footer.default};
+    position: sticky;
+    bottom: 0;
   }
+
   cursor: pointer;
   td:nth-of-type(1) {
     width: ${FIRST_TH_WIDTH};
     left: 0;
     border-top: none;
   }
-  &.first-columns-sticky {
-    td:nth-of-type(1) {
-      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+
+  td:nth-of-type(1) {
+    position: sticky;
+    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+  }
+  td:nth-of-type(2) {
+    position: sticky;
+    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+    transition: 0.3s ease;
+    &::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      height: calc(100% + 2px);
+      width: 4px;
+      right: 0px;
+      box-shadow: ${({ theme }) => theme.boxShadow.light};
+      clip-path: inset(0px -4px 0px 0px);
     }
-    td:nth-of-type(2) {
-      position: sticky;
-      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-      transition: 0.3s ease;
-      &::after {
-        content: '';
-        position: absolute;
-        top: -1px;
-        height: calc(100% + 2px);
-        width: 4px;
-        right: 0px;
-        box-shadow: ${({ theme }) => theme.boxShadow.light};
-        clip-path: inset(0px -4px 0px 0px);
-      }
-      @media (max-width: ${MOBILE_VIEWPORT}px) {
-        width: 34px;
-        max-width: 34px;
-      }
+    @media (max-width: ${MOBILE_VIEWPORT}px) {
+      width: 38px;
+      max-width: 38px;
     }
   }
+
   background: ${({ theme }) => theme.background.primary};
   ${({ hasHorizontalOverflow }) =>
     `.footer-sticky {

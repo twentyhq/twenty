@@ -54,5 +54,6 @@ export const getDefaultFlatFieldMetadata = ({
     createdAt,
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
+    morphId: null,
   } as const satisfies FlatFieldMetadata;
 };

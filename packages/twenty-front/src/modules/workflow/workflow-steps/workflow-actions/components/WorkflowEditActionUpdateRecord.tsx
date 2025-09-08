@@ -16,6 +16,7 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -53,11 +54,18 @@ export const WorkflowEditActionUpdateRecord = ({
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
-      label: item.labelPlural,
-      value: item.nameSingular,
-    }));
+    activeNonSystemObjectMetadataItems
+      .filter((objectMetadataItem) =>
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadataItem.nameSingular,
+          isSystem: objectMetadataItem.isSystem,
+        }),
+      )
+      .map((item) => ({
+        Icon: getIcon(item.icon),
+        label: item.labelPlural,
+        value: item.nameSingular,
+      }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({
     objectNameSingular: action.settings.input.objectName,

@@ -23,6 +23,8 @@ export class MessagingConnectedAccountDeletionCleanupJob {
   async handle(
     data: MessagingConnectedAccountDeletionCleanupJobData,
   ): Promise<void> {
-    await this.messageCleanerService.cleanWorkspaceThreads(data.workspaceId);
+    await this.messageCleanerService.cleanOrphanMessagesAndThreads(
+      data.workspaceId,
+    );
   }
 }

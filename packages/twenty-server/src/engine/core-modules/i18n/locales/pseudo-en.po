@@ -1829,6 +1829,11 @@ msgstr ""
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr ""
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -3091,6 +3096,11 @@ msgstr ""
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
+msgstr ""
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
 msgstr ""
 
 #. js-lingui-id: 6jpoH4

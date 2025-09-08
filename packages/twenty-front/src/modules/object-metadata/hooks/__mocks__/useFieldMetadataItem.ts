@@ -22,48 +22,9 @@ export const queries = {
         createdAt
         updatedAt
         settings
-      }
-    }
-  `,
-  findManyViewsQuery: gql`
-    query FindManyViews(
-      $filter: ViewFilterInput
-      $orderBy: [ViewOrderByInput]
-      $lastCursor: String
-      $limit: Int
-    ) {
-      views(
-        filter: $filter
-        orderBy: $orderBy
-        first: $limit
-        after: $lastCursor
-      ) {
-        edges {
-          node {
-            __typename
-            id
-            viewGroups {
-              edges {
-                node {
-                  __typename
-                  fieldMetadataId
-                  fieldValue
-                  id
-                  isVisible
-                  position
-                }
-              }
-            }
-          }
-          cursor
+        object {
+          id
         }
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-          startCursor
-          endCursor
-        }
-        totalCount
       }
     }
   `,
@@ -86,6 +47,9 @@ export const queries = {
         updatedAt
         settings
         isLabelSyncedWithName
+        object {
+          id
+        }
       }
     }
   `,
@@ -108,6 +72,9 @@ export const queries = {
         defaultValue
         options
         isLabelSyncedWithName
+        object {
+          id
+        }
       }
     }
   `,

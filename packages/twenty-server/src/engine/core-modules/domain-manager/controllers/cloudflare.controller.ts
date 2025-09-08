@@ -71,7 +71,7 @@ export class CloudflareController {
 
       if (!workspace) return;
 
-      const analytics = this.auditService.createContext({
+      const auditService = this.auditService.createContext({
         workspaceId: workspace.id,
       });
 
@@ -100,7 +100,10 @@ export class CloudflareController {
           ...workspaceUpdated,
         });
 
-        await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+        await auditService.insertWorkspaceEvent(
+          CUSTOM_DOMAIN_ACTIVATED_EVENT,
+          {},
+        );
       }
 
       return res.status(200).send();

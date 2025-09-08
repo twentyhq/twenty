@@ -1046,7 +1046,7 @@ msgstr "Ожидается, что одни и те же поля огранич
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Внешний ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Является организатором"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Отправленные папки"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Синхронизация включена"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Синхронизировано"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1834,6 +1834,11 @@ msgstr "Отсутствуют необходимые поля: как мини�
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Пакеты создания отношений морфинга должны иметь одинаковый тип отношений"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Пакеты создания отношений морфинга могут содержать только связь с метаданными другого объекта"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1874,12 +1879,12 @@ msgstr "Имя \"{computedMetadataNameFromLabel}\" не может быть од
 #. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr ""
+msgstr "Имя \"{flatFieldMetadataName}\" недоступно"
 
 #. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Имя \"{flatFieldMetadataName}\" недоступно, так как уже используется другим полем"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2864,7 +2869,7 @@ msgstr "Статус версии рабочего процесса"
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
-msgstr ""
+msgstr "Это имя недоступно, так как уже используется другим полем."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3097,6 +3102,11 @@ msgstr "Представление"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Поле представления"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Поле представления уже существует."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

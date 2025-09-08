@@ -17,7 +17,7 @@ const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 100%;
+  width: fit-content;
   height: 100%;
 `;
 

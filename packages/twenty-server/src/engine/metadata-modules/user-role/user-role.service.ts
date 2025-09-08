@@ -258,6 +258,17 @@ export class UserRoleService {
       );
     }
 
+    if (!role.canBeAssignedToUsers) {
+      throw new PermissionsException(
+        `Role "${role.label}" cannot be assigned to users`,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        {
+          userFriendlyMessage:
+            'This role cannot be assigned to users. Please select a different role.',
+        },
+      );
+    }
+
     const roles = await this.getRolesByUserWorkspaces({
       userWorkspaceIds: [userWorkspace.id],
       workspaceId,
