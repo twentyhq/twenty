@@ -1,12 +1,19 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
+import { pageLayoutCurrentLayoutsState } from '../../states/pageLayoutCurrentLayoutsState';
 import { usePageLayoutHandleLayoutChange } from '../usePageLayoutHandleLayoutChange';
 
 describe('usePageLayoutHandleLayoutChange', () => {
-  it('should update layouts and draft state when layout changes', () => {
-    const { result } = renderHook(() => usePageLayoutHandleLayoutChange(), {
-      wrapper: RecoilRoot,
-    });
+  it('should update layouts for specific tab only', () => {
+    const { result } = renderHook(
+      () => ({
+        handler: usePageLayoutHandleLayoutChange('tab-1'),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+      }),
+      {
+        wrapper: RecoilRoot,
+      },
+    );
 
     const newLayouts = {
       desktop: [
@@ -20,43 +27,69 @@ describe('usePageLayoutHandleLayoutChange', () => {
     };
 
     act(() => {
-      result.current.handleLayoutChange([], newLayouts);
+      result.current.handler.handleLayoutChange([], newLayouts);
     });
 
-    expect(typeof result.current.handleLayoutChange).toBe('function');
+    expect(result.current.layouts['tab-1']).toEqual(newLayouts);
+    expect(result.current.layouts['tab-2']).toBeUndefined();
   });
 
-  it('should handle empty layouts', () => {
-    const { result } = renderHook(() => usePageLayoutHandleLayoutChange(), {
-      wrapper: RecoilRoot,
-    });
+  it('should isolate layouts between different tabs', () => {
+    const { result, rerender } = renderHook(
+      ({ tabId }) => ({
+        handler: usePageLayoutHandleLayoutChange(tabId),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+      }),
+      {
+        wrapper: RecoilRoot,
+        initialProps: { tabId: 'tab-1' },
+      },
+    );
 
-    const emptyLayouts = {
-      desktop: [],
-      mobile: [],
+    const tab1Layouts = {
+      desktop: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2 }],
+      mobile: [{ i: 'widget-1', x: 0, y: 0, w: 1, h: 2 }],
     };
 
     act(() => {
-      result.current.handleLayoutChange([], emptyLayouts);
+      result.current.handler.handleLayoutChange([], tab1Layouts);
     });
 
-    expect(typeof result.current.handleLayoutChange).toBe('function');
+    rerender({ tabId: 'tab-2' });
+
+    const tab2Layouts = {
+      desktop: [{ i: 'widget-2', x: 4, y: 4, w: 3, h: 3 }],
+      mobile: [{ i: 'widget-2', x: 0, y: 0, w: 1, h: 3 }],
+    };
+
+    act(() => {
+      result.current.handler.handleLayoutChange([], tab2Layouts);
+    });
+
+    expect(result.current.layouts['tab-1']).toEqual(tab1Layouts);
+    expect(result.current.layouts['tab-2']).toEqual(tab2Layouts);
   });
 
-  it('should maintain callback reference across renders', () => {
-    const { result, rerender } = renderHook(
-      () => usePageLayoutHandleLayoutChange(),
+  it('should not update layouts when activeTabId is null', () => {
+    const { result } = renderHook(
+      () => ({
+        handler: usePageLayoutHandleLayoutChange(null),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+      }),
       {
         wrapper: RecoilRoot,
       },
     );
 
-    const firstCallback = result.current.handleLayoutChange;
+    const newLayouts = {
+      desktop: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2 }],
+      mobile: [{ i: 'widget-1', x: 0, y: 0, w: 1, h: 2 }],
+    };
 
-    rerender();
+    act(() => {
+      result.current.handler.handleLayoutChange([], newLayouts);
+    });
 
-    const secondCallback = result.current.handleLayoutChange;
-
-    expect(firstCallback).toBe(secondCallback);
+    expect(Object.keys(result.current.layouts)).toHaveLength(0);
   });
 });

@@ -86,6 +86,7 @@ export class PermissionsService {
       });
 
     const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
+    const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
       {
@@ -103,6 +104,7 @@ export class PermissionsService {
       permissionFlags,
       objectRecordsPermissions,
       objectPermissions,
+      objectsPermissions,
     };
   }
 
@@ -128,6 +130,7 @@ export class PermissionsService {
         [PermissionFlagType.EXPORT_CSV]: false,
       },
       objectPermissions: {},
+      objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
   public async userHasWorkspaceSettingPermission({

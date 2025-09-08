@@ -439,7 +439,6 @@ describe('Page Layout Resolver', () => {
           id
           name
           type
-          workspaceId
           createdAt
           updatedAt
           deletedAt

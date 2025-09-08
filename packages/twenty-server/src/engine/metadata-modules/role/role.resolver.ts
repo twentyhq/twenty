@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -22,6 +23,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -39,7 +41,10 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import {
+  ApiKeyForRoleDTO,
+  RoleDTO,
+} from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -63,6 +68,7 @@ export class RoleResolver {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: PermissionFlagService,
     private readonly agentRoleService: AgentRoleService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
@@ -242,5 +248,36 @@ export class RoleResolver {
       );
 
     return workspaceMembers;
+  }
+
+  @ResolveField('agents', () => [AgentDTO])
+  async getAgentsAssignedToRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<AgentDTO[]> {
+    const agents = await this.agentRoleService.getAgentsAssignedToRole(
+      role.id,
+      workspace.id,
+    );
+
+    return agents;
+  }
+
+  @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
+  async getApiKeysAssignedToRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<ApiKeyForRoleDTO[]> {
+    const apiKeys = await this.apiKeyRoleService.getApiKeysAssignedToRole(
+      role.id,
+      workspace.id,
+    );
+
+    return apiKeys.map((apiKey) => ({
+      id: apiKey.id,
+      name: apiKey.name,
+      expiresAt: apiKey.expiresAt,
+      revokedAt: apiKey.revokedAt,
+    }));
   }
 }

@@ -100,7 +100,7 @@ export const WorkflowAdvancedFilterValueFormInput = ({
   if (isFilterableByTextValue) {
     return (
       <FormTextFieldInput
-        label={''}
+        label=""
         defaultValue={recordFilter.value}
         onChange={handleChange}
         readonly={readonly}
@@ -125,7 +125,7 @@ export const WorkflowAdvancedFilterValueFormInput = ({
       | undefined;
     return (
       <FormMultiSelectFieldInput
-        label={''}
+        label=""
         defaultValue={recordFilter.value}
         onChange={handleChange}
         readonly={readonly}

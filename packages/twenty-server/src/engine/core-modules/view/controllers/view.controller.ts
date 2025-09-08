@@ -16,7 +16,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import {
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -52,16 +58,25 @@ export class ViewController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewDTO | null> {
+  ): Promise<ViewDTO> {
     const view = await this.viewService.findById(id, workspace.id);
 
-    if (!view) {
-      return null;
+    if (!isDefined(view)) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
+        ViewExceptionCode.VIEW_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          ),
+        },
+      );
     }
 
-    const replacedViews = await this.replaceViewTemplates([view], workspace.id);
-
-    return replacedViews[0];
+    return view;
   }
 
   @Post()
@@ -106,9 +121,9 @@ export class ViewController {
   }
 
   private async replaceViewTemplates(
-    views: ViewEntity[],
+    views: ViewDTO[],
     workspaceId: string,
-  ): Promise<ViewEntity[]> {
+  ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
       view.name.includes('{objectLabelPlural}'),
     );

@@ -15,6 +15,10 @@ import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -26,6 +30,8 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -53,8 +59,20 @@ export class AdminPanelResolver {
   @Mutation(() => ImpersonateOutput)
   async impersonate(
     @Args() { workspaceId, userId }: ImpersonateInput,
+    @AuthUser() adminUser: User,
   ): Promise<ImpersonateOutput> {
-    return await this.adminService.impersonate(userId, workspaceId);
+    if (!adminUser.id) {
+      throw new AuthException(
+        'Admin user not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    return await this.adminService.impersonate(
+      userId,
+      workspaceId,
+      adminUser.id,
+    );
   }
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)

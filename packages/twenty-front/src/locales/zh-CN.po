@@ -33,6 +33,11 @@ msgstr ": 空"
 msgid ": Future"
 msgstr "：未来"
 
+#. js-lingui-id: uhan84
+#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+msgid ": Loading..."
+msgstr "加载中……"
+
 #. js-lingui-id: Nk/d+Z
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
@@ -72,6 +77,22 @@ msgstr "· {objectFilterDropdownSearchInput}"
 msgid "[empty string]"
 msgstr "[空字符串]"
 
+#. js-lingui-id: m6BGdm
+#. placeholder {0}: Math.abs(days)
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#: src/utils/date-utils.ts
+msgid "{0, plural, one {{days} {1}} other {{days} {2}}}"
+msgstr "{0, plural, other {{天数} {2}}}"
+
+#. js-lingui-id: FYY5cK
+#. placeholder {0}: Math.abs(years)
+#. placeholder {1}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
+#: src/utils/date-utils.ts
+msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
+msgstr "{0, plural, other {{年数} {2}}}"
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -106,6 +127,11 @@ msgstr "{roleLabel} 能 {humanReadableAction} {objectLabel} 记录"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} 不能 {humanReadableAction} {objectLabel} 记录"
+
+#. js-lingui-id: uHZWwU
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
+msgstr "{roleTargetName}将被分配到“{newRoleName}”角色。"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -183,6 +209,16 @@ msgstr "双因素验证方法已成功删除。"
 msgid "2FA Method Reset"
 msgstr "双因素验证方法重置"
 
+#. js-lingui-id: keUlu+
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists"
+msgstr "草稿已存在"
+
+#. js-lingui-id: OITESn
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
+msgstr "此工作流的草稿已存在。您确定要删除它吗？"
+
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
@@ -242,6 +278,11 @@ msgstr "关于此工作区"
 msgid "Account"
 msgstr "账户"
 
+#. js-lingui-id: 9o6rjW
+#: src/utils/title-utils.ts
+msgid "Account - Settings"
+msgstr "账户 - 设置"
+
 #. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -300,6 +341,7 @@ msgid "Activate Workflow"
 msgstr "激活工作流"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -329,11 +371,22 @@ msgstr "添加账户"
 msgid "Add Approved Access Domain"
 msgstr "添加批准的访问域"
 
+#. js-lingui-id: We0vOO
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Add Block"
+msgstr "添加模块"
+
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add Field"
 msgstr "添加字段"
+
+#. js-lingui-id: T7RGT6
+#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/Attachments.tsx
+msgid "Add file"
+msgstr "添加文件"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
@@ -360,7 +413,7 @@ msgstr "添加输入到您的表单"
 #. js-lingui-id: rejvy6
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Add layout"
-msgstr ""
+msgstr "添加布局"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -444,7 +497,7 @@ msgstr "添加视图"
 #. js-lingui-id: iRpDWj
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 msgid "Add Widget"
-msgstr ""
+msgstr "添加小部件"
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -526,8 +579,14 @@ msgstr "代理交接"
 msgid "Agent not found"
 msgstr "代理未找到"
 
+#. js-lingui-id: jJT5pC
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Agent Roles"
+msgstr "代理角色"
+
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "代理"
 
@@ -565,6 +624,7 @@ msgstr "AI 响应架构"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/activities/files/components/Attachments.tsx
 msgid "All"
 msgstr "全部"
 
@@ -607,6 +667,11 @@ msgstr "所有角色"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
 msgstr "所有标准对象"
+
+#. js-lingui-id: XLzFVD
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "All workspace members already have this role"
+msgstr "所有工作区成员已经有此角色"
 
 #. js-lingui-id: MLmnB2
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -671,6 +736,7 @@ msgid "An unexpected error occurred"
 msgstr "发生意外错误"
 
 #. js-lingui-id: HZFm5R
+#: src/utils/date-utils.ts
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "和"
@@ -708,8 +774,14 @@ msgstr "API 密钥"
 msgid "API Key copied to clipboard"
 msgstr "API 密钥已复制到剪贴板"
 
+#. js-lingui-id: K84VsN
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "API Key Roles"
+msgstr "API 密钥角色"
+
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "API keys"
 msgstr "API 密钥"
 
@@ -717,6 +789,11 @@ msgstr "API 密钥"
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
 msgstr "API 密钥"
+
+#. js-lingui-id: VIs5Hx
+#: src/utils/title-utils.ts
+msgid "API Keys - Settings"
+msgstr "API 密钥 - 设置"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -766,6 +843,11 @@ msgstr "API 和 Webhooks"
 msgid "Appearance"
 msgstr "外观"
 
+#. js-lingui-id: d7+zQ6
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Applicability"
+msgstr "适用性"
+
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
@@ -811,25 +893,45 @@ msgstr "升序"
 msgid "Ask AI"
 msgstr "询问 AI"
 
-#. js-lingui-id: 9ch9Mz
+#. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
-msgid "Assign {workspaceMemberName}?"
-msgstr "分配给{workspaceMemberName}？"
+msgid "Assign {roleTargetName}?"
+msgstr "分配 {roleTargetName}?"
 
-#. js-lingui-id: 17M/rH
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to manage each member’s access and permissions"
-msgstr "分配角色以管理每个成员的访问权限和权限"
+#. js-lingui-id: krsgB0
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "Assign to agent"
+msgstr "分配给代理"
+
+#. js-lingui-id: ngx6hS
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "Assign to API key"
+msgstr "分配给 API 密钥"
 
 #. js-lingui-id: 2y2quh
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "Assign to member"
 msgstr "分配给成员"
 
-#. js-lingui-id: OItM/o
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "Assigned members"
-msgstr "已分配成员"
+#. js-lingui-id: sqEW29
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to Agents"
+msgstr "可分配给代理"
+
+#. js-lingui-id: kOksfH
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to API Keys"
+msgstr "可分配给 API 密钥"
+
+#. js-lingui-id: 6cOTMx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to team members"
+msgstr "可分配给团队成员"
+
+#. js-lingui-id: 7qh2Hx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Assigned {roleTargetDisplayName}"
+msgstr "分配了 {roleTargetDisplayName}"
 
 #. js-lingui-id: lxQ+5m
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -1082,6 +1184,11 @@ msgstr "取消订阅"
 msgid "Catalan"
 msgstr "加泰罗尼亚语"
 
+#. js-lingui-id: tHntRt
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Change Color"
+msgstr "更改颜色"
+
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Change email"
@@ -1265,7 +1372,7 @@ msgstr "颜色代码"
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
 msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
-msgstr ""
+msgstr "列数据与多选不兼容。需要的格式为“[\"选项1\", \"选项2\"]”或 选项1,选项2。"
 
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -1448,7 +1555,12 @@ msgstr "继续使用 Microsoft"
 #. js-lingui-id: XgMEX4
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Control which folders are synced"
-msgstr ""
+msgstr "控制同步哪些文件夹"
+
+#. js-lingui-id: +iFqZW
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Control which types of entities this role can be assigned to"
+msgstr "控制此角色可分配的实体类型"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -1620,6 +1732,11 @@ msgstr "创建新的工作流"
 msgid "Create profile"
 msgstr "创建个人资料"
 
+#. js-lingui-id: ccH5/A
+#: src/utils/title-utils.ts
+msgid "Create Profile"
+msgstr "创建个人资料"
+
 #. js-lingui-id: GPuEIc
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Create Related Record"
@@ -1663,6 +1780,7 @@ msgid "Create Webhook"
 msgstr "创建 Webhook"
 
 #. js-lingui-id: kdLGki
+#: src/utils/title-utils.ts
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
 msgstr "创建工作区"
@@ -1813,6 +1931,11 @@ msgstr "数据模型"
 msgid "Data Model"
 msgstr "数据模型"
 
+#. js-lingui-id: zAfYtx
+#: src/utils/title-utils.ts
+msgid "Data model - Settings"
+msgstr "数据模型 - 设置"
+
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1844,6 +1967,16 @@ msgstr "日期和时间"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "Date format"
 msgstr "日期格式"
+
+#. js-lingui-id: /ITcnz
+#: src/utils/date-utils.ts
+msgid "day"
+msgstr "日"
+
+#. js-lingui-id: J/Upwb
+#: src/utils/date-utils.ts
+msgid "days"
+msgstr "天"
 
 #. js-lingui-id: cpDASC
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -1880,6 +2013,7 @@ msgid "Deactivate Workflow"
 msgstr "停用工作流"
 
 #. js-lingui-id: yAT3be
+#: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "已停用"
@@ -1903,6 +2037,11 @@ msgstr "默认国家"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "默认国家代码"
+
+#. js-lingui-id: CGhRMh
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
+msgid "Default Role"
+msgstr "默认角色"
 
 #. js-lingui-id: TlEEts
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -1946,6 +2085,8 @@ msgstr "删除"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2106,6 +2247,7 @@ msgstr "描述何时使用此交接"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "描述"
@@ -2263,6 +2405,7 @@ msgstr "最早日期"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -2285,6 +2428,11 @@ msgstr "编辑账户"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
 msgstr "编辑代理"
+
+#. js-lingui-id: X8x8v5
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit Connection"
+msgstr "编辑连接"
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -2312,6 +2460,11 @@ msgstr "编辑付款方式、查看发票等"
 msgid "Edit Records on All Objects"
 msgstr "编辑所有对象上的记录"
 
+#. js-lingui-id: vjOt/P
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit the information to connect your database"
+msgstr "编辑连接数据库的信息"
+
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Edit your subdomain name or set a custom domain."
@@ -2328,6 +2481,7 @@ msgstr "第八"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "电子邮件"
@@ -2426,6 +2580,11 @@ msgstr "空"
 msgid "Empty Array"
 msgstr "空数组"
 
+#. js-lingui-id: 8X+jbk
+#: src/modules/activities/emails/components/EmailThreads.tsx
+msgid "Empty Inbox"
+msgstr "清空收件箱"
+
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -2477,12 +2636,12 @@ msgstr "输入代理名称*"
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
-msgstr ""
+msgstr "输入项目数组或变量表达式"
 
 #. js-lingui-id: uyFQs5
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of step IDs"
-msgstr ""
+msgstr "输入步骤 ID 数组"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -2636,7 +2795,7 @@ msgstr "从我的电子邮件同步中排除以下人员和域名。内部对话
 #. js-lingui-id: uwM4yU
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Existing layouts"
-msgstr ""
+msgstr "现有布局"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2678,6 +2837,11 @@ msgstr "扩展到全屏"
 msgid "Experience"
 msgstr "体验"
 
+#. js-lingui-id: 8TiwZn
+#: src/utils/title-utils.ts
+msgid "Experience - Settings"
+msgstr "体验 - 设置"
+
 #. js-lingui-id: LxRNPw
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -2691,13 +2855,24 @@ msgstr "到期日期"
 
 #. js-lingui-id: M1RnFv
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "已过期"
+
+#. js-lingui-id: KnN1Tu
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Expires"
+msgstr "过期"
 
 #. js-lingui-id: i9qiyR
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
 msgstr "到期时间"
+
+#. js-lingui-id: 1RvVK1
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Expires in {dateDiff}"
+msgstr "在 {dateDiff} 之内过期"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -2945,12 +3120,12 @@ msgstr "名字"
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
-msgstr ""
+msgstr "文件夹"
 
 #. js-lingui-id: NRJn87
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Folder Management"
-msgstr ""
+msgstr "文件夹管理"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -2988,6 +3163,11 @@ msgstr "完全访问"
 msgid "Functions"
 msgstr "功能"
 
+#. js-lingui-id: tkr79G
+#: src/utils/title-utils.ts
+msgid "Functions - Settings"
+msgstr "功能 - 设置"
+
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -2995,6 +3175,11 @@ msgstr "功能"
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
 msgstr "常规"
+
+#. js-lingui-id: p+rXSW
+#: src/utils/title-utils.ts
+msgid "General - Settings"
+msgstr "通用 - 设置"
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3332,12 +3517,22 @@ msgstr "正在导入"
 msgid "Importing Data ..."
 msgstr "正在导入数据 ......"
 
+#. js-lingui-id: HiyKEP
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "In {dateDiff}"
+msgstr "在 {dateDiff} 内"
+
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "未激活"
+
+#. js-lingui-id: Gp4Yi6
+#: src/modules/activities/emails/components/EmailThreads.tsx
+msgid "Inbox"
+msgstr "收件箱"
 
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -3347,7 +3542,12 @@ msgstr "索引"
 #. js-lingui-id: T6szT2
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Initial loop step IDs"
-msgstr ""
+msgstr "初始循环步骤 ID"
+
+#. js-lingui-id: XU5AOg
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Input"
+msgstr "输入"
 
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3359,6 +3559,11 @@ msgstr "输入内容必须使用驼峰命名法，且不能以数字开头"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 msgid "Input settings"
 msgstr "输入设置"
+
+#. js-lingui-id: T8avpe
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Insert a JSON input, then press \"Run\" to test your function."
+msgstr "插入一个 JSON 输入，然后按“运行”测试您的功能。"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -3375,9 +3580,15 @@ msgstr "AI 指令"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "集成"
+
+#. js-lingui-id: RGm66q
+#: src/utils/title-utils.ts
+msgid "Integrations - Settings"
+msgstr "集成 - 设置"
 
 #. js-lingui-id: ntgzzG
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
@@ -3453,6 +3664,7 @@ msgid "Invitations"
 msgstr "邀请函"
 
 #. js-lingui-id: MFKlMB
+#: src/utils/title-utils.ts
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "邀请"
@@ -3605,12 +3817,12 @@ msgstr "意大利语"
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Items to iterate over"
-msgstr ""
+msgstr "要迭代的项目"
 
 #. js-lingui-id: E08FMd
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Iterator"
-msgstr ""
+msgstr "迭代器"
 
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3694,6 +3906,11 @@ msgstr "最近4小时（最旧 → 最新）"
 msgid "Last 7 Days (oldest → newest)"
 msgstr "最近7天（最旧 → 最新）"
 
+#. js-lingui-id: P4FGJG
+#: src/modules/activities/emails/components/EmailThreadHeader.tsx
+msgid "Last message {lastMessageSentAtFormatted}"
+msgstr "最后信息 {lastMessageSentAtFormatted}"
+
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -3739,7 +3956,7 @@ msgstr "布局"
 #. js-lingui-id: A/oBX5
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 msgid "Layout Name"
-msgstr ""
+msgstr "布局名称"
 
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -3777,6 +3994,11 @@ msgstr "浅色"
 msgid "Link copied to clipboard"
 msgstr "链接已复制到剪贴板"
 
+#. js-lingui-id: HhVDr2
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Listing"
+msgstr "列表"
+
 #. js-lingui-id: DL2sg0
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
@@ -3794,7 +4016,7 @@ msgstr "正在加载指标数据……"
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
@@ -3852,6 +4074,16 @@ msgstr "管理收藏"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "管理成员"
+
+#. js-lingui-id: GzInS6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Manage roles and permissions for team members and API keys"
+msgstr "管理团队成员和 API 密钥的角色和权限"
+
+#. js-lingui-id: wMlk+o
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Manage roles and permissions for team members, agents, and API keys"
+msgstr "管理团队成员、代理和 API 密钥的角色和权限"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -3917,10 +4149,16 @@ msgstr "成员"
 #. js-lingui-id: wlQNTg
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
 msgstr "成员"
+
+#. js-lingui-id: Max/je
+#: src/utils/title-utils.ts
+msgid "Members - Settings"
+msgstr "成员 - 设置"
 
 #. js-lingui-id: UODtG8
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4062,6 +4300,9 @@ msgstr "必须是有效电子邮件的数组"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4124,6 +4365,16 @@ msgstr "导航到上一个版本"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "导航到上一个工作流"
+
+#. js-lingui-id: qqeAJM
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Never"
+msgstr "从不"
+
+#. js-lingui-id: O1Aswy
+#: src/modules/settings/developers/utils/formatExpiration.ts
+msgid "Never expires"
+msgstr "永不过期"
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -4200,6 +4451,11 @@ msgstr "新 SSO 配置"
 msgid "New SSO provider"
 msgstr "新 SSO 提供商"
 
+#. js-lingui-id: hXzOVo
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Next"
+msgstr "下一个"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -4217,15 +4473,55 @@ msgstr "第九"
 msgid "No"
 msgstr "不"
 
+#. js-lingui-id: xUXmJM
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+msgid "No {fieldLabel}"
+msgstr "无 {fieldLabel}"
+
+#. js-lingui-id: yWS1Mx
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
+msgid "No {objectNameSingular}"
+msgstr "无 {objectNameSingular}"
+
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "No Agent"
 msgstr "无代理"
 
+#. js-lingui-id: f9b1sj
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "No agents assigned"
+msgstr "没有分配代理"
+
+#. js-lingui-id: 2jU+NX
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No agents available"
+msgstr "没有可用的代理"
+
 #. js-lingui-id: pC+mOo
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "No agents available for handoff"
 msgstr "没有可用的代理进行交接"
+
+#. js-lingui-id: mU1OkO
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No agents match your search"
+msgstr "没有与您的搜索匹配的代理"
+
+#. js-lingui-id: 9mx36q
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "No API keys assigned"
+msgstr "没有分配 API 密钥"
+
+#. js-lingui-id: QnvikC
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No API keys available"
+msgstr "没有可用的 API 密钥"
+
+#. js-lingui-id: wZT6U/
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No API keys match your search"
+msgstr "没有与您的搜索匹配的 API 密钥"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -4262,15 +4558,35 @@ msgstr "无包含错误的数据"
 msgid "No data found"
 msgstr "未找到数据"
 
+#. js-lingui-id: P4KXUa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No Deleted {objectLabelSingular} found"
+msgstr "未找到已删除的 {objectLabelSingular}"
+
+#. js-lingui-id: s7QKq9
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No deleted records matching the filter criteria were found."
+msgstr "找不到符合筛选条件的已删除记录。"
+
 #. js-lingui-id: flmDTf
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "无描述"
 
+#. js-lingui-id: mINrlz
+#: src/modules/activities/emails/components/EmailThreads.tsx
+msgid "No email exchange has occurred with this record yet."
+msgstr "还没有与此记录进行电子邮件交换。"
+
+#. js-lingui-id: 23Rceg
+#: src/modules/activities/files/components/Attachments.tsx
+msgid "No Files"
+msgstr "无文件"
+
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
-msgstr ""
+msgstr "此账户未找到文件夹"
 
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -4303,13 +4619,12 @@ msgid "No members"
 msgstr "没有成员"
 
 #. js-lingui-id: Y4qK8/
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No members assigned"
 msgstr "没有分配成员"
 
 #. js-lingui-id: /nLvVj
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members match your search"
 msgstr "没有与您的搜索匹配的成员"
 
@@ -4345,6 +4660,7 @@ msgstr "尚未为个人对象设置权限。"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
 msgstr "未找到记录"
 
@@ -4392,6 +4708,7 @@ msgstr "尚无工作流版本"
 #. js-lingui-id: EdQY6l
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
 msgstr "无"
@@ -4448,6 +4765,11 @@ msgstr "未同步"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Notes"
 msgstr "备注"
+
+#. js-lingui-id: YwzE9K
+#: src/utils/date-utils.ts
+msgid "now"
+msgstr "现在"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -4578,6 +4900,11 @@ msgstr "选项"
 msgid "or"
 msgstr "或"
 
+#. js-lingui-id: ZAVklK
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Or"
+msgstr "或"
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
@@ -4601,7 +4928,7 @@ msgstr "其他工作区"
 #. js-lingui-id: NuKR0h
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
 msgid "Others"
-msgstr ""
+msgstr "其他"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -4613,13 +4940,18 @@ msgstr "我们的团队可以帮助您设置工作空间，以符合您的特定
 msgid "Output Field {fieldNumber}"
 msgstr "输出字段 {fieldNumber}"
 
+#. js-lingui-id: in6CUw
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Override Draft"
+msgstr "覆盖草稿"
+
 #. js-lingui-id: lXe6vt
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Page Layouts"
-msgstr ""
+msgstr "页面布局"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4823,6 +5155,12 @@ msgstr "历史人工智能对话"
 msgid "Price updated."
 msgstr "价格已更新。"
 
+#. js-lingui-id: 0Ni6nR
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+msgid "Primary Email"
+msgstr "主要邮箱"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -4845,6 +5183,11 @@ msgstr "处理中……"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Profile"
 msgstr "个人资料"
+
+#. js-lingui-id: 6Fs5Ks
+#: src/utils/title-utils.ts
+msgid "Profile - Settings"
+msgstr "个人资料 - 设置"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4963,6 +5306,11 @@ msgstr "发布"
 msgid "Reload"
 msgstr "重新加载"
 
+#. js-lingui-id: qlAIQ1
+#: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
+msgid "Remote"
+msgstr "远程"
+
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -4978,6 +5326,11 @@ msgstr "删除账户"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
 msgstr "移除默认设置"
+
+#. js-lingui-id: 2HpFUd
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "Remove Deleted filter"
+msgstr "移除已删除过滤器"
 
 #. js-lingui-id: rn2/2V
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
@@ -5004,6 +5357,16 @@ msgstr "移除交接"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "移除选项"
+
+#. js-lingui-id: NRCCKG
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove Sorting"
+msgstr "移除排序"
+
+#. js-lingui-id: qMPWg0
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove sorting?"
+msgstr "移除排序？"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5150,6 +5513,11 @@ msgstr "罗马尼亚语"
 msgid "Run a workflow and return here to view its executions"
 msgstr "运行工作流并返回此处查看其执行情况"
 
+#. js-lingui-id: UPaWvi
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Run Function"
+msgstr "运行函数"
+
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
@@ -5216,15 +5584,20 @@ msgstr "搜索一个团队成员……"
 msgid "Search a type"
 msgstr "搜索类型"
 
+#. js-lingui-id: +7s4fw
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "Search agents"
+msgstr "搜索代理"
+
 #. js-lingui-id: 4fd0q+
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "搜索代理..."
 
-#. js-lingui-id: x55IVv
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "Search an assigned team member..."
-msgstr "搜索已分配的团队成员……"
+#. js-lingui-id: kdagxk
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Search an assigned {roleTargetDisplayName}..."
+msgstr "搜索已分配的 {roleTargetDisplayName}..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -5244,6 +5617,11 @@ msgstr "搜索对象"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 msgid "Search any field"
 msgstr "搜索任意字段"
+
+#. js-lingui-id: FzcOoG
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "Search API keys"
+msgstr "搜索 API 密钥"
 
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
@@ -5658,6 +6036,11 @@ msgstr "登录"
 msgid "Sign In"
 msgstr "登录"
 
+#. js-lingui-id: Vt3mQ2
+#: src/utils/title-utils.ts
+msgid "Sign in or Create an account"
+msgstr "登录或创建账户"
+
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
@@ -5864,6 +6247,7 @@ msgstr "主题、正文和附件将与您的团队分享。"
 
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Submit"
 msgstr "提交"
 
@@ -5941,7 +6325,7 @@ msgstr "切换至年度计划"
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Sync"
-msgstr ""
+msgstr "同步"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -6015,6 +6399,11 @@ msgstr "系统设置 - 星期日"
 msgid "Table"
 msgstr "表格"
 
+#. js-lingui-id: 38Or+7
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Tabs"
+msgstr ""
+
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -6040,6 +6429,11 @@ msgstr "测试"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test Workflow"
 msgstr "测试工作流"
+
+#. js-lingui-id: 3nWPN6
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Test your function"
+msgstr "测试您的功能"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -6123,11 +6517,6 @@ msgstr "此字段的值必须唯一"
 msgid "The whole event details will be shared with your team."
 msgstr "整个事件详情将与您的团队分享。"
 
-#. js-lingui-id: MssRHl
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "The workspace needs at least one Admin"
-msgstr "工作区至少需要一个管理员"
-
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -6137,6 +6526,16 @@ msgstr "主题"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Theme "
 msgstr "主题 "
+
+#. js-lingui-id: Wn862P
+#: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
+msgid "then"
+msgstr "然后"
+
+#. js-lingui-id: l2fWLK
+#: src/modules/activities/files/components/Attachments.tsx
+msgid "There are no associated files with this record."
+msgstr "没有与此记录关联的文件。"
 
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6183,15 +6582,20 @@ msgstr "此操作无法撤销。这将永久删除交接配置。"
 msgid "This database value overrides environment settings. "
 msgstr "此数据库值会覆盖环境设置。"
 
+#. js-lingui-id: E4JJ5C
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "This is required to enable manual row reordering."
+msgstr "这需要启用手动行重新排序。"
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
 msgstr "此角色可以{humanReadableAction}所有记录"
 
-#. js-lingui-id: xPfDRx
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "This role is assigned to these workspace members."
-msgstr "这个角色被分配给这些工作区成员。"
+#. js-lingui-id: BifDEA
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "This role is assigned to these {roleTargetDisplayName}."
+msgstr "此角色已分配给这些 {roleTargetDisplayName}。"
 
 #. js-lingui-id: C/wr0z
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6241,6 +6645,7 @@ msgid "Timestamp and participants will be shared with your team."
 msgstr "时间戳和参与者将与您的团队分享。"
 
 #. js-lingui-id: ecUA8p
+#: src/utils/date-utils.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
@@ -6512,6 +6917,11 @@ msgstr "用户信息"
 msgid "User is not logged in"
 msgstr "用户未登录"
 
+#. js-lingui-id: LVecP9
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "User Roles"
+msgstr "用户角色"
+
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Users"
@@ -6533,6 +6943,7 @@ msgid "Validate Data"
 msgstr "验证数据"
 
 #. js-lingui-id: wMHvYH
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Value"
@@ -6563,6 +6974,11 @@ msgstr "变量未找到"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
 msgstr "变量更新成功."
+
+#. js-lingui-id: uSMfoN
+#: src/utils/title-utils.ts
+msgid "Verify"
+msgstr "验证"
 
 #. js-lingui-id: IoglDq
 #: src/pages/auth/SignInUp.tsx
@@ -6730,7 +7146,7 @@ msgstr "密钥何时会被禁用"
 #. js-lingui-id: tL6W2K
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Widgets"
-msgstr ""
+msgstr "小工具"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6823,6 +7239,7 @@ msgid "Write a description for this agent"
 msgstr "为此代理撰写描述"
 
 #. js-lingui-id: 7qI8sJ
+#: src/utils/date-utils.ts
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
 msgstr "年"
@@ -6831,6 +7248,11 @@ msgstr "年"
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
 msgstr "年度计划"
+
+#. js-lingui-id: +BGee5
+#: src/utils/date-utils.ts
+msgid "years"
+msgstr "年"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -6863,6 +7285,15 @@ msgstr "您无权为此对象创建记录"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "您可以根据需要设置 IMAP（接收电子邮件）、SMTP（发送电子邮件）和 CalDAV（日历同步）的任意组合。"
+
+#. js-lingui-id: aiJY7y
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
+"If you need to make changes, please create a new connection or unsync the tables first."
+msgstr ""
+"您不能编辑此连接，因为它具有跟踪表。\n"
+"如果您需要进行更改，请创建新连接或首先取消同步表。"
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

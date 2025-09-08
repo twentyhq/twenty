@@ -95,9 +95,7 @@ const Providers = () => {
                       <HelmetProvider>
                         <IconsProvider>
                           <PrefetchDataProvider>
-                            <RecordComponentInstanceContextsWrapper
-                              componentInstanceId={'storybook-test-record'}
-                            >
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
                               <Outlet />
                             </RecordComponentInstanceContextsWrapper>
                           </PrefetchDataProvider>

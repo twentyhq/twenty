@@ -1,5 +1,5 @@
 import {
-  GraphSubType,
+  GraphType,
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
@@ -26,7 +26,8 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: '   ',
         type: PageLayoutType.DASHBOARD,
-        widgets: [],
+        objectMetadataId: null,
+        tabs: [],
       });
     });
 
@@ -43,7 +44,8 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Updated Name',
         type: PageLayoutType.DASHBOARD,
-        widgets: [],
+        objectMetadataId: null,
+        tabs: [],
       });
     });
 
@@ -61,14 +63,31 @@ describe('usePageLayoutDraftState', () => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
-        widgets: [
+        objectMetadataId: null,
+        tabs: [
           {
-            id: 'widget-1',
-            title: 'New Widget',
-            type: WidgetType.GRAPH,
-            gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-            configuration: { graphType: GraphSubType.BAR },
-            data: {},
+            id: 'tab-1',
+            title: 'Tab 1',
+            position: 0,
+            pageLayoutId: '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+            widgets: [
+              {
+                id: 'widget-1',
+                pageLayoutTabId: 'tab-1',
+                title: 'New Widget',
+                type: WidgetType.GRAPH,
+                gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
+                configuration: { graphType: GraphType.BAR },
+                data: {},
+                objectMetadataId: null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                deletedAt: null,
+              },
+            ],
           },
         ],
       });

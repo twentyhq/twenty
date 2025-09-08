@@ -66,7 +66,7 @@ export const useComputeRecordRelationFilterLabelValue = ({
   });
 
   if (loading) {
-    return { labelValue: t`Loading...` };
+    return { labelValue: t`: Loading...` };
   }
 
   const labelValueItems = [
@@ -83,9 +83,13 @@ export const useComputeRecordRelationFilterLabelValue = ({
     labelValue:
       labelValueItems.length > 0
         ? getRecordFilterLabelValue({
-            ...recordFilter,
-            displayValue: filterDisplayValue,
+            recordFilter: {
+              ...recordFilter,
+              displayValue: filterDisplayValue,
+            },
           })
-        : getRecordFilterLabelValue(recordFilter),
+        : getRecordFilterLabelValue({
+            recordFilter,
+          }),
   };
 };

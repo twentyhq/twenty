@@ -173,7 +173,7 @@ export const BlockEditor = ({
       >
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
-          triggerCharacter={'/'}
+          triggerCharacter="/"
           getItems={async (query) =>
             filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
           }

@@ -1046,7 +1046,7 @@ msgstr "Oczekiwano, że te same pola ograniczeń będą stosowane konsekwentnie 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Zewnętrzne ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Czy jest organizatorem"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Jest folderem wysłanych"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Czy synchronizacja jest włączona"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Jest zsynchronizowane"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1837,7 +1837,7 @@ msgstr "Ładunki tworzenia relacji morf muszą mieć ten sam typ relacji"
 #. js-lingui-id: nU54nm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr ""
+msgstr "Ładunki tworzenia relacji morf muszą zawierać wyłącznie relację do innych metadanych obiektu"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1879,12 +1879,12 @@ msgstr "Nazwa \"{computedMetadataNameFromLabel}\" nie może być taka sama po ob
 #. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr ""
+msgstr "Nazwa \"{flatFieldMetadataName}\" jest niedostępna"
 
 #. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Nazwa \"{flatFieldMetadataName}\" jest niedostępna, ponieważ jest już używana przez inne pole"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2869,7 +2869,7 @@ msgstr "Status wersji procesu"
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
-msgstr ""
+msgstr "Ta nazwa jest niedostępna, ponieważ jest już używana przez inne pole."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3102,6 +3102,11 @@ msgstr "Widok"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Pole widoku"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Pole widoku już istnieje."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

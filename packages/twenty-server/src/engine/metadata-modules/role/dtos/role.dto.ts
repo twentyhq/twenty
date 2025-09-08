@@ -4,10 +4,26 @@ import { Relation } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+
+@ObjectType('ApiKeyForRole')
+export class ApiKeyForRoleDTO {
+  @Field(() => UUIDScalarType, { nullable: false })
+  id: string;
+
+  @Field({ nullable: false })
+  name: string;
+
+  @Field(() => Date, { nullable: false })
+  expiresAt: Date;
+
+  @Field(() => Date, { nullable: true })
+  revokedAt?: Date | null;
+}
 
 @ObjectType('Role')
 export class RoleDTO {
@@ -29,11 +45,26 @@ export class RoleDTO {
   @Field({ nullable: false })
   isEditable: boolean;
 
+  @Field({ nullable: false })
+  canBeAssignedToUsers: boolean;
+
+  @Field({ nullable: false })
+  canBeAssignedToAgents: boolean;
+
+  @Field({ nullable: false })
+  canBeAssignedToApiKeys: boolean;
+
   @HideField()
   roleTargets: Relation<RoleTargetsEntity[]>;
 
   @Field(() => [WorkspaceMember], { nullable: true })
   workspaceMembers?: WorkspaceMember[];
+
+  @Field(() => [AgentDTO], { nullable: true })
+  agents?: AgentDTO[];
+
+  @Field(() => [ApiKeyForRoleDTO], { nullable: true })
+  apiKeys?: ApiKeyForRoleDTO[];
 
   @Field({ nullable: false })
   canUpdateAllSettings: boolean;
