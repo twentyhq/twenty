@@ -4,20 +4,21 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
+import { WidgetRenderer } from '@/settings/page-layout/components/WidgetRenderer';
 import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
-import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
-import { useStartPageLayoutDragSelection } from '@/settings/page-layout/hooks/useStartPageLayoutDragSelection';
 import { useChangePageLayoutDragSelection } from '@/settings/page-layout/hooks/useChangePageLayoutDragSelection';
-import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
-import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
-import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
 import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
+import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
 import { usePageLayoutActiveTabId } from '@/settings/page-layout/hooks/usePageLayoutActiveTabId';
+import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
+import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
+import { useStartPageLayoutDragSelection } from '@/settings/page-layout/hooks/useStartPageLayoutDragSelection';
 import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
@@ -26,7 +27,6 @@ import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/page
 import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
-import { WidgetRenderer } from '@/settings/page-layout/components/WidgetRenderer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -384,7 +384,7 @@ export const SettingsPageLayoutEdit = () => {
               selectableItemsContainerRef={gridContainerRef}
               onDragSelectionStart={startPageLayoutDragSelection}
               onDragSelectionChange={changePageLayoutDragSelection}
-              onDragSelectionEnd={() => endPageLayoutDragSelection()}
+              onDragSelectionEnd={endPageLayoutDragSelection}
             />
           )}
         </StyledGridContainer>
