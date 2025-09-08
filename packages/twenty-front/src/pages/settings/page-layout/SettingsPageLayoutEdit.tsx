@@ -408,7 +408,7 @@ export const SettingsPageLayoutEdit = () => {
               selectableItemsContainerRef={gridContainerRef}
               onDragSelectionStart={startPageLayoutDragSelection}
               onDragSelectionChange={changePageLayoutDragSelection}
-              onDragSelectionEnd={endPageLayoutDragSelection}
+              onDragSelectionEnd={() => endPageLayoutDragSelection(activeTabId)}
             />
           )}
         </StyledGridContainer>

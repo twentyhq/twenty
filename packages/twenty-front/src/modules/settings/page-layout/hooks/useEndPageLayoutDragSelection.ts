@@ -1,7 +1,9 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconAppWindow } from 'twenty-ui/display';
+import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
@@ -11,7 +13,7 @@ export const useEndPageLayoutDragSelection = () => {
 
   const endPageLayoutDragSelection = useRecoilCallback(
     ({ snapshot, set }) =>
-      () => {
+      (activeTabId?: string | null) => {
         const pageLayoutSelectedCells = snapshot
           .getLoadable(pageLayoutSelectedCellsState)
           .getValue();
@@ -21,8 +23,12 @@ export const useEndPageLayoutDragSelection = () => {
             Array.from(pageLayoutSelectedCells),
           );
 
-          if (draggedBounds !== null) {
+          if (isDefined(draggedBounds)) {
             set(pageLayoutDraggedAreaState, draggedBounds);
+
+            if (isDefined(activeTabId)) {
+              set(pageLayoutCurrentTabIdForCreationState, activeTabId);
+            }
 
             navigateCommandMenu({
               page: CommandMenuPages.PageLayoutWidgetTypeSelect,
