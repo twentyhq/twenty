@@ -12,6 +12,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
   type AccessTokenJwtPayload,
@@ -56,6 +57,42 @@ export class AccessTokenService {
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
   >): Promise<AuthToken> {
+    const isImpersonatingToken = isImpersonating === true;
+    const hasImpersonationFields = Boolean(
+      impersonationType || impersonatorUserWorkspaceId || originalUserWorkspaceId,
+    );
+
+    if (!isImpersonatingToken && hasImpersonationFields) {
+      throw new AuthException(
+        'Invalid impersonation parameters',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (isImpersonatingToken) {
+      const typeIsValid =
+        impersonationType === ImpersonationTokenTypeEnum.WORKSPACE ||
+        impersonationType === ImpersonationTokenTypeEnum.SERVER;
+
+      if (
+        !typeIsValid ||
+        typeof impersonatorUserWorkspaceId !== 'string' ||
+        typeof originalUserWorkspaceId !== 'string'
+      ) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (impersonatorUserWorkspaceId === originalUserWorkspaceId) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+    }
+
     const expiresIn = this.twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -108,6 +145,27 @@ export class AccessTokenService {
 
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
+    if (
+      isImpersonatingToken &&
+      impersonationType === ImpersonationTokenTypeEnum.WORKSPACE &&
+      originalUserWorkspaceId !== userWorkspace.id
+    ) {
+      throw new AuthException(
+        'Invalid impersonation parameters',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const payloadImpersonationType = isImpersonatingToken
+      ? impersonationType
+      : undefined;
+    const payloadImpersonatorUwId = isImpersonatingToken
+      ? impersonatorUserWorkspaceId
+      : undefined;
+    const payloadOriginalUwId = isImpersonatingToken
+      ? originalUserWorkspaceId
+      : undefined;
+
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
       userId: user.id,
@@ -116,10 +174,10 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
-      isImpersonating,
-      impersonationType,
-      impersonatorUserWorkspaceId,
-      originalUserWorkspaceId,
+      isImpersonating: isImpersonatingToken,
+      impersonationType: payloadImpersonationType,
+      impersonatorUserWorkspaceId: payloadImpersonatorUwId,
+      originalUserWorkspaceId: payloadOriginalUwId,
     };
 
     return {
