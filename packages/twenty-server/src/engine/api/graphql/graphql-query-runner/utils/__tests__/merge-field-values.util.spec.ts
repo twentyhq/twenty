@@ -3,10 +3,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 
 describe('mergeFieldValues', () => {
-  const priorityRecordId = 'priority-record-id';
-  const recordsWithValues = [
+  const PRIORITY_RECORD_ID = 'priority-record-id';
+  const RECORDS_WITH_VALUES = [
     { value: 'value1', recordId: 'record1' },
-    { value: 'value2', recordId: priorityRecordId },
+    { value: 'value2', recordId: PRIORITY_RECORD_ID },
     { value: 'value3', recordId: 'record3' },
   ];
 
@@ -14,29 +14,27 @@ describe('mergeFieldValues', () => {
     it('should return priority field value for text fields', () => {
       const result = mergeFieldValues(
         FieldMetadataType.TEXT,
-        false,
-        recordsWithValues,
-        priorityRecordId,
+        RECORDS_WITH_VALUES,
+        PRIORITY_RECORD_ID,
       );
 
       expect(result).toBe('value2');
     });
 
-    it('should return fallback value when priority record has no value', () => {
+    it('should throw error when priority record is not found', () => {
       const recordsWithoutPriorityValue = [
         { value: 'value1', recordId: 'record1' },
-        { value: null, recordId: priorityRecordId },
+        { value: null, recordId: PRIORITY_RECORD_ID },
         { value: 'value3', recordId: 'record3' },
       ];
 
-      const result = mergeFieldValues(
-        FieldMetadataType.TEXT,
-        false,
-        recordsWithoutPriorityValue,
-        priorityRecordId,
-      );
-
-      expect(result).toBe('value1');
+      expect(() =>
+        mergeFieldValues(
+          FieldMetadataType.TEXT,
+          recordsWithoutPriorityValue,
+          'non-existent-id',
+        ),
+      ).toThrow('Priority record with ID non-existent-id not found');
     });
   });
 
@@ -44,23 +42,22 @@ describe('mergeFieldValues', () => {
     it('should merge array values', () => {
       const arrayRecords = [
         { value: ['a', 'b'], recordId: 'record1' },
-        { value: ['b', 'c'], recordId: priorityRecordId },
+        { value: ['b', 'c'], recordId: PRIORITY_RECORD_ID },
         { value: ['c', 'd'], recordId: 'record3' },
       ];
 
       const result = mergeFieldValues(
         FieldMetadataType.ARRAY,
-        false,
         arrayRecords,
-        priorityRecordId,
+        PRIORITY_RECORD_ID,
       );
 
       expect(result).toEqual(['a', 'b', 'c', 'd']);
     });
   });
 
-  describe('composite field types', () => {
-    it('should merge emails for composite EMAILS field', () => {
+  describe('arrayable field types', () => {
+    it('should merge emails for EMAILS field', () => {
       const emailRecords = [
         {
           value: {
@@ -74,32 +71,20 @@ describe('mergeFieldValues', () => {
             primaryEmail: 'priority@example.com',
             additionalEmails: ['extra2@example.com'],
           },
-          recordId: priorityRecordId,
+          recordId: PRIORITY_RECORD_ID,
         },
       ];
 
       const result = mergeFieldValues(
         FieldMetadataType.EMAILS,
-        true,
         emailRecords,
-        priorityRecordId,
+        PRIORITY_RECORD_ID,
       );
 
       expect(result).toEqual({
         primaryEmail: 'priority@example.com',
         additionalEmails: ['extra1@example.com', 'extra2@example.com'],
       });
-    });
-
-    it('should use priority value for non-composite EMAILS field', () => {
-      const result = mergeFieldValues(
-        FieldMetadataType.EMAILS,
-        false,
-        recordsWithValues,
-        priorityRecordId,
-      );
-
-      expect(result).toBe('value2');
     });
   });
 });

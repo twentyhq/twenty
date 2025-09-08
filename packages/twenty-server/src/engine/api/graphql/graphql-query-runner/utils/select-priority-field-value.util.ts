@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 
 export const selectPriorityFieldValue = <T>(
@@ -8,13 +10,15 @@ export const selectPriorityFieldValue = <T>(
     (record) => record.recordId === priorityRecordId,
   );
 
-  if (priorityRecord && hasRecordFieldValue(priorityRecord.value)) {
+  if (!isDefined(priorityRecord)) {
+    throw new Error(
+      `Priority record with ID ${priorityRecordId} not found in merge candidates`,
+    );
+  }
+
+  if (hasRecordFieldValue(priorityRecord.value)) {
     return priorityRecord.value;
   }
 
-  const fallbackRecord = recordsWithValues.find((record) =>
-    hasRecordFieldValue(record.value),
-  );
-
-  return fallbackRecord ? fallbackRecord.value : null;
+  return null;
 };

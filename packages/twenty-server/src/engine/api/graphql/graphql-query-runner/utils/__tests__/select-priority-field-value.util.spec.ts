@@ -18,7 +18,7 @@ describe('selectPriorityFieldValue', () => {
     expect(result).toBe('priority value');
   });
 
-  it('should return first record value when priority record not found', () => {
+  it('should throw error when priority record not found', () => {
     const recordsWithValues = [
       {
         recordId: '2',
@@ -30,12 +30,12 @@ describe('selectPriorityFieldValue', () => {
       },
     ];
 
-    const result = selectPriorityFieldValue(recordsWithValues, '1');
-
-    expect(result).toBe('first value');
+    expect(() => selectPriorityFieldValue(recordsWithValues, '1')).toThrow(
+      'Priority record with ID 1 not found in merge candidates',
+    );
   });
 
-  it('should return first record value when priority record has no value', () => {
+  it('should return null when priority record has no value', () => {
     const recordsWithValues = [
       {
         recordId: '1',
@@ -49,10 +49,10 @@ describe('selectPriorityFieldValue', () => {
 
     const result = selectPriorityFieldValue(recordsWithValues, '1');
 
-    expect(result).toBe('fallback value');
+    expect(result).toBeNull();
   });
 
-  it('should return first record value when priority record has empty string', () => {
+  it('should return null when priority record has empty string', () => {
     const recordsWithValues = [
       {
         recordId: '1',
@@ -66,10 +66,10 @@ describe('selectPriorityFieldValue', () => {
 
     const result = selectPriorityFieldValue(recordsWithValues, '1');
 
-    expect(result).toBe('fallback value');
+    expect(result).toBeNull();
   });
 
-  it('should handle undefined values', () => {
+  it('should return null when priority record has undefined value', () => {
     const recordsWithValues = [
       {
         recordId: '1',
@@ -83,13 +83,13 @@ describe('selectPriorityFieldValue', () => {
 
     const result = selectPriorityFieldValue(recordsWithValues, '1');
 
-    expect(result).toBe('fallback value');
+    expect(result).toBeNull();
   });
 
-  it('should return null when no records exist', () => {
-    const result = selectPriorityFieldValue([], '1');
-
-    expect(result).toBeNull();
+  it('should throw error when no records exist', () => {
+    expect(() => selectPriorityFieldValue([], '1')).toThrow(
+      'Priority record with ID 1 not found in merge candidates',
+    );
   });
 
   it('should handle complex object values', () => {

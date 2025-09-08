@@ -6,14 +6,18 @@ import {
   type LinksMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
-import { parseAdditionalItems } from './parse-additional-items.util';
+import { parseArrayOrJsonStringToArray } from './parse-additional-items.util';
 
 export const mergeLinksFieldValues = (
   recordsWithValues: { value: LinksMetadata; recordId: string }[],
   priorityRecordId: string,
-): LinksMetadata | null => {
+): LinksMetadata => {
   if (recordsWithValues.length === 0) {
-    return null;
+    return {
+      primaryLinkUrl: '',
+      primaryLinkLabel: '',
+      secondaryLinks: null,
+    };
   }
 
   let primaryLinkUrl = '';
@@ -43,7 +47,7 @@ export const mergeLinksFieldValues = (
   const allSecondaryLinks: LinkMetadata[] = [];
 
   recordsWithValues.forEach((record) => {
-    const secondaryLinks = parseAdditionalItems<LinkMetadata>(
+    const secondaryLinks = parseArrayOrJsonStringToArray<LinkMetadata>(
       record.value.secondaryLinks,
     );
 

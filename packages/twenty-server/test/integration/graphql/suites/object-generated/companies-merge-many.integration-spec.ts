@@ -2,11 +2,16 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 describe('companies merge resolvers (integration)', () => {
-  beforeAll(async () => {
-    await deleteAllRecords('company');
+  let createdCompanyIds: string[] = [];
+
+  afterEach(async () => {
+    if (createdCompanyIds.length > 0) {
+      await deleteRecordsByIds('company', createdCompanyIds);
+      createdCompanyIds = [];
+    }
   });
 
   describe('merging links composite fields', () => {
@@ -61,6 +66,8 @@ describe('companies merge resolvers (integration)', () => {
 
       const company1Id = createResponse.body.data.createCompanies[0].id;
       const company2Id = createResponse.body.data.createCompanies[1].id;
+
+      createdCompanyIds.push(company1Id, company2Id);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
@@ -147,6 +154,8 @@ describe('companies merge resolvers (integration)', () => {
       const company1Id = createResponse.body.data.createCompanies[0].id;
       const company2Id = createResponse.body.data.createCompanies[1].id;
 
+      createdCompanyIds.push(company1Id, company2Id);
+
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -215,6 +224,8 @@ describe('companies merge resolvers (integration)', () => {
       );
       const company1Id = createResponse.body.data.createCompanies[0].id;
       const company2Id = createResponse.body.data.createCompanies[1].id;
+
+      createdCompanyIds.push(company1Id, company2Id);
 
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',

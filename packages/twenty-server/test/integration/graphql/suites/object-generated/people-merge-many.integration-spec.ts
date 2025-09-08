@@ -3,11 +3,16 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 describe('people merge resolvers (integration)', () => {
-  beforeAll(async () => {
-    await deleteAllRecords('person');
+  let createdPersonIds: string[] = [];
+
+  afterEach(async () => {
+    if (createdPersonIds.length > 0) {
+      await deleteRecordsByIds('person', createdPersonIds);
+      createdPersonIds = [];
+    }
   });
 
   describe('merging composite fields', () => {
@@ -54,6 +59,8 @@ describe('people merge resolvers (integration)', () => {
 
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
+
+      createdPersonIds.push(person1Id, person2Id);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
@@ -117,6 +124,8 @@ describe('people merge resolvers (integration)', () => {
       );
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
+
+      createdPersonIds.push(person1Id, person2Id);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
@@ -182,6 +191,8 @@ describe('people merge resolvers (integration)', () => {
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
 
+      createdPersonIds.push(person1Id, person2Id);
+
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
         gqlFields: PERSON_GQL_FIELDS,
@@ -235,6 +246,8 @@ describe('people merge resolvers (integration)', () => {
       );
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
+
+      createdPersonIds.push(person1Id, person2Id);
 
       const dryRunMergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',
@@ -353,6 +366,8 @@ describe('people merge resolvers (integration)', () => {
 
       const person1Id = createResponse.body.data.createPeople[0].id;
       const person2Id = createResponse.body.data.createPeople[1].id;
+
+      createdPersonIds.push(person1Id, person2Id);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'people',

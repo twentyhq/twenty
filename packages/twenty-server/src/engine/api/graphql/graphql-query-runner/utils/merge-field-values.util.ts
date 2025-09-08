@@ -12,7 +12,6 @@ import { selectPriorityFieldValue } from './select-priority-field-value.util';
 
 export const mergeFieldValues = (
   fieldType: FieldMetadataType,
-  isCompositeField: boolean,
   recordsWithValues: { value: unknown; recordId: string }[],
   priorityRecordId: string,
 ): unknown => {
@@ -22,34 +21,22 @@ export const mergeFieldValues = (
       return mergeArrayFieldValues(recordsWithValues);
 
     case FieldMetadataType.EMAILS:
-      if (isCompositeField) {
-        return mergeEmailsFieldValues(
-          recordsWithValues as { value: EmailsMetadata; recordId: string }[],
-          priorityRecordId,
-        );
-      }
-
-      return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
+      return mergeEmailsFieldValues(
+        recordsWithValues as { value: EmailsMetadata; recordId: string }[],
+        priorityRecordId,
+      );
 
     case FieldMetadataType.PHONES:
-      if (isCompositeField) {
-        return mergePhonesFieldValues(
-          recordsWithValues as { value: PhonesMetadata; recordId: string }[],
-          priorityRecordId,
-        );
-      }
-
-      return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
+      return mergePhonesFieldValues(
+        recordsWithValues as { value: PhonesMetadata; recordId: string }[],
+        priorityRecordId,
+      );
 
     case FieldMetadataType.LINKS:
-      if (isCompositeField) {
-        return mergeLinksFieldValues(
-          recordsWithValues as { value: LinksMetadata; recordId: string }[],
-          priorityRecordId,
-        );
-      }
-
-      return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
+      return mergeLinksFieldValues(
+        recordsWithValues as { value: LinksMetadata; recordId: string }[],
+        priorityRecordId,
+      );
 
     default:
       return selectPriorityFieldValue(recordsWithValues, priorityRecordId);

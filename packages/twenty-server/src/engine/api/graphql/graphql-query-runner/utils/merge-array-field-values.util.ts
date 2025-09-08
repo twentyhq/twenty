@@ -8,20 +8,22 @@ export const mergeArrayFieldValues = <T>(
   const allValues: T[] = [];
 
   recordsWithValues.forEach((record) => {
-    if (Array.isArray(record.value)) {
-      allValues.push(
-        ...record.value.filter((value) => hasRecordFieldValue(value)),
+    if (record.value === null || record.value === undefined) {
+      return;
+    }
+
+    if (!Array.isArray(record.value)) {
+      throw new Error(
+        `Expected array value but received ${typeof record.value}`,
       );
     }
-  });
 
-  const uniqueValues = allValues.filter((value, index, array) => {
-    const firstIndex = array.findIndex(
-      (item) => JSON.stringify(item) === JSON.stringify(value),
+    allValues.push(
+      ...record.value.filter((value) => hasRecordFieldValue(value)),
     );
-
-    return firstIndex === index;
   });
+
+  const uniqueValues = Array.from(new Set(allValues));
 
   return uniqueValues.length > 0 ? uniqueValues : null;
 };

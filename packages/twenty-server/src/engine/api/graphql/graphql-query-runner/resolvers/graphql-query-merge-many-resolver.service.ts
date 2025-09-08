@@ -28,7 +28,6 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -198,13 +197,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
           return;
         }
 
-        const isCompositeField = isCompositeFieldMetadataType(
-          fieldMetadata.type,
-        );
-
         mergedResult[fieldName] = mergeFieldValues(
           fieldMetadata.type,
-          isCompositeField,
           recordsWithValues,
           priorityRecordId,
         );

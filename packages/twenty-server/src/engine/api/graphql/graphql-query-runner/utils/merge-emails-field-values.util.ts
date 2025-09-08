@@ -1,13 +1,16 @@
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import { parseAdditionalItems } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
+import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
 import { type EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 
 export const mergeEmailsFieldValues = (
   recordsWithValues: { value: EmailsMetadata; recordId: string }[],
   priorityRecordId: string,
-): EmailsMetadata | null => {
+): EmailsMetadata => {
   if (recordsWithValues.length === 0) {
-    return null;
+    return {
+      primaryEmail: '',
+      additionalEmails: null,
+    };
   }
 
   let primaryEmail = '';
@@ -31,7 +34,7 @@ export const mergeEmailsFieldValues = (
   const allAdditionalEmails: string[] = [];
 
   recordsWithValues.forEach((record) => {
-    const additionalEmails = parseAdditionalItems<string>(
+    const additionalEmails = parseArrayOrJsonStringToArray<string>(
       record.value.additionalEmails,
     );
 

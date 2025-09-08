@@ -10,9 +10,14 @@ import {
 export const mergePhonesFieldValues = (
   recordsWithValues: { value: PhonesMetadata; recordId: string }[],
   priorityRecordId: string,
-): PhonesMetadata | null => {
+): PhonesMetadata => {
   if (recordsWithValues.length === 0) {
-    return null;
+    return {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '',
+      additionalPhones: null,
+    };
   }
 
   let primaryPhoneNumber = '';
