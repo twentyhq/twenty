@@ -89,6 +89,10 @@ describe('RenewTokenService', () => {
         token: mockAppToken as AppToken,
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        isImpersonating: false,
+        impersonationType: undefined,
+        impersonatorUserWorkspaceId: undefined,
+        originalUserWorkspaceId: undefined,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest
@@ -112,17 +116,78 @@ describe('RenewTokenService', () => {
         { id: mockTokenId },
         { revokedAt: expect.any(Date) },
       );
-      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith({
-        userId: mockUser.id,
-        workspaceId: mockWorkspaceId,
-        authProvider: AuthProviderEnum.Password,
-      });
+      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: mockUser.id,
+          workspaceId: mockWorkspaceId,
+          authProvider: AuthProviderEnum.Password,
+        }),
+      );
       expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith({
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         userId: mockUser.id,
         workspaceId: mockWorkspaceId,
       });
+    });
+
+    it('should propagate impersonation claims when present', async () => {
+      const mockRefreshToken = 'valid-refresh-token';
+      const mockUser = { id: 'user-id' } as User;
+      const mockWorkspaceId = 'workspace-id';
+      const mockTokenId = 'token-id';
+      const mockAccessToken = {
+        token: 'new-access-token',
+        expiresAt: new Date(),
+      };
+      const mockNewRefreshToken = {
+        token: 'new-refresh-token',
+        expiresAt: new Date(),
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+      };
+      const mockAppToken: Partial<AppToken> = {
+        id: mockTokenId,
+        workspaceId: mockWorkspaceId,
+        user: mockUser,
+        userId: mockUser.id,
+      };
+
+      jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
+        user: mockUser,
+        token: mockAppToken as AppToken,
+        authProvider: AuthProviderEnum.Password,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        isImpersonating: true,
+        impersonationType: 'WORKSPACE' as any,
+        impersonatorUserWorkspaceId: 'uw-imp',
+        originalUserWorkspaceId: 'uw-orig',
+      });
+      jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
+      const accessSpy = jest
+        .spyOn(accessTokenService, 'generateAccessToken')
+        .mockResolvedValue(mockAccessToken);
+      const refreshSpy = jest
+        .spyOn(refreshTokenService, 'generateRefreshToken')
+        .mockResolvedValue(mockNewRefreshToken);
+
+      await service.generateTokensFromRefreshToken(mockRefreshToken);
+
+      expect(accessSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isImpersonating: true,
+          impersonationType: 'WORKSPACE',
+          impersonatorUserWorkspaceId: 'uw-imp',
+          originalUserWorkspaceId: 'uw-orig',
+        }),
+      );
+      expect(refreshSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isImpersonating: true,
+          impersonationType: 'WORKSPACE',
+          impersonatorUserWorkspaceId: 'uw-imp',
+          originalUserWorkspaceId: 'uw-orig',
+        }),
+      );
     });
 
     it('should throw an error if refresh token is not provided', async () => {
