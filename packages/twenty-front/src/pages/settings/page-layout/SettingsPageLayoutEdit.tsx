@@ -290,7 +290,7 @@ export const SettingsPageLayoutEdit = () => {
           },
           {
             children: t`Page Layouts`,
-            href: '/settings/page-layout',
+            href: getSettingsPath(SettingsPath.PageLayout),
           },
           {
             children: (

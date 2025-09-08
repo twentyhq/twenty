@@ -13,7 +13,7 @@ export const SettingsObjectOverview = () => {
           children: 'Workspace',
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: 'Objects', href: '/settings/objects' },
+        { children: 'Objects', href: getSettingsPath(SettingsPath.Objects) },
         {
           children: 'Overview',
         },

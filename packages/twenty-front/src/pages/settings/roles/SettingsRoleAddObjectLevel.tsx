@@ -25,14 +25,14 @@ export const SettingsRoleAddObjectLevel = () => {
       <SubMenuTopBarContainer
         title={t`1. Select an object`}
         links={[
-          { children: t`Roles`, href: '/settings/roles' },
+          { children: t`Roles`, href: getSettingsPath(SettingsPath.Roles) },
           {
             children: settingsDraftRole.label ?? '',
-            href: `/settings/roles/${roleId}`,
+            href: getSettingsPath(SettingsPath.RoleDetail, { roleId }),
           },
           {
             children: t`Add object permission`,
-            href: `/settings/roles/${roleId}/add-object-permission`,
+            href: getSettingsPath(SettingsPath.RoleAddObjectLevel, { roleId }),
           },
         ]}
       >

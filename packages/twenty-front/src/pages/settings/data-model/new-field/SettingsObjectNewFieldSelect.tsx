@@ -68,8 +68,11 @@ export const SettingsObjectNewFieldSelect = () => {
       <SubMenuTopBarContainer
         title={t`1. Select a field type`}
         links={[
-          { children: t`Workspace`, href: '/settings/general' },
-          { children: t`Objects`, href: '/settings/objects' },
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
           {
             children: activeObjectMetadataItem.labelPlural,
             href: getSettingsPath(SettingsPath.ObjectDetail, {

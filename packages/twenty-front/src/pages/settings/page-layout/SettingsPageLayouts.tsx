@@ -59,7 +59,7 @@ export const SettingsPageLayouts = () => {
     <SubMenuTopBarContainer
       title={t`Page Layouts`}
       actionButton={
-        <UndecoratedLink to="/settings/page-layout/new">
+        <UndecoratedLink to={getSettingsPath(SettingsPath.PageLayoutNew)}>
           <Button
             Icon={IconPlus}
             title={t`Add layout`}
@@ -92,7 +92,9 @@ export const SettingsPageLayouts = () => {
             {savedPageLayouts.map((layout) => (
               <StyledTableRow
                 key={layout.id}
-                to={`/settings/page-layout/${layout.id}`}
+                to={getSettingsPath(SettingsPath.PageLayoutEdit, {
+                  id: layout.id,
+                })}
               >
                 <StyledNameTableCell>
                   <IconLayoutList
