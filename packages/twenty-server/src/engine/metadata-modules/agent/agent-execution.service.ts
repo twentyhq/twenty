@@ -14,6 +14,8 @@ import {
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -31,7 +33,6 @@ import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metad
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
@@ -106,6 +107,9 @@ export class AgentExecutionService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
+      const isAnthropicModel =
+        registeredModel.provider === ModelProvider.ANTHROPIC;
+
       return {
         system,
         tools,
@@ -113,6 +117,16 @@ export class AgentExecutionService {
         ...(messages && { messages }),
         ...(prompt && { prompt }),
         maxSteps: AGENT_CONFIG.MAX_STEPS,
+        ...(isAnthropicModel && {
+          providerOptions: {
+            anthropic: {
+              thinking: {
+                type: 'enabled',
+                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
+              },
+            },
+          },
+        }),
       };
     } catch (error) {
       this.logger.error(
