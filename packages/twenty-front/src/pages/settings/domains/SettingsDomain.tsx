@@ -21,10 +21,6 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-<<<<<<< HEAD
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-=======
->>>>>>> 502bd07db9 (Fix wrong path used by backend (#14352))
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';
