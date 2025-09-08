@@ -14,13 +14,13 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import {
   type RefreshTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class RefreshTokenService {
@@ -103,6 +103,10 @@ export class RefreshTokenService {
       token,
       authProvider: jwtPayload.authProvider,
       targetedTokenType: jwtPayload.targetedTokenType,
+      isImpersonating: jwtPayload.isImpersonating,
+      impersonationType: jwtPayload.impersonationType,
+      impersonatorUserWorkspaceId: jwtPayload.impersonatorUserWorkspaceId,
+      originalUserWorkspaceId: jwtPayload.originalUserWorkspaceId,
     };
   }
 

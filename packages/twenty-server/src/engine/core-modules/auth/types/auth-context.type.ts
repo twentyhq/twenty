@@ -1,4 +1,5 @@
 import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -12,6 +13,11 @@ export type AuthContext = {
   userWorkspaceId?: string;
   userWorkspace?: UserWorkspace;
   authProvider?: AuthProviderEnum;
+  impersonationContext?: {
+    impersonationType?: ImpersonationTokenTypeEnum;
+    impersonatorUserWorkspaceId?: string;
+    originalUserWorkspaceId?: string;
+  };
 };
 
 export enum JwtTokenTypeEnum {
@@ -43,7 +49,8 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
-  authProvider?: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
+  impersonatorUserId?: string;
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -60,6 +67,10 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   jti?: string;
   authProvider?: AuthProviderEnum;
   targetedTokenType: JwtTokenTypeEnum;
+  isImpersonating?: boolean;
+  impersonationType?: ImpersonationTokenTypeEnum;
+  impersonatorUserWorkspaceId?: string;
+  originalUserWorkspaceId?: string;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -81,7 +92,11 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   workspaceMemberId?: string;
   userWorkspaceId: string;
-  authProvider?: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
+  isImpersonating?: boolean;
+  impersonationType?: ImpersonationTokenTypeEnum;
+  impersonatorUserWorkspaceId?: string;
+  originalUserWorkspaceId?: string;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

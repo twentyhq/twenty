@@ -48,6 +48,10 @@ export class AccessTokenService {
     userId,
     workspaceId,
     authProvider,
+    isImpersonating,
+    impersonationType,
+    impersonatorUserWorkspaceId,
+    originalUserWorkspaceId,
   }: Omit<
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
@@ -112,6 +116,10 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
+      isImpersonating,
+      impersonationType,
+      impersonatorUserWorkspaceId,
+      originalUserWorkspaceId,
     };
 
     return {
@@ -131,25 +139,9 @@ export class AccessTokenService {
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
-    const {
-      user,
-      apiKey,
-      workspace,
-      workspaceMemberId,
-      userWorkspace,
-      userWorkspaceId,
-      authProvider,
-    } = await this.jwtStrategy.validate(decoded);
+    const context = await this.jwtStrategy.validate(decoded);
 
-    return {
-      user,
-      apiKey,
-      workspace,
-      userWorkspace,
-      workspaceMemberId,
-      userWorkspaceId,
-      authProvider,
-    };
+    return context;
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {
