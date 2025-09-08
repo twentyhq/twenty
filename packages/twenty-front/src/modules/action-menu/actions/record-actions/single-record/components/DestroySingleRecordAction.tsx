@@ -3,7 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordAction = () => {

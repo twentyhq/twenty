@@ -5,7 +5,8 @@ import {
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
+import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -15,13 +16,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
-import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';

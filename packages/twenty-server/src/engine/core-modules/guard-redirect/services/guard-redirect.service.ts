@@ -1,7 +1,7 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
-import { AppPath } from 'twenty-shared';
+import { AppPath } from 'twenty-shared/types';
 
 import {
   AuthException,

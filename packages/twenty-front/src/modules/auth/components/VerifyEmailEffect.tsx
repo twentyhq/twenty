@@ -1,7 +1,7 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
+import { AppPath } from 'twenty-shared/types';
 
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';

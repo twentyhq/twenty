@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
-import { SettingsPath, getSettingsPath } from 'twenty-shared';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-many-query.factory';
 import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';

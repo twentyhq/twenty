@@ -12,7 +12,8 @@ import {
   ToolSet,
   type UserContent,
 } from 'ai';
-import { AppPath, getAppPath } from 'twenty-shared';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';

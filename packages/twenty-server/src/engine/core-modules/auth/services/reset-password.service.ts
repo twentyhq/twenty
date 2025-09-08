@@ -9,8 +9,9 @@ import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
-import { AppPath, getAppPath } from 'twenty-shared';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {

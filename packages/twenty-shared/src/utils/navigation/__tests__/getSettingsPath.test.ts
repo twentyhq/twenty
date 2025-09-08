@@ -1,4 +1,4 @@
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from '../getSettingsPath';
 
 describe('getSettingsPath', () => {

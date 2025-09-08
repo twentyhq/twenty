@@ -13,8 +13,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
+import { AppPath } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { AppPath } from 'twenty-shared';
 
 import {
   AuthException,
