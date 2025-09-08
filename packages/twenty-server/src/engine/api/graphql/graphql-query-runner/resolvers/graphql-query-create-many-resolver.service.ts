@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -284,12 +285,36 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const recordsToInsert: Partial<ObjectRecord>[] = [];
 
     for (const record of records) {
-      let existingRecord: PartialObjectRecordWithId | null = null;
+      const matchingRecordId = this.getMatchingRecordId(
+        record,
+        conflictingFields,
+        existingRecords,
+      );
 
-      for (const field of conflictingFields) {
+      if (isDefined(matchingRecordId)) {
+        recordsToUpdate.push({ ...record, id: matchingRecordId });
+      } else {
+        recordsToInsert.push(record);
+      }
+    }
+
+    return { recordsToUpdate, recordsToInsert };
+  }
+
+  private getMatchingRecordId(
+    record: Partial<ObjectRecord>,
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+    existingRecords: PartialObjectRecordWithId[],
+  ): string | undefined {
+    const matchingRecordIds = conflictingFields.reduce<string[]>(
+      (acc, field) => {
         const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
-        const existingRec = existingRecords.find((existingRecord) => {
+        const matchingRecord = existingRecords.find((existingRecord) => {
           const existingFieldValue = this.getValueFromPath(
             existingRecord,
             field.fullPath,
@@ -301,20 +326,35 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
           );
         });
 
-        if (existingRec) {
-          existingRecord = { ...record, id: existingRec.id };
-          break;
+        if (isDefined(matchingRecord)) {
+          acc.push(matchingRecord.id);
         }
-      }
 
-      if (existingRecord) {
-        recordsToUpdate.push({ ...record, id: existingRecord.id });
-      } else {
-        recordsToInsert.push(record);
-      }
+        return acc;
+      },
+      [],
+    );
+
+    if ([...new Set(matchingRecordIds)].length > 1) {
+      const conflictingFieldsValues = conflictingFields
+        .map((field) => {
+          const value = this.getValueFromPath(record, field.fullPath);
+
+          return isDefined(value) ? `${field.fullPath}: ${value}` : undefined;
+        })
+        .filter(isDefined)
+        .join(', ');
+
+      throw new GraphqlQueryRunnerException(
+        `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
+        {
+          userFriendlyMessage: t`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        },
+      );
     }
 
-    return { recordsToUpdate, recordsToInsert };
+    return matchingRecordIds[0];
   }
 
   private async processRecordsToUpdate({
