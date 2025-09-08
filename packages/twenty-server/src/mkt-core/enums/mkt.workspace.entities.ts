@@ -26,6 +26,7 @@ import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-sta
 import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-contract.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 import { MktTemplateWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-template.workspace-entity';
 import { MktPaymentMethodWorkspaceEntity } from 'src/mkt-core/payment-method/mkt-payment-method.workspace-entity';
 import { MktPaymentWorkspaceEntity } from 'src/mkt-core/payment/mkt-payment.workspace-entity';
@@ -52,7 +53,7 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktComboWorkspaceEntity,
   MktComboVariantWorkspaceEntity,
   // Order
-  //MktOrderWorkspaceEntity,
+  MktOrderWorkspaceEntity,
   MktOrderItemWorkspaceEntity,
   // Template
   MktTemplateWorkspaceEntity,
