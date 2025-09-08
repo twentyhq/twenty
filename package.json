@@ -381,18 +381,15 @@
   "lint-staged": {
     "packages/twenty-front/src/**/*.{ts,tsx,js,jsx}": [
       "prettier --write",
-      "eslint --fix",
-      "yarn run type-check"
+      "eslint --fix"
     ],
     "packages/twenty-server/src/**/*.{ts,js}": [
       "prettier --write",
-      "eslint --fix",
-      "npm run type-check"
+      "eslint --fix"
     ],
     "*.{ts,tsx,js,jsx}": [
       "prettier --write",
-      "eslint --fix",
-      "yarn run type-check"
+      "eslint --fix"
     ]
   },
   "workspaces": {

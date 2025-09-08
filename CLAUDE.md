@@ -146,3 +146,9 @@ packages/
 - `tsconfig.base.json` - Base TypeScript configuration
 - `package.json` - Root package with workspace definitions
 - `.cursor/rules/` - Development guidelines and best practices
+
+## Coding conventions
+- Do not use type `any`
+- Use named exports only (no default exports)
+- Prefer string literals over enums (except for GraphQL enums)
+- Prefer types over interfaces (except when extending third-party interfaces)
