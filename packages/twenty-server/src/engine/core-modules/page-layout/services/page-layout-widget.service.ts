@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import {
@@ -81,7 +82,7 @@ export class PageLayoutWidgetService {
   }
 
   async create(
-    pageLayoutWidgetData: Partial<PageLayoutWidgetEntity>,
+    pageLayoutWidgetData: CreatePageLayoutWidgetInput,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
@@ -121,12 +122,16 @@ export class PageLayoutWidgetService {
 
       const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
-      const pageLayoutWidget = repository.create({
+      const insertResult = await repository.insert({
         ...pageLayoutWidgetData,
         workspaceId,
-      });
+      } as QueryDeepPartialEntity<PageLayoutWidgetEntity>);
 
-      return repository.save(pageLayoutWidget);
+      return this.findByIdOrThrow(
+        insertResult.identifiers[0].id,
+        workspaceId,
+        transactionManager,
+      );
     } catch (error) {
       if (
         error instanceof PageLayoutTabException &&

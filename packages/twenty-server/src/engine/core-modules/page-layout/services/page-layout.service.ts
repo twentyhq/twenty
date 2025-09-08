@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import {
   PageLayoutException,
@@ -90,7 +91,7 @@ export class PageLayoutService {
   }
 
   async create(
-    pageLayoutData: Partial<PageLayoutEntity>,
+    pageLayoutData: CreatePageLayoutInput,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutEntity> {
@@ -105,12 +106,16 @@ export class PageLayoutService {
 
     const repository = this.getPageLayoutRepository(transactionManager);
 
-    const pageLayout = repository.create({
+    const insertResult = await repository.insert({
       ...pageLayoutData,
       workspaceId,
     });
 
-    return repository.save(pageLayout);
+    return this.findByIdOrThrow(
+      insertResult.identifiers[0].id,
+      workspaceId,
+      transactionManager,
+    );
   }
 
   async update(
