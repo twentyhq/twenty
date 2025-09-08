@@ -5,8 +5,8 @@ import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { type PageLayoutTab } from '../states/savedPageLayoutsState';
 import { createEmptyTabLayout } from '../utils/createEmptyTabLayout';
 
-export const usePageLayoutTabCreate = () => {
-  const handleCreateTab = useRecoilCallback(
+export const useCreatePageLayoutTab = () => {
+  const createPageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
       (title?: string): string => {
         const pageLayoutDraft = snapshot
@@ -41,5 +41,5 @@ export const usePageLayoutTabCreate = () => {
     [],
   );
 
-  return { handleCreateTab };
+  return { createPageLayoutTab };
 };
