@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type Request, type Response } from 'express';
+import { type Request } from 'express';
 
 import { CloudflareController } from 'src/engine/core-modules/dns-manager/controllers/cloudflare.controller';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -61,40 +61,42 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       module.get<DomainManagerService>(DomainManagerService);
   });
 
-  it('should handle exception and return status 200 if hostname is missing', async () => {
+  it('should return if hostname is missing', async () => {
     const req = {
       headers: { 'cf-webhook-auth': 'correct-secret' },
       body: { data: { data: {} } },
     } as unknown as Request;
-    const sendMock = jest.fn();
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: sendMock,
-    } as unknown as Response;
 
-    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
+    await controller.customHostnameWebhooks(req);
 
-    await controller.customHostnameWebhooks(req, res);
+    expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
+  });
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(sendMock).toHaveBeenCalled();
+  it('should return if wrong alert_type', async () => {
+    const req = {
+      headers: { 'cf-webhook-auth': 'correct-secret' },
+      body: { alert_type: 'wrong_alert_type', data: { data: {} } },
+    } as unknown as Request;
+
+    await controller.customHostnameWebhooks(req);
+
+    expect(dnsManagerService.isHostnameWorking).not.toHaveBeenCalled();
   });
 
   it('should update workspace for a valid hostname and save changes', async () => {
     const req = {
       headers: { 'cf-webhook-auth': 'correct-secret' },
-      body: { data: { data: { hostname: 'example.com' } } },
+      body: {
+        alert_type: 'custom_ssl_certificate_event_type',
+        data: { data: { hostname: 'example.com' } },
+      },
     } as unknown as Request;
-    const sendMock = jest.fn();
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: sendMock,
-    } as unknown as Response;
 
-    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
     jest.spyOn(dnsManagerService, 'isHostnameWorking').mockResolvedValue(true);
 
-    await controller.customHostnameWebhooks(req, res);
+    await controller.customHostnameWebhooks(req);
+
+    expect(dnsManagerService.isHostnameWorking).toHaveBeenCalled();
 
     expect(
       domainManagerService.handleCustomDomainActivation,
@@ -102,7 +104,5 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       customDomain: 'example.com',
       isCustomDomainWorking: true,
     });
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(sendMock).toHaveBeenCalled();
   });
 });

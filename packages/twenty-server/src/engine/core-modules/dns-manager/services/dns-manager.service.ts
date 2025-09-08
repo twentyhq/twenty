@@ -127,7 +127,13 @@ export class DnsManagerService {
     }
 
     // should never happen. error 5xx
-    throw new Error('More than one custom hostname found in cloudflare');
+    throw new DnsManagerException(
+      'More than one custom hostname found in cloudflare',
+      DnsManagerExceptionCode.MULTIPLE_HOSTNAMES_FOUND,
+      {
+        userFriendlyMessage: `${response.result.length} hostnames found for domain '${hostname}'. Expect 1`,
+      },
+    );
   }
 
   async updateHostname(fromHostname: string, toHostname: string) {
