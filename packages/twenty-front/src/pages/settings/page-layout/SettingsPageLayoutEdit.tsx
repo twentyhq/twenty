@@ -321,7 +321,7 @@ export const SettingsPageLayoutEdit = () => {
           <StyledTabList
             tabs={tabListTabs}
             behaveAsLinks={false}
-            componentInstanceId="page-layout-tabs"
+            componentInstanceId={SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID}
             onAddTab={handleAddTab}
           />
         )}
