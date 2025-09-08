@@ -263,6 +263,7 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         pageLayoutTabData.pageLayoutId,
         workspaceId,
+        undefined,
       );
       expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
         ...pageLayoutTabData,
@@ -586,6 +587,7 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         'deleted-page-layout-id',
         workspaceId,
+        undefined,
       );
     });
   });

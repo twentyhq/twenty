@@ -204,6 +204,7 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutTabService.findByIdOrThrow).toHaveBeenCalledWith(
         validPageLayoutWidgetData.pageLayoutTabId,
         workspaceId,
+        undefined,
       );
       expect(pageLayoutWidgetRepository.create).toHaveBeenCalledWith({
         ...validPageLayoutWidgetData,
@@ -578,6 +579,7 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutTabService.findByIdOrThrow).toHaveBeenCalledWith(
         'deleted-tab-id',
         workspaceId,
+        undefined,
       );
     });
   });
