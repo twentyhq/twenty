@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -7,18 +7,23 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
+import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import {
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
   generatePageLayoutExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class PageLayoutService {
+  private readonly logger = new Logger(PageLayoutService.name);
+
   constructor(
     @InjectRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   private getPageLayoutRepository(
@@ -180,9 +185,40 @@ export class PageLayoutService {
       );
     }
 
+    if (pageLayout.type === PageLayoutType.DASHBOARD) {
+      await this.destroyAssociatedDashboards(id, workspaceId);
+    }
+
     await repository.delete(id);
 
     return pageLayout;
+  }
+
+  private async destroyAssociatedDashboards(
+    pageLayoutId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    try {
+      const dashboardRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          'dashboard',
+        );
+
+      const dashboards = await dashboardRepository.find({
+        where: {
+          pageLayoutId,
+        },
+      });
+
+      for (const dashboard of dashboards) {
+        await dashboardRepository.delete(dashboard.id);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to destroy associated dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
   }
 
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
