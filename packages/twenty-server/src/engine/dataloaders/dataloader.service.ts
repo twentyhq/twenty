@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
@@ -141,7 +141,7 @@ export class DataloaderService {
                 flatFieldMetadata:
                   sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
                 flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // TODO double check if ascending or descending
+              }).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
             relationDtos.push(
               fromMorphOrRelationFlatFieldMetadataToRelationDto({
@@ -294,9 +294,9 @@ export class DataloaderService {
             return [];
           }
 
-          const fields = Object.values(
+          const overriddenFieldMetadataEntities = Object.values(
             objectMetadata.fieldsById,
-          ).map<FieldMetadataDTO>((fieldMetadata) => {
+          ).map<FieldMetadataEntity>((fieldMetadata) => {
             const overridesFieldToCompute = [
               'icon',
               'label',
@@ -325,14 +325,19 @@ export class DataloaderService {
               {},
             );
 
-            return fromFieldMetadataEntityToFieldMetadataDto({
+            return {
               ...fieldMetadata,
               ...overrides,
-            });
+            };
           });
 
-          return filterMorphRelationDuplicateFieldsDTO<FieldMetadataDTO>(
-            fields,
+          const filteredFieldMetadataEntities =
+            filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
+              overriddenFieldMetadataEntities,
+            );
+
+          return filteredFieldMetadataEntities.map(
+            fromFieldMetadataEntityToFieldMetadataDto,
           );
         });
 

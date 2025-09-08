@@ -1,13 +1,13 @@
 export const filterMorphRelationDuplicateFieldsDTO = <
-  T extends { name: string; id: string },
+  T extends { createdAt: Date; morphId: string | null },
 >(
   fields: T[],
 ) => {
   return fields.filter((currentField) => {
     return !fields.some(
       (otherField) =>
-        otherField.name === currentField.name &&
-        otherField.id > currentField.id,
+        otherField.morphId === currentField.morphId &&
+        otherField.createdAt.getTime() > currentField.createdAt.getTime(),
     );
   });
 };
