@@ -27,7 +27,6 @@ import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/page
 import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -46,10 +45,11 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -277,7 +277,7 @@ export const SettingsPageLayoutEdit = () => {
           },
           {
             children: t`Page Layouts`,
-            href: '/settings/page-layout',
+            href: getSettingsPath(SettingsPath.PageLayout),
           },
           {
             children: (

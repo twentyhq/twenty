@@ -9,6 +9,8 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export { AppBasePath } from './AppBasePath';
+export { AppPath } from './AppPath';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
@@ -34,6 +36,7 @@ export type {
 export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
+export { SettingsPath } from './SettingsPath';
 export type { StepFilterGroup, StepFilter } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
