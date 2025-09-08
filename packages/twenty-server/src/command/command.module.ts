@@ -21,6 +21,7 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
     WorkspaceMigrationRunnerCommandsModule,
     ObjectMetadataModule,
     FieldMetadataModule,
+    WorkspaceCleanerModule,
   ],
 })
 export class CommandModule {}
