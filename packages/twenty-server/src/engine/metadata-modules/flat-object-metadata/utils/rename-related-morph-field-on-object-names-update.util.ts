@@ -31,16 +31,16 @@ const searchAndReplaceLast = ({
   );
 };
 
-type renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadatasArgs =
+type RenameRelatedMorphFieldOnObjectNamesUpdateArgs =
   FromTo<FlatObjectMetadata, 'flatObjectMetadata'> & {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   };
-export const renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadatas =
+export const renameRelatedMorphFieldOnObjectNamesUpdate =
   ({
     fromFlatObjectMetadata,
     existingFlatObjectMetadataMaps,
     toFlatObjectMetadata,
-  }: renameFlatObjectMetadataRelatedMorphRelationTargetFlatFieldMetadatasArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
+  }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
     const manyToOneMorphRelationFlatFieldMetadatas =
       getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
         flatObjectMetadata: fromFlatObjectMetadata,
