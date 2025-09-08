@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
@@ -27,7 +28,9 @@ import { ViewRestApiExceptionFilter } from 'src/engine/core-modules/view/filters
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 @Controller('rest/metadata/views')
@@ -41,6 +44,7 @@ export class ViewController {
 
   @Get()
   async findMany(
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: Workspace,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
@@ -51,12 +55,13 @@ export class ViewController {
         )
       : await this.viewService.findByWorkspaceId(workspace.id);
 
-    return this.replaceViewTemplates(views, workspace.id);
+    return this.processViewsWithTemplates(views, workspace.id, locale);
   }
 
   @Get(':id')
   async findOne(
     @Param('id') id: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
     const view = await this.viewService.findById(id, workspace.id);
@@ -76,38 +81,51 @@ export class ViewController {
       );
     }
 
-    return view;
+    const processedViews = await this.processViewsWithTemplates(
+      [view],
+      workspace.id,
+      locale,
+    );
+
+    return processedViews[0];
   }
 
   @Post()
   async create(
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
+    @RequestLocale() locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO> {
     const view = await this.viewService.create({
       ...input,
       workspaceId: workspace.id,
     });
 
-    const replacedViews = await this.replaceViewTemplates([view], workspace.id);
+    const processedViews = await this.processViewsWithTemplates(
+      [view],
+      workspace.id,
+      locale,
+    );
 
-    return replacedViews[0];
+    return processedViews[0];
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.update(id, workspace.id, input);
 
-    const replacedViews = await this.replaceViewTemplates(
+    const processedViews = await this.processViewsWithTemplates(
       [updatedView],
       workspace.id,
+      locale,
     );
 
-    return replacedViews[0];
+    return processedViews[0];
   }
 
   @Delete(':id')
@@ -120,43 +138,64 @@ export class ViewController {
     return { success: isDefined(deletedView) };
   }
 
-  private async replaceViewTemplates(
+  private async processViewsWithTemplates(
     views: ViewDTO[],
     workspaceId: string,
+    locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
       view.name.includes('{objectLabelPlural}'),
     );
 
-    if (!hasTemplates) {
+    if (!hasTemplates && views.every((view) => view.isCustom)) {
       return views;
     }
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        {
-          workspaceId,
-        },
+        { workspaceId },
       );
 
     return views.map((view) => {
+      let processedName = view.name;
+
       if (view.name.includes('{objectLabelPlural}')) {
         const objectMetadata = objectMetadataMaps.byId[view.objectMetadataId];
 
-        if (!objectMetadata) {
-          return view;
-        }
+        if (objectMetadata) {
+          const translatedObjectLabel = resolveObjectMetadataStandardOverride(
+            {
+              labelPlural: objectMetadata.labelPlural,
+              labelSingular: objectMetadata.labelSingular,
+              description: objectMetadata.description ?? undefined,
+              icon: objectMetadata.icon ?? undefined,
+              isCustom: objectMetadata.isCustom,
+              standardOverrides: objectMetadata.standardOverrides ?? undefined,
+            },
+            'labelPlural',
+            locale,
+          );
 
-        return {
-          ...view,
-          name: view.name.replace(
-            '{objectLabelPlural}',
-            objectMetadata.labelPlural,
-          ),
-        };
+          processedName = this.viewService.processViewNameWithTemplate(
+            view.name,
+            view.isCustom,
+            translatedObjectLabel,
+            locale,
+          );
+        }
+      } else {
+        processedName = this.viewService.processViewNameWithTemplate(
+          view.name,
+          view.isCustom,
+          undefined,
+          locale,
+        );
       }
 
-      return view;
+      return {
+        ...view,
+        name: processedName,
+      };
     });
   }
 

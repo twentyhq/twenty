@@ -12,9 +12,7 @@ import {
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
@@ -47,7 +45,6 @@ export class ViewResolver {
     private readonly viewFilterGroupService: ViewFilterGroupService,
     private readonly viewSortService: ViewSortService,
     private readonly viewGroupService: ViewGroupService,
-    private readonly i18nService: I18nService,
   ) {}
 
   @ResolveField(() => String)
@@ -76,34 +73,21 @@ export class ViewResolver {
           context.req.locale,
         );
 
-        const messageId = generateMessageId(view.name);
-        const translatedTemplate = this.i18nService.translateMessage({
-          messageId,
-          values: {
-            objectLabelPlural: translatedObjectLabel,
-          },
-          locale: context.req.locale,
-        });
-
-        if (translatedTemplate !== messageId) {
-          return translatedTemplate;
-        }
-
-        return view.name.replace('{objectLabelPlural}', translatedObjectLabel);
+        return this.viewService.processViewNameWithTemplate(
+          view.name,
+          view.isCustom,
+          translatedObjectLabel,
+          context.req.locale,
+        );
       }
     }
 
-    if (view.isCustom) {
-      return view.name;
-    }
-
-    const messageId = generateMessageId(view.name);
-    const translatedMessage = this.i18nService.translateMessage({
-      messageId,
-      locale: context.req.locale,
-    });
-
-    return translatedMessage !== messageId ? translatedMessage : view.name;
+    return this.viewService.processViewNameWithTemplate(
+      view.name,
+      view.isCustom,
+      undefined,
+      context.req.locale,
+    );
   }
 
   @Query(() => [ViewDTO])
