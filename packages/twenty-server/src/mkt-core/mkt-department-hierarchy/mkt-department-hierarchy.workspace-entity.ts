@@ -15,6 +15,7 @@ import { MKT_DEPARTMENT_HIERARCHY_FIELD_IDS } from 'src/mkt-core/constants/mkt-f
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { DEPARTMENT_HIERARCHY_RELATIONSHIP_TYPE_OPTIONS } from 'src/mkt-core/mkt-department/constants/relationship-type.constants';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktDepartmentHierarchy,
@@ -42,32 +43,7 @@ export class MktDepartmentHierarchyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Relationship Type`,
     description: msg`Type of hierarchical relationship`,
     icon: 'IconLink',
-    options: [
-      {
-        value: 'PARENT_CHILD',
-        label: 'Parent-Child',
-        color: 'green',
-        position: 0,
-      },
-      {
-        value: 'MATRIX',
-        label: 'Matrix',
-        color: 'blue',
-        position: 1,
-      },
-      {
-        value: 'FUNCTIONAL',
-        label: 'Functional',
-        color: 'orange',
-        position: 2,
-      },
-      {
-        value: 'TEMPORARY',
-        label: 'Temporary',
-        color: 'yellow',
-        position: 3,
-      },
-    ],
+    options: DEPARTMENT_HIERARCHY_RELATIONSHIP_TYPE_OPTIONS,
   })
   relationshipType: string;
 

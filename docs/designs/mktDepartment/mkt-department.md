@@ -976,3 +976,46 @@ class DepartmentHealthCheck {
 - ✅ **Audit Ready**: Full audit trail và compliance support
 
 Entity này là core foundation để xây dựng sophisticated organizational management system trong enterprise CRM environment.
+
+```graphql
+fragment DepartmentNode on DepartmentTreeNode {
+    id
+    departmentCode
+    departmentName
+    level
+    relationshipType
+    hierarchyId
+}
+fragment DepartmentTree7Levels on DepartmentTreeNode {
+    ...DepartmentNode
+    children {
+        ...DepartmentNode
+        children {
+            ...DepartmentNode
+            children {
+                ...DepartmentNode
+                children {
+                    ...DepartmentNode
+                    children {
+                        ...DepartmentNode
+                        children {
+                            ...DepartmentNode
+                            children {
+                                ...DepartmentNode
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+query GetDepartmentHierarchyTree {
+    getDepartmentHierarchyTree(
+        rootDepartmentId: "1d2e3f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a"
+    ) {
+        ...DepartmentTree7Levels
+    }
+}
+
+```
