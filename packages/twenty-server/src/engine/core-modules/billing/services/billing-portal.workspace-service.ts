@@ -30,6 +30,10 @@ import { assert } from 'src/utils/assert';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
+import { MeterBillingPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { findOrThrow } from 'src/utils/find-or-throw.util';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -38,6 +42,7 @@ export class BillingPortalWorkspaceService {
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
@@ -121,7 +126,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
   }: {
     workspace: Workspace;
-    billingPricesPerPlan?: BillingGetPricesPerPlanResult;
+    billingPricesPerPlan: BillingGetPricesPerPlanResult;
     successUrlPath?: string;
   }) {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
@@ -172,9 +177,12 @@ export class BillingPortalWorkspaceService {
     );
 
     await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, {
-        object: subscription,
-      }),
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        workspaceId,
+        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          subscription.id,
+        ),
+      ),
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
@@ -258,24 +266,18 @@ export class BillingPortalWorkspaceService {
 
   private getDefaultMeteredProductPrice(
     billingPricesPerPlan: BillingGetPricesPerPlanResult,
-  ): BillingPrice & {
-    tiers: MeterBillingPriceTiers;
-  } {
+  ): MeterBillingPrice {
     const defaultMeteredProductPrice =
       billingPricesPerPlan.meteredProductsPrices.reduce(
         (result, billingPrice) => {
           if (!result) {
-            return billingPrice as BillingPrice & {
-              tiers: MeterBillingPriceTiers;
-            };
+            return billingPrice as MeterBillingPrice;
           }
           const tiers = billingPrice.tiers;
 
           if (billingValidator.isMeteredTiersSchema(tiers)) {
             if (tiers[0].flat_amount < result.tiers[0].flat_amount) {
-              return billingPrice as BillingPrice & {
-                tiers: MeterBillingPriceTiers;
-              };
+              return billingPrice as MeterBillingPrice;
             }
           }
 
@@ -299,26 +301,30 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan,
   }: {
     quantity: number;
-    billingPricesPerPlan?: BillingGetPricesPerPlanResult;
+    billingPricesPerPlan: BillingGetPricesPerPlanResult;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
-    if (billingPricesPerPlan) {
-      const defaultMeteredProductPrice =
-        this.getDefaultMeteredProductPrice(billingPricesPerPlan);
+    const defaultMeteredProductPrice =
+      this.getDefaultMeteredProductPrice(billingPricesPerPlan);
 
-      return [
-        {
-          price: billingPricesPerPlan.baseProductPrice.stripePriceId,
-          quantity,
-        },
-        {
-          price: defaultMeteredProductPrice.stripePriceId,
-        },
-      ];
-    }
-
-    throw new BillingException(
-      'Missing Billing prices per plan',
-      BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+    const defaultLicensedProductPrice = findOrThrow(
+      billingPricesPerPlan.licensedProductsPrices,
+      (licensedProductsPrice) =>
+        licensedProductsPrice.billingProduct.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+      new BillingException(
+        `Base product not found`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      ),
     );
+
+    return [
+      {
+        price: defaultLicensedProductPrice.stripePriceId,
+        quantity,
+      },
+      {
+        price: defaultMeteredProductPrice.stripePriceId,
+      },
+    ];
   }
 }

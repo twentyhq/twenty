@@ -91,7 +91,6 @@ const buildLicensedYearlyPrice = (
     tiers: null,
     recurring: null,
     transformQuantity: null,
-    tiersMode: null,
     unitAmountDecimal: null,
     unitAmount: 1000,
     stripeMeterId: null,
@@ -126,7 +125,6 @@ const buildMeteredYearlyPrice = (
     ] as any,
     recurring: null,
     transformQuantity: null,
-    tiersMode: null,
     unitAmountDecimal: null,
     unitAmount: null,
     stripeMeterId: null,
@@ -249,9 +247,7 @@ describe('BillingSubscriptionService - switching methods', () => {
         sub,
       ]);
 
-      await expect(
-        service.switchToYearlyInterval(workspace),
-      ).rejects.toMatchObject({
+      await expect(service.switchToYearlyInterval(sub)).rejects.toMatchObject({
         code: BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
       });
     });
@@ -317,7 +313,7 @@ describe('BillingSubscriptionService - switching methods', () => {
         yearlyMeteredLower, // lower but should pick highest below cap => 1000
       ]);
 
-      await service.switchToYearlyInterval(workspace);
+      await service.switchToYearlyInterval(sub);
 
       expect(
         stripeSubscriptionService.updateSubscriptionItems,

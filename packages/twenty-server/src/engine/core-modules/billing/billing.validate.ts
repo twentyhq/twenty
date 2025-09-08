@@ -6,6 +6,12 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import {
+  type BillingSubscriptionItem,
+  type LicensedBillingSubscriptionItem,
+  type MeteredBillingSubscriptionItem,
+} from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 const assertIsMeteredTiersSchemaOrThrow = (
   tiers: BillingPrice['tiers'] | undefined | null,
@@ -40,10 +46,62 @@ const isMeteredTiersSchema = (
   return true;
 };
 
+const assertIsLicensedSubscriptionItem = (
+  subscriptionItem: BillingSubscriptionItem,
+): asserts subscriptionItem is LicensedBillingSubscriptionItem => {
+  if (
+    subscriptionItem.quantity !== null &&
+    subscriptionItem.billingProduct.metadata.priceUsageBased ===
+      BillingUsageType.LICENSED
+  )
+    return;
+
+  throw new BillingException(
+    'Subscription Item is not a licence subscription item',
+    BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID,
+  );
+};
+
+const assertIsMeteredSubscriptionItem = (
+  subscriptionItem: BillingSubscriptionItem,
+): asserts subscriptionItem is MeteredBillingSubscriptionItem => {
+  if (
+    subscriptionItem.quantity === null &&
+    subscriptionItem.billingProduct.metadata.priceUsageBased ===
+      BillingUsageType.METERED
+  )
+    return;
+
+  throw new BillingException(
+    'Subscription Item is not a meter subscription item',
+    BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID,
+  );
+};
+
+const assertIsMeteredPrice = (
+  price: BillingPrice,
+): asserts price is BillingPrice => {
+  if (
+    price.billingProduct.metadata.priceUsageBased === BillingUsageType.METERED
+  )
+    return;
+
+  throw new BillingException(
+    'Price is not metered',
+    BillingExceptionCode.BILLING_PRICE_INVALID,
+  );
+};
+
 export const billingValidator: {
   assertIsMeteredTiersSchemaOrThrow: typeof assertIsMeteredTiersSchemaOrThrow;
   isMeteredTiersSchema: typeof isMeteredTiersSchema;
+  assertIsLicensedSubscriptionItem: typeof assertIsLicensedSubscriptionItem;
+  assertIsMeteredSubscriptionItem: typeof assertIsMeteredSubscriptionItem;
+  assertIsMeteredPrice: typeof assertIsMeteredPrice;
 } = {
   assertIsMeteredTiersSchemaOrThrow,
   isMeteredTiersSchema,
+  assertIsLicensedSubscriptionItem,
+  assertIsMeteredSubscriptionItem,
+  assertIsMeteredPrice,
 };

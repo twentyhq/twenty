@@ -1,4 +1,4 @@
-import { SettingsBillingLabelValueItem } from '@/billing/components/SettingsBillingLabelValueItem';
+import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -11,13 +11,13 @@ import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
-// import { useListAvailableMeteredBillingPricesQuery } from '~/generated-metadata/graphql';
-// import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
+import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import {
   getIntervalLabel,
   isMonthlyPlan,
 } from '@/billing/utils/subscriptionFlags';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -32,17 +32,26 @@ export const SettingsBillingCreditsSection = ({
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
 
+  const { getCurrentMeteredPricesByInterval } = useBillingPlan();
+
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
   const { usedCredits, grantedCredits, unitPriceCents } =
     useGetWorkflowNodeExecutionUsage();
 
-  // const { data: meteredBillingPrices } =
-  //   useListAvailableMeteredBillingPricesQuery();
-
   const progressBarValue = (usedCredits / grantedCredits) * 100;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan(currentWorkspace));
+
+  const extraCreditsUsed = Math.max(0, usedCredits - grantedCredits);
+
+  const costPer1kExtraCredits = (unitPriceCents / 100) * 1000;
+
+  const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
+
+  const meteredBillingPrices = getCurrentMeteredPricesByInterval(
+    currentWorkspace.currentBillingSubscription?.interval,
+  );
 
   return (
     <>
@@ -54,7 +63,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatAmount(grantedCredits)}`}
+            value={`${formatNumber(usedCredits, { abbreviate: true })}/${formatAmount(grantedCredits)}`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -67,36 +76,28 @@ export const SettingsBillingCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatNumber(Math.max(0, usedCredits - grantedCredits))}`}
+              value={`${formatAmount(extraCreditsUsed)}`}
             />
           )}
           <SettingsBillingLabelValueItem
             label={t`Cost per 1k Extra Credits`}
-            value={`$${formatNumber((unitPriceCents / 100) * 1000, 2)}`}
+            value={`$${formatNumber(costPer1kExtraCredits, 2)}`}
           />
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Cost`}
               isValueInPrimaryColor={true}
-              value={`$${formatNumber(((usedCredits - grantedCredits) * unitPriceCents) / 100, 2)}`}
+              value={`$${formatNumber(costExtraCredits, 2)}`}
             />
           )}
         </SubscriptionInfoContainer>
       </Section>
-      {/*<Section>*/}
-      {/*  {meteredBillingPrices?.listAvailableMeteredBillingPrices && (*/}
-      {/*    <MeteredPriceSelector*/}
-      {/*      billingSubscriptionItems={*/}
-      {/*        currentWorkspace.currentBillingSubscription*/}
-      {/*          ?.billingSubscriptionItems ?? []*/}
-      {/*      }*/}
-      {/*      meteredBillingPrices={*/}
-      {/*        meteredBillingPrices.listAvailableMeteredBillingPrices*/}
-      {/*      }*/}
-      {/*      isTrialing={isTrialing}*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*</Section>*/}
+      <Section>
+        <MeteredPriceSelector
+          meteredBillingPrices={meteredBillingPrices}
+          isTrialing={isTrialing}
+        />
+      </Section>
     </>
   );
 };

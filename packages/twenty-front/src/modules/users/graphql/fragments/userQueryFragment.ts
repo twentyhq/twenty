@@ -9,6 +9,8 @@ import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
+import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseItemFragment';
+import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseFragment';
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
@@ -71,6 +73,9 @@ export const USER_QUERY_FRAGMENT = gql`
         interval
         metadata
         currentPeriodEnd
+        phases {
+          ...BillingSubscriptionSchedulePhaseFragment
+        }
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
@@ -79,10 +84,11 @@ export const USER_QUERY_FRAGMENT = gql`
           billingProduct {
             name
             description
+            images
             metadata {
+              productKey
               planKey
               priceUsageBased
-              productKey
             }
           }
         }
@@ -91,6 +97,9 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         metadata
+        phases {
+          ...BillingSubscriptionSchedulePhaseFragment
+        }
       }
       workspaceMembersCount
       defaultRole {
@@ -119,4 +128,6 @@ export const USER_QUERY_FRAGMENT = gql`
   ${VIEW_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
+  ${BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT}
+  ${BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT}
 `;
