@@ -2,6 +2,7 @@ import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/co
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
@@ -15,9 +16,10 @@ import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -59,6 +61,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   onDelete: () => void;
   onClick?: () => void;
 }) => {
+  const { _ } = useLingui();
+
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
@@ -131,7 +135,16 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           onMouseLeave={handleMouseLeave}
           onClick={handleAddStepButtonContainerClick}
         >
-          <WorkflowDiagramCreateStepElement data={data} />
+          <WorkflowDiagramCreateStepElement
+            data={data}
+            Label={
+              isDefined(data.defaultHandleOptions?.label) ? (
+                <WorkflowDiagramEdgeLabel
+                  label={_(data.defaultHandleOptions.label)}
+                />
+              ) : undefined
+            }
+          />
         </StyledAddStepButtonContainer>
       )}
 
@@ -147,6 +160,23 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         }
         hovered={isSourceHovered(id) || isHovered}
       />
+
+      {isDefined(data.rightHandleOptions) && (
+        <WorkflowDiagramHandleSource
+          id={data.rightHandleOptions.id}
+          type="source"
+          position={Position.Right}
+          disableHoverEffect={!isWorkflowBranchEnabled}
+          selected={
+            isSourceSelected(id) ||
+            selected ||
+            isSourceConnected(id) ||
+            (isConnectable(id) && isHovered)
+          }
+          // TODO: fix hovered state when multiple source handles
+          hovered={isSourceHovered(id) || isHovered}
+        />
+      )}
     </>
   );
 };

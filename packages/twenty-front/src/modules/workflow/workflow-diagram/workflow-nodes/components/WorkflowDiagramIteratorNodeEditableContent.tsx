@@ -98,6 +98,7 @@ export const WorkflowDiagramIteratorNodeEditableContent = ({
         isConnectable={isConnectable(id)}
       >
         <WorkflowDiagramHandleTarget isConnectable={isConnectable(id)} />
+
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>

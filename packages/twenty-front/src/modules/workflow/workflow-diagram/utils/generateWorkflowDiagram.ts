@@ -10,6 +10,8 @@ import {
   type WorkflowDiagramEdgeType,
   type WorkflowDiagramIteratorEmptyActionNodeData,
   type WorkflowDiagramNode,
+  type WorkflowDiagramNodeDefaultHandleOptions,
+  type WorkflowDiagramNodeRightHandleOptions,
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
@@ -18,6 +20,7 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -67,6 +70,21 @@ export const generateWorkflowDiagram = ({
   for (const step of steps) {
     levelYPos += VERTICAL_DISTANCE_BETWEEN_TWO_NODES;
 
+    let defaultHandleOptions:
+      | WorkflowDiagramNodeDefaultHandleOptions
+      | undefined;
+    let rightHandleOptions: WorkflowDiagramNodeRightHandleOptions | undefined;
+
+    if (step.type === 'ITERATOR') {
+      defaultHandleOptions = {
+        label: msg`completed`,
+      };
+
+      rightHandleOptions = {
+        id: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
+      };
+    }
+
     nodes.push({
       id: step.id,
       data: {
@@ -80,6 +98,8 @@ export const generateWorkflowDiagram = ({
           x: xPos,
           y: levelYPos,
         },
+        defaultHandleOptions,
+        rightHandleOptions,
       } satisfies WorkflowDiagramStepNodeData,
       position: step.position ?? {
         x: xPos,

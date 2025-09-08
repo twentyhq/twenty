@@ -7,7 +7,6 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { WorkflowDiagramIteratorNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorNodeEditableContent';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useContext } from 'react';
@@ -44,13 +43,8 @@ export const WorkflowDiagramStepNodeEditable = ({
     commandMenuNavigationStackState,
   );
 
-  const Child =
-    data.nodeType === 'action' && data.actionType === 'ITERATOR'
-      ? WorkflowDiagramIteratorNodeEditableContent
-      : WorkflowDiagramStepNodeEditableContent;
-
   return (
-    <Child
+    <WorkflowDiagramStepNodeEditableContent
       id={id}
       data={data}
       selected={selected ?? false}

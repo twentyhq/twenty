@@ -4,6 +4,7 @@ import {
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
+import { type MessageDescriptor } from '@lingui/core';
 import { type Edge, type Node } from '@xyflow/react';
 import { type StepStatus } from 'twenty-shared/workflow';
 
@@ -23,6 +24,14 @@ export type WorkflowDiagram = {
   edges: Array<WorkflowDiagramEdge>;
 };
 
+export type WorkflowDiagramNodeRightHandleOptions = {
+  id: string;
+};
+
+export type WorkflowDiagramNodeDefaultHandleOptions = {
+  label?: MessageDescriptor;
+};
+
 export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
@@ -32,6 +41,8 @@ export type WorkflowDiagramStepNodeData =
       runStatus?: WorkflowRunStepStatus;
       hasNextStepIds: boolean;
       stepId: string;
+      defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
+      rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
       position: {
         x: number;
         y: number;
@@ -44,6 +55,8 @@ export type WorkflowDiagramStepNodeData =
       runStatus?: WorkflowRunStepStatus;
       hasNextStepIds: boolean;
       stepId: string;
+      defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
+      rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
       position: {
         x: number;
         y: number;
