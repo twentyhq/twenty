@@ -26,7 +26,7 @@ import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/page
 import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
-import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
+import { WidgetRenderer } from '@/settings/page-layout/components/WidgetRenderer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -373,7 +373,7 @@ export const SettingsPageLayoutEdit = () => {
                     onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
                   >
-                    {renderWidget(widget)}
+                    <WidgetRenderer widget={widget} />
                   </PageLayoutWidgetPlaceholder>
                 </div>
               ))
