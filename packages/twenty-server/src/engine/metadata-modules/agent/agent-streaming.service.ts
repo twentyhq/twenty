@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Response } from 'express';
 import { Repository } from 'typeorm';
 
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
@@ -12,7 +13,6 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 export type StreamAgentChatOptions = {
@@ -75,6 +75,7 @@ export class AgentStreamingService {
         });
 
       let aiResponse = '';
+      let reasoningSummary = '';
 
       for await (const chunk of fullStream) {
         switch (chunk.type) {
@@ -89,6 +90,13 @@ export class AgentStreamingService {
             this.sendStreamEvent(res, {
               type: chunk.type,
               message: chunk.args?.toolDescription,
+            });
+            break;
+          case 'reasoning':
+            reasoningSummary += chunk.textDelta || '';
+            this.sendStreamEvent(res, {
+              type: chunk.type,
+              message: chunk.textDelta || '',
             });
             break;
           case 'error':
@@ -131,6 +139,7 @@ export class AgentStreamingService {
         threadId,
         role: AgentChatMessageRole.ASSISTANT,
         content: aiResponse,
+        reasoningSummary: reasoningSummary,
       });
 
       res.end();
