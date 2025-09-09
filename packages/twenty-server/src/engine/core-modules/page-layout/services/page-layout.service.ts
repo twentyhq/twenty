@@ -203,6 +203,7 @@ export class PageLayoutService {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           'dashboard',
+          { shouldBypassPermissionChecks: true },
         );
 
       const dashboards = await dashboardRepository.find({
