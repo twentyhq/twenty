@@ -16,15 +16,17 @@ const ORDERED_STANDARD_OBJECTS = [
   'note',
 ];
 
+type NavigationDrawerSectionForObjectMetadataItemsProps = {
+  sectionTitle: string;
+  isRemote: boolean;
+  objectMetadataItems: ObjectMetadataItem[];
+};
+
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
   isRemote,
   objectMetadataItems,
-}: {
-  sectionTitle: string;
-  isRemote: boolean;
-  objectMetadataItems: ObjectMetadataItem[];
-}) => {
+}: NavigationDrawerSectionForObjectMetadataItemsProps) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);

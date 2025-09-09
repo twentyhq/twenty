@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
@@ -38,11 +39,11 @@ describe('AuthResolver', () => {
       providers: [
         AuthResolver,
         {
-          provide: getRepositoryToken(AppToken, 'core'),
+          provide: getRepositoryToken(AppToken),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {},
         },
         {
@@ -124,6 +125,14 @@ describe('AuthResolver', () => {
         {
           provide: TwentyConfigService,
           useValue: {},
+        },
+        {
+          provide: AuditService,
+          useValue: {
+            createContext: jest.fn().mockReturnValue({
+              insertWorkspaceEvent: jest.fn(),
+            }),
+          },
         },
         // {
         //   provide: OAuthService,

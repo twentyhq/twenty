@@ -2,11 +2,11 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { MessageChannelContactAutoCreationPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   title:
@@ -26,6 +26,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
       excludeGroupEmails: false,
       isSyncEnabled: true,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      messageFolders: [],
     },
   },
   argTypes: {

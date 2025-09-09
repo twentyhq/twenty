@@ -14,7 +14,7 @@ import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/ut
 export class BillingWebhookProductService {
   protected readonly logger = new Logger(BillingWebhookProductService.name);
   constructor(
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
   ) {}
 

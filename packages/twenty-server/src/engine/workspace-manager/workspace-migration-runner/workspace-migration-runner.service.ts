@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, Table, type TableColumn } from 'typeorm';
+import { DataSource, type QueryRunner, Table, type TableColumn } from 'typeorm';
 
 import {
   IndexMetadataException,
@@ -21,7 +22,6 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
 import { type PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
@@ -33,7 +33,8 @@ export class WorkspaceMigrationRunnerService {
   private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);
 
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationColumnService: WorkspaceMigrationColumnService,
   ) {}
@@ -88,15 +89,7 @@ export class WorkspaceMigrationRunnerService {
   public async executeMigrationFromPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationTableAction[]> {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Main data source not found');
-    }
-
-    const queryRunner =
-      mainDataSource.createQueryRunner() as PostgresQueryRunner;
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -116,7 +109,14 @@ export class WorkspaceMigrationRunnerService {
         `Error executing migration: ${error.message}`,
         error.stack,
       );
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
       throw error;
     } finally {
       await queryRunner.release();

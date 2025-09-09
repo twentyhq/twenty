@@ -1,7 +1,4 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -16,10 +13,9 @@ import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePers
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { type View } from '@/views/types/View';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
@@ -29,30 +25,18 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  FeatureFlagKey,
-  useCreateCoreViewMutation,
-  useFindManyCoreViewsLazyQuery,
-} from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useCreateCoreViewMutation } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
-  const featureFlags = useFeatureFlagsMap();
-  const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
-
-  const { createOneRecord } = useCreateOneRecord<View>({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
 
   const anyFieldFilterValue = useRecoilComponentValue(
     anyFieldFilterValueComponentState,
@@ -70,12 +54,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
-
-  const { findManyRecordsLazy } = useLazyFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.View,
-    fetchPolicy: 'network-only',
-  });
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
@@ -129,54 +109,30 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         set(isPersistingViewFieldsState, true);
 
-        let newViewId: string | undefined;
-
-        if (isCoreViewEnabled) {
-          const result = await createCoreViewMutation({
-            variables: {
-              input: {
-                name: name ?? sourceView.name,
-                icon: icon ?? sourceView.icon,
-                key: null,
-                kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
-                  ? sourceView.kanbanAggregateOperation
-                  : undefined,
-                kanbanAggregateOperationFieldMetadataId:
-                  shouldCopyFiltersAndSortsAndAggregate
-                    ? sourceView.kanbanAggregateOperationFieldMetadataId
-                    : undefined,
-                type: convertViewTypeToCore(type ?? sourceView.type),
-                objectMetadataId: sourceView.objectMetadataId,
-                openRecordIn: convertViewOpenRecordInToCore(
-                  sourceView.openRecordIn,
-                ),
-                anyFieldFilterValue: anyFieldFilterValue,
-              },
-            },
-          });
-          newViewId = result.data?.createCoreView?.id ?? undefined;
-        } else {
-          const createdView = await createOneRecord({
-            id: id ?? v4(),
-            name: name ?? sourceView.name,
-            icon: icon ?? sourceView.icon,
-            key: null,
-            kanbanFieldMetadataId:
-              kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
-            kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
-              ? sourceView.kanbanAggregateOperation
-              : undefined,
-            kanbanAggregateOperationFieldMetadataId:
-              shouldCopyFiltersAndSortsAndAggregate
-                ? sourceView.kanbanAggregateOperationFieldMetadataId
+        const result = await createCoreViewMutation({
+          variables: {
+            input: {
+              id: id ?? v4(),
+              name: name ?? sourceView.name,
+              icon: icon ?? sourceView.icon,
+              key: null,
+              kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+                ? sourceView.kanbanAggregateOperation
                 : undefined,
-            type: type ?? sourceView.type,
-            objectMetadataId: sourceView.objectMetadataId,
-            openRecordIn: sourceView.openRecordIn,
-            anyFieldFilterValue: anyFieldFilterValue,
-          });
-          newViewId = createdView.id;
-        }
+              kanbanAggregateOperationFieldMetadataId:
+                shouldCopyFiltersAndSortsAndAggregate
+                  ? sourceView.kanbanAggregateOperationFieldMetadataId
+                  : undefined,
+              type: convertViewTypeToCore(type ?? sourceView.type),
+              objectMetadataId: sourceView.objectMetadataId,
+              openRecordIn: convertViewOpenRecordInToCore(
+                sourceView.openRecordIn,
+              ),
+              anyFieldFilterValue: anyFieldFilterValue,
+            },
+          },
+        });
+        const newViewId = result.data?.createCoreView.id;
 
         if (isUndefinedOrNull(newViewId)) {
           throw new Error('Failed to create view');
@@ -257,49 +213,26 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewSortRecords(viewSortsToCreate, { id: newViewId });
         }
 
-        if (isCoreViewEnabled) {
-          const result = await findManyCoreViewsLazy({
-            variables: {
-              objectMetadataId: objectMetadataItem.id,
-            },
-            fetchPolicy: 'network-only',
-          });
-
-          const existingCoreViews = snapshot
-            .getLoadable(coreViewsState)
-            .getValue();
-
-          if (
-            isDefined(result.data?.getCoreViews) &&
-            !isDeeplyEqual(existingCoreViews, result.data.getCoreViews)
-          ) {
-            set(coreViewsState, result.data.getCoreViews);
-          }
-        } else {
-          await findManyRecordsLazy();
-        }
+        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
 
         set(isPersistingViewFieldsState, false);
         return newViewId;
       },
     [
-      anyFieldFilterValue,
       currentViewIdCallbackState,
-      createOneRecord,
       createViewFieldRecords,
-      findManyRecordsLazy,
+      createCoreViewMutation,
+      anyFieldFilterValue,
       objectMetadataItem.fields,
+      objectMetadataItem.id,
       createViewGroupRecords,
-      createViewSortRecords,
-      createViewFilterRecords,
-      createViewFilterGroupRecords,
+      currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
-      currentRecordFilterGroups,
-      isCoreViewEnabled,
-      createCoreViewMutation,
-      findManyCoreViewsLazy,
-      objectMetadataItem.id,
+      createViewFilterGroupRecords,
+      createViewFilterRecords,
+      createViewSortRecords,
+      refreshCoreViewsByObjectMetadataId,
     ],
   );
 

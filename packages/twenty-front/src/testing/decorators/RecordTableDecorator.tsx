@@ -133,6 +133,8 @@ const InternalTableContextProviders = ({
     }),
   );
 
+  const triggerEvent = 'CLICK';
+
   return (
     <RecordIndexContextProvider
       value={{
@@ -143,6 +145,10 @@ const InternalTableContextProviders = ({
         objectMetadataItem: objectMetadataItem,
         objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
       }}
     >
       <RecordTableContextProvider
@@ -155,11 +161,9 @@ const InternalTableContextProviders = ({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: objectMetadataItem.id,
           }),
-          labelIdentifierFieldMetadataItem,
-          recordFieldByFieldMetadataItemId,
           visibleRecordFields,
-          fieldDefinitionByFieldMetadataItemId,
-          fieldMetadataItemByFieldMetadataItemId,
+          onRecordIdentifierClick: () => {},
+          triggerEvent,
         }}
       >
         <RecordTableBodyContextProvider

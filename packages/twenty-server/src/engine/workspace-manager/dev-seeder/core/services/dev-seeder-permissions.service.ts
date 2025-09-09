@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -13,7 +12,10 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import {
+  RANDOM_USER_WORKSPACE_IDS,
+  USER_WORKSPACE_DATA_SEED_IDS,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -29,13 +31,14 @@ export class DevSeederPermissionsService {
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly objectPermissionService: ObjectPermissionService,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    private readonly typeORMService: TypeORMService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   public async initPermissions(workspaceId: string) {
@@ -52,39 +55,33 @@ export class DevSeederPermissionsService {
       );
     }
 
-    const dataSource = this.typeORMService.getMainDataSource();
-
-    if (dataSource) {
-      try {
-        await dataSource
-          .createQueryBuilder()
-          .insert()
-          .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
-          .orIgnore()
-          .values([
-            {
-              roleId: adminRole.id,
-              apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
-              workspaceId: workspaceId,
-            },
-          ])
-          .execute();
-
-        await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache(
+    try {
+      await this.coreDataSource
+        .createQueryBuilder()
+        .insert()
+        .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
+        .orIgnore()
+        .values([
           {
-            workspaceId,
+            roleId: adminRole.id,
+            apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+            workspaceId: workspaceId,
           },
-        );
-        await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
-          {
-            workspaceId,
-          },
-        );
-      } catch (error) {
-        this.logger.error(
-          `Could not assign role to test API key: ${error.message}`,
-        );
-      }
+        ])
+        .execute();
+
+      await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+        workspaceId,
+      });
+      await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+        {
+          workspaceId,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not assign role to test API key: ${error.message}`,
+      );
     }
 
     let adminUserWorkspaceId: string | undefined;
@@ -95,7 +92,10 @@ export class DevSeederPermissionsService {
     if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
       limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
-      memberUserWorkspaceIds = [USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      memberUserWorkspaceIds = [
+        USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        ...Object.values(RANDOM_USER_WORKSPACE_IDS),
+      ];
       guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
 
       const guestRole = await this.roleService.createGuestRole({
@@ -137,13 +137,10 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    await this.typeORMService
-      .getMainDataSource()
-      ?.getRepository(Workspace)
-      .update(workspaceId, {
-        defaultRoleId: memberRole.id,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      });
+    await this.coreDataSource.getRepository(Workspace).update(workspaceId, {
+      defaultRoleId: memberRole.id,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+    });
 
     if (memberUserWorkspaceIds) {
       for (const memberUserWorkspaceId of memberUserWorkspaceIds) {

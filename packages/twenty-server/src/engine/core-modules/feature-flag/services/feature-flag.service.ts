@@ -20,7 +20,7 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 @Injectable()
 export class FeatureFlagService {
   constructor(
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,

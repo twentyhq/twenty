@@ -16,7 +16,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 @Injectable()
 export class DomainManagerService {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}

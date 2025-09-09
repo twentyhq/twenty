@@ -18,11 +18,11 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -254,6 +254,17 @@ export class UserRoleService {
         {
           userFriendlyMessage:
             'The role you are trying to assign could not be found. It may have been deleted.',
+        },
+      );
+    }
+
+    if (!role.canBeAssignedToUsers) {
+      throw new PermissionsException(
+        `Role "${role.label}" cannot be assigned to users`,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        {
+          userFriendlyMessage:
+            'This role cannot be assigned to users. Please select a different role.',
         },
       );
     }

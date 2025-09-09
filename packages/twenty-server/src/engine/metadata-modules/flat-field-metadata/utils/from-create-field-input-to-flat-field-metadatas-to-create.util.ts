@@ -9,15 +9,16 @@ import { v4 } from 'uuid';
 
 import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromRelationCreateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util';
+import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
+import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 
 type FromCreateFieldInputToFlatObjectMetadataArgs = {
   rawCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
@@ -46,10 +47,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       rawCreateFieldInput,
       ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
     );
-  const parentFlatObjectMetadata =
+  const parentFlatObjectMetadataWithFlatFieldMaps =
     existingFlatObjectMetadataMaps.byId[createFieldInput.objectMetadataId];
 
-  if (!isDefined(parentFlatObjectMetadata)) {
+  if (!isDefined(parentFlatObjectMetadataWithFlatFieldMaps)) {
     return {
       status: 'fail',
       error: {
@@ -60,6 +61,11 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     };
   }
 
+  const parentFlatObjectMetadata =
+    fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata(
+      parentFlatObjectMetadataWithFlatFieldMaps,
+    );
+
   const fieldMetadataId = v4();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
@@ -69,15 +75,24 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
-      throw new UserInputError(
-        'Morph relation feature is not migrated to workspace migration v2 yet',
-      );
+      return await fromMorphRelationCreateFieldInputToFlatFieldMetadatas({
+        createFieldInput: {
+          ...createFieldInput,
+          type: createFieldInput.type,
+        },
+        existingFlatObjectMetadataMaps,
+        sourceFlatObjectMetadata: parentFlatObjectMetadata,
+        workspaceId,
+      });
     }
     case FieldMetadataType.RELATION: {
-      return await fromRelationCreateFieldInputToFlatFieldMetadata({
+      return await fromRelationCreateFieldInputToFlatFieldMetadatas({
         existingFlatObjectMetadataMaps,
-        sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
-        createFieldInput,
+        sourceFlatObjectMetadata: parentFlatObjectMetadata,
+        createFieldInput: {
+          ...createFieldInput,
+          type: createFieldInput.type,
+        },
         workspaceId,
       });
     }
@@ -100,6 +115,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       const options = (createFieldInput?.options ?? []).map<
         FieldMetadataOptions<typeof createFieldInput.type>[number]
       >((option) => ({
+        id: v4(),
         ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
           option as FieldMetadataOptions<typeof createFieldInput.type>[number],
           ['label', 'value', 'id', 'color'],

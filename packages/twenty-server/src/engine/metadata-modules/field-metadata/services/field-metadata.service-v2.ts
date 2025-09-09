@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  isDefined,
-  trimAndRemoveDuplicatedWhitespacesFromString,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -32,22 +29,22 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class FieldMetadataServiceV2 {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   async createOne({
-    fieldMetadataInput,
+    createFieldInput,
     workspaceId,
   }: {
-    fieldMetadataInput: Omit<CreateFieldInput, 'workspaceId'>;
+    createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FieldMetadataEntity> {
     const [createdFieldMetadata] = await this.createMany({
-      fieldMetadataInputs: [fieldMetadataInput],
       workspaceId,
+      createFieldInputs: [createFieldInput],
     });
 
     if (!isDefined(createdFieldMetadata)) {
@@ -83,10 +80,14 @@ export class FieldMetadataServiceV2 {
     const flatObjectMetadataMapsWithImpactedObject =
       getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: flatFieldMetadatasToDelete.map(
-          (flatFieldMetadataToDelete) =>
-            flatFieldMetadataToDelete.objectMetadataId,
-        ),
+        objectMetadataIds: [
+          ...new Set(
+            flatFieldMetadatasToDelete.map(
+              (flatFieldMetadataToDelete) =>
+                flatFieldMetadataToDelete.objectMetadataId,
+            ),
+          ),
+        ],
       });
 
     const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete.reduce(
@@ -145,20 +146,33 @@ export class FieldMetadataServiceV2 {
       throw inputTranspilationResult.error;
     }
 
-    const optimisticiallyUpdatedFlatFieldMetadata =
+    const optimisticallyUpdatedFlatFieldMetadatas =
       inputTranspilationResult.result;
 
+    const objectMetadataIdWithRelatedObjectMetadataIds = [
+      ...new Set(
+        optimisticallyUpdatedFlatFieldMetadatas.flatMap(
+          ({ objectMetadataId, relationTargetObjectMetadataId }) =>
+            isDefined(relationTargetObjectMetadataId)
+              ? [objectMetadataId, relationTargetObjectMetadataId]
+              : [objectMetadataId],
+        ),
+      ),
+    ];
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: [
-        optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
-      ],
+      objectMetadataIds: objectMetadataIdWithRelatedObjectMetadataIds,
     });
+
     const toFlatObjectMetadataMaps =
-      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-        flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
-      });
+      optimisticallyUpdatedFlatFieldMetadatas.reduce(
+        (flatObjectMetadataMaps, flatFieldMetadata) =>
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps,
+            flatFieldMetadata,
+          }),
+        fromFlatObjectMetadataMaps,
+      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -182,20 +196,20 @@ export class FieldMetadataServiceV2 {
 
     return this.fieldMetadataRepository.findOneOrFail({
       where: {
-        id: optimisticiallyUpdatedFlatFieldMetadata.id,
+        id: optimisticallyUpdatedFlatFieldMetadatas[0].id,
         workspaceId,
       },
     });
   }
 
   async createMany({
-    fieldMetadataInputs,
+    createFieldInputs,
     workspaceId,
   }: {
-    fieldMetadataInputs: Omit<CreateFieldInput, 'workspaceId'>[];
+    createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
   }): Promise<FieldMetadataEntity[]> {
-    if (!fieldMetadataInputs.length) {
+    if (createFieldInputs.length === 0) {
       return [];
     }
 
@@ -204,24 +218,24 @@ export class FieldMetadataServiceV2 {
         { workspaceId },
       );
 
-    const allInputTranspilationsResults = (
-      await Promise.all(
-        fieldMetadataInputs.map(
-          async (fieldMetadataInput) =>
-            await fromCreateFieldInputToFlatFieldMetadatasToCreate({
-              existingFlatObjectMetadataMaps,
-              workspaceId,
-              rawCreateFieldInput: fieldMetadataInput,
-            }),
-        ),
-      )
-    ).flat();
+    const allTranspiledTranspilationInputs = [];
+
+    for (const createInput of createFieldInputs) {
+      allTranspiledTranspilationInputs.push(
+        await fromCreateFieldInputToFlatFieldMetadatasToCreate({
+          existingFlatObjectMetadataMaps,
+          workspaceId,
+          rawCreateFieldInput: createInput,
+        }),
+      );
+    }
 
     throwOnFieldInputTranspilationsError(
-      allInputTranspilationsResults,
+      allTranspiledTranspilationInputs,
       'Multiple validation errors occurred while creating field',
     );
-    const flatFieldMetadatasToCreate = allInputTranspilationsResults.flatMap(
+
+    const flatFieldMetadatasToCreate = allTranspiledTranspilationInputs.flatMap(
       ({ result }) => result,
     );
 
@@ -272,10 +286,8 @@ export class FieldMetadataServiceV2 {
     return this.fieldMetadataRepository.find({
       where: {
         name: In(
-          fieldMetadataInputs.map((flatFieldMetadata) =>
-            trimAndRemoveDuplicatedWhitespacesFromString(
-              flatFieldMetadata.name,
-            ),
+          allTranspiledTranspilationInputs.map(
+            ({ result: flatFieldMetadatas }) => flatFieldMetadatas[0].name,
           ),
         ),
         workspaceId,

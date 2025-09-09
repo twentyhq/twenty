@@ -1,11 +1,11 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsIntegrationMCP } from '@/settings/integrations/components/SettingsIntegrationMCP';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { SettingsIntegrationMCP } from '@/settings/integrations/components/SettingsIntegrationMCP';
-import { Trans, useLingui } from '@lingui/react/macro';
 
 export const SettingsIntegrationMCPPage = () => {
   const { t } = useLingui();

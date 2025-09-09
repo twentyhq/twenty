@@ -13,7 +13,8 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 
 describe('updateOneObjectRecordsPermissions', () => {
   const personId = randomUUID();
-  let allPetsViewId: string;
+  let messageId: string;
+  let originalMessageText: string;
 
   beforeAll(async () => {
     const createPersonOperation = createOneOperationFactory({
@@ -27,34 +28,38 @@ describe('updateOneObjectRecordsPermissions', () => {
 
     await makeGraphqlAPIRequest(createPersonOperation);
 
-    const findAllPetsViewOperation = findOneOperationFactory({
-      objectMetadataSingularName: 'view',
-      gqlFields: 'id',
+    const findAllMessagesOperation = findOneOperationFactory({
+      objectMetadataSingularName: 'message',
+      gqlFields: `
+        id
+        text
+      `,
       filter: {
-        name: {
-          eq: 'All Pets',
+        subject: {
+          eq: 'Meeting Request',
         },
       },
     });
 
-    const findAllPetsViewResponse = await makeGraphqlAPIRequest(
-      findAllPetsViewOperation,
+    const findAllMessagesResponse = await makeGraphqlAPIRequest(
+      findAllMessagesOperation,
     );
 
-    allPetsViewId = findAllPetsViewResponse.body.data.view.id;
+    messageId = findAllMessagesResponse.body.data.message.id;
+    originalMessageText = findAllMessagesResponse.body.data.message.text;
   });
 
   afterAll(async () => {
-    const updateViewOperation = updateOneOperationFactory({
-      objectMetadataSingularName: 'view',
+    const updateMessageOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'message',
       gqlFields: 'id',
-      recordId: allPetsViewId,
+      recordId: messageId,
       data: {
-        icon: 'IconList',
+        text: originalMessageText,
       },
     });
 
-    await makeGraphqlAPIRequest(updateViewOperation);
+    await makeGraphqlAPIRequest(updateMessageOperation);
   });
 
   it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -79,23 +84,25 @@ describe('updateOneObjectRecordsPermissions', () => {
 
   it('should allow to update a system object record even without update permission (guest role)', async () => {
     const graphqlOperation = updateOneOperationFactory({
-      objectMetadataSingularName: 'view',
+      objectMetadataSingularName: 'message',
       gqlFields: `
           id
-          icon
+          text
         `,
-      recordId: allPetsViewId,
+      recordId: messageId,
       data: {
-        icon: 'IconDog',
+        text: "Hello, I'm fine, thank you!",
       },
     });
 
     const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
-    expect(response.body.data.updateView).toBeDefined();
-    expect(response.body.data.updateView.id).toBe(allPetsViewId);
-    expect(response.body.data.updateView.icon).toBe('IconDog');
+    expect(response.body.data.updateMessage).toBeDefined();
+    expect(response.body.data.updateMessage.id).toBe(messageId);
+    expect(response.body.data.updateMessage.text).toBe(
+      "Hello, I'm fine, thank you!",
+    );
   });
 
   it('should update an object record when user has permission (admin role)', async () => {

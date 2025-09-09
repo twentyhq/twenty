@@ -1,41 +1,39 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, useUpdateCoreViewMutation } from '~/generated/graphql';
+import { useUpdateCoreViewMutation } from '~/generated/graphql';
 
 export const useUpdateView = () => {
-  const featureFlagMap = useFeatureFlagsMap();
-  const isCoreViewEnabled = featureFlagMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
-
   const [updateOneCoreView] = useUpdateCoreViewMutation();
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
+
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const updateView = useRecoilCallback(
     () => async (view: Partial<GraphQLView>) => {
-      if (isDefined(view.id)) {
-        if (isCoreViewEnabled) {
-          await updateOneCoreView({
-            variables: {
-              id: view.id,
-              input: convertUpdateViewInputToCore(view),
-            },
-          });
-        } else {
-          await updateOneRecord({
-            idToUpdate: view.id,
-            updateOneRecordInput: view,
-          });
-        }
+      if (!isDefined(view.id)) {
+        return;
       }
+
+      await updateOneCoreView({
+        variables: {
+          id: view.id,
+          input: convertUpdateViewInputToCore(view),
+        },
+      });
+
+      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
     },
-    [isCoreViewEnabled, updateOneCoreView, updateOneRecord],
+    [
+      objectMetadataItem.id,
+      refreshCoreViewsByObjectMetadataId,
+      updateOneCoreView,
+    ],
   );
 
   return {

@@ -30,21 +30,21 @@ describe('AgentRoleService', () => {
       providers: [
         AgentRoleService,
         {
-          provide: getRepositoryToken(AgentEntity, 'core'),
+          provide: getRepositoryToken(AgentEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -57,13 +57,13 @@ describe('AgentRoleService', () => {
 
     service = module.get<AgentRoleService>(AgentRoleService);
     agentRepository = module.get<Repository<AgentEntity>>(
-      getRepositoryToken(AgentEntity, 'core'),
+      getRepositoryToken(AgentEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
     roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity, 'core'),
+      getRepositoryToken(RoleTargetsEntity),
     );
 
     // Setup test data
@@ -87,6 +87,9 @@ describe('AgentRoleService', () => {
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToAgents: true,
+      canBeAssignedToUsers: true,
+      canBeAssignedToApiKeys: true,
       workspaceId: testWorkspaceId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -102,6 +105,9 @@ describe('AgentRoleService', () => {
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToAgents: true,
+      canBeAssignedToUsers: true,
+      canBeAssignedToApiKeys: true,
       workspaceId: testWorkspaceId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -288,7 +294,7 @@ describe('AgentRoleService', () => {
           roleId: nonExistentRoleId,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        code: AgentExceptionCode.ROLE_NOT_FOUND,
         message: `Role with id ${nonExistentRoleId} not found in workspace`,
       });
     });

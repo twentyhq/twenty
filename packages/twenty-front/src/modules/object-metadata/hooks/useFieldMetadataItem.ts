@@ -1,6 +1,5 @@
 import { type Field } from '~/generated-metadata/graphql';
 
-import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
 import { type RelationCreationPayload } from 'twenty-shared/types';
@@ -65,14 +64,10 @@ export const useFieldMetadataItem = () => {
       updatePayload: { isActive: false },
     });
 
-  const deleteMetadataField = (metadataField: FieldMetadataItem) => {
-    return deleteOneFieldMetadataItem(metadataField.id);
-  };
-
   return {
     activateMetadataField,
     createMetadataField,
     deactivateMetadataField,
-    deleteMetadataField,
+    deleteMetadataField: deleteOneFieldMetadataItem,
   };
 };

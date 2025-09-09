@@ -20,7 +20,7 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
                 flatIndexMetadatas: [
                   getFlatIndexMetadataMock({
                     objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
-                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                    universalIdentifier: 'field-metadata-unique-identifier-1',
                   }),
                 ],
               }),
@@ -38,7 +38,7 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
         input: () => {
           const flatIndexMetadata = getFlatIndexMetadataMock({
             objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
-            uniqueIdentifier: 'field-metadata-unique-identifier-1',
+            universalIdentifier: 'field-metadata-unique-identifier-1',
           });
           const fromFlatObjectMetadataMaps =
             replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
@@ -59,7 +59,7 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
                     name: 'new index name',
                     isUnique: false,
                     indexWhereClause: 'new index where clause',
-                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                    universalIdentifier: 'field-metadata-unique-identifier-1',
                   },
                 ],
               }),
@@ -88,7 +88,7 @@ export const WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES: WorkspaceMigrationBui
                 flatIndexMetadatas: [
                   getFlatIndexMetadataMock({
                     objectMetadataId: NOTE_FLAT_OBJECT_MOCK.id,
-                    uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                    universalIdentifier: 'field-metadata-unique-identifier-1',
                   }),
                 ],
               }),

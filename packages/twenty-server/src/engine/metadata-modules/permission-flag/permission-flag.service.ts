@@ -16,9 +16,9 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 
 export class PermissionFlagService {
   constructor(
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -100,7 +100,14 @@ export class PermissionFlagService {
         order: { flag: 'ASC' },
       });
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
 
       if (error.message.includes('violates foreign key constraint')) {
         const role = await this.roleRepository.findOne({

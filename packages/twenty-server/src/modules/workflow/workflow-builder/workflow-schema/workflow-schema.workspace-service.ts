@@ -76,6 +76,15 @@ export class WorkflowSchemaWorkspaceService {
           formFieldMetadataItems: step.settings.input,
           workspaceId,
         });
+      case WorkflowActionType.ITERATOR: {
+        return {
+          nextItemToProcess: {
+            isLeaf: true,
+            type: 'unknown',
+            value: generateFakeValue('unknown'),
+          },
+        };
+      }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
         return {};
@@ -117,6 +126,7 @@ export class WorkflowSchemaWorkspaceService {
     const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
+      maxDepth: 0,
     });
 
     return {
@@ -138,9 +148,11 @@ export class WorkflowSchemaWorkspaceService {
   private async computeRecordOutputSchema({
     objectType,
     workspaceId,
+    maxDepth = 1,
   }: {
     objectType: string;
     workspaceId: string;
+    maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
@@ -148,7 +160,7 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       );
 
-    return generateFakeObjectRecord({ objectMetadataInfo });
+    return generateFakeObjectRecord({ objectMetadataInfo, maxDepth });
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {

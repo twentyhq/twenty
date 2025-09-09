@@ -27,7 +27,7 @@ export const CommandMenuContextChipGroups = ({
         {contextChips.map((chip, index) => (
           <CommandMenuContextChip
             key={index}
-            maxWidth={'180px'}
+            maxWidth="180px"
             Icons={chip.Icons}
             text={chip.text}
             onClick={chip.onClick}
@@ -81,7 +81,7 @@ export const CommandMenuContextChipGroups = ({
           Icons={lastChip.Icons}
           text={lastChip.text}
           onClick={lastChip.onClick}
-          maxWidth={'180px'}
+          maxWidth="180px"
         />
       )}
     </>

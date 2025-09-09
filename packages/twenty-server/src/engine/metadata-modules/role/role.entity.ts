@@ -62,6 +62,15 @@ export class RoleEntity {
   @Column({ nullable: false, default: true })
   isEditable: boolean;
 
+  @Column({ nullable: false, default: true })
+  canBeAssignedToUsers: boolean;
+
+  @Column({ nullable: false, default: true })
+  canBeAssignedToAgents: boolean;
+
+  @Column({ nullable: false, default: true })
+  canBeAssignedToApiKeys: boolean;
+
   @OneToMany(
     () => RoleTargetsEntity,
     (roleTargets: RoleTargetsEntity) => roleTargets.role,

@@ -1,12 +1,12 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsGraphQLPlayground = () => {
   const navigateSettings = useNavigateSettings();
@@ -19,7 +19,7 @@ export const SettingsGraphQLPlayground = () => {
       : PlaygroundSchemas.CORE;
 
   const handleExitFullScreen = () => {
-    navigateSettings(SettingsPath.APIs);
+    navigateSettings(SettingsPath.ApiWebhooks);
   };
 
   const handleOnError = () => {
@@ -35,8 +35,8 @@ export const SettingsGraphQLPlayground = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>APIs</Trans>,
-          href: getSettingsPath(SettingsPath.APIs),
+          children: <Trans>APIs & Webhooks</Trans>,
+          href: getSettingsPath(SettingsPath.ApiWebhooks),
         },
         { children: <Trans>GraphQL API Playground</Trans> },
       ]}

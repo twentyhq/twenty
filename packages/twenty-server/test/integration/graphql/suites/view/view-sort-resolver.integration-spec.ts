@@ -41,11 +41,12 @@ describe('View Sort Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'mySortTestObject',
+        namePlural: 'mySortTestObjects',
+        labelSingular: 'My Sort Test Object',
+        labelPlural: 'My Sort Test Objects',
         icon: 'Icon123',
       },
     });
@@ -57,6 +58,7 @@ describe('View Sort Resolver', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         name: 'testField',
         label: 'Test Field',
@@ -71,8 +73,10 @@ describe('View Sort Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -84,10 +88,6 @@ describe('View Sort Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewSorts', () => {

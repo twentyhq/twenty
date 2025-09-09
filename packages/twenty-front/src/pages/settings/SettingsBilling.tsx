@@ -2,14 +2,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingMonthlyCreditsSection } from '@/billing/components/SettingsBillingMonthlyCreditsSection';
+import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -17,7 +17,6 @@ import {
   SubscriptionStatus,
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
@@ -38,7 +37,7 @@ export const SettingsBilling = () => {
 
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
-      returnUrlPath: '/settings/billing',
+      returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
     skip: !hasSubscriptions,
   });
@@ -67,8 +66,8 @@ export const SettingsBilling = () => {
         {hasNotCanceledCurrentSubscription && (
           <SettingsBillingSubscriptionInfo />
         )}
-        {hasNotCanceledCurrentSubscription && (
-          <SettingsBillingMonthlyCreditsSection />
+        {hasNotCanceledCurrentSubscription && currentWorkspace && (
+          <SettingsBillingCreditsSection currentWorkspace={currentWorkspace} />
         )}
         <Section>
           <H2Title

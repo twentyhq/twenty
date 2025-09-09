@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -19,7 +20,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
   CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-  CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS,
+  getCalendarEventParticipantDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import {
   COMPANY_DATA_SEED_COLUMNS,
@@ -42,8 +43,8 @@ import {
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import {
+  getMessageParticipantDataSeeds,
   MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-  MESSAGE_PARTICIPANT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import {
   MESSAGE_THREAD_DATA_SEED_COLUMNS,
@@ -82,19 +83,17 @@ import {
   TASK_TARGET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import {
+  getWorkspaceMemberDataSeeds,
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-  WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
-import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
-import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
-const RECORD_SEEDS_CONFIGS = [
+const getRecordSeedsConfigs = (workspaceId: string) => [
   {
     tableName: 'workspaceMember',
     pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-    recordSeeds: WORKSPACE_MEMBER_DATA_SEEDS,
+    recordSeeds: getWorkspaceMemberDataSeeds(workspaceId),
   },
   {
     tableName: 'company',
@@ -144,7 +143,7 @@ const RECORD_SEEDS_CONFIGS = [
   {
     tableName: 'calendarEventParticipant',
     pgColumns: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-    recordSeeds: CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS,
+    recordSeeds: getCalendarEventParticipantDataSeeds(workspaceId),
   },
   {
     tableName: 'messageChannel',
@@ -169,7 +168,7 @@ const RECORD_SEEDS_CONFIGS = [
   {
     tableName: 'messageParticipant',
     pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-    recordSeeds: MESSAGE_PARTICIPANT_DATA_SEEDS,
+    recordSeeds: getMessageParticipantDataSeeds(workspaceId),
   },
   {
     tableName: '_pet',
@@ -196,7 +195,8 @@ const RECORD_SEEDS_CONFIGS = [
 @Injectable()
 export class DevSeederDataService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
   ) {}
@@ -208,19 +208,12 @@ export class DevSeederDataService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await mainDataSource.transaction(
+    await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
+        for (const recordSeedsConfig of getRecordSeedsConfigs(workspaceId)) {
           const objectMetadata = objectMetadataItems.find(
             (item) =>
               computeTableName(item.nameSingular, item.isCustom) ===
@@ -246,28 +239,7 @@ export class DevSeederDataService {
           workspaceId,
         });
 
-        const viewDefinitionsWithId = await prefillViews(
-          entityManager,
-          schemaName,
-          objectMetadataItems.filter((item) => !item.isCustom),
-        );
-
         await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
-
-        await prefillWorkspaceFavorites(
-          viewDefinitionsWithId
-            .filter(
-              (view) =>
-                view.key === 'INDEX' &&
-                shouldSeedWorkspaceFavorite(
-                  view.objectMetadataId,
-                  objectMetadataItems,
-                ),
-            )
-            .map((view) => view.id),
-          entityManager,
-          schemaName,
-        );
       },
     );
   }

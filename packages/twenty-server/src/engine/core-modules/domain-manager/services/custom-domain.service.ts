@@ -28,7 +28,7 @@ export class CustomDomainService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly auditService: AuditService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {
     if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {
@@ -199,11 +199,11 @@ export class CustomDomainService {
 
       await this.workspaceRepository.save(workspace);
 
-      const analytics = this.auditService.createContext({
+      const auditService = this.auditService.createContext({
         workspaceId: workspace.id,
       });
 
-      analytics.insertWorkspaceEvent(
+      auditService.insertWorkspaceEvent(
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,

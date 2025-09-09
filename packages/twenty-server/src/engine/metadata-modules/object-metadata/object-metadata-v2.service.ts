@@ -12,6 +12,7 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
+import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -28,6 +29,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -37,7 +39,8 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
-    @InjectRepository(ViewEntity, 'core')
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
@@ -55,22 +58,37 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const optimisticallyUpdatedFlatObjectMetadata =
-      fromUpdateObjectInputToFlatObjectMetadata({
-        existingFlatObjectMetadataMaps,
-        updateObjectInput,
-      });
+    const {
+      flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+      otherObjectFlatFieldMetadatas,
+    } = fromUpdateObjectInputToFlatObjectMetadata({
+      existingFlatObjectMetadataMaps,
+      updateObjectInput,
+    });
 
+    const impactedObjectMetadataIds = [
+      ...new Set([
+        optimisticallyUpdatedFlatObjectMetadata.id,
+        ...otherObjectFlatFieldMetadatas.map(
+          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
+        ),
+      ]),
+    ];
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+      objectMetadataIds: impactedObjectMetadataIds,
     });
-    const toFlatObjectMetadataMaps =
+    const toFlatObjectMetadataMaps = otherObjectFlatFieldMetadatas.reduce(
+      (flatObjectMetadataMaps, flatFieldMetadata) =>
+        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+          flatFieldMetadata,
+          flatObjectMetadataMaps,
+        }),
       replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
         flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-      });
-
+      }),
+    );
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -107,6 +125,14 @@ export class ObjectMetadataServiceV2 {
       throw new ObjectMetadataException(
         'Updated object metadata not found in recomputed cache',
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (isDefined(updateObjectInput.update.labelIdentifierFieldMetadataId)) {
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
       );
     }
 

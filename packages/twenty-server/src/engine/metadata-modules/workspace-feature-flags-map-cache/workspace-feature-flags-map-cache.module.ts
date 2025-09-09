@@ -8,7 +8,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceCacheStorageModule,
   ],
   providers: [WorkspaceFeatureFlagsMapCacheService],

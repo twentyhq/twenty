@@ -10,6 +10,8 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -36,11 +38,11 @@ export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly emailService: EmailService,
   ) {}
@@ -139,7 +141,9 @@ export class ResetPasswordService {
 
     const link = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: `/reset-password/${resetToken.passwordResetToken}`,
+      pathname: getAppPath(AppPath.ResetPassword, {
+        passwordResetToken: resetToken.passwordResetToken,
+      }),
     });
 
     const emailData = {

@@ -40,7 +40,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
-    @InjectRepository(ServerlessFunctionEntity, 'core')
+    @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -214,7 +214,7 @@ export class ServerlessFunctionService {
     if (!isDefined(publishedServerlessFunction.latestVersion)) {
       throw new WorkflowVersionStepException(
         `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
-        WorkflowVersionStepExceptionCode.FAILURE,
+        WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
       );
     }
 

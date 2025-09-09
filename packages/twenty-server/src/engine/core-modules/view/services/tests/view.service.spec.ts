@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -18,6 +19,7 @@ import { ViewService } from 'src/engine/core-modules/view/services/view.service'
 describe('ViewService', () => {
   let viewService: ViewService;
   let viewRepository: Repository<ViewEntity>;
+  let i18nService: I18nService;
 
   const mockView = {
     id: 'view-id',
@@ -44,7 +46,7 @@ describe('ViewService', () => {
       providers: [
         ViewService,
         {
-          provide: getRepositoryToken(ViewEntity, 'core'),
+          provide: getRepositoryToken(ViewEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -54,13 +56,20 @@ describe('ViewService', () => {
             delete: jest.fn(),
           },
         },
+        {
+          provide: I18nService,
+          useValue: {
+            translateMessage: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     viewService = module.get<ViewService>(ViewService);
     viewRepository = module.get<Repository<ViewEntity>>(
-      getRepositoryToken(ViewEntity, 'core'),
+      getRepositoryToken(ViewEntity),
     );
+    i18nService = module.get<I18nService>(I18nService);
   });
 
   it('should be defined', () => {
@@ -314,6 +323,76 @@ describe('ViewService', () => {
       expect(viewService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('processViewNameWithTemplate', () => {
+    it('should replace template with objectLabelPlural', () => {
+      const viewName = 'All {objectLabelPlural}';
+      const objectLabelPlural = 'Companies';
+
+      jest.spyOn(i18nService, 'translateMessage').mockImplementation((args) => {
+        return args.messageId;
+      });
+
+      const result = viewService.processViewNameWithTemplate(
+        viewName,
+        false,
+        objectLabelPlural,
+        'en',
+      );
+
+      expect(result).toBe('All Companies');
+    });
+
+    it('should return translated value when translation exists', () => {
+      const viewName = 'All {objectLabelPlural}';
+      const objectLabelPlural = 'Companies';
+      const translatedTemplate = 'Toutes les Companies';
+
+      jest
+        .spyOn(i18nService, 'translateMessage')
+        .mockReturnValue(translatedTemplate);
+
+      const result = viewService.processViewNameWithTemplate(
+        viewName,
+        false,
+        objectLabelPlural,
+        'fr-FR',
+      );
+
+      expect(result).toBe(translatedTemplate);
+    });
+
+    it('should not translate custom views', () => {
+      const viewName = 'My Custom View';
+
+      const result = viewService.processViewNameWithTemplate(
+        viewName,
+        true,
+        undefined,
+        'en',
+      );
+
+      expect(i18nService.translateMessage).not.toHaveBeenCalled();
+      expect(result).toBe(viewName);
+    });
+
+    it('should return original name when no objectLabelPlural provided for template', () => {
+      const viewName = 'All {objectLabelPlural}';
+
+      jest.spyOn(i18nService, 'translateMessage').mockImplementation((args) => {
+        return args.messageId;
+      });
+
+      const result = viewService.processViewNameWithTemplate(
+        viewName,
+        false,
+        undefined,
+        'en',
+      );
+
+      expect(result).toBe(viewName);
     });
   });
 });

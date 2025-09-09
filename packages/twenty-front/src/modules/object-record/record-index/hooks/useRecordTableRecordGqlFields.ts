@@ -4,10 +4,10 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
   objectMetadataItem,
@@ -19,7 +19,7 @@ export const useRecordTableRecordGqlFields = ({
   );
 
   const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
+    useRecordIndexContextOrThrow();
 
   const { objectMetadataItem: noteTargetObjectMetadataItem } =
     useObjectMetadataItem({
@@ -58,12 +58,7 @@ export const useRecordTableRecordGqlFields = ({
       }
 
       return fieldMetadataItem.morphRelations.map((morphRelation) => [
-        computeMorphRelationFieldName({
-          fieldName: fieldMetadataItem.name,
-          relationDirection: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
-        }),
+        morphRelation.sourceFieldMetadata.name,
         true,
       ]);
     }),

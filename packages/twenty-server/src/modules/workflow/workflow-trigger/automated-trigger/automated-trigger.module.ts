@@ -6,19 +6,19 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
-import { CronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/cron-trigger.cron.job';
-import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
+import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
+import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     WorkflowCommonModule,
     WorkspaceDataSourceModule,
   ],
   providers: [
     AutomatedTriggerWorkspaceService,
-    DatabaseEventTriggerListener,
-    CronTriggerCronJob,
+    WorkflowDatabaseEventTriggerListener,
+    WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,
   ],
   exports: [AutomatedTriggerWorkspaceService, WorkflowCronTriggerCronCommand],

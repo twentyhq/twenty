@@ -1,8 +1,7 @@
-import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
@@ -19,8 +18,11 @@ export const RecordTableCellFieldContextWrapper = ({
   children,
 }: RecordTableCellFieldContextWrapperProps) => {
   const { recordId } = useRecordTableRowContextOrThrow();
-  const { objectMetadataItem, fieldMetadataItemByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
+
+  const {
+    fieldMetadataItemByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+  } = useRecordIndexContextOrThrow();
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -31,13 +33,8 @@ export const RecordTableCellFieldContextWrapper = ({
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
 
-  const isLabelIdentifier = isLabelIdentifierField({
-    fieldMetadataItem: {
-      id: recordField.fieldMetadataItemId,
-      name: fieldMetadataItem.name,
-    },
-    objectMetadataItem,
-  });
+  const isLabelIdentifier =
+    labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>

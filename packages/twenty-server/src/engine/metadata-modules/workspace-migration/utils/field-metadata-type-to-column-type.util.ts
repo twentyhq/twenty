@@ -8,6 +8,7 @@ import {
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
+  // Should be columnType
 ): string => {
   /**
    * Composite types are not implemented here, as they are flattened by their composite definitions.

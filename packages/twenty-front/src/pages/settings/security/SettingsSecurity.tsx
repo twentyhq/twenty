@@ -5,15 +5,15 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
-import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
+
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { H2Title, IconLock } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -55,21 +55,15 @@ export const SettingsSecurity = () => {
               adornment={
                 <Tag
                   text={t`Enterprise`}
-                  color={'transparent'}
+                  color="transparent"
                   Icon={IconLock}
-                  variant={'border'}
+                  variant="border"
                 />
               }
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          <StyledSection>
-            <H2Title
-              title={t`Approved Domains`}
-              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-            />
-            <SettingsApprovedAccessDomainsListCard />
-          </StyledSection>
+
           <Section>
             <StyledContainer>
               <H2Title

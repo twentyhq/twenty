@@ -3,36 +3,23 @@ import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVi
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const featureFlagsMap = useFeatureFlagsMap();
-
-  const isCoreViewEnabled =
-    featureFlagsMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-
   const {
     activeNonSystemObjectMetadataItems,
     alphaSortedActiveNonSystemObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
-
-  const arePrefetchViewsLoaded = useRecoilValue(arePrefetchViewsLoadedState);
 
   const readableAlphaSortedActiveNonSystemObjectMetadataItems = useMemo(() => {
     return alphaSortedActiveNonSystemObjectMetadataItems.filter((item) => {
@@ -56,27 +43,18 @@ export const useDefaultHomePagePath = () => {
     [activeNonSystemObjectMetadataItems],
   );
 
-  const getFirstView = useRecoilCallback(
-    ({ snapshot }) => {
-      return (objectMetadataItemId: string | undefined | null) => {
-        if (!arePrefetchViewsLoaded) {
-          return undefined;
-        }
+  const getFirstView = useRecoilCallback(({ snapshot }) => {
+    return (objectMetadataItemId: string | undefined | null) => {
+      const views = snapshot
+        .getLoadable(coreViewsState)
+        .getValue()
+        .map(convertCoreViewToView);
 
-        const views = isCoreViewEnabled
-          ? snapshot
-              .getLoadable(coreViewsState)
-              .getValue()
-              .map(convertCoreViewToView)
-          : snapshot.getLoadable(prefetchViewsState).getValue();
-
-        return views.find(
-          (view) => view.objectMetadataId === objectMetadataItemId,
-        );
-      };
-    },
-    [arePrefetchViewsLoaded, isCoreViewEnabled],
-  );
+      return views.find(
+        (view) => view.objectMetadataId === objectMetadataItemId,
+      );
+    };
+  }, []);
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     const [firstObjectMetadataItem] =
@@ -132,16 +110,12 @@ export const useDefaultHomePagePath = () => {
   );
 
   const defaultHomePagePath = useMemo(() => {
-    if (!arePrefetchViewsLoaded) {
-      return undefined;
-    }
-
     if (!isDefined(currentUser)) {
       return AppPath.SignInUp;
     }
 
     if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
-      return `${AppPath.Settings}/${SettingsPath.ProfilePage}`;
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();
@@ -159,7 +133,6 @@ export const useDefaultHomePagePath = () => {
       viewId ? { viewId } : undefined,
     );
   }, [
-    arePrefetchViewsLoaded,
     currentUser,
     getDefaultObjectPathInfo,
     readableAlphaSortedActiveNonSystemObjectMetadataItems,

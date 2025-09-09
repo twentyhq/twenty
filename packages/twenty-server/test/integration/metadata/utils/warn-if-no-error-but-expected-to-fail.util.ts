@@ -10,7 +10,7 @@ export const warnIfNoErrorButExpectedToFail = ({
   response,
   errorMessage,
 }: WarnIfNoErrorButExpectedToFailInput) => {
-  if (isDefined(response.body.data)) {
+  if (!isDefined(response.body.errors) || response.body.errors.length === 0) {
     expect(false).toEqual(errorMessage);
   }
   expect(response.body.errors.length).toBeGreaterThan(0);

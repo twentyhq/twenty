@@ -9,6 +9,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -78,13 +79,13 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
@@ -268,7 +269,7 @@ export class AuthService {
   async verify(
     email: string,
     workspaceId: string,
-    authProvider?: AuthProviderEnum,
+    authProvider: AuthProviderEnum,
   ): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
@@ -527,7 +528,7 @@ export class AuthService {
   }) {
     const url = this.domainManagerService.buildWorkspaceURL({
       workspace,
-      pathname: '/verify',
+      pathname: AppPath.Verify,
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
@@ -739,7 +740,7 @@ export class AuthService {
         ));
 
       const url = this.domainManagerService.buildBaseUrl({
-        pathname: '/welcome',
+        pathname: AppPath.SignInUp,
         searchParams: {
           tokenPair: JSON.stringify({
             accessOrWorkspaceAgnosticToken:
@@ -827,7 +828,7 @@ export class AuthService {
           this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
-        pathname: '/verify',
+        pathname: AppPath.Verify,
       });
     }
   }

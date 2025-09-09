@@ -5,9 +5,11 @@ import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builde
 export const generateFakeObjectRecord = ({
   objectMetadataInfo,
   depth = 0,
+  maxDepth = 1,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
   depth?: number;
+  maxDepth?: number;
 }): RecordOutputSchema => {
   return {
     object: {
@@ -22,6 +24,7 @@ export const generateFakeObjectRecord = ({
     fields: generateObjectRecordFields({
       objectMetadataInfo,
       depth,
+      maxDepth,
     }),
     _outputSchemaType: 'RECORD',
   };

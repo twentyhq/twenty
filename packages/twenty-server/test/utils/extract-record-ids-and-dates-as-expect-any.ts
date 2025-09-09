@@ -8,9 +8,7 @@ export const extractRecordIdsAndDatesAsExpectAny = (
   }
 
   if (typeof record !== 'object') {
-    throw new Error(
-      'extractRecordIdsAndDatesAsExpectAny should be called with an array or a record only',
-    );
+    return record;
   }
 
   return Object.entries(record).reduce((acc, [key, value]) => {
@@ -27,6 +25,7 @@ export const extractRecordIdsAndDatesAsExpectAny = (
 
     if (
       key.endsWith('Id') ||
+      key === 'universalIdentifier' ||
       key === 'id' ||
       key === 'updatedAt' ||
       key === 'deletedAt' ||

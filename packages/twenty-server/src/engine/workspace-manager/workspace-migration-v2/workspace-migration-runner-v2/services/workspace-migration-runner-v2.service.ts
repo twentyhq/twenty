@@ -17,7 +17,7 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
   ) {}
@@ -76,9 +76,13 @@ export class WorkspaceMigrationRunnerV2Service {
       return optimisticFlatObjectMetadataMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();

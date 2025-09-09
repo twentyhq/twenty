@@ -9,6 +9,7 @@ import {
   type workflowFindRecordsActionSchema,
   type workflowFormActionSchema,
   type workflowHttpRequestActionSchema,
+  type workflowIteratorActionSchema,
   type workflowManualTriggerSchema,
   type workflowRunSchema,
   type workflowRunStateSchema,
@@ -18,7 +19,7 @@ import {
   type workflowTriggerSchema,
   type workflowUpdateRecordActionSchema,
   type workflowWebhookTriggerSchema,
-} from '@/workflow/validation-schemas/workflowSchema';
+} from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
@@ -42,7 +43,9 @@ export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 export type WorkflowHttpRequestAction = z.infer<
   typeof workflowHttpRequestActionSchema
 >;
-
+export type WorkflowIteratorAction = z.infer<
+  typeof workflowIteratorActionSchema
+>;
 export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
 
 export type WorkflowAction =
@@ -55,7 +58,8 @@ export type WorkflowAction =
   | WorkflowFilterAction
   | WorkflowFormAction
   | WorkflowHttpRequestAction
-  | WorkflowAiAgentAction;
+  | WorkflowAiAgentAction
+  | WorkflowIteratorAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;

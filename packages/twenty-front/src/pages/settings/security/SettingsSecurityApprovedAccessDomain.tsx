@@ -1,6 +1,5 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -8,12 +7,13 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { useCreateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -65,7 +65,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           enqueueSuccessSnackBar({
             message: t`Please check your email for a verification link.`,
           });
-          navigate(SettingsPath.Security);
+          navigate(SettingsPath.Domains);
         },
         onError: (error) => {
           enqueueErrorSnackBar({
@@ -86,7 +86,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         title="New Approved Access Domain"
         actionButton={
           <SaveAndCancelButtons
-            onCancel={() => navigate(SettingsPath.Security)}
+            onCancel={() => navigate(SettingsPath.Domains)}
             isSaveDisabled={form.formState.isSubmitting}
           />
         }
@@ -96,8 +96,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: <Trans>Security</Trans>,
-            href: getSettingsPath(SettingsPath.Security),
+            children: <Trans>Domains</Trans>,
+            href: getSettingsPath(SettingsPath.Domains),
           },
           { children: <Trans>New Approved Access Domain</Trans> },
         ]}

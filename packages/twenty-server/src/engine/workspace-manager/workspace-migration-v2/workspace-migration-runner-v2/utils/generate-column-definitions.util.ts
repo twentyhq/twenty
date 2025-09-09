@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type ColumnType } from 'typeorm';
 
 import { type CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -8,15 +9,15 @@ import {
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
+import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -54,10 +55,14 @@ export const generateCompositeColumnDefinition = ({
   const defaultValue =
     // @ts-expect-error - TODO: fix this
     parentFieldMetadata.defaultValue?.[compositeProperty.name];
-
-  const unserializedDefaultValue = unserializeDefaultValue(defaultValue);
-
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
+  const serializedDefaultValue = serializeDefaultValueV2({
+    columnName,
+    schemaName,
+    tableName,
+    columnType: columnType as ColumnType,
+    defaultValue,
+  });
 
   const isArrayFlag =
     compositeProperty.type === FieldMetadataType.ARRAY ||
@@ -72,7 +77,7 @@ export const generateCompositeColumnDefinition = ({
         : columnType,
     isNullable: parentFieldMetadata.isNullable || !compositeProperty.isRequired,
     isUnique: parentFieldMetadata.isUnique ?? false,
-    default: unserializedDefaultValue,
+    default: serializedDefaultValue,
     isArray: isArrayFlag,
   };
 
@@ -120,23 +125,29 @@ const generateRelationColumnDefinition = (
   };
 };
 
-const generateStandardColumnDefinition = (
+const generateColumnDefinition = (
   flatFieldMetadata: FlatFieldMetadata,
   tableName: string,
   schemaName: string,
 ): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(flatFieldMetadata.name);
-  const serializedDefaultValue = serializeDefaultValue(
-    flatFieldMetadata.defaultValue,
-  );
-  const columnType = fieldMetadataTypeToColumnType(flatFieldMetadata.type);
+  const columnType = fieldMetadataTypeToColumnType(
+    flatFieldMetadata.type,
+  ) as ColumnType;
+  const serializedDefaultValue = serializeDefaultValueV2({
+    columnName,
+    schemaName,
+    tableName,
+    columnType,
+    defaultValue: flatFieldMetadata.defaultValue,
+  });
 
   return {
     name: columnName,
     type:
       columnType === 'enum'
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
-        : columnType,
+        : (columnType as string),
     isNullable: flatFieldMetadata.isNullable ?? true,
     isArray:
       flatFieldMetadata.type === FieldMetadataType.ARRAY ||
@@ -171,30 +182,16 @@ export const generateColumnDefinitions = ({
   }
 
   if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.TS_VECTOR,
-    )
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
     return [generateTsVectorColumnDefinition(flatFieldMetadata)];
   }
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.RELATION,
-    ) ||
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
+  if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
     const relationColumn = generateRelationColumnDefinition(flatFieldMetadata);
 
     return relationColumn ? [relationColumn] : [];
   }
 
-  return [
-    generateStandardColumnDefinition(flatFieldMetadata, tableName, schemaName),
-  ];
+  return [generateColumnDefinition(flatFieldMetadata, tableName, schemaName)];
 };

@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import { plural } from 'pluralize';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -49,9 +49,9 @@ export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
 
   constructor(
-    @InjectRepository(RemoteTableEntity, 'core')
+    @InjectRepository(RemoteTableEntity)
     private readonly remoteTableRepository: Repository<RemoteTableEntity>,
-    @InjectRepository(RemoteServerEntity, 'core')
+    @InjectRepository(RemoteServerEntity)
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
@@ -63,6 +63,8 @@ export class RemoteTableService {
     private readonly foreignTableService: ForeignTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly remoteTableSchemaUpdateService: RemoteTableSchemaUpdateService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   public async findDistantTablesWithStatus(
@@ -182,14 +184,11 @@ export class RemoteTableService {
         workspaceId,
       );
 
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     const { baseName: localTableBaseName, suffix: localTableSuffix } =
       await getRemoteTableLocalName(
         input.name,
         dataSourceMetatada.schema,
-        mainDataSource,
+        this.coreDataSource,
       );
 
     const localTableName = localTableSuffix

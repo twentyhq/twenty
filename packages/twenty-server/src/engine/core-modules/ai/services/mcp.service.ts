@@ -21,7 +21,7 @@ export class McpService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly toolService: ToolService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 

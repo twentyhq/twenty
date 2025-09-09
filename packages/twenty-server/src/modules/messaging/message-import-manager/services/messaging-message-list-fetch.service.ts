@@ -13,9 +13,11 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
   MessageChannelSyncStage,
-  type MessageChannelWorkspaceEntity,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -41,6 +43,7 @@ export class MessagingMessageListFetchService {
     private readonly messagingCursorService: MessagingCursorService,
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
+    private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
   public async processMessageListFetch(
@@ -74,9 +77,30 @@ export class MessagingMessageListFetchService {
         },
       };
 
+      const datasource = await this.twentyORMManager.getDatasource();
+
+      await this.syncMessageFoldersService.syncMessageFolders({
+        workspaceId,
+        messageChannelId: messageChannelWithFreshTokens.id,
+        connectedAccount: messageChannelWithFreshTokens.connectedAccount,
+        manager: datasource.manager,
+      });
+
+      const messageFolderRepository =
+        await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+          'messageFolder',
+        );
+
+      const messageFolders = await messageFolderRepository.find({
+        where: {
+          messageChannelId: messageChannel.id,
+        },
+      });
+
       const messageLists =
         await this.messagingGetMessageListService.getMessageLists(
           messageChannelWithFreshTokens,
+          messageFolders,
         );
 
       await this.cacheStorage.del(
@@ -99,7 +123,11 @@ export class MessagingMessageListFetchService {
       let totalMessagesToImportCount = 0;
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}`,
+        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
+          (messageList) => {
+            messageList.nextSyncCursor;
+          },
+        )}`,
       );
 
       const messageChannelMessageAssociationRepository =
@@ -182,24 +210,21 @@ export class MessagingMessageListFetchService {
         const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
         for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
-          await messageChannelMessageAssociationRepository.delete({
-            messageChannelId: messageChannelWithFreshTokens.id,
-            messageExternalId: In(toDeleteChunk),
-          });
-
           this.logger.log(
-            `messageChannelId: ${messageChannel.id} Deleted ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+            `messageChannelId: ${messageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+          );
+
+          await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+            {
+              workspaceId,
+              messageExternalIds: toDeleteChunk.filter((messageExternalId) =>
+                isNonEmptyString(messageExternalId),
+              ),
+              messageChannelId: messageChannelWithFreshTokens.id,
+            },
           );
         }
       }
-
-      this.logger.log(
-        `messageChannelId: ${messageChannel.id} launching workspace thread cleanup`,
-      );
-
-      await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-        workspaceId,
-      );
 
       this.logger.log(
         `messageChannelId: ${messageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,

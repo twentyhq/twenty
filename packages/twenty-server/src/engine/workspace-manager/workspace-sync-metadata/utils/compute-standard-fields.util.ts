@@ -57,6 +57,7 @@ export const computeStandardFields = (
           relationTargetObjectMetadataId: null,
           settings: null,
           standardOverrides: null,
+          morphId: null,
         });
       }
     } else {

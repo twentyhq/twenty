@@ -47,18 +47,16 @@ export class WorkflowCreateManyPostQueryHook
       workspaceId: workspace.id,
     });
 
-    const workflowVersionsToCreate = payload.map((workflow) => {
-      return workflowVersionRepository.create({
-        workflowId: workflow.id,
-        status: WorkflowVersionStatus.DRAFT,
-        name: 'v1',
-        position,
-      });
-    });
+    const workflowVersionsToCreate = payload.map((workflow) => ({
+      workflowId: workflow.id,
+      status: WorkflowVersionStatus.DRAFT,
+      name: 'v1',
+      position,
+    }));
 
     await Promise.all(
       workflowVersionsToCreate.map((workflowVersion) => {
-        return workflowVersionRepository.save(workflowVersion);
+        return workflowVersionRepository.insert(workflowVersion);
       }),
     );
   }

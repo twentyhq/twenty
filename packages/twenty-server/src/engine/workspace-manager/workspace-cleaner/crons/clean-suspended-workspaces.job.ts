@@ -15,7 +15,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
 export class CleanSuspendedWorkspacesJob {
   constructor(
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

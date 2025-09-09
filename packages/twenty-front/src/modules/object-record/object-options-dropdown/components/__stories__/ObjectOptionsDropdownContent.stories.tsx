@@ -7,6 +7,7 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { type ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -77,6 +78,16 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
         (item) => item.nameSingular === 'company',
       )!;
 
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
+
       return (
         <RecordIndexContextProvider
           value={{
@@ -87,6 +98,10 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
             objectNameSingular: 'company',
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
           }}
         >
           <ObjectOptionsDropdownContext.Provider

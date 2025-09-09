@@ -90,7 +90,7 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockDomainManagerService,
         },
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethod),
           useFactory: createMockRepository,
         },
       ],
@@ -103,9 +103,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
     domainManagerService = module.get(DomainManagerService);
-    repository = module.get(
-      getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
-    );
+    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
   });
 
   afterEach(() => {

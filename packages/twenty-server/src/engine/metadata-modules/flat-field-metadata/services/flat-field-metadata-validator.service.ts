@@ -12,8 +12,7 @@ import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadat
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -92,20 +91,11 @@ export class FlatFieldMetadataValidatorService {
     }
 
     const updates = compareTwoFlatFieldMetadata({
-      from: existingFlatFieldMetadataToUpdate,
-      to: updatedFlatFieldMetadata,
+      fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
+      toFlatFieldMetadata: updatedFlatFieldMetadata,
     });
 
-    if (
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
+    if (isMorphOrRelationFlatFieldMetadata(updatedFlatFieldMetadata)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
           !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
@@ -133,7 +123,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataName(updatedFlatFieldMetadata.name),
         ...validateFlatFieldMetadataNameAvailability({
-          name: updatedFlatFieldMetadata.name,
+          flatFieldMetadata: updatedFlatFieldMetadata,
           flatObjectMetadata: flatObjectMetadata,
         }),
       );
@@ -209,7 +199,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     const isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted =
-      isRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
         existingFlatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
@@ -298,7 +288,7 @@ export class FlatFieldMetadataValidatorService {
 
       validationResult.errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          name: flatFieldMetadataToValidate.name,
+          flatFieldMetadata: flatFieldMetadataToValidate,
           flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );

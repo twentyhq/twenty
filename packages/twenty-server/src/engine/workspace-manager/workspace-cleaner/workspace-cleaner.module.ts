@@ -20,10 +20,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [Workspace, UserWorkspace, BillingSubscription],
-      'core',
-    ),
+    TypeOrmModule.forFeature([Workspace, UserWorkspace, BillingSubscription]),
     WorkspaceModule,
     DataSourceModule,
     UserVarsModule,
@@ -33,13 +30,17 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
   ],
   providers: [
     DeleteWorkspacesCommand,
-    CleanSuspendedWorkspacesCommand,
     DestroyWorkspaceCommand,
     CleanSuspendedWorkspacesCronCommand,
+    CleanSuspendedWorkspacesCommand,
     CleanOnboardingWorkspacesCommand,
     CleanOnboardingWorkspacesCronCommand,
     CleanerWorkspaceService,
   ],
-  exports: [CleanerWorkspaceService],
+  exports: [
+    CleanerWorkspaceService,
+    CleanSuspendedWorkspacesCronCommand,
+    CleanOnboardingWorkspacesCronCommand,
+  ],
 })
 export class WorkspaceCleanerModule {}

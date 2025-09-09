@@ -20,7 +20,9 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'FILTER': {
       return msg`Filter`;
     }
-
+    case 'ITERATOR': {
+      return msg`Iterator`;
+    }
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

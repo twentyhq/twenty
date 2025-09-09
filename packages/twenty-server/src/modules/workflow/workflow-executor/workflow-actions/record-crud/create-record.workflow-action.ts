@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
 import { resolveInput } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -14,24 +15,20 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { isWorkflowCreateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-create-record-action.guard';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly recordPositionService: RecordPositionService,
@@ -44,21 +41,10 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     steps,
     context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const step = steps.find((step) => step.id === currentStepId);
-
-    if (!step) {
-      throw new WorkflowStepExecutorException(
-        'Step not found',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-      );
-    }
-
-    if (!isWorkflowCreateRecordAction(step)) {
-      throw new WorkflowStepExecutorException(
-        'Step is not a create record action',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-      );
-    }
+    const step = findStepOrThrow({
+      steps,
+      stepId: currentStepId,
+    });
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
@@ -81,30 +67,29 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         { shouldBypassPermissionChecks: true },
       );
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: workflowActionInput.objectName,
-      },
-    });
+    const { objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
 
-    if (!objectMetadata) {
+    if (
+      !canObjectBeManagedByWorkflow({
+        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
+        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+      })
+    ) {
       throw new RecordCRUDActionException(
-        'Failed to create: Object metadata not found',
+        'Failed to create: Object cannot be created by workflow',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
 
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
-      objectMetadata,
+      objectMetadata: objectMetadataItemWithFieldsMaps,
       workspaceId,
     });
-
-    const { objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
 
     const validObjectRecord = Object.fromEntries(
       Object.entries(workflowActionInput.objectRecord).filter(([key]) =>
@@ -118,7 +103,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
       });
 
-    const objectRecord = await repository.save({
+    const insertResult = await repository.insert({
       ...transformedObjectRecord,
       position,
       createdBy: {
@@ -127,8 +112,10 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       },
     });
 
+    const [createdRecord] = insertResult.generatedMaps;
+
     return {
-      result: objectRecord,
+      result: createdRecord,
     };
   }
 }

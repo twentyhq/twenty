@@ -29,7 +29,7 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 @Resolver()
 export class AgentResolver {
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentService: AgentService,
     private readonly agentHandoffService: AgentHandoffService,
@@ -38,10 +38,7 @@ export class AgentResolver {
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async findManyAgents(@AuthWorkspace() { id: workspaceId }: Workspace) {
-    return this.agentRepository.find({
-      where: { workspaceId },
-      order: { createdAt: 'DESC' },
-    });
+    return this.agentService.findManyAgents(workspaceId);
   }
 
   @Query(() => AgentDTO)

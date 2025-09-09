@@ -12,7 +12,7 @@ import {
   name: 'cron:workflow:clean-workflow-runs',
   description: 'Clean workflow runs',
 })
-export class WorkflowCleanWorkflowRunsCommand extends CommandRunner {
+export class WorkflowCleanWorkflowRunsCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,

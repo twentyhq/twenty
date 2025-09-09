@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type CoreMessage, type StreamTextResult, streamText } from 'ai';
+import { type CoreMessage, streamText, LanguageModelV1 } from 'ai';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
@@ -8,15 +8,7 @@ import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-m
 export class AiService {
   constructor(private aiModelRegistryService: AiModelRegistryService) {}
 
-  streamText(
-    messages: CoreMessage[],
-    options?: {
-      temperature?: number;
-      maxTokens?: number;
-      modelId?: string; // Optional model override
-    },
-  ): StreamTextResult<Record<string, never>, undefined> {
-    const modelId = options?.modelId;
+  getModel(modelId: string | undefined) {
     const registeredModel = modelId
       ? this.aiModelRegistryService.getModel(modelId)
       : this.aiModelRegistryService.getDefaultModel();
@@ -29,19 +21,25 @@ export class AiService {
       );
     }
 
+    return registeredModel.model;
+  }
+
+  streamText({
+    messages,
+    options,
+  }: {
+    messages: CoreMessage[];
+    options: {
+      temperature?: number;
+      maxTokens?: number;
+      model: LanguageModelV1;
+    };
+  }) {
     return streamText({
-      model: registeredModel.model,
+      model: options.model,
       messages,
       temperature: options?.temperature,
       maxTokens: options?.maxTokens,
     });
-  }
-
-  getAvailableModels() {
-    return this.aiModelRegistryService.getAvailableModels();
-  }
-
-  getDefaultModel() {
-    return this.aiModelRegistryService.getDefaultModel();
   }
 }

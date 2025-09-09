@@ -1,25 +1,27 @@
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { type CreateOneObjectFactoryInput } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
 
+/**
+ * This testing function util should be used for local debugging only
+ * Please do not call this method in prod ci
+ * Each test should handle and adopt black box testing pattern
+ */
 export const forceCreateOneObjectMetadata = async ({
   input: {
-    labelSingular = LISTING_NAME_SINGULAR,
-    labelPlural = LISTING_NAME_PLURAL,
-    nameSingular = LISTING_NAME_SINGULAR,
-    namePlural = LISTING_NAME_PLURAL,
-    isLabelSyncedWithName = true,
+    labelSingular,
+    labelPlural,
+    nameSingular,
+    namePlural,
+    isLabelSyncedWithName = false,
     icon = 'IconBuildingSkyscraper',
     ...rest
   },
 }: {
-  input: Partial<CreateOneObjectFactoryInput>;
+  input: CreateOneObjectFactoryInput;
 }) => {
   const result = await createOneObjectMetadata({
     input: {
@@ -33,10 +35,12 @@ export const forceCreateOneObjectMetadata = async ({
     },
   });
 
-  if (!isDefined(result.errors)) {
+  if (!isDefined(result.errors) || result.errors.length === 0) {
     return result;
   }
-  const { objects, errors } = await findManyObjectMetadata({
+
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
     input: {
       filter: {},
       paging: {
@@ -49,12 +53,6 @@ export const forceCreateOneObjectMetadata = async ({
     `,
   });
 
-  if (isDefined(errors) || !isDefined(objects)) {
-    throw new Error(
-      'Force create object metadata find many failed, should never occur',
-    );
-  }
-
   const match = objects.find((object) => object.nameSingular === nameSingular);
 
   if (!isDefined(match)) {
@@ -63,15 +61,18 @@ export const forceCreateOneObjectMetadata = async ({
     );
   }
 
-  const { errors: deleteErrors } = await deleteOneObjectMetadata({
+  await updateOneObjectMetadata({
+    expectToFail: false,
+    input: { idToUpdate: match.id, updatePayload: { isActive: false } },
+  });
+
+  await deleteOneObjectMetadata({
+    expectToFail: false,
     input: { idToDelete: match.id },
   });
 
-  if (isDefined(deleteErrors)) {
-    throw new Error(JSON.stringify(deleteErrors));
-  }
-
-  return await createOneObjectMetadata({
+  const { errors: createErrors, data } = await createOneObjectMetadata({
+    expectToFail: false,
     input: {
       labelSingular,
       labelPlural,
@@ -82,4 +83,9 @@ export const forceCreateOneObjectMetadata = async ({
       ...rest,
     },
   });
+
+  return {
+    data,
+    errors: createErrors,
+  };
 };

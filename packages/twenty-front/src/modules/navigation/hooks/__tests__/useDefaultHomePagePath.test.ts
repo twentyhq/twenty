@@ -7,11 +7,9 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { AppPath } from '@/types/AppPath';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType } from '@/views/types/ViewType';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { AppPath } from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from '~/generated/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -32,39 +30,33 @@ const renderHooks = ({
       const setObjectMetadataItems = useSetRecoilState(
         objectMetadataItemsState,
       );
-      const setPrefetchViews = useSetRecoilState(prefetchViewsState);
-      const setArePrefetchViewsLoaded = useSetRecoilState(
-        arePrefetchViewsLoadedState,
-      );
+      const setCoreViews = useSetRecoilState(coreViewsState);
 
       useEffect(() => {
         setObjectMetadataItems(generatedMockObjectMetadataItems);
-        setArePrefetchViewsLoaded(true);
 
         if (withExistingView) {
-          setPrefetchViews([
+          setCoreViews([
             {
               id: 'viewId',
               name: 'Test View',
               objectMetadataId: getMockCompanyObjectMetadataItem().id,
-              type: ViewType.Table,
+              type: ViewType.TABLE,
               key: null,
               isCompact: false,
-              openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+              openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
               viewFields: [],
               viewGroups: [],
               viewSorts: [],
-              kanbanFieldMetadataId: '',
               kanbanAggregateOperation: AggregateOperations.COUNT,
               icon: '',
               kanbanAggregateOperationFieldMetadataId: '',
               position: 0,
               viewFilters: [],
-              __typename: 'View',
             },
           ]);
         } else {
-          setPrefetchViews([]);
+          setCoreViews([]);
         }
 
         if (withCurrentUser) {
@@ -75,8 +67,7 @@ const renderHooks = ({
         setCurrentUser,
         setCurrentUserWorkspace,
         setObjectMetadataItems,
-        setPrefetchViews,
-        setArePrefetchViewsLoaded,
+        setCoreViews,
       ]);
 
       return useDefaultHomePagePath();

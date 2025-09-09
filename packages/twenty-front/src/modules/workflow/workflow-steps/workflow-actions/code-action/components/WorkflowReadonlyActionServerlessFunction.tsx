@@ -15,8 +15,8 @@ import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -86,7 +86,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
           <CodeEditor
             height={343}
             value={formValues.code?.[INDEX_FILE_PATH]}
-            language={'typescript'}
+            language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}
             options={{

@@ -11,6 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,6 +20,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'], {
+  where: '"deletedAt" IS NULL',
+})
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -26,7 +31,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewFieldEntity {
+export class ViewFieldEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -45,7 +50,7 @@ export class ViewFieldEntity {
   @Column({ nullable: false, type: 'int', default: 0 })
   size: number;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({

@@ -6,7 +6,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<FlatFieldMetadata<T>, 'uniqueIdentifier' | 'objectMetadataId' | 'type'>
+  Pick<
+    FlatFieldMetadata<T>,
+    'universalIdentifier' | 'objectMetadataId' | 'type'
+  >
 > &
   Partial<FlatFieldMetadata<T>>;
 
@@ -20,6 +23,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     updatedAt: createdAt,
     defaultValue: null,
     options: null,
+    morphId: null,
     settings: null,
     description: 'default flat field metadata description',
     icon: 'icon',

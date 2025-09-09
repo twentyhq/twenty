@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -16,6 +17,7 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
 import { workspaceSyncMetadataComparators } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators';
 import { workspaceSyncMetadataFactories } from 'src/engine/workspace-manager/workspace-sync-metadata/factories';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
+import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
@@ -29,13 +31,15 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     FeatureFlagModule,
     WorkspaceMigrationBuilderModule,
     WorkspaceMigrationRunnerModule,
-    TypeOrmModule.forFeature(
-      [FieldMetadataEntity, ObjectMetadataEntity, WorkspaceMigrationEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      FieldMetadataEntity,
+      ObjectMetadataEntity,
+      WorkspaceMigrationEntity,
+    ]),
     DataSourceModule,
-    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceMetadataVersionModule,
+    AgentRoleModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,
@@ -48,6 +52,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceSyncMetadataService,
     WorkspaceSyncIndexMetadataService,
     WorkspaceSyncRoleService,
+    WorkspaceSyncAgentService,
     SyncWorkspaceLoggerService,
     SyncWorkspaceMetadataCommand,
   ],

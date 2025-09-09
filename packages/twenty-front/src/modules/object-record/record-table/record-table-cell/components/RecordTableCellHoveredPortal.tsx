@@ -6,12 +6,15 @@ import styled from '@emotion/styled';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useContext } from 'react';
 import { BORDER_COMMON } from 'twenty-ui/theme';
@@ -20,6 +23,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   isReadOnly: boolean;
   isRowActive: boolean;
+  zIndex: number;
 }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.secondary};
@@ -42,6 +46,8 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   position: relative;
   user-select: none;
+
+  z-index: ${({ zIndex }) => zIndex};
 `;
 
 const RecordTableCellHoveredPortalContent = () => {
@@ -67,10 +73,28 @@ const RecordTableCellHoveredPortalContent = () => {
     rowIndex,
   );
 
+  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
+    isRecordTableScrolledHorizontallyComponentState,
+  );
+
+  const isRecordTableScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const computedZIndex =
+    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
+      ? TABLE_Z_INDEX.scrolledBothVerticallyAndHorizontally.hoverPortalCell
+      : isRecordTableScrolledHorizontally
+        ? TABLE_Z_INDEX.scrolledHorizontallyOnly.hoverPortalCell
+        : isRecordTableScrolledVertically
+          ? TABLE_Z_INDEX.scrolledVerticallyOnly.hoverPortalCell
+          : TABLE_Z_INDEX.noScrollAtAll.hoverPortalCell;
+
   return (
     <StyledRecordTableCellHoveredPortalContent
       isReadOnly={isReadOnly}
       isRowActive={isRowActive}
+      zIndex={computedZIndex}
     >
       {isFieldInputOnly ? (
         <RecordTableCellEditMode>

@@ -100,7 +100,7 @@ const StyledIcon = styled(IconReload)`
 
 export const AppRootErrorFallback = ({
   resetErrorBoundary,
-  title = 'Sorry, something went wrong',
+  title = t`Sorry, something went wrong`,
 }: AppRootErrorFallbackProps) => {
   return (
     <StyledContainer>
@@ -117,7 +117,7 @@ export const AppRootErrorFallback = ({
             />
           </StyledImageContainer>
           <StyledEmptyTextContainer>
-            <StyledEmptyTitle>{t`${title}`}</StyledEmptyTitle>
+            <StyledEmptyTitle>{title}</StyledEmptyTitle>
             <StyledEmptySubTitle>
               {t`Please refresh the page.`}
             </StyledEmptySubTitle>

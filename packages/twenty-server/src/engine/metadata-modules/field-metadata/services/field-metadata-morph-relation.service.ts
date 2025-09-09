@@ -15,21 +15,17 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { computeMorphRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-join-column-name.util';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataFromObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/get-object-metadata-from-object-metadata-Item-with-field-maps';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class FieldMetadataMorphRelationService {
   constructor(
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async createMorphRelationFieldMetadataItems({
@@ -63,10 +59,11 @@ export class FieldMetadataMorphRelationService {
     }
 
     const fieldsCreated: FieldMetadataEntity[] = [];
+    const morphId = v4();
 
-    for (const relation of morphRelationsCreationPayload) {
+    for (const relationCreationPayload of morphRelationsCreationPayload) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[relation.targetObjectMetadataId];
+        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
 
       if (!isDefined(targetObjectMetadata)) {
         throw new FieldMetadataException(
@@ -75,15 +72,21 @@ export class FieldMetadataMorphRelationService {
         );
       }
 
+      const currentMorphRelationFieldName = computeMorphRelationFieldName({
+        fieldName: fieldMetadataForCreate.name,
+        relationType: relationCreationPayload.type,
+        targetObjectMetadata,
+      });
       const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
           {
-            fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: relation,
-            joinColumnName: computeMorphRelationFieldJoinColumnName({
-              name: fieldMetadataForCreate.name,
-              targetObjectMetadataNameSingular:
-                targetObjectMetadata.nameSingular,
+            fieldMetadataInput: {
+              ...fieldMetadataForCreate,
+              name: currentMorphRelationFieldName,
+            },
+            relationCreationPayload: relationCreationPayload,
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+              name: currentMorphRelationFieldName,
             }),
           },
         );
@@ -97,21 +100,22 @@ export class FieldMetadataMorphRelationService {
         },
       );
 
-      const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        omit(relationFieldMetadataForCreate, 'id'),
-      );
+      const createdMorphFieldMetadataItemWithoutTargetField =
+        await fieldMetadataRepository.save(
+          omit({ ...relationFieldMetadataForCreate, morphId }, 'id'),
+        );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
-        relation.targetFieldLabel,
+        relationCreationPayload.targetFieldLabel,
       );
 
       const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation(
         {
-          objectMetadataId: relation.targetObjectMetadataId,
+          objectMetadataId: relationCreationPayload.targetObjectMetadataId,
           type: FieldMetadataType.RELATION,
           name: targetFieldMetadataName,
-          label: relation.targetFieldLabel,
-          icon: relation.targetFieldIcon,
+          label: relationCreationPayload.targetFieldLabel,
+          icon: relationCreationPayload.targetFieldIcon,
           workspaceId: fieldMetadataForCreate.workspaceId,
           settings: fieldMetadataForCreate.settings,
         },
@@ -126,11 +130,11 @@ export class FieldMetadataMorphRelationService {
               targetFieldLabel: fieldMetadataForCreate.label,
               targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
               type:
-                relation.type === RelationType.ONE_TO_MANY
+                relationCreationPayload.type === RelationType.ONE_TO_MANY
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },
-            joinColumnName: computeRelationFieldJoinColumnName({
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
               name: targetFieldMetadataToCreate.name,
             }),
           },
@@ -144,12 +148,13 @@ export class FieldMetadataMorphRelationService {
 
       const targetFieldMetadata = await fieldMetadataRepository.save({
         ...targetFieldMetadataToCreateWithRelationWithId,
-        relationTargetFieldMetadataId: createdFieldMetadataItem.id,
+        relationTargetFieldMetadataId:
+          createdMorphFieldMetadataItemWithoutTargetField.id,
       });
 
       const createdFieldMetadataItemUpdated =
         await fieldMetadataRepository.save({
-          ...createdFieldMetadataItem,
+          ...createdMorphFieldMetadataItemWithoutTargetField,
           relationTargetFieldMetadataId: targetFieldMetadata.id,
         });
 
@@ -157,118 +162,5 @@ export class FieldMetadataMorphRelationService {
     }
 
     return fieldsCreated;
-  }
-
-  async findCachedFieldMetadataMorphRelation(
-    fieldMetadataItems: Array<
-      Pick<
-        FieldMetadataEntity,
-        | 'id'
-        | 'type'
-        | 'objectMetadataId'
-        | 'relationTargetFieldMetadataId'
-        | 'relationTargetObjectMetadataId'
-        | 'name'
-      >
-    >,
-    workspaceId: string,
-  ): Promise<
-    Array<{
-      sourceObjectMetadata: ObjectMetadataEntity;
-      sourceFieldMetadata: FieldMetadataEntity;
-      targetObjectMetadata: ObjectMetadataEntity;
-      targetFieldMetadata: FieldMetadataEntity;
-    }>
-  > {
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspaceId,
-      );
-
-    const fieldMetadataItemsAndMorphSiblings: Pick<
-      FieldMetadataEntity,
-      | 'id'
-      | 'type'
-      | 'objectMetadataId'
-      | 'relationTargetFieldMetadataId'
-      | 'relationTargetObjectMetadataId'
-      | 'name'
-    >[] = fieldMetadataItems.flatMap((fieldMetadataItem) => {
-      const fieldsById =
-        objectMetadataMaps.byId[fieldMetadataItem.objectMetadataId]?.fieldsById;
-
-      if (!isDefined(fieldsById)) {
-        throw new FieldMetadataException(
-          `Fields by id not found for object metadata ${fieldMetadataItem.objectMetadataId}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      return Object.values(fieldsById)
-        .filter(
-          (fieldMetadataById) =>
-            fieldMetadataItem.name === fieldMetadataById.name,
-        )
-        .map((fieldMetadataById) => {
-          return {
-            id: fieldMetadataById.id,
-            type: fieldMetadataById.type,
-            objectMetadataId: fieldMetadataById.objectMetadataId,
-            relationTargetFieldMetadataId:
-              fieldMetadataById.relationTargetFieldMetadataId,
-            relationTargetObjectMetadataId:
-              fieldMetadataById.relationTargetObjectMetadataId,
-            name: fieldMetadataById.name,
-          };
-        });
-    });
-
-    return fieldMetadataItemsAndMorphSiblings.map((fieldMetadataItem) => {
-      const {
-        id,
-        objectMetadataId,
-        relationTargetFieldMetadataId,
-        relationTargetObjectMetadataId,
-      } = fieldMetadataItem;
-
-      if (!relationTargetObjectMetadataId || !relationTargetFieldMetadataId) {
-        throw new FieldMetadataException(
-          `Relation target object metadata id or relation target field metadata id not found for field metadata ${id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
-      const targetObjectMetadata =
-        objectMetadataMaps.byId[relationTargetObjectMetadataId];
-      const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
-      const targetFieldMetadata =
-        targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
-
-      if (
-        !sourceObjectMetadata ||
-        !targetObjectMetadata ||
-        !sourceFieldMetadata ||
-        !targetFieldMetadata
-      ) {
-        throw new FieldMetadataException(
-          `Field relation metadata not found for field metadata ${id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      return {
-        sourceObjectMetadata:
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            sourceObjectMetadata,
-          ) as ObjectMetadataEntity,
-        sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
-        targetObjectMetadata:
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            targetObjectMetadata,
-          ) as ObjectMetadataEntity,
-        targetFieldMetadata: targetFieldMetadata as FieldMetadataEntity,
-      };
-    });
   }
 }

@@ -25,7 +25,7 @@ runs:
       uses: actions/cache/restore@v4
       id: restore-cache
       with:
-        key:  ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}
+        key: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}
         restore-keys: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-
         path: |
           .cache

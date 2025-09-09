@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -18,10 +19,11 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity], 'core'),
-    TypeOrmModule.forFeature([UserWorkspace, Workspace], 'core'),
+    TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity]),
+    TypeOrmModule.forFeature([UserWorkspace, Workspace]),
     UserRoleModule,
     AgentRoleModule,
+    ApiKeyModule,
     PermissionsModule,
     UserWorkspaceModule,
     ObjectPermissionModule,

@@ -34,7 +34,7 @@ export const fromObjectMetadataItemWithFieldMapsToFlatObjectMetadata = ({
   return {
     ...rest,
     flatFieldMetadatas,
-    uniqueIdentifier: rest.standardId ?? rest.id,
+    universalIdentifier: rest.standardId ?? rest.id,
     flatIndexMetadatas: [], // prastoin TODO convert from indexMetadatas to flatIndexMetadatas
   };
 };

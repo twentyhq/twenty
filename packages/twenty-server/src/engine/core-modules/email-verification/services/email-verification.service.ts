@@ -8,6 +8,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -29,7 +30,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 @Injectable()
 export class EmailVerificationService {
   constructor(
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly domainManagerService: DomainManagerService,
     private readonly emailService: EmailService,
@@ -55,7 +56,7 @@ export class EmailVerificationService {
       await this.emailVerificationTokenService.generateToken(userId, email);
 
     const linkPathnameAndSearchParams = {
-      pathname: 'verify-email',
+      pathname: AppPath.VerifyEmail,
       searchParams: {
         emailVerificationToken,
         email,

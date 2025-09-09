@@ -1,4 +1,9 @@
+import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 type WorkspaceMemberDataSeed = {
   id: string;
@@ -28,7 +33,14 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   JANE: '20202020-463f-435b-828c-107e007a2711',
 };
 
-export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
+const {
+  workspaceMembers: randomWorkspaceMembers,
+  workspaceMemberIds: randomWorkspaceMemberIds,
+} = generateRandomUsers();
+
+export const RANDOM_WORKSPACE_MEMBER_IDS = randomWorkspaceMemberIds;
+
+const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     nameFirstName: 'Tim',
@@ -66,3 +78,27 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userId: USER_DATA_SEED_IDS.JANE,
   },
 ];
+
+export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
+  ...originalWorkspaceMembers,
+  ...randomWorkspaceMembers,
+];
+
+export const getWorkspaceMemberDataSeeds = (
+  workspaceId: string,
+): WorkspaceMemberDataSeed[] => {
+  // In test environment, only return original members to avoid conflicts
+  if (process.env.NODE_ENV === 'test') {
+    return originalWorkspaceMembers;
+  }
+
+  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+    // Apple workspace gets all workspace members (original + random)
+    return WORKSPACE_MEMBER_DATA_SEEDS;
+  } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
+    // YC workspace gets all 4 original workspace members
+    return originalWorkspaceMembers;
+  }
+
+  return originalWorkspaceMembers;
+};

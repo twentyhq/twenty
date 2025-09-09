@@ -3,6 +3,7 @@ import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -11,11 +12,15 @@ import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
+import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
-import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
+import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
@@ -26,16 +31,26 @@ import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
-export const prefillCoreViews = async (
-  dataSource: DataSource,
-  workspaceId: string,
-  objectMetadataItems: ObjectMetadataEntity[],
-): Promise<ViewEntity[]> => {
+type PrefillCoreViewsArgs = {
+  coreDataSource: DataSource;
+  workspaceId: string;
+  objectMetadataItems: ObjectMetadataEntity[];
+  schemaName: string;
+  featureFlags?: Record<string, boolean>;
+};
+
+export const prefillCoreViews = async ({
+  coreDataSource,
+  workspaceId,
+  objectMetadataItems,
+  schemaName,
+  featureFlags,
+}: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
     opportunitiesAllView(objectMetadataItems, true),
-    opportunitiesTableByStageView(objectMetadataItems, true),
+    opportunitiesByStageView(objectMetadataItems, true),
     notesAllView(objectMetadataItems, true),
     tasksAllView(objectMetadataItems, true),
     tasksAssignedToMeView(objectMetadataItems, true),
@@ -45,7 +60,11 @@ export const prefillCoreViews = async (
     workflowRunsAllView(objectMetadataItems, true),
   ];
 
-  const queryRunner = dataSource.createQueryRunner();
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems, true));
+  }
+
+  const queryRunner = coreDataSource.createQueryRunner();
 
   await queryRunner.connect();
 
@@ -54,12 +73,32 @@ export const prefillCoreViews = async (
 
     const createdViews = await createCoreViews(queryRunner, workspaceId, views);
 
+    await prefillWorkspaceFavorites(
+      createdViews
+        .filter(
+          (view) =>
+            view.key === 'INDEX' &&
+            shouldSeedWorkspaceFavorite(
+              view.objectMetadataId,
+              objectMetadataItems,
+            ),
+        )
+        .map((view) => view.id),
+      queryRunner.manager as WorkspaceEntityManager,
+      schemaName,
+    );
+
     await queryRunner.commitTransaction();
 
     return createdViews;
   } catch (error) {
     if (queryRunner.isTransactionActive) {
-      await queryRunner.rollbackTransaction();
+      try {
+        await queryRunner.rollbackTransaction();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.trace(`Failed to rollback transaction: ${error.message}`);
+      }
     }
     throw error;
   } finally {

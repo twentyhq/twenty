@@ -36,6 +36,7 @@ export class WorkspaceDataSource extends DataSource {
   rolesPermissionsVersion: string;
   permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated;
   dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
+  isPoolSharingEnabled: boolean;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -44,6 +45,7 @@ export class WorkspaceDataSource extends DataSource {
     featureFlagMap: FeatureFlagMap,
     rolesPermissionsVersion: string,
     permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated,
+    isPoolSharingEnabled: boolean,
   ) {
     super(options);
     this.internalContext = internalContext;
@@ -53,6 +55,7 @@ export class WorkspaceDataSource extends DataSource {
     this.manager = this.createEntityManager();
     this.rolesPermissionsVersion = rolesPermissionsVersion;
     this.permissionsPerRoleId = permissionsPerRoleId;
+    this.isPoolSharingEnabled = isPoolSharingEnabled;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -247,5 +250,26 @@ export class WorkspaceDataSource extends DataSource {
 
   setFeatureFlagMapVersion(featureFlagMapVersion: string) {
     this.featureFlagMapVersion = featureFlagMapVersion;
+  }
+
+  override async destroy(): Promise<void> {
+    if (this.isPoolSharingEnabled) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
+      );
+      // We should NOT call dataSource.destroy() here, because that would end
+      // the shared pool, potentially affecting other active users of that pool.
+      // The PgPoolSharedService is responsible for the lifecycle of shared pools.
+
+      return Promise.resolve();
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Calling safelyDestroyDataSource.`,
+      );
+
+      return super.destroy();
+    }
   }
 }

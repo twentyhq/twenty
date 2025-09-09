@@ -65,12 +65,12 @@ export class WorkspaceRoleComparator {
     const roleDifferences = diff(fromRoleMap, toRoleMap);
 
     for (const difference of roleDifferences) {
-      const uniqueIdentifier = difference.path[0] as string;
+      const universalIdentifier = difference.path[0] as string;
 
       switch (difference.type) {
         case 'CREATE': {
           const toRole = toFlatRoles.find(
-            (role) => keyFactory(role) === uniqueIdentifier,
+            (role) => keyFactory(role) === universalIdentifier,
           );
 
           if (toRole) {
@@ -84,10 +84,10 @@ export class WorkspaceRoleComparator {
         }
         case 'CHANGE': {
           const fromRole = fromFlatRoles.find(
-            (role) => keyFactory(role) === uniqueIdentifier,
+            (role) => keyFactory(role) === universalIdentifier,
           );
           const toRole = toFlatRoles.find(
-            (role) => keyFactory(role) === uniqueIdentifier,
+            (role) => keyFactory(role) === universalIdentifier,
           );
 
           if (fromRole && toRole) {
@@ -101,7 +101,7 @@ export class WorkspaceRoleComparator {
         }
         case 'REMOVE': {
           const fromRole = fromFlatRoles.find(
-            (role) => keyFactory(role) === uniqueIdentifier,
+            (role) => keyFactory(role) === universalIdentifier,
           );
 
           if (fromRole && difference.path.length === 1) {

@@ -83,4 +83,16 @@ export class StripeSubscriptionService {
   ): Promise<Stripe.Subscription> {
     return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
   }
+
+  async setYearlyThresholds(stripeSubscriptionId: string) {
+    return this.stripe.subscriptions.update(stripeSubscriptionId, {
+      billing_thresholds: {
+        amount_gte:
+          this.twentyConfigService.get(
+            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+          ) * 12,
+        reset_billing_cycle_anchor: false,
+      },
+    });
+  }
 }

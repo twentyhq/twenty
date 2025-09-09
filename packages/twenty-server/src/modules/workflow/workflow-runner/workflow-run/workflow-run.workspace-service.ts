@@ -115,7 +115,7 @@ export class WorkflowRunWorkspaceService {
       ? parseInt(workflowRunCountMatch[1], 10)
       : 0;
 
-    const workflowRun = workflowRunRepository.create({
+    const workflowRun = {
       id: workflowRunId ?? v4(),
       name: `#${workflowRunCount + 1} - ${workflow.name}`,
       workflowVersionId,
@@ -124,9 +124,8 @@ export class WorkflowRunWorkspaceService {
       status,
       position,
       state: initState,
-      enqueuedAt:
-        status === WorkflowRunStatus.ENQUEUED ? new Date().toISOString() : null,
-    });
+      enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
+    };
 
     await workflowRunRepository.insert(workflowRun);
 
@@ -252,6 +251,38 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+  }
+
+  @WithLock('workflowRunId')
+  async updateWorkflowRunStepInfos({
+    stepInfos,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepInfos: Record<string, WorkflowRunStepInfo>;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const partialUpdate = {
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          ...stepInfos,
+        },
+      },
+    };
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate,
+    });
   }
 
   @WithLock('workflowRunId')
@@ -392,6 +423,11 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+    await workflowRunRepository.update(
+      workflowRunToUpdate.id,
+      partialUpdate,
+      undefined,
+      ['id'],
+    );
   }
 }

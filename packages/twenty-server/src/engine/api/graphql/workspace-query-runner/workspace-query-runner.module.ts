@@ -14,6 +14,7 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
 
@@ -23,13 +24,14 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
     AuditModule,
     TelemetryModule,
     FileModule,
     FeatureFlagModule,
     RecordTransformerModule,
     RecordPositionModule,
+    SubscriptionsModule,
   ],
   providers: [
     ...workspaceQueryRunnerFactories,

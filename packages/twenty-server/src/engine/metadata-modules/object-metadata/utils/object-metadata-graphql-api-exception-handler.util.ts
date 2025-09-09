@@ -12,8 +12,14 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter';
 
 export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+    workspaceMigrationBuilderExceptionV2Formatter(error);
+  }
+
   if (error instanceof InvalidMetadataException) {
     throw new UserInputError(error);
   }
@@ -25,6 +31,7 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT:
         throw new UserInputError(error);
       case ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
+      case ObjectMetadataExceptionCode.NAME_CONFLICT:
         throw new ForbiddenError(error);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
         throw new ConflictError(error);

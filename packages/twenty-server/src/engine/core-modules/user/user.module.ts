@@ -5,7 +5,6 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -32,18 +31,18 @@ import { UserService } from './services/user.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([User], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([User]),
         TypeORMModule,
         FileModule,
       ],
       resolvers: userAutoResolverOpts,
     }),
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
     DataSourceModule,
     FileUploadModule,
     WorkspaceModule,
     OnboardingModule,
-    TypeOrmModule.forFeature([KeyValuePair, UserWorkspace], 'core'),
+    TypeOrmModule.forFeature([KeyValuePair, UserWorkspace]),
     UserVarsModule,
     UserWorkspaceModule,
     AuditModule,
@@ -53,11 +52,6 @@ import { UserService } from './services/user.service';
     UserWorkspaceModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
-  providers: [
-    UserService,
-    UserResolver,
-    TypeORMService,
-    WorkspaceMemberTranspiler,
-  ],
+  providers: [UserService, UserResolver, WorkspaceMemberTranspiler],
 })
 export class UserModule {}

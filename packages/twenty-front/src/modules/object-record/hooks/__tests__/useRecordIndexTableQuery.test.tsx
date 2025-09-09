@@ -11,10 +11,15 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { type MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { peopleQueryResult } from '~/testing/mock-data/people';
+import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
+import {
+  getMockPersonObjectMetadataItem,
+  peopleQueryResult,
+} from '~/testing/mock-data/people';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
+const mockPersonObjectMetadataItem = getMockPersonObjectMetadataItem();
 
 const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
@@ -660,29 +665,33 @@ jest.mock('react-router-dom', () => ({
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <HookMockWrapper>
-      <RecordTableContextProvider
-        objectNameSingular={objectNameSingular}
-        recordTableId={recordTableId}
-        viewBarId="instanceId"
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: 'instanceId' }}
       >
-        <ObjectNamePluralSetter>
-          <ViewComponentInstanceContext.Provider
-            value={{ instanceId: 'instanceId' }}
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={recordTableId}
+        >
+          <JestRecordIndexContextProviderWrapper
+            objectMetadataItem={mockPersonObjectMetadataItem}
           >
-            <RecordComponentInstanceContextsWrapper
-              componentInstanceId={recordTableId}
+            <RecordTableContextProvider
+              objectNameSingular={objectNameSingular}
+              recordTableId={recordTableId}
+              viewBarId="instanceId"
             >
-              <RecordTableComponentInstance recordTableId={recordTableId}>
-                <RecordGroupContext.Provider
-                  value={{ recordGroupId: 'default' }}
-                >
-                  {children}
-                </RecordGroupContext.Provider>
-              </RecordTableComponentInstance>
-            </RecordComponentInstanceContextsWrapper>
-          </ViewComponentInstanceContext.Provider>
-        </ObjectNamePluralSetter>
-      </RecordTableContextProvider>
+              <ObjectNamePluralSetter>
+                <RecordTableComponentInstance recordTableId={recordTableId}>
+                  <RecordGroupContext.Provider
+                    value={{ recordGroupId: 'default' }}
+                  >
+                    {children}
+                  </RecordGroupContext.Provider>
+                </RecordTableComponentInstance>
+              </ObjectNamePluralSetter>
+            </RecordTableContextProvider>
+          </JestRecordIndexContextProviderWrapper>
+        </RecordComponentInstanceContextsWrapper>
+      </ViewComponentInstanceContext.Provider>
     </HookMockWrapper>
   );
 };

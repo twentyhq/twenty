@@ -12,6 +12,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -44,7 +45,6 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
@@ -52,11 +52,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [ObjectMetadataEntity, FieldMetadataEntity],
-          'core',
-        ),
-        TypeOrmModule.forFeature([FeatureFlag, ViewEntity], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([
+          ObjectMetadataEntity,
+          FieldMetadataEntity,
+        ]),
+        TypeOrmModule.forFeature([FeatureFlag, ViewEntity]),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
@@ -71,6 +71,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceDataSourceModule,
         FeatureFlagModule,
         WorkspaceMigrationV2Module,
+        CoreViewModule,
       ],
       services: [
         ObjectMetadataService,
@@ -100,10 +101,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [
-            WorkspaceMigrationBuilderExceptionV2Interceptor,
-            ObjectMetadataGraphqlApiExceptionInterceptor,
-          ],
+          interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
           filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],

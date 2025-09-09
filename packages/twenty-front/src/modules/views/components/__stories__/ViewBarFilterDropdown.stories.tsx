@@ -7,7 +7,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -16,6 +15,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { within } from '@storybook/test';
@@ -29,10 +29,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { mockedCoreViewsData } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
@@ -50,13 +47,10 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         instanceId,
       );
 
-      const setPrefetchViews = useSetRecoilState(prefetchViewsState);
       const setCoreViews = useSetRecoilState(coreViewsState);
 
-      const mockView = mockedViewsData[0];
       const mockCoreView = mockedCoreViewsData[0];
 
-      setPrefetchViews([mockView]);
       setCoreViews([mockCoreView]);
 
       const setCurrentViewId = useSetRecoilComponentState(
@@ -64,7 +58,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId(mockView.id);
+      setCurrentViewId(mockCoreView.id);
 
       const columns = companyObjectMetadataItem.fields.map(
         (fieldMetadataItem, index) =>
@@ -79,6 +73,16 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       setCurrentRecordFields(columns);
 
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
+
       return (
         <RecordIndexContextProvider
           value={{
@@ -89,6 +93,10 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             objectNameSingular: CoreObjectNameSingular.Company,
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
           }}
         >
           <RecordComponentInstanceContextsWrapper

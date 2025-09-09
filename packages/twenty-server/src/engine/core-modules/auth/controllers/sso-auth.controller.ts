@@ -13,6 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { Response } from 'express';
+import { AppPath } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import {
@@ -50,9 +51,9 @@ export class SSOAuthController {
     private readonly domainManagerService: DomainManagerService,
 
     private readonly sSOService: SSOService,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
+    @InjectRepository(WorkspaceSSOIdentityProvider)
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
   ) {}
 
@@ -162,7 +163,7 @@ export class SSOAuthController {
             this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
               workspaceIdentityProvider?.workspace,
             ),
-          pathname: '/verify',
+          pathname: AppPath.Verify,
         }),
       );
     }

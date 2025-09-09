@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
@@ -16,8 +19,9 @@ import {
 @Injectable()
 export class ViewService {
   constructor(
-    @InjectRepository(ViewEntity, 'core')
+    @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    private readonly i18nService: I18nService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
@@ -176,5 +180,43 @@ export class ViewService {
     await this.viewRepository.delete(id);
 
     return true;
+  }
+
+  processViewNameWithTemplate(
+    viewName: string,
+    isCustom: boolean,
+    objectLabelPlural?: string,
+    locale?: keyof typeof APP_LOCALES,
+  ): string {
+    if (viewName.includes('{objectLabelPlural}') && objectLabelPlural) {
+      const messageId = generateMessageId(viewName);
+      const translatedTemplate = this.i18nService.translateMessage({
+        messageId,
+        values: {
+          objectLabelPlural,
+        },
+        locale: locale ?? SOURCE_LOCALE,
+      });
+
+      if (translatedTemplate !== messageId) {
+        return translatedTemplate;
+      }
+
+      return viewName.replace('{objectLabelPlural}', objectLabelPlural);
+    }
+
+    if (!isCustom) {
+      const messageId = generateMessageId(viewName);
+      const translatedMessage = this.i18nService.translateMessage({
+        messageId,
+        locale: locale ?? SOURCE_LOCALE,
+      });
+
+      if (translatedMessage !== messageId) {
+        return translatedMessage;
+      }
+    }
+
+    return viewName;
   }
 }
