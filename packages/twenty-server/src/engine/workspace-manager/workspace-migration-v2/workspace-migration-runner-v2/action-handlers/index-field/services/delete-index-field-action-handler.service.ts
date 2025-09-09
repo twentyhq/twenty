@@ -2,33 +2,33 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { type DeleteIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
+import { DeleteIndexFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-field-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { In } from 'typeorm';
 
 @Injectable()
 export class DeleteIndexFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'delete_index',
+  'delete_index_field',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
+    context: WorkspaceMigrationActionRunnerArgs<DeleteIndexFieldAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
     const fieldMetadataRepository =
-      queryRunner.manager.getRepository<IndexMetadataEntity>(
-        IndexMetadataEntity,
+      queryRunner.manager.getRepository<IndexFieldMetadataEntity>(
+        IndexFieldMetadataEntity,
       );
 
-    const { flatIndexMetadataId } = action;
+    const { flatIndexFieldMetadataId } = action;
 
     await fieldMetadataRepository.delete({
-      id: In([flatIndexMetadataId]),
+      id: In([flatIndexFieldMetadataId]),
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
+    _context: WorkspaceMigrationActionRunnerArgs<DeleteIndexFieldAction>,
   ): Promise<void> {
     throw new Error('Not implemented');
   }

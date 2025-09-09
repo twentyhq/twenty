@@ -17,7 +17,10 @@ export type UpdateIndexFieldAction = {
   flatIndexFieldMetadataId: string;
   updates: Array<
     {
-      [P in FlatIndexFieldMetadataPropertiesToCompare]: PropertyUpdate<FlatIndexFieldMetadata, P>;
+      [P in FlatIndexFieldMetadataPropertiesToCompare]: PropertyUpdate<
+        FlatIndexFieldMetadata,
+        P
+      >;
     }[FlatIndexFieldMetadataPropertiesToCompare]
   >;
 };
@@ -26,5 +29,6 @@ export type WorkspaceMigrationIndexFieldActionV2 =
   | CreateIndexFieldAction
   | DeleteIndexFieldAction
   | UpdateIndexFieldAction;
+
 export type WorkspaceMigrationIndexFieldActionTypeV2 =
   WorkspaceMigrationIndexFieldActionV2['type'];
