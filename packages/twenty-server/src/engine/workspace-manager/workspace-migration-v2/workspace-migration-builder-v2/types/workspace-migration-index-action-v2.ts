@@ -1,4 +1,4 @@
-import { type FlatIndexMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-properites-to-compare.type';
+import { type FlatIndexMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-properties-to-compare.type';
 import { type FlatIndexMetadataPropertyUpdate } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-property-update.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 
