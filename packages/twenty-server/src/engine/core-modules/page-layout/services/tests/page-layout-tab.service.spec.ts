@@ -51,15 +51,6 @@ describe('PageLayoutTabService', () => {
     deletedAt: null,
   } as PageLayoutWidgetEntity;
 
-  const mockPageLayout = {
-    id: 'page-layout-id',
-    workspaceId: 'workspace-id',
-    title: 'Test Layout',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
 
