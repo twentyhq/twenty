@@ -224,9 +224,11 @@ describe('PageLayoutWidgetService', () => {
       };
 
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toThrow(PageLayoutWidgetException);
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toHaveProperty(
         'code',
@@ -242,9 +244,11 @@ describe('PageLayoutWidgetService', () => {
       };
 
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toThrow(PageLayoutWidgetException);
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toHaveProperty(
         'code',
@@ -260,9 +264,11 @@ describe('PageLayoutWidgetService', () => {
       };
 
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toThrow(PageLayoutWidgetException);
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
       ).rejects.toHaveProperty(
         'code',

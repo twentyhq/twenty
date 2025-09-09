@@ -282,9 +282,11 @@ describe('PageLayoutTabService', () => {
       };
 
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutTabService.create(pageLayoutTabData, workspaceId),
       ).rejects.toThrow(PageLayoutTabException);
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutTabService.create(pageLayoutTabData, workspaceId),
       ).rejects.toHaveProperty(
         'code',
