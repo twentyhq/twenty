@@ -393,7 +393,9 @@ describe('PageLayoutService', () => {
 
       expect(
         twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId, 'dashboard');
+      ).toHaveBeenCalledWith(workspaceId, 'dashboard', {
+        shouldBypassPermissionChecks: true,
+      });
       expect(mockDashboardRepository.find).toHaveBeenCalledWith({
         where: {
           pageLayoutId: id,
