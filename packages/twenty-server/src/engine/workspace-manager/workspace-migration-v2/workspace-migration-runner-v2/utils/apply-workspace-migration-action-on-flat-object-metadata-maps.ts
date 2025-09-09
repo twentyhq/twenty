@@ -132,10 +132,13 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
         objectMetadataId: action.objectMetadataId,
       });
     }
+    // TODO
     case 'create_index':
     case 'delete_index':
     case 'create_view':
+    case 'update_index':
       return flatObjectMetadataMaps;
+    ///
     default: {
       assertUnreachable(
         action,

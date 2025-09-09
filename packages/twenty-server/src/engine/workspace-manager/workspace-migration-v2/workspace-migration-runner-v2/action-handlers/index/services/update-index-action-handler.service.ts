@@ -14,7 +14,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
   ): Promise<void> {
-    const { action, queryRunner, flatObjectMetadataMaps } = context;
+    const { action, queryRunner } = context;
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<IndexMetadataEntity>(
         IndexMetadataEntity,

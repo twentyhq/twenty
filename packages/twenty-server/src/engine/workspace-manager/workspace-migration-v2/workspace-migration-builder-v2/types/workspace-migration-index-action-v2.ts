@@ -28,7 +28,7 @@ export type UpdateIndexAction = {
 export type WorkspaceMigrationIndexActionV2 =
   | CreateIndexAction
   | DeleteIndexAction
-  // | UpdateIndexAction;
+  | UpdateIndexAction;
 
 export type WorkspaceMigrationIndexActionTypeV2 =
   WorkspaceMigrationIndexActionV2['type'];
