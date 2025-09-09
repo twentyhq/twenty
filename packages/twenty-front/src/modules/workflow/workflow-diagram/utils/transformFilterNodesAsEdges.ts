@@ -1,8 +1,9 @@
+import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagramEdge,
-  type WorkflowDiagramEdgeType,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getFilterEdgeType } from '@/workflow/workflow-diagram/utils/getFilterEdgeType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const transformFilterNodesAsEdges = <
@@ -11,14 +12,12 @@ export const transformFilterNodesAsEdges = <
 >({
   nodes,
   edges,
-  getFilterEdgeType,
+  workflowContext,
   isWorkflowBranchEnabled,
 }: {
   nodes: T[];
   edges: U[];
-  getFilterEdgeType: (params: {
-    incomingNode: T | undefined;
-  }) => WorkflowDiagramEdgeType;
+  workflowContext: WorkflowContext;
   isWorkflowBranchEnabled: boolean;
 }): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
@@ -43,7 +42,6 @@ export const transformFilterNodesAsEdges = <
   for (const filterNode of filterNodes) {
     const incomingEdge = edges.find((edge) => edge.target === filterNode.id);
     const outgoingEdge = edges.find((edge) => edge.source === filterNode.id);
-    const incomingNode = nodes.find((node) => node.id === incomingEdge?.source);
 
     if (isDefined(incomingEdge) && isDefined(outgoingEdge)) {
       if (
@@ -53,11 +51,11 @@ export const transformFilterNodesAsEdges = <
         throw new Error('Expected the filter node to be of action type');
       }
 
+      const filterEdgeType = getFilterEdgeType({ workflowContext });
+
       const newEdge: U = {
         ...incomingEdge,
-        type: getFilterEdgeType({
-          incomingNode: incomingNode,
-        }),
+        type: filterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         selectable: isWorkflowBranchEnabled === true,

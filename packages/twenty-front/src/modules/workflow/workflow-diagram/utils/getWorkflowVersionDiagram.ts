@@ -1,4 +1,5 @@
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
@@ -22,31 +23,21 @@ export const getWorkflowVersionDiagram = ({
     return EMPTY_DIAGRAM;
   }
 
+  const workflowContext: WorkflowContext = isEditable
+    ? 'workflow'
+    : 'workflow-version';
+
   const diagram = generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    workflowContext: isEditable ? 'workflow' : 'workflow-version',
+    workflowContext,
     isWorkflowBranchEnabled,
   });
 
   return transformFilterNodesAsEdges({
     nodes: diagram.nodes,
     edges: diagram.edges,
-    getFilterEdgeType: ({ incomingNode }) => {
-      if (!isEditable) {
-        // TODO: special design probably for iterators
-        return 'filter--readonly';
-      }
-
-      if (
-        incomingNode?.data.nodeType === 'action' &&
-        incomingNode.data.actionType === 'ITERATOR'
-      ) {
-        return 'iterator-completed--filter--editable';
-      }
-
-      return 'filter--editable';
-    },
+    workflowContext,
     isWorkflowBranchEnabled: isWorkflowBranchEnabled === true,
   });
 };

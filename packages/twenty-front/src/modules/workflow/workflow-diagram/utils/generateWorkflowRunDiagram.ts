@@ -106,7 +106,7 @@ export const generateWorkflowRunDiagram = ({
     diagram: transformFilterNodesAsEdges({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-      getFilterEdgeType: () => 'filter--run',
+      workflowContext: 'workflow-run',
       isWorkflowBranchEnabled,
     }),
     stepToOpenByDefault,
