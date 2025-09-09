@@ -2,7 +2,6 @@ import { Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -18,7 +17,6 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/get-root-steps.utils';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -113,17 +111,7 @@ export class RunWorkflowJob {
       workspaceId,
     });
 
-    const rootSteps = getRootSteps(workflowVersion.steps);
-
-    const isWorkflowBranchEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-        workspaceId,
-      );
-
-    const stepIds = isWorkflowBranchEnabled
-      ? (workflowVersion.trigger.nextStepIds ?? [])
-      : (rootSteps.map((step) => step.id) ?? []);
+    const stepIds = workflowVersion.trigger.nextStepIds ?? [];
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds,

@@ -1,87 +1,118 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('Rename an object metadata with morph relation should succeed', () => {
-  let opportunityId = '';
-  let personId = '';
-  let companyId = '';
-  let morphRelationField: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
-    morphRelations: RelationDTO[];
-  };
+  let createdObjectMetadataPersonId: string;
+  let createdObjectMetadataOpportunityId: string;
+  let createdObjectMetadataCompanyId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
 
   beforeEach(async () => {
     const {
       data: {
         createOneObject: { id: aId },
       },
-    } = await createOneObjectMetadata({
+    } = await forceCreateOneObjectMetadata({
       input: {
-        nameSingular: 'opportunityForRename',
-        namePlural: 'opportunitiesForRename',
+        nameSingular: 'opportunityForRenameSecond',
+        namePlural: 'opportunitiesForRenameSecond',
         labelSingular: 'Opportunity For Rename',
         labelPlural: 'Opportunities For Rename',
         icon: 'IconOpportunity',
       },
     });
 
-    opportunityId = aId;
+    createdObjectMetadataOpportunityId = aId;
     const {
       data: {
         createOneObject: { id: bId },
       },
-    } = await createOneObjectMetadata({
+    } = await forceCreateOneObjectMetadata({
       input: {
-        nameSingular: 'personForRename',
-        namePlural: 'peopleForRename',
+        nameSingular: 'personForRenameSecond',
+        namePlural: 'peopleForRenameSecond',
         labelSingular: 'Person For Rename',
         labelPlural: 'People For Rename',
         icon: 'IconPerson',
       },
     });
 
-    personId = bId;
+    createdObjectMetadataPersonId = bId;
     const {
       data: {
         createOneObject: { id: cId },
       },
-    } = await createOneObjectMetadata({
+    } = await forceCreateOneObjectMetadata({
       input: {
-        nameSingular: 'companyForRename',
-        namePlural: 'companiesForRename',
+        nameSingular: 'companyForRenameSecond',
+        namePlural: 'companiesForRenameSecond',
         labelSingular: 'Company For Rename',
         labelPlural: 'Companies For Rename',
         icon: 'IconCompany',
       },
     });
 
-    companyId = cId;
+    createdObjectMetadataCompanyId = cId;
   });
 
   afterEach(async () => {
-    await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
-    await deleteOneObjectMetadata({ input: { idToDelete: personId } });
-    await deleteOneObjectMetadata({ input: { idToDelete: companyId } });
+    const createdObjectMetadataIds = [
+      createdObjectMetadataPersonId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataCompanyId,
+    ];
+
+    for (const objectMetadataId of createdObjectMetadataIds) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: objectMetadataId },
+      });
+    }
   });
 
-  it('should rename custom object, and update the join column name of the morph relation that contains the object name', async () => {
-    morphRelationField = await createMorphRelationBetweenObjects({
+  it('should rename custom object, and update both the field name and join column name of the morph relation that contains the object name', async () => {
+    const morphRelationField = await createMorphRelationBetweenObjects({
       name: 'owner',
-      objectMetadataId: opportunityId,
-      firstTargetObjectMetadataId: personId,
-      secondTargetObjectMetadataId: companyId,
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+      secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
       type: FieldMetadataType.MORPH_RELATION,
       relationType: RelationType.MANY_TO_ONE,
     });
+
+    expect(morphRelationField.morphRelations.length).toBe(2);
 
     const { data } = await updateOneObjectMetadata({
       gqlFields: `
@@ -91,20 +122,21 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       labelPlural
       `,
       input: {
-        idToUpdate: personId,
+        idToUpdate: createdObjectMetadataPersonId,
         updatePayload: {
-          nameSingular: 'personForRename2',
-          namePlural: 'peopleForRename2',
+          nameSingular: 'personForRenameSecond2',
+          namePlural: 'peopleForRenameSecond2',
           labelSingular: 'Person For Rename2',
           labelPlural: 'People For Rename2',
         },
       },
     });
 
-    expect(data.updateOneObject.nameSingular).toBe('personForRename2');
+    expect(data.updateOneObject.nameSingular).toBe('personForRenameSecond2');
 
     const ownerFieldMetadataOnPersonId = morphRelationField.morphRelations.find(
-      (morphRelation) => morphRelation.targetObjectMetadata.id === personId,
+      (morphRelation) =>
+        morphRelation.targetObjectMetadata.id === createdObjectMetadataPersonId,
     )?.sourceFieldMetadata.id;
 
     if (!ownerFieldMetadataOnPersonId) {
@@ -118,7 +150,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     });
 
     expect(fieldAfterRenaming.settings.joinColumnName).toBe(
-      'ownerPersonForRename2Id',
+      'ownerPersonForRenameSecondId',
     );
   });
 });

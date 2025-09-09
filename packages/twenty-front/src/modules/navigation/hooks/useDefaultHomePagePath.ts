@@ -10,7 +10,7 @@ import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
@@ -115,7 +115,7 @@ export const useDefaultHomePagePath = () => {
     }
 
     if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
-      return `${AppPath.Settings}/${SettingsPath.ProfilePage}`;
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     const defaultObjectPathInfo = getDefaultObjectPathInfo();

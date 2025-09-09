@@ -15,12 +15,12 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
     AppModule,
     WorkspaceSyncMetadataCommandsModule,
     DatabaseCommandModule,
-    WorkspaceCleanerModule,
     WorkspaceHealthCommandModule,
     MessagingMessageCleanerModule,
     WorkspaceMigrationRunnerCommandsModule,
     ObjectMetadataModule,
     FieldMetadataModule,
+    WorkspaceCleanerModule,
   ],
 })
 export class CommandModule {}

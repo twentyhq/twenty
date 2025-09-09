@@ -1671,6 +1671,11 @@ msgstr "Logisk operator"
 msgid "Logical operator for the filter group"
 msgstr "Logisk operator f\\u00f6r filtergruppen"
 
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
+
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1853,6 +1858,11 @@ msgstr "Forms fält för relation är inaktiverade för din arbetsyta"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "Multi-select fält standardvärde måste vara en array"
+
+#. js-lingui-id: 6rLmLu
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts

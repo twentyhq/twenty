@@ -43,7 +43,9 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
           },
           {
             children: integration.text,
-            href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+            href: getSettingsPath(SettingsPath.IntegrationDatabase, {
+              databaseKey,
+            }),
           },
           { children: connection.label },
         ]}

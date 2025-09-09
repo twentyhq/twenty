@@ -14,8 +14,6 @@ export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
-export { computeMorphRelationFieldJoinColumnName } from './fieldMetadata/compute-morph-relation-field-join-column-name.util';
-export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name.util';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
