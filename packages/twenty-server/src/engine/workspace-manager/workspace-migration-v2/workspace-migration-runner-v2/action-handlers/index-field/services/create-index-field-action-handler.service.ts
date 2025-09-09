@@ -7,7 +7,7 @@ import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-m
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
-export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
+export class CreateIndexFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create_index',
 ) {
   async executeForMetadata(
