@@ -7,13 +7,9 @@ import { PermissionFlagType } from '~/generated/graphql';
 type ExtendedPermissionFlag = PermissionFlagType | 'IMPERSONATE';
 
 const ALLOWED_FLAGS: ReadonlySet<string> = new Set([
-  ...Object.values(PermissionFlagType),
+  ...Object.values(PermissionFlagType).map((f) => String(f)),
   'IMPERSONATE',
 ]);
-
-const normalizeFlag = (flag: ExtendedPermissionFlag): string => {
-  return typeof flag === 'string' ? flag : (flag as unknown as string);
-};
 
 export const useHasPermissionFlag = (
   permissionFlag?: ExtendedPermissionFlag,
@@ -25,7 +21,7 @@ export const useHasPermissionFlag = (
     return true;
   }
 
-  const normalizedFlag = normalizeFlag(permissionFlag);
+  const normalizedFlag = String(permissionFlag);
 
   if (!ALLOWED_FLAGS.has(normalizedFlag)) {
     return false;
@@ -46,7 +42,7 @@ export const useHasPermissionFlag = (
     return false;
   }
 
-  const userFlagSet = new Set<string>(userFlags as unknown as string[]);
+  const userFlagSet = new Set<string>(userFlags.map((f) => String(f)));
 
   return userFlagSet.has(normalizedFlag);
 };

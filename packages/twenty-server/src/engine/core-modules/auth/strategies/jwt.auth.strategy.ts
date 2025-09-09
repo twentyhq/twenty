@@ -138,7 +138,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         payload.impersonationType !== ImpersonationTokenTypeEnum.SERVER
       ) {
         throw new AuthException(
-          'Invalid impersonation token',
+          'Invalid impersonation type in token',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         );
       }
@@ -150,7 +150,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         !isUUID(payload.impersonatorUserWorkspaceId)
       ) {
         throw new AuthException(
-          'Invalid impersonation token',
+          'Invalid or missing user workspace ID in impersonation token',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         );
       }
@@ -158,7 +158,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       if (payload.impersonationType === ImpersonationTokenTypeEnum.WORKSPACE) {
         if (payload.originalUserWorkspaceId !== payload.userWorkspaceId) {
           throw new AuthException(
-            'Invalid impersonation token',
+            'Original user workspace ID does not match user workspace ID in token',
             AuthExceptionCode.FORBIDDEN_EXCEPTION,
           );
         }
@@ -168,7 +168,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           payload.impersonatorUserWorkspaceId
         ) {
           throw new AuthException(
-            'Invalid impersonation token',
+            'User cannot impersonate themselves',
             AuthExceptionCode.FORBIDDEN_EXCEPTION,
           );
         }
@@ -212,16 +212,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     // this validate and attach impersonation metadata if present
     if (payload.isImpersonating === true) {
-      if (
-        payload.impersonationType !== ImpersonationTokenTypeEnum.WORKSPACE &&
-        payload.impersonationType !== ImpersonationTokenTypeEnum.SERVER
-      ) {
-        throw new AuthException(
-          'Invalid impersonation token',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
       if (payload.impersonationType === ImpersonationTokenTypeEnum.WORKSPACE) {
         // this ensure workspace policy allows impersonation
         if (workspace.allowImpersonation !== true) {
@@ -230,16 +220,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
             AuthExceptionCode.FORBIDDEN_EXCEPTION,
           );
         }
-
-        if (payload.originalUserWorkspaceId !== userWorkspace.id) {
-          throw new AuthException(
-            'Invalid impersonation token',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
         if ((user?.id as string) !== (payload.sub ?? payload.userId)) {
           throw new AuthException(
-            'Invalid impersonation token',
+            'Invalid impersonation token: user ID mismatch',
             AuthExceptionCode.FORBIDDEN_EXCEPTION,
           );
         }
