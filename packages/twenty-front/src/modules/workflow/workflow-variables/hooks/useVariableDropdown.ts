@@ -15,10 +15,10 @@ import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { isBaseOutputSchemaV2 } from '../types/guards/isBaseOutputSchemaV2';
+import { isLinkOutputSchema } from '../types/guards/isLinkOutputSchema';
+import { isRecordOutputSchemaV2 } from '../types/guards/isRecordOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '../utils/getCurrentSubStepFromPath';
-import { isBaseOutputSchemaV2 } from '../utils/isBaseOutputSchemaV2';
-import { isLinkOutputSchema } from '../utils/isLinkOutputSchema';
-import { isRecordOutputSchemaV2 } from '../utils/isRecordOutputSchemaV2';
 
 type UseVariableDropdownProps = {
   step: StepOutputSchemaV2;

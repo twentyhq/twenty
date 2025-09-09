@@ -4,10 +4,7 @@ import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/ste
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
-import {
-  type OutputSchemaV2,
-  type StepOutputSchemaV2,
-} from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,7 +44,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         shouldDisplayRecordObjects,
         outputSchema: stepOutputSchema.outputSchema,
         fieldTypesToExclude,
-      }) as OutputSchemaV2;
+      });
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
         return undefined;

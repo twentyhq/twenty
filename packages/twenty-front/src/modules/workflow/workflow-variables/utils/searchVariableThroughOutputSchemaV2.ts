@@ -2,13 +2,13 @@ import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
-import { type CodeOutputSchema } from '@/workflow/workflow-variables/types/CodeOutputSchema';
-import { type FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
-import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
-import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { isCodeOutputSchema } from '@/workflow/workflow-variables/types/guards/isCodeOutputSchema';
+import { isDatabaseEventTriggerOutputSchema } from '@/workflow/workflow-variables/types/guards/isDatabaseEventTriggerOutputSchema';
+import { isFindRecordsOutputSchema } from '@/workflow/workflow-variables/types/guards/isFindRecordsOutputSchema';
+import { isFormOutputSchema } from '@/workflow/workflow-variables/types/guards/isFormOutputSchema';
+import { isRecordActionOutputSchema } from '@/workflow/workflow-variables/types/guards/isRecordActionOutputSchema';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { getOutputSchemaType } from '@/workflow/workflow-variables/utils/getOutputSchemaType';
+
 import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
 import { searchVariableThroughCodeOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughCodeOutputSchema';
 import { searchVariableThroughFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFindRecordsOutputSchema';
@@ -27,51 +27,48 @@ export const searchVariableThroughOutputSchemaV2 = ({
   rawVariableName: string;
   isFullRecord: boolean;
 }) => {
-  const outputSchemaType = getOutputSchemaType(stepType);
-
-  if (outputSchemaType === 'RECORD') {
+  if (isRecordActionOutputSchema(stepType, stepOutputSchema.outputSchema)) {
     return searchVariableThroughRecordOutputSchema({
       stepName: stepOutputSchema.name,
-      recordOutputSchema: stepOutputSchema.outputSchema as RecordOutputSchemaV2,
+      recordOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
     });
   }
 
-  if (outputSchemaType === 'DATABASE_EVENT') {
+  if (
+    isDatabaseEventTriggerOutputSchema(stepType, stepOutputSchema.outputSchema)
+  ) {
     return searchVariableThroughRecordEventOutputSchema({
       stepName: stepOutputSchema.name,
-      recordOutputSchema: stepOutputSchema.outputSchema as RecordOutputSchemaV2,
+      recordOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
     });
   }
 
-  if (outputSchemaType === 'FIND_RECORDS') {
+  if (isFindRecordsOutputSchema(stepType, stepOutputSchema.outputSchema)) {
     return searchVariableThroughFindRecordsOutputSchema({
       stepName: stepOutputSchema.name,
-      searchRecordOutputSchema:
-        stepOutputSchema.outputSchema as unknown as FindRecordsOutputSchema,
+      searchRecordOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
     });
   }
 
-  if (outputSchemaType === 'FORM') {
+  if (isFormOutputSchema(stepType, stepOutputSchema.outputSchema)) {
     return searchVariableThroughFormOutputSchema({
       stepName: stepOutputSchema.name,
-      formOutputSchema:
-        stepOutputSchema.outputSchema as unknown as FormOutputSchema,
+      formOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
     });
   }
 
-  if (outputSchemaType === 'CODE') {
+  if (isCodeOutputSchema(stepType, stepOutputSchema.outputSchema)) {
     return searchVariableThroughCodeOutputSchema({
       stepName: stepOutputSchema.name,
-      codeOutputSchema:
-        stepOutputSchema.outputSchema as unknown as CodeOutputSchema,
+      codeOutputSchema: stepOutputSchema.outputSchema,
       rawVariableName,
       isFullRecord,
     });
@@ -79,7 +76,7 @@ export const searchVariableThroughOutputSchemaV2 = ({
 
   return searchVariableThroughBaseOutputSchema({
     stepName: stepOutputSchema.name,
-    baseOutputSchema: stepOutputSchema.outputSchema as BaseOutputSchemaV2,
+    baseOutputSchema: stepOutputSchema.outputSchema,
     rawVariableName,
     isFullRecord,
   });

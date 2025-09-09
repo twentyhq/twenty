@@ -13,12 +13,12 @@ import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/ste
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
-import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';

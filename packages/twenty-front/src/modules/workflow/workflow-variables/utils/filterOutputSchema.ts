@@ -8,10 +8,10 @@ import {
   type RecordOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isBaseOutputSchemaV2';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
+import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
-import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
-import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const isValidRecordOutputSchema = ({
