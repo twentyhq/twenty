@@ -166,7 +166,7 @@ describe('DnsManagerService', () => {
 
       expect(result).toEqual({
         id: 'custom-id',
-        customDomain: customDomain,
+        domain: customDomain,
         records: expect.any(Array),
       });
     });
@@ -202,7 +202,7 @@ describe('DnsManagerService', () => {
 
       expect(result).toEqual({
         id: 'custom-id',
-        customDomain: customDomain,
+        domain: customDomain,
         records: expect.any(Array),
       });
     });
