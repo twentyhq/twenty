@@ -3,11 +3,11 @@ import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selectorFamily } from 'recoil';
 
-export const prefetchViewFromViewIdFamilySelector = selectorFamily<
+export const coreViewFromViewIdFamilySelector = selectorFamily<
   View | undefined,
   { viewId: string }
 >({
-  key: 'prefetchViewFromViewIdFamilySelector',
+  key: 'coreViewFromViewIdFamilySelector',
   get:
     ({ viewId }) =>
     ({ get }) => {

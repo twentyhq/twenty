@@ -1,5 +1,5 @@
-import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useRecoilValue } from 'recoil';
 
 export const useViewOrDefaultViewFromPrefetchedViews = ({
@@ -8,13 +8,13 @@ export const useViewOrDefaultViewFromPrefetchedViews = ({
   objectMetadataItemId: string;
 }) => {
   const indexViewId = useRecoilValue(
-    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
       objectMetadataItemId,
     }),
   );
 
   const indexView = useRecoilValue(
-    prefetchViewFromViewIdFamilySelector({
+    coreViewFromViewIdFamilySelector({
       viewId: indexViewId ?? '',
     }),
   );

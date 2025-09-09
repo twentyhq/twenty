@@ -17,7 +17,7 @@ export const useMoveTableColumn = ({ recordTableId }: useRecordTableProps) => {
     async (direction: 'left' | 'right', fieldMetadataItemId: string) => {
       unfocusRecordTableCell();
 
-      moveRecordField({
+      await moveRecordField({
         direction: direction === 'left' ? 'before' : 'after',
         fieldMetadataItemIdToMove: fieldMetadataItemId,
       });
