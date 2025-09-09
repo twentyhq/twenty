@@ -31,7 +31,6 @@ import { tokenPairState } from '../states/tokenPairState';
 
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { qrCodeState } from '@/auth/states/qrCode';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -53,6 +52,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -111,6 +111,7 @@ export const useAuth = () => {
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
+  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -144,7 +145,6 @@ export const useAuth = () => {
         const workspacePublicData = snapshot
           .getLoadable(workspacePublicDataState)
           .getValue();
-        const qrCodeValue = snapshot.getLoadable(qrCodeState).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -163,7 +163,6 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
-          set(qrCodeState, qrCodeValue);
           return undefined;
         });
 
@@ -174,9 +173,16 @@ export const useAuth = () => {
         await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);
       },
-    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [
+      goToRecoilSnapshot,
+      client,
+      setLastAuthenticateWorkspaceDomain,
+      loadMockedObjectMetadataItems,
+      navigate,
+    ],
   );
 
   const handleSetAuthTokens = useCallback(

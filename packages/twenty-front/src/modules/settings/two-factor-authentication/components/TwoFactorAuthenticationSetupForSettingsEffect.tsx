@@ -1,9 +1,10 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { gql, useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
@@ -16,8 +17,9 @@ const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const qrCode = useRecoilValue(qrCodeState);
-  const setQrCodeState = useSetRecoilState(qrCodeState);
+  const [qrCode, setQrCode] = useRecoilState(qrCodeState);
+  const currentUser = useRecoilValue(currentUserState);
+
   const { t } = useLingui();
 
   const [initiateOTPProvisioningForAuthenticatedUser] = useMutation(
@@ -25,7 +27,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   );
 
   useEffect(() => {
-    if (isDefined(qrCode)) {
+    if (!currentUser || isDefined(qrCode)) {
       return;
     }
 
@@ -41,7 +43,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           throw new Error('No URI returned from OTP provisioning');
         }
 
-        setQrCodeState(
+        setQrCode(
           initiateOTPProvisioningResult.data
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
@@ -59,8 +61,14 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
     handleTwoFactorAuthenticationProvisioningInitiation();
 
     // Two factor authentication provisioning only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    enqueueErrorSnackBar,
+    initiateOTPProvisioningForAuthenticatedUser,
+    t,
+    setQrCode,
+    qrCode,
+    currentUser,
+  ]);
 
   return <></>;
 };
