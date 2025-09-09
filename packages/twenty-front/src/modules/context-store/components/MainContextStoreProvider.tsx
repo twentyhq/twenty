@@ -2,9 +2,9 @@ import { MainContextStoreProviderEffect } from '@/context-store/components/MainC
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,7 +60,7 @@ export const MainContextStoreProvider = () => {
   );
 
   const indexViewId = useRecoilValue(
-    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem?.id ?? '',
     }),
   );

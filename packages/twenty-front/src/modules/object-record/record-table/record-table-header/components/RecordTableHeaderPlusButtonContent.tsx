@@ -31,9 +31,11 @@ export const RecordTableHeaderPlusButtonContent = () => {
     useChangeRecordFieldVisibility(recordTableId);
 
   const handleAddColumn = useCallback(
-    (column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>) => {
+    async (
+      column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>,
+    ) => {
       closeDropdown();
-      changeRecordFieldVisibility({ ...column, isVisible: true });
+      await changeRecordFieldVisibility({ ...column, isVisible: true });
     },
     [changeRecordFieldVisibility, closeDropdown],
   );
@@ -60,8 +62,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
         {availableFieldMetadataItemsToShow.map((fieldMetadataItem) => (
           <MenuItem
             key={fieldMetadataItem.id}
-            onClick={() =>
-              handleAddColumn({
+            onClick={async () =>
+              await handleAddColumn({
                 fieldMetadataId: fieldMetadataItem.id,
               })
             }

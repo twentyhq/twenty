@@ -1,8 +1,8 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { selector } from 'recoil';
 
-export const prefetchViewLengthSelector = selector<number>({
-  key: 'prefetchViewLengthSelector',
+export const coreViewLengthFamilySelector = selector<number>({
+  key: 'coreViewLengthFamilySelector',
   get: ({ get }) => {
     const coreViews = get(coreViewsState);
 

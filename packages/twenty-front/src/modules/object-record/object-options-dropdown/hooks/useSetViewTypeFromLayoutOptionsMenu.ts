@@ -4,9 +4,9 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
@@ -78,7 +78,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
         const currentView = snapshot
           .getLoadable(
-            prefetchViewFromViewIdFamilySelector({ viewId: currentViewId }),
+            coreViewFromViewIdFamilySelector({ viewId: currentViewId }),
           )
           .getValue();
         if (!isDefined(currentView)) {
