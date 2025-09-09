@@ -1,4 +1,4 @@
-import { type WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
+import { type WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { createState } from 'twenty-ui/utilities';
 
 export enum PageLayoutType {

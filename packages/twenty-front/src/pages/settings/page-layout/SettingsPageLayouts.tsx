@@ -1,5 +1,5 @@
+import { savedPageLayoutsState } from '@/page-layout/states/savedPageLayoutsState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -12,11 +12,11 @@ import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  H2Title,
-  IconChevronRight,
-  IconLayoutList,
-  IconPlus,
-  IconTrashX,
+    H2Title,
+    IconChevronRight,
+    IconLayoutList,
+    IconPlus,
+    IconTrashX,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

@@ -1,32 +1,32 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
+import { PageLayoutWidgetPlaceholder } from '@/page-layout/components/PageLayoutWidgetPlaceholder';
+import { WidgetRenderer } from '@/page-layout/components/WidgetRenderer';
+import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
+import {
+    PAGE_LAYOUT_CONFIG,
+    type PageLayoutBreakpoint,
+} from '@/page-layout/constants/PageLayoutBreakpoints';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
+import { useChangePageLayoutDragSelection } from '@/page-layout/hooks/useChangePageLayoutDragSelection';
+import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
+import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
+import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
+import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutSaveHandler } from '@/page-layout/hooks/usePageLayoutSaveHandler';
+import { useStartPageLayoutDragSelection } from '@/page-layout/hooks/useStartPageLayoutDragSelection';
+import { WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayoutCurrentBreakpointState';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
+import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSelectedCellsState';
+import { type PageLayoutWidget } from '@/page-layout/states/savedPageLayoutsState';
+import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
+import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
-import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
-import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
-import { WidgetRenderer } from '@/settings/page-layout/components/WidgetRenderer';
-import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
-import {
-  PAGE_LAYOUT_CONFIG,
-  type PageLayoutBreakpoint,
-} from '@/settings/page-layout/constants/PageLayoutBreakpoints';
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
-import { useChangePageLayoutDragSelection } from '@/settings/page-layout/hooks/useChangePageLayoutDragSelection';
-import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
-import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
-import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
-import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
-import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
-import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
-import { useStartPageLayoutDragSelection } from '@/settings/page-layout/hooks/useStartPageLayoutDragSelection';
-import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
-import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
-import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
-import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
-import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
-import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -37,9 +37,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
-  Responsive,
-  WidthProvider,
-  type ResponsiveProps,
+    Responsive,
+    WidthProvider,
+    type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';

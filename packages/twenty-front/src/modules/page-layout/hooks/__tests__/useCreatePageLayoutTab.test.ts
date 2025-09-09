@@ -1,5 +1,5 @@
-import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useCreatePageLayoutTab } from '../useCreatePageLayoutTab';

@@ -1,8 +1,8 @@
 import {
-  GraphType,
-  WidgetType,
-} from '@/settings/page-layout/mocks/mockWidgets';
-import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
+    GraphType,
+    WidgetType,
+} from '@/page-layout/mocks/mockWidgets';
+import { PageLayoutType } from '@/page-layout/states/savedPageLayoutsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';

@@ -1,11 +1,11 @@
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import {
-  GraphType,
-  WidgetType,
-} from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
-import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
+    GraphType,
+    WidgetType,
+} from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { PageLayoutType } from '@/page-layout/states/savedPageLayoutsState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
