@@ -137,6 +137,9 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
     case 'delete_index':
     case 'create_view':
     case 'update_index':
+    case 'create_index_field':
+    case 'delete_index_field':
+    case 'update_index_field':
       return flatObjectMetadataMaps;
     ///
     default: {
