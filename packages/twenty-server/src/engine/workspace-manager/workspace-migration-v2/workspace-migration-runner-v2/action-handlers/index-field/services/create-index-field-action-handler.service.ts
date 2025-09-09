@@ -21,10 +21,13 @@ export class CreateIndexFieldActionHandlerService extends WorkspaceMigrationRunn
 
     const { flatIndexFieldMetadata } = action;
 
-    await fieldMetadataRepository.save(flatIndexFieldMetadata); 
+    await fieldMetadataRepository.save(flatIndexFieldMetadata);
   }
 
   async executeForWorkspaceSchema(
     _context: WorkspaceMigrationActionRunnerArgs<CreateIndexFieldAction>,
-  ): Promise<void> {}
+  ): Promise<void> {
+    // Noop already handled in create_index
+    return;
+  }
 }
