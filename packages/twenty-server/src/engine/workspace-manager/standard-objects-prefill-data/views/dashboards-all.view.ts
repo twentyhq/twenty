@@ -6,6 +6,7 @@ import {
   DASHBOARD_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export const dashboardsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
@@ -27,6 +28,7 @@ export const dashboardsAllView = (
     position: 0,
     icon: 'IconLayoutDashboard',
     kanbanFieldMetadataId: '',
+    openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     filters: [],
     fields: [
       {
