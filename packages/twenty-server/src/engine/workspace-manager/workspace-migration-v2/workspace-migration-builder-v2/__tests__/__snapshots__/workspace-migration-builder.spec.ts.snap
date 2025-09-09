@@ -356,7 +356,6 @@ exports[`Workspace migration builder index actions test suite It should build an
   {
     "flatIndexMetadata": {
       "createdAt": Any<ClockDate>,
-      "flatIndexFieldMetadatas": [],
       "id": Any<String>,
       "indexType": "BTREE",
       "indexWhereClause": null,
@@ -382,7 +381,6 @@ exports[`Workspace migration builder index actions test suite It should build an
   {
     "flatIndexMetadata": {
       "createdAt": Any<ClockDate>,
-      "flatIndexFieldMetadatas": [],
       "id": Any<String>,
       "indexType": "BTREE",
       "indexWhereClause": "new index where clause",
@@ -3232,7 +3230,6 @@ exports[`Workspace migration builder object actions test suite It should build a
   {
     "flatIndexMetadata": {
       "createdAt": Any<ClockDate>,
-      "flatIndexFieldMetadatas": [],
       "id": Any<String>,
       "indexType": "BTREE",
       "indexWhereClause": null,
