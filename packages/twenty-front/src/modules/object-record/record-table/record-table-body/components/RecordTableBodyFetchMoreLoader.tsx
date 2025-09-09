@@ -56,13 +56,14 @@ export const RecordTableBodyFetchMoreLoader = () => {
   if (!showLoadingMoreRow) {
     return <></>;
   }
+  // TODO: fix here styling
 
   return (
-    <tr ref={tbodyRef}>
-      <td colSpan={7}>
+    <div ref={tbodyRef}>
+      <div>
         <StyledText>Loading more...</StyledText>
-      </td>
-      <td colSpan={7} />
-    </tr>
+      </div>
+      <div />
+    </div>
   );
 };

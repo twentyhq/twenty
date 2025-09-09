@@ -12,6 +12,8 @@ import {
   ToolSet,
   type UserContent,
 } from 'ai';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
@@ -218,7 +220,11 @@ export class AgentExecutionService {
                 ...record,
                 resourceUrl: this.domainManagerService.buildWorkspaceURL({
                   workspace,
-                  pathname: `object/${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}/${record.id}`,
+                  pathname: getAppPath(AppPath.RecordShowPage, {
+                    objectNameSingular:
+                      recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+                    objectRecordId: record.id,
+                  }),
                 }),
               };
             });

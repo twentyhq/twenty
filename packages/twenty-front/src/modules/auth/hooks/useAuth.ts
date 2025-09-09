@@ -1,4 +1,3 @@
-import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -52,6 +52,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -110,6 +111,7 @@ export const useAuth = () => {
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
+  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -171,9 +173,16 @@ export const useAuth = () => {
         await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);
       },
-    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [
+      goToRecoilSnapshot,
+      client,
+      setLastAuthenticateWorkspaceDomain,
+      loadMockedObjectMetadataItems,
+      navigate,
+    ],
   );
 
   const handleSetAuthTokens = useCallback(

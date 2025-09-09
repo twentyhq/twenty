@@ -2,12 +2,14 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { type Widget } from '../mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
+import {
+  pageLayoutCurrentLayoutsState,
+  type TabLayouts,
+} from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import {
   PageLayoutType,
   savedPageLayoutsState,
@@ -40,39 +42,52 @@ export const PageLayoutInitializationEffect = ({
             set(pageLayoutDraftState, {
               name: layout.name,
               type: layout.type,
-              widgets: layout.widgets,
+              objectMetadataId: layout.objectMetadataId,
+              tabs: layout.tabs,
             });
 
-            const widgets: Widget[] = layout.widgets.map((w) => ({
-              id: w.id,
-              title: w.title,
-              type: w.type,
-              configuration: w.configuration,
-              data: w.data,
-            }));
-            set(pageLayoutWidgetsState, widgets);
-
-            const layouts = layout.widgets.map((w) => ({
-              i: w.id,
-              x: w.gridPosition.column,
-              y: w.gridPosition.row,
-              w: w.gridPosition.columnSpan,
-              h: w.gridPosition.rowSpan,
-            }));
-            set(pageLayoutCurrentLayoutsState, {
-              desktop: layouts,
-              mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
-            });
+            if (layout.tabs.length > 0) {
+              const tabLayouts: TabLayouts = {};
+              layout.tabs.forEach((tab) => {
+                const layouts = tab.widgets.map((w) => ({
+                  i: w.id,
+                  x: w.gridPosition.column,
+                  y: w.gridPosition.row,
+                  w: w.gridPosition.columnSpan,
+                  h: w.gridPosition.rowSpan,
+                }));
+                tabLayouts[tab.id] = {
+                  desktop: layouts,
+                  mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
+                };
+              });
+              set(pageLayoutCurrentLayoutsState, tabLayouts);
+            } else {
+              set(pageLayoutCurrentLayoutsState, {});
+            }
           }
         } else {
+          const defaultTab = {
+            id: `tab-${uuidv4()}`,
+            title: 'Main',
+            position: 0,
+            pageLayoutId: '',
+            widgets: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+          };
+
           set(pageLayoutDraftState, {
             name: '',
             type: PageLayoutType.DASHBOARD,
-            widgets: [],
+            objectMetadataId: null,
+            tabs: [defaultTab],
           });
           set(pageLayoutPersistedState, undefined);
-          set(pageLayoutWidgetsState, []);
-          set(pageLayoutCurrentLayoutsState, { desktop: [], mobile: [] });
+          set(pageLayoutCurrentLayoutsState, {
+            [defaultTab.id]: { desktop: [], mobile: [] },
+          });
         }
       },
     [],

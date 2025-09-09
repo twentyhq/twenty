@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-shared/types';
 
 export const CAPTCHA_PROTECTED_PATHS: string[] = [
   AppPath.SignInUp,

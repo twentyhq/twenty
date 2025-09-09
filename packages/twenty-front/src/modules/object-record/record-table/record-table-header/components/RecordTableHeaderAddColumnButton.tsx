@@ -29,6 +29,9 @@ const StyledPlusIconHeaderCell = styled.div<{
 
   z-index: 1;
 
+  height: 32px;
+  max-height: 32px;
+
   &:hover {
     background: ${({ theme }) => theme.background.transparent.secondary};
   }
@@ -72,6 +75,7 @@ export const RecordTableHeaderAddColumnButton = () => {
     <StyledPlusIconHeaderCell
       isTableWiderThanScreen={isTableWiderThanScreen}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      className="header-cell"
     >
       <StyledDropdownContainer>
         <Dropdown

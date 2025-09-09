@@ -14,11 +14,9 @@ import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/work
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -26,10 +24,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const { getIcon } = useIcons();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -62,7 +56,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           steps: workflowRunRecord.state.flow.steps,
           stepInfos: workflowRunRecord.state.stepInfos,
           trigger: workflowRunRecord.state.flow.trigger,
-          isWorkflowBranchEnabled,
         });
 
         if (!isDefined(stepToOpenByDefault)) {
@@ -132,7 +125,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
     [
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
-      isWorkflowBranchEnabled,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,
     ],

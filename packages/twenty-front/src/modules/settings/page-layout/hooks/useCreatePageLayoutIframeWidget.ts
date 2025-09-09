@@ -1,79 +1,87 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type Widget, WidgetType } from '../mocks/mockWidgets';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '../constants/SettingsPageLayoutTabsInstanceId';
+import { WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
+import { addWidgetToTab } from '../utils/addWidgetToTab';
+import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
 export const useCreatePageLayoutIframeWidget = () => {
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+  );
+
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (title: string, url: string) => {
-        const pageLayoutWidgets = snapshot
-          .getLoadable(pageLayoutWidgetsState)
-          .getValue();
-        const pageLayoutCurrentLayouts = snapshot
+        const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
 
-        const newWidget: Widget = {
-          id: `widget-${uuidv4()}`,
-          type: WidgetType.IFRAME,
-          title,
-          configuration: {
-            url,
-          },
-        };
+        if (!activeTabId) {
+          return;
+        }
 
+        const widgetId = `widget-${uuidv4()}`;
         const defaultSize = { w: 6, h: 6 };
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultSize,
         );
 
-        const newLayout = {
-          i: newWidget.id,
-          x: position.x,
-          y: position.y,
-          w: position.w,
-          h: position.h,
-        };
-
-        const updatedWidgets = [...pageLayoutWidgets, newWidget];
-        set(pageLayoutWidgetsState, updatedWidgets);
-
-        const updatedLayouts = {
-          desktop: [...(pageLayoutCurrentLayouts.desktop || []), newLayout],
-          mobile: [
-            ...(pageLayoutCurrentLayouts.mobile || []),
-            { ...newLayout, w: 1, x: 0 },
-          ],
-        };
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-        const widgetWithPosition = {
-          ...newWidget,
+        const newWidget: PageLayoutWidget = {
+          id: widgetId,
+          pageLayoutTabId: activeTabId,
+          title,
+          type: WidgetType.IFRAME,
           gridPosition: {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
+          configuration: {
+            url,
+          },
+          objectMetadataId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
         };
+
+        const newLayout = {
+          i: widgetId,
+          x: position.x,
+          y: position.y,
+          w: position.w,
+          h: position.h,
+        };
+
+        const updatedLayouts = createUpdatedTabLayouts(
+          allTabLayouts,
+          activeTabId,
+          newLayout,
+        );
+        set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          widgets: [...prev.widgets, widgetWithPosition],
+          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [],
+    [activeTabId],
   );
 
   return { createPageLayoutIframeWidget };
