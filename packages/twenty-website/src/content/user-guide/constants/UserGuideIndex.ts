@@ -6,7 +6,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'create-workspace' },
       { fileName: 'getting-around-twenty' },
       { fileName: 'configure-workspace-in-three-steps' },
-      { fileName: 'book-your-onboarding-call' },
+      { fileName: 'implementation-services' },
     ],
     'Data Model': [
       { fileName: 'data-model' },
@@ -40,7 +40,6 @@ export const USER_GUIDE_INDEX = {
     ],
     Pricing: [
       { fileName: 'pricing' },
-      { fileName: 'our-open-source-licence' },
       { fileName: 'billing-and-pricing-faq' },
     ],
     Other: [
