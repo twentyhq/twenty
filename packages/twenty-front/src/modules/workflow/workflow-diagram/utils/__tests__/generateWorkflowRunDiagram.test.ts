@@ -104,8 +104,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -337,8 +335,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -570,8 +566,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -822,8 +816,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -1055,8 +1047,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
