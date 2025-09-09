@@ -44,7 +44,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
-    edgeTypeBetweenTwoDefaultNodes: 'empty-filter--readonly',
+    workflowContext: 'workflow-run',
   });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =

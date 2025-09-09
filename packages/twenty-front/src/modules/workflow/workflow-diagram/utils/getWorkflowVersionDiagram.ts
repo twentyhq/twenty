@@ -25,9 +25,7 @@ export const getWorkflowVersionDiagram = ({
   const diagram = generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    edgeTypeBetweenTwoDefaultNodes: isEditable
-      ? 'empty-filter--editable'
-      : 'empty-filter--readonly',
+    workflowContext: isEditable ? 'workflow' : 'workflow-version',
     isWorkflowBranchEnabled,
   });
 

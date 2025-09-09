@@ -4,17 +4,18 @@ import {
 } from '@/workflow/types/Workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
+import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeLabelOptions,
-  type WorkflowDiagramEdgeType,
   type WorkflowDiagramIteratorEmptyActionNodeData,
   type WorkflowDiagramNode,
   type WorkflowDiagramNodeDefaultHandleOptions,
   type WorkflowDiagramNodeRightHandleOptions,
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 
@@ -31,16 +32,20 @@ import { v4 } from 'uuid';
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
-  edgeTypeBetweenTwoDefaultNodes,
+  workflowContext,
   isWorkflowBranchEnabled = false,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
-  edgeTypeBetweenTwoDefaultNodes: WorkflowDiagramEdgeType;
+  workflowContext: WorkflowContext;
   isWorkflowBranchEnabled?: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
   const edges: Array<WorkflowDiagramEdge> = [];
+
+  const edgeTypeBetweenTwoNodes = getEdgeTypeBetweenTwoNodes({
+    workflowContext,
+  });
 
   if (isDefined(trigger)) {
     nodes.push(getWorkflowDiagramTriggerNode({ trigger }));
@@ -109,11 +114,11 @@ export const generateWorkflowDiagram = ({
   for (const stepLinkToTriggerId of trigger?.nextStepIds ?? []) {
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-      type: edgeTypeBetweenTwoDefaultNodes,
+      type: edgeTypeBetweenTwoNodes,
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: stepLinkToTriggerId,
-      ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+      ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
     });
@@ -133,12 +138,12 @@ export const generateWorkflowDiagram = ({
         for (const initialLoopStepId of initialLoopStepIds) {
           edges.push({
             ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-            type: edgeTypeBetweenTwoDefaultNodes,
+            type: edgeTypeBetweenTwoNodes,
             id: v4(),
             source: step.id,
             sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
             target: initialLoopStepId,
-            ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+            ...(edgeTypeBetweenTwoNodes.includes('editable')
               ? { deletable: true, selectable: true }
               : {}),
             data: {
@@ -178,12 +183,12 @@ export const generateWorkflowDiagram = ({
 
         edges.push({
           ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-          type: edgeTypeBetweenTwoDefaultNodes,
+          type: edgeTypeBetweenTwoNodes,
           id: v4(),
           source: step.id,
           sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
           target: emptyNodeId,
-          ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+          ...(edgeTypeBetweenTwoNodes.includes('editable')
             ? { deletable: true, selectable: true }
             : {}),
           data: {
@@ -197,11 +202,11 @@ export const generateWorkflowDiagram = ({
 
         edges.push({
           ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-          type: edgeTypeBetweenTwoDefaultNodes,
+          type: edgeTypeBetweenTwoNodes,
           id: v4(),
           source: emptyNodeId,
           target: step.id,
-          ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+          ...(edgeTypeBetweenTwoNodes.includes('editable')
             ? { deletable: true, selectable: true }
             : {}),
         });
@@ -220,11 +225,11 @@ export const generateWorkflowDiagram = ({
     step.nextStepIds?.forEach((child) => {
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-        type: edgeTypeBetweenTwoDefaultNodes,
+        type: edgeTypeBetweenTwoNodes,
         id: v4(),
         source: step.id,
         target: child,
-        ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+        ...(edgeTypeBetweenTwoNodes.includes('editable')
           ? { deletable: true, selectable: true }
           : {}),
         data: isDefined(edgeLabelOptions)
