@@ -63,6 +63,7 @@ describe('PageLayoutWidgetService', () => {
             findOne: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
+            insert: jest.fn(),
             update: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
@@ -177,6 +178,7 @@ describe('PageLayoutWidgetService', () => {
 
   describe('create', () => {
     const validPageLayoutWidgetData = {
+      id: 'page-layout-widget-id',
       title: 'New Widget',
       pageLayoutTabId: 'page-layout-tab-id',
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
@@ -186,14 +188,13 @@ describe('PageLayoutWidgetService', () => {
     it('should create a new page layout widget successfully', async () => {
       const workspaceId = 'workspace-id';
 
+      jest.spyOn(pageLayoutWidgetRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-widget-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
       jest
-        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayoutTab as any);
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'create')
-        .mockReturnValue(mockPageLayoutWidget);
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'save')
+        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayoutWidget);
 
       const result = await pageLayoutWidgetService.create(
@@ -201,18 +202,10 @@ describe('PageLayoutWidgetService', () => {
         workspaceId,
       );
 
-      expect(pageLayoutTabService.findByIdOrThrow).toHaveBeenCalledWith(
-        validPageLayoutWidgetData.pageLayoutTabId,
-        workspaceId,
-        undefined,
-      );
-      expect(pageLayoutWidgetRepository.create).toHaveBeenCalledWith({
+      expect(pageLayoutWidgetRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutWidgetData,
         workspaceId,
       });
-      expect(pageLayoutWidgetRepository.save).toHaveBeenCalledWith(
-        mockPageLayoutWidget,
-      );
       expect(result).toEqual(mockPageLayoutWidget);
     });
 

@@ -155,17 +155,20 @@ describe('PageLayoutService', () => {
 
   describe('create', () => {
     const validPageLayoutData = {
+      id: 'page-layout-id',
       name: 'Test Page Layout',
       type: PageLayoutType.RECORD_PAGE,
       objectMetadataId: 'object-metadata-id',
     };
 
     it('should create a page layout successfully', async () => {
+      jest.spyOn(pageLayoutRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
       jest
-        .spyOn(pageLayoutRepository, 'create')
-        .mockReturnValue(mockPageLayout);
-      jest
-        .spyOn(pageLayoutRepository, 'save')
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout);
 
       const result = await pageLayoutService.create(
@@ -173,11 +176,10 @@ describe('PageLayoutService', () => {
         'workspace-id',
       );
 
-      expect(pageLayoutRepository.create).toHaveBeenCalledWith({
+      expect(pageLayoutRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutData,
         workspaceId: 'workspace-id',
       });
-      expect(pageLayoutRepository.save).toHaveBeenCalledWith(mockPageLayout);
       expect(result).toEqual(mockPageLayout);
     });
 

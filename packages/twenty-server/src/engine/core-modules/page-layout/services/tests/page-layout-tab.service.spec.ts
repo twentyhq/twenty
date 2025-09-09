@@ -77,6 +77,7 @@ describe('PageLayoutTabService', () => {
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
+            insert: jest.fn(),
           },
         },
         {
@@ -240,6 +241,7 @@ describe('PageLayoutTabService', () => {
     it('should create a new page layout tab successfully', async () => {
       const workspaceId = 'workspace-id';
       const pageLayoutTabData = {
+        id: 'page-layout-tab-id',
         title: 'New Tab',
         pageLayoutId: 'page-layout-id',
         position: 1,
@@ -248,12 +250,11 @@ describe('PageLayoutTabService', () => {
       jest
         .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout as any);
-      jest
-        .spyOn(pageLayoutTabRepository, 'create')
-        .mockReturnValue(mockPageLayoutTab);
-      jest
-        .spyOn(pageLayoutTabRepository, 'save')
-        .mockResolvedValue(mockPageLayoutTab);
+      jest.spyOn(pageLayoutTabRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-tab-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
 
       const result = await pageLayoutTabService.create(
         pageLayoutTabData,
@@ -265,13 +266,10 @@ describe('PageLayoutTabService', () => {
         workspaceId,
         undefined,
       );
-      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
+      expect(pageLayoutTabRepository.insert).toHaveBeenCalledWith({
         ...pageLayoutTabData,
         workspaceId,
       });
-      expect(pageLayoutTabRepository.save).toHaveBeenCalledWith(
-        mockPageLayoutTab,
-      );
       expect(result).toEqual(mockPageLayoutTab);
     });
 
@@ -300,6 +298,12 @@ describe('PageLayoutTabService', () => {
         title: 'New Tab',
         pageLayoutId: 'non-existent-page-layout-id',
       };
+
+      jest.spyOn(pageLayoutTabRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-tab-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
 
       jest
         .spyOn(pageLayoutService, 'findByIdOrThrow')
