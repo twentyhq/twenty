@@ -24,7 +24,7 @@ export const filterMorphRelationDuplicateFields = (
       ) {
         return {
           ...acc,
-          morphFlatFieldMetadata: [
+          morphFlatFieldMetadatas: [
             ...acc.morphFlatFieldMetadatas,
             flatFieldMetadata,
           ],
