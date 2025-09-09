@@ -28,7 +28,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -50,7 +49,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -72,7 +70,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -94,7 +91,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -118,7 +114,6 @@ describe('getTriggerDefaultDefinition', () => {
         icon: COMMAND_MENU_DEFAULT_ICON,
         isPinned: false,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -141,7 +136,6 @@ describe('getTriggerDefaultDefinition', () => {
         schedule: { day: 1, hour: 0, minute: 0 },
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -164,7 +158,6 @@ describe('getTriggerDefaultDefinition', () => {
         httpMethod: 'GET',
         authentication: null,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,

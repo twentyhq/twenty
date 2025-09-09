@@ -12,12 +12,10 @@ export const transformFilterNodesAsEdges = <
   nodes,
   edges,
   defaultFilterEdgeType,
-  isWorkflowBranchEnabled,
 }: {
   nodes: T[];
   edges: U[];
   defaultFilterEdgeType: WorkflowDiagramEdgeType;
-  isWorkflowBranchEnabled: boolean;
 }): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
     (node) =>
@@ -55,8 +53,8 @@ export const transformFilterNodesAsEdges = <
         type: defaultFilterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
-        selectable: isWorkflowBranchEnabled === true,
-        deletable: isWorkflowBranchEnabled === true,
+        selectable: true,
+        deletable: true,
         data: {
           ...incomingEdge.data,
           edgeType: 'filter',
