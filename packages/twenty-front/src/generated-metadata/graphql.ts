@@ -931,6 +931,22 @@ export enum DistantTableUpdate {
   TABLE_DELETED = 'TABLE_DELETED'
 }
 
+export type DomainRecord = {
+  __typename?: 'DomainRecord';
+  key: Scalars['String'];
+  status: Scalars['String'];
+  type: Scalars['String'];
+  validationType: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type DomainValidRecords = {
+  __typename?: 'DomainValidRecords';
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  records: Array<DomainRecord>;
+};
+
 export type EditSsoInput = {
   id: Scalars['UUID'];
   status: SsoIdentityProviderStatus;
@@ -1203,22 +1219,6 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
-export type HostnameRecord = {
-  __typename?: 'HostnameRecord';
-  key: Scalars['String'];
-  status: Scalars['String'];
-  type: Scalars['String'];
-  validationType: Scalars['String'];
-  value: Scalars['String'];
-};
-
-export type HostnameValidRecords = {
-  __typename?: 'HostnameValidRecords';
-  customDomain: Scalars['String'];
-  id: Scalars['UUID'];
-  records: Array<HostnameRecord>;
-};
-
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -1393,7 +1393,7 @@ export type Mutation = {
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
-  checkCustomDomainValidRecords?: Maybe<HostnameValidRecords>;
+  checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
@@ -5391,7 +5391,7 @@ export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorks
 export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'HostnameValidRecords', id: string, customDomain: string, records: Array<{ __typename?: 'HostnameRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
+export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'DomainValidRecords', id: string, domain: string, records: Array<{ __typename?: 'DomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -12546,7 +12546,7 @@ export const CheckCustomDomainValidRecordsDocument = gql`
     mutation CheckCustomDomainValidRecords {
   checkCustomDomainValidRecords {
     id
-    customDomain
+    domain
     records {
       type
       key

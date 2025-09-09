@@ -16,7 +16,7 @@ import {
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/cloudflare.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type HostnameValidRecords } from 'src/engine/core-modules/dns-manager/dtos/hostname-valid-records';
+import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 const PUBLIC_DOMAIN_HEADER_NAME = 'X-Twenty-Public-Domain';
 
@@ -71,7 +71,7 @@ export class DnsManagerService {
 
   async getHostnameDetails(
     hostname: string,
-  ): Promise<HostnameValidRecords | undefined> {
+  ): Promise<DomainValidRecords | undefined> {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const response = await this.cloudflareClient.customHostnames.list({
@@ -91,7 +91,7 @@ export class DnsManagerService {
 
       return {
         id: id,
-        customDomain: hostname,
+        domain: hostname,
         records: [
           {
             validationType: 'redirection' as const,
@@ -172,10 +172,10 @@ export class DnsManagerService {
     });
   }
 
-  async refreshHostname(hostnameValidRecords: HostnameValidRecords) {
+  async refreshHostname(domainValidRecords: DomainValidRecords) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    await this.cloudflareClient.customHostnames.edit(hostnameValidRecords.id, {
+    await this.cloudflareClient.customHostnames.edit(domainValidRecords.id, {
       zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
       ssl: this.sslParams,
     });

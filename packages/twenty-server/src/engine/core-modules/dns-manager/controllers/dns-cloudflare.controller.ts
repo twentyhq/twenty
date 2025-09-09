@@ -13,7 +13,7 @@ import { DnsManagerExceptionFilter } from 'src/engine/core-modules/dns-manager/e
 
 @Controller()
 @UseFilters(AuthRestApiExceptionFilter, DnsManagerExceptionFilter)
-export class CloudflareController {
+export class DnsCloudflareController {
   constructor(
     protected readonly domainManagerService: DomainManagerService,
     protected readonly dnsManagerService: DnsManagerService,

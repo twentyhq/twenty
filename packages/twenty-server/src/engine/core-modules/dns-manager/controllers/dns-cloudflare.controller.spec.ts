@@ -2,16 +2,15 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Request } from 'express';
 
-import { CloudflareController } from 'src/engine/core-modules/dns-manager/controllers/cloudflare.controller';
+import { DnsCloudflareController } from 'src/engine/core-modules/dns-manager/controllers/dns-cloudflare.controller';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
-describe('CloudflareController - customHostnameWebhooks', () => {
-  let controller: CloudflareController;
-  let twentyConfigService: TwentyConfigService;
+describe('DnsCloudflareController - customHostnameWebhooks', () => {
+  let controller: DnsCloudflareController;
   let dnsManagerService: DnsManagerService;
   let domainManagerService: DomainManagerService;
 
@@ -19,7 +18,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CloudflareController],
+      controllers: [DnsCloudflareController],
       providers: [
         {
           provide: DomainManagerService,
@@ -54,8 +53,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       ],
     }).compile();
 
-    controller = module.get<CloudflareController>(CloudflareController);
-    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
+    controller = module.get<DnsCloudflareController>(DnsCloudflareController);
     dnsManagerService = module.get<DnsManagerService>(DnsManagerService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
