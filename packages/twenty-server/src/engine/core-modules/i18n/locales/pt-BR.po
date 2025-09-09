@@ -1671,6 +1671,11 @@ msgstr "Operador Lógico"
 msgid "Logical operator for the filter group"
 msgstr "Operador lógico para o grupo de filtros"
 
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
+
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1853,6 +1858,11 @@ msgstr "Campos de relação morph estão desativados para o seu workspace"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "Valor padrão do campo de seleção múltipla deve ser um array"
+
+#. js-lingui-id: 6rLmLu
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
