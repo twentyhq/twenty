@@ -53,4 +53,5 @@ export type {
   WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
+export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';

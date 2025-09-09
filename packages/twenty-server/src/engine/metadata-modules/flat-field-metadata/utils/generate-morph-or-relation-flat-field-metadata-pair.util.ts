@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -40,6 +40,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
+  morphId?: string | null;
 };
 export const generateMorphOrRelationFlatFieldMetadataPair = ({
   createFieldInput,
@@ -47,6 +48,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   targetFlatObjectMetadata,
   workspaceId,
   sourceFlatObjectMetadataJoinColumnName,
+  morphId = null,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>[] => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -66,6 +68,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
     }),
+    morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
     type: createFieldInput.type,
@@ -89,7 +92,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
-      joinColumnName: computeRelationFieldJoinColumnName({
+      joinColumnName: computeMorphOrRelationFieldJoinColumnName({
         name: targetCreateFieldInput.name,
       }),
       relationType:

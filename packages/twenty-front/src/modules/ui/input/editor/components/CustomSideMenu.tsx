@@ -10,6 +10,7 @@ import {
   SideMenuController,
 } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 
 type CustomSideMenuProps = {
@@ -21,6 +22,7 @@ const StyledDivToCreateGap = styled.div`
 `;
 
 export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
+  const { t } = useLingui();
   return (
     <SideMenuController
       sideMenu={(props) => (
@@ -35,7 +37,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                 <CustomAddBlockItem editor={editor}>
                   <CustomSideMenuOptions
                     LeftIcon={IconPlus}
-                    text={'Add Block'}
+                    text={t`Add Block`}
                     Variant="normal"
                   />
                 </CustomAddBlockItem>
@@ -43,7 +45,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                 <BlockColorsItem {...props}>
                   <CustomSideMenuOptions
                     LeftIcon={IconColorSwatch}
-                    text={'Change Color'}
+                    text={t`Change Color`}
                     Variant="normal"
                   />
                 </BlockColorsItem>
@@ -52,7 +54,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                   {' '}
                   <CustomSideMenuOptions
                     LeftIcon={IconTrash}
-                    text={'Delete'}
+                    text={t`Delete`}
                     Variant="danger"
                   />
                 </RemoveBlockItem>

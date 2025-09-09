@@ -10,7 +10,7 @@ import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metad
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-flat-object-metadata-morph-relation-flat-field-metadatas-settings-join-column-name.util';
+import { renameRelatedMorphFieldOnObjectNamesUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-related-morph-field-on-object-names-update.util';
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -130,14 +130,12 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
         [property]: updatedPropertyValue,
       };
       const newUpdatedOtherObjectFlatFieldMetadatas =
-        property === 'nameSingular'
-          ? renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName(
-              {
-                existingFlatObjectMetadataMaps,
-                fromFlatObjectMetadata: updatedFlatObjectMetadata,
-                toFlatObjectMetadata: updatedFlatObjectMetadata,
-              },
-            )
+        property === 'nameSingular' || property === 'namePlural'
+          ? renameRelatedMorphFieldOnObjectNamesUpdate({
+              existingFlatObjectMetadataMaps,
+              fromFlatObjectMetadata: updatedFlatObjectMetadata,
+              toFlatObjectMetadata: updatedFlatObjectMetadata,
+            })
           : [];
 
       return {

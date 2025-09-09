@@ -30,13 +30,17 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
   ],
   providers: [
     DeleteWorkspacesCommand,
-    CleanSuspendedWorkspacesCommand,
     DestroyWorkspaceCommand,
     CleanSuspendedWorkspacesCronCommand,
+    CleanSuspendedWorkspacesCommand,
     CleanOnboardingWorkspacesCommand,
     CleanOnboardingWorkspacesCronCommand,
     CleanerWorkspaceService,
   ],
-  exports: [CleanerWorkspaceService],
+  exports: [
+    CleanerWorkspaceService,
+    CleanSuspendedWorkspacesCronCommand,
+    CleanOnboardingWorkspacesCronCommand,
+  ],
 })
 export class WorkspaceCleanerModule {}

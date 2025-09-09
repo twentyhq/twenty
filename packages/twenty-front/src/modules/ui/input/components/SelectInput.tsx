@@ -116,7 +116,7 @@ export const SelectInput = ({
               key={`No ${clearLabel}`}
               text={`No ${clearLabel}`}
               color="transparent"
-              variant={'outline'}
+              variant="outline"
               onClick={handleClearOption}
               isKeySelected={selectedItemId === `No ${clearLabel}`}
             />

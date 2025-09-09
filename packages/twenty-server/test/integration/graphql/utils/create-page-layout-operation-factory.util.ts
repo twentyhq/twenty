@@ -5,13 +5,13 @@ import { type CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/
 
 type CreatePageLayoutOperationFactoryParams = {
   gqlFields?: string;
-  data?: CreatePageLayoutInput;
+  data: CreatePageLayoutInput;
 };
 
 export const createPageLayoutOperationFactory = ({
   gqlFields = PAGE_LAYOUT_GQL_FIELDS,
-  data = {} as CreatePageLayoutInput,
-}: CreatePageLayoutOperationFactoryParams = {}) => ({
+  data,
+}: CreatePageLayoutOperationFactoryParams) => ({
   query: gql`
     mutation CreatePageLayout($input: CreatePageLayoutInput!) {
       createPageLayout(input: $input) {

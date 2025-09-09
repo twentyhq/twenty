@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  isDefined,
-  trimAndRemoveDuplicatedWhitespacesFromString,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -39,15 +36,15 @@ export class FieldMetadataServiceV2 {
   ) {}
 
   async createOne({
-    fieldMetadataInput,
+    createFieldInput,
     workspaceId,
   }: {
-    fieldMetadataInput: Omit<CreateFieldInput, 'workspaceId'>;
+    createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FieldMetadataEntity> {
     const [createdFieldMetadata] = await this.createMany({
-      fieldMetadataInputs: [fieldMetadataInput],
       workspaceId,
+      createFieldInputs: [createFieldInput],
     });
 
     if (!isDefined(createdFieldMetadata)) {
@@ -206,13 +203,13 @@ export class FieldMetadataServiceV2 {
   }
 
   async createMany({
-    fieldMetadataInputs,
+    createFieldInputs,
     workspaceId,
   }: {
-    fieldMetadataInputs: Omit<CreateFieldInput, 'workspaceId'>[];
+    createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
   }): Promise<FieldMetadataEntity[]> {
-    if (!fieldMetadataInputs.length) {
+    if (createFieldInputs.length === 0) {
       return [];
     }
 
@@ -221,24 +218,24 @@ export class FieldMetadataServiceV2 {
         { workspaceId },
       );
 
-    const allInputTranspilationsResults = (
-      await Promise.all(
-        fieldMetadataInputs.map(
-          async (fieldMetadataInput) =>
-            await fromCreateFieldInputToFlatFieldMetadatasToCreate({
-              existingFlatObjectMetadataMaps,
-              workspaceId,
-              rawCreateFieldInput: fieldMetadataInput,
-            }),
-        ),
-      )
-    ).flat();
+    const allTranspiledTranspilationInputs = [];
+
+    for (const createInput of createFieldInputs) {
+      allTranspiledTranspilationInputs.push(
+        await fromCreateFieldInputToFlatFieldMetadatasToCreate({
+          existingFlatObjectMetadataMaps,
+          workspaceId,
+          rawCreateFieldInput: createInput,
+        }),
+      );
+    }
 
     throwOnFieldInputTranspilationsError(
-      allInputTranspilationsResults,
+      allTranspiledTranspilationInputs,
       'Multiple validation errors occurred while creating field',
     );
-    const flatFieldMetadatasToCreate = allInputTranspilationsResults.flatMap(
+
+    const flatFieldMetadatasToCreate = allTranspiledTranspilationInputs.flatMap(
       ({ result }) => result,
     );
 
@@ -289,10 +286,8 @@ export class FieldMetadataServiceV2 {
     return this.fieldMetadataRepository.find({
       where: {
         name: In(
-          fieldMetadataInputs.map((flatFieldMetadata) =>
-            trimAndRemoveDuplicatedWhitespacesFromString(
-              flatFieldMetadata.name,
-            ),
+          allTranspiledTranspilationInputs.map(
+            ({ result: flatFieldMetadatas }) => flatFieldMetadatas[0].name,
           ),
         ),
         workspaceId,

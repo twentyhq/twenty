@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import {
@@ -93,14 +94,11 @@ export class PageLayoutService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<PageLayoutEntity>,
+    updateData: QueryDeepPartialEntity<PageLayoutEntity>,
   ): Promise<PageLayoutEntity> {
-    const existingPageLayout = await this.findByIdOrThrow(id, workspaceId);
+    await this.pageLayoutRepository.update({ id, workspaceId }, updateData);
 
-    const updatedPageLayout = await this.pageLayoutRepository.save({
-      ...existingPageLayout,
-      ...updateData,
-    });
+    const updatedPageLayout = await this.findByIdOrThrow(id, workspaceId);
 
     return updatedPageLayout;
   }
@@ -139,6 +137,10 @@ export class PageLayoutService {
 
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
     const pageLayout = await this.pageLayoutRepository.findOne({
+      select: {
+        id: true,
+        deletedAt: true,
+      },
       where: {
         id,
         workspaceId,

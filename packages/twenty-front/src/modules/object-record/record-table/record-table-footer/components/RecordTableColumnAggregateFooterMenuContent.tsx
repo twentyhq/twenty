@@ -91,7 +91,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           />
         ) : null}
         <MenuItem
-          key={'none'}
+          key="none"
           onClick={async () => {
             await updateViewFieldAggregateOperation(null);
             resetContent();

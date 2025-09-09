@@ -20,8 +20,8 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Button, IconButtonGroup } from 'twenty-ui/input';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconLock,
   IconLockOpen,
@@ -30,6 +30,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/display';
+import { Button, IconButtonGroup } from 'twenty-ui/input';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,
@@ -184,7 +185,10 @@ export const SettingsDataModelOverview = () => {
   return (
     <StyledContainer>
       <StyledCloseButton>
-        <Button Icon={IconX} to="/settings/objects"></Button>
+        <Button
+          Icon={IconX}
+          to={getSettingsPath(SettingsPath.Objects)}
+        ></Button>
       </StyledCloseButton>
       <SettingsDataModelOverviewEffect
         setEdges={setEdges}

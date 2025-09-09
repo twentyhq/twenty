@@ -1,7 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
@@ -61,8 +61,8 @@ export const RecordTableColumnHead = ({
     }),
   );
 
-  const isRecordTableScrolledLeft = useRecoilComponentValue(
-    isRecordTableScrolledLeftComponentState,
+  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
+    isRecordTableScrolledHorizontallyComponentState,
   );
 
   const { getIcon } = useIcons();
@@ -77,7 +77,9 @@ export const RecordTableColumnHead = ({
   );
 
   return (
-    <StyledTitle hideTitle={isLabelIdentifier && !isRecordTableScrolledLeft}>
+    <StyledTitle
+      hideTitle={isLabelIdentifier && isRecordTableScrolledHorizontally}
+    >
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

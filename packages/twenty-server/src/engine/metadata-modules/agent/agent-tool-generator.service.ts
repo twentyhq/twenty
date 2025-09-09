@@ -49,6 +49,7 @@ export class AgentToolGeneratorService {
           id: roleId,
           workspaceId,
         },
+        relations: ['permissionFlags'],
       });
 
       if (!role) {

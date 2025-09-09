@@ -1,5 +1,6 @@
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
@@ -8,6 +9,7 @@ import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
 import { type AgentChatMessage } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -43,7 +45,57 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     isUser ? theme.font.color.light : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   width: fit-content;
-  white-space: pre-line;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+
+  code {
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.4;
+    padding: ${({ theme }) => theme.spacing(1)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${({ theme }) => theme.background.tertiary};
+  }
+
+  pre {
+    background: ${({ theme }) => theme.background.tertiary};
+    padding: ${({ theme }) => theme.spacing(2)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    overflow-x: auto;
+    max-width: 100%;
+
+    code {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+    }
+  }
+
+  p {
+    margin: ${({ theme }) => theme.spacing(1)} 0;
+    line-height: 1.5;
+  }
+
+  ul,
+  ol {
+    margin: ${({ theme }) => theme.spacing(1)} 0;
+    padding-left: ${({ theme }) => theme.spacing(4)};
+  }
+
+  li {
+    margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  }
+
+  blockquote {
+    border-left: 3px solid ${({ theme }) => theme.border.color.medium};
+    margin: ${({ theme }) => theme.spacing(2)} 0;
+    padding-left: ${({ theme }) => theme.spacing(2)};
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
 `;
 
 const StyledMessageFooter = styled.div`
@@ -124,6 +176,7 @@ export const AIChatMessage = ({
   agentStreamingMessage: { streamingText: string; toolCall: string };
 }) => {
   const theme = useTheme();
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const markdownRender = (text: string) => {
     return <LazyMarkdownRenderer text={text} />;
@@ -198,7 +251,12 @@ export const AIChatMessage = ({
           )}
           {message.content && (
             <StyledMessageFooter className="message-footer">
-              <span>{beautifyPastDateRelativeToNow(message.createdAt)}</span>
+              <span>
+                {beautifyPastDateRelativeToNow(
+                  message.createdAt,
+                  localeCatalog,
+                )}
+              </span>
               <LightCopyIconButton copyText={message.content} />
             </StyledMessageFooter>
           )}

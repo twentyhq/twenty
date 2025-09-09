@@ -187,7 +187,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
             {currentView?.type === ViewType.Kanban && (
               <>
                 <SelectableListItem
-                  itemId={'Group'}
+                  itemId="Group"
                   onEnter={() => {
                     isDefined(recordGroupFieldMetadata)
                       ? onContentChange('recordGroups')
@@ -209,7 +209,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
 
                 <SelectableListItem
-                  itemId={'Compact view'}
+                  itemId="Compact view"
                   onEnter={() => {
                     setAndPersistIsCompactModeActive(
                       !isCompactModeActive,

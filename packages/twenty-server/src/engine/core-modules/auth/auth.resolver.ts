@@ -22,6 +22,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -40,7 +42,10 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  JwtTokenTypeEnum,
+  LoginTokenJwtPayload,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -53,6 +58,7 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -113,6 +119,7 @@ export class AuthResolver {
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
+    private readonly auditService: AuditService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
@@ -536,44 +543,174 @@ export class AuthResolver {
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const {
-      sub: email,
-      workspaceId,
-      authProvider,
-    } = await this.loginTokenService.verifyLoginToken(
+    const tokenPayload = await this.validateAndDecodeLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
     );
 
+    const workspace = await this.validateWorkspaceAccess(
+      origin,
+      tokenPayload.workspaceId,
+    );
+
+    const { user, userWorkspace } = await this.validateUserAccess(
+      tokenPayload.sub,
+      tokenPayload.workspaceId,
+    );
+
+    if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
+      await this.validateAndLogImpersonation(
+        tokenPayload,
+        workspace,
+        user.email,
+      );
+    } else {
+      await this.validateRegularAuthentication(workspace, userWorkspace);
+    }
+
+    return await this.authService.verify(
+      user.email,
+      workspace.id,
+      tokenPayload.authProvider,
+    );
+  }
+
+  private async validateAndDecodeLoginToken(
+    loginToken: string,
+  ): Promise<LoginTokenJwtPayload> {
+    return await this.loginTokenService.verifyLoginToken(loginToken);
+  }
+
+  private async validateWorkspaceAccess(
+    origin: string,
+    tokenWorkspaceId: string,
+  ): Promise<Workspace> {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
 
-    if (workspaceId !== workspace.id) {
+    if (tokenWorkspaceId !== workspace.id) {
       throw new AuthException(
         'Token is not valid for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
+    return workspace;
+  }
+
+  private async validateUserAccess(
+    email: string,
+    workspaceId: string,
+  ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
     const user = await this.userService.getUserByEmail(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
-    const currentUserWorkspace =
+    const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
         userId: user.id,
         workspaceId,
       });
 
+    return { user, userWorkspace };
+  }
+
+  private async validateRegularAuthentication(
+    workspace: Workspace,
+    userWorkspace: UserWorkspace,
+  ): Promise<void> {
     await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
       workspace,
-      currentUserWorkspace.twoFactorAuthenticationMethods,
+      userWorkspace.twoFactorAuthenticationMethods,
     );
+  }
 
-    return await this.authService.verify(email, workspace.id, authProvider);
+  private async validateAndLogImpersonation(
+    tokenPayload: LoginTokenJwtPayload,
+    workspace: Workspace,
+    targetUserEmail: string,
+  ): Promise<void> {
+    const { impersonatorUserId } = tokenPayload;
+
+    const auditService = this.auditService.createContext({
+      workspaceId: workspace.id,
+      userId: impersonatorUserId,
+    });
+
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      eventName: 'server.impersonation.token_exchange_attempt',
+      message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserId}`,
+    });
+
+    if (workspace.allowImpersonation !== true) {
+      throw new AuthException(
+        'Impersonation not allowed on this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (!impersonatorUserId) {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.token_exchange_failed',
+        message: `Invalid impersonation token (missing impersonator user ID) for ${targetUserEmail}`,
+      });
+      throw new AuthException(
+        'Invalid impersonation token (missing impersonator user ID)',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const impersonatorUser = await this.userRepository.findOne({
+      where: { id: impersonatorUserId },
+    });
+
+    if (!impersonatorUser) {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.token_exchange_failed',
+        message: `Impersonator user not found: ${impersonatorUserId} for ${targetUserEmail}`,
+      });
+      throw new AuthException(
+        'Impersonator user not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (impersonatorUser.canImpersonate !== true) {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.token_exchange_failed',
+        message: `User not authorized to impersonate: ${impersonatorUserId} for ${targetUserEmail}`,
+      });
+      throw new AuthException(
+        'User not authorized to impersonate',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    await this.logImpersonationEvent(workspace.id, impersonatorUserId);
+  }
+
+  private async logImpersonationEvent(
+    workspaceId: string,
+    impersonatorUserId: string,
+  ): Promise<void> {
+    const auditService = this.auditService.createContext({
+      workspaceId,
+      userId: impersonatorUserId,
+    });
+
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      eventName: 'server.impersonation.login_token_exchanged',
+      message: 'Impersonation token exchanged',
+    });
   }
 
   @Mutation(() => AuthorizeApp)

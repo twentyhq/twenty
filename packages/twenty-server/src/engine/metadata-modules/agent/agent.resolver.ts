@@ -38,10 +38,7 @@ export class AgentResolver {
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async findManyAgents(@AuthWorkspace() { id: workspaceId }: Workspace) {
-    return this.agentRepository.find({
-      where: { workspaceId },
-      order: { createdAt: 'DESC' },
-    });
+    return this.agentService.findManyAgents(workspaceId);
   }
 
   @Query(() => AgentDTO)

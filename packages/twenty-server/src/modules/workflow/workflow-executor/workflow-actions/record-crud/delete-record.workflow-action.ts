@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { isValidUuid, resolveInput } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -25,6 +27,7 @@ import { type WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workf
 export class DeleteRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
@@ -76,6 +79,24 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
         workflowActionInput.objectName,
         { shouldBypassPermissionChecks: true },
       );
+
+    const { objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
+
+    if (
+      !canObjectBeManagedByWorkflow({
+        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
+        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+      })
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to delete: Object cannot be deleted by workflow',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const objectRecord = await repository.findOne({
       where: {

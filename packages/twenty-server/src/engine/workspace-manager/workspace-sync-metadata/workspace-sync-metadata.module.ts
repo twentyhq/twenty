@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -38,6 +39,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     DataSourceModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceMetadataVersionModule,
+    AgentRoleModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

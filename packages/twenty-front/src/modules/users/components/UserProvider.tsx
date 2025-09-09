@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
-import { AppPath } from '@/types/AppPath';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 

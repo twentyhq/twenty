@@ -2,7 +2,7 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
@@ -65,13 +65,7 @@ export const useLoadCurrentUser = () => {
     setCurrentUser(user);
 
     if (isDefined(user.workspaceMembers)) {
-      const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
-        ...workspaceMember,
-        colorScheme: workspaceMember.colorScheme as ColorScheme,
-        locale: workspaceMember.locale ?? SOURCE_LOCALE,
-      }));
-
-      setCurrentWorkspaceMembers(workspaceMembers);
+      setCurrentWorkspaceMembers(user.workspaceMembers);
     }
 
     if (isDefined(user.availableWorkspaces)) {
