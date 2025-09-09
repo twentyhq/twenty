@@ -248,8 +248,9 @@ describe('PageLayoutTabService', () => {
       };
 
       jest
-        .spyOn(pageLayoutService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayout as any);
+        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
+        .mockResolvedValue(mockPageLayoutTab as any);
+
       jest.spyOn(pageLayoutTabRepository, 'insert').mockResolvedValue({
         identifiers: [{ id: 'page-layout-tab-id' }],
         generatedMaps: [],
@@ -304,7 +305,6 @@ describe('PageLayoutTabService', () => {
         generatedMaps: [],
         raw: [],
       });
-
       jest
         .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockRejectedValue(
