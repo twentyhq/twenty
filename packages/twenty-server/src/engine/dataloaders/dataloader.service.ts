@@ -26,7 +26,6 @@ import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadat
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { transpileToDateIfNot } from 'src/utils/transpile-to-date-if-not.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -139,11 +138,7 @@ export class DataloaderService {
                 flatFieldMetadata:
                   sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
                 flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              }).sort(
-                (a, b) =>
-                  transpileToDateIfNot(a.createdAt).getTime() -
-                  transpileToDateIfNot(b.createdAt).getTime(),
-              );
+              }).sort((a, b) => (a.id > b.id ? 1 : -1));
 
             relationDtos.push(
               fromMorphOrRelationFlatFieldMetadataToRelationDto({

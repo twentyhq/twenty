@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { transpileToDateIfNot } from 'src/utils/transpile-to-date-if-not.util';
 
 export const filterMorphRelationDuplicateFields = (
   flatFieldMetadatas: FlatFieldMetadata[],
@@ -44,9 +43,9 @@ export const filterMorphRelationDuplicateFields = (
     (currentField) =>
       !morphFlatFieldMetadatas.some(
         (otherField) =>
+          currentField.id !== otherField.id &&
           otherField.morphId === currentField.morphId &&
-          transpileToDateIfNot(otherField.createdAt).getTime() >
-            transpileToDateIfNot(currentField.createdAt).getTime(),
+          otherField.id < currentField.id,
       ),
   );
 
