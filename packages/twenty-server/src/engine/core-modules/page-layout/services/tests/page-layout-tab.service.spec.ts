@@ -51,15 +51,6 @@ describe('PageLayoutTabService', () => {
     deletedAt: null,
   } as PageLayoutWidgetEntity;
 
-  const mockPageLayout = {
-    id: 'page-layout-id',
-    workspaceId: 'workspace-id',
-    title: 'Test Layout',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -77,6 +68,7 @@ describe('PageLayoutTabService', () => {
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
+            insert: jest.fn(),
           },
         },
         {
@@ -240,20 +232,21 @@ describe('PageLayoutTabService', () => {
     it('should create a new page layout tab successfully', async () => {
       const workspaceId = 'workspace-id';
       const pageLayoutTabData = {
+        id: 'page-layout-tab-id',
         title: 'New Tab',
         pageLayoutId: 'page-layout-id',
         position: 1,
       };
 
       jest
-        .spyOn(pageLayoutService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayout as any);
-      jest
-        .spyOn(pageLayoutTabRepository, 'create')
-        .mockReturnValue(mockPageLayoutTab);
-      jest
-        .spyOn(pageLayoutTabRepository, 'save')
-        .mockResolvedValue(mockPageLayoutTab);
+        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
+        .mockResolvedValue(mockPageLayoutTab as any);
+
+      jest.spyOn(pageLayoutTabRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-tab-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
 
       const result = await pageLayoutTabService.create(
         pageLayoutTabData,
@@ -263,14 +256,12 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         pageLayoutTabData.pageLayoutId,
         workspaceId,
+        undefined,
       );
-      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
+      expect(pageLayoutTabRepository.insert).toHaveBeenCalledWith({
         ...pageLayoutTabData,
         workspaceId,
       });
-      expect(pageLayoutTabRepository.save).toHaveBeenCalledWith(
-        mockPageLayoutTab,
-      );
       expect(result).toEqual(mockPageLayoutTab);
     });
 
@@ -281,9 +272,11 @@ describe('PageLayoutTabService', () => {
       };
 
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutTabService.create(pageLayoutTabData, workspaceId),
       ).rejects.toThrow(PageLayoutTabException);
       await expect(
+        // @ts-expect-error - we are testing the exception
         pageLayoutTabService.create(pageLayoutTabData, workspaceId),
       ).rejects.toHaveProperty(
         'code',
@@ -298,6 +291,11 @@ describe('PageLayoutTabService', () => {
         pageLayoutId: 'non-existent-page-layout-id',
       };
 
+      jest.spyOn(pageLayoutTabRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-tab-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
       jest
         .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockRejectedValue(
@@ -586,6 +584,7 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         'deleted-page-layout-id',
         workspaceId,
+        undefined,
       );
     });
   });

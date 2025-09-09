@@ -6,7 +6,7 @@ export const TABLE_Z_INDEX = {
     editMode: 20,
   },
   footer: {
-    default: 12,
+    default: 18,
     stickyColumn: 20,
   },
   noScrollAtAll: {

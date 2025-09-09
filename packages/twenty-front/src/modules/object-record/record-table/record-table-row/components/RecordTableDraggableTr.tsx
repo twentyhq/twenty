@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { type ReactNode } from 'react';
 
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { RecordTableTrEffect } from '@/object-record/record-table/record-table-row/components/RecordTableTrEffect';
@@ -61,7 +61,7 @@ export const RecordTableDraggableTr = ({
               borderColor: draggableSnapshot.isDragging
                 ? `${theme.border.color.medium}`
                 : 'transparent',
-              opacity: isSecondaryDragged ? 0.3 : 1,
+              opacity: isSecondaryDragged ? 0.3 : undefined,
             }}
             isDragging={draggableSnapshot.isDragging}
             data-testid={`row-id-${recordId}`}
