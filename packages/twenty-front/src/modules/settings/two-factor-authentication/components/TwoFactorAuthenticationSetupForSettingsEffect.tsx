@@ -27,7 +27,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   );
 
   useEffect(() => {
-    if (!currentUser || isDefined(qrCode)) {
+    if (!isDefined(currentUser) || isDefined(qrCode)) {
       return;
     }
 
