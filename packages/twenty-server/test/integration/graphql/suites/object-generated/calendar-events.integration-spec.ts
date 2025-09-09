@@ -2,6 +2,7 @@ import { CALENDAR_EVENT_GQL_FIELDS } from 'test/integration/constants/calendar-e
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 
@@ -22,7 +23,7 @@ describe('calendarEventsResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(60);
+    expect(edges.length).toEqual(QUERY_MAX_RECORDS);
 
     const calendarEvent = edges[0].node;
 
