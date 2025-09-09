@@ -12,7 +12,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
-import { useKeyValuePairs } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
+import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -106,7 +106,6 @@ export const WorkflowEditActionHttpRequest = ({
     onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
   });
-
   const { outputSchema, handleOutputSchemaChange, error } =
     useHttpRequestOutputSchema({
       action,
@@ -116,9 +115,6 @@ export const WorkflowEditActionHttpRequest = ({
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
-  const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
-    formData.headers as Record<string, string>,
-  );
   const handleTestRequest = async () => {
     if (actionOptions.readonly === true) {
       return;
@@ -180,6 +176,7 @@ export const WorkflowEditActionHttpRequest = ({
             />
 
             <KeyValuePairInput
+              key={getBodyTypeFromHeaders(formData.headers) || 'none'}
               label="Headers Input"
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
@@ -187,8 +184,6 @@ export const WorkflowEditActionHttpRequest = ({
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
               uniqueNotEditableKeys={['content-type']}
-              pairs={keyValuePairs}
-              setPairs={setKeyValuePairs}
             />
 
             {isMethodWithBody(formData.method) && (
@@ -199,7 +194,6 @@ export const WorkflowEditActionHttpRequest = ({
                 }
                 readonly={actionOptions.readonly}
                 headers={formData.headers}
-                setHeadersPairs={setKeyValuePairs}
               />
             )}
 

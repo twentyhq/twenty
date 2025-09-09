@@ -1,10 +1,10 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { type KeyValuePair } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -29,6 +29,11 @@ const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
           grid-template-columns: repeat(2, minmax(0, 1fr)) ${theme.spacing(8)};
         `};
 `;
+export type KeyValuePair = {
+  id: string;
+  key: string;
+  value: string;
+};
 
 export type KeyValuePairInputProps = {
   label?: string;
@@ -38,8 +43,6 @@ export type KeyValuePairInputProps = {
   keyPlaceholder?: string;
   valuePlaceholder?: string;
   uniqueNotEditableKeys?: string[];
-  pairs: KeyValuePair[];
-  setPairs: (value: KeyValuePair[]) => void;
 };
 
 export const KeyValuePairInput = ({
@@ -49,9 +52,20 @@ export const KeyValuePairInput = ({
   keyPlaceholder = 'Key',
   valuePlaceholder = 'Value',
   uniqueNotEditableKeys,
-  pairs,
-  setPairs,
+  defaultValue,
 }: KeyValuePairInputProps) => {
+  const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
+    const initialPairs = defaultValue
+      ? Object.entries(defaultValue).map(([key, value]) => ({
+          id: v4(),
+          key,
+          value,
+        }))
+      : [];
+    return initialPairs.length > 0
+      ? [...initialPairs, { id: v4(), key: '', value: '' }]
+      : [{ id: v4(), key: '', value: '' }];
+  });
   const handlePairChange = (
     pairId: string,
     field: 'key' | 'value',
