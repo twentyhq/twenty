@@ -12,11 +12,11 @@ import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconChevronRight,
-    IconLayoutList,
-    IconPlus,
-    IconTrashX,
+  H2Title,
+  IconChevronRight,
+  IconLayoutList,
+  IconPlus,
+  IconTrashX,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
