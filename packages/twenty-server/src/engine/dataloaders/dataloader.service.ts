@@ -301,9 +301,9 @@ export class DataloaderService {
             flatObjectMetadataWithFlatFieldMaps.flatFieldMetadatas.map(
               (flatFieldMetadata) => {
                 return FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
-                  (acc, field) => ({
+                  (acc, property) => ({
                     ...acc,
-                    [field]: resolveFieldMetadataStandardOverride(
+                    [property]: resolveFieldMetadataStandardOverride(
                       {
                         label: flatFieldMetadata.label,
                         description: flatFieldMetadata.description ?? undefined,
@@ -312,7 +312,7 @@ export class DataloaderService {
                         standardOverrides:
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },
-                      field,
+                      property,
                       dataLoaderParams[0].locale,
                       i18nInstance,
                     ),
