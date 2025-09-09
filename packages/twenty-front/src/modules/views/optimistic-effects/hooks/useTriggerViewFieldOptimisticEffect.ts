@@ -38,7 +38,6 @@ export const useTriggerViewFieldOptimisticEffect = () => {
                 toReference(createdViewField),
               ],
             },
-            optimistic: true,
           });
           const toBeModifiedCoreView = newCoreViews.find(
             (coreView) => coreView.id === createdViewField.viewId,
@@ -75,7 +74,6 @@ export const useTriggerViewFieldOptimisticEffect = () => {
                   return viewField;
                 }),
             },
-            optimistic: true,
           });
           const toBeModifiedCoreView = newCoreViews.find(
             (coreView) => coreView.id === updatedViewField.viewId,
@@ -111,11 +109,11 @@ export const useTriggerViewFieldOptimisticEffect = () => {
                     readField('id', viewField) !== deletedViewField.id,
                 ),
             },
-            optimistic: true,
           });
           const toBeModifiedCoreView = newCoreViews.find(
             (coreView) => coreView.id === deletedViewField.viewId,
           );
+
           if (isDefined(toBeModifiedCoreView)) {
             newCoreViews = [
               ...newCoreViews.filter(
