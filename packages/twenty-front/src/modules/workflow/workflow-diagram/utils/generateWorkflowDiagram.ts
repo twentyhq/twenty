@@ -176,7 +176,7 @@ export const generateWorkflowDiagram = ({
           type: edgeTypeForIteratorLoopBranch,
           id: v4(),
           source: step.id,
-          sourceHandle: 'loop',
+          sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
           target: emptyNodeId,
           ...(edgeTypeForIteratorLoopBranch.includes('editable')
             ? { deletable: true, selectable: true }
