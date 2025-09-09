@@ -37,7 +37,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   ): Promise<void> {
     const { action, flatObjectMetadataMaps, queryRunner, workspaceId } =
       context;
-    // TODO find from cache
+    // TODO find in cache
     const fromFlatIndexMetadata = {
       id: action.flatIndexMetadataId,
     } as FlatIndexMetadata;

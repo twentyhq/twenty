@@ -31,6 +31,7 @@ export class UpdateIndexFieldActionHandlerService extends WorkspaceMigrationRunn
   async executeForWorkspaceSchema(
     _context: WorkspaceMigrationActionRunnerArgs<UpdateIndexFieldAction>,
   ): Promise<void> {
-    throw new Error('Not implemented');
+    // Handled in update_index handler
+    return;
   }
 }

@@ -37,7 +37,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     const { action, flatObjectMetadataMaps, queryRunner, workspaceId } =
       context;
 
-    // TODO add to cache
+    // TODO find in cache
     const flatIndexMetadataToDelete = {
       id: action.flatIndexMetadataId,
     } as FlatIndexMetadata;

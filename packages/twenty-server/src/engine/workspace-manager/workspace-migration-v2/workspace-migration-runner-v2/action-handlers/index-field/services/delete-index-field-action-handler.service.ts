@@ -31,6 +31,7 @@ export class DeleteIndexFieldActionHandlerService extends WorkspaceMigrationRunn
   async executeForWorkspaceSchema(
     _context: WorkspaceMigrationActionRunnerArgs<DeleteIndexFieldAction>,
   ): Promise<void> {
-    throw new Error('Not implemented');
+    // Handled in delete_index handler
+    return;
   }
 }

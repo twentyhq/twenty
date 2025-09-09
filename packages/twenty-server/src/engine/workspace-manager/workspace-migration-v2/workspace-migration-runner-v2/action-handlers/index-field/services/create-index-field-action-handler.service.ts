@@ -27,7 +27,7 @@ export class CreateIndexFieldActionHandlerService extends WorkspaceMigrationRunn
   async executeForWorkspaceSchema(
     _context: WorkspaceMigrationActionRunnerArgs<CreateIndexFieldAction>,
   ): Promise<void> {
-    // Noop already handled in create_index
+    // Handled in create_index handler
     return;
   }
 }
