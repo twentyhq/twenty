@@ -462,8 +462,6 @@ export const WorkflowDiagramCanvasBase = ({
     clearEdgeHover();
   }, [clearEdgeHover]);
 
-  console.log('nodes', nodes);
-
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />

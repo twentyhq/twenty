@@ -3,6 +3,7 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { type MessageDescriptor } from '@lingui/core';
 import { type Edge, type Node, type Position } from '@xyflow/react';
@@ -29,7 +30,7 @@ export type WorkflowDiagramNodeRightHandleOptions = {
 };
 
 export type WorkflowDiagramNodeDefaultHandleOptions = {
-  label?: MessageDescriptor;
+  label: MessageDescriptor;
 };
 
 export type WorkflowDiagramStepNodeData =
@@ -72,15 +73,6 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
 
 export type WorkflowDiagramEmptyTriggerNodeData = {
   nodeType: 'empty-trigger';
-  position: {
-    x: number;
-    y: number;
-  };
-};
-
-export type WorkflowDiagramIteratorEmptyActionNodeData = {
-  nodeType: 'iterator-empty-action';
-  parentIteratorStepId: string;
   position: {
     x: number;
     y: number;

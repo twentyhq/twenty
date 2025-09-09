@@ -1,7 +1,7 @@
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useStartIteratorFirstNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartIteratorFirstNodeCreation';
-import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { useStartIteratorFirstNodeCreation } from '@/workflow/workflow-diagram/workflow-iterator/hooks/useStartIteratorFirstNodeCreation';
+import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';

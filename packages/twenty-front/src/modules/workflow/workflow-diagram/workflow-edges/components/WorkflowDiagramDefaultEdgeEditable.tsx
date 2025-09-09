@@ -117,8 +117,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     await deleteEdge({ source, target });
   };
 
-  console.log('in editable edge', data?.labelOptions);
-
   return (
     <>
       <WorkflowDiagramBaseEdge
