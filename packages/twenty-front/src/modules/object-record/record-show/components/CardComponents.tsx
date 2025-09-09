@@ -212,4 +212,8 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
   },
+
+  [CardType.DashboardCard]: ({ targetableObject }) => {
+    return <></>;
+  },
 };

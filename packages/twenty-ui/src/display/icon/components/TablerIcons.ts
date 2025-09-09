@@ -190,6 +190,7 @@ export {
   IconLanguage,
   IconLayersLinked,
   IconLayout,
+  IconLayoutDashboard,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,

@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconHome,
+  IconLayoutDashboard,
   IconMail,
   IconNotes,
   IconSettings,
@@ -228,6 +229,29 @@ export const useRecordShowContainerTabs = (
             position: 101,
             Icon: IconSettings,
             cards: [{ type: CardType.WorkflowRunCard }],
+            hide: {
+              ifMobile: false,
+              ifDesktop: false,
+              ifInRightDrawer: false,
+              ifFeaturesDisabled: [],
+              ifRequiredObjectsInactive: [],
+              ifRelationsMissing: [],
+            },
+          },
+          timeline: null,
+          tasks: null,
+          notes: null,
+          files: null,
+        },
+      },
+      [CoreObjectNameSingular.Dashboard]: {
+        hideSummaryAndFields: true,
+        tabs: {
+          dashboard: {
+            title: 'Dashboard',
+            position: 101,
+            Icon: IconLayoutDashboard,
+            cards: [{ type: CardType.DashboardCard }],
             hide: {
               ifMobile: false,
               ifDesktop: false,
