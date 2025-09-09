@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull, type Repository } from 'typeorm';
 
+import { type CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -12,10 +13,12 @@ import {
   generatePageLayoutExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 describe('PageLayoutService', () => {
   let pageLayoutService: PageLayoutService;
   let pageLayoutRepository: Repository<PageLayoutEntity>;
+  let twentyORMGlobalManager: TwentyORMGlobalManager;
 
   const mockPageLayout = {
     id: 'page-layout-id',
@@ -46,6 +49,13 @@ describe('PageLayoutService', () => {
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
+            insert: jest.fn(),
+          },
+        },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: {
+            getRepositoryForWorkspace: jest.fn(),
           },
         },
       ],
@@ -54,6 +64,9 @@ describe('PageLayoutService', () => {
     pageLayoutService = module.get<PageLayoutService>(PageLayoutService);
     pageLayoutRepository = module.get<Repository<PageLayoutEntity>>(
       getRepositoryToken(PageLayoutEntity),
+    );
+    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
+      TwentyORMGlobalManager,
     );
   });
 
@@ -142,17 +155,20 @@ describe('PageLayoutService', () => {
 
   describe('create', () => {
     const validPageLayoutData = {
+      id: 'page-layout-id',
       name: 'Test Page Layout',
       type: PageLayoutType.RECORD_PAGE,
       objectMetadataId: 'object-metadata-id',
     };
 
     it('should create a page layout successfully', async () => {
+      jest.spyOn(pageLayoutRepository, 'insert').mockResolvedValue({
+        identifiers: [{ id: 'page-layout-id' }],
+        generatedMaps: [],
+        raw: [],
+      });
       jest
-        .spyOn(pageLayoutRepository, 'create')
-        .mockReturnValue(mockPageLayout);
-      jest
-        .spyOn(pageLayoutRepository, 'save')
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout);
 
       const result = await pageLayoutService.create(
@@ -160,11 +176,10 @@ describe('PageLayoutService', () => {
         'workspace-id',
       );
 
-      expect(pageLayoutRepository.create).toHaveBeenCalledWith({
+      expect(pageLayoutRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutData,
         workspaceId: 'workspace-id',
       });
-      expect(pageLayoutRepository.save).toHaveBeenCalledWith(mockPageLayout);
       expect(result).toEqual(mockPageLayout);
     });
 
@@ -173,7 +188,10 @@ describe('PageLayoutService', () => {
       const workspaceId = 'workspace-id';
 
       await expect(
-        pageLayoutService.create(invalidData, workspaceId),
+        pageLayoutService.create(
+          invalidData as unknown as CreatePageLayoutInput,
+          workspaceId,
+        ),
       ).rejects.toThrow(
         new PageLayoutException(
           generatePageLayoutExceptionMessage(
@@ -210,6 +228,7 @@ describe('PageLayoutService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
         workspaceId,
+        undefined,
       );
       expect(result).toEqual(updatedPageLayout);
     });
@@ -262,6 +281,7 @@ describe('PageLayoutService', () => {
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
         workspaceId,
+        undefined,
       );
       expect(pageLayoutRepository.softDelete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockPageLayout);
@@ -343,6 +363,51 @@ describe('PageLayoutService', () => {
           PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
         ),
       );
+    });
+
+    it('should destroy associated dashboards when page layout is a dashboard', async () => {
+      const id = 'page-layout-id';
+      const workspaceId = 'workspace-id';
+      const mockDashboardRepository = {
+        find: jest.fn(),
+        delete: jest.fn(),
+      };
+      const mockDashboards = [{ id: 'dashboard', pageLayoutId: id }];
+
+      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue({
+        ...mockPageLayout,
+        type: PageLayoutType.DASHBOARD,
+      });
+      jest
+        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .mockResolvedValue(mockDashboardRepository as any);
+      jest
+        .spyOn(mockDashboardRepository, 'find')
+        .mockResolvedValue(mockDashboards);
+      jest
+        .spyOn(mockDashboardRepository, 'delete')
+        .mockResolvedValue({} as any);
+      jest.spyOn(pageLayoutRepository, 'delete').mockResolvedValue({} as any);
+
+      const result = await pageLayoutService.destroy(id, workspaceId);
+
+      expect(
+        twentyORMGlobalManager.getRepositoryForWorkspace,
+      ).toHaveBeenCalledWith(workspaceId, 'dashboard', {
+        shouldBypassPermissionChecks: true,
+      });
+      expect(mockDashboardRepository.find).toHaveBeenCalledWith({
+        where: {
+          pageLayoutId: id,
+        },
+      });
+      expect(mockDashboardRepository.delete).toHaveBeenCalledWith('dashboard');
+
+      expect(pageLayoutRepository.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual({
+        ...mockPageLayout,
+        type: PageLayoutType.DASHBOARD,
+      });
     });
   });
 
