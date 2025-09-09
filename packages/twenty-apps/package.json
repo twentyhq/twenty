@@ -1,0 +1,38 @@
+{
+  "name": "twenty-apps",
+  "version": "0.1.0",
+  "description": "Collection of Twenty CRM applications and extensions",
+  "private": true,
+  "keywords": [
+    "twenty",
+    "crm",
+    "applications",
+    "extensions",
+    "marketplace"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-apps"
+  },
+  "license": "AGPL-3.0",
+  "scripts": {
+    "lint": "echo 'No linting needed for application manifests'",
+    "validate": "ts-node scripts/validate-apps.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.9.3",
+    "@swc/jest": "^0.2.36",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.3.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "glob": "^10.3.0",
+    "jest": "^30.1.3",
+    "ts-jest": "^29.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

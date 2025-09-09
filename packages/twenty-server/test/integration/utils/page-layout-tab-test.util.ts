@@ -1,7 +1,6 @@
 import { type PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 
 export const cleanupPageLayoutTabRecords = async (): Promise<void> => {
-  // @ts-expect-error legacy noImplicitAny
   await global.testDataSource.query(`DELETE from "core"."pageLayoutTab"`);
 };
 

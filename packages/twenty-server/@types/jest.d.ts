@@ -1,5 +1,11 @@
 import 'jest';
+
+import { type INestApplication } from '@nestjs/common';
+
 import { type DataSource } from 'typeorm';
+
+import { type DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
+import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 
 declare module '@jest/types' {
   namespace Config {
@@ -27,7 +33,13 @@ declare global {
   const API_KEY_ACCESS_TOKEN: string;
   const ACME_JONY_MEMBER_ACCESS_TOKEN: string;
   const WORKSPACE_AGNOSTIC_TOKEN: string;
-  const testDataSource: DataSource;
+  var testDataSource: DataSource;
+
+  // Additional global properties set during test setup
+  var app: INestApplication;
+  var dataSourceService: DataSourceService;
+  var dataSeedWorkspaceCommand: DataSeedWorkspaceCommand;
 }
 
-export {};
+export { };
+
