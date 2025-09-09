@@ -3,7 +3,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/coreViewsByObjectMetadataIdFamilySelector';
+import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterableFieldsWithVectorSearch';
 
