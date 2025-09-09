@@ -25,19 +25,35 @@ const IMPERSONATE_WORKSPACE_USER = gql`
   mutation ImpersonateWorkspaceUser($targetUserWorkspaceId: UUID!) {
     impersonateWorkspaceUser(targetUserWorkspaceId: $targetUserWorkspaceId) {
       tokens {
-        accessOrWorkspaceAgnosticToken { token expiresAt }
-        refreshToken { token expiresAt }
+        accessOrWorkspaceAgnosticToken {
+          token
+          expiresAt
+        }
+        refreshToken {
+          token
+          expiresAt
+        }
       }
     }
   }
 `;
 
 const IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID = gql`
-  mutation ImpersonateWorkspaceUserByWorkspaceMemberId($targetWorkspaceMemberId: UUID!) {
-    impersonateWorkspaceUserByWorkspaceMemberId(targetWorkspaceMemberId: $targetWorkspaceMemberId) {
+  mutation ImpersonateWorkspaceUserByWorkspaceMemberId(
+    $targetWorkspaceMemberId: UUID!
+  ) {
+    impersonateWorkspaceUserByWorkspaceMemberId(
+      targetWorkspaceMemberId: $targetWorkspaceMemberId
+    ) {
       tokens {
-        accessOrWorkspaceAgnosticToken { token expiresAt }
-        refreshToken { token expiresAt }
+        accessOrWorkspaceAgnosticToken {
+          token
+          expiresAt
+        }
+        refreshToken {
+          token
+          expiresAt
+        }
       }
     }
   }
@@ -51,8 +67,12 @@ export const ManageMembersDropdownMenu = ({
 }: ManageMembersDropdownMenuProps) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
-  const [impersonateByUserWorkspaceId] = useMutation(IMPERSONATE_WORKSPACE_USER);
-  const [impersonateByMemberId] = useMutation(IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID);
+  const [impersonateByUserWorkspaceId] = useMutation(
+    IMPERSONATE_WORKSPACE_USER,
+  );
+  const [impersonateByMemberId] = useMutation(
+    IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID,
+  );
   const { setAuthTokens } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
@@ -98,24 +118,26 @@ export const ManageMembersDropdownMenu = ({
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
-      clickableComponent={<LightIconButton Icon={IconDotsVertical} accent="tertiary" />}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-          <MenuItem
+            <MenuItem
               LeftIcon={IconUser}
               text={t`Impersonate`}
               onClick={handleImpersonate}
             />
             <MenuItem
-               accent="danger"
-                LeftIcon={IconTrash}
-                text="Delete"
-                onClick={() => {
-                    onRequestDelete();
-                    closeDropdown(dropdownId);
-                }}
-                />
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Delete"
+              onClick={() => {
+                onRequestDelete();
+                closeDropdown(dropdownId);
+              }}
+            />
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

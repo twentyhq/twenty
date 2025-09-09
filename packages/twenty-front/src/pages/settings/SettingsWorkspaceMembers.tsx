@@ -378,8 +378,13 @@ export const SettingsWorkspaceMembers = () => {
                           <ManageMembersDropdownMenu
                             dropdownId={`workspace-member-actions-${workspaceMember.id}`}
                             workspaceMemberId={workspaceMember.id}
-                            userWorkspaceId={(workspaceMember as unknown as { userWorkspaceId?: string })
-                              .userWorkspaceId}
+                            userWorkspaceId={
+                              (
+                                workspaceMember as unknown as {
+                                  userWorkspaceId?: string;
+                                }
+                              ).userWorkspaceId
+                            }
                             onRequestDelete={() => {
                               openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
                               setWorkspaceMemberToDelete(workspaceMember.id);

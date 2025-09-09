@@ -35,7 +35,10 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
-import { getEffectiveTokenPair, isImpersonating } from '../utils/getEffectiveTokenPair';
+import {
+  getEffectiveTokenPair,
+  isImpersonating,
+} from '../utils/getEffectiveTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -147,7 +150,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             .then((tokens) => {
               if (isDefined(tokens)) {
                 if (isImpersonating()) {
-                  cookieStorage.setItem('impersonationTokenPair', JSON.stringify(tokens));
+                  cookieStorage.setItem(
+                    'impersonationTokenPair',
+                    JSON.stringify(tokens),
+                  );
                 } else {
                   onTokenPairChange?.(tokens);
                   cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
