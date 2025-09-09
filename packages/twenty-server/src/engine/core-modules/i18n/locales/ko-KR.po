@@ -330,6 +330,11 @@ msgstr "첨부 파일 작성자"
 msgid "Attachment company"
 msgstr "첨부 회사"
 
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr ""
+
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
@@ -370,6 +375,7 @@ msgstr "첨부 파일 유형"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -390,6 +396,11 @@ msgstr "회사에 연결된 첨부 파일"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "연락처에 연결된 첨부 파일."
+
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -746,6 +757,7 @@ msgstr "연락처의 X/트위터 계정"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
@@ -781,7 +793,10 @@ msgid "Custom Connection Parameters"
 msgstr "사용자 지정 연결 매개변수"
 
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "대시보드"
 
@@ -789,6 +804,11 @@ msgstr "대시보드"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "대시보드 페이지 레이아웃"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr ""
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -933,6 +953,11 @@ msgstr "CLOUDFLARE_API_KEY 환경 변수가 정의되지 않으면 이 기능을
 msgid "Event company"
 msgstr "이벤트 회사"
 
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr ""
+
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event details"
@@ -1058,6 +1083,11 @@ msgstr "즐겨찾기"
 msgid "Favorite company"
 msgstr "즐겨찾는 회사"
 
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr ""
+
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1130,6 +1160,7 @@ msgstr "즐겨찾는 워크스페이스 멤버"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1149,6 +1180,11 @@ msgstr "회사와 연결된 즐겨찾기"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "연락처에 연결된 즐겨찾기"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2369,6 +2405,7 @@ msgstr "담당자"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2796,6 +2833,7 @@ msgstr "회사 웹사이트 URL. 이 URL을 사용하여 회사 아이콘을 가
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
@@ -2923,6 +2961,7 @@ msgstr "시간대"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2932,6 +2971,11 @@ msgstr "타임라인 활동"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "회사에 연결된 타임라인 활동"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
