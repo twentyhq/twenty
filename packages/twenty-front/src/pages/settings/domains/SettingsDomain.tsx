@@ -22,6 +22,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { useState } from 'react';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';
@@ -62,6 +63,7 @@ export const SettingsDomain = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -89,6 +91,10 @@ export const SettingsDomain = () => {
     customDomain: string | null,
     currentWorkspace: CurrentWorkspace,
   ) => {
+    if (isSubmitting) {
+      return;
+    }
+    setIsSubmitting(true);
     updateWorkspace({
       variables: {
         input: {
@@ -107,6 +113,7 @@ export const SettingsDomain = () => {
         enqueueSuccessSnackBar({
           message: t`Custom domain updated`,
         });
+        setIsSubmitting(false);
       },
       onError: (error: ApolloError) => {
         if (
@@ -121,6 +128,7 @@ export const SettingsDomain = () => {
         enqueueErrorSnackBar({
           apolloError: error,
         });
+        setIsSubmitting(false);
       },
     });
   };
@@ -129,6 +137,10 @@ export const SettingsDomain = () => {
     subdomain: string,
     currentWorkspace: CurrentWorkspace,
   ) => {
+    if (isSubmitting) {
+      return;
+    }
+    setIsSubmitting(true);
     updateWorkspace({
       variables: {
         input: {
@@ -149,6 +161,7 @@ export const SettingsDomain = () => {
         enqueueErrorSnackBar({
           apolloError: error,
         });
+        setIsSubmitting(false);
       },
       onCompleted: async () => {
         const currentUrl = new URL(window.location.href);
@@ -165,6 +178,7 @@ export const SettingsDomain = () => {
         enqueueSuccessSnackBar({
           message: t`Subdomain updated`,
         });
+        setIsSubmitting(false);
 
         await redirectToWorkspaceDomain(currentUrl.toString());
       },
@@ -223,7 +237,7 @@ export const SettingsDomain = () => {
             actionButton={
               <SaveAndCancelButtons
                 onCancel={() => navigate(SettingsPath.Domains)}
-                isSaveDisabled={form.formState.isSubmitting}
+                isSaveDisabled={isSubmitting}
               />
             }
           >
