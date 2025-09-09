@@ -22,12 +22,22 @@ export const compareTwoFlatIndexMetadata = ({
     propertiesToStringify: FLAT_INDEX_METADATA_JSONB_PROPERTIES,
   };
 
-  const fromCompare = transformMetadataForComparison(
+  const [sortedFromFlatIndexMetadata, sortedToFlatIndexMetadata] = [
     fromFlatIndexMetadata,
+    toFlatIndexMetadata,
+  ].map((flatIndexMetadata) => ({
+    ...flatIndexMetadata,
+    flatIndexFieldMetadatas: fromFlatIndexMetadata.flatIndexFieldMetadatas.sort(
+      (a, b) => (a.universalIdentifier > b.universalIdentifier ? 1 : -1),
+    ),
+  }));
+
+  const fromCompare = transformMetadataForComparison(
+    sortedFromFlatIndexMetadata,
     transformOptions,
   );
   const toCompare = transformMetadataForComparison(
-    toFlatIndexMetadata,
+    sortedToFlatIndexMetadata,
     transformOptions,
   );
 
