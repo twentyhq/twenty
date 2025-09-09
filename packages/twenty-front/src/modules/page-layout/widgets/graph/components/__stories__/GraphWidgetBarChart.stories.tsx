@@ -4,7 +4,7 @@ import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetBarChart } from '../GraphWidgetBarChart';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
-  title: 'Modules/Dashboards/Graphs/GraphWidgetBarChart',
+  title: 'Modules/PageLayout/Widgets/GraphWidgetBarChart',
   component: GraphWidgetBarChart,
   decorators: [ComponentDecorator],
   parameters: {

@@ -4,7 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetLegend } from '../GraphWidgetLegend';
 
 const meta: Meta<typeof GraphWidgetLegend> = {
-  title: 'Modules/Dashboards/Graphs/GraphWidgetLegend',
+  title: 'Modules/PageLayout/Widgets/GraphWidgetLegend',
   component: GraphWidgetLegend,
   decorators: [ComponentDecorator],
   parameters: {

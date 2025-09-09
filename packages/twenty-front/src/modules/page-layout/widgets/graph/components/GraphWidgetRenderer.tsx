@@ -1,9 +1,9 @@
-import { GraphWidgetBarChart } from '@/dashboards/widgets/graph/components/GraphWidgetBarChart';
-import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/GraphWidgetGaugeChart';
-import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
-import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
-import { GraphType } from '../mocks/mockWidgets';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
+import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart';
+import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
+import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
+import { GraphType } from '../../../mocks/mockWidgets';
+import { type PageLayoutWidget } from '../../../states/savedPageLayoutsState';
 
 type GraphWidgetRendererProps = {
   widget: PageLayoutWidget;

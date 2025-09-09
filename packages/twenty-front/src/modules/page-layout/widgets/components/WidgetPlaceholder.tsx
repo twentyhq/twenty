@@ -63,7 +63,7 @@ const StyledContent = styled.div`
   justify-content: center;
 `;
 
-type PageLayoutWidgetPlaceholderProps = {
+type WidgetPlaceholderProps = {
   title?: string;
   onRemove?: () => void;
   onEdit?: () => void;
@@ -71,13 +71,13 @@ type PageLayoutWidgetPlaceholderProps = {
   isEmpty?: boolean;
 };
 
-export const PageLayoutWidgetPlaceholder = ({
+export const WidgetPlaceholder = ({
   title = 'Graph Title',
   onRemove,
   onEdit,
   children,
   isEmpty = false,
-}: PageLayoutWidgetPlaceholderProps) => {
+}: WidgetPlaceholderProps) => {
   if (isEmpty) {
     return (
       <StyledPlaceholderContainer isEmpty>

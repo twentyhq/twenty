@@ -4,7 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetNumberChart } from '../GraphWidgetNumberChart';
 
 const meta: Meta<typeof GraphWidgetNumberChart> = {
-  title: 'Modules/Dashboards/Graphs/GraphWidgetNumberChart',
+  title: 'Modules/PageLayout/Widgets/GraphWidgetNumberChart',
   component: GraphWidgetNumberChart,
   decorators: [ComponentDecorator],
 };

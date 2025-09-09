@@ -4,7 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetTooltip } from '../GraphWidgetTooltip';
 
 const meta: Meta<typeof GraphWidgetTooltip> = {
-  title: 'Modules/Dashboards/Graphs/GraphWidgetTooltip',
+  title: 'Modules/PageLayout/Widgets/GraphWidgetTooltip',
   component: GraphWidgetTooltip,
   decorators: [ComponentDecorator],
   parameters: {

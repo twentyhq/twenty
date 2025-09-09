@@ -1,13 +1,13 @@
-import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/GraphWidgetGaugeChart';
-import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
-import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
+import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
+import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutWidgetPlaceholder } from '../PageLayoutWidgetPlaceholder';
+import { WidgetPlaceholder } from '../WidgetPlaceholder';
 
-const meta: Meta<typeof PageLayoutWidgetPlaceholder> = {
-  title: 'Modules/Settings/PageLayout/PageLayoutWidgetPlaceholder',
-  component: PageLayoutWidgetPlaceholder,
+const meta: Meta<typeof WidgetPlaceholder> = {
+  title: 'Modules/PageLayout/Widgets/WidgetPlaceholder',
+  component: WidgetPlaceholder,
   decorators: [ComponentDecorator],
   parameters: {
     layout: 'centered',
@@ -28,7 +28,7 @@ const meta: Meta<typeof PageLayoutWidgetPlaceholder> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof PageLayoutWidgetPlaceholder>;
+type Story = StoryObj<typeof WidgetPlaceholder>;
 
 export const WithNumberChart: Story = {
   args: {
@@ -37,7 +37,7 @@ export const WithNumberChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -66,7 +66,7 @@ export const WithGaugeChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -89,7 +89,7 @@ export const EmptyState: Story = {
   },
   render: (args) => (
     <div style={{ width: '500px', height: '300px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -144,7 +144,7 @@ export const WithPieChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -168,7 +168,7 @@ export const SmallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -204,7 +204,7 @@ export const MediumWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '400px', height: '250px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -240,7 +240,7 @@ export const LargeWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '600px', height: '400px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -266,7 +266,7 @@ export const WideWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '800px', height: '200px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}
@@ -302,7 +302,7 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <PageLayoutWidgetPlaceholder
+      <WidgetPlaceholder
         title={args.title}
         isEmpty={args.isEmpty}
         onRemove={args.onRemove}

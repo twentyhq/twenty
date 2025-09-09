@@ -1,12 +1,10 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
-import { PageLayoutWidgetPlaceholder } from '@/page-layout/components/PageLayoutWidgetPlaceholder';
-import { WidgetRenderer } from '@/page-layout/components/WidgetRenderer';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
-    PAGE_LAYOUT_CONFIG,
-    type PageLayoutBreakpoint,
+  PAGE_LAYOUT_CONFIG,
+  type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
 import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { useChangePageLayoutDragSelection } from '@/page-layout/hooks/useChangePageLayoutDragSelection';
@@ -25,6 +23,8 @@ import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSel
 import { type PageLayoutWidget } from '@/page-layout/states/savedPageLayoutsState';
 import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/page-layout/utils/generateCellId';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -37,9 +37,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
-    Responsive,
-    WidthProvider,
-    type ResponsiveProps,
+  Responsive,
+  WidthProvider,
+  type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -374,18 +374,18 @@ export const SettingsPageLayoutEdit = () => {
           >
             {isEmptyState ? (
               <div key="empty-placeholder" onClick={handleOpenAddWidget}>
-                <PageLayoutWidgetPlaceholder title="" isEmpty />
+                <WidgetPlaceholder title="" isEmpty />
               </div>
             ) : (
               activeTabWidgets.map((widget) => (
                 <div key={widget.id} data-select-disable="true">
-                  <PageLayoutWidgetPlaceholder
+                  <WidgetPlaceholder
                     title={widget.title}
                     onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
                   >
                     <WidgetRenderer widget={widget} />
-                  </PageLayoutWidgetPlaceholder>
+                  </WidgetPlaceholder>
                 </div>
               ))
             )}

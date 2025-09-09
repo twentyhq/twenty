@@ -4,7 +4,7 @@ import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetGaugeChart } from '../GraphWidgetGaugeChart';
 
 const meta: Meta<typeof GraphWidgetGaugeChart> = {
-  title: 'Modules/Dashboards/Graphs/GraphWidgetGaugeChart',
+  title: 'Modules/PageLayout/Widgets/GraphWidgetGaugeChart',
   component: GraphWidgetGaugeChart,
   decorators: [ComponentDecorator],
   parameters: {
