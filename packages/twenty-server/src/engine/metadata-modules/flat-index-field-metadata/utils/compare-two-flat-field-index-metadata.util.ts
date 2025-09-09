@@ -1,31 +1,19 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { FLAT_INDEX_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-index-field-metadata/constants/flat-index-field-metadata-properties-to-compare.constant';
+import { FlatIndexFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-index-field-metadata/types/flat-index-field-metadata-properties-to-compare.type';
+import { FlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-field-metadata';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flatIndexMetadataPropertiesToCompare = [
-  'indexType',
-  'indexWhereClause',
-  'isUnique',
-  'name',
-] as const satisfies (keyof FlatIndexMetadata)[];
-
-type FlatIndexMetadataPropertiesToCompare =
-  (typeof flatIndexMetadataPropertiesToCompare)[number];
-
-// Should also handle indexFieldMetadata comparison ?
-/**
- * This comparator handles update on colliding universalIdentifier flatIndexMetadata
- */
-export const compareTwoFlatIndexMetadata = ({
+export const compareTwoFlatFieldIndexMetadata = ({
   from,
   to,
-}: FromTo<FlatIndexMetadata>) => {
+}: FromTo<FlatIndexFieldMetadata>) => {
   const transformOptions = {
     shouldIgnoreProperty: (property: string) =>
-      !flatIndexMetadataPropertiesToCompare.includes(
-        property as FlatIndexMetadataPropertiesToCompare,
+      !FLAT_INDEX_FIELD_METADATA_PROPERTIES_TO_COMPARE.includes(
+        property as FlatIndexFieldMetadataPropertiesToCompare,
       ),
   };
 

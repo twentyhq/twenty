@@ -14,10 +14,6 @@ const flatIndexMetadataPropertiesToCompare = [
 type FlatIndexMetadataPropertiesToCompare =
   (typeof flatIndexMetadataPropertiesToCompare)[number];
 
-// Should also handle indexFieldMetadata comparison ?
-/**
- * This comparator handles update on colliding universalIdentifier flatIndexMetadata
- */
 export const compareTwoFlatIndexMetadata = ({
   from,
   to,
