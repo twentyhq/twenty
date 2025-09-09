@@ -330,6 +330,11 @@ msgstr "Συγγραφέας συνημμένου"
 msgid "Attachment company"
 msgstr "Συνημμένο εταιρείας"
 
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr ""
+
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
@@ -370,6 +375,7 @@ msgstr "Τύπος συνημμένου"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -390,6 +396,11 @@ msgstr "Συνημμένα συνδεδεμένα με την εταιρεία"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Συνημμένα συνδεδεμένα με την επαφή."
+
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -746,6 +757,7 @@ msgstr "Λογαριασμός X/Twitter Επαφής"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
@@ -781,7 +793,10 @@ msgid "Custom Connection Parameters"
 msgstr "Προσαρμοσμένες Παράμετροι Σύνδεσης"
 
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Πίνακας ελέγχου"
 
@@ -789,6 +804,11 @@ msgstr "Πίνακας ελέγχου"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "Διάταξη σελίδας πίνακα ελέγχου"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr ""
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -933,6 +953,11 @@ msgstr "Η μεταβλητή περιβάλλοντος CLOUDFLARE_API_KEY πρ
 msgid "Event company"
 msgstr "Εταιρεία Συμβάντος"
 
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr ""
+
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event details"
@@ -1058,6 +1083,11 @@ msgstr "Αγαπημένο"
 msgid "Favorite company"
 msgstr "Αγαπημένη Εταιρεία"
 
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr ""
+
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1130,6 +1160,7 @@ msgstr "Αγαπημένο μέλος χώρου εργασίας"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1149,6 +1180,11 @@ msgstr "Αγαπημένα συνδεδεμένα με την εταιρεία"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "Αγαπημένα συνδεδεμένα με την επαφή"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2369,6 +2405,7 @@ msgstr "\\\\"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2796,6 +2833,7 @@ msgstr "Η διεύθυνση URL της ιστοσελίδας της εται�
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
@@ -2923,6 +2961,7 @@ msgstr "Ζώνη ώρας"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2932,6 +2971,11 @@ msgstr "Δραστηριότητες Χρονοδιαγράμματος"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "Δραστηριότητες Χρονοδιαγράμματος συνδεδεμένες με την εταιρία"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
