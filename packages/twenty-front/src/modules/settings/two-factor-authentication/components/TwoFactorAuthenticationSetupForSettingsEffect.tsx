@@ -59,8 +59,6 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
     };
 
     handleTwoFactorAuthenticationProvisioningInitiation();
-
-    // Two factor authentication provisioning only needs to run once at mount
   }, [
     enqueueErrorSnackBar,
     initiateOTPProvisioningForAuthenticatedUser,
