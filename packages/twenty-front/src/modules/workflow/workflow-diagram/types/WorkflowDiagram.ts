@@ -5,7 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { type MessageDescriptor } from '@lingui/core';
-import { type Edge, type Node } from '@xyflow/react';
+import { type Edge, type Node, type Position } from '@xyflow/react';
 import { type StepStatus } from 'twenty-shared/workflow';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
@@ -97,6 +97,11 @@ export type WorkflowRunDiagramNodeData = Exclude<
   'runStatus'
 > & { runStatus: WorkflowRunStepStatus };
 
+export type WorkflowDiagramEdgeLabelOptions = {
+  position: Position;
+  label: MessageDescriptor;
+};
+
 export type WorkflowDiagramFilterEdgeData = {
   edgeType: 'filter';
   stepId: string;
@@ -104,11 +109,13 @@ export type WorkflowDiagramFilterEdgeData = {
   name: string;
   runStatus?: WorkflowRunStepStatus;
   edgeExecutionStatus?: StepStatus;
+  labelOptions?: WorkflowDiagramEdgeLabelOptions;
 };
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
   edgeExecutionStatus?: StepStatus;
+  labelOptions?: WorkflowDiagramEdgeLabelOptions;
 };
 
 export type WorkflowDiagramEdgeData =

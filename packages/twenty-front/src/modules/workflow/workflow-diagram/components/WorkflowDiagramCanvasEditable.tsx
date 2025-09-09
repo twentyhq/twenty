@@ -14,8 +14,6 @@ import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/ut
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable';
-import { WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable';
-import { WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramIteratorEmptyActionEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
@@ -130,10 +128,6 @@ export const WorkflowDiagramCanvasEditable = () => {
           blank: WorkflowDiagramBlankEdge,
           'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
           'filter--editable': WorkflowDiagramFilterEdgeEditable,
-          'iterator-completed--empty-filter--editable':
-            WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable,
-          'iterator-loop--empty-filter--editable':
-            WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}

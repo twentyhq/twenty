@@ -28,9 +28,6 @@ export const getWorkflowVersionDiagram = ({
     edgeTypeBetweenTwoDefaultNodes: isEditable
       ? 'empty-filter--editable'
       : 'empty-filter--readonly',
-    edgeTypeForIteratorCompletedBranch:
-      'iterator-completed--empty-filter--editable',
-    edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     isWorkflowBranchEnabled,
   });
 
