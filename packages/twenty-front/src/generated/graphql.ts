@@ -1431,6 +1431,8 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
+  impersonateWorkspaceUser: AuthTokens;
+  impersonateWorkspaceUserByWorkspaceMemberId: AuthTokens;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
@@ -1905,6 +1907,16 @@ export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
+};
+
+
+export type MutationImpersonateWorkspaceUserArgs = {
+  targetUserWorkspaceId: Scalars['UUID'];
+};
+
+
+export type MutationImpersonateWorkspaceUserByWorkspaceMemberIdArgs = {
+  targetWorkspaceMemberId: Scalars['UUID'];
 };
 
 
@@ -2442,6 +2454,7 @@ export enum PermissionFlagType {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   EXPORT_CSV = 'EXPORT_CSV',
+  IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
