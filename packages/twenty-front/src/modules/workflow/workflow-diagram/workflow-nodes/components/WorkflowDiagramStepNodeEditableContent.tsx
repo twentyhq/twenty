@@ -15,7 +15,7 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react';
+import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -59,7 +59,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   onDelete: () => void;
   onClick?: () => void;
 }) => {
-  const { _ } = useLingui();
+  const { i18n } = useLingui();
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -134,7 +134,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             Label={
               isDefined(data.defaultHandleOptions?.label) ? (
                 <WorkflowDiagramEdgeLabel
-                  label={_(data.defaultHandleOptions.label)}
+                  label={i18n._(data.defaultHandleOptions.label)}
                 />
               ) : undefined
             }

@@ -16,7 +16,7 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
-import { useLingui } from '@lingui/react';
+import { useLingui } from '@lingui/react/macro';
 import {
   EdgeLabelRenderer,
   type EdgeProps,
@@ -40,7 +40,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   markerEnd,
   data,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
-  const { _ } = useLingui();
+  const { i18n } = useLingui();
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
@@ -128,7 +128,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             sourceY={sourceY}
             position={data.labelOptions.position}
           >
-            <WorkflowDiagramEdgeLabel label={_(data.labelOptions.label)} />
+            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
           </WorkflowDiagramEdgeLabelContainer>
         )}
 
