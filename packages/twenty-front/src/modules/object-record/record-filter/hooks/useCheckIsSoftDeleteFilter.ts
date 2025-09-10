@@ -9,7 +9,10 @@ export const useCheckIsSoftDeleteFilter = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const isRecordFilterAboutSoftDelete = (recordFilter: RecordFilter) => {
-    isRecordFilterAboutSoftDeleteUtil({ recordFilter, objectMetadataItems });
+    return isRecordFilterAboutSoftDeleteUtil({
+      recordFilter,
+      objectMetadataItems,
+    });
   };
 
   const isSeeDeletedRecordsFilter = (recordFilter: RecordFilter) => {
