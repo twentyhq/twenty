@@ -1,15 +1,14 @@
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
-import { type WorkflowStepType } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
+import { useDuplicateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCreateStep = () => {
+export const useDuplicateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
+  const { duplicateWorkflowVersionStep } = useDuplicateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
@@ -20,17 +19,7 @@ export const useCreateStep = () => {
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
-  const createStep = async ({
-    newStepType,
-    parentStepId,
-    nextStepId,
-    position,
-  }: {
-    newStepType: WorkflowStepType;
-    parentStepId: string | undefined;
-    nextStepId: string | undefined;
-    position?: { x: number; y: number };
-  }) => {
+  const duplicateStep = async ({ stepId }: { stepId: string }) => {
     if (isLoading === true) {
       return;
     }
@@ -41,19 +30,16 @@ export const useCreateStep = () => {
       const workflowVersionId = await getUpdatableWorkflowVersion();
 
       const workflowVersionStepChanges = (
-        await createWorkflowVersionStep({
+        await duplicateWorkflowVersionStep({
           workflowVersionId,
-          stepType: newStepType,
-          parentStepId,
-          nextStepId,
-          position,
+          stepId,
         })
-      )?.data?.createWorkflowVersionStep;
+      )?.data?.duplicateWorkflowVersionStep;
 
       const createdStep = workflowVersionStepChanges?.createdStep;
 
       if (!isDefined(createdStep)) {
-        throw new Error("Couldn't create step");
+        throw new Error("Couldn't duplicate step");
       }
 
       setWorkflowSelectedNode(createdStep.id);
@@ -66,6 +52,6 @@ export const useCreateStep = () => {
   };
 
   return {
-    createStep,
+    duplicateStep,
   };
 };

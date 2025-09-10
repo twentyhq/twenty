@@ -13,6 +13,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
@@ -232,6 +233,7 @@ export const WorkflowEditActionFindRecords = ({
           readonly
         />
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
   );
 };

@@ -30,7 +30,6 @@ export const WorkflowDiagramStepNodeEditable = ({
   );
 
   const { deleteStep } = useDeleteStep();
-
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
