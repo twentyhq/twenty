@@ -41,6 +41,30 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
         layout: 'vertical' as const,
       };
 
+    case GraphType.LINE:
+      return {
+        series: [
+          {
+            id: 'series1',
+            label: 'Series 1',
+            color: 'red',
+            data: [
+              { x: 0, y: 30 },
+              { x: 1, y: 40 },
+              { x: 2, y: 35 },
+              { x: 3, y: 50 },
+              { x: 4, y: 45 },
+              { x: 5, y: 60 },
+            ],
+          },
+        ],
+        enableArea: true,
+        showLegend: true,
+        showGrid: true,
+        enablePoints: false,
+        displayType: 'number',
+      };
+
     default:
       return {};
   }
@@ -52,6 +76,7 @@ export const getWidgetTitle = (graphType: GraphType, index: number): string => {
     [GraphType.GAUGE]: 'Gauge',
     [GraphType.PIE]: 'Pie Chart',
     [GraphType.BAR]: 'Bar Chart',
+    [GraphType.LINE]: 'Line Chart',
   };
 
   return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
@@ -67,6 +92,8 @@ export const getWidgetSize = (graphType: GraphType) => {
       return { w: 4, h: 4 };
     case GraphType.BAR:
       return { w: 6, h: 4 };
+    case GraphType.LINE:
+      return { w: 6, h: 10 };
     default:
       return { w: 4, h: 4 };
   }

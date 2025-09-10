@@ -142,7 +142,7 @@ export const GraphWidgetLineChart = ({
   const defs = enrichedSeries
     .filter((series) => series.shouldEnableArea)
     .map((series) =>
-      createGradientDef(series.colorScheme, series.gradientId, false, 90, true),
+      createGradientDef(series.colorScheme, series.gradientId, false, 90),
     );
 
   const fill = enrichedSeries
