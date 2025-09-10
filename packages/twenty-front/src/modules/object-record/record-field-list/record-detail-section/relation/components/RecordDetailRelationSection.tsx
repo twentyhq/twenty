@@ -19,12 +19,13 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { AppPath } from '@/types/AppPath';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
-import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
