@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetLineChart } from '../GraphWidgetLineChart';
+import { type ComponentProps } from 'react';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/Dashboards/Graphs/GraphWidgetLineChart',
@@ -71,12 +72,13 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
 
 export default meta;
 type Story = StoryObj<typeof GraphWidgetLineChart>;
+type ChartArgs = ComponentProps<typeof GraphWidgetLineChart>;
 
 const Container = ({ children }: { children: React.ReactNode }) => (
   <div style={{ width: '700px', height: '500px' }}>{children}</div>
 );
 
-const renderChart = (args: any) => (
+const renderChart = (args: ChartArgs) => (
   <Container>
     <GraphWidgetLineChart
       id={args.id}
