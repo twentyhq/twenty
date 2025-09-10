@@ -1,4 +1,4 @@
-import { MKT_PRODUCT_DATA_SEEDS_IDS } from "src/mkt-core/dev-seeder/product-seeder/mkt-product-data-seeds.constants";
+import { MKT_PRODUCT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/product-seeder/mkt-product-data-seeds.constants';
 
 type MktVariantDataSeed = {
   id: string;

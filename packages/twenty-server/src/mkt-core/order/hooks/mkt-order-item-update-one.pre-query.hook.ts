@@ -1,4 +1,4 @@
-import { BadRequestException,Injectable,Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -16,7 +16,8 @@ export class MktOrderItemUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   private readonly logger = new Logger(MktOrderItemUpdateOnePreQueryHook.name);
-  private readonly orderEnv: string = process.env.ORDER_OPTIMISTIC_LOCKING_ENABLED || 'true';
+  private readonly orderEnv: string =
+    process.env.ORDER_OPTIMISTIC_LOCKING_ENABLED || 'true';
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -29,11 +30,19 @@ export class MktOrderItemUpdateOnePreQueryHook
   ): Promise<UpdateOneResolverArgs<MktOrderItemWorkspaceEntity>> {
     const input = payload?.data;
     const orderItemId = payload?.id;
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId || '';
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create().workspaceId || '';
     const orderItem = await this.getCurrentOrderItem(orderItemId, workspaceId);
+
     await this.validateOrderItemForUpdate(orderItem, input);
-    const variant = await this.getVariant(input, workspaceId, orderItem?.mktVariant);
+    const variant = await this.getVariant(
+      input,
+      workspaceId,
+      orderItem?.mktVariant,
+    );
+
     await this.updateOrderItemFromVariant(input, variant, orderItem?.quantity);
+
     return payload;
   }
 
@@ -45,7 +54,6 @@ export class MktOrderItemUpdateOnePreQueryHook
     if (!variant) return;
 
     await this.calculateOrderItemValues(input, variant, currentQuantity);
-    
   }
 
   /**
@@ -61,25 +69,31 @@ export class MktOrderItemUpdateOnePreQueryHook
       input.mktProductId = variant.mktProductId;
       input.unitName = 'pcs';
       let { quantity } = input;
+
       if (!quantity) quantity = currentQuantity || 1;
       if (quantity <= 0) quantity = 1;
-      let { price : unitPrice } = variant;
+      let { price: unitPrice } = variant;
+
       if (unitPrice === undefined || unitPrice <= 0) unitPrice = 0;
       input.unitPrice = unitPrice;
       const taxPercentage = 0;
+
       input.taxPercentage = taxPercentage;
-      
+
       input.name = `${variant.name} (x${quantity})`;
-      
+
       const totalPrice = quantity * unitPrice;
+
       input.totalPrice = this.roundToTwoDecimals(totalPrice);
-  
+
       const taxAmount = (totalPrice * taxPercentage) / 100;
+
       input.taxAmount = this.roundToTwoDecimals(taxAmount);
-  
+
       const totalAmountWithTax = totalPrice + taxAmount;
+
       input.totalAmountWithTax = this.roundToTwoDecimals(totalAmountWithTax);
-  
+
       this.logger.log(
         `order item values: quantity=${quantity}, unitPrice=${unitPrice}, taxPercentage=${taxPercentage}%, totalPrice=${input.totalPrice}, taxAmount=${input.taxAmount}, totalAmountWithTax=${input.totalAmountWithTax}`,
       );
@@ -98,16 +112,16 @@ export class MktOrderItemUpdateOnePreQueryHook
         'mktOrderItem',
         { shouldBypassPermissionChecks: true },
       );
-      const currentOrderItem = await orderItemRepository.findOne({
-        where: { id: orderItemId },
-        relations: ['mktOrder', 'mktVariant'],
-      });
-      if (!currentOrderItem) {
-        throw new BadRequestException(
-          `Order item not found for recalculation`
-        );
-      }
-    return currentOrderItem
+    const currentOrderItem = await orderItemRepository.findOne({
+      where: { id: orderItemId },
+      relations: ['mktOrder', 'mktVariant'],
+    });
+
+    if (!currentOrderItem) {
+      throw new BadRequestException(`Order item not found for recalculation`);
+    }
+
+    return currentOrderItem;
   }
 
   /**
@@ -129,15 +143,19 @@ export class MktOrderItemUpdateOnePreQueryHook
         throw new BadRequestException('Order item not found');
       }
       if (!currentOrderItem || !currentOrderItem.mktOrder) {
-        throw new BadRequestException('Order item not found or has no associated order');
+        throw new BadRequestException(
+          'Order item not found or has no associated order',
+        );
       }
 
       const orderStatus = currentOrderItem.mktOrder.status;
 
-      if(this.orderEnv !== 'true') return;
+      if (this.orderEnv !== 'true') return;
 
       if (orderStatus) {
-        throw new BadRequestException('Order item cannot be updated because order is locked');
+        throw new BadRequestException(
+          'Order item cannot be updated because order is locked',
+        );
       }
 
       this.assertOrderUpdatedAtMatches(
@@ -145,7 +163,9 @@ export class MktOrderItemUpdateOnePreQueryHook
         input?.updatedAt as string,
       );
 
-      this.logger.log(`Order status validation passed for order item. Order status: ${orderStatus || 'null'}`);
+      this.logger.log(
+        `Order status validation passed for order item. Order status: ${orderStatus || 'null'}`,
+      );
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -174,7 +194,7 @@ export class MktOrderItemUpdateOnePreQueryHook
     if (given.getTime() !== current.getTime()) {
       throw new BadRequestException(
         `Order updatedAt mismatch. Input: ${given.toISOString()}, Current: ${current.toISOString()}`,
-        message
+        message,
       );
     }
   }
@@ -184,7 +204,8 @@ export class MktOrderItemUpdateOnePreQueryHook
     workspaceId: string,
     mktVariant?: MktVariantWorkspaceEntity | null,
   ): Promise<MktVariantWorkspaceEntity | null> {
-    const { mktVariantId, id :orderItemId } = input;
+    const { mktVariantId, id: orderItemId } = input;
+
     if (mktVariantId) {
       const variantRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktVariantWorkspaceEntity>(
@@ -192,14 +213,15 @@ export class MktOrderItemUpdateOnePreQueryHook
           'mktVariant',
           { shouldBypassPermissionChecks: true },
         );
-        return await variantRepository.findOne({
-          where: { id: mktVariantId },
-          relations: ['mktProduct'],
-        });
-    }else if(mktVariant){
+
+      return await variantRepository.findOne({
+        where: { id: mktVariantId },
+        relations: ['mktProduct'],
+      });
+    } else if (mktVariant) {
       return mktVariant;
     }
+
     return null;
   }
-
 }

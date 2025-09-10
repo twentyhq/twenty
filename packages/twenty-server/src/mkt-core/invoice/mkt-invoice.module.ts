@@ -13,7 +13,12 @@ import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/integration/s-i
 import { SInvoiceIntegrationJob } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
 
 @Module({
-  imports: [TwentyORMModule, AuthModule, WorkspaceCacheStorageModule, RecordPositionModule],
+  imports: [
+    TwentyORMModule,
+    AuthModule,
+    WorkspaceCacheStorageModule,
+    RecordPositionModule,
+  ],
   controllers: [InvoiceFileController],
   providers: [
     SInvoiceIntegrationService,

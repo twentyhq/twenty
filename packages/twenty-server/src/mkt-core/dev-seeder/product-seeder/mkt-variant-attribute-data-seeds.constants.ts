@@ -1,4 +1,3 @@
-
 type MktVariantAttributeDataSeed = {
   id: string;
   name: string;

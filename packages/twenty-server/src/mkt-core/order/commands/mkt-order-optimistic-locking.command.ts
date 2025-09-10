@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command,CommandRunner,Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,9 +18,7 @@ type Options = {
     'Create/replace trigger to touch mktOrder.updatedAt when mktOrderItem changes for a specific workspace',
 })
 export class EnsureOrderUpdatedAtTriggerCommand extends CommandRunner {
-  private readonly logger = new Logger(
-    EnsureOrderUpdatedAtTriggerCommand.name,
-  );
+  private readonly logger = new Logger(EnsureOrderUpdatedAtTriggerCommand.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -41,6 +39,7 @@ export class EnsureOrderUpdatedAtTriggerCommand extends CommandRunner {
   async run(_passedParam: string[], options: Options): Promise<void> {
     if (!options.workspaceId) {
       this.logger.error('Missing --workspace-id');
+
       return;
     }
 
@@ -50,6 +49,7 @@ export class EnsureOrderUpdatedAtTriggerCommand extends CommandRunner {
 
     if (!workspace) {
       this.logger.error(`Workspace ${options.workspaceId} not found`);
+
       return;
     }
 
@@ -102,5 +102,3 @@ export class EnsureOrderUpdatedAtTriggerCommand extends CommandRunner {
     this.logger.log('Done.');
   }
 }
-
-

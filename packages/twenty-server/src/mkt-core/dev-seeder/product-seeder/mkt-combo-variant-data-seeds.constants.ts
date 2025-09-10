@@ -1,4 +1,3 @@
-
 type MktComboVariantDataSeed = {
   id: string;
   name: string;
@@ -65,6 +64,4 @@ export const MKT_COMBO_VARIANT_DATA_SEEDS_IDS = {
   ID_35:'a02d4c5b-2c36-4892-a297-f18fe47224c2',
 };
 
-export const MKT_COMBO_VARIANT_DATA_SEEDS: MktComboVariantDataSeed[] = [
-  
-];
+export const MKT_COMBO_VARIANT_DATA_SEEDS: MktComboVariantDataSeed[] = [];

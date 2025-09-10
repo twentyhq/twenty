@@ -1,4 +1,4 @@
-import { Inject,Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -22,8 +22,9 @@ export class MktOrderUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   private readonly logger = new Logger(MktOrderUpdateOnePreQueryHook.name);
-  private readonly orderEnv: string = process.env.ORDER_OPTIMISTIC_LOCKING_ENABLED || 'true';
-  
+  private readonly orderEnv: string =
+    process.env.ORDER_OPTIMISTIC_LOCKING_ENABLED || 'true';
+
   constructor(
     @Inject(getQueueToken(MessageQueue.billingQueue))
     private readonly messageQueueService: MessageQueueService,
@@ -39,6 +40,7 @@ export class MktOrderUpdateOnePreQueryHook
     const input = payload?.data;
     const orderId = payload?.id;
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     if (!orderId || !workspaceId) return payload;
 
     const orderRepository =
@@ -47,16 +49,20 @@ export class MktOrderUpdateOnePreQueryHook
         'mktOrder',
         { shouldBypassPermissionChecks: true },
       );
-    const currentOrder = await orderRepository.findOne(
-      { where: { id: orderId }, relations: ['orderItems'] },
-    );
+    const currentOrder = await orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['orderItems'],
+    });
+
     this.logger.log(`Validating updatedAt for order ${orderId}`);
     await this.validateUpdatedAtOrThrow(input, currentOrder);
 
     this.logger.log(`Updating order information for order ${orderId}`);
     await this.updateOrderInformation(workspaceId, payload, currentOrder);
 
-    this.logger.log(`Adding S-Invoice integration job to queue for order ${orderId}`);
+    this.logger.log(
+      `Adding S-Invoice integration job to queue for order ${orderId}`,
+    );
     await this.sInvoiceIntegration(orderId, workspaceId, input, currentOrder);
 
     input.updatedAt = new Date().toISOString();
@@ -65,8 +71,8 @@ export class MktOrderUpdateOnePreQueryHook
   }
 
   private async sInvoiceIntegration(
-    orderId: string, 
-    workspaceId: string, 
+    orderId: string,
+    workspaceId: string,
     input: Partial<MktOrderWorkspaceEntity>,
     currentOrder: MktOrderWorkspaceEntity | null,
   ): Promise<void> {
@@ -104,13 +110,15 @@ export class MktOrderUpdateOnePreQueryHook
     currentOrder: MktOrderWorkspaceEntity | null,
   ): Promise<void> {
     if (!currentOrder) {
-      throw new Error( `Order not found`,);
+      throw new Error(`Order not found`);
     }
     if (this.orderEnv !== 'true') {
       return Promise.resolve();
     }
     if (!input?.updatedAt || !currentOrder?.updatedAt) {
-      throw new Error( `updatedAt is required when optimistic locking is enabled`,);
+      throw new Error(
+        `updatedAt is required when optimistic locking is enabled`,
+      );
     }
 
     const inputUpdatedAt = new Date(input.updatedAt);
@@ -124,6 +132,7 @@ export class MktOrderUpdateOnePreQueryHook
         `Order has been modified by another user. Please refresh and try again.`,
       );
     }
+
     return Promise.resolve();
   }
 
@@ -132,11 +141,18 @@ export class MktOrderUpdateOnePreQueryHook
    */
   private async calculateOrderValues(
     currentOrder: MktOrderWorkspaceEntity | null,
-  ): Promise<{ subtotal: number; tax: number; discount: number; totalAmount: number } | null> {
+  ): Promise<{
+    subtotal: number;
+    tax: number;
+    discount: number;
+    totalAmount: number;
+  } | null> {
     try {
       const orderItems = currentOrder?.orderItems;
+
       if (!orderItems || orderItems.length === 0) {
         this.logger.warn(`No order items found for order`);
+
         return {
           subtotal: 0,
           tax: 0,
@@ -154,18 +170,20 @@ export class MktOrderUpdateOnePreQueryHook
         const taxPercentage = item.taxPercentage || 0;
 
         const itemSubtotal = quantity * unitPrice;
+
         subtotal += itemSubtotal;
 
         const itemTax = (itemSubtotal * taxPercentage) / 100;
+
         totalTax += itemTax;
 
         this.logger.debug(
           `Order item ${item.id}: quantity=${quantity}, unitPrice=${unitPrice}, subtotal=${itemSubtotal}, tax=${itemTax}`,
         );
       }
-      
+
       const discount = currentOrder?.discount || 0;
-      
+
       const totalAmount = subtotal + totalTax - discount;
 
       return {
@@ -179,6 +197,7 @@ export class MktOrderUpdateOnePreQueryHook
         `Failed to calculate order values for order ${currentOrder?.id}:`,
         error,
       );
+
       return null;
     }
   }
@@ -204,15 +223,19 @@ export class MktOrderUpdateOnePreQueryHook
       // Find the highest order number for today
       const todayOrders = await orderRepository
         .createQueryBuilder('order')
-        .where('order.orderCode LIKE :pattern', { pattern: `ORD${datePrefix}%` })
+        .where('order.orderCode LIKE :pattern', {
+          pattern: `ORD${datePrefix}%`,
+        })
         .orderBy('order.orderCode', 'DESC')
         .limit(1)
         .getOne();
 
       let nextNumber = 1;
+
       if (todayOrders?.orderCode) {
         // Extract number from existing order code (e.g., ORD20241201001 -> 1)
         const match = todayOrders.orderCode.match(/ORD\d{8}(\d{3})$/);
+
         if (match) {
           nextNumber = parseInt(match[1], 10) + 1;
         }
@@ -229,13 +252,16 @@ export class MktOrderUpdateOnePreQueryHook
       if (existingOrder) {
         // If somehow duplicate, try with timestamp
         const timestamp = Date.now().toString().slice(-6);
+
         return `ORD${datePrefix}${timestamp}`;
       }
 
       this.logger.log(`Generated orderCode: ${orderCode}`);
+
       return orderCode;
     } catch (error) {
       this.logger.error(`Failed to generate order code:`, error);
+
       return null;
     }
   }
@@ -250,23 +276,29 @@ export class MktOrderUpdateOnePreQueryHook
       if (!currentOrder?.orderItems || currentOrder.orderItems.length === 0) {
         const now = new Date();
         const dateStr = now.toLocaleDateString('vi-VN');
+
         return `Đơn hàng ${dateStr}`;
       }
 
       // Generate name based on products
-      const productNames = currentOrder.orderItems.map(item => {
+      const productNames = currentOrder.orderItems.map((item) => {
         if (item.snapshotProductName) {
           return item.snapshotProductName;
         }
         if (item.mktProduct?.name) {
           const variantName = item.mktVariant?.name;
-          return variantName ? `${item.mktProduct.name} - ${variantName}` : item.mktProduct.name;
+
+          return variantName
+            ? `${item.mktProduct.name} - ${variantName}`
+            : item.mktProduct.name;
         }
+
         return 'Sản phẩm';
       });
 
       // Create order name
       let orderName = '';
+
       if (productNames.length === 1) {
         orderName = productNames[0];
       } else if (productNames.length === 2) {
@@ -276,15 +308,21 @@ export class MktOrderUpdateOnePreQueryHook
       }
 
       // Add quantity info if there are multiple quantities
-      const totalQuantity = currentOrder.orderItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      const totalQuantity = currentOrder.orderItems.reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0,
+      );
+
       if (totalQuantity > 1) {
         orderName += ` (${totalQuantity} sản phẩm)`;
       }
 
       this.logger.log(`Generated order name: ${orderName}`);
+
       return orderName;
     } catch (error) {
       this.logger.error(`Failed to generate order name:`, error);
+
       return null;
     }
   }
@@ -296,14 +334,16 @@ export class MktOrderUpdateOnePreQueryHook
   ): Promise<void> {
     const input = payload?.data;
     const incomStatus = input?.status;
+
     if (this.orderEnv === 'true' && !!currentOrder?.status) {
-      throw new Error( `Order cannot be updated because order is locked`);
+      throw new Error(`Order cannot be updated because order is locked`);
     }
-    
-    if (!incomStatus)  return Promise.resolve();
+
+    if (!incomStatus) return Promise.resolve();
 
     if (!currentOrder?.orderCode && !payload.data?.orderCode) {
       const generatedOrderCode = await this.generateOrderCode(workspaceId);
+
       if (generatedOrderCode) {
         payload.data = {
           ...payload.data,
@@ -314,6 +354,7 @@ export class MktOrderUpdateOnePreQueryHook
 
     if (!input?.name) {
       const generatedOrderName = await this.generateOrderName(currentOrder);
+
       if (generatedOrderName) {
         payload.data = {
           ...payload.data,
@@ -322,7 +363,10 @@ export class MktOrderUpdateOnePreQueryHook
       }
     }
 
-    if (currentOrder?.discount === undefined && payload.data?.discount === undefined) {
+    if (
+      currentOrder?.discount === undefined &&
+      payload.data?.discount === undefined
+    ) {
       payload.data = {
         ...payload.data,
         discount: 0,

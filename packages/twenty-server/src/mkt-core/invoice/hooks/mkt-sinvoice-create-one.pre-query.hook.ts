@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -30,6 +30,7 @@ export class MktSInvoiceCreateOnePreQueryHook
   ): Promise<CreateOneResolverArgs<MktSInvoiceWorkspaceEntity>> {
     const input = payload?.data;
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     this.logger.log(
       `Creating MktSInvoice with input: ${JSON.stringify(input)}`,
     );
@@ -43,7 +44,7 @@ export class MktSInvoiceCreateOnePreQueryHook
     }
 
     try {
-      // Lấy thông tin order và orderItems
+      // get order and orderItems
       const orderRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
           workspaceId,
@@ -64,6 +65,7 @@ export class MktSInvoiceCreateOnePreQueryHook
 
       if (!order) {
         this.logger.warn(`Order not found with ID: ${input.mktOrderId}`);
+
         return payload;
       }
 
@@ -75,10 +77,11 @@ export class MktSInvoiceCreateOnePreQueryHook
         this.logger.warn(
           `Order ${input.mktOrderId} has no items; skip data population`,
         );
+
         return payload;
       }
 
-      // Tính toán thông tin từ orderItems
+      // calculate information from orderItems
       const itemInfo = orderItems.map((item, idx) => {
         const quantity = item.quantity ?? 1;
         const unitPrice = item.unitPrice ?? 0;
@@ -100,7 +103,7 @@ export class MktSInvoiceCreateOnePreQueryHook
         };
       });
 
-      // Tính tổng các khoản
+      // sum up
       const totalAmountWithoutTax = itemInfo.reduce(
         (sum, item) => sum + item.itemTotalAmountWithoutTax,
         0,
@@ -113,28 +116,29 @@ export class MktSInvoiceCreateOnePreQueryHook
 
       const totalAmountWithTax = totalAmountWithoutTax + totalTaxAmount;
 
-      // Tạo tên cho SInvoice nếu chưa có
-      const sInvoiceName = input.name || `SInvoice - ${order.orderCode || order.name}`;
-      
-      // Cập nhật input với thông tin từ order và orderItems
+      // create name for SInvoice if not exists
+      const sInvoiceName =
+        input.name || `SInvoice - ${order.orderCode || order.name}`;
+
+      // update input with information from order and orderItems
       const updatedInput = {
         ...input,
         name: sInvoiceName,
-        // Thông tin từ order
+        // information from order
         buyerName: input.buyerName || order.name,
         buyerTaxCode: input.buyerTaxCode || null, // Có thể lấy từ customer info nếu có
         buyerAddressLine: input.buyerAddressLine || null,
         buyerPhoneNumber: input.buyerPhoneNumber || null,
         buyerEmail: input.buyerEmail || null,
         currencyCode: input.currencyCode || order.currency || 'VND',
-        // Thông tin tính toán từ orderItems
+        // information calculated from orderItems
         sumOfTotalLineAmountWithoutTax: totalAmountWithoutTax,
         totalAmountWithoutTax: totalAmountWithoutTax,
         totalTaxAmount: totalTaxAmount,
         totalAmountWithTax: totalAmountWithTax,
         totalAmountWithTaxInWords: this.numberToWords(totalAmountWithTax),
         totalAmountAfterDiscount: order.totalAmount,
-        // Thông tin mặc định cho SInvoice
+        // default information for SInvoice
         invoiceType: input.invoiceType || null,
         templateCode: input.templateCode || '1/770',
         invoiceSeries: input.invoiceSeries || 'K23TXM',
@@ -142,7 +146,7 @@ export class MktSInvoiceCreateOnePreQueryHook
         cusGetInvoiceRight: input.cusGetInvoiceRight || true,
         //invoiceIssuedDate: input.invoiceIssuedDate || new Date(),
         transactionUuid: input.transactionUuid || order.orderCode,
-        // Thông tin mặc định khác
+        // default information for SInvoice
         adjustmentType: input.adjustmentType || null,
         description: input.description || order.note || null,
       };
@@ -161,16 +165,16 @@ export class MktSInvoiceCreateOnePreQueryHook
         error,
       );
 
-      // Vẫn tạo record với dữ liệu gốc nếu có lỗi
+      // still create record with original data if there is an error
       return payload;
     }
   }
 
   /**
-   * Chuyển đổi số thành chữ (đơn giản cho VND)
+   * convert number to words (simple for VND)
    */
   private numberToWords(amount: number): string {
-    // Implementation đơn giản - có thể cải thiện sau
+    // simple implementation - can be improved later
     const units = ['', 'nghìn', 'triệu', 'tỷ'];
     const ones = [
       '',
@@ -204,6 +208,7 @@ export class MktSInvoiceCreateOnePreQueryHook
 
     while (amount > 0) {
       const chunk = amount % 1000;
+
       if (chunk > 0) {
         let chunkText = '';
         const hundred = Math.floor(chunk / 100);
@@ -238,8 +243,8 @@ export class MktSInvoiceCreateOnePreQueryHook
   }
 
   /**
-   * Tạo SInvoice Items từ OrderItems
-   * GraphQL sẽ tự động thiết lập quan hệ mktSInvoiceId khi sử dụng cú pháp create
+   * create SInvoice Items from OrderItems
+   * GraphQL will automatically set the mktSInvoiceId relationship when using the create syntax
    */
   private async createSInvoiceItemsFromOrderItems(
     orderItems: MktOrderItemWorkspaceEntity[],
@@ -247,22 +252,31 @@ export class MktSInvoiceCreateOnePreQueryHook
   ): Promise<any[]> {
     return await orderItems.map((orderItem, index) => {
       const item = itemInfo[index];
-      
+
       return {
-        name: orderItem.name || orderItem.snapshotProductName || `Item ${index + 1}`,
+        name:
+          orderItem.name ||
+          orderItem.snapshotProductName ||
+          `Item ${index + 1}`,
         lineNumber: item.lineNumber,
         selection: item.selection || 1,
-        itemCode: orderItem.mktProductId ? `MKT_${orderItem.mktProductId}` : null,
-        itemName: orderItem.name || orderItem.snapshotProductName || `Item ${index + 1}`,
+        itemCode: orderItem.mktProductId
+          ? `MKT_${orderItem.mktProductId}`
+          : null,
+        itemName:
+          orderItem.name ||
+          orderItem.snapshotProductName ||
+          `Item ${index + 1}`,
         unitName: orderItem.unitName || 'unit',
         quantity: orderItem.quantity || 1,
         unitPrice: orderItem.unitPrice || 0,
         itemTotalAmountWithoutTax: item.itemTotalAmountWithoutTax,
-        itemTotalAmountAfterDiscount: item.itemTotalAmountAfterDiscount || item.itemTotalAmountWithoutTax,
+        itemTotalAmountAfterDiscount:
+          item.itemTotalAmountAfterDiscount || item.itemTotalAmountWithoutTax,
         itemTotalAmountWithTax: item.itemTotalAmountWithTax,
         taxPercentage: orderItem.taxPercentage || 0,
         taxAmount: item.taxAmount,
-        discount: 0, // Có thể lấy từ orderItem nếu có
+        discount: 0, // can be get from orderItem if exists
         itemDiscount: 0,
         itemNote: null,
         isIncreaseItem: false,

@@ -1,7 +1,8 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -16,8 +17,13 @@ import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-orde
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 @Injectable()
-@WorkspaceQueryHook({ key: 'mktSInvoice.createOne', type: WorkspaceQueryHookType.POST_HOOK })
-export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHookInstance {
+@WorkspaceQueryHook({
+  key: 'mktSInvoice.createOne',
+  type: WorkspaceQueryHookType.POST_HOOK,
+})
+export class MktSInvoiceCreateOnePostQueryHook
+  implements WorkspacePostQueryHookInstance
+{
   private readonly logger = new Logger(MktSInvoiceCreateOnePostQueryHook.name);
 
   constructor(
@@ -32,30 +38,36 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
     payload: MktSInvoiceWorkspaceEntity[],
   ): Promise<void> {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     if (!workspaceId) return;
 
     const created = payload?.[0];
+
     if (!created) return;
 
     try {
-      const sInvoiceItemRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceItemWorkspaceEntity>(
-        workspaceId,
-        'mktSInvoiceItem',
-        { shouldBypassPermissionChecks: true },
-      );
-      const sInvoiceRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceWorkspaceEntity>(
-        workspaceId,
-        'mktSInvoice',
-        { shouldBypassPermissionChecks: true },
-      );
-      const orderRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
-        workspaceId,
-        'mktOrder',
-        { shouldBypassPermissionChecks: true },
-      );
+      const sInvoiceItemRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceItemWorkspaceEntity>(
+          workspaceId,
+          'mktSInvoiceItem',
+          { shouldBypassPermissionChecks: true },
+        );
+      const sInvoiceRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceWorkspaceEntity>(
+          workspaceId,
+          'mktSInvoice',
+          { shouldBypassPermissionChecks: true },
+        );
+      const orderRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+          workspaceId,
+          'mktOrder',
+          { shouldBypassPermissionChecks: true },
+        );
 
-      // 1) Ưu tiên dùng items đã tính sẵn từ pre-hook nếu có
-      const meta = (created as unknown as Record<string, any>).__preComputedItems as
+      // 1) prioritize using items already calculated from pre-hook if available
+      const meta = (created as unknown as Record<string, any>)
+        .__preComputedItems as
         | Array<Partial<MktSInvoiceItemWorkspaceEntity>>
         | undefined;
 
@@ -64,18 +76,26 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
       if (meta && meta.length > 0) {
         itemsPayload = meta;
       } else if (created.mktOrderId) {
-        // 2) Nếu không có meta, tính từ OrderItems
-        const orderItemRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderItemWorkspaceEntity>(
-          workspaceId,
-          'mktOrderItem',
-          { shouldBypassPermissionChecks: true },
-        );
+        // 2) if no meta, calculate from OrderItems
+        const orderItemRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderItemWorkspaceEntity>(
+            workspaceId,
+            'mktOrderItem',
+            { shouldBypassPermissionChecks: true },
+          );
 
-        const orderItems = await orderItemRepository.find({ where: { mktOrderId: created.mktOrderId } as any });
-        const order = await orderRepository.findOne({ where: { id: created.mktOrderId } });
+        const orderItems = await orderItemRepository.find({
+          where: { mktOrderId: created.mktOrderId } as any,
+        });
+        const order = await orderRepository.findOne({
+          where: { id: created.mktOrderId },
+        });
 
         if (!orderItems || orderItems.length === 0) {
-          this.logger.log('[SInvoice POST HOOK] Order has no items. Skip item creation.');
+          this.logger.log(
+            '[SInvoice POST HOOK] Order has no items. Skip item creation.',
+          );
+
           return;
         }
 
@@ -88,11 +108,19 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
           const withTax = amountWithoutTax + taxAmount;
 
           return {
-            name: orderItem.name || orderItem.snapshotProductName || `Item ${index + 1}`,
+            name:
+              orderItem.name ||
+              orderItem.snapshotProductName ||
+              `Item ${index + 1}`,
             lineNumber: index + 1,
             selection: 1,
-            itemCode: orderItem.mktProductId ? `MKT_${orderItem.mktProductId}` : null,
-            itemName: orderItem.name || orderItem.snapshotProductName || `Item ${index + 1}`,
+            itemCode: orderItem.mktProductId
+              ? `MKT_${orderItem.mktProductId}`
+              : null,
+            itemName:
+              orderItem.name ||
+              orderItem.snapshotProductName ||
+              `Item ${index + 1}`,
             unitName: orderItem.unitName || 'unit',
             quantity,
             unitPrice,
@@ -112,16 +140,22 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
         itemsPayload = computed;
       } else {
         this.logger.log('[SInvoice POST HOOK] No orderId and no meta. Skip.');
+
         return;
       }
 
       const itemsToCreate = await Promise.all(
         itemsPayload.map(async (item) => {
-          const position = await this.recordPositionService.buildRecordPosition({
-            value: 'last',
-            objectMetadata: { isCustom: false, nameSingular: 'mktSInvoiceItem' },
-            workspaceId,
-          });
+          const position = await this.recordPositionService.buildRecordPosition(
+            {
+              value: 'last',
+              objectMetadata: {
+                isCustom: false,
+                nameSingular: 'mktSInvoiceItem',
+              },
+              workspaceId,
+            },
+          );
 
           return sInvoiceItemRepository.create({
             ...item,
@@ -131,27 +165,35 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
         }),
       );
 
-      await sInvoiceItemRepository.save(itemsToCreate as MktSInvoiceItemWorkspaceEntity[]);
+      await sInvoiceItemRepository.save(
+        itemsToCreate as MktSInvoiceItemWorkspaceEntity[],
+      );
 
       // ===== Create Metadata =====
-      const metaMeta = (created as unknown as Record<string, any>).__preComputedMetadata as
+      const metaMeta = (created as unknown as Record<string, any>)
+        .__preComputedMetadata as
         | Array<Partial<MktSInvoiceMetadataWorkspaceEntity>>
         | undefined;
 
       if (metaMeta && metaMeta.length > 0) {
-        const metadataRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceMetadataWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoiceMetadata',
-          { shouldBypassPermissionChecks: true },
-        );
+        const metadataRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceMetadataWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoiceMetadata',
+            { shouldBypassPermissionChecks: true },
+          );
 
         const metadataToCreate = await Promise.all(
           metaMeta.map(async (m) => {
-            const position = await this.recordPositionService.buildRecordPosition({
-              value: 'last',
-              objectMetadata: { isCustom: false, nameSingular: 'mktSInvoiceMetadata' },
-              workspaceId,
-            });
+            const position =
+              await this.recordPositionService.buildRecordPosition({
+                value: 'last',
+                objectMetadata: {
+                  isCustom: false,
+                  nameSingular: 'mktSInvoiceMetadata',
+                },
+                workspaceId,
+              });
 
             return metadataRepository.create({
               ...m,
@@ -161,52 +203,91 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
           }),
         );
 
-        await metadataRepository.save(metadataToCreate as MktSInvoiceMetadataWorkspaceEntity[]);
-      } else if (created.mktOrderId) {
-        const metadataRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceMetadataWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoiceMetadata',
-          { shouldBypassPermissionChecks: true },
+        await metadataRepository.save(
+          metadataToCreate as MktSInvoiceMetadataWorkspaceEntity[],
         );
-        // Tự động điền một số metadata cơ bản từ order/SInvoice
-        const baseMetadata: Array<Partial<MktSInvoiceMetadataWorkspaceEntity>> = [
-          { name: 'Order Code', keyLabel: 'orderCode', keyTag: 'ORDER_CODE', stringValue: (created as any).transactionUuid },
-          { name: 'Buyer Name', keyLabel: 'buyerName', keyTag: 'BUYER_NAME', stringValue: created.buyerName },
-          { name: 'Currency', keyLabel: 'currency', keyTag: 'CURRENCY', stringValue: created.currencyCode },
-          { name: 'Total With Tax', keyLabel: 'totalAmountWithTax', keyTag: 'TOTAL_WITH_TAX', stringValue: String(created.totalAmountWithTax ?? '') },
-        ];
+      } else if (created.mktOrderId) {
+        const metadataRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceMetadataWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoiceMetadata',
+            { shouldBypassPermissionChecks: true },
+          );
+        // auto fill some metadata from order/SInvoice
+        const baseMetadata: Array<Partial<MktSInvoiceMetadataWorkspaceEntity>> =
+          [
+            {
+              name: 'Order Code',
+              keyLabel: 'orderCode',
+              keyTag: 'ORDER_CODE',
+              stringValue: (created as any).transactionUuid,
+            },
+            {
+              name: 'Buyer Name',
+              keyLabel: 'buyerName',
+              keyTag: 'BUYER_NAME',
+              stringValue: created.buyerName,
+            },
+            {
+              name: 'Currency',
+              keyLabel: 'currency',
+              keyTag: 'CURRENCY',
+              stringValue: created.currencyCode,
+            },
+            {
+              name: 'Total With Tax',
+              keyLabel: 'totalAmountWithTax',
+              keyTag: 'TOTAL_WITH_TAX',
+              stringValue: String(created.totalAmountWithTax ?? ''),
+            },
+          ];
         const metadataToCreate = await Promise.all(
           baseMetadata.map(async (m) => {
-            const position = await this.recordPositionService.buildRecordPosition({
-              value: 'last',
-              objectMetadata: { isCustom: false, nameSingular: 'mktSInvoiceMetadata' },
-              workspaceId,
-            });
-            return metadataRepository.create({ ...m, mktSInvoiceId: created.id, position } as Partial<MktSInvoiceMetadataWorkspaceEntity>);
+            const position =
+              await this.recordPositionService.buildRecordPosition({
+                value: 'last',
+                objectMetadata: {
+                  isCustom: false,
+                  nameSingular: 'mktSInvoiceMetadata',
+                },
+                workspaceId,
+              });
+
+            return metadataRepository.create({
+              ...m,
+              mktSInvoiceId: created.id,
+              position,
+            } as Partial<MktSInvoiceMetadataWorkspaceEntity>);
           }),
         );
         //await metadataRepository.save(metadataToCreate as MktSInvoiceMetadataWorkspaceEntity[]);
       }
 
       // ===== Create Payments =====
-      const metaPayments = (created as unknown as Record<string, any>).__preComputedPayments as
+      const metaPayments = (created as unknown as Record<string, any>)
+        .__preComputedPayments as
         | Array<Partial<MktSInvoicePaymentWorkspaceEntity>>
         | undefined;
 
       if (metaPayments && metaPayments.length > 0) {
-        const paymentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoicePaymentWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoicePayment',
-          { shouldBypassPermissionChecks: true },
-        );
+        const paymentRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoicePaymentWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoicePayment',
+            { shouldBypassPermissionChecks: true },
+          );
 
         const paymentsToCreate = await Promise.all(
           metaPayments.map(async (p) => {
-            const position = await this.recordPositionService.buildRecordPosition({
-              value: 'last',
-              objectMetadata: { isCustom: false, nameSingular: 'mktSInvoicePayment' },
-              workspaceId,
-            });
+            const position =
+              await this.recordPositionService.buildRecordPosition({
+                value: 'last',
+                objectMetadata: {
+                  isCustom: false,
+                  nameSingular: 'mktSInvoicePayment',
+                },
+                workspaceId,
+              });
 
             return paymentRepository.create({
               ...p,
@@ -216,21 +297,31 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
           }),
         );
 
-        await paymentRepository.save(paymentsToCreate as MktSInvoicePaymentWorkspaceEntity[]);
-      } else if (created.mktOrderId) {
-        const paymentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoicePaymentWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoicePayment',
-          { shouldBypassPermissionChecks: true },
+        await paymentRepository.save(
+          paymentsToCreate as MktSInvoicePaymentWorkspaceEntity[],
         );
+      } else if (created.mktOrderId) {
+        const paymentRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoicePaymentWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoicePayment',
+            { shouldBypassPermissionChecks: true },
+          );
         const position = await this.recordPositionService.buildRecordPosition({
           value: 'last',
-          objectMetadata: { isCustom: false, nameSingular: 'mktSInvoicePayment' },
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'mktSInvoicePayment',
+          },
           workspaceId,
         });
         const autoPayment = paymentRepository.create({
           name: 'Payment for Order ' + created.name,
-          amount: created.totalAmountWithTax ?? created.totalAmountAfterDiscount ?? created.totalAmountWithoutTax ?? 0,
+          amount:
+            created.totalAmountWithTax ??
+            created.totalAmountAfterDiscount ??
+            created.totalAmountWithoutTax ??
+            0,
           currency: created.currencyCode ?? 'VND',
           paymentDate: undefined,
           paymentMethodName: 'Thanh toán bằng tiền mặt',
@@ -239,28 +330,37 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
           mktSInvoiceId: created.id,
           position,
         } as Partial<MktSInvoicePaymentWorkspaceEntity>);
-        await paymentRepository.save([autoPayment] as MktSInvoicePaymentWorkspaceEntity[]);
+
+        await paymentRepository.save([
+          autoPayment,
+        ] as MktSInvoicePaymentWorkspaceEntity[]);
       }
 
       // ===== Create Tax Breakdowns =====
-      const metaTax = (created as unknown as Record<string, any>).__preComputedTaxBreakdowns as
+      const metaTax = (created as unknown as Record<string, any>)
+        .__preComputedTaxBreakdowns as
         | Array<Partial<MktSInvoiceTaxBreakdownWorkspaceEntity>>
         | undefined;
 
       if (metaTax && metaTax.length > 0) {
-        const taxRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceTaxBreakdownWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoiceTaxBreakdown',
-          { shouldBypassPermissionChecks: true },
-        );
+        const taxRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceTaxBreakdownWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoiceTaxBreakdown',
+            { shouldBypassPermissionChecks: true },
+          );
 
         const taxesToCreate = await Promise.all(
           metaTax.map(async (t) => {
-            const position = await this.recordPositionService.buildRecordPosition({
-              value: 'last',
-              objectMetadata: { isCustom: false, nameSingular: 'mktSInvoiceTaxBreakdown' },
-              workspaceId,
-            });
+            const position =
+              await this.recordPositionService.buildRecordPosition({
+                value: 'last',
+                objectMetadata: {
+                  isCustom: false,
+                  nameSingular: 'mktSInvoiceTaxBreakdown',
+                },
+                workspaceId,
+              });
 
             return taxRepository.create({
               ...t,
@@ -270,51 +370,75 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
           }),
         );
 
-        await taxRepository.save(taxesToCreate as MktSInvoiceTaxBreakdownWorkspaceEntity[]);
+        await taxRepository.save(
+          taxesToCreate as MktSInvoiceTaxBreakdownWorkspaceEntity[],
+        );
       } else if (created.mktOrderId) {
-        const taxRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceTaxBreakdownWorkspaceEntity>(
-          workspaceId,
-          'mktSInvoiceTaxBreakdown',
-          { shouldBypassPermissionChecks: true },
-        );
-        // Nhóm theo taxPercentage từ OrderItems và tính tổng
-        const orderItemRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderItemWorkspaceEntity>(
-          workspaceId,
-          'mktOrderItem',
-          { shouldBypassPermissionChecks: true },
-        );
-        const orderItemsForTax = await orderItemRepository.find({ where: { mktOrderId: created.mktOrderId } as any });
-        const groups = new Map<number, { taxableAmount: number; taxAmount: number }>();
+        const taxRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktSInvoiceTaxBreakdownWorkspaceEntity>(
+            workspaceId,
+            'mktSInvoiceTaxBreakdown',
+            { shouldBypassPermissionChecks: true },
+          );
+        // group by taxPercentage from OrderItems and sum up
+        const orderItemRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderItemWorkspaceEntity>(
+            workspaceId,
+            'mktOrderItem',
+            { shouldBypassPermissionChecks: true },
+          );
+        const orderItemsForTax = await orderItemRepository.find({
+          where: { mktOrderId: created.mktOrderId } as any,
+        });
+        const groups = new Map<
+          number,
+          { taxableAmount: number; taxAmount: number }
+        >();
+
         orderItemsForTax.forEach((oi) => {
           const quantity = oi.quantity ?? 1;
           const unitPrice = oi.unitPrice ?? 0;
           const amountWithoutTax = unitPrice * quantity;
           const taxPercent = (oi.taxPercentage ?? 0) as number;
           const taxAmount = Math.round((amountWithoutTax * taxPercent) / 100);
-          const g = groups.get(taxPercent) || { taxableAmount: 0, taxAmount: 0 };
+          const g = groups.get(taxPercent) || {
+            taxableAmount: 0,
+            taxAmount: 0,
+          };
+
           g.taxableAmount += amountWithoutTax;
           g.taxAmount += taxAmount;
           groups.set(taxPercent, g);
         });
         const taxesToCreate = await Promise.all(
-          Array.from(groups.entries()).map(async ([taxPercentage, agg], idx) => {
-            const position = await this.recordPositionService.buildRecordPosition({
-              value: 'last',
-              objectMetadata: { isCustom: false, nameSingular: 'mktSInvoiceTaxBreakdown' },
-              workspaceId,
-            });
-            return taxRepository.create({
-              name: `VAT ${taxPercentage}%`,
-              taxableAmount: agg.taxableAmount,
-              taxAmount: agg.taxAmount,
-              taxPercentage,
-              mktSInvoiceId: created.id,
-              position,
-            } as Partial<MktSInvoiceTaxBreakdownWorkspaceEntity>);
-          }),
+          Array.from(groups.entries()).map(
+            async ([taxPercentage, agg], idx) => {
+              const position =
+                await this.recordPositionService.buildRecordPosition({
+                  value: 'last',
+                  objectMetadata: {
+                    isCustom: false,
+                    nameSingular: 'mktSInvoiceTaxBreakdown',
+                  },
+                  workspaceId,
+                });
+
+              return taxRepository.create({
+                name: `VAT ${taxPercentage}%`,
+                taxableAmount: agg.taxableAmount,
+                taxAmount: agg.taxAmount,
+                taxPercentage,
+                mktSInvoiceId: created.id,
+                position,
+              } as Partial<MktSInvoiceTaxBreakdownWorkspaceEntity>);
+            },
+          ),
         );
+
         if (taxesToCreate.length > 0) {
-          await taxRepository.save(taxesToCreate as MktSInvoiceTaxBreakdownWorkspaceEntity[]);
+          await taxRepository.save(
+            taxesToCreate as MktSInvoiceTaxBreakdownWorkspaceEntity[],
+          );
         }
       }
 
@@ -340,5 +464,3 @@ export class MktSInvoiceCreateOnePostQueryHook implements WorkspacePostQueryHook
     }
   }
 }
-
-

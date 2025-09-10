@@ -28,7 +28,10 @@ import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-orde
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MKT_PRODUCT_TYPE_OPTIONS,MKT_PRODUCT_TYPE } from 'src/mkt-core/product/product.constants';
+import {
+  MKT_PRODUCT_TYPE_OPTIONS,
+  MKT_PRODUCT_TYPE,
+} from 'src/mkt-core/product/product.constants';
 const TABLE_PRODUCT_NAME = 'mktProduct';
 const NAME_FIELD_NAME = 'name';
 const DESCRIPTION_FIELD_NAME = 'description';
