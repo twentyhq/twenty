@@ -3,11 +3,84 @@ import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/Grap
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
-import { isDefined } from 'twenty-shared/utils';
 import { GraphType } from '../../../mocks/mockWidgets';
 
 type GraphWidgetRendererProps = {
   widget: PageLayoutWidgetWithData;
+};
+
+// TODO: Remove this once we query the data from the database
+const getDefaultWidgetData = (graphType: GraphType) => {
+  switch (graphType) {
+    case GraphType.NUMBER:
+      return {
+        value: '0',
+        trendPercentage: 0,
+      };
+
+    case GraphType.GAUGE:
+      return {
+        value: 0,
+        min: 0,
+        max: 100,
+        label: 'Default Gauge',
+      };
+
+    case GraphType.PIE:
+      return {
+        items: [
+          {
+            id: 'category-1',
+            value: 50,
+            label: 'Category 1',
+            to: '/default/category-1',
+          },
+          {
+            id: 'category-2',
+            value: 30,
+            label: 'Category 2',
+            to: '/default/category-2',
+          },
+          {
+            id: 'category-3',
+            value: 20,
+            label: 'Category 3',
+            to: '/default/category-3',
+          },
+        ],
+      };
+
+    case GraphType.BAR:
+      return {
+        items: [
+          {
+            period: 'Q1',
+            value1: 100,
+            value2: 80,
+            to: '/default/q1',
+          },
+          {
+            period: 'Q2',
+            value1: 120,
+            value2: 90,
+            to: '/default/q2',
+          },
+          {
+            period: 'Q3',
+            value1: 110,
+            value2: 95,
+            to: '/default/q3',
+          },
+        ],
+        indexBy: 'period',
+        keys: ['value1', 'value2'],
+        seriesLabels: ['Series 1', 'Series 2'],
+        layout: 'vertical' as const,
+      };
+
+    default:
+      return null;
+  }
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
@@ -21,7 +94,9 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     return null;
   }
 
-  if (!isDefined(widget.data)) {
+  const data = widget.data ?? getDefaultWidgetData(graphType as GraphType);
+
+  if (!data) {
     return null;
   }
 
@@ -29,8 +104,8 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     case GraphType.NUMBER:
       return (
         <GraphWidgetNumberChart
-          value={widget.data.value}
-          trendPercentage={widget.data.trendPercentage}
+          value={data.value}
+          trendPercentage={data.trendPercentage}
         />
       );
 
@@ -38,10 +113,10 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
       return (
         <GraphWidgetGaugeChart
           data={{
-            value: widget.data.value,
-            min: widget.data.min,
-            max: widget.data.max,
-            label: widget.data.label,
+            value: data.value,
+            min: data.min,
+            max: data.max,
+            label: data.label,
           }}
           displayType="percentage"
           showValue
@@ -52,7 +127,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     case GraphType.PIE:
       return (
         <GraphWidgetPieChart
-          data={widget.data.items}
+          data={data.items}
           showLegend
           displayType="percentage"
           id={`pie-chart-${widget.id}`}
@@ -62,11 +137,11 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     case GraphType.BAR:
       return (
         <GraphWidgetBarChart
-          data={widget.data.items}
-          indexBy={widget.data.indexBy}
-          keys={widget.data.keys}
-          seriesLabels={widget.data.seriesLabels}
-          layout={widget.data.layout}
+          data={data.items}
+          indexBy={data.indexBy}
+          keys={data.keys}
+          seriesLabels={data.seriesLabels}
+          layout={data.layout}
           showLegend
           showGrid
           displayType="number"
