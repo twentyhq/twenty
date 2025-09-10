@@ -8,7 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/workspaceMemberDeletion';
+import { WORKSPACE_MEMBER_DELETION_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionID';
 import { workspaceMemberBeingDeletedState } from '@/workspace-member/states/workspaceMemberDeletionState';
 import { useMutation, type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -107,7 +107,7 @@ export const ManageMembersDropdownMenu = ({
               text="Delete"
               onClick={() => {
                 setWorkspaceMemberBeingDeleted(workspaceMemberId);
-                openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
+                openModal(WORKSPACE_MEMBER_DELETION_ID);
                 closeDropdown(dropdownId);
               }}
             />

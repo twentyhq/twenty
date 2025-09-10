@@ -75,7 +75,10 @@ export class AccessTokenService {
         impersonatedUserWorkspaceId !== undefined &&
         impersonatedUserWorkspaceId !== '';
 
-      if (!impersonatorUserWorkspaceIdValid || !impersonatedUserWorkspaceIdValid) {
+      if (
+        !impersonatorUserWorkspaceIdValid ||
+        !impersonatedUserWorkspaceIdValid
+      ) {
         throw new AuthException(
           'Invalid impersonation parameters',
           AuthExceptionCode.INVALID_INPUT,
@@ -143,12 +146,14 @@ export class AccessTokenService {
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
     if (isImpersonatingToken) {
-      const impersonatorUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { id: impersonatorUserWorkspaceId! },
-      });
-      const impersonatedUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { id: impersonatedUserWorkspaceId! },
-      });
+      const impersonatorUserWorkspace =
+        await this.userWorkspaceRepository.findOne({
+          where: { id: impersonatorUserWorkspaceId! },
+        });
+      const impersonatedUserWorkspace =
+        await this.userWorkspaceRepository.findOne({
+          where: { id: impersonatedUserWorkspaceId! },
+        });
 
       if (!impersonatorUserWorkspace || !impersonatedUserWorkspace) {
         throw new AuthException(

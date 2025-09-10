@@ -196,9 +196,11 @@ describe('RefreshTokenService', () => {
     });
 
     const token = { id: tokenId, type: AppTokenType.RefreshToken } as AppToken;
+
     jest.spyOn(appTokenRepository, 'findOneBy').mockResolvedValue(token);
 
     const user = { id: userId } as User;
+
     jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
     const out = await service.verifyRefreshToken(refreshToken);

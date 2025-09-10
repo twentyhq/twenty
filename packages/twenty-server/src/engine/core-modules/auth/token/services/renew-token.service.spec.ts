@@ -9,7 +9,7 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { type User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { RenewTokenService } from './renew-token.service';

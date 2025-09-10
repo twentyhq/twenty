@@ -20,7 +20,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/workspaceMemberDeletion';
+import { WORKSPACE_MEMBER_DELETION_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionID';
 import { workspaceMemberBeingDeletedState } from '@/workspace-member/states/workspaceMemberDeletionState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
@@ -415,7 +415,7 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        modalId={WORKSPACE_MEMBER_DELETION_MODAL_ID}
+        modalId={WORKSPACE_MEMBER_DELETION_ID}
         title={t`Account Deletion`}
         subtitle={
           <Trans>
