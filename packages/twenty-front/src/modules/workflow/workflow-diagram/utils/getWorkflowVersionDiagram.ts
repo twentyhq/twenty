@@ -12,18 +12,14 @@ const EMPTY_DIAGRAM: WorkflowDiagram = {
 
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
-  isEditable,
+  workflowContext,
 }: {
   workflowVersion: WorkflowVersion | undefined;
-  isEditable: boolean;
+  workflowContext: WorkflowContext;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
     return EMPTY_DIAGRAM;
   }
-
-  const workflowContext: WorkflowContext = isEditable
-    ? 'workflow'
-    : 'workflow-version';
 
   const diagram = generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
