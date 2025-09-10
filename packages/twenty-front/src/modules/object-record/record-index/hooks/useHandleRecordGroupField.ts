@@ -110,7 +110,12 @@ export const useHandleRecordGroupField = () => {
         }
 
         if (viewGroupsToDelete.length > 0) {
-          await deleteViewGroupRecords(viewGroupsToDelete);
+          await deleteViewGroupRecords(
+            viewGroupsToDelete.map((group) => ({
+              id: group.id,
+              viewId: view.id,
+            })),
+          );
         }
       },
     [
@@ -144,7 +149,12 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        await deleteViewGroupRecords(view.viewGroups);
+        await deleteViewGroupRecords(
+          view.viewGroups.map((group) => ({
+            id: group.id,
+            viewId: view.id,
+          })),
+        );
 
         setRecordGroupsFromViewGroups(view.id, [], objectMetadataItem);
       },
