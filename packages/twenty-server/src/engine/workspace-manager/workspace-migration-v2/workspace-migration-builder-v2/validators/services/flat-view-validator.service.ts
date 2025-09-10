@@ -14,15 +14,27 @@ export class FlatViewValidatorService {
   constructor() {}
 
   public validateFlatViewUpdate({
-    _existingFlatViewMaps,
+    existingFlatViewMaps,
     updatedFlatView,
   }: {
-    _existingFlatViewMaps: FlatViewMaps;
+    existingFlatViewMaps: FlatViewMaps;
     updatedFlatView: FlatView;
   }): FailedFlatViewValidation {
+    const errors = [];
+
+    const existingFlatView = existingFlatViewMaps.byId[updatedFlatView.id];
+
+    if (!isDefined(existingFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
+      });
+    }
+
     return {
       type: 'update_view',
-      viewLevelErrors: [],
+      viewLevelErrors: errors,
       failedViewValidationMinimalInformation: {
         id: updatedFlatView.id,
       },
@@ -30,15 +42,27 @@ export class FlatViewValidatorService {
   }
 
   public validateFlatViewDeletion({
-    _existingFlatViewMaps,
+    existingFlatViewMaps,
     viewIdToDelete,
   }: {
-    _existingFlatViewMaps: FlatViewMaps;
+    existingFlatViewMaps: FlatViewMaps;
     viewIdToDelete: string;
   }): FailedFlatViewValidation {
+    const errors = [];
+
+    const existingFlatView = existingFlatViewMaps.byId[viewIdToDelete];
+
+    if (!isDefined(existingFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
+      });
+    }
+
     return {
       type: 'delete_view',
-      viewLevelErrors: [],
+      viewLevelErrors: errors,
       failedViewValidationMinimalInformation: {
         id: viewIdToDelete,
       },
@@ -48,42 +72,30 @@ export class FlatViewValidatorService {
   public async validateFlatViewCreation({
     _existingFlatViewMaps,
     flatViewToValidate,
-    _otherFlatViewMapsToValidate,
     optimisticFlatObjectMetadataMaps,
   }: {
     _existingFlatViewMaps: FlatViewMaps;
     flatViewToValidate: FlatView;
-    _otherFlatViewMapsToValidate?: FlatViewMaps;
-    optimisticFlatObjectMetadataMaps?: FlatObjectMetadataMaps; // TODO: Fix this, should always be defined
+    optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   }): Promise<FailedFlatViewValidation> {
-    if (!isDefined(optimisticFlatObjectMetadataMaps)) {
-      throw new Error('Optimistic flat object metadata maps is not defined');
-    }
-
     const optimisticFlatObjectMetadata =
       optimisticFlatObjectMetadataMaps.byId[
         flatViewToValidate.objectMetadataId
       ];
 
+    const errors = [];
+
     if (!isDefined(optimisticFlatObjectMetadata)) {
-      return {
-        type: 'create_view',
-        viewLevelErrors: [
-          {
-            code: ViewExceptionCode.INVALID_VIEW_DATA,
-            message: t`Object metadata not found`,
-            userFriendlyMessage: t`Object metadata not found`,
-          },
-        ],
-        failedViewValidationMinimalInformation: {
-          id: flatViewToValidate.id,
-        },
-      };
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Object metadata not found`,
+        userFriendlyMessage: t`Object metadata not found`,
+      });
     }
 
     return {
       type: 'create_view',
-      viewLevelErrors: [],
+      viewLevelErrors: errors,
       failedViewValidationMinimalInformation: {
         id: flatViewToValidate.id,
       },

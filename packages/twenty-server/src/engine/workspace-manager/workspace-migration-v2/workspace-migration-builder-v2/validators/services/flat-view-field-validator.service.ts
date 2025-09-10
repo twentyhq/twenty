@@ -9,21 +9,48 @@ import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 
 @Injectable()
 export class FlatViewFieldValidatorService {
   constructor() {}
 
   public validateFlatViewFieldUpdate({
-    _existingFlatViewFieldMaps,
+    existingFlatViewFieldMaps,
     updatedFlatViewField,
+    optimisticFlatViewMaps,
   }: {
-    _existingFlatViewFieldMaps: FlatViewFieldMaps;
+    existingFlatViewFieldMaps: FlatViewFieldMaps;
     updatedFlatViewField: FlatViewField;
+    optimisticFlatViewMaps: FlatViewMaps;
   }): FailedFlatViewFieldValidation {
+    const errors = [];
+
+    const optimisticFlatView =
+      optimisticFlatViewMaps.byId[updatedFlatViewField.viewId];
+
+    if (!isDefined(optimisticFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
+      });
+    }
+
+    const existingFlatViewField =
+      existingFlatViewFieldMaps.byId[updatedFlatViewField.id];
+
+    if (!isDefined(existingFlatViewField)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field not found`,
+        userFriendlyMessage: t`View field not found`,
+      });
+    }
+
     return {
       type: 'update_view_field',
-      viewFieldLevelErrors: [],
+      viewFieldLevelErrors: errors,
       failedViewFieldValidationMinimalInformation: {
         id: updatedFlatViewField.id,
         viewId: updatedFlatViewField.viewId,
@@ -33,15 +60,40 @@ export class FlatViewFieldValidatorService {
   }
 
   public validateFlatViewFieldDeletion({
-    _existingFlatViewFieldMaps,
+    existingFlatViewFieldMaps,
     viewFieldIdToDelete,
+    optimisticFlatViewMaps,
   }: {
-    _existingFlatViewFieldMaps: FlatViewFieldMaps;
+    existingFlatViewFieldMaps: FlatViewFieldMaps;
     viewFieldIdToDelete: string;
+    optimisticFlatViewMaps: FlatViewMaps;
   }): FailedFlatViewFieldValidation {
+    const errors = [];
+
+    const optimisticFlatView = optimisticFlatViewMaps.byId[viewFieldIdToDelete];
+
+    if (!isDefined(optimisticFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
+      });
+    }
+
+    const existingFlatViewField =
+      existingFlatViewFieldMaps.byId[viewFieldIdToDelete];
+
+    if (!isDefined(existingFlatViewField)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field not found`,
+        userFriendlyMessage: t`View field not found`,
+      });
+    }
+
     return {
       type: 'delete_view_field',
-      viewFieldLevelErrors: [],
+      viewFieldLevelErrors: errors,
       failedViewFieldValidationMinimalInformation: {
         id: viewFieldIdToDelete,
       },
@@ -51,57 +103,39 @@ export class FlatViewFieldValidatorService {
   public async validateFlatViewFieldCreation({
     _existingFlatViewFieldMaps,
     flatViewFieldToValidate,
-    _otherFlatViewFieldMapsToValidate,
     optimisticFlatObjectMetadataMaps,
     optimisticFlatViewMaps,
   }: {
     _existingFlatViewFieldMaps: FlatViewFieldMaps;
     flatViewFieldToValidate: FlatViewField;
-    _otherFlatViewFieldMapsToValidate?: FlatViewFieldMaps;
-    optimisticFlatObjectMetadataMaps?: FlatObjectMetadataMaps;
-    optimisticFlatViewMaps?: FlatViewMaps;
+    optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    optimisticFlatViewMaps: FlatViewMaps;
   }): Promise<FailedFlatViewFieldValidation> {
     const errors = [];
 
-    // TODO: replace once we have a dedicated field maps
-    if (isDefined(optimisticFlatObjectMetadataMaps)) {
-      let fieldMetadataFound = false;
+    const relatedFlatFieldMetadata =
+      findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
+        fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,
+        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      });
 
-      for (const objectMetadata of Object.values(
-        optimisticFlatObjectMetadataMaps.byId,
-      )) {
-        if (
-          isDefined(objectMetadata) &&
-          objectMetadata.flatFieldMetadatas.some(
-            (field) => field.id === flatViewFieldToValidate.fieldMetadataId,
-          )
-        ) {
-          fieldMetadataFound = true;
-          break;
-        }
-      }
-
-      if (!fieldMetadataFound) {
-        errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Field metadata not found`,
-          userFriendlyMessage: t`Field metadata not found`,
-        });
-      }
+    if (!isDefined(relatedFlatFieldMetadata)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Field metadata not found`,
+        userFriendlyMessage: t`Field metadata not found`,
+      });
     }
 
-    // Validate that the viewId exists in views
-    if (isDefined(optimisticFlatViewMaps)) {
-      const optimisticFlatView =
-        optimisticFlatViewMaps.byId[flatViewFieldToValidate.viewId];
+    const optimisticFlatView =
+      optimisticFlatViewMaps.byId[flatViewFieldToValidate.viewId];
 
-      if (!isDefined(optimisticFlatView)) {
-        errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View not found`,
-          userFriendlyMessage: t`View not found`,
-        });
-      }
+    if (!isDefined(optimisticFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: t`View not found`,
+      });
     }
 
     return {

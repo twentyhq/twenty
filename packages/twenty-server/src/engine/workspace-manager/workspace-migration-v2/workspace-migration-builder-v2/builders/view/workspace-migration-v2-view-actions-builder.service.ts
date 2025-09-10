@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
@@ -66,6 +67,13 @@ export class WorkspaceMigrationV2ViewActionsBuilderService {
         optimisticFlatViewMaps: structuredClone(fromFlatViewMaps),
       };
 
+    if (
+      !isDefined(dependencyOptimisticEntityMaps.object) ||
+      !isDefined(dependencyOptimisticEntityMaps.view)
+    ) {
+      throw new Error('Dependency optimistic entity maps are not defined');
+    }
+
     for (const flatViewToCreate of createdFlatView) {
       const validationErrors =
         await this.flatViewValidatorService.validateFlatViewCreation({
@@ -98,7 +106,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService {
       : []) {
       const validationErrors =
         this.flatViewValidatorService.validateFlatViewDeletion({
-          _existingFlatViewMaps: validateAndBuildResult.optimisticFlatViewMaps,
+          existingFlatViewMaps: validateAndBuildResult.optimisticFlatViewMaps,
           viewIdToDelete: flatViewToDelete.id,
         });
 
@@ -131,7 +139,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService {
 
       const validationErrors =
         this.flatViewValidatorService.validateFlatViewUpdate({
-          _existingFlatViewMaps: validateAndBuildResult.optimisticFlatViewMaps,
+          existingFlatViewMaps: validateAndBuildResult.optimisticFlatViewMaps,
           updatedFlatView: toFlatView,
         });
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
@@ -66,6 +67,13 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService {
         optimisticFlatViewFieldMaps: structuredClone(fromFlatViewFieldMaps),
       };
 
+    if (
+      !isDefined(dependencyOptimisticEntityMaps.object) ||
+      !isDefined(dependencyOptimisticEntityMaps.view)
+    ) {
+      throw new Error('Dependency optimistic entity maps are not defined');
+    }
+
     for (const flatViewFieldToCreate of createdFlatViewField) {
       const validationErrors =
         await this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
@@ -101,9 +109,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService {
       : []) {
       const validationErrors =
         this.flatViewFieldValidatorService.validateFlatViewFieldDeletion({
-          _existingFlatViewFieldMaps:
+          existingFlatViewFieldMaps:
             validateAndBuildResult.optimisticFlatViewFieldMaps,
           viewFieldIdToDelete: flatViewFieldToDelete.id,
+          optimisticFlatViewMaps: dependencyOptimisticEntityMaps.view,
         });
 
       if (validationErrors.viewFieldLevelErrors.length > 0) {
@@ -138,9 +147,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService {
 
       const validationErrors =
         this.flatViewFieldValidatorService.validateFlatViewFieldUpdate({
-          _existingFlatViewFieldMaps:
+          existingFlatViewFieldMaps:
             validateAndBuildResult.optimisticFlatViewFieldMaps,
           updatedFlatViewField: toFlatViewField,
+          optimisticFlatViewMaps: dependencyOptimisticEntityMaps.view,
         });
 
       if (validationErrors.viewFieldLevelErrors.length > 0) {
