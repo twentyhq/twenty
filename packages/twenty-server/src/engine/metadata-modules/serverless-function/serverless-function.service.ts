@@ -409,7 +409,7 @@ export class ServerlessFunctionService {
     version: string;
     workspaceId: string;
   }) {
-    const serverlessFunction =
+    const serverlessFunctionToDuplicate =
       await this.serverlessFunctionRepository.findOneOrFail({
         where: {
           id,
@@ -419,9 +419,9 @@ export class ServerlessFunctionService {
 
     const newServerlessFunction = await this.createOneServerlessFunction(
       {
-        name: `${serverlessFunction.name} (Duplicate)`,
-        description: serverlessFunction.description,
-        timeoutSeconds: serverlessFunction.timeoutSeconds,
+        name: serverlessFunctionToDuplicate.name,
+        description: serverlessFunctionToDuplicate.description,
+        timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
       },
       workspaceId,
     );
@@ -436,7 +436,7 @@ export class ServerlessFunctionService {
     await this.fileStorageService.copy({
       from: {
         folderPath: getServerlessFolder({
-          serverlessFunction: serverlessFunction,
+          serverlessFunction: serverlessFunctionToDuplicate,
           version,
         }),
       },

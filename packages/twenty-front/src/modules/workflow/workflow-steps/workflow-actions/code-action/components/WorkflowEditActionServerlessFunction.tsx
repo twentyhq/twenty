@@ -515,18 +515,20 @@ export const WorkflowEditActionServerlessFunction = ({
             </>
           )}
         </WorkflowStepBody>
-        <WorkflowActionFooter
-          stepId={action.id}
-          additionalActions={[
-            activeTabId === WorkflowServerlessFunctionTabId.TEST && (
-              <CmdEnterActionButton
-                title="Test"
-                onClick={handleRunFunction}
-                disabled={isTesting || actionOptions.readonly}
-              />
-            ),
-          ]}
-        />
+        {!actionOptions.readonly && (
+          <WorkflowActionFooter
+            stepId={action.id}
+            additionalActions={[
+              activeTabId === WorkflowServerlessFunctionTabId.TEST && (
+                <CmdEnterActionButton
+                  title="Test"
+                  onClick={handleRunFunction}
+                  disabled={isTesting || actionOptions.readonly}
+                />
+              ),
+            ]}
+          />
+        )}
         {fullScreenOverlay}
       </>
     )

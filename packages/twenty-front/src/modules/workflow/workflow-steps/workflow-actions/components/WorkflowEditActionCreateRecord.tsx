@@ -272,7 +272,7 @@ export const WorkflowEditActionCreateRecord = ({
           );
         })}
       </WorkflowStepBody>
-      <WorkflowActionFooter stepId={action.id} additionalActions={[]} />
+      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
   );
 };

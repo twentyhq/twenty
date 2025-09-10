@@ -16,7 +16,7 @@ export const WorkflowActionFooter = ({
   additionalActions,
 }: {
   stepId: string;
-  additionalActions: React.ReactNode[];
+  additionalActions?: React.ReactNode[];
 }) => {
   const dropdownId = useId();
   const theme = useTheme();
@@ -61,6 +61,8 @@ export const WorkflowActionFooter = ({
   };
 
   return (
-    <RightDrawerFooter actions={[<OptionsDropdown />, ...additionalActions]} />
+    <RightDrawerFooter
+      actions={[<OptionsDropdown />, ...(additionalActions ?? [])]}
+    />
   );
 };

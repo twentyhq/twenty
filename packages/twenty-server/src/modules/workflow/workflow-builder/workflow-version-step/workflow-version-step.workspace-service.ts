@@ -838,9 +838,10 @@ export class WorkflowVersionStepWorkspaceService {
         return {
           ...step,
           id: v4(),
+          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: {
-            x: (step.position?.x ?? 0) + 200,
+            x: (step.position?.x ?? 0) + 100,
             y: step.position?.y ?? 0,
           },
           settings: {
@@ -857,9 +858,10 @@ export class WorkflowVersionStepWorkspaceService {
         return {
           ...step,
           id: v4(),
+          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: {
-            x: (step.position?.x ?? 0) + 200,
+            x: (step.position?.x ?? 0) + 100,
             y: step.position?.y ?? 0,
           },
         };
