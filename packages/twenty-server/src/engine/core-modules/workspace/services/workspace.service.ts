@@ -138,22 +138,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       );
     }
 
-    if (
-      customDomain &&
-      workspace.customDomain !== customDomain &&
-      isDefined(workspace.customDomain)
-    ) {
+    if (!isDefined(customDomain) || workspace.customDomain === customDomain) {
+      return;
+    }
+
+    if (isDefined(workspace.customDomain)) {
       await this.dnsManagerService.updateHostname(
         workspace.customDomain,
         customDomain,
       );
-    }
-
-    if (
-      customDomain &&
-      workspace.customDomain !== customDomain &&
-      !isDefined(workspace.customDomain)
-    ) {
+    } else {
       await this.dnsManagerService.registerHostname(customDomain);
     }
   }
@@ -513,13 +507,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async checkCustomDomainValidRecords(workspace: Workspace) {
     if (!workspace.customDomain) return;
 
-    const customDomainDetails = await this.dnsManagerService.getHostnameDetails(
-      workspace.customDomain,
-    );
+    const customDomainWithRecords =
+      await this.dnsManagerService.getHostnameWithRecords(
+        workspace.customDomain,
+        false,
+      );
 
-    if (!customDomainDetails) return;
+    if (!customDomainWithRecords) return;
 
-    await this.dnsManagerService.refreshHostname(customDomainDetails);
+    await this.dnsManagerService.refreshHostname(customDomainWithRecords);
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
@@ -541,6 +537,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       );
     }
 
-    return customDomainDetails;
+    return customDomainWithRecords;
   }
 }

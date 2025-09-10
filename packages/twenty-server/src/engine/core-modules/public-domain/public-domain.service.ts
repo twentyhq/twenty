@@ -32,10 +32,6 @@ export class PublicDomainService {
   }): Promise<void> {
     const formattedDomain = domain.trim().toLowerCase();
 
-    await this.dnsManagerService.deleteHeaderTransformRuleSilently(
-      formattedDomain,
-    );
-
     await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
 
     await this.publicDomainRepository.delete({
@@ -89,14 +85,9 @@ export class PublicDomainService {
 
     await this.dnsManagerService.registerHostname(formattedDomain);
 
-    await this.dnsManagerService.registerHeaderTransformRule(formattedDomain);
-
     try {
       await this.publicDomainRepository.insert(publicDomain);
     } catch (error) {
-      await this.dnsManagerService.deleteHeaderTransformRuleSilently(
-        formattedDomain,
-      );
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
 
       throw error;

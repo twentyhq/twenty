@@ -43,6 +43,10 @@ export class DomainManagerService {
     return baseUrl;
   }
 
+  getPublicDomainUrl(): URL {
+    return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
+  }
+
   private appendSearchParams(
     url: URL,
     searchParams: Record<string, string | number | boolean>,

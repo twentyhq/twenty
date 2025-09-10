@@ -894,6 +894,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Base URL for public domains',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  PUBLIC_DOMAIN_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Secret key for the application',
     isEnvOnly: true,
