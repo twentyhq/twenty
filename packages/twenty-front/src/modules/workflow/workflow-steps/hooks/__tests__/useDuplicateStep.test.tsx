@@ -1,20 +1,20 @@
+import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
-import { useCreateStep } from '../useCreateStep';
 
 const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
+const mockDuplicateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: {
-    createWorkflowVersionStep: { createdStep: { id: '1', type: 'CODE' } },
+    duplicateWorkflowVersionStep: { createdStep: { id: '2', type: 'CODE' } },
   },
 });
 
 jest.mock(
-  '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep',
+  '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep',
   () => ({
-    useCreateWorkflowVersionStep: () => ({
-      createWorkflowVersionStep: mockCreateWorkflowVersionStep,
+    useDuplicateWorkflowVersionStep: () => ({
+      duplicateWorkflowVersionStep: mockDuplicateWorkflowVersionStep,
     }),
   }),
 );
@@ -42,7 +42,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-describe('useCreateStep', () => {
+describe('useDuplicateStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -51,25 +51,20 @@ describe('useCreateStep', () => {
     const mockWorkflowVersionId = 'version-123';
     mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
 
-    const { result } = renderHook(() => useCreateStep(), {
+    const { result } = renderHook(() => useDuplicateStep(), {
       wrapper,
     });
 
     await act(async () => {
-      await result.current.createStep({
-        newStepType: 'CODE',
-        parentStepId: 'parent-step-id',
-        nextStepId: undefined,
+      await result.current.duplicateStep({
+        stepId: 'step-1',
       });
     });
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
-    expect(mockCreateWorkflowVersionStep).toHaveBeenCalledWith({
+    expect(mockDuplicateWorkflowVersionStep).toHaveBeenCalledWith({
+      stepId: 'step-1',
       workflowVersionId: mockWorkflowVersionId,
-      stepType: 'CODE',
-      parentStepId: 'parent-step-id',
-      nextStepId: undefined,
-      position: undefined,
     });
   });
 });

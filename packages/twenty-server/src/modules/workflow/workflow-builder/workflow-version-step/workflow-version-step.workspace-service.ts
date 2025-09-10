@@ -48,6 +48,8 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   },
 };
 
+const DUPLICATED_STEP_POSITION_OFFSET = 50;
+
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
   constructor(
@@ -819,8 +821,8 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     const duplicatedStepPosition = {
-      x: (step.position?.x ?? 0) + 100,
-      y: (step.position?.y ?? 0) + 50,
+      x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
     };
 
     switch (step.type) {
