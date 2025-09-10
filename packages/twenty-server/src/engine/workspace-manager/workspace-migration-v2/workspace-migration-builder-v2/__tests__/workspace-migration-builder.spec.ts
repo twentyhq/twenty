@@ -54,7 +54,6 @@ const expectedActionsTypeCounterChecker = ({
     deleteObject: 0,
     updateField: 0,
     updateObject: 0,
-    createView: 0,
   };
   const actualActionsTypeCounter = workspaceMigration.actions.reduce(
     (acc, action) => {
@@ -125,7 +124,7 @@ describe.each(allWorkspaceBuilderTestCases)(
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           buildOptions = {
-            inferDeletionFromMissingObjectFieldIndex: true,
+            inferDeletionFromMissingEntities: true,
             isSystemBuild: false,
           },
         } = typeof input === 'function' ? input() : input;

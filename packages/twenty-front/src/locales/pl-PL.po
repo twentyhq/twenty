@@ -305,6 +305,7 @@ msgstr "ACS Url skopiowany do schowka"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
 msgid "Action"
 msgstr "Akcja"
 
@@ -365,6 +366,11 @@ msgstr "Dodaj wyzwalacz"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Dodaj konto"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
+msgid "Add an Action"
+msgstr ""
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1393,6 +1399,12 @@ msgstr "Kompaktowy widok"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "Firmy"
+
+#. js-lingui-id: 2PsTzL
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "completed"
+msgstr ""
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -4048,6 +4060,12 @@ msgstr "Wyszukaj użytkowników i zarządzaj ich flagami funkcji w przestrzeni r
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
 msgstr "Wyszukaj użytkowników do ich udawania."
+
+#. js-lingui-id: tL2lBI
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "loop"
+msgstr ""
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

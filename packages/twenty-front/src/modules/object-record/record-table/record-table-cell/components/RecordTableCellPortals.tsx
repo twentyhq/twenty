@@ -16,7 +16,6 @@ export const RecordTableCellPortals = () => {
   return (
     <>
       <RecordTableCellHoveredPortal />
-
       {isRecordTableFocusActive && (
         <>
           <RecordTableCellEditModePortal />

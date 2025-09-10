@@ -21,7 +21,7 @@ export const useTriggerViewFieldOptimisticEffect = () => {
       }: {
         createdViewFields?: CoreViewField[];
         updatedViewFields?: CoreViewField[];
-        deletedViewFields?: CoreViewField[];
+        deletedViewFields?: Pick<CoreViewField, 'id' | 'viewId'>[];
       }) => {
         const coreViews = getSnapshotValue(snapshot, coreViewsState);
         let newCoreViews = [...coreViews];
@@ -96,38 +96,40 @@ export const useTriggerViewFieldOptimisticEffect = () => {
           }
         });
 
-        deletedViewFields.forEach((deletedViewField) => {
-          cache.modify<CoreViewWithRelations>({
-            id: cache.identify({
-              __typename: 'CoreView',
-              id: deletedViewField.viewId,
-            }),
-            fields: {
-              viewFields: (existingViewFields, { readField }) =>
-                existingViewFields.filter(
-                  (viewField) =>
-                    readField('id', viewField) !== deletedViewField.id,
-                ),
-            },
-          });
-          const toBeModifiedCoreView = newCoreViews.find(
-            (coreView) => coreView.id === deletedViewField.viewId,
-          );
-
-          if (isDefined(toBeModifiedCoreView)) {
-            newCoreViews = [
-              ...newCoreViews.filter(
-                (coreView) => coreView.id !== deletedViewField.viewId,
-              ),
-              {
-                ...toBeModifiedCoreView,
-                viewFields: toBeModifiedCoreView.viewFields.filter(
-                  (viewField) => viewField.id !== deletedViewField.id,
-                ),
+        deletedViewFields.forEach(
+          (deletedViewField: Pick<CoreViewField, 'id' | 'viewId'>) => {
+            cache.modify<CoreViewWithRelations>({
+              id: cache.identify({
+                __typename: 'CoreView',
+                id: deletedViewField.viewId,
+              }),
+              fields: {
+                viewFields: (existingViewFields, { readField }) =>
+                  existingViewFields.filter(
+                    (viewField) =>
+                      readField('id', viewField) !== deletedViewField.id,
+                  ),
               },
-            ];
-          }
-        });
+            });
+            const toBeModifiedCoreView = newCoreViews.find(
+              (coreView) => coreView.id === deletedViewField.viewId,
+            );
+
+            if (isDefined(toBeModifiedCoreView)) {
+              newCoreViews = [
+                ...newCoreViews.filter(
+                  (coreView) => coreView.id !== deletedViewField.viewId,
+                ),
+                {
+                  ...toBeModifiedCoreView,
+                  viewFields: toBeModifiedCoreView.viewFields.filter(
+                    (viewField) => viewField.id !== deletedViewField.id,
+                  ),
+                },
+              ];
+            }
+          },
+        );
 
         if (!isDeeplyEqual(coreViews, newCoreViews)) {
           set(coreViewsState, newCoreViews);

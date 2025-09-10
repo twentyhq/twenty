@@ -7,7 +7,6 @@ import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.enti
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 export const cleanupViewRecords = async (): Promise<void> => {
-  // @ts-expect-error legacy noImplicitAny
   await global.testDataSource.query(`DELETE from "core"."view"`);
 };
 

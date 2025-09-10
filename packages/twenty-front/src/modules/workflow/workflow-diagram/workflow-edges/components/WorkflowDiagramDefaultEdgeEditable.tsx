@@ -1,19 +1,19 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
+import { WorkflowDiagramEdgeLabelContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabelContainer';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
+import { useLingui } from '@lingui/react/macro';
 import {
   EdgeLabelRenderer,
   type EdgeProps,
@@ -35,7 +35,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   targetY,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
+  const { i18n } = useLingui();
+
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const { isEdgeHovered } = useEdgeState();
@@ -47,12 +50,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     targetY,
   });
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-
-  const { createStep } = useCreateStep({ workflow });
+  const { createStep } = useCreateStep();
 
   const { deleteEdge } = useDeleteEdge();
 
@@ -116,6 +114,16 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       />
 
       <EdgeLabelRenderer>
+        {isDefined(data?.labelOptions) && (
+          <WorkflowDiagramEdgeLabelContainer
+            sourceX={sourceX}
+            sourceY={sourceY}
+            position={data.labelOptions.position}
+          >
+            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
+          </WorkflowDiagramEdgeLabelContainer>
+        )}
+
         <WorkflowDiagramEdgeV2Container
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}

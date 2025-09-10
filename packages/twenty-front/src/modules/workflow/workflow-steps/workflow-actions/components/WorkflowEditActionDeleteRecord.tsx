@@ -6,6 +6,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useEffect, useState } from 'react';
 
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -179,6 +180,7 @@ export const WorkflowEditActionDeleteRecord = ({
           />
         )}
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
   );
 };
