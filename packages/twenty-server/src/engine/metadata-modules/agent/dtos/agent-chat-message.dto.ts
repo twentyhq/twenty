@@ -20,6 +20,9 @@ export class AgentChatMessageDTO {
   @Field({ nullable: true })
   reasoningSummary: string;
 
+  @Field({ nullable: true })
+  streamData: object;
+
   @Field(() => [FileDTO])
   files: FileDTO[];
 

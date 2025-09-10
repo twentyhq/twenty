@@ -42,6 +42,9 @@ export class AgentChatMessageEntity {
   @Column({ type: 'text', nullable: true })
   reasoningSummary: string | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  streamData: object | null;
+
   @OneToMany(() => FileEntity, (file) => file.message)
   files: Relation<FileEntity[]>;
 

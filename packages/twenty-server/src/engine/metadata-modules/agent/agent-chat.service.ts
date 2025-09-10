@@ -71,18 +71,21 @@ export class AgentChatService {
     content,
     fileIds,
     reasoningSummary,
+    streamData,
   }: {
     threadId: string;
     role: AgentChatMessageRole;
     content: string;
     fileIds?: string[];
     reasoningSummary?: string | null;
+    streamData?: object | null;
   }) {
     const message = this.messageRepository.create({
       threadId,
       role,
       content,
       reasoningSummary,
+      streamData,
     });
 
     const savedMessage = await this.messageRepository.save(message);
