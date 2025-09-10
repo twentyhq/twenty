@@ -6,6 +6,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -246,6 +247,8 @@ export const RecordTableHeaderCell = ({
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
+  const hasSoftDeleteFilterOnView = useHasAnySoftDeleteFilter();
+
   return (
     <StyledColumnHeaderCell
       className="header-cell"
@@ -266,7 +269,8 @@ export const RecordTableHeaderCell = ({
         {(useIsMobile() || iconVisibility) &&
           !!isLabelIdentifier &&
           !isReadOnly &&
-          hasObjectUpdatePermissions && (
+          hasObjectUpdatePermissions &&
+          !hasSoftDeleteFilterOnView && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}

@@ -1,14 +1,11 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledNewButton = styled.button`
@@ -36,15 +33,7 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const currentRecordFilters = useRecoilComponentValue(
-    currentRecordFiltersComponentState,
-  );
-
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
-
-  const softDeleteFilter = currentRecordFilters.find((recordFilter) =>
-    checkIsSoftDeleteFilter(recordFilter),
-  );
+  const hasAnySoftDeleteFitler = useHasAnySoftDeleteFilter();
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -60,7 +49,7 @@ export const RecordBoardColumnNewRecordButton = () => {
     return null;
   }
 
-  if (isDefined(softDeleteFilter)) {
+  if (hasAnySoftDeleteFitler === true) {
     return null;
   }
 

@@ -1,5 +1,6 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type IconComponent } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -44,6 +45,8 @@ export const RecordTableEmptyStateDisplay = (
     objectMetadataItem,
   });
 
+  const hasAnySoftDeleteFilter = useHasAnySoftDeleteFilter();
+
   return (
     <AnimatedPlaceholderEmptyContainer>
       <AnimatedPlaceholder type={props.animatedPlaceholderType} />
@@ -56,7 +59,7 @@ export const RecordTableEmptyStateDisplay = (
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
       {'buttonComponent' in props && props.buttonComponent}
-      {'buttonTitle' in props && !isReadOnly && (
+      {'buttonTitle' in props && !isReadOnly && !hasAnySoftDeleteFilter && (
         <Button
           Icon={props.ButtonIcon}
           title={props.buttonTitle}
