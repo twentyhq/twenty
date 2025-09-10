@@ -73,7 +73,7 @@ export default meta;
 type Story = StoryObj<typeof GraphWidgetLineChart>;
 
 const Container = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ width: '500px', height: '300px' }}>{children}</div>
+  <div style={{ width: '700px', height: '500px' }}>{children}</div>
 );
 
 const renderChart = (args: any) => (
@@ -288,7 +288,12 @@ export const LogScaleDemo: Story = {
     enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value (log scale)',
-    yScale: { type: 'log' },
+    yScale: {
+      type: 'log',
+      base: 10,
+      min: 'auto',
+      max: 'auto',
+    },
     displayType: 'shortNumber',
   },
 };
