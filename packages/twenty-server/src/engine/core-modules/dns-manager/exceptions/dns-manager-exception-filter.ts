@@ -17,6 +17,7 @@ export class DnsManagerExceptionFilter implements ExceptionFilter {
       case DnsManagerExceptionCode.INVALID_INPUT_DATA:
       case DnsManagerExceptionCode.CLOUDFLARE_CLIENT_NOT_INITIALIZED:
       case DnsManagerExceptionCode.MULTIPLE_HOSTNAMES_FOUND:
+      case DnsManagerExceptionCode.MISSING_PUBLIC_DOMAIN_URL:
         throw exception;
       default: {
         assertUnreachable(exception.code);
