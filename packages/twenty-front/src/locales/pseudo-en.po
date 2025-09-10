@@ -5046,10 +5046,10 @@ msgstr ""
 msgid "Phone number copied to clipboard"
 msgstr ""
 
-#. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#. js-lingui-id: vqKcU0
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
-msgid "Pick a {nameSingular} record"
+msgid "Pick a {objectLabel} record"
 msgstr ""
 
 #. js-lingui-id: N0+GsR

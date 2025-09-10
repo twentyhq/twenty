@@ -3,11 +3,11 @@ import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selectorFamily } from 'recoil';
 
-export const prefetchViewsFromObjectMetadataItemFamilySelector = selectorFamily<
+export const coreViewsFromObjectMetadataItemFamilySelector = selectorFamily<
   View[],
   { objectMetadataItemId: string }
 >({
-  key: 'prefetchViewsFromObjectMetadataItemFamilySelector',
+  key: 'coreViewsFromObjectMetadataItemFamilySelector',
   get:
     ({ objectMetadataItemId }) =>
     ({ get }) => {

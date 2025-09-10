@@ -119,17 +119,10 @@ export abstract class GraphqlQueryBaseResolverService<
       let shouldBypassPermissionChecks = false;
 
       if (isDefined(authContext.apiKey)) {
-        const isApiKeyRolesEnabled =
-          featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
-
-        if (!isApiKeyRolesEnabled) {
-          shouldBypassPermissionChecks = true;
-        } else {
-          roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
-            authContext.apiKey.id,
-            workspace.id,
-          );
-        }
+        roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+          authContext.apiKey.id,
+          workspace.id,
+        );
       }
 
       if (isDefined(authContext.userWorkspaceId)) {
