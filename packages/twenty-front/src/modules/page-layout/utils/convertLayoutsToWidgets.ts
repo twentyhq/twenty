@@ -1,10 +1,10 @@
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { type Layouts } from 'react-grid-layout';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 
 export const convertLayoutsToWidgets = (
-  widgets: PageLayoutWidget[],
+  widgets: PageLayoutWidgetWithData[],
   layouts: Layouts,
-): PageLayoutWidget[] => {
+): PageLayoutWidgetWithData[] => {
   const activeLayouts = layouts.desktop || layouts.mobile || [];
 
   return widgets.map((widget) => {

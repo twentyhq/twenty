@@ -1,5 +1,5 @@
 import { type Layouts } from 'react-grid-layout';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
+import { type PageLayoutWidgetWithData } from '../types/pageLayoutTypes';
 
 export enum WidgetType {
   VIEW = 'VIEW',
@@ -15,7 +15,7 @@ export enum GraphType {
   BAR = 'BAR',
 }
 
-export const mockPageLayoutWidgets: PageLayoutWidget[] = [
+export const mockPageLayoutWidgets: PageLayoutWidgetWithData[] = [
   {
     id: 'widget-1',
     pageLayoutTabId: 'tab-overview',

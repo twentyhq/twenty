@@ -1,16 +1,16 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { createUpdatedTabLayouts } from '@/page-layout/utils/createUpdatedTabLayouts';
+import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '../constants/SettingsPageLayoutTabsInstanceId';
-import { WidgetType } from '../mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
-import { addWidgetToTab } from '../utils/addWidgetToTab';
-import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
-import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
+import { WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = () => {
   const activeTabId = useRecoilComponentValue(
@@ -39,7 +39,7 @@ export const useCreatePageLayoutIframeWidget = () => {
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidget = {
+        const newWidget: PageLayoutWidgetWithData = {
           id: widgetId,
           pageLayoutTabId: activeTabId,
           title,
@@ -53,6 +53,7 @@ export const useCreatePageLayoutIframeWidget = () => {
           configuration: {
             url,
           },
+          data: {},
           objectMetadataId: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -76,7 +77,7 @@ export const useCreatePageLayoutIframeWidget = () => {
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
+          tabs: addWidgetToTab(prev?.tabs || [], activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);

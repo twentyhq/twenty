@@ -1,21 +1,23 @@
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilCallback } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '../constants/SettingsPageLayoutTabsInstanceId';
-import { type GraphType, type WidgetType } from '../mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
-import { addWidgetToTab } from '../utils/addWidgetToTab';
-import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
+import { type GraphType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { createUpdatedTabLayouts } from '@/page-layout/utils/createUpdatedTabLayouts';
 import {
   getDefaultWidgetData,
   getWidgetSize,
   getWidgetTitle,
-} from '../utils/getDefaultWidgetData';
-import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
+} from '@/page-layout/utils/getDefaultWidgetData';
+import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
+import { type WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutWidget = () => {
   const activeTabId = useRecoilComponentValue(
@@ -42,7 +44,10 @@ export const useCreatePageLayoutWidget = () => {
           return;
         }
 
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const allWidgets =
+          pageLayoutDraft.tabs
+            ?.flatMap((tab) => tab.widgets)
+            .filter(isDefined) || [];
         const existingWidgetCount = allWidgets.filter(
           (w) =>
             w.type === widgetType && w.configuration?.graphType === graphType,
@@ -56,7 +61,7 @@ export const useCreatePageLayoutWidget = () => {
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidget = {
+        const newWidget: PageLayoutWidgetWithData = {
           id: widgetId,
           pageLayoutTabId: activeTabId,
           title,
@@ -70,7 +75,7 @@ export const useCreatePageLayoutWidget = () => {
           configuration: {
             graphType,
           },
-          data: widgetData,
+          data: widgetData as Record<string, unknown>,
           objectMetadataId: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -94,7 +99,7 @@ export const useCreatePageLayoutWidget = () => {
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
+          tabs: addWidgetToTab(prev.tabs || [], activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);

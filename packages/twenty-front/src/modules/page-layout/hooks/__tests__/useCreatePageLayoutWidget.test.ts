@@ -1,14 +1,11 @@
 import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
-import {
-    GraphType,
-    WidgetType,
-} from '@/page-layout/mocks/mockWidgets';
+import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
-import { PageLayoutType } from '@/page-layout/states/savedPageLayoutsState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { PageLayoutType } from '~/generated/graphql';
 import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
 
 jest.mock('uuid', () => ({
@@ -30,7 +27,7 @@ describe('useCreatePageLayoutWidget', () => {
         );
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
@@ -77,7 +74,7 @@ describe('useCreatePageLayoutWidget', () => {
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
-    expect(result.current.allWidgets[0].pageLayoutTabId).toBe('tab-1');
+    expect(result.current.allWidgets?.[0]?.pageLayoutTabId).toBe('tab-1');
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
     expect(
@@ -96,7 +93,7 @@ describe('useCreatePageLayoutWidget', () => {
           }),
         );
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
@@ -155,12 +152,11 @@ describe('useCreatePageLayoutWidget', () => {
     expect(result.current.allWidgets).toHaveLength(4);
 
     graphTypes.forEach((graphType, index) => {
-      const widget = result.current.allWidgets[index];
-      expect(widget.type).toBe(WidgetType.GRAPH);
-      expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(widget.configuration?.graphType).toBe(graphType);
-      expect(widget.id).toBe('widget-mock-uuid');
-      expect(widget.data).toBeDefined();
+      const widget = result.current.allWidgets?.[index];
+      expect(widget?.type).toBe(WidgetType.GRAPH);
+      expect(widget?.pageLayoutTabId).toBe('tab-1');
+      expect(widget?.configuration?.graphType).toBe(graphType);
+      expect(widget?.id).toBe('widget-mock-uuid');
     });
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
@@ -171,14 +167,14 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.pageLayoutCurrentLayouts['tab-1'].mobile,
     ).toHaveLength(4);
 
-    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
+    expect(result.current.pageLayoutDraft?.tabs?.[0]?.widgets).toHaveLength(4);
   });
 
   it('should not create widget when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );

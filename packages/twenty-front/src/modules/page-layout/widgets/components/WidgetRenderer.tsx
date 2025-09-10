@@ -1,11 +1,11 @@
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { isString } from '@sniptt/guards';
-import { WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutWidget } from '../../states/savedPageLayoutsState';
-import { GraphWidgetRenderer } from '../graph/components/GraphWidgetRenderer';
+import { WidgetType } from '~/generated/graphql';
 
 type WidgetRendererProps = {
-  widget: PageLayoutWidget;
+  widget: PageLayoutWidgetWithData;
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {

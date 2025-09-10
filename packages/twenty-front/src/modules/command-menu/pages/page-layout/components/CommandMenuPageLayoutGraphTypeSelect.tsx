@@ -1,15 +1,12 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
-import {
-    GraphType,
-    WidgetType,
-} from '@/page-layout/mocks/mockWidgets';
+import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
 import {
-    IconChartBar,
-    IconChartPie,
-    IconGauge,
-    IconNumber,
+  IconChartBar,
+  IconChartPie,
+  IconGauge,
+  IconNumber,
 } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
 

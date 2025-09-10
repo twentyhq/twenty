@@ -1,8 +1,9 @@
 import { createState } from 'twenty-ui/utilities';
-import { PageLayoutType, type SavedPageLayout } from './savedPageLayoutsState';
+import { PageLayoutType } from '~/generated/graphql';
+import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 export type DraftPageLayout = Omit<
-  SavedPageLayout,
+  PageLayoutWithData,
   'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
 

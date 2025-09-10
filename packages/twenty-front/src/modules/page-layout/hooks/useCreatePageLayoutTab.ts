@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { type PageLayoutTab } from '../states/savedPageLayoutsState';
+import { type PageLayoutTabWithData } from '../types/pageLayoutTypes';
 import { createEmptyTabLayout } from '../utils/createEmptyTabLayout';
 
 export const useCreatePageLayoutTab = () => {
@@ -14,10 +14,11 @@ export const useCreatePageLayoutTab = () => {
           .getValue();
 
         const newTabId = `tab-${uuidv4()}`;
-        const newTab: PageLayoutTab = {
+        const tabsLength = pageLayoutDraft.tabs?.length || 0;
+        const newTab: PageLayoutTabWithData = {
           id: newTabId,
-          title: title || `Tab ${pageLayoutDraft.tabs.length + 1}`,
-          position: pageLayoutDraft.tabs.length,
+          title: title || `Tab ${tabsLength + 1}`,
+          position: tabsLength,
           pageLayoutId: '',
           widgets: [],
           createdAt: new Date().toISOString(),
@@ -25,7 +26,7 @@ export const useCreatePageLayoutTab = () => {
           deletedAt: null,
         };
 
-        const updatedTabs = [...pageLayoutDraft.tabs, newTab];
+        const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab];
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,

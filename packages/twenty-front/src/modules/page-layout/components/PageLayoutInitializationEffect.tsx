@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { PageLayoutType } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   pageLayoutCurrentLayoutsState,
@@ -10,27 +11,26 @@ import {
 } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
-import {
-  PageLayoutType,
-  savedPageLayoutsState,
-  type SavedPageLayout,
-} from '../states/savedPageLayoutsState';
+import { savedPageLayoutsState } from '../states/savedPageLayoutsState';
+import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 type PageLayoutInitializationEffectProps = {
   layoutId: string | undefined;
   isEditMode: boolean;
+  pageLayout?: PageLayoutWithData;
 };
 
 export const PageLayoutInitializationEffect = ({
   layoutId,
   isEditMode,
+  pageLayout,
 }: PageLayoutInitializationEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const savedPageLayouts = useRecoilValue(savedPageLayoutsState);
 
   const initializePageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
-      (layout: SavedPageLayout | undefined) => {
+      (layout: PageLayoutWithData | undefined) => {
         const currentPersisted = getSnapshotValue(
           snapshot,
           pageLayoutPersistedState,
@@ -46,10 +46,14 @@ export const PageLayoutInitializationEffect = ({
               tabs: layout.tabs,
             });
 
-            if (layout.tabs.length > 0) {
+            if (
+              layout.tabs !== null &&
+              layout.tabs !== undefined &&
+              layout.tabs.length > 0
+            ) {
               const tabLayouts: TabLayouts = {};
               layout.tabs.forEach((tab) => {
-                const layouts = tab.widgets.map((w) => ({
+                const layouts = (tab.widgets || []).map((w) => ({
                   i: w.id,
                   x: w.gridPosition.column,
                   y: w.gridPosition.row,
@@ -98,7 +102,10 @@ export const PageLayoutInitializationEffect = ({
       const existingLayout = isEditMode
         ? savedPageLayouts.find((l) => l.id === layoutId)
         : undefined;
-      initializePageLayout(existingLayout);
+
+      const layoutToInitialize = existingLayout || pageLayout;
+
+      initializePageLayout(layoutToInitialize);
       setIsInitialized(true);
     }
   }, [
@@ -107,6 +114,7 @@ export const PageLayoutInitializationEffect = ({
     initializePageLayout,
     isInitialized,
     isEditMode,
+    pageLayout,
   ]);
 
   return null;

@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
+import { type PageLayoutWidgetWithData } from '../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
 export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
@@ -24,21 +24,21 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        const currentTab = pageLayoutDraft.tabs.find(
+        const currentTab = pageLayoutDraft?.tabs?.find(
           (tab) => tab.id === activeTabId,
         );
         if (!currentTab) return;
         const updatedWidgets = convertLayoutsToWidgets(
-          currentTab.widgets,
+          currentTab?.widgets || [],
           allLayouts,
         );
 
         if (isDefined(activeTabId)) {
           set(pageLayoutDraftState, (prev) => ({
             ...prev,
-            tabs: prev.tabs.map((tab) => {
+            tabs: prev?.tabs?.map((tab) => {
               if (tab.id === activeTabId) {
-                const tabWidgets: PageLayoutWidget[] = updatedWidgets
+                const tabWidgets: PageLayoutWidgetWithData[] = updatedWidgets
                   .filter((w) => w.pageLayoutTabId === activeTabId)
                   .map((widget) => ({
                     id: widget.id,
@@ -50,8 +50,8 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
                     configuration: widget.configuration || undefined,
                     data: widget.data,
                     createdAt:
-                      tab.widgets.find((w) => w.id === widget.id)?.createdAt ||
-                      new Date().toISOString(),
+                      tab?.widgets?.find((w) => w.id === widget.id)
+                        ?.createdAt || new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                     deletedAt: null,
                   }));

@@ -1,12 +1,13 @@
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType } from '../../../mocks/mockWidgets';
-import { type PageLayoutWidget } from '../../../states/savedPageLayoutsState';
 
 type GraphWidgetRendererProps = {
-  widget: PageLayoutWidget;
+  widget: PageLayoutWidgetWithData;
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
@@ -17,6 +18,10 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
   }
 
   if (!Object.values(GraphType).includes(graphType as GraphType)) {
+    return null;
+  }
+
+  if (!isDefined(widget.data)) {
     return null;
   }
 

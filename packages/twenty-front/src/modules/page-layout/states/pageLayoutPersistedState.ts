@@ -1,8 +1,8 @@
 import { createState } from 'twenty-ui/utilities';
-import { type SavedPageLayout } from './savedPageLayoutsState';
+import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 export const pageLayoutPersistedState = createState<
-  SavedPageLayout | undefined
+  PageLayoutWithData | undefined
 >({
   key: 'pageLayoutPersistedState',
   defaultValue: undefined,

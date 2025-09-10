@@ -20,7 +20,7 @@ import {
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { type PageLayout } from '~/generated/graphql';
+import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -55,12 +55,13 @@ const ResponsiveGridLayout = WidthProvider(
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
 type PageLayoutRendererProps = {
-  pageLayout: PageLayout;
+  pageLayout: PageLayoutWithData;
 };
 
 export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
-  const [pageLayoutCurrentBreakpoint, setPageLayoutCurrentBreakpoint] =
-    useRecoilState(pageLayoutCurrentBreakpointState);
+  const [, setPageLayoutCurrentBreakpoint] = useRecoilState(
+    pageLayoutCurrentBreakpointState,
+  );
 
   const pageLayoutCurrentLayouts = useRecoilValue(
     pageLayoutCurrentLayoutsState,
@@ -79,6 +80,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
       <PageLayoutInitializationEffect
         layoutId={pageLayout.id}
         isEditMode={false}
+        pageLayout={pageLayout}
       />
 
       <StyledGridContainer ref={gridContainerRef}>
@@ -95,8 +97,8 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
           maxCols={12}
           containerPadding={[0, 0]}
           margin={[8, 8]}
-          isDraggable={pageLayoutCurrentBreakpoint !== 'mobile'}
-          isResizable={pageLayoutCurrentBreakpoint !== 'mobile'}
+          isDraggable={false}
+          isResizable={false}
           draggableHandle=".drag-handle"
           compactType="vertical"
           preventCollision={false}

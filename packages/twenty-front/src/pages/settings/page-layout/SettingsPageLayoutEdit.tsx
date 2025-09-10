@@ -20,7 +20,7 @@ import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayou
 import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSelectedCellsState';
-import { type PageLayoutWidget } from '@/page-layout/states/savedPageLayoutsState';
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
@@ -46,7 +46,7 @@ import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -165,15 +165,17 @@ export const SettingsPageLayoutEdit = () => {
 
   const activeTabWidgets = useMemo(() => {
     if (!activeTabId) return [];
-    const activeTab = pageLayoutDraft.tabs.find(
+    const activeTab = pageLayoutDraft?.tabs?.find(
       (tab) => tab.id === activeTabId,
     );
     return activeTab?.widgets || [];
-  }, [pageLayoutDraft.tabs, activeTabId]);
+  }, [pageLayoutDraft?.tabs, activeTabId]);
 
   const allWidgets = useMemo(
-    () => pageLayoutDraft.tabs.flatMap((tab) => tab.widgets),
-    [pageLayoutDraft.tabs],
+    () =>
+      pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets).filter(isDefined) ||
+      [],
+    [pageLayoutDraft?.tabs],
   );
 
   const { startPageLayoutDragSelection } = useStartPageLayoutDragSelection();
@@ -232,32 +234,36 @@ export const SettingsPageLayoutEdit = () => {
   }, [createPageLayoutTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
-    return [...pageLayoutDraft.tabs]
+    return [...(pageLayoutDraft?.tabs || [])]
       .sort((a, b) => a.position - b.position)
       .map((tab) => ({
         id: tab.id,
         title: tab.title,
       }));
-  }, [pageLayoutDraft.tabs]);
+  }, [pageLayoutDraft?.tabs]);
 
   const handleSaveClick = async () => {
     setIsSaving(true);
     try {
-      const allWidgets: PageLayoutWidget[] = pageLayoutDraft.tabs.flatMap(
-        (tab) =>
-          tab.widgets.map((widget) => ({
-            ...widget,
-            pageLayoutTabId: widget.pageLayoutTabId || tab.id,
-            objectMetadataId: widget.objectMetadataId || null,
-            createdAt: widget.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            deletedAt: widget.deletedAt || null,
-          })),
-      );
+      const allWidgets: PageLayoutWidgetWithData[] =
+        pageLayoutDraft?.tabs
+          ?.flatMap((tab) =>
+            tab?.widgets
+              ?.map((widget) => ({
+                ...widget,
+                pageLayoutTabId: widget.pageLayoutTabId || tab.id,
+                objectMetadataId: widget.objectMetadataId || null,
+                createdAt: widget.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                deletedAt: widget.deletedAt || null,
+              }))
+              .filter(isDefined),
+          )
+          .filter(isDefined) || [];
 
       setPageLayoutDraft((prev) => ({
         ...prev,
-        tabs: pageLayoutDraft.tabs,
+        tabs: pageLayoutDraft?.tabs,
       }));
 
       await savePageLayout(allWidgets);
@@ -317,14 +323,15 @@ export const SettingsPageLayoutEdit = () => {
           </StyledActionButtonContainer>
         }
       >
-        {pageLayoutDraft.tabs.length > 0 && (
-          <StyledTabList
-            tabs={tabListTabs}
-            behaveAsLinks={false}
-            componentInstanceId={SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID}
-            onAddTab={handleAddTab}
-          />
-        )}
+        {isDefined(pageLayoutDraft?.tabs?.length) &&
+          pageLayoutDraft?.tabs?.length > 0 && (
+            <StyledTabList
+              tabs={tabListTabs}
+              behaveAsLinks={false}
+              componentInstanceId={SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID}
+              onAddTab={handleAddTab}
+            />
+          )}
         <StyledGridContainer ref={gridContainerRef}>
           <StyledGridOverlay
             isDragSelecting={pageLayoutCurrentBreakpoint !== 'mobile'}

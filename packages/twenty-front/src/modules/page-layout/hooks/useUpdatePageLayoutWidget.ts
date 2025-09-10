@@ -1,16 +1,16 @@
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { useRecoilCallback } from 'recoil';
-import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 
 export const useUpdatePageLayoutWidget = () => {
   const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
-      (widgetId: string, updates: Partial<PageLayoutWidget>) => {
+      (widgetId: string, updates: Partial<PageLayoutWidgetWithData>) => {
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: prev.tabs.map((tab) => ({
+          tabs: prev?.tabs?.map((tab) => ({
             ...tab,
-            widgets: tab.widgets.map((widget) =>
+            widgets: tab?.widgets?.map((widget) =>
               widget.id === widgetId ? { ...widget, ...updates } : widget,
             ),
           })),

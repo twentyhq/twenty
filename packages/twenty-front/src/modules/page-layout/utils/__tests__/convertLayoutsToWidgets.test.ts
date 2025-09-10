@@ -1,9 +1,9 @@
 import { GraphType, WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutWidget } from '../../states/savedPageLayoutsState';
+import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
-  const mockWidgets: PageLayoutWidget[] = [
+  const mockWidgets: PageLayoutWidgetWithData[] = [
     {
       id: 'widget-1',
       pageLayoutTabId: 'tab-1',
