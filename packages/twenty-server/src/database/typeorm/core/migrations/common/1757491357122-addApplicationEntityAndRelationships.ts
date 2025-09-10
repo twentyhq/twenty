@@ -6,7 +6,6 @@ export class AddApplicationEntityAndRelationships1757491357122
   name = 'AddApplicationEntityAndRelationships1757491357122';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create the application table
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "core"."application" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -24,7 +23,6 @@ export class AddApplicationEntityAndRelationships1757491357122
       )
     `);
 
-    // Create indexes
     await queryRunner.query(`
       CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_WORKSPACE_ID" ON "core"."application" ("workspaceId")
     `);
@@ -35,7 +33,6 @@ export class AddApplicationEntityAndRelationships1757491357122
       WHERE "deletedAt" IS NULL AND "standardId" IS NOT NULL
     `);
 
-    // Add foreign key constraint to workspace
     await queryRunner.query(`
       ALTER TABLE "core"."application" 
       ADD CONSTRAINT "FK_08d1d5e33c2a3ce7c140e9b335b" 
@@ -43,13 +40,11 @@ export class AddApplicationEntityAndRelationships1757491357122
       ON DELETE CASCADE ON UPDATE NO ACTION
     `);
 
-    // Add applicationId column to agent table if it doesn't exist
     await queryRunner.query(`
       ALTER TABLE "core"."agent" 
       ADD COLUMN IF NOT EXISTS "applicationId" uuid
     `);
 
-    // Add foreign key constraint from agent to application
     await queryRunner.query(`
       ALTER TABLE "core"."agent" 
       ADD CONSTRAINT "FK_259c48f99f625708723414adb5d" 
@@ -59,30 +54,26 @@ export class AddApplicationEntityAndRelationships1757491357122
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop foreign key constraints
     await queryRunner.query(`
       ALTER TABLE "core"."agent" DROP CONSTRAINT IF EXISTS "FK_259c48f99f625708723414adb5d"
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "core"."application" DROP CONSTRAINT IF EXISTS "FK_08d1d5e33c2a3ce7c140e9b335b"
     `);
 
-    // Drop indexes
     await queryRunner.query(`
       DROP INDEX IF EXISTS "core"."IDX_APPLICATION_STANDARD_ID_WORKSPACE_ID_UNIQUE"
     `);
-    
+
     await queryRunner.query(`
       DROP INDEX IF EXISTS "core"."IDX_APPLICATION_WORKSPACE_ID"
     `);
 
-    // Drop applicationId column from agent
     await queryRunner.query(`
       ALTER TABLE "core"."agent" DROP COLUMN IF EXISTS "applicationId"
     `);
 
-    // Drop application table
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."application"`);
   }
 }

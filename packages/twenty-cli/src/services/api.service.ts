@@ -83,8 +83,8 @@ export class ApiService {
   async syncApplication(manifest: AppManifest): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($input: SyncApplicationInput!) {
-          syncApplication(input: $input) {
+        mutation SyncApplication($manifest: JSON!) {
+          syncApplication(manifest: $manifest) {
             id
             standardId
             label
@@ -97,9 +97,7 @@ export class ApiService {
       `;
 
       const variables = {
-        input: {
-          manifest,
-        },
+        manifest,
       };
 
       const response: AxiosResponse = await this.client.post(
