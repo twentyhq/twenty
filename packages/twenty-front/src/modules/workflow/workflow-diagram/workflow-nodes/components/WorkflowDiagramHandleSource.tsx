@@ -30,7 +30,7 @@ const StyledHandle = styled(Handle, {
       if (!selected) {
         return css`
           background: ${theme.background.primary};
-          border-color: ${hovered && disableHoverEffect === false
+          border-color: ${hovered && disableHoverEffect !== true
             ? theme.font.color.light
             : theme.border.color.strong};
         `;
