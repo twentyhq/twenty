@@ -12,7 +12,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
@@ -134,18 +133,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (payload.isImpersonating === true) {
       if (
-        payload.impersonationType !== ImpersonationTokenTypeEnum.WORKSPACE &&
-        payload.impersonationType !== ImpersonationTokenTypeEnum.SERVER
-      ) {
-        throw new AuthException(
-          'Invalid impersonation type in token',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      if (
-        !payload.originalUserWorkspaceId ||
-        !isUUID(payload.originalUserWorkspaceId) ||
+        !payload.impersonatedUserWorkspaceId ||
+        !isUUID(payload.impersonatedUserWorkspaceId) ||
         !payload.impersonatorUserWorkspaceId ||
         !isUUID(payload.impersonatorUserWorkspaceId)
       ) {
@@ -153,25 +142,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           'Invalid or missing user workspace ID in impersonation token',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         );
-      }
-
-      if (payload.impersonationType === ImpersonationTokenTypeEnum.WORKSPACE) {
-        if (payload.originalUserWorkspaceId !== payload.userWorkspaceId) {
-          throw new AuthException(
-            'Original user workspace ID does not match user workspace ID in token',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
-
-        if (
-          payload.originalUserWorkspaceId ===
-          payload.impersonatorUserWorkspaceId
-        ) {
-          throw new AuthException(
-            'User cannot impersonate themselves',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
       }
     }
 
@@ -212,26 +182,40 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     // this validate and attach impersonation metadata if present
     if (payload.isImpersonating === true) {
-      if (payload.impersonationType === ImpersonationTokenTypeEnum.WORKSPACE) {
-        // this ensure workspace policy allows impersonation
-        if (workspace.allowImpersonation !== true) {
-          throw new AuthException(
-            'Impersonation not allowed for this workspace',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
-        if ((user?.id as string) !== (payload.sub ?? payload.userId)) {
-          throw new AuthException(
-            'Invalid impersonation token: user ID mismatch',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
+      if (workspace.allowImpersonation !== true) {
+        throw new AuthException(
+          'Impersonation not allowed for this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if ((user?.id as string) !== (payload.sub ?? payload.userId)) {
+        throw new AuthException(
+          'Invalid impersonation token: user ID mismatch',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
+        throw new AuthException(
+          'Original user workspace ID does not match user workspace ID in token',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if (
+        payload.impersonatedUserWorkspaceId ===
+        payload.impersonatorUserWorkspaceId
+      ) {
+        throw new AuthException(
+          'User cannot impersonate themselves',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
       }
 
       context.impersonationContext = {
-        impersonationType: payload.impersonationType,
         impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
-        originalUserWorkspaceId: payload.originalUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
       };
     }
 

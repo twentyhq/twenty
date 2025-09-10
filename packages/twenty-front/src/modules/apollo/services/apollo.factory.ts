@@ -35,10 +35,8 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
-import {
-  getEffectiveTokenPair,
-  isImpersonating,
-} from '../utils/getEffectiveTokenPair';
+import { getCurrentTokenPair } from '../utils/getCurrentTokenPair';
+import { getIsImpersonating } from '../utils/getIsImpersonating';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -97,7 +95,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const authLink = setContext(async (_, { headers }) => {
-        const tokenPair = getEffectiveTokenPair();
+        const tokenPair = getCurrentTokenPair();
 
         if (isUndefinedOrNull(tokenPair)) {
           return {
@@ -146,10 +144,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         forward: (operation: Operation) => Observable<FetchResult>,
       ) => {
         return fromPromise(
-          renewToken(uri, getEffectiveTokenPair())
+          renewToken(uri, getCurrentTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
-                if (isImpersonating()) {
+                if (getIsImpersonating()) {
                   cookieStorage.setItem(
                     'impersonationTokenPair',
                     JSON.stringify(tokens),

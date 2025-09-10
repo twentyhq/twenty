@@ -43,7 +43,6 @@ export class RenewTokenService {
       authProvider,
       targetedTokenType: targetedTokenTypeFromPayload,
       isImpersonating,
-      impersonationType,
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId,
     } = await this.refreshTokenService.verifyRefreshToken(token);
@@ -78,7 +77,6 @@ export class RenewTokenService {
             workspaceId,
             authProvider: resolvedAuthProvider,
             isImpersonating,
-            impersonationType,
             impersonatorUserWorkspaceId,
             impersonatedUserWorkspaceId,
           });
@@ -89,7 +87,6 @@ export class RenewTokenService {
       authProvider: resolvedAuthProvider,
       targetedTokenType,
       isImpersonating,
-      impersonationType,
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId,
     });

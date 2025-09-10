@@ -186,7 +186,6 @@ describe('AccessTokenService', () => {
         workspaceId,
         authProvider: AuthProviderEnum.Impersonation,
         isImpersonating: true,
-        impersonationType: 'WORKSPACE' as any,
         impersonatorUserWorkspaceId: 'uw-imp',
         impersonatedUserWorkspaceId: 'uw-orig',
       });
@@ -194,7 +193,6 @@ describe('AccessTokenService', () => {
       expect(signSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           isImpersonating: true,
-          impersonationType: 'WORKSPACE',
           impersonatorUserWorkspaceId: 'uw-imp',
           impersonatedUserWorkspaceId: 'uw-orig',
         }),

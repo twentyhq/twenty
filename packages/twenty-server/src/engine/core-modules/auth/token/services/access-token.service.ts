@@ -12,7 +12,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
   type AccessTokenJwtPayload,
@@ -50,18 +49,16 @@ export class AccessTokenService {
     workspaceId,
     authProvider,
     isImpersonating,
-    impersonationType,
     impersonatorUserWorkspaceId,
-    originalUserWorkspaceId,
+    impersonatedUserWorkspaceId,
   }: Omit<
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
   >): Promise<AuthToken> {
     const isImpersonatingToken = isImpersonating ? true : false;
     const hasImpersonationFields =
-      impersonationType !== undefined ||
       impersonatorUserWorkspaceId !== undefined ||
-      originalUserWorkspaceId !== undefined;
+      impersonatedUserWorkspaceId !== undefined;
 
     if (!isImpersonatingToken && hasImpersonationFields) {
       throw new AuthException(
@@ -71,24 +68,21 @@ export class AccessTokenService {
     }
 
     if (isImpersonatingToken) {
-      const typeIsValid =
-        impersonationType === ImpersonationTokenTypeEnum.WORKSPACE ||
-        impersonationType === ImpersonationTokenTypeEnum.SERVER;
-
-      const impersonatorOk =
+      const impersonatorUserWorkspaceIdValid =
         impersonatorUserWorkspaceId !== undefined &&
         impersonatorUserWorkspaceId !== '';
-      const originalOk =
-        originalUserWorkspaceId !== undefined && originalUserWorkspaceId !== '';
+      const impersonatedUserWorkspaceIdValid =
+        impersonatedUserWorkspaceId !== undefined &&
+        impersonatedUserWorkspaceId !== '';
 
-      if (!typeIsValid || !impersonatorOk || !originalOk) {
+      if (!impersonatorUserWorkspaceIdValid || !impersonatedUserWorkspaceIdValid) {
         throw new AuthException(
           'Invalid impersonation parameters',
           AuthExceptionCode.INVALID_INPUT,
         );
       }
 
-      if (impersonatorUserWorkspaceId === originalUserWorkspaceId) {
+      if (impersonatorUserWorkspaceId === impersonatedUserWorkspaceId) {
         throw new AuthException(
           'Invalid impersonation parameters',
           AuthExceptionCode.INVALID_INPUT,
@@ -148,25 +142,44 @@ export class AccessTokenService {
 
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
-    if (
-      isImpersonatingToken &&
-      impersonationType === ImpersonationTokenTypeEnum.WORKSPACE &&
-      impersonatorUserWorkspaceId !== userWorkspace.id
-    ) {
-      throw new AuthException(
-        'Invalid impersonation parameters',
-        AuthExceptionCode.INVALID_INPUT,
-      );
+    if (isImpersonatingToken) {
+      const impersonatorUserWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { id: impersonatorUserWorkspaceId! },
+      });
+      const impersonatedUserWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { id: impersonatedUserWorkspaceId! },
+      });
+
+      if (!impersonatorUserWorkspace || !impersonatedUserWorkspace) {
+        throw new AuthException(
+          'Impersonator or impersonated user workspace not found',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (
+        impersonatorUserWorkspace.workspaceId !== workspaceId ||
+        impersonatedUserWorkspace.workspaceId !== workspaceId
+      ) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (impersonatedUserWorkspaceId !== userWorkspace.id) {
+        throw new AuthException(
+          'Impersonated user workspace ID does not match user workspace ID in token',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
     }
 
-    const payloadImpersonationType = isImpersonatingToken
-      ? impersonationType
-      : undefined;
-    const payloadImpersonatorUwId = isImpersonatingToken
+    const payloadImpersonatorUserWorkspaceId = isImpersonatingToken
       ? impersonatorUserWorkspaceId
       : undefined;
-    const payloadOriginalUwId = isImpersonatingToken
-      ? originalUserWorkspaceId
+    const payloadOriginalUserWorkspaceId = isImpersonatingToken
+      ? impersonatedUserWorkspaceId
       : undefined;
 
     const jwtPayload: AccessTokenJwtPayload = {
@@ -178,9 +191,8 @@ export class AccessTokenService {
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
       isImpersonating: isImpersonatingToken,
-      impersonationType: payloadImpersonationType,
-      impersonatorUserWorkspaceId: payloadImpersonatorUwId,
-      originalUserWorkspaceId: payloadOriginalUwId,
+      impersonatorUserWorkspaceId: payloadImpersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
     return {

@@ -6,90 +6,62 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { gql, useMutation, type ApolloError } from '@apollo/client';
+import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/workspaceMemberDeletion';
+import { workspaceMemberBeingDeletedState } from '@/workspace-member/states/workspaceMemberDeletionState';
+import { useMutation, type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash, IconUser } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated/graphql';
+import { IMPERSONATE_WORKSPACE_USER } from '../../auth/graphql/mutations/impersonateWorkspace';
+import { IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID } from '../../auth/graphql/mutations/impersonateWorkspaceByMemberId';
 
 type ManageMembersDropdownMenuProps = {
   dropdownId: string;
   workspaceMemberId: string;
   userWorkspaceId?: string;
-  onRequestDelete: () => void;
 };
-
-const IMPERSONATE_WORKSPACE_USER = gql`
-  mutation ImpersonateWorkspaceUser($targetUserWorkspaceId: UUID!) {
-    impersonateWorkspaceUser(targetUserWorkspaceId: $targetUserWorkspaceId) {
-      tokens {
-        accessOrWorkspaceAgnosticToken {
-          token
-          expiresAt
-        }
-        refreshToken {
-          token
-          expiresAt
-        }
-      }
-    }
-  }
-`;
-
-const IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID = gql`
-  mutation ImpersonateWorkspaceUserByWorkspaceMemberId(
-    $targetWorkspaceMemberId: UUID!
-  ) {
-    impersonateWorkspaceUserByWorkspaceMemberId(
-      targetWorkspaceMemberId: $targetWorkspaceMemberId
-    ) {
-      tokens {
-        accessOrWorkspaceAgnosticToken {
-          token
-          expiresAt
-        }
-        refreshToken {
-          token
-          expiresAt
-        }
-      }
-    }
-  }
-`;
 
 export const ManageMembersDropdownMenu = ({
   dropdownId,
   workspaceMemberId,
   userWorkspaceId,
-  onRequestDelete,
 }: ManageMembersDropdownMenuProps) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { closeDropdown } = useCloseDropdown();
   const [impersonateByUserWorkspaceId] = useMutation(
     IMPERSONATE_WORKSPACE_USER,
   );
-  const [impersonateByMemberId] = useMutation(
+  const [impersonateByWorkspaceMemberId] = useMutation(
     IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID,
   );
-  const { setAuthTokens } = useAuth();
+  const { setImpersonationTokens } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const canImpersonate = useHasPermissionFlag('IMPERSONATE');
+  const canImpersonate = useHasPermissionFlag(PermissionFlagType.IMPERSONATE);
+  const { openModal } = useModal();
+  const setWorkspaceMemberBeingDeleted = useSetRecoilState(
+    workspaceMemberBeingDeletedState,
+  );
 
   const handleImpersonate = async () => {
     try {
-      const { data, errors } = userWorkspaceId
+      const { data, errors } = isDefined(userWorkspaceId)
         ? await impersonateByUserWorkspaceId({
             variables: { targetUserWorkspaceId: userWorkspaceId },
           })
-        : await impersonateByMemberId({
+        : await impersonateByWorkspaceMemberId({
             variables: { targetWorkspaceMemberId: workspaceMemberId },
           });
+
       if (isDefined(errors)) {
         enqueueErrorSnackBar({
-          message: t`Could not impersonate user`,
+          message: t`Cannot impersonate selected user`,
           options: { duration: 2000 },
         });
         return;
@@ -99,7 +71,7 @@ export const ManageMembersDropdownMenu = ({
         data?.impersonateWorkspaceUser?.tokens ??
         data?.impersonateWorkspaceUserByWorkspaceMemberId?.tokens;
       if (isDefined(tokens)) {
-        setAuthTokens(tokens);
+        setImpersonationTokens(tokens);
         await loadCurrentUser();
         await refreshObjectMetadataItems();
       }
@@ -134,7 +106,8 @@ export const ManageMembersDropdownMenu = ({
               LeftIcon={IconTrash}
               text="Delete"
               onClick={() => {
-                onRequestDelete();
+                setWorkspaceMemberBeingDeleted(workspaceMemberId);
+                openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
                 closeDropdown(dropdownId);
               }}
             />

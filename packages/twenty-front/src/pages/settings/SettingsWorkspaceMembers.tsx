@@ -4,7 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,6 +20,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/workspaceMemberDeletion';
+import { workspaceMemberBeingDeletedState } from '@/workspace-member/states/workspaceMemberDeletionState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
@@ -46,9 +48,6 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
-
-export const WORKSPACE_MEMBER_DELETION_MODAL_ID =
-  'workspace-member-deletion-modal';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -98,9 +97,9 @@ export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
-  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
-    string | undefined
-  >();
+  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useRecoilState(
+    workspaceMemberBeingDeletedState,
+  );
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const {
@@ -123,6 +122,7 @@ export const SettingsWorkspaceMembers = () => {
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
+    setWorkspaceMemberToDelete(undefined);
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
@@ -385,10 +385,6 @@ export const SettingsWorkspaceMembers = () => {
                                 }
                               ).userWorkspaceId
                             }
-                            onRequestDelete={() => {
-                              openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
-                              setWorkspaceMemberToDelete(workspaceMember.id);
-                            }}
                           />
                         </StyledButtonContainer>
                       )}
