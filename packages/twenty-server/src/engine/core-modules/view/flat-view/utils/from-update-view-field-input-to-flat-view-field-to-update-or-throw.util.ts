@@ -15,7 +15,7 @@ import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/t
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-optional-record-in-record.util';
 
-export const fromUpdateViewFieldInputToFlatViewFieldToOrThrow = ({
+export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
   flatViewFieldMaps,
 }: {

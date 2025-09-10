@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { t } from '@lingui/core/macro';
 
 import {
   FlatEntityMapsException,
@@ -20,7 +20,7 @@ import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-fiel
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromDeleteOrDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-or-destroy-view-field-input-to-flat-view-field-or-throw.util';
-import { fromUpdateViewFieldInputToFlatViewFieldToOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
+import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
@@ -128,14 +128,14 @@ export class ViewFieldV2Service {
     const existingFlatViewFieldMaps =
       await this.getExistingFlatViewFieldMapsFromCache(workspaceId);
 
-    const optimistcallyUpdatedFlatView =
-      fromUpdateViewFieldInputToFlatViewFieldToOrThrow({
+    const optimisticallyUpdatedFlatView =
+      fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
         flatViewFieldMaps: existingFlatViewFieldMaps,
         updateViewFieldInput,
       });
 
     const toFlatViewFieldMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: optimistcallyUpdatedFlatView,
+      flatEntity: optimisticallyUpdatedFlatView,
       flatEntityMaps: existingFlatViewFieldMaps,
     });
 
@@ -166,11 +166,11 @@ export class ViewFieldV2Service {
       await this.getExistingFlatViewFieldMapsFromCache(workspaceId);
 
     const updatedFlatViewField =
-      recomputedExistingFlatViewFieldMaps.byId[optimistcallyUpdatedFlatView.id];
+      recomputedExistingFlatViewFieldMaps.byId[optimisticallyUpdatedFlatView.id];
 
     if (!isDefined(updatedFlatViewField)) {
       throw new FlatEntityMapsException(
-        t`Created view field not found in cache`,
+        t`Updated view field not found in cache`,  
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
       );
     }
