@@ -1,4 +1,4 @@
-# Contributing to Twenty Apps
+# Contributing to Twenty Apps  (WIP WIP WIP - DO NOT USE)
 
 Thank you for your interest in contributing applications to the Twenty ecosystem! This guide will help you create, test, and submit high-quality applications.
 
@@ -309,7 +309,7 @@ Before submitting, ensure:
 
 1. **Fork the Repository**
    ```bash
-   git fork https://github.com/twentyhq/twenty.git
+   git clone https://github.com/twentyhq/twenty.git
    ```
 
 2. **Create Feature Branch**

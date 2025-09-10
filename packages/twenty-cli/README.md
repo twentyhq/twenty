@@ -1,4 +1,4 @@
-# Twenty CLI
+# Twenty CLI (WIP WIP WIP - DO NOT USE)
 
 A command-line interface for Twenty application development. Build, deploy, and manage Twenty applications with ease.
 
