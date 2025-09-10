@@ -1,24 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
   ViewExceptionMessageKey,
   generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 
 @Injectable()
 export class ViewService {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
-    private readonly viewV2Service: ViewV2Service,
+    private readonly i18nService: I18nService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
@@ -82,42 +85,40 @@ export class ViewService {
   }
 
   async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
-    return await this.viewV2Service.createOne(viewData);
+    if (!isDefined(viewData.workspaceId)) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
+        ViewExceptionCode.INVALID_VIEW_DATA,
+        {
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
+        },
+      );
+    }
 
-    // if (!isDefined(viewData.workspaceId)) {
-    //   throw new ViewException(
-    //     generateViewExceptionMessage(
-    //       ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-    //     ),
-    //     ViewExceptionCode.INVALID_VIEW_DATA,
-    //     {
-    //       userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-    //         ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-    //       ),
-    //     },
-    //   );
-    // }
+    if (!isDefined(viewData.objectMetadataId)) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+        ),
+        ViewExceptionCode.INVALID_VIEW_DATA,
+        {
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
+          ),
+        },
+      );
+    }
 
-    // if (!isDefined(viewData.objectMetadataId)) {
-    //   throw new ViewException(
-    //     generateViewExceptionMessage(
-    //       ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-    //     ),
-    //     ViewExceptionCode.INVALID_VIEW_DATA,
-    //     {
-    //       userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-    //         ViewExceptionMessageKey.OBJECT_METADATA_ID_REQUIRED,
-    //       ),
-    //     },
-    //   );
-    // }
+    const view = this.viewRepository.create({
+      ...viewData,
+      isCustom: true,
+    });
 
-    // const view = this.viewRepository.create({
-    //   ...viewData,
-    //   isCustom: true,
-    // });
-
-    // return this.viewRepository.save(view);
+    return this.viewRepository.save(view);
   }
 
   async update(
@@ -125,25 +126,24 @@ export class ViewService {
     workspaceId: string,
     updateData: Partial<ViewEntity>,
   ): Promise<ViewEntity> {
-    return await this.viewV2Service.updateOne(id, workspaceId, updateData);
-    // const existingView = await this.findById(id, workspaceId);
+    const existingView = await this.findById(id, workspaceId);
 
-    // if (!isDefined(existingView)) {
-    //   throw new ViewException(
-    //     generateViewExceptionMessage(
-    //       ViewExceptionMessageKey.VIEW_NOT_FOUND,
-    //       id,
-    //     ),
-    //     ViewExceptionCode.VIEW_NOT_FOUND,
-    //   );
-    // }
+    if (!isDefined(existingView)) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
 
-    // const updatedView = await this.viewRepository.save({
-    //   id,
-    //   ...updateData,
-    // });
+    const updatedView = await this.viewRepository.save({
+      id,
+      ...updateData,
+    });
 
-    // return { ...existingView, ...updatedView };
+    return { ...existingView, ...updatedView };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewEntity> {
@@ -165,21 +165,58 @@ export class ViewService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    return await this.viewV2Service.deleteOne(id, workspaceId);
-    // const view = await this.findById(id, workspaceId);
+    const view = await this.findById(id, workspaceId);
 
-    // if (!isDefined(view)) {
-    //   throw new ViewException(
-    //     generateViewExceptionMessage(
-    //       ViewExceptionMessageKey.VIEW_NOT_FOUND,
-    //       id,
-    //     ),
-    //     ViewExceptionCode.VIEW_NOT_FOUND,
-    //   );
-    // }
+    if (!isDefined(view)) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
 
-    // await this.viewRepository.delete(id);
+    await this.viewRepository.delete(id);
 
-    // return true;
+    return true;
+  }
+
+  processViewNameWithTemplate(
+    viewName: string,
+    isCustom: boolean,
+    objectLabelPlural?: string,
+    locale?: keyof typeof APP_LOCALES,
+  ): string {
+    if (viewName.includes('{objectLabelPlural}') && objectLabelPlural) {
+      const messageId = generateMessageId(viewName);
+      const translatedTemplate = this.i18nService.translateMessage({
+        messageId,
+        values: {
+          objectLabelPlural,
+        },
+        locale: locale ?? SOURCE_LOCALE,
+      });
+
+      if (translatedTemplate !== messageId) {
+        return translatedTemplate;
+      }
+
+      return viewName.replace('{objectLabelPlural}', objectLabelPlural);
+    }
+
+    if (!isCustom) {
+      const messageId = generateMessageId(viewName);
+      const translatedMessage = this.i18nService.translateMessage({
+        messageId,
+        locale: locale ?? SOURCE_LOCALE,
+      });
+
+      if (translatedMessage !== messageId) {
+        return translatedMessage;
+      }
+    }
+
+    return viewName;
   }
 }

@@ -10,15 +10,14 @@ import {
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { ViewFieldV2Service } from 'src/engine/core-modules/view/services/view-field-v2.service';
 
 @Injectable()
 export class ViewFieldService {
   constructor(
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
-    private readonly viewFieldV2Service: ViewFieldV2Service,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
@@ -66,48 +65,71 @@ export class ViewFieldService {
   async create(
     viewFieldData: Partial<ViewFieldEntity>,
   ): Promise<ViewFieldEntity> {
-    return this.viewFieldV2Service.createOne(viewFieldData);
-    // if (!isDefined(viewFieldData.workspaceId)) {
-    //   throw new ViewFieldException(
-    //     generateViewFieldExceptionMessage(
-    //       ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-    //     ),
-    //     ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-    //     {
-    //       userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-    //         ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-    //       ),
-    //     },
-    //   );
-    // }
-    // if (!isDefined(viewFieldData.viewId)) {
-    //   throw new ViewFieldException(
-    //     generateViewFieldExceptionMessage(
-    //       ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
-    //     ),
-    //     ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-    //     {
-    //       userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-    //         ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
-    //       ),
-    //     },
-    //   );
-    // }
-    // if (!isDefined(viewFieldData.fieldMetadataId)) {
-    //   throw new ViewFieldException(
-    //     generateViewFieldExceptionMessage(
-    //       ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
-    //     ),
-    //     ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-    //     {
-    //       userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-    //         ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
-    //       ),
-    //     },
-    //   );
-    // }
-    // const viewField = this.viewFieldRepository.create(viewFieldData);
-    // return this.viewFieldRepository.save(viewField);
+    if (!isDefined(viewFieldData.workspaceId)) {
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+        ),
+        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+        {
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+          ),
+        },
+      );
+    }
+
+    if (!isDefined(viewFieldData.viewId)) {
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
+        ),
+        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+        {
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
+          ),
+        },
+      );
+    }
+
+    if (!isDefined(viewFieldData.fieldMetadataId)) {
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+        ),
+        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+        {
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
+          ),
+        },
+      );
+    }
+
+    try {
+      const viewField = this.viewFieldRepository.create(viewFieldData);
+
+      return await this.viewFieldRepository.save(viewField);
+    } catch (error) {
+      if (
+        error.message.includes('duplicate key value violates unique constraint')
+      ) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+          ),
+          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+            ),
+          },
+        );
+      }
+
+      throw error;
+    }
   }
 
   async update(
