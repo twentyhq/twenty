@@ -52,7 +52,7 @@ export const RecordBoardColumnNewRecordButton = () => {
     return null;
   }
 
-  if (hasAnySoftDeleteFilterOnView === true) {
+  if (hasAnySoftDeleteFilterOnView) {
     return null;
   }
 

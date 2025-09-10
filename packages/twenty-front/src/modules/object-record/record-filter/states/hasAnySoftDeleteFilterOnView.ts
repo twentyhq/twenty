@@ -18,13 +18,12 @@ export const hasAnySoftDeleteFilterOnViewComponentSelector =
 
         const hasAnySoftDeleteFilterOnView = currentRecordFilters.some(
           (recordFilter) => {
-            isRecordFilterAboutSoftDelete({
+            return isRecordFilterAboutSoftDelete({
               recordFilter,
               objectMetadataItems,
             });
           },
         );
-
         return hasAnySoftDeleteFilterOnView;
       },
   });
