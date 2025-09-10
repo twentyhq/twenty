@@ -1,18 +1,19 @@
 import { t } from '@lingui/core/macro';
-import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
-import {
-  ViewFieldException,
-  ViewFieldExceptionCode,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-properties-to-compare.constant';
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
-import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { mergeUpdateInExistingRecord } from 'src/utils/merge-optional-record-in-record.util';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
+
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
+import {
+  ViewFieldException,
+  ViewFieldExceptionCode,
+} from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-properties-to-compare.constant';
+import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { mergeUpdateInExistingRecord } from 'src/utils/merge-optional-record-in-record.util';
 
 export const fromUpdateViewFieldInputToFlatViewFieldToOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
@@ -27,7 +28,8 @@ export const fromUpdateViewFieldInputToFlatViewFieldToOrThrow = ({
       ['id'],
     );
 
-  const existingFlatViewFieldToUpdate = flatViewFieldMaps.byId[viewFieldToUpdateId];
+  const existingFlatViewFieldToUpdate =
+    flatViewFieldMaps.byId[viewFieldToUpdateId];
 
   if (!isDefined(existingFlatViewFieldToUpdate)) {
     throw new ViewFieldException(

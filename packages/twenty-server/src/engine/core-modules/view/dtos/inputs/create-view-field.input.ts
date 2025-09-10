@@ -1,5 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsEnum, IsNumber, IsOptional, IsUUID } from 'class-validator';
+
+import {
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

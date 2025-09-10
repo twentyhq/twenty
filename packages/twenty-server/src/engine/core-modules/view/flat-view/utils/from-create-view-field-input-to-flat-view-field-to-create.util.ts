@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
-
-import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,

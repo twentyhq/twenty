@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-
 import { t } from '@lingui/core/macro';
+
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -107,6 +107,7 @@ export class ViewFieldV2Service {
 
     const createdFlatViewField =
       recomputedExistingFlatViewFieldMaps.byId[flatViewFieldToCreate.id];
+
     if (!isDefined(createdFlatViewField)) {
       throw new FlatEntityMapsException(
         t`Created view field not found in cache`,
@@ -166,6 +167,7 @@ export class ViewFieldV2Service {
 
     const updatedFlatViewField =
       recomputedExistingFlatViewFieldMaps.byId[optimistcallyUpdatedFlatView.id];
+
     if (!isDefined(updatedFlatViewField)) {
       throw new FlatEntityMapsException(
         t`Created view field not found in cache`,
