@@ -279,9 +279,9 @@ export const GraphWidgetLineChart = ({
           enablePoints={enablePoints}
           pointSize={6}
           pointBorderWidth={0}
-          areaOpacity={1}
-          areaBlendMode="multiply"
+          areaOpacity={theme.name === 'dark' ? 0.8 : 1}
           colors={colors}
+          areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
           defs={defs}
           fill={fill}
           axisTop={null}
@@ -319,7 +319,7 @@ export const GraphWidgetLineChart = ({
                 },
                 text: {
                   fill: theme.font.color.secondary,
-                  fontSize: 11,
+                  fontSize: 12,
                 },
               },
               legend: {
