@@ -8,10 +8,13 @@ import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayou
 import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -45,6 +48,10 @@ const StyledGridContainer = styled.div`
   }
 `;
 
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 type ExtendedResponsiveProps = ResponsiveProps & {
   maxCols?: number;
   preventCollision?: boolean;
@@ -58,7 +65,13 @@ type PageLayoutRendererProps = {
   pageLayout: PageLayoutWithData;
 };
 
-export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
+type PageLayoutRendererContentProps = {
+  pageLayout: PageLayoutWithData;
+};
+
+const PageLayoutRendererContent = ({
+  pageLayout,
+}: PageLayoutRendererContentProps) => {
   const [, setPageLayoutCurrentBreakpoint] = useRecoilState(
     pageLayoutCurrentBreakpointState,
   );
@@ -75,6 +88,15 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
     (tab) => tab.id === activeTabId,
   )?.widgets;
 
+  const tabListTabs: SingleTabProps[] = useMemo(() => {
+    return [...pageLayout.tabs]
+      .sort((a, b) => a.position - b.position)
+      .map((tab) => ({
+        id: tab.id,
+        title: tab.title,
+      }));
+  }, [pageLayout.tabs]);
+
   return (
     <>
       <PageLayoutInitializationEffect
@@ -82,7 +104,13 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
         isEditMode={false}
         pageLayout={pageLayout}
       />
-
+      {pageLayout.tabs?.length > 0 && (
+        <StyledTabList
+          tabs={tabListTabs}
+          behaveAsLinks={false}
+          componentInstanceId={pageLayout.id}
+        />
+      )}
       <StyledGridContainer ref={gridContainerRef}>
         <ResponsiveGridLayout
           className="layout"
@@ -118,5 +146,15 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
         </ResponsiveGridLayout>
       </StyledGridContainer>
     </>
+  );
+};
+
+export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
+  return (
+    <TabListComponentInstanceContext.Provider
+      value={{ instanceId: pageLayout.id }}
+    >
+      <PageLayoutRendererContent pageLayout={pageLayout} />
+    </TabListComponentInstanceContext.Provider>
   );
 };
