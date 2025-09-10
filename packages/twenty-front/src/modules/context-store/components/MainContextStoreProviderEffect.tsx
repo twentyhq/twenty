@@ -6,8 +6,8 @@ import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -53,7 +53,7 @@ export const MainContextStoreProviderEffect = ({
   );
 
   const view = useRecoilValue(
-    prefetchViewFromViewIdFamilySelector({
+    coreViewFromViewIdFamilySelector({
       viewId: viewId ?? '',
     }),
   );

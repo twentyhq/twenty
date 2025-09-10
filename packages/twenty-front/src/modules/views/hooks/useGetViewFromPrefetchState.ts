@@ -1,4 +1,4 @@
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useRecoilCallback } from 'recoil';
 
 export const useGetViewFromPrefetchState = () => {
@@ -7,7 +7,7 @@ export const useGetViewFromPrefetchState = () => {
       (viewId: string) => {
         const view = snapshot
           .getLoadable(
-            prefetchViewFromViewIdFamilySelector({
+            coreViewFromViewIdFamilySelector({
               viewId: viewId,
             }),
           )

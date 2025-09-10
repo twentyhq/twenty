@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
+import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import {
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
   generatePageLayoutExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class PageLayoutService {
+  private readonly logger = new Logger(PageLayoutService.name);
+
   constructor(
     @InjectRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<PageLayoutEntity[]> {
-    return this.pageLayoutRepository.find({
+  private getPageLayoutRepository(
+    transactionManager?: EntityManager,
+  ): Repository<PageLayoutEntity> {
+    return transactionManager
+      ? transactionManager.getRepository(PageLayoutEntity)
+      : this.pageLayoutRepository;
+  }
+
+  async findByWorkspaceId(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutEntity[]> {
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    return repository.find({
       where: {
         workspaceId,
         deletedAt: IsNull(),
@@ -32,8 +52,11 @@ export class PageLayoutService {
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutEntity[]> {
-    return this.pageLayoutRepository.find({
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    return repository.find({
       where: {
         workspaceId,
         objectMetadataId,
@@ -46,8 +69,11 @@ export class PageLayoutService {
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutEntity> {
-    const pageLayout = await this.pageLayoutRepository.findOne({
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    const pageLayout = await repository.findOne({
       where: {
         id,
         workspaceId,
@@ -70,8 +96,9 @@ export class PageLayoutService {
   }
 
   async create(
-    pageLayoutData: Partial<PageLayoutEntity>,
+    pageLayoutData: CreatePageLayoutInput,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutEntity> {
     if (!isDefined(pageLayoutData.name)) {
       throw new PageLayoutException(
@@ -82,39 +109,65 @@ export class PageLayoutService {
       );
     }
 
-    const pageLayout = this.pageLayoutRepository.create({
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    const insertResult = await repository.insert({
       ...pageLayoutData,
       workspaceId,
     });
 
-    return this.pageLayoutRepository.save(pageLayout);
+    return this.findByIdOrThrow(
+      insertResult.identifiers[0].id,
+      workspaceId,
+      transactionManager,
+    );
   }
 
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<PageLayoutEntity>,
+    updateData: QueryDeepPartialEntity<PageLayoutEntity>,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutEntity> {
-    const existingPageLayout = await this.findByIdOrThrow(id, workspaceId);
+    const repository = this.getPageLayoutRepository(transactionManager);
 
-    const updatedPageLayout = await this.pageLayoutRepository.save({
-      ...existingPageLayout,
-      ...updateData,
-    });
+    await repository.update({ id, workspaceId }, updateData);
+
+    const updatedPageLayout = await this.findByIdOrThrow(
+      id,
+      workspaceId,
+      transactionManager,
+    );
 
     return updatedPageLayout;
   }
 
-  async delete(id: string, workspaceId: string): Promise<PageLayoutEntity> {
-    const pageLayout = await this.findByIdOrThrow(id, workspaceId);
+  async delete(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutEntity> {
+    const pageLayout = await this.findByIdOrThrow(
+      id,
+      workspaceId,
+      transactionManager,
+    );
 
-    await this.pageLayoutRepository.softDelete(id);
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    await repository.softDelete(id);
 
     return pageLayout;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<PageLayoutEntity> {
-    const pageLayout = await this.pageLayoutRepository.findOne({
+  async destroy(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutEntity> {
+    const repository = this.getPageLayoutRepository(transactionManager);
+
+    const pageLayout = await repository.findOne({
       where: {
         id,
         workspaceId,
@@ -132,13 +185,49 @@ export class PageLayoutService {
       );
     }
 
-    await this.pageLayoutRepository.delete(id);
+    if (pageLayout.type === PageLayoutType.DASHBOARD) {
+      await this.destroyAssociatedDashboards(id, workspaceId);
+    }
+
+    await repository.delete(id);
 
     return pageLayout;
   }
 
+  private async destroyAssociatedDashboards(
+    pageLayoutId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    try {
+      const dashboardRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+          workspaceId,
+          'dashboard',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const dashboards = await dashboardRepository.find({
+        where: {
+          pageLayoutId,
+        },
+      });
+
+      for (const dashboard of dashboards) {
+        await dashboardRepository.delete(dashboard.id);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to destroy associated dashboards for page layout ${pageLayoutId}: ${error}`,
+      );
+    }
+  }
+
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
     const pageLayout = await this.pageLayoutRepository.findOne({
+      select: {
+        id: true,
+        deletedAt: true,
+      },
       where: {
         id,
         workspaceId,

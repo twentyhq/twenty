@@ -90,27 +90,30 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterAll(async () => {
-      await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: createdObjectMetadataId,
-          updatePayload: {
-            isActive: false,
+      try {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: createdObjectMetadataId,
+            updatePayload: {
+              isActive: false,
+            },
           },
-        },
-      });
+        });
 
-      await deleteOneObjectMetadata({
-        input: {
-          idToDelete: createdObjectMetadataId,
-        },
-        expectToFail: false,
-      });
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: false,
-      });
+        await deleteOneObjectMetadata({
+          input: {
+            idToDelete: createdObjectMetadataId,
+          },
+          expectToFail: false,
+        });
+      } finally {
+        await updateFeatureFlag({
+          expectToFail: false,
+          featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+          value: false,
+        });
+      }
     });
 
     test.each(eachTestingContextFilter(failingTestCases))(

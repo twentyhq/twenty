@@ -103,8 +103,8 @@ export const SingleRecordPickerMenuItems = ({
     >
       {emptyLabel && (
         <SelectableListItem
-          key={'select-none'}
-          itemId={'select-none'}
+          key="select-none"
+          itemId="select-none"
           onEnter={() => {
             setSelectedRecordId(undefined);
             onRecordSelected();

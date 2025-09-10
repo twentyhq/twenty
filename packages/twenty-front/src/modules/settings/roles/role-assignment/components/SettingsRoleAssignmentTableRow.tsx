@@ -1,4 +1,4 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -12,10 +12,11 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { type Agent, type WorkspaceMember } from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
+import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -42,7 +43,7 @@ const StyledTableCell = styled(TableCell)`
 `;
 
 export type RoleTarget =
-  | { type: 'member'; data: WorkspaceMember }
+  | { type: 'member'; data: PartialWorkspaceMember }
   | { type: 'agent'; data: Agent }
   | { type: 'apiKey'; data: ApiKeyForRole };
 

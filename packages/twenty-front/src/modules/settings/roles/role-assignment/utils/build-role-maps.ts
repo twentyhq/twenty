@@ -1,7 +1,7 @@
-import { type Role } from '~/generated-metadata/graphql';
+import { type RoleWithPartialMembers } from '../../types/RoleWithPartialMembers';
 import { type RoleMaps } from '../types/role-maps';
 
-export const buildRoleMaps = (roles: Role[]): RoleMaps => {
+export const buildRoleMaps = (roles: RoleWithPartialMembers[]): RoleMaps => {
   const maps: RoleMaps = {
     member: new Map(),
     agent: new Map(),

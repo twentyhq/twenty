@@ -992,6 +992,219 @@ export const computeMetadataSchemaComponents = (
 
           return schemas;
         }
+        case 'pageLayout': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A page layout`,
+            properties: {
+              name: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                default: 'RECORD_PAGE',
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+            },
+            required: ['name'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A page layout for update`,
+            properties: {
+              name: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A page layout`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              tabs: {
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/PageLayoutTabForResponse',
+                },
+              },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'pageLayoutTab': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A page layout tab`,
+            properties: {
+              title: { type: 'string' },
+              position: { type: 'number', default: 0 },
+              pageLayoutId: { type: 'string', format: 'uuid' },
+            },
+            required: ['title', 'pageLayoutId'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A page layout tab for update`,
+            properties: {
+              title: { type: 'string' },
+              position: { type: 'number' },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A page layout tab`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              title: { type: 'string' },
+              position: { type: 'number' },
+              pageLayoutId: { type: 'string', format: 'uuid' },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
+        case 'pageLayoutWidget': {
+          schemas['GridPosition'] = {
+            type: 'object',
+            description: 'Grid position for widget placement',
+            properties: {
+              row: { type: 'number', minimum: 0 },
+              column: { type: 'number', minimum: 0 },
+              rowSpan: { type: 'number', minimum: 1 },
+              columnSpan: { type: 'number', minimum: 1 },
+            },
+            required: ['row', 'column', 'rowSpan', 'columnSpan'],
+          };
+
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            description: `A page layout widget`,
+            properties: {
+              pageLayoutTabId: { type: 'string', format: 'uuid' },
+              title: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+                default: 'VIEW',
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              gridPosition: {
+                $ref: '#/components/schemas/GridPosition',
+              },
+              configuration: {
+                type: 'object',
+                description: 'Widget-specific configuration',
+              },
+            },
+            required: ['pageLayoutTabId', 'title', 'gridPosition'],
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
+            type: 'object',
+            description: `A page layout widget for update`,
+            properties: {
+              title: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              gridPosition: {
+                $ref: '#/components/schemas/GridPosition',
+              },
+              configuration: {
+                type: 'object',
+                description: 'Widget-specific configuration',
+              },
+            },
+          };
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
+            type: 'object',
+            description: `A page layout widget`,
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              pageLayoutTabId: { type: 'string', format: 'uuid' },
+              title: { type: 'string' },
+              type: {
+                type: 'string',
+                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+              },
+              objectMetadataId: { type: 'string', format: 'uuid' },
+              gridPosition: {
+                $ref: '#/components/schemas/GridPosition',
+              },
+              configuration: {
+                type: 'object',
+                description: 'Widget-specific configuration',
+              },
+              workspaceId: { type: 'string', format: 'uuid' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+              deletedAt: { type: 'string', format: 'date-time' },
+            },
+          };
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
+            },
+          };
+
+          return schemas;
+        }
       }
 
       return schemas;

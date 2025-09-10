@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +28,7 @@ export const useUpdateCurrentView = () => {
 
         const currentView = snapshot
           .getLoadable(
-            prefetchViewFromViewIdFamilySelector({
+            coreViewFromViewIdFamilySelector({
               viewId: currentViewId ?? '',
             }),
           )

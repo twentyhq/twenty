@@ -34,7 +34,7 @@ export const SoftDeleteFilterChip = ({
   return (
     <SortOrFilterChip
       testId={recordFilter.fieldMetadataId}
-      variant={'danger'}
+      variant="danger"
       labelValue={recordFilter.label ?? ''}
       Icon={ChipIcon}
       onRemove={handleRemoveClick}

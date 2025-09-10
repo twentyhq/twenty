@@ -135,7 +135,7 @@ export type ApiKey = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;
-  role?: Maybe<Role>;
+  role: Role;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
@@ -681,6 +681,21 @@ export type CreatePageLayoutInput = {
   type?: InputMaybe<PageLayoutType>;
 };
 
+export type CreatePageLayoutTabInput = {
+  pageLayoutId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['Float']>;
+  title: Scalars['String'];
+};
+
+export type CreatePageLayoutWidgetInput = {
+  configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition: GridPositionInput;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type?: InputMaybe<WidgetType>;
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
@@ -948,7 +963,6 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
-  IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
@@ -961,7 +975,6 @@ export enum FeatureFlagKey {
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_BRANCH_ENABLED = 'IS_WORKFLOW_BRANCH_ENABLED',
   IS_WORKFLOW_ITERATOR_ENABLED = 'IS_WORKFLOW_ITERATOR_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
@@ -1136,6 +1149,21 @@ export type GetServerlessFunctionSourceCodeInput = {
 
 export type GetWebhookDto = {
   id: Scalars['UUID'];
+};
+
+export type GridPosition = {
+  __typename?: 'GridPosition';
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
+};
+
+export type GridPositionInput = {
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
 };
 
 export enum HealthIndicatorId {
@@ -1345,6 +1373,8 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createPageLayout: PageLayout;
+  createPageLayoutTab: PageLayoutTab;
+  createPageLayoutWidget: PageLayoutWidget;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -1366,6 +1396,8 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
+  deletePageLayoutTab: Scalars['Boolean'];
+  deletePageLayoutWidget: PageLayoutWidget;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -1380,6 +1412,8 @@ export type Mutation = {
   destroyCoreViewGroup: Scalars['Boolean'];
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
+  destroyPageLayoutTab: Scalars['Boolean'];
+  destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1404,6 +1438,8 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   restorePageLayout: PageLayout;
+  restorePageLayoutTab: PageLayoutTab;
+  restorePageLayoutWidget: PageLayoutWidget;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1433,6 +1469,8 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
+  updatePageLayoutTab: PageLayoutTab;
+  updatePageLayoutWidget: PageLayoutWidget;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
@@ -1601,6 +1639,16 @@ export type MutationCreatePageLayoutArgs = {
 };
 
 
+export type MutationCreatePageLayoutTabArgs = {
+  input: CreatePageLayoutTabInput;
+};
+
+
+export type MutationCreatePageLayoutWidgetArgs = {
+  input: CreatePageLayoutWidgetInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -1701,6 +1749,16 @@ export type MutationDeletePageLayoutArgs = {
 };
 
 
+export type MutationDeletePageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeletePageLayoutWidgetArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
@@ -1762,6 +1820,16 @@ export type MutationDestroyCoreViewSortArgs = {
 
 
 export type MutationDestroyPageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutWidgetArgs = {
   id: Scalars['String'];
 };
 
@@ -1876,6 +1944,16 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 
 export type MutationRestorePageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRestorePageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRestorePageLayoutWidgetArgs = {
   id: Scalars['String'];
 };
 
@@ -2026,6 +2104,18 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePageLayoutArgs = {
   id: Scalars['String'];
   input: UpdatePageLayoutInput;
+};
+
+
+export type MutationUpdatePageLayoutTabArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutTabInput;
+};
+
+
+export type MutationUpdatePageLayoutWidgetArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutWidgetInput;
 };
 
 
@@ -2305,7 +2395,6 @@ export type PageLayout = {
   tabs?: Maybe<Array<PageLayoutTab>>;
   type: PageLayoutType;
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['UUID'];
 };
 
 export type PageLayoutTab = {
@@ -2324,6 +2413,20 @@ export enum PageLayoutType {
   RECORD_INDEX = 'RECORD_INDEX',
   RECORD_PAGE = 'RECORD_PAGE'
 }
+
+export type PageLayoutWidget = {
+  __typename?: 'PageLayoutWidget';
+  configuration?: Maybe<Scalars['JSON']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  gridPosition: GridPosition;
+  id: Scalars['UUID'];
+  objectMetadataId?: Maybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type: WidgetType;
+  updatedAt: Scalars['DateTime'];
+};
 
 export type PermissionFlag = {
   __typename?: 'PermissionFlag';
@@ -2441,6 +2544,10 @@ export type Query = {
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
+  getPageLayoutTab: PageLayoutTab;
+  getPageLayoutTabs: Array<PageLayoutTab>;
+  getPageLayoutWidget: PageLayoutWidget;
+  getPageLayoutWidgets: Array<PageLayoutWidget>;
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -2626,6 +2733,26 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabsArgs = {
+  pageLayoutId: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetsArgs = {
+  pageLayoutTabId: Scalars['String'];
 };
 
 
@@ -3220,6 +3347,19 @@ export type UpdatePageLayoutInput = {
   type?: InputMaybe<PageLayoutType>;
 };
 
+export type UpdatePageLayoutTabInput = {
+  position?: InputMaybe<Scalars['Float']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdatePageLayoutWidgetInput = {
+  configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition?: InputMaybe<GridPositionInput>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<WidgetType>;
+};
+
 export type UpdateRoleInput = {
   /** The id of the role to update */
   id: Scalars['UUID'];
@@ -3519,6 +3659,13 @@ export type Webhook = {
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
 };
+
+export enum WidgetType {
+  FIELDS = 'FIELDS',
+  GRAPH = 'GRAPH',
+  IFRAME = 'IFRAME',
+  VIEW = 'VIEW'
+}
 
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';

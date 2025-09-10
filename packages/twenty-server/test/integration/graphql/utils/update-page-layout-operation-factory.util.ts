@@ -6,13 +6,13 @@ import { type UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/
 type UpdatePageLayoutOperationFactoryParams = {
   gqlFields?: string;
   pageLayoutId: string;
-  data?: UpdatePageLayoutInput;
+  data: UpdatePageLayoutInput;
 };
 
 export const updatePageLayoutOperationFactory = ({
   gqlFields = PAGE_LAYOUT_GQL_FIELDS,
   pageLayoutId,
-  data = {} as UpdatePageLayoutInput,
+  data,
 }: UpdatePageLayoutOperationFactoryParams) => ({
   query: gql`
     mutation UpdatePageLayout($id: String!, $input: UpdatePageLayoutInput!) {

@@ -16,7 +16,7 @@ const StyledHandle = styled(Handle, {
     prop !== 'runStatus',
 })<{
   type: HandleProps['type'];
-  disableHoverEffect: boolean;
+  disableHoverEffect?: boolean;
   selected: boolean;
   hovered?: boolean;
   runStatus?: WorkflowRunStepStatus;
@@ -30,7 +30,7 @@ const StyledHandle = styled(Handle, {
       if (!selected) {
         return css`
           background: ${theme.background.primary};
-          border-color: ${hovered && !disableHoverEffect
+          border-color: ${hovered && disableHoverEffect === false
             ? theme.font.color.light
             : theme.border.color.strong};
         `;
@@ -69,7 +69,7 @@ const StyledHandle = styled(Handle, {
 
     &:hover {
       ${({ disableHoverEffect, theme }) => {
-        if (disableHoverEffect) {
+        if (disableHoverEffect === true) {
           return undefined;
         }
 
@@ -82,7 +82,7 @@ const StyledHandle = styled(Handle, {
       }}
 
       ${({ disableHoverEffect, position }) => {
-        if (disableHoverEffect) {
+        if (disableHoverEffect === true) {
           return undefined;
         }
 

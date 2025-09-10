@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { type DeleteResult, type Repository } from 'typeorm';
 
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -282,7 +284,7 @@ describe('ApprovedAccessDomainService', () => {
 
       expect(domainManagerService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
-        pathname: 'settings/security',
+        pathname: getSettingsPath(SettingsPath.Domains),
         searchParams: { validationToken: expect.any(String) },
       });
 

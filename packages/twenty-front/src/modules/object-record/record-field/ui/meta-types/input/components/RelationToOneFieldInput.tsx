@@ -13,11 +13,13 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
 export const RelationToOneFieldInput = () => {
+  const { t } = useLingui();
   const { fieldDefinition, recordId } = useRelationField<ObjectRecord>();
 
   const { onSubmit, onCancel } = useContext(FieldInputEventContext);
@@ -73,13 +75,14 @@ export const RelationToOneFieldInput = () => {
   if (isLoading) {
     return <></>;
   }
+  const fieldLabel = fieldDefinition.label;
 
   return (
     <SingleRecordPicker
       focusId={instanceId}
       componentInstanceId={instanceId}
       EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
+      emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onCreate={handleCreateNew}
       onRecordSelected={handleRecordSelected}

@@ -6,7 +6,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 
 type ComputeMorphRelationFieldNameArgs = {
   fieldName: string;
-  relationDirection: RelationType;
+  relationType: RelationType;
   targetObjectMetadata: Pick<
     ObjectMetadataEntity,
     'nameSingular' | 'namePlural'
@@ -15,18 +15,12 @@ type ComputeMorphRelationFieldNameArgs = {
 
 export const computeMorphRelationFieldName = ({
   fieldName,
-  relationDirection,
+  relationType,
   targetObjectMetadata,
 }: ComputeMorphRelationFieldNameArgs): string => {
-  if (relationDirection === RelationType.MANY_TO_ONE) {
+  if (relationType === RelationType.MANY_TO_ONE) {
     return `${fieldName}${capitalize(targetObjectMetadata.nameSingular)}`;
   }
 
-  if (relationDirection === RelationType.ONE_TO_MANY) {
-    return `${fieldName}${capitalize(targetObjectMetadata.namePlural)}`;
-  }
-
-  throw new Error(
-    `Invalid relation direction: ${relationDirection} for field ${fieldName}`,
-  );
+  return `${fieldName}${capitalize(targetObjectMetadata.namePlural)}`;
 };

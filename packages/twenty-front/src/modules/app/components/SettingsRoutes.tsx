@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>

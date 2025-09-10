@@ -11,6 +11,8 @@ import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-pan
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -25,6 +27,7 @@ import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class AdminPanelService {
@@ -32,11 +35,16 @@ export class AdminPanelService {
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly auditService: AuditService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async impersonate(userId: string, workspaceId: string) {
+  async impersonate(
+    userId: string,
+    workspaceId: string,
+    impersonatorUserId: string,
+  ) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -53,25 +61,60 @@ export class AdminPanelService {
     userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
-        'User not found or impersonation not enable on workspace',
-        AuthExceptionCode.INVALID_INPUT,
+        'User not found in workspace or impersonation not enabled',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       ),
     );
 
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      user.userWorkspaces[0].workspace.id,
-    );
+    const auditService = this.auditService.createContext({
+      workspaceId: user.userWorkspaces[0].workspace.id,
+      userId: impersonatorUserId,
+    });
 
-    return {
-      workspace: {
-        id: user.userWorkspaces[0].workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-          user.userWorkspaces[0].workspace,
-        ),
-      },
-      loginToken,
-    };
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      eventName: 'server.impersonation.attempt',
+      message: `Impersonation attempt: targetUserId=${userId}, workspaceId=${workspaceId}, impersonatorUserId=${impersonatorUserId}`,
+    });
+
+    try {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_attempt',
+        message: `Impersonation token generation attempt for user ${userId}`,
+      });
+
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+        user.userWorkspaces[0].workspace.id,
+        AuthProviderEnum.Impersonation,
+        {
+          impersonatorUserId,
+        },
+      );
+
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_generated',
+        message: `Impersonation token generated successfully for user ${userId}`,
+      });
+
+      return {
+        workspace: {
+          id: user.userWorkspaces[0].workspace.id,
+          workspaceUrls: this.domainManagerService.getWorkspaceUrls(
+            user.userWorkspaces[0].workspace,
+          ),
+        },
+        loginToken,
+      };
+    } catch {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        eventName: 'server.impersonation.login_token_failed',
+        message: `Impersonation token generation failed for targetUserId=${userId}`,
+      });
+      throw new AuthException(
+        'Impersonation failed',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
   }
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {

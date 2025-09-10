@@ -1,36 +1,15 @@
-type BaseLeaf = {
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+
+export type LeafType = 'string' | 'number' | 'boolean' | 'array' | 'unknown';
+
+export type Leaf = {
   isLeaf: true;
+  type: LeafType;
   label: string;
+  value: any;
 };
 
-type LeafString = BaseLeaf & {
-  type: 'string';
-  value: string;
-};
-
-type LeafNumber = BaseLeaf & {
-  type: 'number';
-  value: number;
-};
-
-type LeafBoolean = BaseLeaf & {
-  type: 'boolean';
-  value: boolean;
-};
-
-type LeafArray = BaseLeaf & {
-  type: 'array';
-  value: unknown[];
-};
-
-type LeafUnknown = BaseLeaf & {
-  type: 'unknown';
-  value: unknown;
-};
-
-type Leaf = LeafString | LeafNumber | LeafBoolean | LeafArray | LeafUnknown;
-
-type Node = {
+export type Node = {
   isLeaf: false;
   type: 'object' | 'unknown';
   label: string;
@@ -38,3 +17,12 @@ type Node = {
 };
 
 export type BaseOutputSchemaV2 = Record<string, Leaf | Node>;
+
+export type LeafDeprecated = {
+  isLeaf: true;
+  type: InputSchemaPropertyType | undefined;
+  label: string;
+  value: any;
+};
+
+export type BaseOutputSchemaDeprecated = Record<string, LeafDeprecated | Node>;

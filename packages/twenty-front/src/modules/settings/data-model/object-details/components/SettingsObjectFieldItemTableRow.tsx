@@ -1,3 +1,4 @@
+import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -7,7 +8,6 @@ import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/o
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -15,7 +15,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import {
+  getSettingsPath,
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
@@ -25,7 +27,7 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -108,11 +110,10 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  const {
-    activateMetadataField,
-    deactivateMetadataField,
-    deleteMetadataField,
-  } = useFieldMetadataItem();
+  const { activateMetadataField, deactivateMetadataField } =
+    useFieldMetadataItem();
+
+  const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
@@ -293,7 +294,12 @@ export const SettingsObjectFieldItemTableRow = ({
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }
-            onDelete={() => deleteMetadataField(fieldMetadataItem)}
+            onDelete={() =>
+              deleteOneFieldMetadataItem({
+                idToDelete: fieldMetadataItem.id,
+                objectMetadataId: objectMetadataItem.id,
+              })
+            }
           />
         ) : (
           <LightIconButton

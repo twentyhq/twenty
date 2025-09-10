@@ -90,58 +90,67 @@ describe('roles permissions', () => {
       expect(resp.status).toBe(200);
       expect(resp.body.errors).toBeUndefined();
       expect(resp.body.data.getRoles).toHaveLength(5);
-      expect(resp.body.data.getRoles).toEqual(
+
+      const roles = resp.body.data.getRoles;
+      const guestRole = roles.find((role: any) => role.label === 'Guest');
+      const adminRole = roles.find((role: any) => role.label === 'Admin');
+      const memberRole = roles.find((role: any) => role.label === 'Member');
+      const objectRestrictedRole = roles.find(
+        (role: any) => role.label === 'Object-restricted',
+      );
+      const workflowManagerRole = roles.find(
+        (role: any) => role.label === 'Workflow Manager',
+      );
+
+      expect(guestRole).toBeDefined();
+      expect(adminRole).toBeDefined();
+      expect(memberRole).toBeDefined();
+      expect(objectRestrictedRole).toBeDefined();
+      expect(workflowManagerRole).toBeDefined();
+
+      expect(guestRole.workspaceMembers).toEqual([
+        {
+          id: '20202020-1553-45c6-a028-5a9064cce07f',
+          name: {
+            firstName: 'Phil',
+            lastName: 'Schiler',
+          },
+        },
+      ]);
+
+      expect(adminRole.workspaceMembers).toEqual([
+        {
+          id: '20202020-463f-435b-828c-107e007a2711',
+          name: {
+            firstName: 'Jane',
+            lastName: 'Austen',
+          },
+        },
+      ]);
+
+      expect(memberRole.workspaceMembers).toEqual(
         expect.arrayContaining([
           {
-            label: 'Guest',
-            workspaceMembers: [
-              {
-                id: '20202020-1553-45c6-a028-5a9064cce07f',
-                name: {
-                  firstName: 'Phil',
-                  lastName: 'Schiler',
-                },
-              },
-            ],
-          },
-          {
-            label: 'Admin',
-            workspaceMembers: [
-              {
-                id: '20202020-463f-435b-828c-107e007a2711',
-                name: {
-                  firstName: 'Jane',
-                  lastName: 'Austen',
-                },
-              },
-            ],
-          },
-          {
-            label: 'Member',
-            workspaceMembers: [
-              {
-                id: '20202020-77d5-4cb6-b60a-f4a835a85d61',
-                name: {
-                  firstName: 'Jony',
-                  lastName: 'Ive',
-                },
-              },
-            ],
-          },
-          {
-            label: 'Object-restricted',
-            workspaceMembers: [
-              {
-                id: '20202020-0687-4c41-b707-ed1bfca972a7',
-                name: {
-                  firstName: 'Tim',
-                  lastName: 'Apple',
-                },
-              },
-            ],
+            id: '20202020-77d5-4cb6-b60a-f4a835a85d61',
+            name: {
+              firstName: 'Jony',
+              lastName: 'Ive',
+            },
           },
         ]),
       );
+
+      expect(objectRestrictedRole.workspaceMembers).toEqual([
+        {
+          id: '20202020-0687-4c41-b707-ed1bfca972a7',
+          name: {
+            firstName: 'Tim',
+            lastName: 'Apple',
+          },
+        },
+      ]);
+
+      expect(workflowManagerRole.workspaceMembers).toBeDefined();
     });
     it('should throw a permission error when user does not have permission (member role)', async () => {
       const query = {

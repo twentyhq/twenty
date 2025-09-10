@@ -12,11 +12,9 @@ const EMPTY_DIAGRAM: WorkflowDiagram = {
 
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
-  isWorkflowBranchEnabled,
   isEditable,
 }: {
   workflowVersion: WorkflowVersion | undefined;
-  isWorkflowBranchEnabled?: boolean;
   isEditable: boolean;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
@@ -31,13 +29,11 @@ export const getWorkflowVersionDiagram = ({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
     workflowContext,
-    isWorkflowBranchEnabled,
   });
 
   return transformFilterNodesAsEdges({
     nodes: diagram.nodes,
     edges: diagram.edges,
     workflowContext,
-    isWorkflowBranchEnabled: isWorkflowBranchEnabled === true,
   });
 };

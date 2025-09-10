@@ -1,13 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
+import {
+  formatExpiration,
+  isExpired,
+} from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconChevronRight } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { type ApiKey, FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type ApiKey } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -44,11 +46,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   const theme = useTheme();
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
-  const isApiKeyRolesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-  );
-
-  const gridColumns = isApiKeyRolesEnabled ? '5fr 2fr 3fr 1fr' : '5fr 3fr 1fr';
+  const gridColumns = '5fr 2fr 3fr 1fr';
 
   return (
     <StyledApisFieldTableRow gridAutoColumns={gridColumns} to={to}>
@@ -56,15 +54,13 @@ export const SettingsApiKeysFieldItemTableRow = ({
         <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
       </StyledTruncatedCell>
 
-      {isApiKeyRolesEnabled && (
-        <StyledTruncatedCell color={theme.font.color.tertiary}>
-          <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
-        </StyledTruncatedCell>
-      )}
+      <StyledTruncatedCell color={theme.font.color.tertiary}>
+        <StyledEllipsisLabel>{apiKey.role?.label || '-'}</StyledEllipsisLabel>
+      </StyledTruncatedCell>
 
       <StyledTruncatedCell
         color={
-          formattedExpiration === 'Expired'
+          isExpired(apiKey.expiresAt || null)
             ? theme.font.color.danger
             : theme.font.color.tertiary
         }

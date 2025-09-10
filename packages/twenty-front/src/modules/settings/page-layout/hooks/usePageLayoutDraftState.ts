@@ -12,10 +12,10 @@ export const usePageLayoutDraftState = () => {
     ? !isDeeplyEqual(pageLayoutDraft, {
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
-        widgets: pageLayoutPersisted.widgets,
+        objectMetadataId: pageLayoutPersisted.objectMetadataId,
+        tabs: pageLayoutPersisted.tabs,
       })
-    : pageLayoutDraft.name.trim().length > 0 ||
-      pageLayoutDraft.widgets.length > 0;
+    : pageLayoutDraft.name.trim().length > 0 || pageLayoutDraft.tabs.length > 0;
 
   const canSave = pageLayoutDraft.name?.trim().length > 0;
 

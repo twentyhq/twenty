@@ -16,7 +16,6 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react';
 import {
   EdgeLabelRenderer,
@@ -27,7 +26,6 @@ import { type MouseEvent, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -43,10 +41,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   data,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
   const { _ } = useLingui();
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
@@ -158,14 +152,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
                   Icon: IconPlus,
                   onClick: handleNodeButtonClick,
                 },
-                ...(isWorkflowBranchEnabled
-                  ? [
-                      {
-                        Icon: IconTrash,
-                        onClick: handleDeleteBranch,
-                      },
-                    ]
-                  : []),
+                {
+                  Icon: IconTrash,
+                  onClick: handleDeleteBranch,
+                },
               ]}
               selected={nodeCreationStarted}
             />

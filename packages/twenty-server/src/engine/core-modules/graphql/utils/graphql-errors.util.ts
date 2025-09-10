@@ -173,11 +173,14 @@ export class ForbiddenError extends BaseGraphQLError {
 export class UserInputError extends BaseGraphQLError {
   constructor(exception: CustomException);
 
-  constructor(message: string, extensions?: RestrictedGraphQLErrorExtensions);
+  constructor(
+    message: string,
+    extensions?: RestrictedGraphQLErrorExtensions & { isExpected?: boolean },
+  );
 
   constructor(
     messageOrException: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions,
+    extensions?: RestrictedGraphQLErrorExtensions & { isExpected?: boolean },
   ) {
     super(messageOrException, ErrorCode.BAD_USER_INPUT, extensions);
     Object.defineProperty(this, 'name', { value: 'UserInputError' });

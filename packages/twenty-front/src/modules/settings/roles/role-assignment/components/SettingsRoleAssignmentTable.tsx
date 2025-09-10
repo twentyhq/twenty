@@ -13,8 +13,9 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { H2Title, IconSearch } from 'twenty-ui/display';
-import { type Agent, type WorkspaceMember } from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
+import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -86,11 +87,11 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   const roleTargets = tableConfig[roleTargetType].roleTargets;
 
   const getSearchableFields = (
-    roleTarget: WorkspaceMember | Agent | ApiKeyForRole,
+    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
   ): string[] => {
     switch (roleTargetType) {
       case 'member': {
-        const member = roleTarget as WorkspaceMember;
+        const member = roleTarget as PartialWorkspaceMember;
         return [
           member.name.firstName?.toLowerCase() || '',
           member.name.lastName?.toLowerCase() || '',
@@ -121,11 +122,14 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
       });
 
   const createRoleTarget = (
-    roleTarget: WorkspaceMember | Agent | ApiKeyForRole,
+    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
   ): RoleTarget => {
     switch (roleTargetType) {
       case 'member':
-        return { type: roleTargetType, data: roleTarget as WorkspaceMember };
+        return {
+          type: roleTargetType,
+          data: roleTarget as PartialWorkspaceMember,
+        };
       case 'agent':
         return { type: roleTargetType, data: roleTarget as Agent };
       case 'apiKey':

@@ -1,4 +1,3 @@
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
@@ -8,8 +7,12 @@ import styled from '@emotion/styled';
 import { AppTooltip, IconPlus, TooltipDelay } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { type Agent, type Role } from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
+import {
+  type PartialWorkspaceMember,
+  type RoleWithPartialMembers,
+} from '../../types/RoleWithPartialMembers';
 import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
 
 const StyledAssignToMemberContainer = styled.div`
@@ -21,10 +24,10 @@ const StyledAssignToMemberContainer = styled.div`
 type RoleAssignmentSectionProps = {
   roleTargetType: keyof typeof ROLE_TARGET_CONFIG;
   roleId: string;
-  settingsDraftRole: Role;
-  currentWorkspaceMember?: CurrentWorkspaceMember;
+  settingsDraftRole: RoleWithPartialMembers;
+  currentWorkspaceMember?: PartialWorkspaceMember;
   onSelect: (
-    roleTarget: CurrentWorkspaceMember | Agent | ApiKeyForRole,
+    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
     roleTargetType: keyof typeof ROLE_TARGET_CONFIG,
   ) => void;
   allWorkspaceMembersHaveThisRole?: boolean;
@@ -88,7 +91,7 @@ export const RoleAssignmentSection = ({
             roleTargetType === 'member' ? (
               <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
                 excludedWorkspaceMemberIds={excludedIds}
-                onSelect={(roleTarget: CurrentWorkspaceMember) => {
+                onSelect={(roleTarget: PartialWorkspaceMember) => {
                   closeDropdown(config.dropdownId);
                   onSelect(roleTarget, roleTargetType);
                 }}
@@ -98,7 +101,7 @@ export const RoleAssignmentSection = ({
                 entityType={roleTargetType}
                 excludedIds={excludedIds}
                 onSelect={(
-                  roleTarget: CurrentWorkspaceMember | Agent | ApiKeyForRole,
+                  roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
                 ) => {
                   closeDropdown(config.dropdownId);
                   onSelect(roleTarget, roleTargetType);

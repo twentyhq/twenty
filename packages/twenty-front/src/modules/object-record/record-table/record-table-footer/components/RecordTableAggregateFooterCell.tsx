@@ -1,23 +1,21 @@
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 
-const COLUMN_MIN_WIDTH = 104;
-
-const StyledColumnFooterCell = styled.td<{
+const StyledColumnFooterCell = styled.div<{
   columnWidth: number;
   isFirstCell?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.tertiary};
-  overflow: hidden;
+
   padding: 0;
 
-  position: relative;
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
@@ -35,6 +33,11 @@ const StyledColumnFooterCell = styled.td<{
     `;
   }};
   height: 32px;
+
+  position: sticky;
+  left: 48px;
+  bottom: 0;
+  z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
 
   user-select: none;
   overflow: auto;
@@ -74,9 +77,11 @@ export const RecordTableAggregateFooterCell = ({
 
   return (
     <StyledColumnFooterCell
-      columnWidth={Math.max(recordField.size + 24, COLUMN_MIN_WIDTH)}
-      colSpan={isFirstCell ? 2 : undefined}
+      columnWidth={recordField.size + 1}
+      // TODO: fix colspan
+      // colSpan={isFirstCell ? 2 : undefined}
       isFirstCell={isFirstCell}
+      className={isFirstCell ? '' : 'footer-cell'}
     >
       <StyledColumnFootContainer>
         <RecordTableColumnFooterWithDropdown

@@ -111,7 +111,7 @@ export const WorkflowEditTriggerManualForm = ({
       />
       <WorkflowStepBody>
         <IconPicker
-          dropdownId={'workflow-edit-manual-trigger-icon'}
+          dropdownId="workflow-edit-manual-trigger-icon"
           selectedIconKey={trigger.settings.icon}
           dropdownOffset={{ y: -parseInt(theme.spacing(3), 10) }}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
@@ -154,7 +154,7 @@ export const WorkflowEditTriggerManualForm = ({
         />
 
         <Select
-          dropdownId={'workflow-edit-manual-trigger-availability'}
+          dropdownId="workflow-edit-manual-trigger-availability"
           label={t`Availability`}
           description={availabilityDescriptions[manualTriggerAvailability]}
           fullWidth
@@ -181,7 +181,7 @@ export const WorkflowEditTriggerManualForm = ({
 
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
           <Select
-            dropdownId={'workflow-edit-manual-trigger-object'}
+            dropdownId="workflow-edit-manual-trigger-object"
             label={t`Object`}
             description={t`On which object(s) should this trigger be available`}
             fullWidth
@@ -209,7 +209,7 @@ export const WorkflowEditTriggerManualForm = ({
 
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
           <Select
-            dropdownId={'workflow-edit-manual-trigger-navbar'}
+            dropdownId="workflow-edit-manual-trigger-navbar"
             label={t`Navbar`}
             description={t`Display a button in the top navbar to trigger this workflow`}
             fullWidth

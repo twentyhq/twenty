@@ -4,15 +4,16 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'getting-started' },
       { fileName: 'what-is-twenty' },
       { fileName: 'create-workspace' },
-      { fileName: 'configure-workspace-in-three-steps' },
       { fileName: 'getting-around-twenty' },
+      { fileName: 'configure-workspace-in-three-steps' },
+      { fileName: 'implementation-services' },
     ],
-    Objects: [
-      { fileName: 'objects' },
+    'Data Model': [
+      { fileName: 'data-model' },
+      { fileName: 'customize-your-data-model' },
       { fileName: 'standard-objects' },
       { fileName: 'fields' },
       { fileName: 'creating-records' },
-      { fileName: 'import-export-data' },
     ],
     Views: [
       { fileName: 'views' },
@@ -30,10 +31,16 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'workflows' },
       { fileName: 'emails' },
       { fileName: 'api-webhooks' },
+      { fileName: 'import-export-data' },
     ],
     Settings: [
       { fileName: 'settings' },
       { fileName: 'permissions' },
+      { fileName: 'settings-faq' },
+    ],
+    Pricing: [
+      { fileName: 'pricing' },
+      { fileName: 'billing-and-pricing-faq' },
     ],
     Other: [
       { fileName: 'other' },

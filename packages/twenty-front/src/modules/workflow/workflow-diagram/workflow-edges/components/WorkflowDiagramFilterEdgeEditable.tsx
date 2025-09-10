@@ -30,7 +30,6 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { WorkflowStepFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterCounter';
 import { useFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterCounter';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -53,7 +52,6 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -102,9 +100,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { t, i18n } = useLingui();
 
   const theme = useTheme();
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -288,13 +283,11 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconPlus}
                       onClick={handleAddNodeButtonClick}
                     />
-                    {isWorkflowBranchEnabled && (
-                      <MenuItem
-                        text={t`Delete branch`}
-                        LeftIcon={IconTrash}
-                        onClick={handleDeleteBranchClick}
-                      />
-                    )}
+                    <MenuItem
+                      text={t`Delete branch`}
+                      LeftIcon={IconTrash}
+                      onClick={handleDeleteBranchClick}
+                    />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

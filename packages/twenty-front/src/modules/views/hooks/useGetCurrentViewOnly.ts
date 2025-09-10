@@ -1,6 +1,6 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 import { useRecoilValue } from 'recoil';
 
@@ -10,7 +10,7 @@ export const useGetCurrentViewOnly = () => {
   );
 
   const currentView = useRecoilValue(
-    prefetchViewFromViewIdFamilySelector({
+    coreViewFromViewIdFamilySelector({
       viewId: currentViewId ?? '',
     }),
   );

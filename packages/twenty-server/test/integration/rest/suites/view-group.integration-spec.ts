@@ -7,6 +7,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertRestApiErrorNotFoundResponse,
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -373,14 +374,7 @@ describe('View Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -408,14 +402,7 @@ describe('View Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
 
     it('should return success even when group is already deleted', async () => {
@@ -438,14 +425,7 @@ describe('View Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        deleteResponse2,
-        404,
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_GROUP_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(deleteResponse2);
     });
   });
 });

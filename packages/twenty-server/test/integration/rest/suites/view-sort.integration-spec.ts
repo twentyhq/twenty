@@ -7,6 +7,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertRestApiErrorNotFoundResponse,
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -199,8 +200,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -243,14 +243,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -276,8 +269,7 @@ describe('View Sort REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(getResponse);
-      expect(getResponse.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(getResponse);
     });
 
     it('should return 404 error when deleting non-existent view sort', async () => {
