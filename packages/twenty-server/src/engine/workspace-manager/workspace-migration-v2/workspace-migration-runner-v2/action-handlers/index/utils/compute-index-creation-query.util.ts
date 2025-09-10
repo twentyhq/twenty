@@ -14,6 +14,7 @@ export const computeIndexCreationQuery = async ({
   schemaName,
   tableName,
 }: ComputeIndexCreationQueryArgs): Promise<string> => {
+  // TODO find in cache
   const flatIndexFieldMetadatas = [] as FlatIndexFieldMetadata[];
   // shouldn't we sanitize this ? we can assume it has been validated tho
   const quotedColumns = flatIndexFieldMetadatas.map((column) => `"${column}"`);

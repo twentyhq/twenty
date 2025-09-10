@@ -15,14 +15,14 @@ export class UpdateIndexFieldActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexFieldAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const fieldMetadataRepository =
+    const indexFieldMetadataRepository =
       queryRunner.manager.getRepository<IndexFieldMetadataEntity>(
         IndexFieldMetadataEntity,
       );
 
     const { flatIndexFieldMetadataId } = action;
 
-    await fieldMetadataRepository.update(
+    await indexFieldMetadataRepository.update(
       flatIndexFieldMetadataId,
       fromWorkspaceMigrationUpdateActionToPartialEntity(action),
     );

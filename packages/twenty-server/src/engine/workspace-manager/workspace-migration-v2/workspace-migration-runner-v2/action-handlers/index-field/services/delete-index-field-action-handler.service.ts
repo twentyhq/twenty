@@ -16,14 +16,14 @@ export class DeleteIndexFieldActionHandlerService extends WorkspaceMigrationRunn
     context: WorkspaceMigrationActionRunnerArgs<DeleteIndexFieldAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const fieldMetadataRepository =
+    const indexFieldMetadataRepository =
       queryRunner.manager.getRepository<IndexFieldMetadataEntity>(
         IndexFieldMetadataEntity,
       );
 
     const { flatIndexFieldMetadataId } = action;
 
-    await fieldMetadataRepository.delete({
+    await indexFieldMetadataRepository.delete({
       id: In([flatIndexFieldMetadataId]),
     });
   }

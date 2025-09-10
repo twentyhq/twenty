@@ -19,14 +19,14 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const fieldMetadataRepository =
+    const indexMetadataRepository =
       queryRunner.manager.getRepository<IndexMetadataEntity>(
         IndexMetadataEntity,
       );
 
     const { flatIndexMetadataId } = action;
 
-    await fieldMetadataRepository.update(
+    await indexMetadataRepository.update(
       flatIndexMetadataId,
       fromWorkspaceMigrationUpdateActionToPartialEntity(action),
     );

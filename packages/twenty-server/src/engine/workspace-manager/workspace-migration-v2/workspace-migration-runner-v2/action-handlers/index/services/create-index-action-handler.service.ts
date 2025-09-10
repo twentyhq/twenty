@@ -17,14 +17,14 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<CreateIndexAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const fieldMetadataRepository =
+    const indexMetadataRepository =
       queryRunner.manager.getRepository<IndexMetadataEntity>(
         IndexMetadataEntity,
       );
 
     const { flatIndexMetadata } = action;
 
-    await fieldMetadataRepository.save(flatIndexMetadata);
+    await indexMetadataRepository.save(flatIndexMetadata);
   }
 
   async executeForWorkspaceSchema(
