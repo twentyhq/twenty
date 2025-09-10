@@ -41,7 +41,6 @@ export const enrichObjectMetadataItemsWithPermissions = ({
 
       const { fields, ...objectWithoutFields } = object;
 
-      console.log('fields', object.nameSingular, fields);
       return {
         ...objectWithoutFields,
         fields: fields,
