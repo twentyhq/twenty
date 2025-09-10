@@ -2,9 +2,9 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
-  findNearbyApps,
-  findProjectRoot,
-  isValidAppPath,
+    findNearbyApps,
+    findProjectRoot,
+    isValidAppPath,
 } from './app-discovery';
 
 export const resolveAppPath = async (
@@ -89,10 +89,14 @@ const validateAppPath = async (
     console.log(chalk.gray(`Checking app path: ${appPath}`));
   }
 
-  const manifestPath = path.join(appPath, 'twenty-app.json');
+  const jsoncManifestPath = path.join(appPath, 'twenty-app.jsonc');
+  const jsonManifestPath = path.join(appPath, 'twenty-app.json');
 
-  if (!(await fs.pathExists(manifestPath))) {
-    let errorMessage = `twenty-app.json not found at: ${manifestPath}`;
+  const hasJsoncManifest = await fs.pathExists(jsoncManifestPath);
+  const hasJsonManifest = await fs.pathExists(jsonManifestPath);
+
+  if (!hasJsoncManifest && !hasJsonManifest) {
+    let errorMessage = `No manifest file found. Expected twenty-app.jsonc or twenty-app.json in: ${appPath}`;
 
     if (await fs.pathExists(appPath)) {
       try {

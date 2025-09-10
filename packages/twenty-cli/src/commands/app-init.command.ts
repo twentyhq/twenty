@@ -2,7 +2,8 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import { createManifest, createReadmeContent } from '../utils/app-template';
+import { createAgentManifest, createManifest, createReadmeContent } from '../utils/app-template';
+import { writeJsoncFile } from '../utils/jsonc-parser';
 
 export class AppInitCommand {
   async execute(options: { path?: string; name?: string }): Promise<void> {
@@ -83,10 +84,22 @@ export class AppInitCommand {
   ): Promise<void> {
     await fs.ensureDir(appDir);
 
-    const manifest = createManifest(appName);
-    const manifestPath = path.join(appDir, 'twenty-app.json');
-    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    // Create agents directory
+    const agentsDir = path.join(appDir, 'agents');
+    await fs.ensureDir(agentsDir);
 
+    // Create main manifest with agent references
+    const manifest = createManifest(appName);
+    const manifestPath = path.join(appDir, 'twenty-app.jsonc');
+    await writeJsoncFile(manifestPath, manifest);
+
+    // Create agent manifest file
+    const agentManifest = createAgentManifest(appName);
+    const agentFileName = `${appName}-agent`;
+    const agentPath = path.join(agentsDir, `${agentFileName}.jsonc`);
+    await writeJsoncFile(agentPath, agentManifest);
+
+    // Create README
     const readmeContent = createReadmeContent(appName, appDir);
     await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
   }

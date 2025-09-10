@@ -19659,15 +19659,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chokidar@npm:^2.1.7":
-  version: 2.1.7
-  resolution: "@types/chokidar@npm:2.1.7"
-  dependencies:
-    chokidar: "npm:*"
-  checksum: 10c0/e296861b45a90da59a871cc09020e1a8b1111b4a954a2f104ea0a0be31f5b565a35710e9d54670288ca9bdf0c7e71d7d070aaf212db03ee14c1bda93db2f1086
-  languageName: node
-  linkType: hard
-
 "@types/chrome@npm:^0.0.267":
   version: 0.0.267
   resolution: "@types/chrome@npm:0.0.267"
@@ -23009,7 +23000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.17.1, ajv@npm:^8.9.0":
+"ajv@npm:^8.0.0, ajv@npm:^8.12.0, ajv@npm:^8.17.1, ajv@npm:^8.9.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:
@@ -26466,15 +26457,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:*, chokidar@npm:4.0.3, chokidar@npm:^4.0.0, chokidar@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "chokidar@npm:4.0.3"
-  dependencies:
-    readdirp: "npm:^4.0.1"
-  checksum: 10c0/a58b9df05bb452f7d105d9e7229ac82fa873741c0c40ddcc7bb82f8a909fbe3f7814c9ebe9bc9a2bef9b737c0ec6e2d699d179048ef06ad3ec46315df0ebe6ad
-  languageName: node
-  linkType: hard
-
 "chokidar@npm:3.5.1":
   version: 3.5.1
   resolution: "chokidar@npm:3.5.1"
@@ -26529,6 +26511,15 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10c0/8361dcd013f2ddbe260eacb1f3cb2f2c6f2b0ad118708a343a5ed8158941a39cb8fb1d272e0f389712e74ee90ce8ba864eece9e0e62b9705cb468a2f6d917462
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:4.0.3, chokidar@npm:^4.0.0, chokidar@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "chokidar@npm:4.0.3"
+  dependencies:
+    readdirp: "npm:^4.0.1"
+  checksum: 10c0/a58b9df05bb452f7d105d9e7229ac82fa873741c0c40ddcc7bb82f8a909fbe3f7814c9ebe9bc9a2bef9b737c0ec6e2d699d179048ef06ad3ec46315df0ebe6ad
   languageName: node
   linkType: hard
 
@@ -51506,6 +51497,8 @@ __metadata:
     "@types/inquirer": "npm:^9.0.0"
     "@types/jest": "npm:^29.5.0"
     "@types/node": "npm:^20.0.0"
+    ajv: "npm:^8.12.0"
+    ajv-formats: "npm:^2.1.1"
     axios: "npm:^1.6.0"
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
@@ -51514,6 +51507,7 @@ __metadata:
     fs-extra: "npm:^11.2.0"
     inquirer: "npm:^10.0.0"
     jest: "npm:^29.5.0"
+    jsonc-parser: "npm:^3.2.0"
     ora: "npm:^8.0.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.3.0"
@@ -51725,7 +51719,6 @@ __metadata:
     "@sniptt/guards": "npm:0.2.0"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/bytes": "npm:^3.1.1"
-    "@types/chokidar": "npm:^2.1.7"
     "@types/dompurify": "npm:^3.0.5"
     "@types/express": "npm:^4.17.13"
     "@types/express-session": "npm:^1.18.0"
@@ -51770,7 +51763,6 @@ __metadata:
     cache-manager: "npm:^5.4.0"
     cache-manager-redis-yet: "npm:^4.1.2"
     chalk: "npm:4.1.2"
-    chokidar: "npm:^4.0.3"
     class-transformer: "npm:0.5.1"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     class-validator-jsonschema: "npm:^5.0.2"

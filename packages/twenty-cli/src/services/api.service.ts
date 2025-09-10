@@ -146,23 +146,19 @@ export class ApiService {
     // In the future, this could handle different source types
     try {
       if (sourceType === 'local') {
-        const fs = await import('fs-extra');
-        const path = await import('path');
-
-        const manifestPath = path.join(source, 'twenty-app.json');
-        const manifestExists = await fs.pathExists(manifestPath);
-
-        if (!manifestExists) {
+        // Try to load manifest using the new loader
+        try {
+          const { loadAppManifest } = await import(
+            '../utils/app-manifest-loader'
+          );
+          const manifest = await loadAppManifest(source);
+          return this.syncApplication(manifest);
+        } catch (manifestError) {
           return {
             success: false,
-            error: 'twenty-app.json not found in the specified directory',
+            error: `Failed to load manifest: ${manifestError instanceof Error ? manifestError.message : 'Unknown error'}`,
           };
         }
-
-        const manifestContent = await fs.readFile(manifestPath, 'utf8');
-        const manifest = JSON.parse(manifestContent);
-
-        return this.syncApplication(manifest);
       }
 
       return {

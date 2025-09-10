@@ -1,14 +1,12 @@
 import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import * as path from 'path';
 import { ApiService } from '../services/api.service';
+import { loadAppManifest } from './app-manifest-loader';
 
 export const syncApp = async (
   appPath: string,
   apiService: ApiService,
 ): Promise<any> => {
-  const manifestPath = path.join(appPath, 'twenty-app.json');
-  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  const manifest = await loadAppManifest(appPath);
 
   try {
     const result = await apiService.syncApplication(manifest);
