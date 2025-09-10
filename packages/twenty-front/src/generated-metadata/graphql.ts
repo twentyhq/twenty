@@ -5286,7 +5286,7 @@ export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
 }>;
 
 
-export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
+export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -12065,6 +12065,8 @@ export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOption
 export const DuplicateWorkflowVersionStepDocument = gql`
     mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
   duplicateWorkflowVersionStep(input: $input) {
+    triggerNextStepIds
+    stepsNextStepIds
     createdStep {
       id
       name
