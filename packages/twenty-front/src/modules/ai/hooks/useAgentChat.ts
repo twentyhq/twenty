@@ -31,7 +31,6 @@ import { type AgentChatMessage } from '~/generated/graphql';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
-import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
@@ -179,34 +178,8 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
       },
       context: {
         onChunk: (chunk: string) => {
-          parseAgentStreamingChunk(chunk, {
-            onTextDelta: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                streamingText: prev.streamingText + message,
-              }));
-              scrollToBottom();
-            },
-            onToolCall: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                toolCall: message,
-              }));
-              scrollToBottom();
-            },
-            onReasoningSummary: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                reasoningSummary: prev.reasoningSummary + message,
-              }));
-              scrollToBottom();
-            },
-            onError: (message: string) => {
-              enqueueErrorSnackBar({
-                message,
-              });
-            },
-          });
+          setAgentStreamingMessage((prev) => prev + chunk);
+          scrollToBottom();
         },
       },
     });
@@ -231,11 +204,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
     const { data } = await refetchMessages();
 
     setAgentChatMessages(data?.agentChatMessages);
-    setAgentStreamingMessage({
-      toolCall: '',
-      streamingText: '',
-      reasoningSummary: '',
-    });
+    setAgentStreamingMessage('');
     scrollToBottom();
   };
 

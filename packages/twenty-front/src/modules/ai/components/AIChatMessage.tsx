@@ -1,14 +1,13 @@
-import { keyframes, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
+import { AIChatMessageStreamRenderer } from '@/ai/components/AIChatMessageStreamRenderer';
 import { type AgentChatMessage } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -26,11 +25,10 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageRow = styled.div<{ isShowingToolCall?: boolean }>`
+const StyledMessageRow = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: ${({ isShowingToolCall }) =>
-    isShowingToolCall ? 'center' : 'flex-start'};
+  align-items: flex-start;
   gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
@@ -138,23 +136,6 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const dots = keyframes`
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-`;
-
-const StyledToolCallContainer = styled.div`
-  &::after {
-    display: inline-block;
-    content: '';
-    animation: ${dots} 750ms steps(3, end) infinite;
-    width: 2ch;
-    text-align: left;
-  }
-`;
-
 const StyledDotsIconContainer = styled.div`
   align-items: center;
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
@@ -174,66 +155,17 @@ export const AIChatMessage = ({
   agentStreamingMessage,
 }: {
   message: AgentChatMessage;
-  agentStreamingMessage: {
-    streamingText: string;
-    toolCall: string;
-    reasoningSummary: string;
-  };
+  agentStreamingMessage: string;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
-
-  const markdownRender = (text: string) => {
-    return <LazyMarkdownRenderer text={text} />;
-  };
-
-  const getAssistantMessageContent = (message: AgentChatMessage) => {
-    if (message.content !== '') {
-      return markdownRender(message.content);
-    }
-
-    if (agentStreamingMessage.streamingText !== '') {
-      return markdownRender(agentStreamingMessage.streamingText);
-    }
-
-    if (agentStreamingMessage.toolCall !== '') {
-      return (
-        <StyledToolCallContainer>
-          {agentStreamingMessage.toolCall}
-        </StyledToolCallContainer>
-      );
-    }
-
-    const isReasoning =
-      message.content === '' &&
-      agentStreamingMessage.streamingText === '' &&
-      agentStreamingMessage.toolCall === '' &&
-      agentStreamingMessage.reasoningSummary !== '';
-
-    if (isReasoning) {
-      return null;
-    }
-
-    return (
-      <StyledDotsIconContainer>
-        <StyledDotsIcon size={theme.icon.size.xl} />
-      </StyledDotsIconContainer>
-    );
-  };
 
   return (
     <StyledMessageBubble
       key={message.id}
       isUser={message.role === AgentChatMessageRole.USER}
     >
-      <StyledMessageRow
-        isShowingToolCall={
-          message.role === AgentChatMessageRole.ASSISTANT &&
-          message.content === '' &&
-          agentStreamingMessage.streamingText === '' &&
-          agentStreamingMessage.toolCall !== ''
-        }
-      >
+      <StyledMessageRow>
         {message.role === AgentChatMessageRole.ASSISTANT && (
           <StyledAvatarContainer>
             <Avatar
@@ -250,31 +182,22 @@ export const AIChatMessage = ({
           </StyledAvatarContainer>
         )}
         <StyledMessageContainer>
-          {message.role === AgentChatMessageRole.ASSISTANT && (
-            <ReasoningSummaryDisplay
-              reasoningSummary={
-                message.reasoningSummary ||
-                agentStreamingMessage.reasoningSummary
-              }
-              isStreaming={
-                message.content === '' &&
-                agentStreamingMessage.streamingText !== '' &&
-                agentStreamingMessage.toolCall === ''
-              }
-              isCompleted={message.content !== ''}
-              isReasoningStreaming={
-                message.content === '' &&
-                agentStreamingMessage.streamingText === '' &&
-                agentStreamingMessage.toolCall === ''
-              }
-            />
-          )}
           <StyledMessageText
             isUser={message.role === AgentChatMessageRole.USER}
           >
-            {message.role === AgentChatMessageRole.ASSISTANT
-              ? getAssistantMessageContent(message)
-              : message.content}
+            {message.role === AgentChatMessageRole.ASSISTANT ? (
+              message.streamData || agentStreamingMessage ? (
+                <AIChatMessageStreamRenderer
+                  streamData={message.streamData || agentStreamingMessage}
+                />
+              ) : (
+                <StyledDotsIconContainer>
+                  <StyledDotsIcon size={theme.icon.size.xl} />
+                </StyledDotsIconContainer>
+              )
+            ) : (
+              message.content
+            )}
           </StyledMessageText>
           {message.files.length > 0 && (
             <StyledFilesContainer>
