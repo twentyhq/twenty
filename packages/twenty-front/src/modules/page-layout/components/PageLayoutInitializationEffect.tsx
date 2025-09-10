@@ -46,14 +46,10 @@ export const PageLayoutInitializationEffect = ({
               tabs: layout.tabs,
             });
 
-            if (
-              layout.tabs !== null &&
-              layout.tabs !== undefined &&
-              layout.tabs.length > 0
-            ) {
+            if (layout.tabs.length > 0) {
               const tabLayouts: TabLayouts = {};
               layout.tabs.forEach((tab) => {
-                const layouts = (tab.widgets || []).map((w) => ({
+                const layouts = tab.widgets.map((w) => ({
                   i: w.id,
                   x: w.gridPosition.column,
                   y: w.gridPosition.row,

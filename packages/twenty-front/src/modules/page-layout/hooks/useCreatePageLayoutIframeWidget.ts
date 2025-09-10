@@ -77,7 +77,7 @@ export const useCreatePageLayoutIframeWidget = () => {
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: addWidgetToTab(prev?.tabs || [], activeTabId, newWidget),
+          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);

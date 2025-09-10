@@ -8,9 +8,9 @@ export const useUpdatePageLayoutWidget = () => {
       (widgetId: string, updates: Partial<PageLayoutWidgetWithData>) => {
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: prev?.tabs?.map((tab) => ({
+          tabs: prev.tabs.map((tab) => ({
             ...tab,
-            widgets: tab?.widgets?.map((widget) =>
+            widgets: tab.widgets.map((widget) =>
               widget.id === widgetId ? { ...widget, ...updates } : widget,
             ),
           })),

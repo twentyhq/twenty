@@ -9,7 +9,7 @@ export const removeWidgetFromTab = (
     if (tab.id === tabId) {
       return {
         ...tab,
-        widgets: tab?.widgets?.filter((w) => w.id !== widgetId),
+        widgets: tab.widgets.filter((w) => w.id !== widgetId),
       };
     }
     return tab;

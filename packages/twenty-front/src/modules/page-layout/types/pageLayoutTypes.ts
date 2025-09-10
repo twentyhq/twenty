@@ -10,9 +10,9 @@ export type PageLayoutWidgetWithData = PageLayoutWidget & {
 };
 
 export type PageLayoutTabWithData = Omit<PageLayoutTab, 'widgets'> & {
-  widgets?: PageLayoutWidgetWithData[];
+  widgets: PageLayoutWidgetWithData[];
 };
 
 export type PageLayoutWithData = Omit<PageLayout, 'tabs'> & {
-  tabs?: PageLayoutTabWithData[];
+  tabs: PageLayoutTabWithData[];
 };

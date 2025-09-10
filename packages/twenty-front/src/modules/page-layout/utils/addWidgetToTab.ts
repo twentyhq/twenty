@@ -1,13 +1,13 @@
 import {
-  type PageLayoutTab,
-  type PageLayoutWidget,
-} from '../states/savedPageLayoutsState';
+  type PageLayoutTabWithData,
+  type PageLayoutWidgetWithData,
+} from '../types/pageLayoutTypes';
 
 export const addWidgetToTab = (
-  tabs: PageLayoutTab[],
+  tabs: PageLayoutTabWithData[],
   activeTabId: string,
-  newWidget: PageLayoutWidget,
-): PageLayoutTab[] => {
+  newWidget: PageLayoutWidgetWithData,
+): PageLayoutTabWithData[] => {
   return tabs.map((tab) => {
     if (tab.id === activeTabId) {
       return {

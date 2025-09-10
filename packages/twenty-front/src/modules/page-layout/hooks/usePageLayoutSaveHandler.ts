@@ -1,3 +1,8 @@
+import { savedPageLayoutsState } from '@/page-layout/states/savedPageLayoutsState';
+import {
+  type PageLayoutWidgetWithData,
+  type PageLayoutWithData,
+} from '@/page-layout/types/pageLayoutTypes';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
@@ -6,11 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
-import {
-  savedPageLayoutsState,
-  type PageLayoutWidget,
-  type SavedPageLayout,
-} from '../states/savedPageLayoutsState';
 
 export const usePageLayoutSaveHandler = () => {
   const navigateSettings = useNavigateSettings();
@@ -19,7 +19,7 @@ export const usePageLayoutSaveHandler = () => {
 
   const savePageLayout = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (widgetsWithPositions?: PageLayoutWidget[]) => {
+      async (widgetsWithPositions?: PageLayoutWidgetWithData[]) => {
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
@@ -40,7 +40,7 @@ export const usePageLayoutSaveHandler = () => {
             }))
           : pageLayoutDraft.tabs;
 
-        const layoutToSave: SavedPageLayout = {
+        const layoutToSave: PageLayoutWithData = {
           id: isEditMode ? id : uuidv4(),
           name: pageLayoutDraft.name,
           type: pageLayoutDraft.type,

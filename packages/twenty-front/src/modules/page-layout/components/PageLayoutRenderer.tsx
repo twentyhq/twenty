@@ -71,7 +71,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
-  const activeTabWidgets = pageLayout?.tabs?.find(
+  const activeTabWidgets = pageLayout.tabs.find(
     (tab) => tab.id === activeTabId,
   )?.widgets;
 

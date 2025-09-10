@@ -27,7 +27,7 @@ describe('useCreatePageLayoutWidget', () => {
         );
         const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
@@ -93,7 +93,7 @@ describe('useCreatePageLayoutWidget', () => {
           }),
         );
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
@@ -167,14 +167,14 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.pageLayoutCurrentLayouts['tab-1'].mobile,
     ).toHaveLength(4);
 
-    expect(result.current.pageLayoutDraft?.tabs?.[0]?.widgets).toHaveLength(4);
+    expect(result.current.pageLayoutDraft.tabs[0].widgets).toHaveLength(4);
   });
 
   it('should not create widget when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
         const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
-        const allWidgets = pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
