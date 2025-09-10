@@ -16,10 +16,10 @@ import {
 
 export const fromUpdateViewFieldInputToFlatViewFieldToOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
-  flatViewMaps,
+  flatViewFieldMaps,
 }: {
   updateViewFieldInput: UpdateViewFieldInput;
-  flatViewMaps: FlatViewFieldMaps;
+  flatViewFieldMaps: FlatViewFieldMaps;
 }): FlatViewField => {
   const { id: viewFieldToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -27,7 +27,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToOrThrow = ({
       ['id'],
     );
 
-  const existingFlatViewFieldToUpdate = flatViewMaps.byId[viewFieldToUpdateId];
+  const existingFlatViewFieldToUpdate = flatViewFieldMaps.byId[viewFieldToUpdateId];
 
   if (!isDefined(existingFlatViewFieldToUpdate)) {
     throw new ViewFieldException(

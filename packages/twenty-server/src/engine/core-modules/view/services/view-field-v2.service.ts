@@ -4,7 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { id } from 'date-fns/locale';
+import { t } from '@lingui/core/macro';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
@@ -13,15 +17,10 @@ import { DeleteDestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/i
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import {
-  ViewFieldException,
-  ViewFieldExceptionCode,
-  ViewFieldExceptionMessageKey,
-  generateViewFieldExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
-import { fromUpdateViewFieldInputToFlatViewFieldToOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update.util';
+import { fromDeleteOrDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-or-destroy-view-field-input-to-flat-view-field-or-throw.util';
+import { fromUpdateViewFieldInputToFlatViewFieldToOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-orchestrator.service';
@@ -109,7 +108,10 @@ export class ViewFieldV2Service {
     const createdFlatViewField =
       recomputedExistingFlatViewFieldMaps.byId[flatViewFieldToCreate.id];
     if (!isDefined(createdFlatViewField)) {
-      throw new Error('Whatver'); //TODO
+      throw new FlatEntityMapsException(
+        t`Created view field not found in cache`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
     }
 
     return createdFlatViewField;
@@ -127,7 +129,7 @@ export class ViewFieldV2Service {
 
     const optimistcallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToOrThrow({
-        flatViewMaps: existingFlatViewFieldMaps,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
         updateViewFieldInput,
       });
 
@@ -162,13 +164,16 @@ export class ViewFieldV2Service {
     const recomputedExistingFlatViewFieldMaps =
       await this.getExistingFlatViewFieldMapsFromCache(workspaceId);
 
-    const createdFlatViewField =
+    const updatedFlatViewField =
       recomputedExistingFlatViewFieldMaps.byId[optimistcallyUpdatedFlatView.id];
-    if (!isDefined(createdFlatViewField)) {
-      throw new Error('Whatver'); //TODO
+    if (!isDefined(updatedFlatViewField)) {
+      throw new FlatEntityMapsException(
+        t`Created view field not found in cache`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
     }
 
-    return createdFlatViewField;
+    return updatedFlatViewField;
   }
 
   async deleteOne({
@@ -177,27 +182,20 @@ export class ViewFieldV2Service {
   }: {
     deleteViewFieldInput: DeleteDestroyViewFieldInput;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<ViewFieldDTO> {
     const existingFlatViewFieldMaps =
       await this.getExistingFlatViewFieldMapsFromCache(workspaceId);
 
-    const existingViewFieldToDelete = existingFlatViewFieldMaps.byId[id];
-
-    if (!isDefined(existingViewFieldToDelete)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          id,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-      );
-    }
-
-    const toFlatViewFieldMaps: FlatViewFieldMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityMaps: existingFlatViewFieldMaps,
-        entityToDeleteId: existingViewFieldToDelete.id,
+    const existingViewFieldToDelete =
+      fromDeleteOrDestroyViewFieldInputToFlatViewFieldOrThrow({
+        deleteDestroyViewInput: deleteViewFieldInput,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
       });
+
+    const toFlatViewFieldMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
+      flatEntityMaps: existingFlatViewFieldMaps,
+      entityToDeleteId: existingViewFieldToDelete.id,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
@@ -222,6 +220,6 @@ export class ViewFieldV2Service {
       );
     }
 
-    return true;
+    return existingViewFieldToDelete;
   }
 }
