@@ -23,19 +23,20 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/objects/mkt-customer.workspace-entity';
 import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invoice.workspace-entity';
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
-import { MktContractWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-contract.workspace-entity';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import {
   ORDER_STATUS_OPTIONS,
   OrderStatus,
   SINVOICE_STATUS,
   SINVOICE_STATUS_OPTIONS,
 } from 'src/mkt-core/order/constants';
+import { MktContractWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-contract.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order-item.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // Define fields to be used for search
 const SEARCH_FIELDS_FOR_ORDER: FieldTypeAndNameMetadata[] = [
@@ -77,6 +78,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Order Code`,
   })
+  @WorkspaceIsNullable()
   orderCode: string;
 
   @WorkspaceField({
@@ -101,7 +103,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MKT_ORDER_FIELD_IDS.currency,
     type: FieldMetadataType.TEXT,
     label: msg`Currency`,
-    defaultValue: "'USD'",
+    defaultValue: "'VND'",
   })
   currency: string;
 
@@ -133,6 +135,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MKT_ORDER_FIELD_IDS.discount,
     type: FieldMetadataType.NUMBER,
     label: msg`Discount`,
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   discount?: number;
@@ -141,6 +144,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MKT_ORDER_FIELD_IDS.requireContract,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Require Contract`,
+    defaultValue: false,
   })
   @WorkspaceIsNullable()
   requireContract?: boolean;
@@ -151,6 +155,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`SInvoice Status`,
     description: msg`Status of the SInvoice`,
     options: SINVOICE_STATUS_OPTIONS,
+    defaultValue: SINVOICE_STATUS.PENDING,
   })
   @WorkspaceIsNullable()
   sInvoiceStatus?: SINVOICE_STATUS;
@@ -275,4 +280,20 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktInvoices: Relation<MktInvoiceWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_FIELD_IDS.mktCustomer,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Customers`,
+    description: msg`Customers linked to the order`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktCustomerWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrders',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktCustomer: Relation<MktCustomerWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mktCustomer')
+  mktCustomerId: string | null;
 }

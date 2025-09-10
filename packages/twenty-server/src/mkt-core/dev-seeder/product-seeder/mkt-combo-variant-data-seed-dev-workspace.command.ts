@@ -12,21 +12,22 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { prefillMktCombos } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combos';
-import { mktCombosAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-combo-all.view';
+import { mktComboVariantsAllView } from 'src/mkt-core/dev-seeder/product-seeder/mkt-combo-variant-all.view';
+import { prefillMktComboVariants } from 'src/mkt-core/dev-seeder/product-seeder/prefill-mkt-combo-variants';
 
 interface SeedModuleOptions {
   workspaceId?: string;
 }
 
-type ComboViewDefinition = ReturnType<typeof mktCombosAllView>;
+type ComboVariantViewDefinition = ReturnType<typeof mktComboVariantsAllView>;
 
 @Command({
-  name: 'workspace:seed:combo-module',
-  description: 'Seed combo module views and data for existing workspace',
+  name: 'workspace:seed:combo-variant-module',
+  description:
+    'Seed combo variant module views and data for existing workspace',
 })
-export class SeedComboModuleCommand extends CommandRunner {
-  private readonly logger = new Logger(SeedComboModuleCommand.name);
+export class SeedComboVariantModuleCommand extends CommandRunner {
+  private readonly logger = new Logger(SeedComboVariantModuleCommand.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -40,7 +41,7 @@ export class SeedComboModuleCommand extends CommandRunner {
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id to seed combo module for',
+    description: 'workspace id to seed combo variant module for',
   })
   parseWorkspaceId(value: string): string {
     return value;
@@ -73,7 +74,7 @@ export class SeedComboModuleCommand extends CommandRunner {
     for (const workspace of workspaces) {
       try {
         await this.seedModuleForWorkspace(workspace.id);
-        // get viewId of view 'All Combo' after seed
+        // get viewId of view 'All Combo Variants' after seed
         const mainDataSource =
           await this.workspaceDataSourceService.connectToMainDataSource();
         const schemaName = getWorkspaceSchemaName(workspace.id);
@@ -81,7 +82,7 @@ export class SeedComboModuleCommand extends CommandRunner {
           .createQueryBuilder()
           .select('id')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Combos' })
+          .where('view.name = :name', { name: 'All Combo Variants' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
         const ViewId = viewRow?.id;
@@ -99,16 +100,16 @@ export class SeedComboModuleCommand extends CommandRunner {
           );
         } else {
           this.logger.warn(
-            '⚠️ Could not find viewId for All Combos view to update Favorite records',
+            '⚠️ Could not find viewId for All Combo Variants view to update Favorite records',
           );
         }
         this.logger.log(
-          `✅ Combo module seeded for workspace: ${workspace.id}`,
+          `✅ Combo Variant module seeded for workspace: ${workspace.id}`,
         );
         await this.workspaceCacheStorageService.flush(workspace.id, undefined);
       } catch (error) {
         this.logger.error(
-          `❌ Failed to seed combo module for workspace ${workspace.id}:`,
+          `❌ Failed to seed combo variant module for workspace ${workspace.id}:`,
           error,
         );
       }
@@ -117,7 +118,7 @@ export class SeedComboModuleCommand extends CommandRunner {
 
   private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
-      `🚀 Starting combo module seeding for workspace ${workspaceId}`,
+      `🚀 Starting combo variant module seeding for workspace ${workspaceId}`,
     );
 
     const mainDataSource =
@@ -130,24 +131,24 @@ export class SeedComboModuleCommand extends CommandRunner {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    // Find combo object metadata
+    // Find combo variant object metadata
     const itemObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === 'mktCombo',
+      (item) => item.nameSingular === 'mktComboVariant',
     );
 
     this.logger.log(
       `🔍 Debug - All objects in workspace: ${objectMetadataItems.map((item) => `${item.nameSingular}(${item.standardId})`).join(', ')}`,
     );
     this.logger.log(
-      `🔍 Debug - Looking for combo object with nameSingular: 'mktCombo'`,
+      `🔍 Debug - Looking for combo variant object with nameSingular: 'mktComboVariant'`,
     );
     this.logger.log(
-      `🔍 Debug - Combo object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
+      `🔍 Debug - Combo variant object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
     );
 
     if (!itemObjectMetadata) {
       this.logger.log(
-        `Combo object not found in workspace ${workspaceId}, skipping...`,
+        `Combo variant object not found in workspace ${workspaceId}, skipping...`,
       );
 
       return;
@@ -157,20 +158,20 @@ export class SeedComboModuleCommand extends CommandRunner {
 
     await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        // Check if combo view already exists by looking for a view with name 'All Combos'
+        // Check if combo variant view already exists by looking for a view with name 'All Combo Variants'
         const existingView = await entityManager
           .createQueryBuilder(undefined, undefined, undefined, {
             shouldBypassPermissionChecks: true,
           })
           .select('*')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Combos' })
+          .where('view.name = :name', { name: 'All Combo Variants' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
 
         if (existingView) {
           this.logger.log(
-            `Combo view already exists for workspace ${workspaceId}. Deleting and recreating...`,
+            `Combo variant view already exists for workspace ${workspaceId}. Deleting and recreating...`,
           );
 
           // Delete existing view (cascade will delete viewFields)
@@ -180,32 +181,32 @@ export class SeedComboModuleCommand extends CommandRunner {
             })
             .delete()
             .from(`${schemaName}.view`)
-            .where('name = :name', { name: 'All Combos' })
+            .where('name = :name', { name: 'All Combo Variants' })
             .andWhere('key = :key', { key: 'INDEX' })
             .execute();
         }
 
-        // Create combo view
-        const comboViewDefinition: ComboViewDefinition =
-          mktCombosAllView(objectMetadataItems);
+        // Create combo variant view
+        const comboVariantViewDefinition: ComboVariantViewDefinition =
+          mktComboVariantsAllView(objectMetadataItems);
 
-        // Seed mkt combos
-        await prefillMktCombos(entityManager, schemaName);
+        // Seed mkt combo variants
+        await prefillMktComboVariants(entityManager, schemaName);
 
-        if (!comboViewDefinition) {
+        if (!comboVariantViewDefinition) {
           this.logger.log(
-            `Could not create combo view definition for workspace ${workspaceId}`,
+            `Could not create combo variant view definition for workspace ${workspaceId}`,
           );
 
           return;
         }
 
         this.logger.log(
-          `🔍 Debug - View definition created with ${comboViewDefinition.fields?.length || 0} fields`,
+          `🔍 Debug - View definition created with ${comboVariantViewDefinition.fields?.length || 0} fields`,
         );
 
         const viewDefinitionWithId = {
-          ...comboViewDefinition,
+          ...comboVariantViewDefinition,
           id: uuidv4(),
         };
 
@@ -275,7 +276,6 @@ export class SeedComboModuleCommand extends CommandRunner {
         }
 
         // Insert view filters if any
-        // Insert view filters if any
         if (
           viewDefinitionWithId.filters &&
           viewDefinitionWithId.filters.length > 0
@@ -311,7 +311,9 @@ export class SeedComboModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(`✅ Combo view created for workspace ${workspaceId}`);
+        this.logger.log(
+          `✅ Combo variant view created for workspace ${workspaceId}`,
+        );
       },
     );
   }

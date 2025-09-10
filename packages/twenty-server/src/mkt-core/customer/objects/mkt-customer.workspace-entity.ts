@@ -41,6 +41,7 @@ import {
 } from 'src/mkt-core/customer/constants/mkt-customer.constant';
 import { MktCustomerTagWorkspaceEntity } from 'src/mkt-core/customer/objects/mkt-customer-tag.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -405,6 +406,19 @@ export class MktCustomerWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktCustomerTags: Relation<MktCustomerTagWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_CUSTOMER_FIELD_IDS.mktOrders,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Orders`,
+    description: msg`Orders of the customer`,
+    icon: 'IconShoppingCart',
+    inverseSideTarget: () => MktOrderWorkspaceEntity,
+    inverseSideFieldKey: 'mktCustomer',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktOrders: Relation<MktOrderWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_CUSTOMER_FIELD_IDS.accountOwner,

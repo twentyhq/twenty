@@ -1,10 +1,10 @@
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
-  MKT_PRODUCT_DATA_SEED_COLUMNS,
-  MKT_PRODUCT_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-product-data-seeds.constants';
+  MKT_VALUE_DATA_SEED_COLUMNS,
+  MKT_VALUE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/product-seeder/mkt-value-data-seeds.constants';
 
-export const prefillMktProducts = async (
+export const prefillMktValues = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
@@ -13,7 +13,8 @@ export const prefillMktProducts = async (
       shouldBypassPermissionChecks: true,
     })
     .insert()
-    .into(`${schemaName}.mktProduct`, MKT_PRODUCT_DATA_SEED_COLUMNS)
-    .values(MKT_PRODUCT_DATA_SEEDS)
+    .into(`${schemaName}.mktValue`, MKT_VALUE_DATA_SEED_COLUMNS)
+    .orIgnore()
+    .values(MKT_VALUE_DATA_SEEDS)
     .execute();
 };

@@ -12,22 +12,21 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { prefillMktComboVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combo-variants';
-import { mktComboVariantsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-combo-variant-all.view';
+import { mktProductsAllView } from 'src/mkt-core/dev-seeder/product-seeder/mkt-product-all.view';
+import { prefillMktProducts } from 'src/mkt-core/dev-seeder/product-seeder/prefill-mkt-products';
 
-interface SeedModuleOptions {
+interface SeedProductModuleOptions {
   workspaceId?: string;
 }
 
-type ComboVariantViewDefinition = ReturnType<typeof mktComboVariantsAllView>;
+type ProductViewDefinition = ReturnType<typeof mktProductsAllView>;
 
 @Command({
-  name: 'workspace:seed:combo-variant-module',
-  description:
-    'Seed combo variant module views and data for existing workspace',
+  name: 'workspace:seed:product-module',
+  description: 'Seed product module views and data for existing workspace',
 })
-export class SeedComboVariantModuleCommand extends CommandRunner {
-  private readonly logger = new Logger(SeedComboVariantModuleCommand.name);
+export class SeedProductModuleCommand extends CommandRunner {
+  private readonly logger = new Logger(SeedProductModuleCommand.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -41,13 +40,16 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id to seed combo variant module for',
+    description: 'workspace id to seed product module for',
   })
   parseWorkspaceId(value: string): string {
     return value;
   }
 
-  async run(passedParam: string[], options: SeedModuleOptions): Promise<void> {
+  async run(
+    passedParam: string[],
+    options: SeedProductModuleOptions,
+  ): Promise<void> {
     let workspaces: Workspace[] = [];
 
     if (options.workspaceId) {
@@ -73,8 +75,8 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
 
     for (const workspace of workspaces) {
       try {
-        await this.seedModuleForWorkspace(workspace.id);
-        // get viewId of view 'All Combo Variants' after seed
+        await this.seedProductModuleForWorkspace(workspace.id);
+        // Lấy viewId của view 'All Products' sau khi seed
         const mainDataSource =
           await this.workspaceDataSourceService.connectToMainDataSource();
         const schemaName = getWorkspaceSchemaName(workspace.id);
@@ -82,43 +84,45 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
           .createQueryBuilder()
           .select('id')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Combo Variants' })
+          .where('view.name = :name', { name: 'All Products' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
-        const ViewId = viewRow?.id;
+        const productViewId = viewRow?.id;
 
-        if (ViewId) {
-          // Insert new Favorite with this viewId
+        if (productViewId) {
+          // Insert mới Favorite với viewId này
           await mainDataSource
             .createQueryBuilder()
             .insert()
             .into(`${schemaName}.favorite`, ['viewId'])
-            .values([{ viewId: ViewId }])
+            .values([{ viewId: productViewId }])
             .execute();
           this.logger.log(
-            `✅ Inserted new Favorite record with viewId: ${ViewId}`,
+            `✅ Inserted new Favorite record with viewId: ${productViewId}`,
           );
         } else {
           this.logger.warn(
-            '⚠️ Could not find viewId for All Combo Variants view to update Favorite records',
+            '⚠️ Could not find viewId for All Products view to update Favorite records',
           );
         }
         this.logger.log(
-          `✅ Combo Variant module seeded for workspace: ${workspace.id}`,
+          `✅ Product module seeded for workspace: ${workspace.id}`,
         );
         await this.workspaceCacheStorageService.flush(workspace.id, undefined);
       } catch (error) {
         this.logger.error(
-          `❌ Failed to seed combo variant module for workspace ${workspace.id}:`,
+          `❌ Failed to seed product module for workspace ${workspace.id}:`,
           error,
         );
       }
     }
   }
 
-  private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
+  private async seedProductModuleForWorkspace(
+    workspaceId: string,
+  ): Promise<void> {
     this.logger.log(
-      `🚀 Starting combo variant module seeding for workspace ${workspaceId}`,
+      `🚀 Starting product module seeding for workspace ${workspaceId}`,
     );
 
     const mainDataSource =
@@ -131,24 +135,24 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    // Find combo variant object metadata
-    const itemObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === 'mktComboVariant',
+    // Find product object metadata
+    const productObjectMetadata = objectMetadataItems.find(
+      (item) => item.nameSingular === 'mktProduct',
     );
 
     this.logger.log(
       `🔍 Debug - All objects in workspace: ${objectMetadataItems.map((item) => `${item.nameSingular}(${item.standardId})`).join(', ')}`,
     );
     this.logger.log(
-      `🔍 Debug - Looking for combo variant object with nameSingular: 'mktComboVariant'`,
+      `🔍 Debug - Looking for product object with nameSingular: 'mktProduct'`,
     );
     this.logger.log(
-      `🔍 Debug - Combo variant object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
+      `🔍 Debug - Product object found: ${productObjectMetadata ? 'YES' : 'NO'}`,
     );
 
-    if (!itemObjectMetadata) {
+    if (!productObjectMetadata) {
       this.logger.log(
-        `Combo variant object not found in workspace ${workspaceId}, skipping...`,
+        `Product object not found in workspace ${workspaceId}, skipping...`,
       );
 
       return;
@@ -158,20 +162,20 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
 
     await mainDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        // Check if combo variant view already exists by looking for a view with name 'All Combo Variants'
+        // Check if product view already exists by looking for a view with name 'All Products'
         const existingView = await entityManager
           .createQueryBuilder(undefined, undefined, undefined, {
             shouldBypassPermissionChecks: true,
           })
           .select('*')
           .from(`${schemaName}.view`, 'view')
-          .where('view.name = :name', { name: 'All Combo Variants' })
+          .where('view.name = :name', { name: 'All Products' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
 
         if (existingView) {
           this.logger.log(
-            `Combo variant view already exists for workspace ${workspaceId}. Deleting and recreating...`,
+            `Product view already exists for workspace ${workspaceId}. Deleting and recreating...`,
           );
 
           // Delete existing view (cascade will delete viewFields)
@@ -181,32 +185,32 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
             })
             .delete()
             .from(`${schemaName}.view`)
-            .where('name = :name', { name: 'All Combo Variants' })
+            .where('name = :name', { name: 'All Products' })
             .andWhere('key = :key', { key: 'INDEX' })
             .execute();
         }
 
-        // Create combo variant view
-        const comboVariantViewDefinition: ComboVariantViewDefinition =
-          mktComboVariantsAllView(objectMetadataItems);
+        // Create product view
+        const productViewDefinition: ProductViewDefinition =
+          mktProductsAllView(objectMetadataItems);
 
-        // Seed mkt combo variants
-        await prefillMktComboVariants(entityManager, schemaName);
+        // Seed mkt products
+        await prefillMktProducts(entityManager, schemaName);
 
-        if (!comboVariantViewDefinition) {
+        if (!productViewDefinition) {
           this.logger.log(
-            `Could not create combo variant view definition for workspace ${workspaceId}`,
+            `Could not create product view definition for workspace ${workspaceId}`,
           );
 
           return;
         }
 
         this.logger.log(
-          `🔍 Debug - View definition created with ${comboVariantViewDefinition.fields?.length || 0} fields`,
+          `🔍 Debug - View definition created with ${productViewDefinition.fields?.length || 0} fields`,
         );
 
         const viewDefinitionWithId = {
-          ...comboVariantViewDefinition,
+          ...productViewDefinition,
           id: uuidv4(),
         };
 
@@ -276,6 +280,7 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
         }
 
         // Insert view filters if any
+        // Insert view filters if any
         if (
           viewDefinitionWithId.filters &&
           viewDefinitionWithId.filters.length > 0
@@ -311,9 +316,7 @@ export class SeedComboVariantModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(
-          `✅ Combo variant view created for workspace ${workspaceId}`,
-        );
+        this.logger.log(`✅ Product view created for workspace ${workspaceId}`);
       },
     );
   }

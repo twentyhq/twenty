@@ -13,7 +13,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -44,7 +43,7 @@ const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
   shortcut: 'OI',
   labelIdentifierStandardId: MKT_ORDER_ITEM_FIELD_IDS.name,
 })
-@WorkspaceIsSearchable()
+//@WorkspaceIsSearchable()
 export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MKT_ORDER_ITEM_FIELD_IDS.name,
@@ -69,6 +68,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Quantity`,
     description: msg`Quantity of the product`,
     icon: 'IconNumbers',
+    defaultValue: 1,
   })
   @WorkspaceIsNullable()
   quantity: number;
@@ -79,6 +79,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Unit Price`,
     description: msg`Price per unit of the product`,
     icon: 'IconCurrencyDollar',
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   unitPrice?: number;
@@ -106,6 +107,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.NUMBER,
     label: msg`Tax Percentage`,
     description: msg`Tax percentage for this line item`,
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   taxPercentage: number;
@@ -115,6 +117,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.NUMBER,
     label: msg`Tax Amount`,
     description: msg`Tax amount for this line item`,
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   taxAmount: number;
@@ -124,6 +127,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.NUMBER,
     label: msg`Total Amount with Tax`,
     description: msg`Total amount with tax for this line item`,
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   totalAmountWithTax: number;
@@ -134,6 +138,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Total Price`,
     description: msg`Total price for this line item (quantity * unit price)`,
     icon: 'IconCurrencyDollar',
+    defaultValue: 0,
   })
   @WorkspaceIsNullable()
   totalPrice?: number;
@@ -167,7 +172,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   mktProduct?: Relation<MktProductWorkspaceEntity>;
 
   @WorkspaceJoinColumn('mktProduct')
-  mktProductId?: string;
+  mktProductId?: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_ITEM_FIELD_IDS.mktVariant,
