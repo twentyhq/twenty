@@ -16,7 +16,7 @@ export type AuthContext = {
   impersonationContext?: {
     impersonationType?: ImpersonationTokenTypeEnum;
     impersonatorUserWorkspaceId?: string;
-    originalUserWorkspaceId?: string;
+    impersonatedUserWorkspaceId?: string;
   };
 };
 
@@ -70,7 +70,7 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   isImpersonating?: boolean;
   impersonationType?: ImpersonationTokenTypeEnum;
   impersonatorUserWorkspaceId?: string;
-  originalUserWorkspaceId?: string;
+  impersonatedUserWorkspaceId?: string;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -96,7 +96,7 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   isImpersonating?: boolean;
   impersonationType?: ImpersonationTokenTypeEnum;
   impersonatorUserWorkspaceId?: string;
-  originalUserWorkspaceId?: string;
+  impersonatedUserWorkspaceId?: string;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

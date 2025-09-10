@@ -106,7 +106,7 @@ export class RefreshTokenService {
       isImpersonating: jwtPayload.isImpersonating,
       impersonationType: jwtPayload.impersonationType,
       impersonatorUserWorkspaceId: jwtPayload.impersonatorUserWorkspaceId,
-      originalUserWorkspaceId: jwtPayload.originalUserWorkspaceId,
+      impersonatedUserWorkspaceId: jwtPayload.impersonatedUserWorkspaceId,
     };
   }
 

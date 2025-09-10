@@ -188,7 +188,7 @@ describe('AccessTokenService', () => {
         isImpersonating: true,
         impersonationType: 'WORKSPACE' as any,
         impersonatorUserWorkspaceId: 'uw-imp',
-        originalUserWorkspaceId: 'uw-orig',
+        impersonatedUserWorkspaceId: 'uw-orig',
       });
 
       expect(signSpy).toHaveBeenCalledWith(
@@ -196,7 +196,7 @@ describe('AccessTokenService', () => {
           isImpersonating: true,
           impersonationType: 'WORKSPACE',
           impersonatorUserWorkspaceId: 'uw-imp',
-          originalUserWorkspaceId: 'uw-orig',
+          impersonatedUserWorkspaceId: 'uw-orig',
         }),
         expect.any(Object),
       );

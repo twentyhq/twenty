@@ -93,7 +93,7 @@ export class WorkspaceImpersonationService {
     impersonatorUserWorkspaceId: string;
     resolveTarget: (manager: EntityManager) => Promise<UserWorkspace | null>;
   }): Promise<AuthTokens> {
-    const { targetUserId, originalUserWorkspaceId } =
+    const { targetUserId, targetUserWorkspaceId, impersonatorUserId } =
       await this.dataSource.transaction(async (manager) => {
         const target = await resolveTarget(manager);
 
@@ -146,7 +146,8 @@ export class WorkspaceImpersonationService {
 
         return {
           targetUserId: target.userId,
-          originalUserWorkspaceId: target.id,
+          targetUserWorkspaceId: target.id,
+          impersonatorUserId: impersonatorUserWorkspace?.userId ?? null,
         };
       });
 
@@ -154,12 +155,12 @@ export class WorkspaceImpersonationService {
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userId: null,
+      userId: impersonatorUserId ?? null,
     });
 
     await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.attempted',
-      message: correlationId,
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
     const accessToken = await this.accessTokenService.generateAccessToken({
@@ -169,7 +170,7 @@ export class WorkspaceImpersonationService {
       isImpersonating: true,
       impersonationType: ImpersonationTokenTypeEnum.WORKSPACE,
       impersonatorUserWorkspaceId,
-      originalUserWorkspaceId,
+      impersonatedUserWorkspaceId: targetUserWorkspaceId,
     });
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: targetUserId,
@@ -179,12 +180,12 @@ export class WorkspaceImpersonationService {
       isImpersonating: true,
       impersonationType: ImpersonationTokenTypeEnum.WORKSPACE,
       impersonatorUserWorkspaceId,
-      originalUserWorkspaceId,
+      impersonatedUserWorkspaceId: targetUserWorkspaceId,
     });
 
     await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
-      message: correlationId,
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
     return {

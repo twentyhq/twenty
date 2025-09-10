@@ -45,7 +45,7 @@ export class RenewTokenService {
       isImpersonating,
       impersonationType,
       impersonatorUserWorkspaceId,
-      originalUserWorkspaceId,
+      impersonatedUserWorkspaceId,
     } = await this.refreshTokenService.verifyRefreshToken(token);
 
     // Revoke old refresh token
@@ -80,7 +80,7 @@ export class RenewTokenService {
             isImpersonating,
             impersonationType,
             impersonatorUserWorkspaceId,
-            originalUserWorkspaceId,
+            impersonatedUserWorkspaceId,
           });
 
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
@@ -91,7 +91,7 @@ export class RenewTokenService {
       isImpersonating,
       impersonationType,
       impersonatorUserWorkspaceId,
-      originalUserWorkspaceId,
+      impersonatedUserWorkspaceId,
     });
 
     return {
