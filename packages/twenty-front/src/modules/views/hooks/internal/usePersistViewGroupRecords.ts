@@ -85,7 +85,7 @@ export const usePersistViewGroupRecords = () => {
   );
 
   const deleteCoreViewGroupRecords = useCallback(
-    async (viewGroupsToDelete: ViewGroup[]) => {
+    async (viewGroupsToDelete: Pick<CoreViewGroup, 'id' | 'viewId'>[]) => {
       if (!viewGroupsToDelete.length) return;
 
       return Promise.all(
@@ -95,12 +95,9 @@ export const usePersistViewGroupRecords = () => {
             variables: {
               id: viewGroup.id,
             },
-            update: (_cache, { data }) => {
-              const record = data?.['destroyCoreViewGroup'];
-              if (!record) return;
-
+            update: () => {
               triggerViewGroupOptimisticEffect({
-                deletedViewGroups: [record],
+                deletedViewGroups: [viewGroup],
               });
             },
           }),

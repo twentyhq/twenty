@@ -21,7 +21,7 @@ export const useTriggerViewGroupOptimisticEffect = () => {
       }: {
         createdViewGroups?: CoreViewGroup[];
         updatedViewGroups?: CoreViewGroup[];
-        deletedViewGroups?: CoreViewGroup[];
+        deletedViewGroups?: Pick<CoreViewGroup, 'id' | 'viewId'>[];
       }) => {
         const coreViews = getSnapshotValue(snapshot, coreViewsState);
         let newCoreViews = [...coreViews];
