@@ -171,6 +171,20 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
+export type Application = {
+  __typename?: 'Application';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  label: Scalars['String'];
+  sourcePath: Scalars['String'];
+  sourceType: Scalars['String'];
+  standardId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  version?: Maybe<Scalars['String']>;
+  workspaceId: Scalars['UUID'];
+};
+
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -1500,6 +1514,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
+  syncApplication: Application;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   trackAnalytics: Analytics;
@@ -2094,6 +2109,11 @@ export type MutationSignUpInWorkspaceArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
+};
+
+
+export type MutationSyncApplicationArgs = {
+  manifest: Scalars['JSON'];
 };
 
 

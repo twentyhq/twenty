@@ -31,7 +31,10 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewFieldEntity extends SyncableEntity {
+export class ViewFieldEntity
+  extends SyncableEntity
+  implements Required<ViewFieldEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -59,7 +62,7 @@ export class ViewFieldEntity extends SyncableEntity {
     nullable: true,
     default: null,
   })
-  aggregateOperation?: AggregateOperations | null;
+  aggregateOperation: AggregateOperations | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
@@ -74,7 +77,7 @@ export class ViewFieldEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',

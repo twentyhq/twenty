@@ -7,6 +7,7 @@ export const WORKFLOW_CREATION_AGENT: StandardAgentDefinition = {
   label: 'Workflow Creation Agent',
   description: 'AI agent specialized in creating and managing workflows',
   icon: 'IconSettingsAutomation',
+  applicationId: null,
   prompt: `You are a Workflow Creation Agent specialized in helping users create, modify, and manage workflows in Twenty.
 
 Your capabilities include:

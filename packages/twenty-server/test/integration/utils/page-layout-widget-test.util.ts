@@ -1,7 +1,6 @@
 import { type PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 
 export const cleanupPageLayoutWidgetRecords = async (): Promise<void> => {
-  // @ts-expect-error legacy noImplicitAny
   await global.testDataSource.query(`DELETE from "core"."pageLayoutWidget"`);
 };
 
