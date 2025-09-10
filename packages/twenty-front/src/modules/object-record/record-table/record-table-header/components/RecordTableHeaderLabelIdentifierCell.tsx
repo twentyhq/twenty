@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -124,6 +125,10 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
     resizedFieldMetadataIdComponentState,
   );
 
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
+
   if (!recordField) {
     return <></>;
   }
@@ -171,7 +176,8 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
         />
         {(isMobile || iconIsVisible) &&
           !isReadOnly &&
-          hasObjectUpdatePermissions && (
+          hasObjectUpdatePermissions &&
+          !hasAnySoftDeleteFilterOnView && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}
