@@ -12,8 +12,8 @@ import {
   WorkspaceMigrationOrchestratorOptimisticEntityMaps,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { WorkspaceViewMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
 import { WorkspaceViewFieldMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-field-migration-builder-v2.service';
+import { WorkspaceViewMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/services/workspace-migration-runner-v2.service';
 import {
   WorkspaceMigrationV2Exception,
@@ -43,7 +43,7 @@ export class WorkspaceMigrationOrchestratorService {
     WorkspaceMigrationOrchestratorFailedResult | undefined
   > {
     try {
-      const allObjectActions = [];
+      const allObjectAndFieldActions = [];
       const allViewActions = [];
       const allViewFieldActions = [];
       const allFailures = [];
@@ -68,7 +68,9 @@ export class WorkspaceMigrationOrchestratorService {
           allFailures.push(...objectResult.errors);
         } else {
           optimisticEntityMaps.object = objectResult.optimisticFlatEntityMaps;
-          allObjectActions.push(...objectResult.workspaceMigration.actions);
+          allObjectAndFieldActions.push(
+            ...objectResult.workspaceMigration.actions,
+          );
         }
       }
 
@@ -128,7 +130,7 @@ export class WorkspaceMigrationOrchestratorService {
       const workspaceMigration = {
         workspaceId,
         actions: [
-          ...allObjectActions,
+          ...allObjectAndFieldActions,
           ...allViewActions,
           ...allViewFieldActions,
         ],
@@ -160,13 +162,13 @@ export class WorkspaceMigrationOrchestratorService {
     entityMaps: WorkspaceMigrationOrchestratorEntityMaps;
     workspaceId: string;
   }): Promise<WorkspaceMigrationOrchestratorOptimisticEntityMaps> {
-    let optimisticObjectMaps =
+    const optimisticObjectMaps =
       entityMaps.object?.fromFlatObjectMetadataMaps ??
-      (await this.workspaceMetadataCacheService
-        .getExistingOrRecomputeFlatObjectMetadataMaps({
-          workspaceId,
-        })
-        .then((result) => result.flatObjectMetadataMaps));
+      (
+        await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+          { workspaceId },
+        )
+      ).flatObjectMetadataMaps;
 
     if (!isDefined(optimisticObjectMaps)) {
       throw new WorkspaceMigrationOrchestratorException(
@@ -174,20 +176,20 @@ export class WorkspaceMigrationOrchestratorService {
       );
     }
 
-    let optimisticViewMaps =
+    const optimisticViewMaps =
       entityMaps.view?.fromFlatViewMaps ??
-      (await this.viewCacheService
-        .getExistingOrRecomputeFlatViewMaps({
+      (
+        await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
           workspaceId,
         })
-        .then((result) => result.flatViewMaps));
+      ).flatViewMaps;
 
     if (!isDefined(optimisticViewMaps)) {
       throw new WorkspaceMigrationOrchestratorException('View maps not found');
     }
 
     // For ViewFields, if not provided, start with empty maps since ViewFields are optional
-    let optimisticViewFieldMaps = entityMaps.viewField
+    const optimisticViewFieldMaps = entityMaps.viewField
       ?.fromFlatViewFieldMaps ?? {
       byId: {},
       idByUniversalIdentifier: {},
@@ -199,22 +201,4 @@ export class WorkspaceMigrationOrchestratorService {
       viewField: optimisticViewFieldMaps,
     };
   }
-
-  // private async handleEntityMigration<
-  //   TBuildArgs,
-  //   TResult extends { status: string },
-  // >(
-  //   buildArgs: TBuildArgs,
-  //   builder: { validateAndBuild: (args: TBuildArgs) => Promise<TResult> },
-  //   allFailures: any[],
-  //   allActions: any[],
-  // ): Promise<void> {
-  //   const result = await builder.validateAndBuild(buildArgs);
-
-  //   if (result.status === 'fail') {
-  //     allFailures.push(...(result as any).errors);
-  //   } else {
-  //     allActions.push(...(result as any).workspaceMigration.actions);
-  //   }
-  // }
 }

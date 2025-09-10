@@ -4,16 +4,11 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
 
-export const viewFieldEntityRelationProperties = [
-  'fieldMetadata',
-  'view',
-  'workspace',
-] as const satisfies ViewFieldEntityRelationProperties[];
-
-type ViewFieldEntityRelationProperties = ExtractRecordTypeOrmRelationProperties<
-  ViewFieldEntity,
-  FieldMetadataEntity | ViewEntity | Workspace
->;
+export type ViewFieldEntityRelationProperties =
+  ExtractRecordTypeOrmRelationProperties<
+    ViewFieldEntity,
+    FieldMetadataEntity | ViewEntity | Workspace
+  >;
 
 export type FlatViewField = Omit<
   ViewFieldEntity,

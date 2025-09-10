@@ -1,6 +1,4 @@
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
-export type FlatViewMaps = {
-  byId: Partial<Record<string, FlatView>>;
-  idByUniversalIdentifier: Partial<Record<string, string>>;
-};
+export type FlatViewMaps = FlatEntityMaps<FlatView>;

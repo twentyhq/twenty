@@ -16,8 +16,8 @@ import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { VIEW_FIELD_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-field-entity-relation-properties.constant';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
-import { viewFieldEntityRelationProperties } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { fromPartialFlatViewFieldToFlatViewFieldWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-field-to-flat-view-field-with-default.util';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
@@ -146,7 +146,7 @@ export class ViewFieldV2Service {
         ...existingViewField,
         ...updateData,
       },
-      viewFieldEntityRelationProperties,
+      VIEW_FIELD_ENTITY_RELATION_PROPERTIES,
     );
 
     const flatViewFieldFromUpdateInput =

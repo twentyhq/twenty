@@ -17,8 +17,8 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
+import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { viewEntityRelationProperties } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-orchestrator.service';
@@ -121,7 +121,7 @@ export class ViewV2Service {
         ...existingView,
         ...updateData,
       },
-      viewEntityRelationProperties,
+      VIEW_ENTITY_RELATION_PROPERTIES,
     );
 
     const flatViewFromUpdateInput = fromPartialFlatViewToFlatViewWithDefault({

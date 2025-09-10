@@ -1,7 +1,7 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 
-import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/constants/flat-view-field-properties-to-compare.constant';
+import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-properties-to-compare.constant';
 import { type FlatViewFieldPropertiesToCompare } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-properties-to-compare.type';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { type UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
@@ -17,17 +17,10 @@ export const compareTwoFlatViewField = ({
   toFlatViewField,
 }: GetWorkspaceMigrationUpdateViewFieldActionArgs) => {
   const transformMetadataForComparisonParameters = {
-    shouldIgnoreProperty: (property: string) => {
-      if (
-        !FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE.includes(
-          property as FlatViewFieldPropertiesToCompare,
-        )
-      ) {
-        return true;
-      }
-
-      return false;
-    },
+    shouldIgnoreProperty: (property: string) =>
+      !FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE.includes(
+        property as FlatViewFieldPropertiesToCompare,
+      ),
     propertiesToStringify: [],
   };
   const fromCompare = transformMetadataForComparison(

@@ -8,26 +8,17 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
 
-export const viewEntityRelationProperties = [
-  'objectMetadata',
-  'viewFields',
-  'viewFilters',
-  'viewFilterGroups',
-  'viewGroups',
-  'viewSorts',
-  'workspace',
-] as const satisfies ViewEntityRelationProperties[];
-
-type ViewEntityRelationProperties = ExtractRecordTypeOrmRelationProperties<
-  ViewEntity,
-  | ObjectMetadataEntity
-  | ViewFieldEntity
-  | ViewSortEntity
-  | ViewFilterEntity
-  | ViewGroupEntity
-  | ViewFilterGroupEntity
-  | Workspace
->;
+export type ViewEntityRelationProperties =
+  ExtractRecordTypeOrmRelationProperties<
+    ViewEntity,
+    | ObjectMetadataEntity
+    | ViewFieldEntity
+    | ViewSortEntity
+    | ViewFilterEntity
+    | ViewGroupEntity
+    | ViewFilterGroupEntity
+    | Workspace
+  >;
 
 export type FlatView = Omit<ViewEntity, ViewEntityRelationProperties> & {
   universalIdentifier: string;
