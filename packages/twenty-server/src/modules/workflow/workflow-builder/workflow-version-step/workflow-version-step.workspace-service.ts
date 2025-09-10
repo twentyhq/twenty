@@ -322,15 +322,7 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const duplicatedStep = await this.createStepForDuplicate({
-      step: {
-        ...stepToDuplicate,
-        id: v4(),
-        nextStepIds: [],
-        position: {
-          x: (stepToDuplicate.position?.x ?? 0) + 200,
-          y: stepToDuplicate.position?.y ?? 0,
-        },
-      },
+      step: stepToDuplicate,
       workspaceId,
     });
 
@@ -826,6 +818,11 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
+    const duplicatedStepPosition = {
+      x: (step.position?.x ?? 0) + 100,
+      y: (step.position?.y ?? 0) + 50,
+    };
+
     switch (step.type) {
       case WorkflowActionType.CODE: {
         const newServerlessFunction =
@@ -840,10 +837,7 @@ export class WorkflowVersionStepWorkspaceService {
           id: v4(),
           name: `${step.name} (Duplicate)`,
           nextStepIds: [],
-          position: {
-            x: (step.position?.x ?? 0) + 100,
-            y: step.position?.y ?? 0,
-          },
+          position: duplicatedStepPosition,
           settings: {
             ...step.settings,
             input: {
@@ -860,10 +854,7 @@ export class WorkflowVersionStepWorkspaceService {
           id: v4(),
           name: `${step.name} (Duplicate)`,
           nextStepIds: [],
-          position: {
-            x: (step.position?.x ?? 0) + 100,
-            y: step.position?.y ?? 0,
-          },
+          position: duplicatedStepPosition,
         };
       }
     }

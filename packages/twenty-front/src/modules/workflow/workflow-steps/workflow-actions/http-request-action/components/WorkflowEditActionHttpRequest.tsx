@@ -220,15 +220,17 @@ export const WorkflowEditActionHttpRequest = ({
       {!actionOptions.readonly && (
         <WorkflowActionFooter
           stepId={action.id}
-          additionalActions={[
-            activeTabId === WorkflowHttpRequestTabId.TEST && (
-              <CmdEnterActionButton
-                title="Test"
-                onClick={handleTestRequest}
-                disabled={isTesting || actionOptions.readonly}
-              />
-            ),
-          ]}
+          additionalActions={
+            activeTabId === WorkflowHttpRequestTabId.TEST
+              ? [
+                  <CmdEnterActionButton
+                    title="Test"
+                    onClick={handleTestRequest}
+                    disabled={isTesting}
+                  />,
+                ]
+              : []
+          }
         />
       )}
     </>

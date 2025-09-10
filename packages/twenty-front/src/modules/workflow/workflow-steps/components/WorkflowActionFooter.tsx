@@ -62,7 +62,10 @@ export const WorkflowActionFooter = ({
 
   return (
     <RightDrawerFooter
-      actions={[<OptionsDropdown />, ...(additionalActions ?? [])]}
+      actions={[
+        <OptionsDropdown key="options" />,
+        ...(additionalActions ?? []),
+      ]}
     />
   );
 };
