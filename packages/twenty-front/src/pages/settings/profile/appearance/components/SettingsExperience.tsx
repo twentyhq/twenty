@@ -2,6 +2,9 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { SettingsPath } from 'twenty-shared/types';
+import type { NumberFormat } from '@/localization/constants/NumberFormat';
+import { useRecoilState } from 'recoil';
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -10,11 +13,21 @@ import { ColorSchemePicker } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { DateTimeSettings } from '~/pages/settings/profile/appearance/components/DateTimeSettings';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
+import { NumberFormatSelect } from '~/pages/settings/profile/appearance/components/NumberFormatSettings';
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
+  const [dateTimeFormat, setDateTimeFormat] =
+    useRecoilState(dateTimeFormatState);
 
   const { t } = useLingui();
+
+  const handleNumberFormatChange = (value: NumberFormat) => {
+    setDateTimeFormat((prev) => ({
+      ...prev,
+      numberFormat: value,
+    }));
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -53,6 +66,17 @@ export const SettingsExperience = () => {
             description={t`Configure how dates are displayed across the app`}
           />
           <DateTimeSettings />
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Other format`}
+            description={t`Choose additional formatting preferences`}
+          />
+          <NumberFormatSelect
+            value={dateTimeFormat.numberFormat}
+            onChange={handleNumberFormatChange}
+          />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

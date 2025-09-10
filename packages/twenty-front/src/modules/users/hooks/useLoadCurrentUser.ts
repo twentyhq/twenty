@@ -7,6 +7,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
@@ -107,6 +108,7 @@ export const useLoadCurrentUser = () => {
               user.workspaceMember.timeFormat,
             )
           : TimeFormat[detectTimeFormat()],
+        numberFormat: NumberFormat.COMMAS_AND_DOT,
       });
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

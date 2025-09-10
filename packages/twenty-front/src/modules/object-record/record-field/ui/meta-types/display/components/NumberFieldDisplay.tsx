@@ -1,22 +1,37 @@
+import { useContext } from 'react';
 import { useNumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useNumberFieldDisplay';
 import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
+import { UserContext } from '@/users/contexts/UserContext';
 import { isDefined } from 'twenty-shared/utils';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '@/localization/utils/formatNumber';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
-  const decimals = fieldDefinition.metadata.settings?.decimals;
+  const { numberFormat } = useContext(UserContext);
   const type = fieldDefinition.metadata.settings?.type;
 
-  if (!isDefined(fieldValue))
-    return <NumberDisplay value={null} decimals={decimals} />;
-  const value =
-    type === 'percentage'
-      ? `${formatNumber(Number(fieldValue) * 100, decimals)}%`
-      : type === 'shortNumber'
-        ? formatAmount(Number(fieldValue))
-        : formatNumber(Number(fieldValue), decimals);
+  if (!isDefined(fieldValue)) {
+    return <NumberDisplay value={null} />;
+  }
 
-  return <NumberDisplay value={value} decimals={decimals} />;
+  const numericValue = Number(fieldValue);
+  let formattedValue: string;
+
+  if (type === 'percentage') {
+    formattedValue = `${formatNumber(numericValue * 100, numberFormat)}%`;
+  } else if (type === 'shortNumber') {
+    formattedValue = formatNumber(
+      numericValue,
+      NumberFormat.MAGNITUDE_SUFFIXES,
+    );
+  } else {
+    formattedValue = formatNumber(numericValue, numberFormat);
+  }
+
+  return (
+    <div>
+      <NumberDisplay value={formattedValue} />
+    </div>
+  );
 };

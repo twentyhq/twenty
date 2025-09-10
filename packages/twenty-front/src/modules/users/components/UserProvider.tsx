@@ -26,6 +26,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
         dateFormat: dateTimeFormat.dateFormat,
         timeFormat: dateTimeFormat.timeFormat,
         timeZone: dateTimeFormat.timeZone,
+        numberFormat: dateTimeFormat.numberFormat,
       }}
     >
       {children}
