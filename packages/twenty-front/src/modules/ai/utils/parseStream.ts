@@ -1,31 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  type ParsedStep,
+  type ToolEvent,
+  type ToolResultEvent,
+} from '@/ai/types/streamTypes';
+
 type TextBlock =
   | { type: 'reasoning'; content: string; isThinking: boolean }
   | { type: 'text'; content: string }
   | null;
-
-type ToolCallEvent = {
-  type: 'tool-call';
-  toolCallId: string;
-  toolName: string;
-  args: any;
-};
-
-type ToolResultEvent = {
-  type: 'tool-result';
-  toolCallId: string;
-  toolName: string;
-  result: any;
-  message: string;
-};
-
-type ToolEvent = ToolCallEvent | ToolResultEvent;
-
-type ParsedStep =
-  | { type: 'tool'; events: ToolEvent[] }
-  | { type: 'reasoning'; content: string; isThinking: boolean }
-  | { type: 'text'; content: string };
 
 export const parseStream = (streamText: string): ParsedStep[] => {
   const lines = streamText.trim().split('\n');
