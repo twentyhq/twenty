@@ -33,8 +33,7 @@ export class WorkspaceViewFieldMigrationBuilderV2Service extends WorkspaceEntity
   FlatViewField,
   FailedFlatViewFieldValidation,
   WorkspaceMigrationViewFieldActionV2,
-  WorkspaceViewFieldMigrationBuildArgs,
-  WorkspaceViewFieldMigrationV2BuilderOptions
+  WorkspaceViewFieldMigrationBuildArgs
 > {
   constructor(
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,

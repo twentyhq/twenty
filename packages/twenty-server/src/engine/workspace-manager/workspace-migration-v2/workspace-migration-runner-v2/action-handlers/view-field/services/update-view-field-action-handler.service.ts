@@ -5,6 +5,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 @Injectable()
 export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -17,24 +18,16 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateViewFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { viewFieldId, updates } = action;
+    const { action, queryRunner } = context;
+    const { viewFieldId } = action;
 
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
-    const updatesToSave = updates.reduce((acc, { to, property }) => {
-      return {
-        ...acc,
-        [property]: to,
-      };
-    }, {});
-
-    await viewFieldRepository.save({
-      id: viewFieldId,
-      ...updatesToSave,
-      workspaceId,
-    });
+    await viewFieldRepository.update(
+      viewFieldId,
+      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+    );
   }
 
   async executeForWorkspaceSchema(

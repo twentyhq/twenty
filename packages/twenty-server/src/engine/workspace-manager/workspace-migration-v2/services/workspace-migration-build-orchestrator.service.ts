@@ -21,9 +21,9 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration.exception';
 
 @Injectable()
-export class WorkspaceMigrationOrchestratorService {
+export class WorkspaceMigrationBuildOrchestratorService {
   private readonly logger = new Logger(
-    WorkspaceMigrationOrchestratorService.name,
+    WorkspaceMigrationBuildOrchestratorService.name,
   );
 
   constructor(
@@ -35,7 +35,7 @@ export class WorkspaceMigrationOrchestratorService {
     private readonly viewCacheService: ViewCacheService,
   ) {}
 
-  public async orchestrateWorkspaceMigration({
+  public async buildWorkspaceMigrations({
     workspaceId,
     buildOptions,
     entityMaps,
@@ -127,22 +127,7 @@ export class WorkspaceMigrationOrchestratorService {
         };
       }
 
-      const workspaceMigration = {
-        workspaceId,
-        actions: [
-          ...allObjectAndFieldActions,
-          ...allViewActions,
-          ...allViewFieldActions,
-        ],
-      };
-
-      await this.migrationRunner.run(workspaceMigration).catch((error) => {
-        this.logger.error(error);
-        throw new WorkspaceMigrationV2Exception(
-          WorkspaceMigrationV2ExceptionCode.RUNNER_INTERNAL_SERVER_ERROR,
-          error.message,
-        );
-      });
+      // TODO: return workspace migrations
 
       return;
     } catch (error) {

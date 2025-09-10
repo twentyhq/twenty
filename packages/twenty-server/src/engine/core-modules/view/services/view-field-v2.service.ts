@@ -21,14 +21,14 @@ import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/
 import { fromPartialFlatViewFieldToFlatViewFieldWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-field-to-flat-view-field-with-default.util';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
-import { WorkspaceMigrationOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-orchestrator.service';
+import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 
 @Injectable()
 export class ViewFieldV2Service {
   constructor(
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
-    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationOrchestratorService,
+    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
   ) {}
 
   // TODO: move to cache service
@@ -90,7 +90,7 @@ export class ViewFieldV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             viewField: {
@@ -163,7 +163,7 @@ export class ViewFieldV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             viewField: {
@@ -217,7 +217,7 @@ export class ViewFieldV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             viewField: {

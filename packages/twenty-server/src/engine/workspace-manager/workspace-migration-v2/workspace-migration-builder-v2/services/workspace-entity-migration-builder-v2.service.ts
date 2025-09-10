@@ -24,7 +24,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   TFailedValidation,
   TActionType extends WorkspaceMigrationActionV2,
   TBuildArgs extends { workspaceId: string } & FromTo<TFlatEntityMaps, string>,
-  _TBuilderOptions,
 > {
   public async validateAndBuild(
     args: TBuildArgs,
@@ -63,11 +62,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       status: 'success',
       workspaceMigration: {
         workspaceId: args.workspaceId,
-        actions: [
-          ...result.deleted,
-          ...result.created,
-          ...result.updated,
-        ] as WorkspaceMigrationActionV2[],
+        actions: [...result.deleted, ...result.created, ...result.updated],
       },
       optimisticFlatEntityMaps: result.optimisticMaps,
     };

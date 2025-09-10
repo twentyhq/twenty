@@ -21,14 +21,14 @@ import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/fl
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
-import { WorkspaceMigrationOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-orchestrator.service';
+import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 
 @Injectable()
 export class ViewV2Service {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
-    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationOrchestratorService,
+    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly viewCacheService: ViewCacheService,
   ) {}
 
@@ -63,7 +63,7 @@ export class ViewV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             view: {
@@ -136,7 +136,7 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             view: {
@@ -192,7 +192,7 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.orchestrateWorkspaceMigration(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
         {
           entityMaps: {
             view: {
