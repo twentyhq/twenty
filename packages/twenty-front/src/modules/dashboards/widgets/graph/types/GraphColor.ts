@@ -5,4 +5,6 @@ export type GraphColor =
   | 'orange'
   | 'pink'
   | 'yellow'
-  | 'red';
+  | 'red'
+  | 'green'
+  | 'sky';

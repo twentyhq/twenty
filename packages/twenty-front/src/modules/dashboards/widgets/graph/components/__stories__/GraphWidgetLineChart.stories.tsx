@@ -33,9 +33,8 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     showGrid: {
       control: 'boolean',
     },
-    showPoints: {
-      control: 'select',
-      options: [true, false, 'hover'],
+    enablePoints: {
+      control: 'boolean',
     },
     xAxisLabel: {
       control: 'text',
@@ -88,7 +87,7 @@ const renderChart = (args: any) => (
       data={args.data}
       showLegend={args.showLegend}
       showGrid={args.showGrid}
-      showPoints={args.showPoints}
+      enablePoints={args.enablePoints}
       xAxisLabel={args.xAxisLabel}
       yAxisLabel={args.yAxisLabel}
       displayType={args.displayType}
@@ -131,7 +130,7 @@ export const Default: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
@@ -161,7 +160,7 @@ export const WithArea: Story = {
     enableArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: 'hover',
+    enablePoints: false,
     xAxisLabel: 'Period',
     yAxisLabel: 'Amount',
     displayType: 'currency',
@@ -196,7 +195,7 @@ export const StackedArea: Story = {
     stackedArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     curve: 'monotoneX',
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Revenue',
@@ -219,7 +218,7 @@ export const WithPoints: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     lineWidth: 3,
     xAxisLabel: 'Week',
     yAxisLabel: 'Score',
@@ -242,7 +241,7 @@ export const StepChart: Story = {
     curve: 'step',
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     lineWidth: 2,
     xAxisLabel: 'Day',
     yAxisLabel: 'Units',
@@ -272,7 +271,7 @@ export const WithNullValues: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Measurement',
     displayType: 'number',
@@ -300,7 +299,7 @@ export const InteractiveWithLinks: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     enableSlices: false,
     xAxisLabel: 'Step',
     yAxisLabel: 'Progress',
@@ -338,7 +337,7 @@ export const MultiSeriesMixed: Story = {
     enableArea: false,
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     curve: 'monotoneX',
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
@@ -401,7 +400,7 @@ export const OverlappingGradientBlend: Story = {
     enableArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     curve: 'monotoneX',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
@@ -446,7 +445,7 @@ export const HighContrastOverlap: Story = {
     enableArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     curve: 'natural',
     xAxisLabel: 'Day',
     yAxisLabel: 'Score',
@@ -476,7 +475,7 @@ export const CurveComparison: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     curve: 'linear',
     xAxisLabel: 'X Axis',
     yAxisLabel: 'Y Axis',
@@ -531,7 +530,7 @@ export const StepInterpolations: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     curve: 'step',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
@@ -576,7 +575,7 @@ export const NaturalVsMonotone: Story = {
     enableArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: true,
+    enablePoints: true,
     curve: 'natural',
     xAxisLabel: 'Sample',
     yAxisLabel: 'Measurement',
@@ -632,7 +631,7 @@ export const IntenseOverlapRGB: Story = {
     enableArea: true,
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     curve: 'monotoneX',
     xAxisLabel: 'Position',
     yAxisLabel: 'Intensity',
@@ -660,7 +659,7 @@ export const Catalog: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    showPoints: false,
+    enablePoints: false,
     enableArea: true,
   },
   decorators: [CatalogDecorator],
@@ -670,7 +669,17 @@ export const Catalog: Story = {
       dimensions: [
         {
           name: 'colors',
-          values: ['blue', 'purple', 'turquoise', 'orange', 'pink'],
+          values: [
+            'blue',
+            'purple',
+            'turquoise',
+            'orange',
+            'pink',
+            'red',
+            'yellow',
+            'green',
+            'sky',
+          ],
           props: (color: string) => ({
             data: [
               {

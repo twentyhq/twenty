@@ -64,4 +64,20 @@ export const createGraphColorRegistry = (
     },
     solid: theme.color.red,
   },
+  green: {
+    name: 'green',
+    gradient: {
+      normal: [theme.adaptiveColors.green1, theme.adaptiveColors.green2],
+      hover: [theme.adaptiveColors.green3, theme.adaptiveColors.green4],
+    },
+    solid: theme.color.green,
+  },
+  sky: {
+    name: 'sky',
+    gradient: {
+      normal: [theme.adaptiveColors.sky1, theme.adaptiveColors.sky2],
+      hover: [theme.adaptiveColors.sky3, theme.adaptiveColors.sky4],
+    },
+    solid: theme.color.sky,
+  },
 });

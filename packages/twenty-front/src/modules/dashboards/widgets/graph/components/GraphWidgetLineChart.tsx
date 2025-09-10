@@ -38,7 +38,7 @@ type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
   showLegend?: boolean;
   showGrid?: boolean;
-  showPoints?: boolean | 'hover';
+  enablePoints?: boolean;
   xAxisLabel?: string;
   yAxisLabel?: string;
   id: string;
@@ -83,7 +83,7 @@ export const GraphWidgetLineChart = ({
   data,
   showLegend = true,
   showGrid = true,
-  showPoints = false,
+  enablePoints = false,
   xAxisLabel,
   yAxisLabel,
   id,
@@ -288,8 +288,8 @@ export const GraphWidgetLineChart = ({
           lineWidth={lineWidth}
           enableArea={enableArea}
           areaBaselineValue={0}
-          enablePoints={showPoints === true}
-          pointSize={showPoints === 'hover' ? 0 : 6}
+          enablePoints={enablePoints}
+          pointSize={6}
           pointBorderWidth={0}
           areaOpacity={1}
           areaBlendMode="multiply"
