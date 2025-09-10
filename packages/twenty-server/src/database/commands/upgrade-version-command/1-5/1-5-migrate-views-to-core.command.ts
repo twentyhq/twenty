@@ -562,6 +562,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         createdAt: new Date(filter.createdAt),
         updatedAt: new Date(filter.updatedAt),
         deletedAt: filter.deletedAt ? new Date(filter.deletedAt) : null,
+        subFieldName: filter.subFieldName,
       };
 
       const repository = queryRunner.manager.getRepository(ViewFilterEntity);

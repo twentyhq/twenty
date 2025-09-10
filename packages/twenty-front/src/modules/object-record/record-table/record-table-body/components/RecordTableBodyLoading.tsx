@@ -1,6 +1,7 @@
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
@@ -10,7 +11,7 @@ export const RecordTableBodyLoading = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   return (
-    <tbody>
+    <RecordTableBody>
       {Array.from({ length: 8 }).map((_, rowIndex) => (
         <RecordTableRowContextProvider
           key={rowIndex}
@@ -45,6 +46,6 @@ export const RecordTableBodyLoading = () => {
           </RecordTableRowDraggableContextProvider>
         </RecordTableRowContextProvider>
       ))}
-    </tbody>
+    </RecordTableBody>
   );
 };

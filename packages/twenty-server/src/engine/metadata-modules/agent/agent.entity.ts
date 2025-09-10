@@ -14,6 +14,7 @@ import {
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
@@ -56,6 +57,9 @@ export class AgentEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId: string | null;
+
   @Column({ default: false })
   isCustom: boolean;
 
@@ -64,6 +68,13 @@ export class AgentEntity {
   })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
+
+  @ManyToOne(() => ApplicationEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
 
   @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
   chatThreads: Relation<AgentChatThreadEntity[]>;

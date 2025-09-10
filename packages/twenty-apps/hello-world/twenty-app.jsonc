@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json",
+  // Hello World Twenty App
+  // A friendly AI companion that greets users and helps them get started with Twenty CRM
+  "standardId": "550e8400-e29b-41d4-a716-446655440000",
+  "label": "Hello World 👋",
+  "description": "A friendly AI companion that greets users and helps them get started with Twenty CRM",
+  "icon": "🌟",
+  "version": "1.0.0"
+  // Agents are automatically discovered from the agents/ folder
+}

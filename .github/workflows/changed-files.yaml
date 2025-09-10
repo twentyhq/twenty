@@ -9,6 +9,9 @@ on:
       any_changed:
         value: ${{ jobs.changed-files.outputs.any_changed }}
 
+permissions:
+  contents: read
+
 jobs:
   changed-files:
     timeout-minutes: 5
