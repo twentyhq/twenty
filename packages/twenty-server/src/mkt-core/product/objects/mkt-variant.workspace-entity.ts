@@ -79,6 +79,7 @@ export class MktVariantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Stock Keeping Unit - variant identifier`,
     icon: 'IconBarcode',
   })
+  @WorkspaceIsNullable()
   sku: string;
 
   @WorkspaceField({

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -84,9 +84,7 @@ export class MktSInvoiceFileCreateOnePreQueryHook
       const updatedInput = {
         ...input,
         name: input.name || `Invoice File - ${sInvoice.invoiceNo}`,
-        fileName:
-          `${input.fileName}.${input.fileType?.toLowerCase()}` ||
-          `invoice-${sInvoice.invoiceNo}.${SINVOICE_FILE_TYPE.PDF.toLowerCase()}`,
+        fileName: `invoice-${sInvoice.invoiceNo}.${SINVOICE_FILE_TYPE.PDF.toLowerCase()}`,
         fileType: input.fileType || SINVOICE_FILE_TYPE.PDF,
         status: input.status || SINVOICE_FILE_STATUS.PENDING,
         supplierTaxCode: sInvoice.supplierTaxCode,

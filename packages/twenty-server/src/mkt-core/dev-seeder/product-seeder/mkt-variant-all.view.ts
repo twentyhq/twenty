@@ -38,9 +38,18 @@ export const mktVariantsAllView = (
       {
         fieldMetadataId:
           attributeObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_VARIANT_FIELD_IDS.mktProduct,
+            (field) => field.standardId === MKT_VARIANT_FIELD_IDS.price,
           )?.id ?? '',
         position: 1,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          attributeObjectMetadata.fields.find(
+            (field) => field.standardId === MKT_VARIANT_FIELD_IDS.isActive,
+          )?.id ?? '',
+        position: 2,
         isVisible: true,
         size: 150,
       },

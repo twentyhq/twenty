@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { Command,CommandRunner,Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -14,10 +14,8 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { mktOrderItemsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-order-item-all.view';
 import { prefillMktOrderItems } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-order-items';
-import { prefillMktOrders } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-orders';
-import { prefillMktProducts } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-products';
 
-interface SeedOrderItemModuleOptions {
+interface SeedModuleOptions {
   workspaceId?: string;
 }
 
@@ -48,10 +46,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
     return value;
   }
 
-  async run(
-    passedParam: string[],
-    options: SeedOrderItemModuleOptions,
-  ): Promise<void> {
+  async run(passedParam: string[], options: SeedModuleOptions): Promise<void> {
     let workspaces: Workspace[] = [];
 
     if (options.workspaceId) {
@@ -77,8 +72,8 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
 
     for (const workspace of workspaces) {
       try {
-        await this.seedOrderItemModuleForWorkspace(workspace.id);
-        // Lấy viewId của view 'All Order Items' sau khi seed
+        await this.seedModuleForWorkspace(workspace.id);
+        // Lấy viewId của view 'All Order Item' sau khi seed
         const mainDataSource =
           await this.workspaceDataSourceService.connectToMainDataSource();
         const schemaName = getWorkspaceSchemaName(workspace.id);
@@ -89,18 +84,18 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
           .where('view.name = :name', { name: 'All Order Items' })
           .andWhere('view.key = :key', { key: 'INDEX' })
           .getRawOne();
-        const orderItemViewId = viewRow?.id;
+        const ViewId = viewRow?.id;
 
-        if (orderItemViewId) {
+        if (ViewId) {
           // Insert mới Favorite với viewId này
           await mainDataSource
             .createQueryBuilder()
             .insert()
             .into(`${schemaName}.favorite`, ['viewId'])
-            .values([{ viewId: orderItemViewId }])
+            .values([{ viewId: ViewId }])
             .execute();
           this.logger.log(
-            `✅ Inserted new Favorite record with viewId: ${orderItemViewId}`,
+            `✅ Inserted new Favorite record with viewId: ${ViewId}`,
           );
         } else {
           this.logger.warn(
@@ -108,7 +103,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
           );
         }
         this.logger.log(
-          `✅ Order Item module seeded for workspace: ${workspace.id}`,
+          `✅ Order item module seeded for workspace: ${workspace.id}`,
         );
         await this.workspaceCacheStorageService.flush(workspace.id, undefined);
       } catch (error) {
@@ -120,9 +115,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
     }
   }
 
-  private async seedOrderItemModuleForWorkspace(
-    workspaceId: string,
-  ): Promise<void> {
+  private async seedModuleForWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
       `🚀 Starting order item module seeding for workspace ${workspaceId}`,
     );
@@ -138,7 +131,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     // Find order item object metadata
-    const orderItemObjectMetadata = objectMetadataItems.find(
+    const itemObjectMetadata = objectMetadataItems.find(
       (item) => item.nameSingular === 'mktOrderItem',
     );
 
@@ -149,12 +142,12 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
       `🔍 Debug - Looking for order item object with nameSingular: 'mktOrderItem'`,
     );
     this.logger.log(
-      `🔍 Debug - Order Item object found: ${orderItemObjectMetadata ? 'YES' : 'NO'}`,
+      `🔍 Debug - Order item object found: ${itemObjectMetadata ? 'YES' : 'NO'}`,
     );
 
-    if (!orderItemObjectMetadata) {
+    if (!itemObjectMetadata) {
       this.logger.log(
-        `Order Item object not found in workspace ${workspaceId}, skipping...`,
+        `Order item object not found in workspace ${workspaceId}, skipping...`,
       );
 
       return;
@@ -177,7 +170,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
 
         if (existingView) {
           this.logger.log(
-            `Order Item view already exists for workspace ${workspaceId}. Deleting and recreating...`,
+            `Order item view already exists for workspace ${workspaceId}. Deleting and recreating...`,
           );
 
           // Delete existing view (cascade will delete viewFields)
@@ -196,57 +189,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
         const orderItemViewDefinition: OrderItemViewDefinition =
           mktOrderItemsAllView(objectMetadataItems);
 
-        // Ensure Products and Orders exist before seeding OrderItems
-        this.logger.log(
-          '🔧 Seeding prerequisite data (Products and Orders)...',
-        );
-
-        // Check and seed products if they don't exist
-        const existingProducts = await entityManager
-          .createQueryBuilder(undefined, undefined, undefined, {
-            shouldBypassPermissionChecks: true,
-          })
-          .select('COUNT(*)')
-          .from(`${schemaName}.mktProduct`, 'product')
-          .getRawOne();
-
-        if (!existingProducts.count || existingProducts.count === '0') {
-          this.logger.log('📦 Seeding Products...');
-          await prefillMktProducts(entityManager, schemaName);
-        } else {
-          this.logger.log(
-            '📦 Products already exist, skipping product seeding',
-          );
-        }
-
-        // Check and seed orders if they don't exist
-        const existingOrders = await entityManager
-          .createQueryBuilder(undefined, undefined, undefined, {
-            shouldBypassPermissionChecks: true,
-          })
-          .select('COUNT(*)')
-          .from(`${schemaName}.mktOrder`, 'order')
-          .getRawOne();
-
-        if (!existingOrders.count || existingOrders.count === '0') {
-          this.logger.log('🛒 Seeding Orders...');
-          await prefillMktOrders(entityManager, schemaName);
-        } else {
-          this.logger.log('🛒 Orders already exist, skipping order seeding');
-        }
-
-        // Delete existing order items to prevent conflicts
-        this.logger.log('🗑️ Clearing existing Order Items...');
-        await entityManager
-          .createQueryBuilder(undefined, undefined, undefined, {
-            shouldBypassPermissionChecks: true,
-          })
-          .delete()
-          .from(`${schemaName}.mktOrderItem`)
-          .execute();
-
-        // Now seed mkt order items
-        this.logger.log('🛍️ Seeding Order Items...');
+        // Seed mkt order items
         await prefillMktOrderItems(entityManager, schemaName);
 
         if (!orderItemViewDefinition) {
@@ -332,6 +275,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
         }
 
         // Insert view filters if any
+        // Insert view filters if any
         if (
           viewDefinitionWithId.filters &&
           viewDefinitionWithId.filters.length > 0
@@ -367,9 +311,7 @@ export class SeedOrderItemModuleCommand extends CommandRunner {
             .execute();
         }
 
-        this.logger.log(
-          `✅ Order Item view created for workspace ${workspaceId}`,
-        );
+        this.logger.log(`✅ Order item view created for workspace ${workspaceId}`);
       },
     );
   }

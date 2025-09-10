@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { createHmac } from 'crypto';
 import * as fs from 'fs';
@@ -290,7 +290,7 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
         expires.toString(),
         secretKey,
       );
-      const downloadUrl = `/api/files/invoice-files/${fileName}?expires=${expires}&signature=${signature}`;
+      const downloadUrl = process.env.SERVER_URL + `/api/files/invoice-files/${fileName}?expires=${expires}&signature=${signature}`;
 
       this.logger.log(`[FILE SAVE] Successfully saved file: ${filePath}`);
 

@@ -2,7 +2,7 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import {
   MKT_VARIANT_ATTRIBUTE_DATA_SEED_COLUMNS,
   MKT_VARIANT_ATTRIBUTE_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-variant-attribute-data-seeds.constants';
+} from 'src/mkt-core/dev-seeder/product-seeder/mkt-variant-attribute-data-seeds.constants';
 
 export const prefillMktVariantAttributes = async (
   entityManager: WorkspaceEntityManager,

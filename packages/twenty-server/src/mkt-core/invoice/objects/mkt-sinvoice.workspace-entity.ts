@@ -14,7 +14,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -50,7 +49,7 @@ export const SEARCH_FIELDS_FOR_MKT_SINVOICE: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: MKT_SINVOICE_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['name'], ['invoiceKey']])
-@WorkspaceIsSearchable()
+//@WorkspaceIsSearchable()
 export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.name,
@@ -99,7 +98,7 @@ export class MktSInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconClock',
   })
   @WorkspaceIsNullable()
-  currencyCode?: Date;
+  currencyCode?: string;
 
   @WorkspaceField({
     standardId: MKT_SINVOICE_FIELD_IDS.exchangeRate,

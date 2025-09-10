@@ -7,7 +7,6 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
@@ -29,71 +28,14 @@ import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-orde
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { MKT_PRODUCT_TYPE_OPTIONS,MKT_PRODUCT_TYPE } from 'src/mkt-core/product/product.constants';
 const TABLE_PRODUCT_NAME = 'mktProduct';
 const NAME_FIELD_NAME = 'name';
 const DESCRIPTION_FIELD_NAME = 'description';
-const CATEGORY_FIELD_NAME = 'category';
-const SKU_FIELD_NAME = 'sku';
 
 export const SEARCH_FIELDS_FOR_MKT_PRODUCT: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: DESCRIPTION_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: CATEGORY_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: SKU_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
-
-export enum PRODUCT_TYPE {
-  PHYSICAL = 'PHYSICAL',
-  DIGITAL = 'DIGITAL',
-  SERVICE = 'SERVICE',
-  SUBSCRIPTION = 'SUBSCRIPTION',
-  LICENSE = 'LICENSE',
-  INTERNAL = 'INTERNAL',
-  OTHER = 'OTHER',
-}
-export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
-  {
-    value: PRODUCT_TYPE.PHYSICAL,
-    label: 'Physical',
-    position: 0,
-    color: 'blue',
-  },
-  {
-    value: PRODUCT_TYPE.DIGITAL,
-    label: 'Digital',
-    position: 1,
-    color: 'purple',
-  },
-  {
-    value: PRODUCT_TYPE.SERVICE,
-    label: 'Service',
-    position: 2,
-    color: 'green',
-  },
-  {
-    value: PRODUCT_TYPE.SUBSCRIPTION,
-    label: 'Subscription',
-    position: 3,
-    color: 'orange',
-  },
-  {
-    value: PRODUCT_TYPE.LICENSE,
-    label: 'License',
-    position: 4,
-    color: 'yellow',
-  },
-  {
-    value: PRODUCT_TYPE.INTERNAL,
-    label: 'Internal',
-    position: 5,
-    color: 'red',
-  },
-  {
-    value: PRODUCT_TYPE.OTHER,
-    label: 'Other',
-    position: 6,
-    color: 'gray',
-  },
 ];
 
 @WorkspaceEntity({
@@ -105,7 +47,7 @@ export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
   icon: 'IconBox',
   labelIdentifierStandardId: MKT_PRODUCT_FIELD_IDS.name,
 })
-@WorkspaceDuplicateCriteria([['name'], ['sku']])
+@WorkspaceDuplicateCriteria([['name']])
 @WorkspaceIsSearchable()
 export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -114,10 +56,10 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Product Type`,
     description: msg`Product type (physical, digital, service, subscription, license, other)`,
     icon: 'IconTags',
-    options: PRODUCT_TYPE_OPTIONS,
+    options: MKT_PRODUCT_TYPE_OPTIONS,
   })
   @WorkspaceIsNullable()
-  type: PRODUCT_TYPE;
+  type: MKT_PRODUCT_TYPE;
 
   @WorkspaceField({
     standardId: MKT_PRODUCT_FIELD_IDS.code,
@@ -168,16 +110,6 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   inStock?: boolean;
-
-  @WorkspaceField({
-    standardId: MKT_PRODUCT_FIELD_IDS.category,
-    type: FieldMetadataType.TEXT,
-    label: msg`Product Category`,
-    description: msg`Product category`,
-    icon: 'IconCategory',
-  })
-  @WorkspaceIsNullable()
-  category?: string;
 
   @WorkspaceField({
     standardId: MKT_PRODUCT_FIELD_IDS.price,

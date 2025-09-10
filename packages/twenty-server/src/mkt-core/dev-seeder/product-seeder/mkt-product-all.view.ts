@@ -48,15 +48,6 @@ export const mktProductsAllView = (
       {
         fieldMetadataId:
           productObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_PRODUCT_FIELD_IDS.category,
-          )?.id ?? '',
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          productObjectMetadata.fields.find(
             (field) => field.standardId === MKT_PRODUCT_FIELD_IDS.price,
           )?.id ?? '',
         position: 3,
