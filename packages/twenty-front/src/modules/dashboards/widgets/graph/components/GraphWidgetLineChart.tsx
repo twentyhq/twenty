@@ -5,7 +5,7 @@ import {
   type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
-import { type ScaleSpec } from '@nivo/scales';
+import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useId, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -57,6 +57,24 @@ type GraphWidgetLineChartProps = {
   xScale?: ScaleSpec;
   yScale?: ScaleSpec;
 } & GraphValueFormatOptions;
+
+const getYScaleWithStacking = (
+  yScale: ScaleSpec | undefined,
+  stackedArea: boolean | undefined,
+): ScaleSpec => {
+  if (!yScale || yScale.type === 'linear') {
+    const linearScale: ScaleLinearSpec = {
+      min: 0,
+      max: 'auto',
+      ...yScale,
+      type: 'linear',
+      stacked: stackedArea,
+    };
+    return linearScale;
+  }
+
+  return yScale;
+};
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -272,12 +290,7 @@ export const GraphWidgetLineChart = ({
           data={nivoData}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
           xScale={xScale}
-          yScale={
-            {
-              ...yScale,
-              stacked: stackedArea,
-            } as any
-          }
+          yScale={getYScaleWithStacking(yScale, stackedArea)}
           curve={curve}
           lineWidth={lineWidth}
           enableArea={enableArea}
