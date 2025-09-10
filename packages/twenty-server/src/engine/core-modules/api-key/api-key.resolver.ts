@@ -18,8 +18,6 @@ import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.d
 import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
 import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
@@ -40,7 +38,6 @@ export class ApiKeyResolver {
   constructor(
     private readonly apiKeyService: ApiKeyService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => [ApiKey])
@@ -126,20 +123,11 @@ export class ApiKeyResolver {
     }
   }
 
-  @ResolveField(() => RoleDTO, { nullable: true })
+  @ResolveField(() => RoleDTO)
   async role(
     @Parent() apiKey: ApiKey,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<RoleDTO | null> {
-    const isApiKeyRolesEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-      workspace.id,
-    );
-
-    if (!isApiKeyRolesEnabled) {
-      return null;
-    }
-
+  ): Promise<RoleDTO> {
     const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
       apiKeyIds: [apiKey.id],
       workspaceId: workspace.id,

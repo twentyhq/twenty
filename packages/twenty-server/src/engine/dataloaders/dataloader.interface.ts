@@ -9,31 +9,17 @@ import {
   type RelationLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export interface IDataloaders {
-  relationLoader: DataLoader<
-    RelationLoaderPayload,
-    {
-      sourceObjectMetadata: ObjectMetadataEntity;
-      targetObjectMetadata: ObjectMetadataEntity;
-      sourceFieldMetadata: FieldMetadataEntity;
-      targetFieldMetadata: FieldMetadataEntity;
-    }
-  >;
+  relationLoader: DataLoader<RelationLoaderPayload, RelationDTO | null>;
 
   morphRelationLoader: DataLoader<
     MorphRelationLoaderPayload,
-    {
-      sourceObjectMetadata: ObjectMetadataEntity;
-      targetObjectMetadata: ObjectMetadataEntity;
-      sourceFieldMetadata: FieldMetadataEntity;
-      targetFieldMetadata: FieldMetadataEntity;
-    }[]
+    RelationDTO[] | null
   >;
 
   fieldMetadataLoader: DataLoader<

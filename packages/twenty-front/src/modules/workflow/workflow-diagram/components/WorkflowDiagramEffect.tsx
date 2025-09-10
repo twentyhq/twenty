@@ -12,11 +12,9 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramEffect = () => {
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
@@ -40,10 +38,6 @@ export const WorkflowDiagramEffect = () => {
     workflowLastCreatedStepIdComponentState,
   );
 
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
-
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
       return (currentVersion: WorkflowVersion) => {
@@ -54,7 +48,6 @@ export const WorkflowDiagramEffect = () => {
 
         const nextWorkflowDiagram = getWorkflowVersionDiagram({
           workflowVersion: currentVersion,
-          isWorkflowBranchEnabled,
           isEditable: true,
         });
 
@@ -88,11 +81,7 @@ export const WorkflowDiagramEffect = () => {
         set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
-    [
-      workflowDiagramState,
-      isWorkflowBranchEnabled,
-      workflowLastCreatedStepIdState,
-    ],
+    [workflowDiagramState, workflowLastCreatedStepIdState],
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;

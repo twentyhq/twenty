@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { AppBasePath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -105,8 +106,8 @@ export const CommandMenuTopBar = () => {
 
   const location = useLocation();
   const isButtonVisible =
-    !location.pathname.startsWith('/objects/') &&
-    !location.pathname.startsWith('/object/');
+    !location.pathname.startsWith(`${AppBasePath.Root}objects/`) &&
+    !location.pathname.startsWith(`${AppBasePath.Root}object/`);
 
   const backButtonAnimationDuration =
     contextChips.length > 0 ? theme.animation.duration.instant : 0;

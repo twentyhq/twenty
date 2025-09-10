@@ -1,13 +1,12 @@
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
 import styled from '@emotion/styled';
 import { type ReactNode, useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
