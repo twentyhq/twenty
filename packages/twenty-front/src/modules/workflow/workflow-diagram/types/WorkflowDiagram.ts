@@ -30,7 +30,7 @@ export type WorkflowDiagramNodeRightHandleOptions = {
 };
 
 export type WorkflowDiagramNodeDefaultHandleOptions = {
-  label: MessageDescriptor;
+  label?: MessageDescriptor;
 };
 
 export type WorkflowDiagramStepNodeData =

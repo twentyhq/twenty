@@ -2,12 +2,12 @@ import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagramEdge,
-  type WorkflowDiagramIteratorEmptyActionNodeData,
   type WorkflowDiagramNode,
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
+import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
