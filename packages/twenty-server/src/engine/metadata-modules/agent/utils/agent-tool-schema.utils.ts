@@ -22,11 +22,6 @@ const createToolSchema = (
         description:
           'A clear, human-readable description of the action being performed. Explain what operation you are executing and with what parameters in natural language.',
       },
-      completionMessage: {
-        type: 'string',
-        description:
-          'A short, clear, human-readable status message to show when the tool is finished.',
-      },
       input: {
         type: 'object',
         properties: inputProperties,

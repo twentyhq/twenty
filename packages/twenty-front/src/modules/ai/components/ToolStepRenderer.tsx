@@ -100,7 +100,7 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
         onClick={() => setIsExpanded(!isExpanded)}
         isExpandable={isExpandable}
       >
-        <StyledButtonText>{toolCall.args.completionMessage}</StyledButtonText>
+        <StyledButtonText>{toolCall.args.loadingMessage}</StyledButtonText>
         {isExpandable &&
           (isExpanded ? (
             <IconChevronUp size={theme.icon.size.sm} />
