@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -104,7 +105,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
       'fieldMetadataItemId',
       labelIdentifierFieldMetadataItem?.id,
     ),
-  )[0];
+  )[0] as RecordField | undefined;
 
   const resizeFieldOffset = useRecoilComponentValue(
     resizeFieldOffsetComponentState,
@@ -115,7 +116,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
   );
 
   const widthOffsetWhileResizing =
-    resizedFieldMetadataItemId === recordField.fieldMetadataItemId
+    resizedFieldMetadataItemId === recordField?.fieldMetadataItemId
       ? resizeFieldOffset
       : 0;
 
