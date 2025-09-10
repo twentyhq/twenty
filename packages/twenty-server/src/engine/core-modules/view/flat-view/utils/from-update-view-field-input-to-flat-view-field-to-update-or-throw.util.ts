@@ -38,7 +38,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     );
   }
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
-    rawUpdateViewFieldInput,
+    rawUpdateViewFieldInput.update,
     FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE,
   );
 

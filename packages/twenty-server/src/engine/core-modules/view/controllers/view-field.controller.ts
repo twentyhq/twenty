@@ -81,7 +81,7 @@ export class ViewFieldController {
     const updatedViewField = await this.viewFieldService.update(
       id,
       workspace.id,
-      input,
+      input.update,
     );
 
     return updatedViewField;

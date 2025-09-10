@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
 
 import {
   IsBoolean,
@@ -7,19 +8,13 @@ import {
   IsNumber,
   IsOptional,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
-
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-@InputType()
-export class UpdateViewFieldInput {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType, {
-    description: 'The id of the view field to update',
-  })
-  id: string;
 
+@InputType()
+class UpdateViewFieldInputUpdates {
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
@@ -39,4 +34,21 @@ export class UpdateViewFieldInput {
   @IsEnum(AggregateOperations)
   @Field(() => AggregateOperations, { nullable: true })
   aggregateOperation?: AggregateOperations;
+}
+
+@InputType()
+export class UpdateViewFieldInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType, {
+    description: 'The id of the view field to update',
+  })
+  id: string;
+
+  @Type(() => UpdateViewFieldInputUpdates)
+  @ValidateNested()
+  @Field(() => UpdateViewFieldInputUpdates, {
+    description: 'The view field to update',
+  })
+  update: UpdateViewFieldInputUpdates;
 }
