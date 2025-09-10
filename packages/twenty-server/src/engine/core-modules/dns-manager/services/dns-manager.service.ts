@@ -102,7 +102,7 @@ export class DnsManagerService {
     return customHostname.id;
   }
 
-  getHostnameStatuses(customHostname: CustomHostnameListResponse) {
+  private getHostnameStatuses(customHostname: CustomHostnameListResponse) {
     const { ssl, verification_errors, created_at } = customHostname;
 
     return {
