@@ -1,4 +1,4 @@
-import { ReasoningStepRenderer } from '@/ai/components/ReasoningStepRenderer';
+import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { TextStepRenderer } from '@/ai/components/TextStepRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import type {
@@ -18,7 +18,7 @@ export const AIChatMessageStreamRenderer = ({
         return <ToolStepRenderer key={index} events={step.events} />;
       case 'reasoning':
         return (
-          <ReasoningStepRenderer
+          <ReasoningSummaryDisplay
             key={index}
             content={step.content}
             isThinking={step.isThinking}

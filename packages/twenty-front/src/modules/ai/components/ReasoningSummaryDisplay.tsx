@@ -9,13 +9,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledThinkingContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledThinkingText = styled.div`
@@ -37,14 +31,14 @@ const StyledThinkingText = styled.div`
   }
 `;
 
-const StyledReasoningSummaryContainer = styled.div`
+const StyledReasoningContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(3)};
   border: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-const StyledReasoningSummaryText = styled.div`
+const StyledReasoningText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
@@ -70,55 +64,35 @@ const StyledToggleButton = styled.button`
 `;
 
 type ReasoningSummaryDisplayProps = {
-  reasoningSummary: string;
-  isStreaming?: boolean;
-  isCompleted?: boolean;
-  isReasoningStreaming?: boolean;
+  content: string;
+  isThinking?: boolean;
 };
 
 export const ReasoningSummaryDisplay = ({
-  reasoningSummary,
-  isStreaming = false,
-  isCompleted = false,
-  isReasoningStreaming = false,
+  content,
+  isThinking = false,
 }: ReasoningSummaryDisplayProps) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const hasReasoningSummary = reasoningSummary.trim().length > 0;
-  const shouldShowThinking = isReasoningStreaming && hasReasoningSummary;
-  const shouldShowReasoningSummary =
-    isReasoningStreaming && hasReasoningSummary;
-  const shouldShowToggleButton =
-    (isCompleted || isStreaming) &&
-    hasReasoningSummary &&
-    !isReasoningStreaming;
+  const hasContent = content.trim().length > 0;
+  const isFinished = hasContent && !isThinking;
 
-  if (
-    !shouldShowThinking &&
-    !shouldShowReasoningSummary &&
-    !shouldShowToggleButton
-  ) {
+  if (!hasContent) {
     return null;
   }
 
   return (
     <StyledContainer>
-      {shouldShowThinking && (
-        <StyledThinkingContainer>
-          <StyledThinkingText>Thinking...</StyledThinkingText>
-        </StyledThinkingContainer>
+      {isThinking && <StyledThinkingText>Thinking...</StyledThinkingText>}
+
+      {isThinking && (
+        <StyledReasoningContainer>
+          <StyledReasoningText>{content}</StyledReasoningText>
+        </StyledReasoningContainer>
       )}
 
-      {shouldShowReasoningSummary && (
-        <StyledReasoningSummaryContainer>
-          <StyledReasoningSummaryText>
-            {reasoningSummary}
-          </StyledReasoningSummaryText>
-        </StyledReasoningSummaryContainer>
-      )}
-
-      {shouldShowToggleButton && (
+      {isFinished && (
         <>
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
             <span>Finished thinking</span>
@@ -130,11 +104,9 @@ export const ReasoningSummaryDisplay = ({
           </StyledToggleButton>
 
           <AnimatedExpandableContainer isExpanded={isExpanded}>
-            <StyledReasoningSummaryContainer>
-              <StyledReasoningSummaryText>
-                {reasoningSummary}
-              </StyledReasoningSummaryText>
-            </StyledReasoningSummaryContainer>
+            <StyledReasoningContainer>
+              <StyledReasoningText>{content}</StyledReasoningText>
+            </StyledReasoningContainer>
           </AnimatedExpandableContainer>
         </>
       )}
