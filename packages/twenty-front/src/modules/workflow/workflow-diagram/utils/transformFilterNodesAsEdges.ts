@@ -1,8 +1,9 @@
+import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagramEdge,
-  type WorkflowDiagramEdgeType,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getFilterEdgeType } from '@/workflow/workflow-diagram/utils/getFilterEdgeType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const transformFilterNodesAsEdges = <
@@ -11,11 +12,11 @@ export const transformFilterNodesAsEdges = <
 >({
   nodes,
   edges,
-  defaultFilterEdgeType,
+  workflowContext,
 }: {
   nodes: T[];
   edges: U[];
-  defaultFilterEdgeType: WorkflowDiagramEdgeType;
+  workflowContext: WorkflowContext;
 }): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
     (node) =>
@@ -48,9 +49,11 @@ export const transformFilterNodesAsEdges = <
         throw new Error('Expected the filter node to be of action type');
       }
 
+      const filterEdgeType = getFilterEdgeType({ workflowContext });
+
       const newEdge: U = {
         ...incomingEdge,
-        type: defaultFilterEdgeType,
+        type: filterEdgeType,
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         selectable: true,

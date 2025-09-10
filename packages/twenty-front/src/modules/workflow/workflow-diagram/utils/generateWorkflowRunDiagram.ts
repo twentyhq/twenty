@@ -42,7 +42,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
-    defaultEdgeType: 'empty-filter--readonly',
+    workflowContext: 'workflow-run',
   });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
@@ -104,7 +104,7 @@ export const generateWorkflowRunDiagram = ({
     diagram: transformFilterNodesAsEdges({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-      defaultFilterEdgeType: 'filter--run',
+      workflowContext: 'workflow-run',
     }),
     stepToOpenByDefault,
   };
