@@ -48,4 +48,20 @@ export const createGraphColorRegistry = (
     },
     solid: theme.color.pink,
   },
+  yellow: {
+    name: 'yellow',
+    gradient: {
+      normal: [theme.adaptiveColors.yellow1, theme.adaptiveColors.yellow2],
+      hover: [theme.adaptiveColors.yellow3, theme.adaptiveColors.yellow4],
+    },
+    solid: theme.color.yellow,
+  },
+  red: {
+    name: 'red',
+    gradient: {
+      normal: [theme.adaptiveColors.red1, theme.adaptiveColors.red2],
+      hover: [theme.adaptiveColors.red3, theme.adaptiveColors.red4],
+    },
+    solid: theme.color.red,
+  },
 });
