@@ -67,10 +67,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService {
         optimisticFlatViewMaps: structuredClone(fromFlatViewMaps),
       };
 
-    if (
-      !isDefined(dependencyOptimisticEntityMaps.object) ||
-      !isDefined(dependencyOptimisticEntityMaps.view)
-    ) {
+    if (!isDefined(dependencyOptimisticEntityMaps.object)) {
       throw new Error('Dependency optimistic entity maps are not defined');
     }
 

@@ -80,6 +80,8 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ViewFilterGroupService,
     ViewGroupService,
     ViewSortService,
+    ViewV2Service,
+    ViewFieldV2Service,
   ],
 })
 export class CoreViewModule {}
