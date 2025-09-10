@@ -2,6 +2,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
+import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
@@ -51,6 +52,7 @@ export const RecordTableRow = ({
       <RecordTableCellGrip />
       <RecordTableCellCheckbox />
       <RecordTableCells />
+      <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
       <ListenRecordUpdatesEffect
         objectNameSingular={objectNameSingular}
