@@ -363,7 +363,7 @@ export class ServerlessFunctionService {
     });
   }
 
-  async usePublishedVersionAsDraft({
+  async createDraftFromPublishedVersion({
     id,
     version,
     workspaceId,
@@ -398,6 +398,57 @@ export class ServerlessFunctionService {
         }),
       },
     });
+  }
+
+  async duplicateServerlessFunction({
+    id,
+    version,
+    workspaceId,
+  }: {
+    id: string;
+    version: string;
+    workspaceId: string;
+  }) {
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
+
+    const newServerlessFunction = await this.createOneServerlessFunction(
+      {
+        name: `${serverlessFunction.name} (Duplicate)`,
+        description: serverlessFunction.description,
+        timeoutSeconds: serverlessFunction.timeoutSeconds,
+      },
+      workspaceId,
+    );
+
+    if (!isDefined(newServerlessFunction)) {
+      throw new ServerlessFunctionException(
+        'Failed to create new serverless function',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED,
+      );
+    }
+
+    await this.fileStorageService.copy({
+      from: {
+        folderPath: getServerlessFolder({
+          serverlessFunction: serverlessFunction,
+          version,
+        }),
+      },
+      to: {
+        folderPath: getServerlessFolder({
+          serverlessFunction: newServerlessFunction,
+          version: 'draft',
+        }),
+      },
+    });
+
+    return newServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {

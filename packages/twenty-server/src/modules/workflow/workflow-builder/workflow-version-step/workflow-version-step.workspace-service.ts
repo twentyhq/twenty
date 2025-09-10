@@ -321,7 +321,7 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const duplicatedStep = await this.duplicateStep({
+    const duplicatedStep = await this.createStepForDuplicate({
       step: {
         ...stepToDuplicate,
         id: v4(),
@@ -413,7 +413,7 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
-  async duplicateStep({
+  async createDraftStep({
     step,
     workspaceId,
   }: {
@@ -422,7 +422,7 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.usePublishedVersionAsDraft({
+        await this.serverlessFunctionService.createDraftFromPublishedVersion({
           id: step.settings.input.serverlessFunctionId,
           version: step.settings.input.serverlessFunctionVersion,
           workspaceId,
@@ -817,5 +817,53 @@ export class WorkflowVersionStepWorkspaceService {
 
       return acc;
     }, {});
+  }
+
+  private async createStepForDuplicate({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        const newServerlessFunction =
+          await this.serverlessFunctionService.duplicateServerlessFunction({
+            id: step.settings.input.serverlessFunctionId,
+            version: step.settings.input.serverlessFunctionVersion,
+            workspaceId,
+          });
+
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: {
+            x: (step.position?.x ?? 0) + 200,
+            y: step.position?.y ?? 0,
+          },
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              serverlessFunctionId: newServerlessFunction.id,
+              serverlessFunctionVersion: 'draft',
+            },
+          },
+        };
+      }
+      default: {
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: {
+            x: (step.position?.x ?? 0) + 200,
+            y: step.position?.y ?? 0,
+          },
+        };
+      }
+    }
   }
 }
