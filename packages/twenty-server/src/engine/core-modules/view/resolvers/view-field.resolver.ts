@@ -4,6 +4,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { DeleteDestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
@@ -37,11 +38,10 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   async updateCoreViewField(
-    @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFieldEntity> {
-    return this.viewFieldService.update(id, workspace.id, input);
+    return this.viewFieldService.update(input.id, workspace.id, input);
   }
 
   @Mutation(() => ViewFieldDTO)
@@ -57,11 +57,11 @@ export class ViewFieldResolver {
 
   @Mutation(() => Boolean)
   async deleteCoreViewField(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: DeleteDestroyViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
     const deletedViewField = await this.viewFieldService.delete(
-      id,
+      input.id,
       workspace.id,
     );
 
@@ -70,11 +70,11 @@ export class ViewFieldResolver {
 
   @Mutation(() => Boolean)
   async destroyCoreViewField(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: DeleteDestroyViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
     const deletedViewField = await this.viewFieldService.destroy(
-      id,
+      input.id,
       workspace.id,
     );
 
