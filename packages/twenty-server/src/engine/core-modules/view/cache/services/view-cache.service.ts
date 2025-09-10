@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { generateFlatViewMaps } from 'src/engine/core-modules/view/utils/generate-flat-view-maps.util';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { generateFlatViewMaps } from 'src/engine/core-modules/view/flat-view/utils/generate-flat-view-maps.util';
 
 type GetExistingOrRecomputeFlatViewMapsResult = {
   flatViewMaps: FlatViewMaps;

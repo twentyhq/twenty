@@ -4,10 +4,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/types/failed-flat-view-field-validation.type';
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view/types/flat-view-field-maps.type';
-import { FlatViewField } from 'src/engine/core-modules/view/types/flat-view-field.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
+import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
+import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class FlatViewFieldValidatorService {
       type: 'update_view_field',
       viewFieldLevelErrors: [],
       failedViewFieldValidationMinimalInformation: {
-        viewFieldId: updatedFlatViewField.id,
+        id: updatedFlatViewField.id,
         viewId: updatedFlatViewField.viewId,
         fieldMetadataId: updatedFlatViewField.fieldMetadataId,
       },
@@ -43,7 +43,7 @@ export class FlatViewFieldValidatorService {
       type: 'delete_view_field',
       viewFieldLevelErrors: [],
       failedViewFieldValidationMinimalInformation: {
-        viewFieldId: viewFieldIdToDelete,
+        id: viewFieldIdToDelete,
       },
     };
   }
@@ -108,7 +108,7 @@ export class FlatViewFieldValidatorService {
       type: 'create_view_field',
       viewFieldLevelErrors: errors,
       failedViewFieldValidationMinimalInformation: {
-        viewFieldId: flatViewFieldToValidate.id,
+        id: flatViewFieldToValidate.id,
         viewId: flatViewFieldToValidate.viewId,
         fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,
       },

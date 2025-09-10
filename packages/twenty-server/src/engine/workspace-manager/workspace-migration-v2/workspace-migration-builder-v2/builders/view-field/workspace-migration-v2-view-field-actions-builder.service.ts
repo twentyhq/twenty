@@ -5,11 +5,10 @@ import { FromTo } from 'twenty-shared/types';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatViewFieldValidatorService } from 'src/engine/core-modules/view/services/flat-view-field-validator.service';
-import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/types/failed-flat-view-field-validation.type';
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view/types/flat-view-field-maps.type';
-import { FlatViewField } from 'src/engine/core-modules/view/types/flat-view-field.type';
-import { compareTwoFlatViewField } from 'src/engine/core-modules/view/utils/compare-two-flat-view-field.util';
+import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
+import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
 import { WorkspaceMigrationOrchestratorOptimisticEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceViewFieldMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-field-migration-builder-v2.service';
@@ -22,6 +21,7 @@ import {
   getWorkspaceMigrationV2ViewFieldCreateAction,
   getWorkspaceMigrationV2ViewFieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-field-action';
+import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
 export type CreatedDeletedUpdatedViewFieldInputMatrix = FromTo<
   FlatViewFieldMaps,

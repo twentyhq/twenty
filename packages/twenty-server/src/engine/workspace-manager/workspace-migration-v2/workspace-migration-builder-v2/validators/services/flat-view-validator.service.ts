@@ -4,9 +4,9 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FailedFlatViewValidation } from 'src/engine/core-modules/view/types/failed-flat-view-validation.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { FlatView } from 'src/engine/core-modules/view/types/flat-view.type';
+import { FailedFlatViewValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-validation.type';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 @Injectable()

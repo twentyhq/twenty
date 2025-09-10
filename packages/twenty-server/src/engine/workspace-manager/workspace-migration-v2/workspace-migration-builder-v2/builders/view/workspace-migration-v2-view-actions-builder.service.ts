@@ -5,11 +5,10 @@ import { FromTo } from 'twenty-shared/types';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FlatViewValidatorService } from 'src/engine/core-modules/view/services/flat-view-validator.service';
-import { FailedFlatViewValidation } from 'src/engine/core-modules/view/types/failed-flat-view-validation.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { FlatView } from 'src/engine/core-modules/view/types/flat-view.type';
-import { compareTwoFlatView } from 'src/engine/core-modules/view/utils/compare-two-flat-view.util';
+import { FailedFlatViewValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-validation.type';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { compareTwoFlatView } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view.util';
 import { WorkspaceMigrationOrchestratorOptimisticEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceViewMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
@@ -22,6 +21,7 @@ import {
   getWorkspaceMigrationV2ViewCreateAction,
   getWorkspaceMigrationV2ViewDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-action';
+import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
 
 export type CreatedDeletedUpdatedViewInputMatrix = FromTo<
   FlatViewMaps,

@@ -4,7 +4,7 @@ import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.enti
 import {
   viewEntityRelationProperties,
   type FlatView,
-} from 'src/engine/core-modules/view/types/flat-view.type';
+} from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
 export const fromViewEntityToFlatView = (viewEntity: ViewEntity): FlatView => {
   const viewEntityWithoutRelations = removePropertiesFromRecord(

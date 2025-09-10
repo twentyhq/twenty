@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
-import { FailedFlatViewValidation } from 'src/engine/core-modules/view/types/failed-flat-view-validation.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { FlatView } from 'src/engine/core-modules/view/types/flat-view.type';
+import { FailedFlatViewValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-validation.type';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { WorkspaceMigrationOrchestratorOptimisticEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import {

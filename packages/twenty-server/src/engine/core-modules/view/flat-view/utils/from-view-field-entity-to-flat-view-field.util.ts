@@ -4,7 +4,7 @@ import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view
 import {
   viewFieldEntityRelationProperties,
   type FlatViewField,
-} from 'src/engine/core-modules/view/types/flat-view-field.type';
+} from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
 export const fromViewFieldEntityToFlatViewField = (
   viewFieldEntity: ViewFieldEntity,

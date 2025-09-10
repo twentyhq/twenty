@@ -1,6 +1,6 @@
 import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { type FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { type FlatView } from 'src/engine/core-modules/view/types/flat-view.type';
+import { type FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
 export const generateFlatViewMaps = (
   viewCollection: ViewEntity[],

@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { type FlatViewField } from 'src/engine/core-modules/view/types/flat-view-field.type';
+import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
 export const fromPartialFlatViewFieldToFlatViewFieldWithDefault = (
   partialFlatViewField: Partial<FlatViewField>,

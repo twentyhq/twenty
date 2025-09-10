@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { type FlatView } from 'src/engine/core-modules/view/types/flat-view.type';
+import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
 export const fromPartialFlatViewToFlatViewWithDefault = (
   partialFlatView: Partial<FlatView>,

@@ -17,9 +17,9 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FlatViewMaps } from 'src/engine/core-modules/view/types/flat-view-maps.type';
-import { viewEntityRelationProperties } from 'src/engine/core-modules/view/types/flat-view.type';
-import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
+import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
+import { viewEntityRelationProperties } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-orchestrator.service';
 
