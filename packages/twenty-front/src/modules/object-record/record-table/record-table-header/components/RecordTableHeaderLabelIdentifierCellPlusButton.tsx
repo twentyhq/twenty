@@ -1,6 +1,8 @@
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -29,12 +31,17 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     objectMetadataItem,
   });
 
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
+
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   return (
     !isMobile &&
     !isReadOnly &&
-    hasObjectUpdatePermissions && (
+    hasObjectUpdatePermissions &&
+    !hasAnySoftDeleteFilterOnView && (
       <StyledHeaderIcon>
         <LightIconButton
           Icon={IconPlus}

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
@@ -58,10 +57,6 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
 
   const resizedFieldMetadataItemId = useRecoilComponentValue(
     resizedFieldMetadataIdComponentState,
-  );
-
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
-    hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
   if (!recordField) {
