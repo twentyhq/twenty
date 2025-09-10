@@ -44,7 +44,7 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
     context: {
       input: {
         buildOptions: {
-          inferDeletionFromMissingObjectFieldIndex: true,
+          inferDeletionFromMissingEntities: true,
           isSystemBuild: true,
         },
         fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
@@ -81,7 +81,6 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
       },
       expectedActionsTypeCounter: {
         createObject: 1,
-        createView: 1,
       },
     },
   },
@@ -103,7 +102,6 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
       },
       expectedActionsTypeCounter: {
         createObject: 1,
-        createView: 1,
       },
     },
   },
@@ -114,7 +112,6 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
       expectedActionsTypeCounter: {
         createIndex: 1,
         createObject: 1,
-        createView: 1,
       },
       input: {
         fromFlatObjectMetadataMaps:
