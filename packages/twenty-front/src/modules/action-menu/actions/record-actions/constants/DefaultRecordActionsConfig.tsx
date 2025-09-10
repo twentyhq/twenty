@@ -74,8 +74,9 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     position: 0,
     isPinned: true,
     Icon: IconPlus,
-    shouldBeRegistered: ({ objectPermissions, hasAnySoftDeleteFilter }) =>
-      (objectPermissions.canUpdateObjectRecords && !hasAnySoftDeleteFilter) ??
+    shouldBeRegistered: ({ objectPermissions, hasAnySoftDeleteFilterOnView }) =>
+      (objectPermissions.canUpdateObjectRecords &&
+        !hasAnySoftDeleteFilterOnView) ??
       false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewTableRecordNoSelectionRecordAction />,
@@ -108,12 +109,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({
       selectedRecord,
       isFavorite,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
     }) =>
       !selectedRecord?.isRemote &&
       !isFavorite &&
       !isDefined(selectedRecord?.deletedAt) &&
-      !hasAnySoftDeleteFilter,
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -132,14 +133,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({
       selectedRecord,
       isFavorite,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
     }) =>
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       isDefined(isFavorite) &&
       isFavorite &&
       !isDefined(selectedRecord?.deletedAt) &&
-      !hasAnySoftDeleteFilter,
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -231,7 +232,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilter }) => !hasAnySoftDeleteFilter,
+    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordAction />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
@@ -263,12 +265,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     shouldBeRegistered: ({
       selectedRecord,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
       objectPermissions,
     }) =>
       (isDefined(selectedRecord) &&
         !selectedRecord.isRemote &&
-        !hasAnySoftDeleteFilter &&
+        !hasAnySoftDeleteFilterOnView &&
         objectPermissions.canSoftDeleteObjectRecords &&
         !isDefined(selectedRecord?.deletedAt)) ??
       false,
@@ -291,12 +293,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({
       objectPermissions,
       isRemote,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
     }) =>
       (objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
-        !hasAnySoftDeleteFilter &&
+        !hasAnySoftDeleteFilterOnView &&
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
@@ -313,7 +315,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconRotate2,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilter }) => !hasAnySoftDeleteFilter,
+    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <SeeDeletedRecordsNoSelectionRecordAction />,
   },
@@ -327,7 +330,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconLayout,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilter }) => !hasAnySoftDeleteFilter,
+    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewViewNoSelectionRecord />,
   },
@@ -341,8 +345,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconEyeOff,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilter }) =>
-      isDefined(hasAnySoftDeleteFilter) && hasAnySoftDeleteFilter,
+    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+      isDefined(hasAnySoftDeleteFilterOnView) && hasAnySoftDeleteFilterOnView,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <HideDeletedRecordsNoSelectionRecordAction />,
   },
@@ -404,13 +408,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({
       objectPermissions,
       isRemote,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
     }) =>
       (objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
-        isDefined(hasAnySoftDeleteFilter) &&
-        hasAnySoftDeleteFilter &&
+        isDefined(hasAnySoftDeleteFilterOnView) &&
+        hasAnySoftDeleteFilterOnView &&
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
@@ -432,13 +436,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       objectPermissions,
       isRemote,
       isShowPage,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
     }) =>
       (!isRemote &&
         isDefined(selectedRecord?.deletedAt) &&
         objectPermissions.canSoftDeleteObjectRecords &&
         ((isDefined(isShowPage) && isShowPage) ||
-          (isDefined(hasAnySoftDeleteFilter) && hasAnySoftDeleteFilter))) ??
+          (isDefined(hasAnySoftDeleteFilterOnView) &&
+            hasAnySoftDeleteFilterOnView))) ??
       false,
     availableOn: [
       ActionViewType.SHOW_PAGE,
@@ -459,13 +464,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     shouldBeRegistered: ({
       objectPermissions,
       isRemote,
-      hasAnySoftDeleteFilter,
+      hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
     }) =>
       (objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
-        isDefined(hasAnySoftDeleteFilter) &&
-        hasAnySoftDeleteFilter &&
+        isDefined(hasAnySoftDeleteFilterOnView) &&
+        hasAnySoftDeleteFilterOnView &&
         isDefined(numberOfSelectedRecords) &&
         numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
       false,
