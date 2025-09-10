@@ -1,3 +1,4 @@
+import { RecordTableResizeEffect } from '@/object-record/record-table/components/RecordTableResizeEffect';
 import { RecordTableScrollAndZIndexEffect } from '@/object-record/record-table/components/RecordTableScrollAndZIndexEffect';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
@@ -23,6 +24,7 @@ const StyledTable = styled.div<{
 
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 
   div.header-cell {
     position: sticky;
@@ -36,7 +38,6 @@ const StyledTable = styled.div<{
   div.header-cell:nth-of-type(1) {
     left: 0px;
 
-    transition: 0.3s ease;
     background-color: ${({ theme }) => theme.background.primary};
 
     z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
@@ -46,7 +47,6 @@ const StyledTable = styled.div<{
     left: 16px;
     top: 0;
 
-    transition: 0.3s ease;
     background-color: ${({ theme }) => theme.background.primary};
 
     z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
@@ -56,7 +56,6 @@ const StyledTable = styled.div<{
     left: 48px;
     right: 0;
 
-    transition: 0.3s ease;
     background-color: ${({ theme }) => theme.background.primary};
 
     z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
@@ -143,7 +142,7 @@ const StyledTableContainer = styled.div`
 `;
 
 export interface RecordTableContentProps {
-  tableBodyRef: React.RefObject<HTMLTableElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement>;
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
   hasRecordGroups: boolean;
@@ -197,6 +196,7 @@ export const RecordTableContent = ({
           <RecordTableNoRecordGroupBody />
         )}
         <RecordTableScrollAndZIndexEffect />
+        <RecordTableResizeEffect />
       </StyledTable>
       <DragSelect
         selectableItemsContainerRef={containerRef}
