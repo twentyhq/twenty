@@ -24,8 +24,9 @@ const StyledBaseContainer = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   height: 32px;
-  position: relative;
   user-select: none;
+
+  position: relative;
 
   &.focus-active {
     border-radius: ${BORDER_COMMON.radius.sm};

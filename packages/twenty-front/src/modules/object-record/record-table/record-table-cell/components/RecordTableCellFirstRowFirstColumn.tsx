@@ -1,40 +1,20 @@
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import {
+  DEFAULT_RECORD_TABLE_TD_WIDTH,
+  StyledTd,
+} from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import styled from '@emotion/styled';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
-export const DEFAULT_RECORD_TABLE_TD_WIDTH = 32;
-
-export const StyledTd = styled.div<{
-  backgroundColor: string;
-  borderColor: string;
-  isDragging?: boolean;
-  fontColor: string;
-  hasRightBorder?: boolean;
-  hasBottomBorder?: boolean;
-  width: number;
-}>`
-  min-width: ${({ width }) => width}px;
-  width: ${({ width }) => width}px;
-  max-width: ${({ width }) => width}px;
-
-  border-bottom: 1px solid
-    ${({ borderColor, hasBottomBorder, isDragging }) =>
-      hasBottomBorder && !isDragging ? borderColor : 'transparent'};
-
-  color: ${({ fontColor }) => fontColor};
-  border-right: ${({ borderColor, hasRightBorder, isDragging }) =>
-    hasRightBorder && !isDragging ? `1px solid ${borderColor}` : 'none'};
-
-  padding: 0;
-
-  text-align: left;
-
-  background: ${({ backgroundColor, isDragging }) =>
-    isDragging ? 'transparent' : backgroundColor};
+const StyledRecordTableTd = styled(StyledTd)<{ zIndex: number }>`
+  z-index: ${({ zIndex }) => zIndex};
 `;
 
-export const RecordTableTd = ({
+export const RecordTableCellFirstRowFirstColumn = ({
   children,
   isSelected,
   isDragging,
@@ -53,6 +33,14 @@ export const RecordTableTd = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
+  const [isRecordTableScrolledVertically] = useRecoilComponentState(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const zIndex = isRecordTableScrolledVertically
+    ? TABLE_Z_INDEX.firstCellWithVerticalScroll
+    : TABLE_Z_INDEX.firstCellWithoutVerticalScroll;
+
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary
     : theme.background.primary;
@@ -62,7 +50,7 @@ export const RecordTableTd = ({
   const fontColor = theme.font.color.primary;
 
   return (
-    <StyledTd
+    <StyledRecordTableTd
       isDragging={isDragging}
       backgroundColor={tdBackgroundColor}
       borderColor={borderColor}
@@ -70,11 +58,12 @@ export const RecordTableTd = ({
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
       width={width}
+      zIndex={zIndex}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
-      className="table-cell"
+      className="table-cell-0-0"
     >
       {children}
-    </StyledTd>
+    </StyledRecordTableTd>
   );
 };
