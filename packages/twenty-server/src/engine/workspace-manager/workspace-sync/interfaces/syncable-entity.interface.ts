@@ -5,5 +5,5 @@ import { Column, Index } from 'typeorm';
 })
 export abstract class SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
-  universalIdentifier?: string | null;
+  universalIdentifier: string | null;
 }

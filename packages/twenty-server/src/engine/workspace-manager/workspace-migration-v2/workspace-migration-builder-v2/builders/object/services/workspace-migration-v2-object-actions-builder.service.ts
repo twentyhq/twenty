@@ -103,7 +103,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
       validateAndBuildResult.created.push(createObjectAction);
     }
 
-    for (const flatObjectMetadataToDelete of buildOptions.inferDeletionFromMissingObjectFieldIndex
+    for (const flatObjectMetadataToDelete of buildOptions.inferDeletionFromMissingEntities
       ? deletedFlatObjectMetadatas
       : []) {
       const validationErrors =
