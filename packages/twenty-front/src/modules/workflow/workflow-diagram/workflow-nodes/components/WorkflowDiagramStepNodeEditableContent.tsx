@@ -16,7 +16,7 @@ import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/h
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
-import { IconHours24, IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 
 const StyledAddStepButtonContainer = styled.div<{
@@ -49,14 +49,12 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   selected,
   onClick,
   onDelete,
-  onDuplicate,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
   selected: boolean;
   onDelete: () => void;
   onClick?: () => void;
-  onDuplicate: () => void;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -109,11 +107,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
               size="medium"
               Icon={IconTrash}
               onClick={onDelete}
-            />
-            <FloatingIconButton
-              size="medium"
-              Icon={IconHours24}
-              onClick={onDuplicate}
             />
           </StyledDeleteButtonContainer>
         )}
