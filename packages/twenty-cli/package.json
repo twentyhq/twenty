@@ -2,7 +2,7 @@
   "name": "twenty-cli",
   "version": "0.1.0",
   "description": "Command-line interface for Twenty application development",
-  "main": "dist/index.js",
+  "main": "dist/cli.js",
   "bin": {
     "twenty": "dist/cli.js"
   },

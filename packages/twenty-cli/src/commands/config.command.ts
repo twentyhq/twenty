@@ -65,7 +65,8 @@ export class ConfigCommand {
 
   private async set(key: string, value: string): Promise<void> {
     try {
-      const config = { [key]: value };
+      const config = await this.configService.getConfig();
+      config[key] = value;
       await this.configService.setConfig(config);
       console.log(chalk.green(`✓ Set ${key} in configuration`));
     } catch (error) {
