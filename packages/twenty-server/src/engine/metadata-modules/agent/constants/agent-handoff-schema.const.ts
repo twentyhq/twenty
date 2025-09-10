@@ -1,10 +1,15 @@
 import { z } from 'zod';
 
 export const AGENT_HANDOFF_SCHEMA = z.object({
-  toolDescription: z
+  loadingMessage: z
     .string()
     .describe(
       'A brief, user-friendly message explaining what is happening while the handoff is being processed. This will be shown to the user during the handoff execution.',
+    ),
+  completionMessage: z
+    .string()
+    .describe(
+      'A short, clear, human-readable status message to show when the handoff is finished.',
     ),
   input: z.object({
     messages: z

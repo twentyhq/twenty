@@ -14,10 +14,15 @@ export const SendEmailInputZodSchema = z.object({
 });
 
 export const SendEmailToolParametersZodSchema = z.object({
-  toolDescription: z
+  loadingMessage: z
     .string()
     .describe(
       "A clear, human-readable status message describing the email being sent. This will be shown to the user while the tool is being called, so phrase it as a present-tense status update (e.g., 'Sending email to customer about order status'). Explain what email you are sending and to whom in natural language.",
+    ),
+  completionMessage: z
+    .string()
+    .describe(
+      'A short, clear, human-readable status message to show when the tool is finished.',
     ),
   input: SendEmailInputZodSchema,
 });
