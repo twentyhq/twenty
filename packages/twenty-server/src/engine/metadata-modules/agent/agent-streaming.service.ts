@@ -76,28 +76,25 @@ export class AgentStreamingService {
 
       let aiResponse = '';
       let reasoningSummary = '';
+      let rawStreamString = '';
 
       for await (const chunk of fullStream) {
+        rawStreamString += JSON.stringify(chunk) + '\n';
+
         switch (chunk.type) {
           case 'text-delta':
             aiResponse += chunk.textDelta;
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.textDelta,
-            });
+            this.sendStreamEvent(res, chunk);
+
             break;
+          // @ts-expect-error will fix later
+          case 'tool-result':
           case 'tool-call':
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.args?.toolDescription,
-            });
+            this.sendStreamEvent(res, chunk);
             break;
           case 'reasoning':
             reasoningSummary += chunk.textDelta || '';
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.textDelta || '',
-            });
+            this.sendStreamEvent(res, chunk);
             break;
           case 'error':
             {
@@ -108,15 +105,13 @@ export class AgentStreamingService {
                   ? chunk.error.message
                   : 'Something went wrong. Please try again.';
 
-              this.sendStreamEvent(res, {
-                type: 'error',
-                message: errorMessage as string,
-              });
+              this.sendStreamEvent(res, chunk);
+              this.logger.error(`Stream error: ${errorMessage}`);
               res.end();
             }
-            this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
             break;
           default:
+            this.sendStreamEvent(res, { type: chunk.type });
             this.logger.log(`Unknown chunk type: ${chunk.type}`);
             break;
         }
@@ -140,10 +135,12 @@ export class AgentStreamingService {
         role: AgentChatMessageRole.ASSISTANT,
         content: aiResponse,
         reasoningSummary: reasoningSummary,
+        streamData: rawStreamString.trim() || null,
       });
 
       res.end();
     } catch (error) {
+      console.log(error);
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
 
@@ -164,10 +161,7 @@ export class AgentStreamingService {
     }
   }
 
-  private sendStreamEvent(
-    res: Response,
-    event: { type: string; message: string },
-  ): void {
+  private sendStreamEvent(res: Response, event: object): void {
     res.write(JSON.stringify(event) + '\n');
   }
 
