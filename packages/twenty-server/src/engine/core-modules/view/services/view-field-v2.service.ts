@@ -166,11 +166,13 @@ export class ViewFieldV2Service {
       await this.getExistingFlatViewFieldMapsFromCache(workspaceId);
 
     const updatedFlatViewField =
-      recomputedExistingFlatViewFieldMaps.byId[optimisticallyUpdatedFlatView.id];
+      recomputedExistingFlatViewFieldMaps.byId[
+        optimisticallyUpdatedFlatView.id
+      ];
 
     if (!isDefined(updatedFlatViewField)) {
       throw new FlatEntityMapsException(
-        t`Updated view field not found in cache`,  
+        t`Updated view field not found in cache`,
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
       );
     }
