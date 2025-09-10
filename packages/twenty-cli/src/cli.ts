@@ -13,7 +13,6 @@ program
   .description('CLI for Twenty application development')
   .version('0.1.0');
 
-// Global options
 program
   .option('-v, --verbose', 'Enable verbose logging')
   .option(
@@ -22,12 +21,10 @@ program
     process.env.TWENTY_API_URL || 'http://localhost:3000',
   );
 
-// Add command groups
 program.addCommand(new AuthCommand().getCommand());
 program.addCommand(new AppCommand().getCommand());
 program.addCommand(new ConfigCommand().getCommand());
 
-// Error handling
 program.exitOverride();
 
 try {

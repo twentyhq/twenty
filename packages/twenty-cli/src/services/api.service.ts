@@ -86,7 +86,7 @@ export class ApiService {
         mutation SyncApplication($input: SyncApplicationInput!) {
           syncApplication(input: $input) {
             id
-            universalIdentifier
+            standardId
             label
             description
             version

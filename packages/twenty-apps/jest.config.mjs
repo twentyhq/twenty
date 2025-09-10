@@ -28,14 +28,11 @@ const jestConfig = {
       },
     ],
   },
-  moduleNameMapper: {
-    '^scripts/(.*)': '<rootDir>/scripts/$1',
-  },
+  moduleNameMapper: {},
   moduleFileExtensions: ['js', 'json', 'ts'],
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   collectCoverageFrom: [
-    'scripts/**/*.ts',
-    '!scripts/list-apps.ts',
+    '__tests__/**/*.ts',
   ],
   coverageDirectory: './coverage',
 };

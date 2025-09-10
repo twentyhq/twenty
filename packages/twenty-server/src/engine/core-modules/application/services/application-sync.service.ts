@@ -16,7 +16,7 @@ export interface ApplicationSyncContext {
 }
 
 interface ApplicationManifest {
-  universalIdentifier: string;
+  standardId: string;
   label: string;
   description?: string;
   version?: string;
@@ -67,8 +67,8 @@ export class ApplicationSyncService {
     this.logger.log(`Syncing application from manifest: ${manifest.label}`);
 
     // Find or create application
-    let application = await this.applicationService.findByUniversalIdentifier(
-      manifest.universalIdentifier,
+    let application = await this.applicationService.findByStandardId(
+      manifest.standardId,
       workspaceId,
     );
 
@@ -76,7 +76,7 @@ export class ApplicationSyncService {
       // Create new application
       application = [
         await this.applicationService.create({
-          universalIdentifier: manifest.universalIdentifier,
+          standardId: manifest.standardId,
           label: manifest.label,
           description: manifest.description,
           version: manifest.version,

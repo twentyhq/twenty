@@ -1,5 +1,5 @@
 {
-  "universalIdentifier": "com.yourcompany.your-app-name",
+  "standardId": "com.yourcompany.your-app-name",
   "label": "Your App Name",
   "description": "A brief description of what your application does",
   "version": "1.0.0",
@@ -7,7 +7,7 @@
   
   "agents": [
     {
-      "universalIdentifier": "com.yourcompany.your-app-name.assistant",
+      "standardId": "com.yourcompany.your-app-name.assistant",
       "name": "assistant",
       "label": "App Assistant",
       "description": "AI assistant for your application",

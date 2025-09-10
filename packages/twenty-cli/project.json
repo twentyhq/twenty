@@ -45,6 +45,12 @@
         "fix": {}
       }
     },
-    "test": {}
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.mjs"
+      }
+    }
   }
 }

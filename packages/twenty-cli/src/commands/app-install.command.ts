@@ -5,10 +5,7 @@ import { ApiService } from '../services/api.service';
 export class AppInstallCommand {
   private apiService = new ApiService();
 
-  async execute(options: {
-    source?: string;
-    type: string;
-  }): Promise<void> {
+  async execute(options: { source?: string; type: string }): Promise<void> {
     try {
       const source = await this.getSource(options.source);
 

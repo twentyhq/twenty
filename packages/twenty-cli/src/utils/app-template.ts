@@ -3,7 +3,7 @@ import { AppManifest } from '../types/config.types';
 
 export const createManifest = (appName: string): AppManifest => {
   return {
-    universalIdentifier: randomUUID(),
+    standardId: randomUUID(),
     label: appName
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -12,7 +12,7 @@ export const createManifest = (appName: string): AppManifest => {
     version: '1.0.0',
     agents: [
       {
-        universalIdentifier: randomUUID(),
+        standardId: randomUUID(),
         name: `${appName}Agent`,
         label: `${appName
           .split('-')

@@ -18,20 +18,20 @@ export class ApplicationService {
     });
   }
 
-  async findByUniversalIdentifier(
-    universalIdentifier: string,
+  async findByStandardId(
+    standardId: string,
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {
     return this.applicationRepository.find({
       where: {
-        universalIdentifier,
+        standardId,
         workspaceId,
       },
     });
   }
 
   async create(data: {
-    universalIdentifier: string;
+    standardId?: string;
     label: string;
     description?: string;
     version?: string;

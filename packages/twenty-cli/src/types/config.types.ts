@@ -5,7 +5,7 @@ export interface TwentyConfig {
 }
 
 export interface AppManifest {
-  universalIdentifier: string;
+  standardId: string;
   label: string;
   description?: string;
   icon?: string;
@@ -14,7 +14,7 @@ export interface AppManifest {
 }
 
 export interface AgentManifest {
-  universalIdentifier: string;
+  standardId: string;
   name: string;
   label: string;
   description?: string;

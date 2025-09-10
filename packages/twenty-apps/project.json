@@ -10,13 +10,6 @@
         "command": "echo 'No linting needed for application manifests'"
       }
     },
-    "validate": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-apps",
-        "command": "yarn validate"
-      }
-    },
     "list": {
       "executor": "nx:run-commands",
       "options": {

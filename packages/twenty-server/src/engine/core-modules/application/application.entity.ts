@@ -15,12 +15,20 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
+@Index(
+  'IDX_APPLICATION_STANDARD_ID_WORKSPACE_ID_UNIQUE',
+  ['standardId', 'workspaceId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL AND "standardId" IS NOT NULL',
+  },
+)
 export class ApplicationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'text' })
-  universalIdentifier: string;
+  @Column({ nullable: true, type: 'uuid' })
+  standardId?: string;
 
   @Column({ nullable: false, type: 'text' })
   label: string;
