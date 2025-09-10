@@ -1,20 +1,13 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { RecordTableCellHotkeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHotkeysEffect';
+import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import styled from '@emotion/styled';
-
-const StyledRecordTableCellHoveredPortal = styled.div`
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-`;
 
 export const RecordTableCellEditModePortal = () => {
   const focusedCellPosition = useRecoilComponentValue(
@@ -32,11 +25,13 @@ export const RecordTableCellEditModePortal = () => {
   return (
     <RecordTableCellPortalWrapper position={focusedCellPosition}>
       {currentTableCellInEditModePosition && (
-        <StyledRecordTableCellHoveredPortal>
+        <RecordTableCellPortalRootContainer
+          zIndex={TABLE_Z_INDEX.cell.editMode}
+        >
           <RecordTableCellEditMode>
             <RecordTableCellFieldInput />
           </RecordTableCellEditMode>
-        </StyledRecordTableCellHoveredPortal>
+        </RecordTableCellPortalRootContainer>
       )}
       <RecordTableCellHotkeysEffect />
     </RecordTableCellPortalWrapper>

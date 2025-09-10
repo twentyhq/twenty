@@ -1,6 +1,8 @@
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Droppable } from '@hello-pangea/dnd';
 import { type ReactNode, useState } from 'react';
@@ -24,6 +26,16 @@ export const RecordTableBodyDroppable = ({
     recordTableHoverPositionComponentState,
   );
 
+  const isSomeCellInEditMode = useRecoilComponentValue(
+    isSomeCellInEditModeComponentSelector,
+  );
+
+  const handleMouseLeave = () => {
+    if (!isSomeCellInEditMode) {
+      setRecordTableHoverPosition(null);
+    }
+  };
+
   return (
     <Droppable
       droppableId={recordGroupId ?? v4Persistable}
@@ -35,7 +47,7 @@ export const RecordTableBodyDroppable = ({
           ref={provided.innerRef}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
-          onMouseLeave={() => setRecordTableHoverPosition(null)}
+          onMouseLeave={handleMouseLeave}
         >
           <RecordTableBodyDroppableContextProvider
             value={{ droppablePlaceholder: provided.placeholder }}

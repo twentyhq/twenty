@@ -1,22 +1,28 @@
 import styled from '@emotion/styled';
 
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
+import { COLUMN_RESIZE_MIN_WIDTH } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { filterOutByProperty } from 'twenty-shared/utils';
 
-const COLUMN_MIN_WIDTH = 48;
-
+// TODO: factorize duplicated code here
 const StyledColumnHeaderCell = styled.div<{
   columnWidth: number;
   isResizing?: boolean;
   isFirstRowActiveOrFocused: boolean;
+  zIndex: number;
 }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
@@ -64,6 +70,8 @@ const StyledColumnHeaderCell = styled.div<{
   div {
     overflow: hidden;
   }
+
+  z-index: ${({ zIndex }) => zIndex};
 `;
 
 const StyledColumnHeadContainer = styled.div`
@@ -76,14 +84,9 @@ const StyledColumnHeadContainer = styled.div`
   }
 `;
 
-type RecordTableHeaderCellProps = {
-  recordField: RecordField;
-};
-
-export const RecordTableHeaderCell = ({
-  recordField,
-}: RecordTableHeaderCellProps) => {
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+export const RecordTableHeaderFirstScrollableCell = () => {
+  const { objectMetadataItem, visibleRecordFields } =
+    useRecordTableContextOrThrow();
 
   const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -95,6 +98,15 @@ export const RecordTableHeaderCell = ({
     0,
   );
 
+  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
+
+  const recordField = visibleRecordFields.filter(
+    filterOutByProperty(
+      'fieldMetadataItemId',
+      labelIdentifierFieldMetadataItem?.id,
+    ),
+  )[0] as RecordField | undefined;
+
   const resizeFieldOffset = useRecoilComponentValue(
     resizeFieldOffsetComponentState,
   );
@@ -104,7 +116,7 @@ export const RecordTableHeaderCell = ({
   );
 
   const widthOffsetWhileResizing =
-    resizedFieldMetadataItemId === recordField.fieldMetadataItemId
+    resizedFieldMetadataItemId === recordField?.fieldMetadataItemId
       ? resizeFieldOffset
       : 0;
 
@@ -112,9 +124,31 @@ export const RecordTableHeaderCell = ({
 
   const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
 
-  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
+  const columnWidth = Math.max(computedDynamicWidth, COLUMN_RESIZE_MIN_WIDTH);
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+
+  const isRecordTableScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
+    isRecordTableScrolledHorizontallyComponentState,
+  );
+
+  const zIndex =
+    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
+      ? TABLE_Z_INDEX.scrolledBothVerticallyAndHorizontally
+          .firstScrollableHeaderCell
+      : isRecordTableScrolledHorizontally
+        ? TABLE_Z_INDEX.scrolledHorizontallyOnly.firstScrollableHeaderCell
+        : isRecordTableScrolledVertically
+          ? TABLE_Z_INDEX.scrolledVerticallyOnly.firstScrollableHeaderCell
+          : TABLE_Z_INDEX.noScrollAtAll.firstScrollableHeaderCell;
+
+  if (!recordField) {
+    return <></>;
+  }
 
   return (
     <StyledColumnHeaderCell
@@ -125,6 +159,7 @@ export const RecordTableHeaderCell = ({
       }
       columnWidth={columnWidth}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      zIndex={zIndex}
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown

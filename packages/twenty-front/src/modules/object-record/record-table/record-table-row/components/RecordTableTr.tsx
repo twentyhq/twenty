@@ -22,13 +22,15 @@ const StyledTr = styled.div<{
   flex-direction: row;
 
   &[data-next-row-active-or-focused='true'] {
-    div.table-cell {
+    div.table-cell,
+    div.table-cell-0-0 {
       border-bottom: none;
     }
   }
 
   &[data-focused='true'] {
-    div.table-cell {
+    div.table-cell,
+    div.table-cell-0-0 {
       &:not(:first-of-type) {
         border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
         border-top: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -49,7 +51,8 @@ const StyledTr = styled.div<{
   }
 
   &[data-active='true'] {
-    div.table-cell {
+    div.table-cell,
+    div.table-cell-0-0 {
       &:not(:first-of-type) {
         border-bottom: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
         border-top: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};

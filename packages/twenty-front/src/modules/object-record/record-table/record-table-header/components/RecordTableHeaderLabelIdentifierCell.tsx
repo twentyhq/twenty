@@ -1,18 +1,26 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
+import { COLUMN_RESIZE_MIN_WIDTH } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { findByProperty } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
-const COLUMN_MIN_WIDTH = 48;
-
+// TODO: factorize duplicated code here
 const StyledColumnHeaderCell = styled.div<{
   columnWidth: number;
   isResizing?: boolean;
@@ -76,14 +84,17 @@ const StyledColumnHeadContainer = styled.div`
   }
 `;
 
-type RecordTableHeaderCellProps = {
-  recordField: RecordField;
-};
+const StyledHeaderIcon = styled.div`
+  margin: ${({ theme }) => theme.spacing(1, 1, 1, 1.5)};
+`;
 
-export const RecordTableHeaderCell = ({
-  recordField,
-}: RecordTableHeaderCellProps) => {
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+export const RecordTableHeaderLabelIdentifierCell = () => {
+  const { objectMetadataItem, objectPermissions, visibleRecordFields } =
+    useRecordTableContextOrThrow();
+
+  const [iconIsVisible, setIconIsVisible] = useState(false);
+
+  const isMobile = useIsMobile();
 
   const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -95,6 +106,16 @@ export const RecordTableHeaderCell = ({
     0,
   );
 
+  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
+
+  const recordField = visibleRecordFields.find(
+    findByProperty('fieldMetadataItemId', labelIdentifierFieldMetadataItem?.id),
+  );
+
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
+    objectMetadataItem,
+  });
+
   const resizeFieldOffset = useRecoilComponentValue(
     resizeFieldOffsetComponentState,
   );
@@ -102,6 +123,21 @@ export const RecordTableHeaderCell = ({
   const resizedFieldMetadataItemId = useRecoilComponentValue(
     resizedFieldMetadataIdComponentState,
   );
+
+  if (!recordField) {
+    return <></>;
+  }
+
+  const handlePlusButtonClick = () => {
+    createNewIndexRecord();
+  };
+
+  const isReadOnly = isObjectMetadataReadOnly({
+    objectPermissions,
+    objectMetadataItem,
+  });
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const widthOffsetWhileResizing =
     resizedFieldMetadataItemId === recordField.fieldMetadataItemId
@@ -112,7 +148,7 @@ export const RecordTableHeaderCell = ({
 
   const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
 
-  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
+  const columnWidth = Math.max(computedDynamicWidth, COLUMN_RESIZE_MIN_WIDTH);
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
@@ -124,6 +160,8 @@ export const RecordTableHeaderCell = ({
         resizedFieldMetadataItemId === recordField.fieldMetadataItemId
       }
       columnWidth={columnWidth}
+      onMouseEnter={() => setIconIsVisible(true)}
+      onMouseLeave={() => setIconIsVisible(false)}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
       <StyledColumnHeadContainer>
@@ -131,6 +169,18 @@ export const RecordTableHeaderCell = ({
           recordField={recordField}
           objectMetadataId={objectMetadataItem.id}
         />
+        {(isMobile || iconIsVisible) &&
+          !isReadOnly &&
+          hasObjectUpdatePermissions && (
+            <StyledHeaderIcon>
+              <LightIconButton
+                Icon={IconPlus}
+                size="small"
+                accent="tertiary"
+                onClick={handlePlusButtonClick}
+              />
+            </StyledHeaderIcon>
+          )}
       </StyledColumnHeadContainer>
       <RecordTableHeaderResizeHandler recordField={recordField} />
     </StyledColumnHeaderCell>
