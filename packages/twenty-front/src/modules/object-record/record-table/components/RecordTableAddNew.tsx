@@ -1,5 +1,5 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
@@ -25,9 +25,11 @@ export const RecordTableAddNew = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasSoftDeleteFilterOnView = useHasAnySoftDeleteFilter();
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
 
-  if (hasSoftDeleteFilterOnView) {
+  if (hasAnySoftDeleteFilterOnView) {
     return null;
   }
 

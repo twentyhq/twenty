@@ -2,47 +2,21 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { SOFT_DELETE_FILTER_FIELD_NAME } from '@/object-record/record-filter/constants/SoftDeleteFilterFieldName';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import isEmpty from 'lodash.isempty';
-import { isDefined } from 'twenty-shared/utils';
+import { getRecordFilterFieldMetadataItem } from '@/object-record/record-filter/utils/getRecordFilterFieldMetadataItem';
+import { isRecordFilterAboutSoftDelete as isRecordFilterAboutSoftDeleteUtil } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 
 export const useCheckIsSoftDeleteFilter = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const getRecordFieldMetadataItem = (recordFilter: RecordFilter) => {
-    const allFieldMetadataItems = objectMetadataItems.flatMap(
-      (objectMetadataItem) => objectMetadataItem.fields,
-    );
-
-    const foundFieldMetadataItem = allFieldMetadataItems.find(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.id === recordFilter.fieldMetadataId,
-    );
-
-    if (!isDefined(foundFieldMetadataItem)) {
-      throw new Error(
-        `Field metadata item not found for field metadata id: ${recordFilter.fieldMetadataId}`,
-      );
-    }
-
-    return foundFieldMetadataItem;
+  const isRecordFilterAboutSoftDelete = (recordFilter: RecordFilter) => {
+    isRecordFilterAboutSoftDeleteUtil({ recordFilter, objectMetadataItems });
   };
 
-  const checkHasAnySoftDeleteFilter = (recordFilter: RecordFilter) => {
-    const foundFieldMetadataItem = getRecordFieldMetadataItem(recordFilter);
-
-    const isNotEmptyFilter =
-      (recordFilter.operand === RecordFilterOperand.Is &&
-        !isEmpty(recordFilter.value)) ||
-      recordFilter.operand === RecordFilterOperand.IsNotEmpty;
-
-    return (
-      foundFieldMetadataItem.name === SOFT_DELETE_FILTER_FIELD_NAME &&
-      isNotEmptyFilter
-    );
-  };
-
-  const checkIsAllSoftDeletedRecordsFilter = (recordFilter: RecordFilter) => {
-    const foundFieldMetadataItem = getRecordFieldMetadataItem(recordFilter);
+  const isSeeDeletedRecordsFilter = (recordFilter: RecordFilter) => {
+    const foundFieldMetadataItem = getRecordFilterFieldMetadataItem({
+      recordFilter,
+      objectMetadataItems,
+    });
 
     const isNotEmptyFilter =
       recordFilter.operand === RecordFilterOperand.IsNotEmpty;
@@ -53,5 +27,5 @@ export const useCheckIsSoftDeleteFilter = () => {
     );
   };
 
-  return { checkHasAnySoftDeleteFilter, checkIsAllSoftDeletedRecordsFilter };
+  return { isRecordFilterAboutSoftDelete, isSeeDeletedRecordsFilter };
 };

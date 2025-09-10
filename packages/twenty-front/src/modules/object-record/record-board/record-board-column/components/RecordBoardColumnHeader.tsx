@@ -7,11 +7,12 @@ import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/reco
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
-import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -81,7 +82,9 @@ export const RecordBoardColumnHeader = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasSoftDeleteFilterOnView = useHasAnySoftDeleteFilter();
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
@@ -148,18 +151,20 @@ export const RecordBoardColumnHeader = () => {
                     });
                   }}
                 />
-                {hasObjectUpdatePermissions && !hasSoftDeleteFilterOnView && (
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconPlus}
-                    onClick={() => {
-                      createNewIndexRecord({
-                        position: 'first',
-                        [selectFieldMetadataItem.name]: columnDefinition.value,
-                      });
-                    }}
-                  />
-                )}
+                {hasObjectUpdatePermissions &&
+                  !hasAnySoftDeleteFilterOnView && (
+                    <LightIconButton
+                      accent="tertiary"
+                      Icon={IconPlus}
+                      onClick={() => {
+                        createNewIndexRecord({
+                          position: 'first',
+                          [selectFieldMetadataItem.name]:
+                            columnDefinition.value,
+                        });
+                      }}
+                    />
+                  )}
               </StyledHeaderActions>
             )}
           </StyledRightContainer>

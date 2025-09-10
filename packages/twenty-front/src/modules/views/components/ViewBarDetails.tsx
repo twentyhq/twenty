@@ -148,19 +148,19 @@ export const ViewBarDetails = ({
   const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
     useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
-  const { checkIsAllSoftDeletedRecordsFilter } = useCheckIsSoftDeleteFilter();
+  const { isSeeDeletedRecordsFilter } = useCheckIsSoftDeleteFilter();
 
   const allSoftDeletedRecordsFilter = currentRecordFilters.find(
-    (recordFilter) => checkIsAllSoftDeletedRecordsFilter(recordFilter),
+    (recordFilter) => isSeeDeletedRecordsFilter(recordFilter),
   );
 
   const recordFilters = useMemo(() => {
     return currentRecordFilters.filter(
       (recordFilter) =>
         !recordFilter.recordFilterGroupId &&
-        !checkIsAllSoftDeletedRecordsFilter(recordFilter),
+        !isSeeDeletedRecordsFilter(recordFilter),
     );
-  }, [currentRecordFilters, checkIsAllSoftDeletedRecordsFilter]);
+  }, [currentRecordFilters, isSeeDeletedRecordsFilter]);
 
   const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
     useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();

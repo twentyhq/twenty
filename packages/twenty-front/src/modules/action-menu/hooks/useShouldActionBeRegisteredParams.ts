@@ -10,7 +10,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
@@ -51,7 +51,9 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const hasAnySoftDeleteFilter = useHasAnySoftDeleteFilter();
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
 
   const isShowPage =
     useRecoilComponentValue(contextStoreCurrentViewTypeComponentState) ===
@@ -104,7 +106,7 @@ export const useShouldActionBeRegisteredParams = ({
     objectPermissions,
     isNoteOrTask,
     isInRightDrawer,
-    hasAnySoftDeleteFilter,
+    hasAnySoftDeleteFilterOnView,
     isShowPage,
     selectedRecord,
     numberOfSelectedRecords,

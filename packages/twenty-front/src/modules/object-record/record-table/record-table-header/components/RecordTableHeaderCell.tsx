@@ -6,7 +6,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import useHasAnySoftDeleteFilter from '@/object-record/record-filter/hooks/useHasAnySoftDeleteFilterOnView';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -20,6 +20,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { throwIfNotDefined } from 'twenty-shared/utils';
@@ -247,7 +248,9 @@ export const RecordTableHeaderCell = ({
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
-  const hasSoftDeleteFilterOnView = useHasAnySoftDeleteFilter();
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
 
   return (
     <StyledColumnHeaderCell
@@ -270,7 +273,7 @@ export const RecordTableHeaderCell = ({
           !!isLabelIdentifier &&
           !isReadOnly &&
           hasObjectUpdatePermissions &&
-          !hasSoftDeleteFilterOnView && (
+          !hasAnySoftDeleteFilterOnView && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}
