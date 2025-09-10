@@ -11,12 +11,9 @@ export interface AppManifestWithMeta extends AppManifest {
   };
 }
 
-export interface AgentReference {
-  $ref: string;
-}
-
 export type AppManifestRaw = Omit<AppManifest, 'agents'> & {
-  agents: (AgentManifest | AgentReference)[];
+  // agents will be discovered from the agents/ folder
+  agents?: AgentManifest[];
 };
 
 export class AppManifestLoader {
@@ -33,7 +30,7 @@ export class AppManifestLoader {
     // Validate the raw manifest structure
     await schemaValidator.validateAppManifest(rawManifest, manifestPath);
 
-    return this.resolveAgentReferences(rawManifest, manifestPath);
+    return this.discoverAndLoadAgents(rawManifest, manifestPath);
   }
 
   private async findManifestFile(): Promise<string> {
@@ -54,23 +51,30 @@ export class AppManifestLoader {
     );
   }
 
-  private async resolveAgentReferences(
+  private async discoverAndLoadAgents(
     rawManifest: AppManifestRaw,
     manifestPath: string,
   ): Promise<AppManifestWithMeta> {
-    const resolvedAgents: AgentManifest[] = [];
+    const agentsDir = path.join(this.appPath, 'agents');
     const agentFiles: string[] = [];
+    const agents: AgentManifest[] = [];
 
-    for (const agent of rawManifest.agents) {
-      if (this.isAgentReference(agent)) {
-        const resolvedAgent = await this.loadAgentFromReference(
-          agent,
-          manifestPath,
-        );
-        resolvedAgents.push(resolvedAgent);
-        agentFiles.push(agent.$ref);
-      } else {
-        resolvedAgents.push(agent);
+    // Check if agents directory exists
+    if (await fs.pathExists(agentsDir)) {
+      const files = await fs.readdir(agentsDir);
+      const agentFileNames = files.filter(
+        (file) => file.endsWith('.jsonc') || file.endsWith('.json'),
+      );
+
+      for (const fileName of agentFileNames) {
+        const agentPath = path.join(agentsDir, fileName);
+        const agentManifest = await parseJsoncFile(agentPath);
+
+        // Validate the agent against schema
+        await schemaValidator.validateAgent(agentManifest, agentPath);
+
+        agents.push(agentManifest);
+        agentFiles.push(`agents/${fileName}`);
       }
     }
 
@@ -80,37 +84,12 @@ export class AppManifestLoader {
       description: rawManifest.description,
       icon: rawManifest.icon,
       version: rawManifest.version,
-      agents: resolvedAgents,
+      agents,
       _meta: {
         agentFiles,
         manifestPath,
       },
     };
-  }
-
-  private isAgentReference(
-    agent: AgentManifest | AgentReference,
-  ): agent is AgentReference {
-    return '$ref' in agent;
-  }
-
-  private async loadAgentFromReference(
-    reference: AgentReference,
-    manifestPath: string,
-  ): Promise<AgentManifest> {
-    const manifestDir = path.dirname(manifestPath);
-    const agentPath = path.resolve(manifestDir, reference.$ref);
-
-    if (!(await fs.pathExists(agentPath))) {
-      throw new Error(`Agent file not found: ${agentPath}`);
-    }
-
-    const agentManifest = await parseJsoncFile(agentPath);
-
-    // Validate the agent against schema
-    await schemaValidator.validateAgent(agentManifest, agentPath);
-
-    return agentManifest;
   }
 
   // Utility method to split agents from an existing manifest
@@ -131,29 +110,22 @@ export class AppManifestLoader {
     await fs.ensureDir(agentsDirPath);
 
     // Extract agents to separate files
-    const agentReferences: AgentReference[] = [];
-
     for (const agent of manifest.agents) {
       const agentFileName = `${agent.name}.jsonc`;
       const agentFilePath = path.join(agentsDirPath, agentFileName);
 
       // Write agent to separate file
       await fs.writeFile(agentFilePath, JSON.stringify(agent, null, 2), 'utf8');
-
-      // Create reference
-      agentReferences.push({
-        $ref: `${agentsDir}/${agentFileName}`,
-      });
     }
 
-    // Update main manifest
+    // Update main manifest (remove agents array since they're now discovered)
     const updatedManifest = {
       standardId: manifest.standardId,
       label: manifest.label,
       description: manifest.description,
       icon: manifest.icon,
       version: manifest.version,
-      agents: agentReferences,
+      // No agents array - they will be discovered from the agents/ folder
     };
 
     // Write updated manifest as JSONC

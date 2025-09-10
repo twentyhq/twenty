@@ -1,4 +1,8 @@
-import { createManifest, createReadmeContent } from '../app-template';
+import {
+  createAgentManifest,
+  createManifest,
+  createReadmeContent,
+} from '../app-template';
 
 // Mock crypto.randomUUID to make tests deterministic
 jest.mock('crypto', () => ({
@@ -12,24 +16,13 @@ describe('app-template', () => {
       const manifest = createManifest(appName);
 
       expect(manifest).toEqual({
+        $schema:
+          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
         standardId: 'mocked-uuid-12345',
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
         version: '1.0.0',
-        agents: [
-          {
-            standardId: 'mocked-uuid-12345',
-            name: 'my-test-appAgent',
-            label: 'My Test App Agent',
-            description: 'AI agent for my-test-app',
-            prompt:
-              'You are an AI agent for my-test-app. Help users with their tasks.',
-            modelId: 'auto',
-            responseFormat: {
-              type: 'text',
-            },
-          },
-        ],
+        // agents will be discovered from the agents/ folder
       });
     });
 
@@ -38,8 +31,7 @@ describe('app-template', () => {
       const manifest = createManifest(appName);
 
       expect(manifest.label).toBe('Calculator');
-      expect(manifest.agents[0].name).toBe('calculatorAgent');
-      expect(manifest.agents[0].label).toBe('Calculator Agent');
+      expect(manifest.standardId).toBe('mocked-uuid-12345');
     });
 
     it('should handle kebab-case app names correctly', () => {
@@ -47,17 +39,52 @@ describe('app-template', () => {
       const manifest = createManifest(appName);
 
       expect(manifest.label).toBe('User Management System');
-      expect(manifest.agents[0].name).toBe('user-management-systemAgent');
-      expect(manifest.agents[0].label).toBe('User Management System Agent');
+      expect(manifest.standardId).toBe('mocked-uuid-12345');
     });
 
-    it('should generate unique standardIds for app and agent', () => {
+    it('should generate unique standardIds', () => {
       const manifest = createManifest('test-app');
 
       expect(manifest.standardId).toBeDefined();
-      expect(manifest.agents[0].standardId).toBeDefined();
       expect(typeof manifest.standardId).toBe('string');
-      expect(typeof manifest.agents[0].standardId).toBe('string');
+    });
+  });
+
+  describe('createAgentManifest', () => {
+    it('should create a valid agent manifest with correct structure', () => {
+      const appName = 'my-test-app';
+      const agent = createAgentManifest(appName);
+
+      expect(agent).toEqual({
+        $schema:
+          'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
+        standardId: 'mocked-uuid-12345',
+        name: 'myTestAppAgent',
+        label: 'My Test App Agent',
+        description: 'AI agent for my-test-app',
+        prompt:
+          'You are an AI agent for my-test-app. Help users with their tasks and provide assistance with Twenty CRM features.',
+        modelId: 'auto',
+        responseFormat: {
+          type: 'text',
+        },
+      });
+    });
+
+    it('should handle single word app names', () => {
+      const appName = 'calculator';
+      const agent = createAgentManifest(appName);
+
+      expect(agent.name).toBe('calculatorAgent');
+      expect(agent.label).toBe('Calculator Agent');
+    });
+
+    it('should handle kebab-case app names correctly', () => {
+      const appName = 'user-management-system';
+      const agent = createAgentManifest(appName);
+
+      expect(agent.name).toBe('userManagementSystemAgent');
+      expect(agent.label).toBe('User Management System Agent');
     });
   });
 

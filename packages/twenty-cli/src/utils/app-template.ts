@@ -1,11 +1,10 @@
 import { randomUUID } from 'crypto';
 import { AgentManifest, AppManifest } from '../types/config.types';
-import { AgentReference } from './app-manifest-loader';
 import { SchemaValidator } from './schema-validator';
 
 export type AppManifestTemplate = Omit<AppManifest, 'agents'> & {
   $schema?: string;
-  agents: AgentReference[];
+  // agents will be discovered from the agents/ folder
 };
 
 export type AgentManifestTemplate = AgentManifest & {
@@ -13,7 +12,6 @@ export type AgentManifestTemplate = AgentManifest & {
 };
 
 export const createManifest = (appName: string): AppManifestTemplate => {
-  const agentFileName = `${appName}-agent`;
   const schemas = SchemaValidator.getSchemaUrls();
 
   return {
@@ -25,11 +23,7 @@ export const createManifest = (appName: string): AppManifestTemplate => {
       .join(' '),
     description: `A Twenty application for ${appName}`,
     version: '1.0.0',
-    agents: [
-      {
-        $ref: `agents/${agentFileName}.jsonc`,
-      },
-    ],
+    // agents will be discovered from the agents/ folder
   };
 };
 

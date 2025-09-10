@@ -31,7 +31,7 @@ export class SchemaValidator {
     if (this.schemasLoaded) return;
 
     const schemasDir = path.join(__dirname, '../../schemas');
-    
+
     try {
       // Load agent schema
       const agentSchemaPath = path.join(schemasDir, 'agent.schema.json');
@@ -44,7 +44,7 @@ export class SchemaValidator {
       this.ajv.addSchema(appSchema, 'app-manifest');
 
       this.schemasLoaded = true;
-    } catch (error) {
+    } catch {
       // Gracefully handle missing schemas in development
       console.warn('Warning: Could not load JSON schemas for validation');
       this.schemasLoaded = true; // Prevent retry
@@ -53,7 +53,7 @@ export class SchemaValidator {
 
   async validateAgent(agent: any, filePath?: string): Promise<void> {
     await this.loadSchemas();
-    
+
     const validate = this.ajv.getSchema('agent');
     if (!validate) {
       // Schema not available, skip validation
@@ -73,7 +73,7 @@ export class SchemaValidator {
 
   async validateAppManifest(manifest: any, filePath?: string): Promise<void> {
     await this.loadSchemas();
-    
+
     const validate = this.ajv.getSchema('app-manifest');
     if (!validate) {
       // Schema not available, skip validation
@@ -96,7 +96,10 @@ export class SchemaValidator {
       .map((error) => {
         const path = error.instancePath || 'root';
         const message = error.message;
-        const value = error.data !== undefined ? ` (got: ${JSON.stringify(error.data)})` : '';
+        const value =
+          error.data !== undefined
+            ? ` (got: ${JSON.stringify(error.data)})`
+            : '';
         return `  • ${path}: ${message}${value}`;
       })
       .join('\n');
@@ -105,8 +108,10 @@ export class SchemaValidator {
   // Get schema URLs for $schema references
   static getSchemaUrls() {
     return {
-      agent: 'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
-      appManifest: 'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
+      agent:
+        'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
+      appManifest:
+        'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
     };
   }
 }

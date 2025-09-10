@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["standardId", "label", "version", "agents"],
+  "required": ["standardId", "label", "version"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -38,29 +38,11 @@
     },
     "agents": {
       "type": "array",
-      "description": "List of agents in this application",
-      "minItems": 1,
+      "description": "Optional inline agent definitions (agents are typically discovered from the agents/ folder)",
       "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "Reference to an external agent file",
-            "required": ["$ref"],
-            "properties": {
-              "$ref": {
-                "type": "string",
-                "description": "Relative path to the agent file",
-                "pattern": "^[^/].*\\.jsonc?$"
-              }
-            },
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "description": "Inline agent definition",
-            "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json"
-          }
-        ]
+        "type": "object",
+        "description": "Inline agent definition",
+        "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json"
       }
     }
   },
@@ -71,15 +53,7 @@
       "label": "Customer Support App",
       "description": "Comprehensive customer support application with AI agents",
       "icon": "🎧",
-      "version": "1.0.0",
-      "agents": [
-        {
-          "$ref": "agents/support-agent.jsonc"
-        },
-        {
-          "$ref": "agents/escalation-agent.jsonc"
-        }
-      ]
+      "version": "1.0.0"
     }
   ]
 }

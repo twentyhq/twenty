@@ -2,7 +2,11 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import { createAgentManifest, createManifest, createReadmeContent } from '../utils/app-template';
+import {
+  createAgentManifest,
+  createManifest,
+  createReadmeContent,
+} from '../utils/app-template';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 
 export class AppInitCommand {
