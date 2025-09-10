@@ -23,7 +23,6 @@ export class ApiService {
       return config;
     });
 
-    // Setup response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
@@ -147,7 +146,6 @@ export class ApiService {
     // In the future, this could handle different source types
     try {
       if (sourceType === 'local') {
-        // Read the manifest from the local path and sync it
         const fs = await import('fs-extra');
         const path = await import('path');
 

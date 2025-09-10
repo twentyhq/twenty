@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { ConfigService } from '../services/config.service';
+import { TwentyConfig } from '../types/config.types';
 
 export class ConfigCommand {
   private configService = new ConfigService();
@@ -63,7 +64,7 @@ export class ConfigCommand {
     }
   }
 
-  private async set(key: string, value: string): Promise<void> {
+  private async set(key: keyof TwentyConfig, value: string): Promise<void> {
     try {
       const config = await this.configService.getConfig();
       config[key] = value;
@@ -121,7 +122,19 @@ export class ConfigCommand {
         key.toLowerCase().includes('key') && value
           ? '***' + value.slice(-4)
           : value;
-      console.log(`  ${key}: ${displayValue}`);
+
+      // Show if value is overridden by environment variable
+      const envVarName = `TWENTY_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`;
+      const isOverridden = process.env[envVarName] !== undefined;
+      const suffix = isOverridden ? chalk.gray(' (from env)') : '';
+
+      console.log(`  ${key}: ${displayValue}${suffix}`);
     });
+
+    // Show available environment variables
+    console.log(chalk.gray('\nEnvironment variables:'));
+    console.log(chalk.gray('  TWENTY_API_URL - Override API URL'));
+    console.log(chalk.gray('  TWENTY_API_KEY - Override API key'));
+    console.log(chalk.gray('  TWENTY_DEFAULT_APP - Override default app'));
   }
 }
