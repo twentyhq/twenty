@@ -7,7 +7,7 @@ export class AddStreamDataToAgentChatMessage1757470059369
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agentChatMessage" ADD "streamData" jsonb`,
+      `ALTER TABLE "core"."agentChatMessage" ADD "streamData" text`,
     );
   }
 

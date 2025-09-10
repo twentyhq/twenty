@@ -78,7 +78,7 @@ export class AgentChatService {
     content: string;
     fileIds?: string[];
     reasoningSummary?: string | null;
-    streamData?: object | null;
+    streamData?: string | null;
   }) {
     const message = this.messageRepository.create({
       threadId,
