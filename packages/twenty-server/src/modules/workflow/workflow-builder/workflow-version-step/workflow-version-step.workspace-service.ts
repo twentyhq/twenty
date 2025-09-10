@@ -279,36 +279,77 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
-  async duplicateStep({
-    step,
+  async duplicateWorkflowVersionStep({
     workspaceId,
+    workflowVersionId,
+    stepId,
   }: {
-    step: WorkflowAction;
     workspaceId: string;
-  }): Promise<WorkflowAction> {
-    switch (step.type) {
-      case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.usePublishedVersionAsDraft({
-          id: step.settings.input.serverlessFunctionId,
-          version: step.settings.input.serverlessFunctionVersion,
-          workspaceId,
-        });
+    workflowVersionId: string;
+    stepId: string;
+  }): Promise<WorkflowVersionStepChangesDTO> {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
 
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              serverlessFunctionVersion: 'draft',
-            },
-          },
-        };
-      }
-      default: {
-        return step;
-      }
+    const workflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
+
+    const stepToDuplicate = workflowVersion.steps?.find(
+      (step) => step.id === stepId,
+    );
+
+    if (!isDefined(stepToDuplicate)) {
+      throw new WorkflowVersionStepException(
+        'Step not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const duplicatedStep = await this.duplicateStep({
+      step: {
+        ...stepToDuplicate,
+        id: v4(),
+        nextStepIds: [],
+        position: {
+          x: (stepToDuplicate.position?.x ?? 0) + 200,
+          y: stepToDuplicate.position?.y ?? 0,
+        },
+      },
+      workspaceId,
+    });
+
+    const { updatedSteps, updatedInsertedStep, updatedTrigger } = insertStep({
+      existingSteps: workflowVersion.steps ?? [],
+      existingTrigger: workflowVersion.trigger,
+      insertedStep: duplicatedStep,
+    });
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+      trigger: updatedTrigger,
+    });
+
+    return computeWorkflowVersionStepChanges({
+      createdStep: updatedInsertedStep,
+      trigger: updatedTrigger,
+      steps: updatedSteps,
+    });
   }
 
   async submitFormStep({
@@ -370,6 +411,38 @@ export class WorkflowVersionStepWorkspaceService {
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  async duplicateStep({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        await this.serverlessFunctionService.usePublishedVersionAsDraft({
+          id: step.settings.input.serverlessFunctionId,
+          version: step.settings.input.serverlessFunctionVersion,
+          workspaceId,
+        });
+
+        return {
+          ...step,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              serverlessFunctionVersion: 'draft',
+            },
+          },
+        };
+      }
+      default: {
+        return step;
+      }
+    }
   }
 
   private async enrichOutputSchema({
