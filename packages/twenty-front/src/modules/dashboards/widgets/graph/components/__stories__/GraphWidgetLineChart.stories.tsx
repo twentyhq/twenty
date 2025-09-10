@@ -66,10 +66,6 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
       control: 'select',
       options: ['x', 'y', false],
     },
-    xScaleType: {
-      control: 'select',
-      options: ['linear', 'time', 'log'],
-    },
   },
 };
 
@@ -99,7 +95,8 @@ const renderChart = (args: any) => (
       curve={args.curve}
       lineWidth={args.lineWidth}
       enableSlices={args.enableSlices}
-      xScaleType={args.xScaleType}
+      xScale={args.xScale}
+      yScale={args.yScale}
     />
   </Container>
 );
@@ -199,6 +196,11 @@ export const StackedArea: Story = {
     curve: 'monotoneX',
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Revenue',
+    yScale: {
+      type: 'linear',
+      min: 0,
+      max: 'auto',
+    },
     displayType: 'shortNumber',
     prefix: '$',
   },
@@ -246,6 +248,48 @@ export const StepChart: Story = {
     xAxisLabel: 'Day',
     yAxisLabel: 'Units',
     displayType: 'number',
+  },
+};
+
+export const LogScaleDemo: Story = {
+  render: renderChart,
+  args: {
+    id: 'line-chart-log-scale',
+    data: [
+      {
+        id: 'exponential',
+        label: 'Exponential Growth',
+        color: 'purple',
+        data: [
+          { x: 0, y: 10 },
+          { x: 1, y: 100 },
+          { x: 2, y: 1000 },
+          { x: 3, y: 10000 },
+          { x: 4, y: 100000 },
+          { x: 5, y: 1000000 },
+        ],
+      },
+      {
+        id: 'linear',
+        label: 'Linear Growth',
+        color: 'turquoise',
+        data: [
+          { x: 0, y: 50 },
+          { x: 1, y: 100 },
+          { x: 2, y: 150 },
+          { x: 3, y: 200 },
+          { x: 4, y: 250 },
+          { x: 5, y: 300 },
+        ],
+      },
+    ],
+    showLegend: true,
+    showGrid: true,
+    enablePoints: true,
+    xAxisLabel: 'Time',
+    yAxisLabel: 'Value (log scale)',
+    yScale: { type: 'log' },
+    displayType: 'shortNumber',
   },
 };
 
@@ -580,6 +624,120 @@ export const NaturalVsMonotone: Story = {
     xAxisLabel: 'Sample',
     yAxisLabel: 'Measurement',
     displayType: 'number',
+  },
+};
+
+export const SliceTooltipDemo: Story = {
+  render: renderChart,
+  args: {
+    id: 'line-chart-slice-tooltip',
+    data: [
+      {
+        id: 'revenue',
+        label: 'Revenue',
+        color: 'blue',
+        data: [
+          { x: 'Jan', y: 4500 },
+          { x: 'Feb', y: 5200 },
+          { x: 'Mar', y: 4800 },
+          { x: 'Apr', y: 6100 },
+          { x: 'May', y: 5500 },
+          { x: 'Jun', y: 7200 },
+        ],
+      },
+      {
+        id: 'costs',
+        label: 'Costs',
+        color: 'red',
+        data: [
+          { x: 'Jan', y: 3200 },
+          { x: 'Feb', y: 3500 },
+          { x: 'Mar', y: 3100 },
+          { x: 'Apr', y: 3800 },
+          { x: 'May', y: 3600 },
+          { x: 'Jun', y: 4200 },
+        ],
+      },
+      {
+        id: 'profit',
+        label: 'Profit',
+        color: 'turquoise',
+        data: [
+          { x: 'Jan', y: 1300 },
+          { x: 'Feb', y: 1700 },
+          { x: 'Mar', y: 1700 },
+          { x: 'Apr', y: 2300 },
+          { x: 'May', y: 1900 },
+          { x: 'Jun', y: 3000 },
+        ],
+      },
+    ],
+    showLegend: true,
+    showGrid: true,
+    enablePoints: false,
+    enableSlices: 'x',
+    xScale: { type: 'point' },
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Amount ($)',
+    displayType: 'shortNumber',
+    prefix: '$',
+  },
+};
+
+export const PointTooltipDemo: Story = {
+  render: renderChart,
+  args: {
+    id: 'line-chart-point-tooltip',
+    data: [
+      {
+        id: 'revenue',
+        label: 'Revenue',
+        color: 'blue',
+        data: [
+          { x: 'Jan', y: 4500 },
+          { x: 'Feb', y: 5200 },
+          { x: 'Mar', y: 4800 },
+          { x: 'Apr', y: 6100 },
+          { x: 'May', y: 5500 },
+          { x: 'Jun', y: 7200 },
+        ],
+      },
+      {
+        id: 'costs',
+        label: 'Costs',
+        color: 'red',
+        data: [
+          { x: 'Jan', y: 3200 },
+          { x: 'Feb', y: 3500 },
+          { x: 'Mar', y: 3100 },
+          { x: 'Apr', y: 3800 },
+          { x: 'May', y: 3600 },
+          { x: 'Jun', y: 4200 },
+        ],
+      },
+      {
+        id: 'profit',
+        label: 'Profit',
+        color: 'turquoise',
+        data: [
+          { x: 'Jan', y: 1300 },
+          { x: 'Feb', y: 1700 },
+          { x: 'Mar', y: 1700 },
+          { x: 'Apr', y: 2300 },
+          { x: 'May', y: 1900 },
+          { x: 'Jun', y: 3000 },
+        ],
+      },
+    ],
+    showLegend: true,
+    showGrid: true,
+    enablePoints: true,
+    enableSlices: false,
+    xScale: { type: 'point' },
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Amount ($)',
+    displayType: 'shortNumber',
+    prefix: '$',
   },
 };
 

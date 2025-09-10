@@ -5,6 +5,7 @@ import {
   type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
+import { type ScaleSpec } from '@nivo/scales';
 import { useId, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -53,7 +54,8 @@ type GraphWidgetLineChartProps = {
     | 'natural';
   lineWidth?: number;
   enableSlices?: 'x' | 'y' | false;
-  xScaleType?: 'linear' | 'time' | 'log';
+  xScale?: ScaleSpec;
+  yScale?: ScaleSpec;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -92,7 +94,8 @@ export const GraphWidgetLineChart = ({
   curve = 'monotoneX',
   lineWidth = 2,
   enableSlices = 'x',
-  xScaleType = 'linear',
+  xScale = { type: 'linear' },
+  yScale = { type: 'linear', min: 0, max: 'auto' },
   displayType,
   decimals,
   prefix,
@@ -227,25 +230,14 @@ export const GraphWidgetLineChart = ({
     );
   };
 
-  const getAxisBottomConfig = () => {
-    const baseConfig = {
-      tickSize: 0,
-      tickPadding: 5,
-      tickRotation: 0,
-      legend: xAxisLabel,
-      legendPosition: 'middle' as const,
-      legendOffset: 40,
-    };
-
-    if (xScaleType === 'time') {
-      return {
-        ...baseConfig,
-        format: '%b %d',
-      };
-    }
-
-    return baseConfig;
-  };
+  const getAxisBottomConfig = () => ({
+    tickSize: 0,
+    tickPadding: 5,
+    tickRotation: 0,
+    legend: xAxisLabel,
+    legendPosition: 'middle' as const,
+    legendOffset: 40,
+  });
 
   const getAxisLeftConfig = () => ({
     tickSize: 0,
@@ -273,17 +265,13 @@ export const GraphWidgetLineChart = ({
         <ResponsiveLine
           data={nivoData}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
-          xScale={
-            xScaleType === 'time'
-              ? { type: 'time', format: '%Y-%m-%d', precision: 'day' }
-              : { type: xScaleType }
+          xScale={xScale}
+          yScale={
+            {
+              ...yScale,
+              stacked: stackedArea,
+            } as any
           }
-          yScale={{
-            type: 'linear',
-            min: 0,
-            max: 'auto',
-            stacked: stackedArea,
-          }}
           curve={curve}
           lineWidth={lineWidth}
           enableArea={enableArea}
@@ -336,9 +324,9 @@ export const GraphWidgetLineChart = ({
               },
               legend: {
                 text: {
-                  fill: theme.font.color.light,
+                  fill: theme.font.color.secondary,
                   fontSize: 12,
-                  fontWeight: theme.font.weight.medium,
+                  fontWeight: theme.font.weight.regular,
                 },
               },
             },
@@ -354,12 +342,6 @@ export const GraphWidgetLineChart = ({
                 stroke: theme.font.color.tertiary,
                 strokeWidth: 1,
                 strokeDasharray: '2 2',
-              },
-            },
-            labels: {
-              text: {
-                fontSize: 11,
-                fontWeight: theme.font.weight.medium,
               },
             },
           }}
