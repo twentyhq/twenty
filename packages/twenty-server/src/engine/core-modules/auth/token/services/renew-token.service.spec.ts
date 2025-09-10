@@ -9,7 +9,7 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type User } from 'src/engine/core-modules/user/user.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { RenewTokenService } from './renew-token.service';
@@ -77,12 +77,10 @@ describe('RenewTokenService', () => {
         expiresAt: new Date(),
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
       };
-      const mockAppToken: Partial<AppToken> = {
+      const mockAppToken = {
         id: mockTokenId,
         workspaceId: mockWorkspaceId,
-        user: mockUser,
-        userId: mockUser.id,
-      };
+      } as AppToken;
 
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
@@ -90,9 +88,8 @@ describe('RenewTokenService', () => {
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         isImpersonating: false,
-        impersonationType: undefined,
         impersonatorUserWorkspaceId: undefined,
-        originalUserWorkspaceId: undefined,
+        impersonatedUserWorkspaceId: undefined,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest
@@ -145,12 +142,10 @@ describe('RenewTokenService', () => {
         expiresAt: new Date(),
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
       };
-      const mockAppToken: Partial<AppToken> = {
+      const mockAppToken = {
         id: mockTokenId,
         workspaceId: mockWorkspaceId,
-        user: mockUser,
-        userId: mockUser.id,
-      };
+      } as AppToken;
 
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
@@ -158,9 +153,8 @@ describe('RenewTokenService', () => {
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         isImpersonating: true,
-        impersonationType: 'WORKSPACE' as any,
         impersonatorUserWorkspaceId: 'uw-imp',
-        originalUserWorkspaceId: 'uw-orig',
+        impersonatedUserWorkspaceId: 'uw-orig',
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       const accessSpy = jest
@@ -175,17 +169,15 @@ describe('RenewTokenService', () => {
       expect(accessSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           isImpersonating: true,
-          impersonationType: 'WORKSPACE',
           impersonatorUserWorkspaceId: 'uw-imp',
-          originalUserWorkspaceId: 'uw-orig',
+          impersonatedUserWorkspaceId: 'uw-orig',
         }),
       );
       expect(refreshSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           isImpersonating: true,
-          impersonationType: 'WORKSPACE',
           impersonatorUserWorkspaceId: 'uw-imp',
-          originalUserWorkspaceId: 'uw-orig',
+          impersonatedUserWorkspaceId: 'uw-orig',
         }),
       );
     });

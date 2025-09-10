@@ -10,7 +10,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
-import { ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -168,7 +167,6 @@ export class WorkspaceImpersonationService {
       workspaceId,
       authProvider: AuthProviderEnum.Impersonation,
       isImpersonating: true,
-      impersonationType: ImpersonationTokenTypeEnum.WORKSPACE,
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: targetUserWorkspaceId,
     });
@@ -178,7 +176,6 @@ export class WorkspaceImpersonationService {
       authProvider: AuthProviderEnum.Impersonation,
       targetedTokenType: JwtTokenTypeEnum.ACCESS,
       isImpersonating: true,
-      impersonationType: ImpersonationTokenTypeEnum.WORKSPACE,
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: targetUserWorkspaceId,
     });

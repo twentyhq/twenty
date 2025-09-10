@@ -76,14 +76,14 @@ describe('RefreshTokenService', () => {
         id: 'token-id',
         workspaceId: 'workspace-id',
         revokedAt: null,
-      };
-      const mockUser: Partial<User> = {
+      } as AppToken;
+      const mockUser = {
         id: 'some-id',
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@example.com',
         defaultAvatarUrl: '',
-      };
+      } as User;
 
       jest
         .spyOn(jwtWrapperService, 'verifyJwtToken')
@@ -91,8 +91,8 @@ describe('RefreshTokenService', () => {
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockJwtPayload);
       jest
         .spyOn(appTokenRepository, 'findOneBy')
-        .mockResolvedValue(mockAppToken as AppToken);
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+        .mockResolvedValue(mockAppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       const result = await service.verifyRefreshToken(mockToken);
@@ -191,27 +191,21 @@ describe('RefreshTokenService', () => {
       type: 'REFRESH',
       targetedTokenType: 'ACCESS',
       isImpersonating: true,
-      impersonationType: 'WORKSPACE',
       impersonatorUserWorkspaceId: 'uw-imp',
-      originalUserWorkspaceId: 'uw-orig',
+      impersonatedUserWorkspaceId: 'uw-orig',
     });
 
-    jest.spyOn(appTokenRepository, 'findOneBy').mockResolvedValue({
-      id: tokenId,
-      type: AppTokenType.RefreshToken,
-    } as any);
+    const token = { id: tokenId, type: AppTokenType.RefreshToken } as AppToken;
+    jest.spyOn(appTokenRepository, 'findOneBy').mockResolvedValue(token);
 
-    jest.spyOn(userRepository, 'findOne').mockResolvedValue({
-      id: userId,
-      appTokens: [],
-    } as any);
+    const user = { id: userId } as User;
+    jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 
     const out = await service.verifyRefreshToken(refreshToken);
 
     expect(out.isImpersonating).toBe(true);
-    expect(out.impersonationType).toBe('WORKSPACE');
     expect(out.impersonatorUserWorkspaceId).toBe('uw-imp');
-    expect(out.originalUserWorkspaceId).toBe('uw-orig');
+    expect(out.impersonatedUserWorkspaceId).toBe('uw-orig');
   });
 
   it('throws on malformed refresh token', async () => {

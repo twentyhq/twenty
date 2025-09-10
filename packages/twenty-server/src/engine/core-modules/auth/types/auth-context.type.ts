@@ -1,5 +1,4 @@
 import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type ImpersonationTokenTypeEnum } from 'src/engine/core-modules/auth/enum/impersonation-type.enum';
 import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -14,7 +13,6 @@ export type AuthContext = {
   userWorkspace?: UserWorkspace;
   authProvider?: AuthProviderEnum;
   impersonationContext?: {
-    impersonationType?: ImpersonationTokenTypeEnum;
     impersonatorUserWorkspaceId?: string;
     impersonatedUserWorkspaceId?: string;
   };
@@ -68,7 +66,6 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   authProvider?: AuthProviderEnum;
   targetedTokenType: JwtTokenTypeEnum;
   isImpersonating?: boolean;
-  impersonationType?: ImpersonationTokenTypeEnum;
   impersonatorUserWorkspaceId?: string;
   impersonatedUserWorkspaceId?: string;
 };
@@ -94,7 +91,6 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   userWorkspaceId: string;
   authProvider: AuthProviderEnum;
   isImpersonating?: boolean;
-  impersonationType?: ImpersonationTokenTypeEnum;
   impersonatorUserWorkspaceId?: string;
   impersonatedUserWorkspaceId?: string;
 };
