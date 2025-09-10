@@ -5,7 +5,6 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
@@ -33,6 +32,7 @@ export type KeyValuePair = {
   id: string;
   key: string;
   value: string;
+  isPreexisting?: boolean;
 };
 
 export type KeyValuePairInputProps = {
@@ -43,6 +43,7 @@ export type KeyValuePairInputProps = {
   keyPlaceholder?: string;
   valuePlaceholder?: string;
   uniqueNotEditableKeys?: string[];
+  errorMessage?: string;
 };
 
 export const KeyValuePairInput = ({
@@ -53,19 +54,37 @@ export const KeyValuePairInput = ({
   valuePlaceholder = 'Value',
   uniqueNotEditableKeys,
   defaultValue,
+  errorMessage,
 }: KeyValuePairInputProps) => {
+  const isUniqueNotEditableKey = (key: string): boolean => {
+    return uniqueNotEditableKeys?.includes(key.trim()) || false;
+  };
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
     const initialPairs = defaultValue
       ? Object.entries(defaultValue).map(([key, value]) => ({
           id: v4(),
           key,
           value,
+          isPreexisting: isUniqueNotEditableKey(key),
         }))
       : [];
     return initialPairs.length > 0
-      ? [...initialPairs, { id: v4(), key: '', value: '' }]
-      : [{ id: v4(), key: '', value: '' }];
+      ? [
+          ...initialPairs,
+          { id: v4(), key: '', value: '', isPreexisting: false },
+        ]
+      : [{ id: v4(), key: '', value: '', isPreexisting: false }];
   });
+
+  const getKeyValidationError = (pair: KeyValuePair): string | undefined => {
+    const trimmedKey = pair.key.trim();
+
+    if (!pair.isPreexisting && isUniqueNotEditableKey(trimmedKey)) {
+      return errorMessage;
+    }
+
+    return undefined;
+  };
   const handlePairChange = (
     pairId: string,
     field: 'key' | 'value',
@@ -73,28 +92,26 @@ export const KeyValuePairInput = ({
   ) => {
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
-    if (
-      field === 'key' &&
-      uniqueNotEditableKeys?.includes(newValue.trim()) === true
-    ) {
-      newPairs.splice(index, 1);
-    } else {
-      newPairs[index] = { ...newPairs[index], [field]: newValue };
-    }
+
+    newPairs[index] = { ...newPairs[index], [field]: newValue };
+
     if (
       index === pairs.length - 1 &&
       (field === 'key' || field === 'value') &&
       Boolean(newValue.trim())
     ) {
-      newPairs.push({ id: v4(), key: '', value: '' });
+      newPairs.push({ id: v4(), key: '', value: '', isPreexisting: false });
     }
 
     setPairs(newPairs);
 
     const record = newPairs.reduce(
-      (acc, { key, value }) => {
-        if (key.trim().length > 0) {
-          acc[key] = value;
+      (acc, pair) => {
+        if (!pair.isPreexisting && isUniqueNotEditableKey(pair.key)) {
+          return acc;
+        }
+        if (pair.key.trim().length > 0) {
+          acc[pair.key] = pair.value;
         }
         return acc;
       },
@@ -105,14 +122,6 @@ export const KeyValuePairInput = ({
   };
 
   const handleRemovePair = (pairId: string) => {
-    const pairToRemove = pairs.find((p) => p.id === pairId);
-
-    if (
-      isDefined(pairToRemove) &&
-      uniqueNotEditableKeys?.includes(pairToRemove?.key.trim()) === true
-    ) {
-      return;
-    }
     const newPairs = pairs.filter((pair) => pair.id !== pairId);
     if (
       newPairs.length === 0 ||
@@ -142,39 +151,39 @@ export const KeyValuePairInput = ({
     <FormFieldInputContainer>
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
-        {pairs.map(
-          (pair) =>
-            !uniqueNotEditableKeys?.includes(pair.key.trim()) && (
-              <StyledKeyValueContainer key={pair.id} readonly={readonly}>
-                <FormTextFieldInput
-                  placeholder={keyPlaceholder}
-                  readonly={readonly}
-                  defaultValue={pair.key}
-                  onChange={(value) =>
-                    handlePairChange(pair.id, 'key', value ?? '')
-                  }
-                  VariablePicker={WorkflowVariablePicker}
-                />
+        {pairs.map((pair) => (
+          <StyledKeyValueContainer key={pair.id} readonly={readonly}>
+            <FormTextFieldInput
+              placeholder={keyPlaceholder}
+              readonly={readonly || pair.isPreexisting}
+              defaultValue={pair.key}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'key', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+              error={getKeyValidationError(pair)}
+            />
 
-                <FormTextFieldInput
-                  placeholder={valuePlaceholder}
-                  readonly={readonly}
-                  defaultValue={pair.value}
-                  onChange={(value) =>
-                    handlePairChange(pair.id, 'value', value ?? '')
-                  }
-                  VariablePicker={WorkflowVariablePicker}
-                />
+            <FormTextFieldInput
+              placeholder={valuePlaceholder}
+              readonly={readonly || pair.isPreexisting}
+              defaultValue={pair.value}
+              onChange={(value) =>
+                handlePairChange(pair.id, 'value', value ?? '')
+              }
+              VariablePicker={WorkflowVariablePicker}
+            />
 
-                {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
-                  <Button
-                    onClick={() => handleRemovePair(pair.id)}
-                    Icon={IconTrash}
-                  />
-                ) : null}
-              </StyledKeyValueContainer>
-            ),
-        )}
+            {!readonly &&
+            pair.id !== pairs[pairs.length - 1].id &&
+            !pair.isPreexisting ? (
+              <Button
+                onClick={() => handleRemovePair(pair.id)}
+                Icon={IconTrash}
+              />
+            ) : null}
+          </StyledKeyValueContainer>
+        ))}
       </StyledContainer>
     </FormFieldInputContainer>
   );
