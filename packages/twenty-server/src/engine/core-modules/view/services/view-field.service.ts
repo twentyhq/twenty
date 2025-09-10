@@ -175,7 +175,7 @@ export class ViewFieldService {
     return viewField;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
+  async destroy(id: string, workspaceId: string): Promise<ViewFieldEntity> {
     const viewField = await this.findById(id, workspaceId);
 
     if (!isDefined(viewField)) {
@@ -190,6 +190,6 @@ export class ViewFieldService {
 
     await this.viewFieldRepository.delete(id);
 
-    return true;
+    return viewField;
   }
 }

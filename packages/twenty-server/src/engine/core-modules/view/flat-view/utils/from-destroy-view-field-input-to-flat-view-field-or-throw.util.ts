@@ -4,7 +4,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type DeleteDestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-destroy-view-field.input';
+import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
@@ -12,11 +12,11 @@ import {
 import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 
-export const fromDeleteOrDestroyViewFieldInputToFlatViewFieldOrThrow = ({
-  deleteDestroyViewInput: rawDeleteDestroyViewInput,
+export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
+  destroyViewFieldInput: rawDeleteDestroyViewInput,
   flatViewFieldMaps,
 }: {
-  deleteDestroyViewInput: DeleteDestroyViewFieldInput;
+  destroyViewFieldInput: DestroyViewFieldInput;
   flatViewFieldMaps: FlatViewFieldMaps;
 }): FlatViewField => {
   const { id: viewFieldId } = extractAndSanitizeObjectStringFields(
@@ -24,15 +24,14 @@ export const fromDeleteOrDestroyViewFieldInputToFlatViewFieldOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFieldToDeleteOrDestroy =
-    flatViewFieldMaps.byId[viewFieldId];
+  const existingFlatViewFieldToDestroy = flatViewFieldMaps.byId[viewFieldId];
 
-  if (!isDefined(existingFlatViewFieldToDeleteOrDestroy)) {
+  if (!isDefined(existingFlatViewFieldToDestroy)) {
     throw new ViewFieldException(
-      t`View field to delete not found`,
+      t`View field to destroy or not found`,
       ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
     );
   }
 
-  return existingFlatViewFieldToDeleteOrDestroy;
+  return existingFlatViewFieldToDestroy;
 };
