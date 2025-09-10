@@ -17,7 +17,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -25,7 +24,6 @@ import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  FeatureFlagKey,
   useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
@@ -69,10 +67,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
         set(apiKeyTokenFamilyState(apiKeyId), token);
       },
     [],
-  );
-
-  const isApiKeyRolesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -155,10 +149,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
-    const adminRole = roles.find((role) => role.label === 'Admin');
-    const roleIdToUse = isApiKeyRolesEnabled ? selectedRoleId : adminRole?.id;
+    const roleIdToUse = selectedRoleId;
 
-    if (!roleIdToUse && isApiKeyRolesEnabled) {
+    if (!roleIdToUse) {
       enqueueErrorSnackBar({
         message: t`A role must be selected for the API key`,
       });
@@ -166,7 +159,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
 
     if (!isDefined(roleIdToUse)) {
-      throw new Error('Admin role not found - this should never happen');
+      throw new Error('Role not selected - this should never happen');
     }
 
     const { data: newApiKeyData } = await createApiKey({
@@ -285,19 +278,17 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onNameUpdate={setApiKeyName}
               />
             </Section>
-            {isApiKeyRolesEnabled && (
-              <Section>
-                <H2Title
-                  title={t`Role`}
-                  description={t`What this API can do: Select a user role to define its permissions.`}
-                />
-                <SettingsDevelopersRoleSelector
-                  value={selectedRoleId}
-                  onChange={handleRoleChange}
-                  roles={roles}
-                />
-              </Section>
-            )}
+            <Section>
+              <H2Title
+                title={t`Role`}
+                description={t`What this API can do: Select a user role to define its permissions.`}
+              />
+              <SettingsDevelopersRoleSelector
+                value={selectedRoleId}
+                onChange={handleRoleChange}
+                roles={roles}
+              />
+            </Section>
             <Section>
               <H2Title
                 title={t`Expiration`}

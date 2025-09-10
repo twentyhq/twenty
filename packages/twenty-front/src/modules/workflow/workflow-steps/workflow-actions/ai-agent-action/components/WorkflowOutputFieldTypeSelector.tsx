@@ -1,7 +1,7 @@
+import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { t } from '@lingui/core/macro';
-import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';
 
 type WorkflowOutputFieldTypeSelectorProps = {
   value?: InputSchemaPropertyType;

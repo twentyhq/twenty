@@ -14,7 +14,6 @@ export const deleteRecordsByIds = async (
       .map((_, index) => `$${index + 1}`)
       .join(', ');
 
-    // @ts-expect-error legacy noImplicitAny
     await global.testDataSource.query(
       `DELETE from "${TEST_SCHEMA_NAME}"."${objectNameSingular}" WHERE id IN (${placeholders})`,
       recordIds,

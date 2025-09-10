@@ -2,12 +2,13 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
+import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFirstRowFirstColumn';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
-  const { isSelected } = useRecordTableRowContextOrThrow();
+  const { isSelected, rowIndex } = useRecordTableRowContextOrThrow();
 
   const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
@@ -19,19 +20,31 @@ export const RecordTableCellsVisible = () => {
 
   const recordFieldsAfterFirst = visibleRecordFields.slice(1);
 
+  const isFirstRow = rowIndex === 0;
+
   return (
     <>
       <RecordTableCellWrapper
         recordField={visibleRecordFields[0]}
         recordFieldIndex={0}
       >
-        <RecordTableTd
-          isSelected={isSelected}
-          isDragging={isDragging}
-          width={visibleRecordFields[0].size}
-        >
-          <RecordTableCell />
-        </RecordTableTd>
+        {isFirstRow ? (
+          <RecordTableCellFirstRowFirstColumn
+            isSelected={isSelected}
+            isDragging={isDragging}
+            width={visibleRecordFields[0].size}
+          >
+            <RecordTableCell />
+          </RecordTableCellFirstRowFirstColumn>
+        ) : (
+          <RecordTableTd
+            isSelected={isSelected}
+            isDragging={isDragging}
+            width={visibleRecordFields[0].size}
+          >
+            <RecordTableCell />
+          </RecordTableTd>
+        )}
       </RecordTableCellWrapper>
       {recordFieldsAfterFirst.map((recordField, recordFieldIndex) => (
         <RecordTableCellWrapper

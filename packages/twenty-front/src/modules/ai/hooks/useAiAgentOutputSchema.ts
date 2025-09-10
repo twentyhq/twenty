@@ -1,14 +1,13 @@
-import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
-import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { getFieldIcon } from '../utils/getFieldIcon';
 
 export const useAiAgentOutputSchema = (
-  outputSchema?: BaseOutputSchema,
+  outputSchema?: BaseOutputSchemaDeprecated,
   onActionUpdate?: (action: WorkflowAiAgentAction) => void,
   action?: WorkflowAiAgentAction,
   readonly?: boolean,
@@ -18,7 +17,6 @@ export const useAiAgentOutputSchema = (
       id: v4(),
       name,
       type: field.type,
-      description: field.description,
     })),
   );
 
@@ -28,16 +26,14 @@ export const useAiAgentOutputSchema = (
         return;
       }
 
-      const newOutputSchema = fields.reduce<BaseOutputSchema>(
+      const newOutputSchema = fields.reduce<BaseOutputSchemaDeprecated>(
         (schema, field) => {
           if (isDefined(field.name)) {
             schema[field.name] = {
               isLeaf: true,
               type: field.type,
               value: null,
-              icon: getFieldIcon(field.type),
               label: field.name,
-              description: field.description,
             };
           }
           return schema;
