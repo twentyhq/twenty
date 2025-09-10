@@ -29,6 +29,7 @@ export default [
       'packages/twenty-server/node_modules/**',
       'packages/twenty-server/dist/**',
       '**/node_modules/**',
+      '**/.local-storage/**',
       'src/engine/workspace-manager/dev-seeder/data/constants/**',
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
       'src/utils/email-providers.ts',

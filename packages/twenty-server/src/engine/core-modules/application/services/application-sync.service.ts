@@ -7,6 +7,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { LocalApplicationSourceProvider } from 'src/engine/core-modules/application/providers/local-application-source.provider';
 import { ApplicationSyncAgentService } from 'src/engine/core-modules/application/services/application-sync-agent.service';
+import { FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 export interface ApplicationSyncContext {
   workspaceId: string;
@@ -19,16 +20,7 @@ interface ApplicationManifest {
   label: string;
   description?: string;
   version?: string;
-  agents?: Array<{
-    universalIdentifier: string;
-    name: string;
-    label: string;
-    description?: string;
-    icon?: string;
-    prompt?: string;
-    modelId?: string;
-    responseFormat?: object;
-  }>;
+  agents?: FlatAgent[];
 }
 
 @Injectable()
