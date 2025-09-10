@@ -3,6 +3,7 @@ import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLa
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
+import { normalizePageLayoutData } from '@/page-layout/utils/normalizePageLayoutData';
 import { useQuery } from '@apollo/client';
 
 type DashboardRendererProps = {
@@ -29,5 +30,7 @@ export const DashboardRenderer = ({ recordId }: DashboardRendererProps) => {
     return <></>;
   }
 
-  return <PageLayoutRenderer pageLayout={pageLayout} />;
+  const normalizedPageLayout = normalizePageLayoutData(pageLayout);
+
+  return <PageLayoutRenderer pageLayout={normalizedPageLayout} />;
 };
