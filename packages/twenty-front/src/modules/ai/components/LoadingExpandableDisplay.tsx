@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
+import { Shimmer } from '@/ai/components/ShimmerEffect';
+
 const StyledButtonText = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -25,22 +27,9 @@ const StyledLoadingContainer = styled.div`
 `;
 
 const StyledLoadingText = styled.div`
-  animation: shimmer 1.5s ease-in-out infinite;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-
-  @keyframes shimmer {
-    0% {
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.5;
-    }
-  }
 `;
 
 const StyledContentContainer = styled.div`
@@ -89,7 +78,9 @@ export const LoadingExpandableDisplay = ({
     return (
       <StyledContainer>
         <StyledLoadingContainer>
-          <StyledLoadingText>{loadingText}</StyledLoadingText>
+          <Shimmer>
+            <StyledLoadingText>{loadingText}</StyledLoadingText>
+          </Shimmer>
         </StyledLoadingContainer>
       </StyledContainer>
     );

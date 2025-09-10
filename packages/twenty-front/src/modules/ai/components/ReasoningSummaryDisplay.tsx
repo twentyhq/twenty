@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
+import { Shimmer } from '@/ai/components/ShimmerEffect';
+
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,22 +15,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledThinkingText = styled.div`
-  animation: shimmer 1.5s ease-in-out infinite;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-
-  @keyframes shimmer {
-    0% {
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.5;
-    }
-  }
 `;
 
 const StyledReasoningContainer = styled.div`
@@ -84,7 +73,11 @@ export const ReasoningSummaryDisplay = ({
 
   return (
     <StyledContainer>
-      {isThinking && <StyledThinkingText>Thinking...</StyledThinkingText>}
+      {isThinking && (
+        <Shimmer>
+          <StyledThinkingText>Thinking...</StyledThinkingText>
+        </Shimmer>
+      )}
 
       {isThinking && (
         <StyledReasoningContainer>
