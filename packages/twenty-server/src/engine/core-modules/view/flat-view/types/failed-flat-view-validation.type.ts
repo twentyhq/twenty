@@ -3,7 +3,7 @@ import { type FlatViewValidationError } from 'src/engine/core-modules/view/flat-
 import { type WorkspaceMigrationViewActionTypeV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 
 export type FailedFlatViewValidation = {
-  type: WorkspaceMigrationViewActionTypeV2['type'];
+  type: WorkspaceMigrationViewActionTypeV2;
   viewLevelErrors: FlatViewValidationError[];
   failedViewValidationMinimalInformation: Partial<FailedFlatViewValidationMinimalInformation>;
 };

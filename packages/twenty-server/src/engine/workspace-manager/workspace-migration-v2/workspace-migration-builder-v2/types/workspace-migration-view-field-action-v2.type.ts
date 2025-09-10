@@ -36,6 +36,4 @@ export type WorkspaceMigrationViewFieldActionV2 =
   | DeleteViewFieldAction;
 
 export type WorkspaceMigrationViewFieldActionTypeV2 =
-  | CreateViewFieldAction
-  | UpdateViewFieldAction
-  | DeleteViewFieldAction;
+  WorkspaceMigrationViewFieldActionV2['type'];
