@@ -305,6 +305,7 @@ msgstr "ACS Url이 클립보드에 복사되었습니다"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
 msgid "Action"
 msgstr "액션"
 
@@ -365,6 +366,11 @@ msgstr "트리거 추가"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "계정 추가"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
+msgid "Add an Action"
+msgstr ""
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1393,6 +1399,12 @@ msgstr "컴팩트 보기"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "회사"
+
+#. js-lingui-id: 2PsTzL
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "completed"
+msgstr ""
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -4048,6 +4060,12 @@ msgstr "사용자를 조회하여 그들의 워크스페이스 기능 플래그�
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
 msgstr "사용자를 조회하여 그들을 대행합니다."
+
+#. js-lingui-id: tL2lBI
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "loop"
+msgstr ""
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
