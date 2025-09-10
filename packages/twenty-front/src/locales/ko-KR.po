@@ -5051,11 +5051,11 @@ msgstr "권한 · {objectLabelSingular}"
 msgid "Phone number copied to clipboard"
 msgstr "전화번호가 클립보드에 복사되었습니다"
 
-#. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#. js-lingui-id: vqKcU0
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
-msgid "Pick a {nameSingular} record"
-msgstr "{nameSingular} 기록을 선택하세요"
+msgid "Pick a {objectLabel} record"
+msgstr ""
 
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx

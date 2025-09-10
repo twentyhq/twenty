@@ -4,7 +4,6 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -15,6 +14,7 @@ import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistVie
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewSort } from '@/views/types/ViewSort';
@@ -97,7 +97,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         const sourceView = snapshot
           .getLoadable(
-            prefetchViewFromViewIdFamilySelector({
+            coreViewFromViewIdFamilySelector({
               viewId: currentViewId,
             }),
           )

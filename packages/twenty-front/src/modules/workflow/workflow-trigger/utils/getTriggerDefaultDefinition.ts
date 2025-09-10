@@ -1,25 +1,21 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  type WorkflowAction,
   type WorkflowTrigger,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
   activeNonSystemObjectMetadataItems,
-  steps,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
-  steps?: WorkflowAction[] | null;
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
@@ -27,12 +23,9 @@ export const getTriggerDefaultDefinition = ({
     );
   }
 
-  const nextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
-
   const baseTriggerDefinition = {
     name: defaultLabel,
     position: { x: 0, y: 0 },
-    nextStepIds,
   };
 
   switch (type) {

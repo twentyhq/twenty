@@ -6,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
@@ -26,7 +24,6 @@ export class PermissionsService {
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
@@ -145,16 +142,6 @@ export class PermissionsService {
     apiKeyId?: string;
   }): Promise<boolean> {
     if (apiKeyId) {
-      const isApiKeyRolesEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-          workspaceId,
-        );
-
-      if (!isApiKeyRolesEnabled) {
-        return true;
-      }
-
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKeyId,
         workspaceId,

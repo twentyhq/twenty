@@ -10,12 +10,13 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-or-relation-flat-field-metadata-to-relation-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
@@ -137,7 +138,7 @@ export class DataloaderService {
                 flatFieldMetadata:
                   sourceFlatFieldMetadata.flatRelationTargetFieldMetadata,
                 flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              }).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+              }).sort((a, b) => (a.id > b.id ? 1 : -1));
 
             relationDtos.push(
               fromMorphOrRelationFlatFieldMetadataToRelationDto({
@@ -278,62 +279,49 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { objectMetadataMaps } =
-          await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+          await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
             { workspaceId },
           );
 
         const fieldMetadataCollection = objectMetadataIds.map((id) => {
-          const objectMetadata = objectMetadataMaps.byId[id];
+          const flatObjectMetadataWithFlatFieldMaps =
+            existingFlatObjectMetadataMaps.byId[id];
 
-          if (!isDefined(objectMetadata)) {
+          if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
             return [];
           }
 
-          const overriddenFieldMetadataEntities = Object.values(
-            objectMetadata.fieldsById,
-          ).map<FieldMetadataEntity>((fieldMetadata) => {
-            const overridesFieldToCompute = [
-              'icon',
-              'label',
-              'description',
-            ] as const satisfies (keyof FieldMetadataEntity)[];
-
-            const overrides = overridesFieldToCompute.reduce<
-              Partial<Record<(typeof overridesFieldToCompute)[number], string>>
-            >(
-              (acc, field) => ({
-                ...acc,
-                [field]: resolveFieldMetadataStandardOverride(
-                  {
-                    label: fieldMetadata.label,
-                    description: fieldMetadata.description ?? undefined,
-                    icon: fieldMetadata.icon ?? undefined,
-                    isCustom: fieldMetadata.isCustom,
-                    standardOverrides:
-                      fieldMetadata.standardOverrides ?? undefined,
-                  },
-                  field,
-                  dataLoaderParams[0].locale,
-                  i18nInstance,
-                ),
-              }),
-              {},
+          const overriddenFieldMetadataEntities =
+            flatObjectMetadataWithFlatFieldMaps.flatFieldMetadatas.map(
+              (flatFieldMetadata) => {
+                return FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
+                  (acc, property) => ({
+                    ...acc,
+                    [property]: resolveFieldMetadataStandardOverride(
+                      {
+                        label: flatFieldMetadata.label,
+                        description: flatFieldMetadata.description ?? undefined,
+                        icon: flatFieldMetadata.icon ?? undefined,
+                        isCustom: flatFieldMetadata.isCustom,
+                        standardOverrides:
+                          flatFieldMetadata.standardOverrides ?? undefined,
+                      },
+                      property,
+                      dataLoaderParams[0].locale,
+                      i18nInstance,
+                    ),
+                  }),
+                  flatFieldMetadata,
+                );
+              },
             );
-
-            return {
-              ...fieldMetadata,
-              ...overrides,
-            };
-          });
 
           const filteredFieldMetadataEntities =
-            filterMorphRelationDuplicateFields<FieldMetadataEntity>(
-              overriddenFieldMetadataEntities,
-            );
+            filterMorphRelationDuplicateFields(overriddenFieldMetadataEntities);
 
           return filteredFieldMetadataEntities.map(
-            fromFieldMetadataEntityToFieldMetadataDto,
+            fromFlatFieldMetadataToFieldMetadataDto,
           );
         });
 

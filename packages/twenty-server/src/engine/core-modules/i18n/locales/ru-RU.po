@@ -330,6 +330,11 @@ msgstr "Автор вложения"
 msgid "Attachment company"
 msgstr "Компания вложения"
 
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr ""
+
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
@@ -370,6 +375,7 @@ msgstr "Тип вложения"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -390,6 +396,11 @@ msgstr "Вложения, связанные с компанией"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "Вложения, связанные с контактом."
+
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -746,6 +757,7 @@ msgstr "Аккаунт X/Twitter Контакта"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
@@ -781,7 +793,10 @@ msgid "Custom Connection Parameters"
 msgstr "Пользовательские параметры подключения"
 
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Панель"
 
@@ -789,6 +804,11 @@ msgstr "Панель"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "Макет страницы панели управления"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr ""
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -933,6 +953,11 @@ msgstr "Переменная окружения CLOUDFLARE_API_KEY должна 
 msgid "Event company"
 msgstr "Компания события"
 
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr ""
+
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event details"
@@ -1058,6 +1083,11 @@ msgstr "Избранное"
 msgid "Favorite company"
 msgstr "Избранная компания"
 
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr ""
+
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1130,6 +1160,7 @@ msgstr "Избранный участник рабочего пространс�
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1149,6 +1180,11 @@ msgstr "Избранное, связанное с компанией"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "Избранное, связанное с контактом"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1671,6 +1707,11 @@ msgstr "Логический оператор"
 msgid "Logical operator for the filter group"
 msgstr "Логический оператор для группы фильтров"
 
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
+
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1853,6 +1894,11 @@ msgstr "Поля отношений типа \"morph\" отключены в в�
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "Значением по умолчанию для поля с множественным выбором должен быть массив"
+
+#. js-lingui-id: 6rLmLu
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2359,6 +2405,7 @@ msgstr "\\"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2786,6 +2833,7 @@ msgstr "URL-адрес веб-сайта компании. Мы использу
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
@@ -2913,6 +2961,7 @@ msgstr "Часовой пояс"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2922,6 +2971,11 @@ msgstr "Действия на временной шкале"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "Действия на временной шкале, связанные с компанией"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts

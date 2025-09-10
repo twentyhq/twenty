@@ -1,22 +1,20 @@
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 const mockStep = {
   id: 'step-1',
   name: 'Step 1',
+  type: 'CREATE_RECORD',
   outputSchema: {
     company: {
       isLeaf: false,
-      icon: 'company',
       label: 'Company',
       value: {
         object: {
-          nameSingular: 'company',
-          fieldIdName: 'id',
           label: 'Company',
-          value: 'John',
-          isLeaf: true,
           objectMetadataId: '123',
+          isRelationField: false,
         },
         fields: {
           name: {
@@ -24,13 +22,15 @@ const mockStep = {
             value: 'Twenty',
             isLeaf: true,
             fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            type: FieldMetadataType.TEXT,
+            isCompositeSubField: false,
           },
         },
         _outputSchemaType: 'RECORD',
       },
     },
   },
-} satisfies StepOutputSchema;
+} satisfies StepOutputSchemaV2;
 
 describe('getCurrentSubStepFromPath', () => {
   it('should return the current sub step from the path', () => {

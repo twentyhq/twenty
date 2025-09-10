@@ -1,11 +1,11 @@
 import { stepsOutputSchemaFamilyState } from '@/workflow/states/stepsOutputSchemaFamilyState';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { selectorFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const stepsOutputSchemaFamilySelector = selectorFamily<
-  StepOutputSchema[],
+  StepOutputSchemaV2[],
   { workflowVersionId: string; stepIds: string[] }
 >({
   key: 'stepsOutputSchemaFamilySelector',
