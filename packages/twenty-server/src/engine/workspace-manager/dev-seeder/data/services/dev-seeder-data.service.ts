@@ -31,6 +31,10 @@ import {
   CONNECTED_ACCOUNT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import {
+  DASHBOARD_DATA_SEED_COLUMNS,
+  DASHBOARD_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
+import {
   MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
@@ -99,6 +103,11 @@ const getRecordSeedsConfigs = (workspaceId: string) => [
     tableName: 'company',
     pgColumns: COMPANY_DATA_SEED_COLUMNS,
     recordSeeds: COMPANY_DATA_SEEDS,
+  },
+  {
+    tableName: 'dashboard',
+    pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
+    recordSeeds: DASHBOARD_DATA_SEEDS,
   },
   {
     tableName: 'person',
