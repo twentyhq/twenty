@@ -8,7 +8,6 @@ import {
   assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 import {
   createViewFieldData,
   updateViewFieldData,
@@ -28,6 +27,7 @@ import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -201,8 +201,10 @@ describe('View Field Resolver', () => {
         size: 300,
       });
       const updateOperation = updateViewFieldOperationFactory({
-        viewFieldId: viewField.id,
-        data: updateInput,
+        input: {
+          id: viewField.id,
+          update: updateInput,
+        },
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
@@ -216,8 +218,13 @@ describe('View Field Resolver', () => {
     });
 
     it('should throw an error when updating non-existent view field', async () => {
-      const operation = updateViewFieldOperationFactory({
-        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      const operation = updateViewFieldOperationFactory ({
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+          update: {
+            position: 1,
+          },
+        },
       });
       const response = await makeGraphqlAPIRequest(operation);
 

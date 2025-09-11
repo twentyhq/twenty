@@ -6,11 +6,11 @@ export const destroyViewFieldOperationFactory = ({
   viewFieldId: string;
 }) => ({
   query: gql`
-    mutation DestroyCoreViewField($id: String!) {
-      destroyCoreViewField(id: $id)
+    mutation DestroyCoreViewField($input: DestroyViewFieldInput!) {
+      destroyCoreViewField(input: $input)
     }
   `,
   variables: {
-    id: viewFieldId,
+    input: { id: viewFieldId },
   },
 });
