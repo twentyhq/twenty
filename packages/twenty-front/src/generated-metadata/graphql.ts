@@ -4285,6 +4285,13 @@ export type ImpersonateMutationVariables = Exact<{
 
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutationVariables = Exact<{
+  targetWorkspaceMemberId: Scalars['UUID'];
+}>;
+
+
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutation = { __typename?: 'Mutation', impersonateWorkspaceUserByWorkspaceMemberId: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type InitiateOtpProvisioningMutationVariables = Exact<{
   loginToken: Scalars['String'];
   origin: Scalars['String'];
@@ -6878,6 +6885,50 @@ export function useImpersonateMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMutation>;
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
+export const ImpersonateWorkspaceUserByWorkspaceMemberIdDocument = gql`
+    mutation ImpersonateWorkspaceUserByWorkspaceMemberId($targetWorkspaceMemberId: UUID!) {
+  impersonateWorkspaceUserByWorkspaceMemberId(
+    targetWorkspaceMemberId: $targetWorkspaceMemberId
+  ) {
+    tokens {
+      accessOrWorkspaceAgnosticToken {
+        token
+        expiresAt
+      }
+      refreshToken {
+        token
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutationFn = Apollo.MutationFunction<ImpersonateWorkspaceUserByWorkspaceMemberIdMutation, ImpersonateWorkspaceUserByWorkspaceMemberIdMutationVariables>;
+
+/**
+ * __useImpersonateWorkspaceUserByWorkspaceMemberIdMutation__
+ *
+ * To run a mutation, you first call `useImpersonateWorkspaceUserByWorkspaceMemberIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImpersonateWorkspaceUserByWorkspaceMemberIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [impersonateWorkspaceUserByWorkspaceMemberIdMutation, { data, loading, error }] = useImpersonateWorkspaceUserByWorkspaceMemberIdMutation({
+ *   variables: {
+ *      targetWorkspaceMemberId: // value for 'targetWorkspaceMemberId'
+ *   },
+ * });
+ */
+export function useImpersonateWorkspaceUserByWorkspaceMemberIdMutation(baseOptions?: Apollo.MutationHookOptions<ImpersonateWorkspaceUserByWorkspaceMemberIdMutation, ImpersonateWorkspaceUserByWorkspaceMemberIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ImpersonateWorkspaceUserByWorkspaceMemberIdMutation, ImpersonateWorkspaceUserByWorkspaceMemberIdMutationVariables>(ImpersonateWorkspaceUserByWorkspaceMemberIdDocument, options);
+      }
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutationHookResult = ReturnType<typeof useImpersonateWorkspaceUserByWorkspaceMemberIdMutation>;
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutationResult = Apollo.MutationResult<ImpersonateWorkspaceUserByWorkspaceMemberIdMutation>;
+export type ImpersonateWorkspaceUserByWorkspaceMemberIdMutationOptions = Apollo.BaseMutationOptions<ImpersonateWorkspaceUserByWorkspaceMemberIdMutation, ImpersonateWorkspaceUserByWorkspaceMemberIdMutationVariables>;
 export const InitiateOtpProvisioningDocument = gql`
     mutation initiateOTPProvisioning($loginToken: String!, $origin: String!) {
   initiateOTPProvisioning(loginToken: $loginToken, origin: $origin) {

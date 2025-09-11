@@ -20,7 +20,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionModalID';
+import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionModalId';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
@@ -96,7 +96,9 @@ export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
-  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<string | undefined>();
+  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
+    string | undefined
+  >();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const {

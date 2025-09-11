@@ -7,8 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useMutation } from '@apollo/client';
-import { ApolloError } from '@apollo/client';
+import { useMutation, ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash, IconUser } from 'twenty-ui/display';
