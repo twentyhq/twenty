@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
-import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewFieldMutationVariables,
@@ -15,8 +14,6 @@ import {
 } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
-  const apolloClient = useApolloClient();
-
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
   const [createCoreViewFieldMutation] = useCreateCoreViewFieldMutation();
@@ -48,7 +45,7 @@ export const usePersistViewFieldRecords = () => {
         ),
       );
     },
-    [apolloClient, triggerViewFieldOptimisticEffect],
+    [triggerViewFieldOptimisticEffect, createCoreViewFieldMutation],
   );
 
   const updateCoreViewFieldRecords = useCallback(
@@ -75,7 +72,7 @@ export const usePersistViewFieldRecords = () => {
         ),
       );
     },
-    [apolloClient, triggerViewFieldOptimisticEffect],
+    [triggerViewFieldOptimisticEffect, updateCoreViewFieldMutation],
   );
 
   const deleteCoreViewFieldRecords = useCallback(
@@ -102,7 +99,7 @@ export const usePersistViewFieldRecords = () => {
         ),
       );
     },
-    [apolloClient, triggerViewFieldOptimisticEffect],
+    [triggerViewFieldOptimisticEffect, deleteCoreViewFieldMutation],
   );
 
   const destroyCoreViewFieldRecords = useCallback(
@@ -119,7 +116,7 @@ export const usePersistViewFieldRecords = () => {
         ),
       );
     },
-    [apolloClient, triggerViewFieldOptimisticEffect],
+    [destroyCoreViewFieldMutation],
   );
 
   return {

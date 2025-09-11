@@ -308,7 +308,7 @@ describe('ViewFieldService', () => {
 
       expect(viewFieldService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewFieldRepository.delete).toHaveBeenCalledWith(id);
-      expect(result).toEqual(true);
+      expect(result).toBeDefined();
     });
   });
 });

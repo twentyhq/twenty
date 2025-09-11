@@ -28,7 +28,10 @@ import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useCreateCoreViewMutation } from '~/generated/graphql';
+import {
+  type CreateCoreViewFieldMutationVariables,
+  useCreateCoreViewMutation,
+} from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -138,7 +141,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           throw new Error('Failed to create view');
         }
 
-        await createViewFieldRecords(sourceView.viewFields, { id: newViewId });
+        await createViewFieldRecords(
+          sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
+            (viewField) => ({ input: { ...viewField, viewId: newViewId } }),
+          ),
+        );
 
         if (type === ViewType.Kanban) {
           if (!isDefined(kanbanFieldMetadataId)) {
