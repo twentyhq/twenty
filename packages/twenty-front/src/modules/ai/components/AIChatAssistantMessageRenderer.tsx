@@ -1,10 +1,7 @@
 import { ErrorStepRenderer } from '@/ai/components/ErrorStepRenderer';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import type {
-  AIChatAssistantMessageRendererProps,
-  ParsedStep,
-} from '@/ai/types/streamTypes';
+import type { ParsedStep } from '@/ai/types/streamTypes';
 import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';
 
@@ -53,7 +50,9 @@ const StyledToolCallContainer = styled.div`
 
 export const AIChatAssistantMessageRenderer = ({
   streamData,
-}: AIChatAssistantMessageRendererProps) => {
+}: {
+  streamData: string;
+}) => {
   const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
   const isStreaming = Boolean(agentStreamingMessage);
 

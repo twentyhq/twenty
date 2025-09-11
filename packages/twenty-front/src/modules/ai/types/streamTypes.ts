@@ -34,7 +34,3 @@ export type ParsedStep =
   | { type: 'reasoning'; content: string; isThinking: boolean }
   | { type: 'text'; content: string }
   | { type: 'error'; message: string; error?: unknown };
-
-export type AIChatAssistantMessageRendererProps = {
-  streamData: string;
-};
