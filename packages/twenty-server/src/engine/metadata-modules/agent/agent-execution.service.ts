@@ -268,21 +268,23 @@ export class AgentExecutionService {
   private mapMessagesToCoreMessages(
     messages: AgentChatMessageEntity[],
   ): CoreMessage[] {
-    return messages.map(({ role, streamData, content }) => {
-      if (role === AgentChatMessageRole.USER) {
-        return {
-          role: 'user',
-          content,
-        };
-      } else {
-        return {
-          role: 'assistant',
-          content: constructAssistantMessageContentFromStream(
-            streamData as string,
-          ),
-        };
-      }
-    });
+    return messages
+      .map(({ role, streamData, content }) => {
+        if (role === AgentChatMessageRole.USER) {
+          return {
+            role: 'user' as const,
+            content,
+          };
+        } else {
+          return {
+            role: 'assistant' as const,
+            content: constructAssistantMessageContentFromStream(
+              streamData as string,
+            ),
+          };
+        }
+      })
+      .filter((message) => message.content.length > 0);
   }
 
   async streamChatResponse({
