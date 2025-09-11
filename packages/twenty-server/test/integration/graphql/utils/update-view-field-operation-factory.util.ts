@@ -11,8 +11,8 @@ export const updateViewFieldOperationFactory = ({
   input: UpdateViewFieldInput;
 }) => ({
   query: gql`
-    mutation UpdateCoreViewField($id: String!, $input: UpdateViewFieldInput!) {
-      updateCoreViewField(id: $id, input: $input) {
+    mutation UpdateCoreViewField($input: UpdateViewFieldInput!) {
+      updateCoreViewField(input: $input) {
         ${gqlFields}
       }
     }
