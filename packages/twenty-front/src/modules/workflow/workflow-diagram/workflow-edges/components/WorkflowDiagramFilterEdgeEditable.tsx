@@ -86,7 +86,9 @@ const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
 
 export const WorkflowDiagramFilterEdgeEditable = ({
   source,
+  sourceHandleId,
   target,
+  targetHandleId,
   sourceY,
   sourceX,
   targetY,
@@ -189,7 +191,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     <>
       <WorkflowDiagramBaseEdge
         source={source}
+        sourceHandleId={sourceHandleId}
         target={target}
+        targetHandleId={targetHandleId}
         path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
@@ -218,7 +222,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                 textColor={theme.font.color.inverted}
                 counter={filterCounter}
               />
-              {isEdgeHovered({ source, target }) ||
+              {isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              }) ||
               isDropdownOpen ||
               nodeCreationStarted ? (
                 <WorkflowDiagramEdgeButtonGroup

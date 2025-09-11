@@ -70,12 +70,20 @@ export const WorkflowDiagramIteratorEmptyActionEditable = ({
         position={Position.Bottom}
         disableHoverEffect
         selected={
-          isSourceSelected(id) ||
+          isSourceSelected({
+            nodeId: id,
+            sourceHandle: null,
+          }) ||
           selected ||
           isSourceConnected(id) ||
           (isConnectable(id) && isHovered)
         }
-        hovered={isSourceHovered(id) || isHovered}
+        hovered={
+          isSourceHovered({
+            nodeId: id,
+            sourceHandle: null,
+          }) || isHovered
+        }
       />
     </WorkflowNodeContainer>
   );

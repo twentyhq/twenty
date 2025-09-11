@@ -146,12 +146,20 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         type="source"
         position={Position.Bottom}
         selected={
-          isSourceSelected(id) ||
+          isSourceSelected({
+            nodeId: id,
+            sourceHandle: null,
+          }) ||
           selected ||
           isSourceConnected(id) ||
           (isConnectable(id) && isHovered)
         }
-        hovered={isSourceHovered(id) || isHovered}
+        hovered={
+          isSourceHovered({
+            nodeId: id,
+            sourceHandle: null,
+          }) || isHovered
+        }
       />
 
       {isDefined(data.rightHandleOptions) && (
@@ -160,13 +168,21 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           type="source"
           position={Position.Right}
           selected={
-            isSourceSelected(id) ||
+            isSourceSelected({
+              nodeId: id,
+              sourceHandle: data.rightHandleOptions.id,
+            }) ||
             selected ||
             isSourceConnected(id) ||
             (isConnectable(id) && isHovered)
           }
           // TODO: fix hovered state when multiple source handles
-          hovered={isSourceHovered(id) || isHovered}
+          hovered={
+            isSourceHovered({
+              nodeId: id,
+              sourceHandle: data.rightHandleOptions.id,
+            }) || isHovered
+          }
         />
       )}
     </>

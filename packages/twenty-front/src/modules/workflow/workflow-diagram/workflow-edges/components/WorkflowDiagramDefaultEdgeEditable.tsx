@@ -28,7 +28,9 @@ type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
   source,
+  sourceHandleId,
   target,
+  targetHandleId,
   sourceX,
   sourceY,
   targetX,
@@ -107,7 +109,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     <>
       <WorkflowDiagramBaseEdge
         source={source}
+        sourceHandleId={sourceHandleId}
         target={target}
+        targetHandleId={targetHandleId}
         path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
@@ -131,7 +135,13 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
             shouldDisplay={
-              nodeCreationStarted || isEdgeHovered({ source, target })
+              nodeCreationStarted ||
+              isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              })
             }
           >
             <WorkflowDiagramEdgeButtonGroup

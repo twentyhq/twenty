@@ -22,6 +22,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       setEdgeSelected({
         source: selectedEdge.source,
         target: selectedEdge.target,
+        sourceHandle: selectedEdge.sourceHandle,
+        targetHandle: selectedEdge.targetHandle,
       });
     },
     [setEdgeSelected, clearEdgeSelected],

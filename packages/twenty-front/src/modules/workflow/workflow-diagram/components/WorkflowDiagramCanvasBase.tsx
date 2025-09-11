@@ -438,6 +438,8 @@ export const WorkflowDiagramCanvasBase = ({
       setEdgeHovered({
         source: hoveredEdge.source,
         target: hoveredEdge.target,
+        sourceHandle: hoveredEdge.sourceHandle,
+        targetHandle: hoveredEdge.targetHandle,
       });
     },
     [setEdgeHovered],
