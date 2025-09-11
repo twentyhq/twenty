@@ -34,8 +34,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Default widget placeholder state. Click to add the first widget.',
+        story: 'Default widget placeholder state.',
       },
     },
   },
