@@ -3,6 +3,7 @@ import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
 
 @ObjectType('PageLayoutTab')
 export class PageLayoutTabDTO {
@@ -17,6 +18,9 @@ export class PageLayoutTabDTO {
 
   @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutId: string;
+
+  @Field(() => [PageLayoutWidgetDTO], { nullable: true })
+  widgets?: PageLayoutWidgetDTO[] | null;
 
   @Field()
   createdAt: Date;

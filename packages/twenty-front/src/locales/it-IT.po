@@ -1323,7 +1323,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Fare clic sul segno di spunta per applicare le modifiche."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/widgets/graph/components/GraphWidgetTooltip.tsx
+#: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr "Clicca per vedere i dati"
 
