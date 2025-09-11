@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -93,7 +94,10 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 
-const getRecordSeedsConfigs = (workspaceId: string) => [
+const getRecordSeedsConfigs = (
+  workspaceId: string,
+  featureFlags?: Record<FeatureFlagKey, boolean>,
+) => [
   {
     tableName: 'workspaceMember',
     pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
@@ -104,11 +108,15 @@ const getRecordSeedsConfigs = (workspaceId: string) => [
     pgColumns: COMPANY_DATA_SEED_COLUMNS,
     recordSeeds: COMPANY_DATA_SEEDS,
   },
-  {
-    tableName: 'dashboard',
-    pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
-    recordSeeds: DASHBOARD_DATA_SEEDS,
-  },
+  ...(featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]
+    ? [
+        {
+          tableName: 'dashboard',
+          pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
+          recordSeeds: DASHBOARD_DATA_SEEDS,
+        },
+      ]
+    : []),
   {
     tableName: 'person',
     pgColumns: PERSON_DATA_SEED_COLUMNS,
@@ -213,16 +221,21 @@ export class DevSeederDataService {
   public async seed({
     schemaName,
     workspaceId,
+    featureFlags,
   }: {
     schemaName: string;
     workspaceId: string;
+    featureFlags?: Record<FeatureFlagKey, boolean>;
   }) {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        for (const recordSeedsConfig of getRecordSeedsConfigs(workspaceId)) {
+        for (const recordSeedsConfig of getRecordSeedsConfigs(
+          workspaceId,
+          featureFlags,
+        )) {
           const objectMetadata = objectMetadataItems.find(
             (item) =>
               computeTableName(item.nameSingular, item.isCustom) ===
