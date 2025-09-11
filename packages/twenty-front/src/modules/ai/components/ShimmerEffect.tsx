@@ -8,8 +8,8 @@ const StyledShimmerEffect = styled.div`
       ${({ theme }) => theme.font.color.primary} 50%,
       ${({ theme }) => theme.font.color.light} 100%
     );
-  background-size: ${({ theme }) => theme.spacing(8)} 100%;
-  background-position: -${({ theme }) => theme.spacing(8)} top;
+  background-size: 200% 100%;
+  background-position: -200% top;
   background-repeat: no-repeat;
   background-clip: text;
   -webkit-background-clip: text;
@@ -18,13 +18,10 @@ const StyledShimmerEffect = styled.div`
 
   @keyframes shimmer-wave {
     0% {
-      background-position: -${({ theme }) => theme.spacing(8)} top;
-    }
-    70% {
-      background-position: ${({ theme }) => theme.spacing(25)} top;
+      background-position: 200% top;
     }
     100% {
-      background-position: ${({ theme }) => theme.spacing(25)} top;
+      background-position: -200% top;
     }
   }
 `;
