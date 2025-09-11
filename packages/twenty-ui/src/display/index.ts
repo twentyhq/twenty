@@ -109,6 +109,7 @@ export {
   IconChartBar,
   IconChartCandle,
   IconChartDots3,
+  IconChartLine,
   IconChartPie,
   IconCheck,
   IconCheckbox,

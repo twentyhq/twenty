@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType()
-class CustomDomainRecord {
+class DomainRecord {
   @Field(() => String)
   validationType: 'ssl' | 'redirection';
 
@@ -21,13 +21,13 @@ class CustomDomainRecord {
 }
 
 @ObjectType()
-export class CustomDomainValidRecords {
+export class DomainValidRecords {
   @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => String)
-  customDomain: string;
+  domain: string;
 
-  @Field(() => [CustomDomainRecord])
-  records: Array<CustomDomainRecord>;
+  @Field(() => [DomainRecord])
+  records: Array<DomainRecord>;
 }

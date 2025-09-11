@@ -169,6 +169,9 @@ export class ApprovedAccessDomainService {
       throw new ApprovedAccessDomainException(
         'Approved access domain already registered.',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
+        {
+          userFriendlyMessage: t`Approved access domain already registered.`,
+        },
       );
     }
 
