@@ -52,13 +52,10 @@ describe('Page Layout Resolver', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
     await cleanupPageLayoutRecords();
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
     await cleanupPageLayoutRecords();
   });
 
