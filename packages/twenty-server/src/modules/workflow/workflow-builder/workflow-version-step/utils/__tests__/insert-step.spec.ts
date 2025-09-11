@@ -11,6 +11,24 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
+const mockIteratorStep: WorkflowIteratorAction = {
+  id: '1',
+  name: 'Iterator 1',
+  type: WorkflowActionType.ITERATOR,
+  settings: {
+    input: {
+      initialLoopStepIds: ['existing-loop-step'],
+      items: [],
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: false },
+      continueOnFailure: { value: false },
+    },
+  },
+  valid: true,
+};
+
 describe('insertStep', () => {
   const createMockAction = (
     id: string,
@@ -162,28 +180,11 @@ describe('insertStep', () => {
 
   it('should add step to iterator initialLoopStepIds when shouldInsertToLoop is true', () => {
     const existingTrigger = createMockTrigger(['1']);
-    const iteratorStep: WorkflowIteratorAction = {
-      id: '1',
-      name: 'Iterator 1',
-      type: WorkflowActionType.ITERATOR,
-      settings: {
-        input: {
-          initialLoopStepIds: ['existing-loop-step'],
-          items: [],
-        },
-        outputSchema: {},
-        errorHandlingOptions: {
-          retryOnFailure: { value: false },
-          continueOnFailure: { value: false },
-        },
-      },
-      valid: true,
-    };
     const newStep = createMockAction('new');
 
     const result = insertStep({
       existingTrigger,
-      existingSteps: [iteratorStep],
+      existingSteps: [mockIteratorStep],
       insertedStep: newStep,
       options: {
         type: WorkflowActionType.ITERATOR,
@@ -205,28 +206,11 @@ describe('insertStep', () => {
 
   it('should not add step to iterator initialLoopStepIds when shouldInsertToLoop is false', () => {
     const existingTrigger = createMockTrigger(['1']);
-    const iteratorStep: WorkflowIteratorAction = {
-      id: '1',
-      name: 'Iterator 1',
-      type: WorkflowActionType.ITERATOR,
-      settings: {
-        input: {
-          initialLoopStepIds: ['existing-loop-step'],
-          items: [],
-        },
-        outputSchema: {},
-        errorHandlingOptions: {
-          retryOnFailure: { value: false },
-          continueOnFailure: { value: false },
-        },
-      },
-      valid: true,
-    };
     const newStep = createMockAction('new');
 
     const result = insertStep({
       existingTrigger,
-      existingSteps: [iteratorStep],
+      existingSteps: [mockIteratorStep],
       insertedStep: newStep,
       options: {
         type: WorkflowActionType.ITERATOR,

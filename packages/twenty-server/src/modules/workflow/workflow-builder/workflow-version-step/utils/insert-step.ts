@@ -84,7 +84,10 @@ const updateParentStep = ({
 
   if (parentStepId === TRIGGER_STEP_ID) {
     if (!trigger) {
-      throw new Error('Cannot insert step from undefined trigger');
+      throw new WorkflowVersionStepException(
+        'Cannot insert step from undefined trigger',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
     }
 
     updatedTrigger = {
