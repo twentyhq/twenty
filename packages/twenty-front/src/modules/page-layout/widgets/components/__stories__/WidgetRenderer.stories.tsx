@@ -107,51 +107,6 @@ export const WithGaugeChart: Story = {
   ),
 };
 
-export const EmptyState: Story = {
-  args: {
-    widget: {
-      title: 'Conversion Rate',
-      type: WidgetType.GRAPH,
-      configuration: {
-        graphType: GraphType.GAUGE,
-      },
-      data: {
-        value: 0.5,
-        min: 0,
-        max: 1,
-        label: 'Conversion rate',
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      gridPosition: {
-        row: 0,
-        column: 0,
-        rowSpan: 5,
-        columnSpan: 3,
-      },
-      id: 'widget-1',
-      pageLayoutTabId: 'tab-overview',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Empty widget placeholder state with dashed border',
-      },
-    },
-  },
-  render: (args) => (
-    <div style={{ width: '500px', height: '300px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
-    </div>
-  ),
-};
-
 export const WithPieChart: Story = {
   args: {
     widget: {

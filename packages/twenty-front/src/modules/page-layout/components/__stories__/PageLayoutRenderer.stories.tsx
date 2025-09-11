@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { MemoryRouter } from 'react-router-dom';
 
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
@@ -145,22 +146,24 @@ const meta: Meta<typeof PageLayoutRenderer> = {
   component: PageLayoutRenderer,
   decorators: [
     (Story, { args }: { args: any }) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            activeTabIdComponentState.atomFamily({
-              instanceId: 'page-layout-stories',
-            }),
-            args.activeTabId,
-          );
-        }}
-      >
-        <TabListComponentInstanceContext.Provider
-          value={{ instanceId: 'page-layout-stories' }}
+      <MemoryRouter>
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(
+              activeTabIdComponentState.atomFamily({
+                instanceId: 'page-layout-stories',
+              }),
+              args.activeTabId,
+            );
+          }}
         >
-          <Story />
-        </TabListComponentInstanceContext.Provider>
-      </RecoilRoot>
+          <TabListComponentInstanceContext.Provider
+            value={{ instanceId: 'page-layout-stories' }}
+          >
+            <Story />
+          </TabListComponentInstanceContext.Provider>
+        </RecoilRoot>
+      </MemoryRouter>
     ),
   ],
   parameters: {
