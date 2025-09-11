@@ -27,7 +27,7 @@ export const DashboardRenderer = ({ recordId }: DashboardRendererProps) => {
   const pageLayout = data?.getPageLayout;
 
   if (!pageLayout) {
-    return <></>;
+    return null;
   }
 
   const normalizedPageLayout = normalizePageLayoutData(pageLayout);

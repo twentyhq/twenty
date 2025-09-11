@@ -169,13 +169,11 @@ export const SettingsPageLayoutEdit = () => {
     const activeTab = pageLayoutDraft.tabs.find(
       (tab) => tab.id === activeTabId,
     );
-    return activeTab?.widgets || [];
+    return activeTab?.widgets ?? [];
   }, [pageLayoutDraft.tabs, activeTabId]);
 
   const allWidgets = useMemo(
-    () =>
-      pageLayoutDraft.tabs.flatMap((tab) => tab.widgets).filter(isDefined) ||
-      [],
+    () => pageLayoutDraft.tabs.flatMap((tab) => tab.widgets).filter(isDefined),
     [pageLayoutDraft.tabs],
   );
 
@@ -235,7 +233,7 @@ export const SettingsPageLayoutEdit = () => {
   }, [createPageLayoutTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
-    return [...(pageLayoutDraft.tabs || [])]
+    return [...(pageLayoutDraft.tabs ?? [])]
       .sort((a, b) => a.position - b.position)
       .map((tab) => ({
         id: tab.id,
@@ -250,11 +248,11 @@ export const SettingsPageLayoutEdit = () => {
         pageLayoutDraft.tabs.flatMap((tab) =>
           tab.widgets.map((widget) => ({
             ...widget,
-            pageLayoutTabId: widget.pageLayoutTabId || tab.id,
+            pageLayoutTabId: widget.pageLayoutTabId ?? tab.id,
             objectMetadataId: widget.objectMetadataId || null,
-            createdAt: widget.createdAt || new Date().toISOString(),
+            createdAt: widget.createdAt ?? new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            deletedAt: widget.deletedAt || null,
+            deletedAt: widget.deletedAt ?? null,
           })),
         );
 
@@ -355,7 +353,7 @@ export const SettingsPageLayoutEdit = () => {
             layouts={
               isEmptyState || !activeTabId
                 ? EMPTY_LAYOUT
-                : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
+                : (pageLayoutCurrentLayouts[activeTabId] ?? EMPTY_LAYOUT)
             }
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
