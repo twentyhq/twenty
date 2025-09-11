@@ -131,7 +131,10 @@ export const GraphWidgetPieChart = ({
     if (!item) return null;
 
     const dataItem = data.find((d) => d.id === datum.id);
-    const formattedValue = formatGraphValue(item.value, formatOptions);
+    const formattedValue = formatGraphValue(
+      displayType === 'percentage' ? item.percentage / 100 : item.value,
+      formatOptions,
+    );
     const formattedWithPercentage = `${formattedValue} (${item.percentage.toFixed(1)}%)`;
 
     return (
@@ -217,7 +220,10 @@ export const GraphWidgetPieChart = ({
         items={enrichedData.map((item) => ({
           id: item.id,
           label: item.label || item.id,
-          formattedValue: formatGraphValue(item.value, formatOptions),
+          formattedValue: formatGraphValue(
+            displayType === 'percentage' ? item.percentage / 100 : item.value,
+            formatOptions,
+          ),
           color: item.colorScheme.solid,
         }))}
       />

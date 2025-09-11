@@ -1,25 +1,42 @@
-import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
-import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
-import { type Widget } from '@/page-layout/widgets/types/Widget';
-import { isString } from '@sniptt/guards';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
+import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
+import { type Widget as WidgetType } from '@/page-layout/widgets/types/Widget';
+import styled from '@emotion/styled';
 
 type WidgetRendererProps = {
-  widget: Widget;
+  widget: WidgetType;
+  displayDragHandle?: boolean;
+  onEdit?: () => void;
+  onRemove?: () => void;
 };
 
-export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  switch (widget.type) {
-    case WidgetType.GRAPH:
-      return <GraphWidgetRenderer widget={widget} />;
+const StyledContent = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+`;
 
-    case WidgetType.IFRAME: {
-      const url = widget.configuration?.url;
-      return (
-        <IframeWidget url={isString(url) ? url : ''} title={widget.title} />
-      );
-    }
-    default:
-      return null;
-  }
+export const WidgetRenderer = ({
+  widget,
+  displayDragHandle = false,
+  onEdit,
+  onRemove,
+}: WidgetRendererProps) => {
+  return (
+    <WidgetContainer>
+      <WidgetHeader
+        displayDragHandle={displayDragHandle}
+        title={widget.title}
+        isEmpty={false}
+        onEdit={onEdit}
+        onRemove={onRemove}
+      />
+      <StyledContent>
+        <WidgetContentRenderer widget={widget} />
+      </StyledContent>
+    </WidgetContainer>
+  );
 };

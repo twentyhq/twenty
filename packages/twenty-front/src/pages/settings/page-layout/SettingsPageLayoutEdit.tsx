@@ -23,7 +23,7 @@ import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSel
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/page-layout/utils/generateCellId';
-import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceHolder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -381,19 +381,18 @@ export const SettingsPageLayoutEdit = () => {
             }
           >
             {isEmptyState ? (
-              <div key="empty-placeholder" onClick={handleOpenAddWidget}>
-                <WidgetPlaceholder title="" isEmpty />
+              <div key="empty-placeholder" data-select-disable="true">
+                <WidgetPlaceholder onClick={handleOpenAddWidget} />
               </div>
             ) : (
               activeTabWidgets.map((widget) => (
                 <div key={widget.id} data-select-disable="true">
-                  <WidgetPlaceholder
-                    title={widget.title}
+                  <WidgetRenderer
+                    widget={widget as Widget}
+                    displayDragHandle={true}
                     onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
-                  >
-                    <WidgetRenderer widget={widget as Widget} />
-                  </WidgetPlaceholder>
+                  />
                 </div>
               ))
             )}
