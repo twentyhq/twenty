@@ -77,18 +77,17 @@ export const ReasoningSummaryDisplay = ({
   return (
     <StyledContainer>
       {isThinking && (
-        <Shimmer>
-          <StyledIconContainer>
-            <IconBrain size={theme.icon.size.sm} />
-            <StyledThinkingText>Thinking...</StyledThinkingText>
-          </StyledIconContainer>
-        </Shimmer>
-      )}
-
-      {isThinking && (
-        <StyledReasoningContainer>
-          <StyledReasoningText>{content}</StyledReasoningText>
-        </StyledReasoningContainer>
+        <>
+          <Shimmer>
+            <StyledIconContainer>
+              <IconBrain size={theme.icon.size.sm} />
+              <StyledThinkingText>Thinking...</StyledThinkingText>
+            </StyledIconContainer>
+          </Shimmer>
+          <StyledReasoningContainer>
+            <StyledReasoningText>{content}</StyledReasoningText>
+          </StyledReasoningContainer>
+        </>
       )}
 
       {hasContent && !isThinking && (
