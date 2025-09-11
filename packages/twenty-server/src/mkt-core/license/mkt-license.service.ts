@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/mkt-license.workspace-entity';
+import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/license.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 type licenseType = {
@@ -11,7 +11,7 @@ type licenseType = {
   status: MKT_LICENSE_STATUS | null;
   activatedAt: string;
   expiresAt: string;
-  lastLoginAt: string;
+  lastLoginAt: string | null;
   deviceInfo: string;
   notes: string;
 };
@@ -56,7 +56,7 @@ export class MktLicenseService {
       expiresAt: new Date(
         new Date().getTime() + 30 * 24 * 60 * 60 * 1000,
       ).toISOString(),
-      lastLoginAt: '',
+      lastLoginAt: null,
       deviceInfo: '',
       notes: '',
     };

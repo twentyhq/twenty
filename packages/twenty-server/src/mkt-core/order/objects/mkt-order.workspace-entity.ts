@@ -28,6 +28,8 @@ import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invo
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import {
+  MKT_LICENSE_STATUS,
+  MKT_LICENSE_STATUS_OPTIONS,
   ORDER_STATUS_OPTIONS,
   OrderStatus,
   SINVOICE_STATUS,
@@ -159,6 +161,16 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   sInvoiceStatus?: SINVOICE_STATUS;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.licenseStatus,
+    type: FieldMetadataType.SELECT,
+    label: msg`License Status`,
+    description: msg`Status of the License`,
+    options: MKT_LICENSE_STATUS_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  licenseStatus?: MKT_LICENSE_STATUS;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.orderItems,

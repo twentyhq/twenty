@@ -7,7 +7,6 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
@@ -26,6 +25,7 @@ import {
 import { MKT_LICENSE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/objects/mkt-customer.workspace-entity';
+import { MKT_LICENSE_STATUS,MKT_LICENSE_STATUS_OPTIONS } from 'src/mkt-core/license/license.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -38,68 +38,6 @@ const LICENSE_KEY_FIELD_NAME = 'licenseKey';
 export const SEARCH_FIELDS_FOR_MKT_LICENSE: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: LICENSE_KEY_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
-
-export enum MKT_LICENSE_STATUS {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED',
-  ERROR = 'ERROR',
-  DELETED = 'DELETED',
-  PENDING = 'PENDING',
-  OTHER = 'OTHER',
-}
-
-export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
-  {
-    value: MKT_LICENSE_STATUS.ACTIVE,
-    label: 'Active',
-    position: 0,
-    color: 'blue',
-  },
-  {
-    value: MKT_LICENSE_STATUS.INACTIVE,
-    label: 'Inactive',
-    position: 1,
-    color: 'purple',
-  },
-  {
-    value: MKT_LICENSE_STATUS.EXPIRED,
-    label: 'Expired',
-    position: 2,
-    color: 'green',
-  },
-  {
-    value: MKT_LICENSE_STATUS.REVOKED,
-    label: 'Revoked',
-    position: 3,
-    color: 'orange',
-  },
-  {
-    value: MKT_LICENSE_STATUS.PENDING,
-    label: 'Pending',
-    position: 4,
-    color: 'yellow',
-  },
-  {
-    value: MKT_LICENSE_STATUS.ERROR,
-    label: 'Error',
-    position: 5,
-    color: 'red',
-  },
-  {
-    value: MKT_LICENSE_STATUS.DELETED,
-    label: 'Deleted',
-    position: 6,
-    color: 'gray',
-  },
-  {
-    value: MKT_LICENSE_STATUS.OTHER,
-    label: 'Other',
-    position: 7,
-    color: 'turquoise',
-  },
 ];
 
 @WorkspaceEntity({

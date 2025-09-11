@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject,Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -11,7 +11,9 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SInvoiceIntegrationJobData } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
+import { LicenseGenerationJobData } from 'src/mkt-core/license/jobs/license-generation.job';
 import {
+  MKT_LICENSE_STATUS,
   OrderStatus,
   SINVOICE_STATUS,
 } from 'src/mkt-core/order/constants/order-status.constants';
@@ -65,6 +67,11 @@ export class MktOrderUpdateOnePreQueryHook
     );
     await this.sInvoiceIntegration(orderId, workspaceId, input, currentOrder);
 
+    this.logger.log(
+      `Adding License integration job to queue for order ${orderId}`,
+    );
+    await this.licenseIntegration(orderId, workspaceId, input, currentOrder);
+
     input.updatedAt = new Date().toISOString();
 
     return payload;
@@ -94,6 +101,49 @@ export class MktOrderUpdateOnePreQueryHook
       } catch (error) {
         this.logger.error(
           `[S-INVOICE JOB] Failed to add S-Invoice integration job to queue for order: ${orderId}`,
+          error,
+        );
+      }
+    }
+  }
+
+  private async licenseIntegration(
+    orderId: string,
+    workspaceId: string,
+    input: Partial<MktOrderWorkspaceEntity>,
+    currentOrder: MktOrderWorkspaceEntity | null,
+  ): Promise<void> {
+    this.logger.log(
+      `[LICENSE DEBUG] licenseIntegration called for order: ${orderId}`,
+    );
+    this.logger.log(
+      `[LICENSE DEBUG] Current order status: ${currentOrder?.status}`,
+    );
+    this.logger.log(
+      `[LICENSE DEBUG] Input license status: ${input?.licenseStatus}`,
+    );
+    this.logger.log(
+      `[LICENSE DEBUG] Required conditions: currentOrder exists: ${!!currentOrder}, status is PAID: ${currentOrder?.status === OrderStatus.PAID}, licenseStatus is GETTING: ${input?.licenseStatus === MKT_LICENSE_STATUS.GETTING}`,
+    );
+
+    if (
+      currentOrder &&
+      currentOrder.status === OrderStatus.PAID &&
+      input?.licenseStatus === MKT_LICENSE_STATUS.GETTING
+    ) {
+      const jobData: LicenseGenerationJobData = {
+        orderId,
+        workspaceId,
+      };
+
+      try {
+        await this.messageQueueService.add('LicenseGenerationJob', jobData);
+        this.logger.log(
+          `[LICENSE JOB] Successfully added License generation job to queue for order: ${orderId}`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `[LICENSE JOB] Failed to add License generation job to queue for order: ${orderId}`,
           error,
         );
       }
