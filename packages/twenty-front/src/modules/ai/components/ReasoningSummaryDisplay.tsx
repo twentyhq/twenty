@@ -52,20 +52,17 @@ const StyledToggleButton = styled.button`
   }
 `;
 
-type ReasoningSummaryDisplayProps = {
-  content: string;
-  isThinking?: boolean;
-};
-
 export const ReasoningSummaryDisplay = ({
   content,
   isThinking = false,
-}: ReasoningSummaryDisplayProps) => {
+}: {
+  content: string;
+  isThinking?: boolean;
+}) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasContent = content.trim().length > 0;
-  const isFinished = hasContent && !isThinking;
 
   if (!hasContent) {
     return null;
@@ -85,7 +82,7 @@ export const ReasoningSummaryDisplay = ({
         </StyledReasoningContainer>
       )}
 
-      {isFinished && (
+      {hasContent && !isThinking && (
         <>
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
             <span>Finished thinking</span>
