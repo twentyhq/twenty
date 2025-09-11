@@ -7,8 +7,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 
@@ -17,7 +17,7 @@ export class CheckCustomDomainValidRecordsCronJob {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly customDomainService: CustomDomainService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   @Process(CheckCustomDomainValidRecordsCronJob.name)
@@ -39,7 +39,7 @@ export class CheckCustomDomainValidRecordsCronJob {
 
     for (const workspace of workspaces) {
       try {
-        await this.customDomainService.checkCustomDomainValidRecords(workspace);
+        await this.workspaceService.checkCustomDomainValidRecords(workspace);
       } catch (error) {
         throw new Error(
           `[${CheckCustomDomainValidRecordsCronJob.name}] Cannot check custom domain for workspaces: ${error.message}`,
