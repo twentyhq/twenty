@@ -15,7 +15,6 @@ import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPo
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type WidgetType } from '~/generated/graphql';
 
@@ -44,13 +43,10 @@ export const useCreatePageLayoutWidget = () => {
           return;
         }
 
-        const allWidgets =
-          pageLayoutDraft.tabs
-            ?.flatMap((tab) => tab.widgets)
-            .filter(isDefined) || [];
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
           (w) =>
-            w.type === widgetType && w.configuration?.graphType === graphType,
+            w.type === widgetType && w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
         const widgetId = `widget-${uuidv4()}`;
@@ -99,7 +95,7 @@ export const useCreatePageLayoutWidget = () => {
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: addWidgetToTab(prev.tabs || [], activeTabId, newWidget),
+          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);

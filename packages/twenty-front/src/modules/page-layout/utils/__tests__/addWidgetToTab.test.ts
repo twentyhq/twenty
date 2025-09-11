@@ -45,7 +45,7 @@ describe('addWidgetToTab', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
     expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets?.[0]).toEqual(mockWidget);
+    expect(result[0].widgets[0]).toEqual(mockWidget);
     expect(result[1].widgets).toHaveLength(0);
   });
 
@@ -75,8 +75,8 @@ describe('addWidgetToTab', () => {
     result = addWidgetToTab(result, 'tab-1', secondWidget);
 
     expect(result[0].widgets).toHaveLength(2);
-    expect(result[0].widgets?.[0]).toEqual(mockWidget);
-    expect(result[0].widgets?.[1]).toEqual(secondWidget);
+    expect(result[0].widgets[0]).toEqual(mockWidget);
+    expect(result[0].widgets[1]).toEqual(secondWidget);
   });
 
   it('should return a new array without mutating the original', () => {

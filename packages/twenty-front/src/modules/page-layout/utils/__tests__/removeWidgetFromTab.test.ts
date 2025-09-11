@@ -65,9 +65,9 @@ describe('removeWidgetFromTab', () => {
     const result = removeWidgetFromTab(mockTabs, 'tab-1', 'widget-1');
 
     expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets?.[0]?.id).toBe('widget-2');
+    expect(result[0].widgets[0].id).toBe('widget-2');
     expect(result[1].widgets).toHaveLength(1);
-    expect(result[1].widgets?.[0]?.id).toBe('widget-3');
+    expect(result[1].widgets[0].id).toBe('widget-3');
   });
 
   it('should not affect other tabs', () => {

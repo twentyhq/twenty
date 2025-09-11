@@ -247,20 +247,16 @@ export const SettingsPageLayoutEdit = () => {
     setIsSaving(true);
     try {
       const allWidgets: PageLayoutWidgetWithData[] =
-        pageLayoutDraft.tabs
-          ?.flatMap((tab) =>
-            tab?.widgets
-              ?.map((widget) => ({
-                ...widget,
-                pageLayoutTabId: widget.pageLayoutTabId || tab.id,
-                objectMetadataId: widget.objectMetadataId || null,
-                createdAt: widget.createdAt || new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                deletedAt: widget.deletedAt || null,
-              }))
-              .filter(isDefined),
-          )
-          .filter(isDefined) || [];
+        pageLayoutDraft.tabs.flatMap((tab) =>
+          tab.widgets.map((widget) => ({
+            ...widget,
+            pageLayoutTabId: widget.pageLayoutTabId || tab.id,
+            objectMetadataId: widget.objectMetadataId || null,
+            createdAt: widget.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: widget.deletedAt || null,
+          })),
+        );
 
       setPageLayoutDraft((prev) => ({
         ...prev,
@@ -324,15 +320,14 @@ export const SettingsPageLayoutEdit = () => {
           </StyledActionButtonContainer>
         }
       >
-        {isDefined(pageLayoutDraft.tabs.length) &&
-          pageLayoutDraft.tabs.length > 0 && (
-            <StyledTabList
-              tabs={tabListTabs}
-              behaveAsLinks={false}
-              componentInstanceId={SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID}
-              onAddTab={handleAddTab}
-            />
-          )}
+        {pageLayoutDraft.tabs.length > 0 && (
+          <StyledTabList
+            tabs={tabListTabs}
+            behaveAsLinks={false}
+            componentInstanceId={SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID}
+            onAddTab={handleAddTab}
+          />
+        )}
         <StyledGridContainer ref={gridContainerRef}>
           <StyledGridOverlay
             isDragSelecting={pageLayoutCurrentBreakpoint !== 'mobile'}

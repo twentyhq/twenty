@@ -102,7 +102,7 @@ const PageLayoutRendererContent = ({
         isEditMode={false}
         pageLayout={pageLayout}
       />
-      {pageLayout.tabs?.length > 0 && (
+      {pageLayout.tabs.length > 0 && (
         <StyledTabList
           tabs={tabListTabs}
           behaveAsLinks={false}

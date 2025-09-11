@@ -14,7 +14,7 @@ export const useCreatePageLayoutTab = () => {
           .getValue();
 
         const newTabId = `tab-${uuidv4()}`;
-        const tabsLength = pageLayoutDraft.tabs?.length || 0;
+        const tabsLength = pageLayoutDraft.tabs.length;
         const newTab: PageLayoutTabWithData = {
           id: newTabId,
           title: title || `Tab ${tabsLength + 1}`,

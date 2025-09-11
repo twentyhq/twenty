@@ -74,7 +74,7 @@ describe('useCreatePageLayoutWidget', () => {
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
-    expect(result.current.allWidgets?.[0]?.pageLayoutTabId).toBe('tab-1');
+    expect(result.current.allWidgets[0].pageLayoutTabId).toBe('tab-1');
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
     expect(
@@ -152,11 +152,11 @@ describe('useCreatePageLayoutWidget', () => {
     expect(result.current.allWidgets).toHaveLength(4);
 
     graphTypes.forEach((graphType, index) => {
-      const widget = result.current.allWidgets?.[index];
-      expect(widget?.type).toBe(WidgetType.GRAPH);
-      expect(widget?.pageLayoutTabId).toBe('tab-1');
-      expect(widget?.configuration?.graphType).toBe(graphType);
-      expect(widget?.id).toBe('widget-mock-uuid');
+      const widget = result.current.allWidgets[index];
+      expect(widget.type).toBe(WidgetType.GRAPH);
+      expect(widget.pageLayoutTabId).toBe('tab-1');
+      expect(widget.configuration.graphType).toBe(graphType);
+      expect(widget.id).toBe('widget-mock-uuid');
     });
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
