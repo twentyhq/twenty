@@ -1,7 +1,11 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/ColumnMinWidth';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -12,8 +16,6 @@ import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useCallback, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { findByProperty, throwIfNotDefined } from 'twenty-shared/utils';
-
-export const COLUMN_RESIZE_MIN_WIDTH = 48;
 
 export const useResizeTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -33,33 +35,48 @@ export const useResizeTableHeader = () => {
   const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
     useRecoilComponentState(resizedFieldMetadataIdComponentState);
 
+  const recordField = visibleRecordFields.find(
+    findByProperty('fieldMetadataItemId', resizedFieldMetadataItemId),
+  );
+
+  const { resetTableRowSelection } = useResetTableRowSelection();
+
   const { saveRecordFields } = useSaveRecordFields();
 
   const { updateRecordField } = useUpdateRecordField();
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
+      resetTableRowSelection();
       setInitialPointerPositionX(x);
     },
-    [],
+    [resetTableRowSelection],
   );
 
   const handleResizeHandlerMove = useCallback<PointerEventListener>(
     ({ x }) => {
       if (!initialPointerPositionX) return;
 
+      throwIfNotDefined(recordField, 'recordField');
+
+      const newResizeOffset = x - initialPointerPositionX;
+
+      const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
+
+      if (newRecordFieldSizeWithOffset < COLUMN_MIN_WIDTH) {
+        return;
+      }
+
       setResizeFieldOffset(x - initialPointerPositionX);
     },
-    [setResizeFieldOffset, initialPointerPositionX],
+    [setResizeFieldOffset, initialPointerPositionX, recordField],
   );
+
+  const { setDragSelectionStartEnabled } = useDragSelect();
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
-        const recordField = visibleRecordFields.find(
-          findByProperty('fieldMetadataItemId', resizedFieldMetadataItemId),
-        );
-
         throwIfNotDefined(recordField, 'recordField');
 
         if (!resizedFieldMetadataItemId) return;
@@ -70,10 +87,7 @@ export const useResizeTableHeader = () => {
         );
 
         const nextWidth = Math.round(
-          Math.max(
-            recordField.size + resizeFieldOffset,
-            COLUMN_RESIZE_MIN_WIDTH,
-          ),
+          Math.max(recordField.size + resizeFieldOffset, COLUMN_MIN_WIDTH),
         );
 
         set(resizeFieldOffsetCallbackState, 0);
@@ -90,6 +104,8 @@ export const useResizeTableHeader = () => {
 
           saveRecordFields([updatedRecordField]);
         }
+
+        setDragSelectionStartEnabled(true);
       },
     [
       saveRecordFields,
@@ -97,7 +113,8 @@ export const useResizeTableHeader = () => {
       resizeFieldOffsetCallbackState,
       setResizedFieldMetadataItemId,
       updateRecordField,
-      visibleRecordFields,
+      setDragSelectionStartEnabled,
+      recordField,
     ],
   );
 

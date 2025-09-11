@@ -1323,7 +1323,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "변경 사항을 적용하려면 체크 표시를 클릭하세요."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/widgets/graph/components/GraphWidgetTooltip.tsx
+#: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr "데이터 보기를 클릭하세요"
 
