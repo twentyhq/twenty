@@ -3,7 +3,6 @@ import {
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
@@ -26,6 +25,7 @@ import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('View Field REST API', () => {
   let testObjectMetadataId: string;
@@ -37,6 +37,7 @@ describe('View Field REST API', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myTestObject',
         namePlural: 'myTestObjects',
@@ -61,6 +62,7 @@ describe('View Field REST API', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: createFieldInput,
       gqlFields: `
           id
@@ -75,6 +77,7 @@ describe('View Field REST API', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
   });

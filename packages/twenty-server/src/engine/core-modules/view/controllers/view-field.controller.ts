@@ -75,13 +75,13 @@ export class ViewFieldController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() input: Omit<UpdateViewFieldInput, 'id'>,
+    @Body() input: UpdateViewFieldInput['update'],
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewFieldEntity> {
     const updatedViewField = await this.viewFieldService.update(
       id,
       workspace.id,
-      input.update,
+      input,
     );
 
     return updatedViewField;
