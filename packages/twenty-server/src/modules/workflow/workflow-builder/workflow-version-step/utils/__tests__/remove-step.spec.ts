@@ -255,4 +255,54 @@ describe('removeStep', () => {
     expect(result.updatedTrigger).toEqual(null);
     expect(result.updatedSteps).toEqual([]);
   });
+
+  it('should handle removing a step that is part of iteratorLoopStepIds', () => {
+    const step1 = createMockAction('1', ['2']);
+    const iteratorStep = {
+      id: '2',
+      name: 'Iterator Step',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          initialLoopStepIds: ['3'],
+          iterableValue: { value: [] },
+          iteratorKey: 'item',
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: ['4'],
+    } as WorkflowAction;
+    const step3 = createMockAction('3', ['5']);
+    const step4 = createMockAction('4');
+    const step5 = createMockAction('5');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, iteratorStep, step3, step4, step5],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['5'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      step1,
+      {
+        ...iteratorStep,
+        settings: {
+          ...iteratorStep.settings,
+          input: {
+            ...iteratorStep.settings.input,
+            initialLoopStepIds: ['5'],
+          },
+        },
+      },
+      step4,
+      step5,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
 });
