@@ -13,7 +13,7 @@
     "jest.config.mjs",
     "vite.config.ts",
     "setupTests.ts"
-, "src/modules/page-layout/widgets/components/WidgetContainer.tsx"  ],
+  ],
   "exclude": [
     "src/testing/**/*"
   ]
