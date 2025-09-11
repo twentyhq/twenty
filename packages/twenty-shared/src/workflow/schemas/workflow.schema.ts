@@ -228,6 +228,11 @@ export const workflowIteratorActionSettingsSchema =
     }),
   });
 
+export const workflowEmptyActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({}),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -284,6 +289,11 @@ export const workflowIteratorActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowIteratorActionSettingsSchema,
 });
 
+export const workflowEmptyActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('EMPTY'),
+  settings: workflowEmptyActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -297,6 +307,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowAiAgentActionSchema,
   workflowFilterActionSchema,
   workflowIteratorActionSchema,
+  workflowEmptyActionSchema,
 ]);
 
 // Trigger schemas
