@@ -30,15 +30,23 @@ export class HttpTool implements Tool {
 
       const response = await axios(axiosConfig);
 
-      return { result: response.data };
+      return {
+        success: true,
+        message: `HTTP ${method} request to ${url} completed successfully`,
+        result: response.data,
+      };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         return {
+          success: false,
+          message: `HTTP ${method} request to ${url} failed`,
           error: error.response?.data || error.message || 'HTTP request failed',
         };
       }
 
       return {
+        success: false,
+        message: `HTTP ${method} request to ${url} failed`,
         error: error instanceof Error ? error.message : 'HTTP request failed',
       };
     }

@@ -1,4 +1,6 @@
 export type ToolOutput = {
-  result?: unknown;
+  success: boolean;
+  message: string;
   error?: string;
+  result?: unknown;
 };
