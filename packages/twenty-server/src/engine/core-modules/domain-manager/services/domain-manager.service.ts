@@ -5,13 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { type CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 
 @Injectable()
 export class DomainManagerService {
@@ -19,6 +20,7 @@ export class DomainManagerService {
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly auditService: AuditService,
   ) {}
 
   getFrontUrl() {
@@ -39,6 +41,10 @@ export class DomainManagerService {
     }
 
     return baseUrl;
+  }
+
+  getPublicDomainUrl(): URL {
+    return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
   }
 
   private appendSearchParams(
@@ -236,12 +242,6 @@ export class DomainManagerService {
     return workspace;
   }
 
-  isCustomDomainWorking(customDomainDetails: CustomDomainValidRecords) {
-    return customDomainDetails.records.every(
-      ({ status }) => status === 'success',
-    );
-  }
-
   getWorkspaceUrls({
     subdomain,
     customDomain,
@@ -254,5 +254,46 @@ export class DomainManagerService {
           : undefined,
       subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
+  }
+
+  async handleCustomDomainActivation({
+    customDomain,
+    isCustomDomainWorking,
+  }: {
+    customDomain: string;
+    isCustomDomainWorking: boolean;
+  }) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      customDomain,
+    });
+
+    if (!workspace) return;
+
+    const analytics = this.auditService.createContext({
+      workspaceId: workspace.id,
+    });
+
+    const workspaceUpdated: Partial<Workspace> = {
+      customDomain: workspace.customDomain,
+    };
+
+    if (!isCustomDomainWorking) {
+      workspaceUpdated.customDomain = null;
+    }
+
+    workspaceUpdated.isCustomDomainEnabled = isCustomDomainWorking;
+
+    if (
+      workspaceUpdated.isCustomDomainEnabled !==
+        workspace.isCustomDomainEnabled ||
+      workspaceUpdated.customDomain !== workspace.customDomain
+    ) {
+      await this.workspaceRepository.save({
+        ...workspace,
+        ...workspaceUpdated,
+      });
+
+      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+    }
   }
 }

@@ -13,6 +13,7 @@ export enum GraphType {
   GAUGE = 'GAUGE',
   PIE = 'PIE',
   BAR = 'BAR',
+  LINE = 'LINE',
 }
 
 export const mockPageLayoutWidgets: PageLayoutWidget[] = [

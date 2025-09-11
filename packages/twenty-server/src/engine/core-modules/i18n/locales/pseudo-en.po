@@ -269,6 +269,11 @@ msgstr ""
 msgid "Any field filter value"
 msgstr ""
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr ""
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -885,6 +890,16 @@ msgstr ""
 msgid "Display Value"
 msgstr ""
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr ""
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Domain is already registered as public domain"
+msgstr ""
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -938,9 +953,9 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr ""
 
 #. js-lingui-id: k//6Xs
@@ -2473,6 +2488,11 @@ msgstr ""
 #. js-lingui-id: CrfRPa
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
+msgstr ""
+
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
 msgstr ""
 
 #. js-lingui-id: YfbwOB
