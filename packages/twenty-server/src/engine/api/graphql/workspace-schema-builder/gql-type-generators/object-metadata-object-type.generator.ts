@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  GraphQLFieldConfigMap,
-  GraphQLObjectType,
-  GraphQLOutputType,
-} from 'graphql';
+import { GraphQLObjectType } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
-import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { FieldObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-object-type.generator';
 import { RelationFieldTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/relation-field-type.generator';
+import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeCompositeFieldObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-object-type-key.util';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
@@ -22,14 +19,6 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
-
-export type GraphQLOutputTypeFieldConfigMap = GraphQLFieldConfigMap<
-  string,
-  {
-    type: GraphQLOutputType;
-    description: string | null;
-  }
->;
 
 @Injectable()
 export class ObjectMetadataObjectTypeGenerator {

@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { StoredGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
+import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -22,9 +22,6 @@ const hiddenAllowListKind = [
   InputTypeDefinitionKind.Create,
   InputTypeDefinitionKind.Update,
 ];
-
-export interface StoredInputType
-  extends StoredGqlType<GraphQLInputObjectType> {}
 
 @Injectable()
 export class CompositeFieldInputTypeGenerator {

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { StoredGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
+import { StoredEnumGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import {
   type CompositeProperty,
@@ -17,8 +17,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
-
-export interface StoredEnumGqlType extends StoredGqlType<GraphQLEnumType> {}
 
 @Injectable()
 export class CompositeFieldEnumTypeGenerator {

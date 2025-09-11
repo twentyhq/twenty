@@ -6,9 +6,8 @@ import { type WorkspaceResolverBuilderMutationMethodNames } from 'src/engine/api
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { GqlObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-object-type-name.enum';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-
-import { RootTypeGenerator } from './root-type.factory';
+import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-type.generator';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Injectable()
 export class MutationTypeGenerator {

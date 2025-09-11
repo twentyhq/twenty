@@ -6,9 +6,8 @@ import { type WorkspaceResolverBuilderQueryMethodNames } from 'src/engine/api/gr
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { GqlObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-object-type-name.enum';
+import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-type.generator';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-
-import { RootTypeGenerator } from './root-type.factory';
 
 @Injectable()
 export class QueryTypeGenerator {

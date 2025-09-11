@@ -1,11 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  GraphQLFieldConfigArgumentMap,
-  type GraphQLFieldConfigMap,
-  GraphQLObjectType,
-  GraphQLOutputType,
-} from 'graphql';
+import { GraphQLObjectType } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
@@ -13,22 +8,15 @@ import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspa
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { GqlObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-object-type-name.enum';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
-import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/args.factory';
+import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/args-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { GraphQLRootTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
-export type GraphQLRootTypeFieldConfigMap = GraphQLFieldConfigMap<
-  string,
-  {
-    type: GraphQLOutputType;
-    args: GraphQLFieldConfigArgumentMap;
-    resolve: undefined;
-  }
->;
 @Injectable()
 export class RootTypeGenerator {
   private readonly logger = new Logger(RootTypeGenerator.name);

@@ -3,24 +3,18 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLObjectType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
+import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
-import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/aggregation-type.factory';
-import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
+import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/aggregation-type.generator';
 import { PageInfoType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
-
-import { GraphQLOutputTypeFieldConfigMap } from './object-type-definition.factory';
-
-export enum ConnectionTypeDefinitionKind {
-  Edge = 'Edge',
-  PageInfo = 'PageInfo',
-}
 
 @Injectable()
 export class ConnectionObjectTypeGenerator {

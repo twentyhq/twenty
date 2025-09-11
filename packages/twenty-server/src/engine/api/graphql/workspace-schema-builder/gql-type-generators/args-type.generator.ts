@@ -47,13 +47,13 @@ export class ArgsTypeGenerator {
 
       // Argument is an input type
       if (isDefined(arg.kind)) {
-        const storagekey = computeObjectMetadataInputTypeKey(
+        const storageKey = computeObjectMetadataInputTypeKey(
           objectMetadataSingularName,
           arg.kind,
         );
 
         const inputType =
-          this.typeDefinitionsStorage.getInputTypeByKey(storagekey);
+          this.typeDefinitionsStorage.getInputTypeByKey(storageKey);
 
         if (!inputType) {
           this.logger.error(

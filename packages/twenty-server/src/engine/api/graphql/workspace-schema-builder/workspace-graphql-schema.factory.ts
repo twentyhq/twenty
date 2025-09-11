@@ -4,10 +4,10 @@ import { GraphQLSchema } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethods } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/mutation-type.factory';
-import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/orphaned-types.factory';
-import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/query-type.factory';
 import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/gql-type.generator';
+import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/mutation-type.generator';
+import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/orphaned-types.generator';
+import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/query-type.generator';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { type WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
