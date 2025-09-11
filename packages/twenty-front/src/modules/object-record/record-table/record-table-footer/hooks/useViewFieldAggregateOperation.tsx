@@ -35,7 +35,9 @@ export const useViewFieldAggregateOperation = () => {
         input: {
           id: currentViewField.id,
           update: {
-            ...currentViewField,
+            isVisible: currentViewField.isVisible,
+            position: currentViewField.position,
+            size: currentViewField.size,
             aggregateOperation:
               convertExtendedAggregateOperationToAggregateOperation(
                 aggregateOperation,

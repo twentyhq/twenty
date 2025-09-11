@@ -110,7 +110,27 @@ export class ViewFieldService {
     try {
       const viewField = this.viewFieldRepository.create(viewFieldData);
 
-      return await this.viewFieldRepository.save(viewField);
+      const savedViewField = await this.viewFieldRepository.save(viewField);
+      const createdViewField = await this.findById(
+        savedViewField.id,
+        viewFieldData.workspaceId,
+      );
+
+      if (!isDefined(createdViewField)) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          ),
+          ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+            ),
+          },
+        );
+      }
+
+      return createdViewField;
     } catch (error) {
       if (
         error.message.includes('duplicate key value violates unique constraint')
