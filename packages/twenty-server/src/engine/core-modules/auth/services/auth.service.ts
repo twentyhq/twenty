@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
@@ -54,6 +53,7 @@ import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -87,6 +87,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
+    private readonly i18nService: I18nService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -485,14 +486,17 @@ export class AuthService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
-    i18n.activate(firstUserWorkspace.locale);
+    const subject = this.i18nService.translateMessage({
+      messageId: 'Your Password Has Been Successfully Changed',
+      locale: firstUserWorkspace.locale,
+    });
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
-      subject: t`Your Password Has Been Successfully Changed`,
+      subject,
       text,
       html,
     });
