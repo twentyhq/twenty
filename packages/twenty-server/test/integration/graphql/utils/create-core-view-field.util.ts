@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -16,7 +17,7 @@ export const createCoreViewField = async ({
   createCoreViewField: ViewFieldDTO;
 }> => {
   const graphqlOperation = {
-    query: createViewFieldOperationFactory(gqlFields),
+    query: gql`${createViewFieldOperationFactory(gqlFields)}`,
     variables: {
       input,
     },

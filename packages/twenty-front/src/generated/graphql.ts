@@ -3958,13 +3958,6 @@ export type CreateCoreViewMutationVariables = Exact<{
 
 export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } };
 
-export type CreateCoreViewFieldMutationVariables = Exact<{
-  input: CreateViewFieldInput;
-}>;
-
-
-export type CreateCoreViewFieldMutation = { __typename?: 'Mutation', createCoreViewField: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
 export type CreateCoreViewFilterMutationVariables = Exact<{
   input: CreateViewFilterInput;
 }>;
@@ -4424,39 +4417,6 @@ export function useCreateCoreViewMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateCoreViewMutationHookResult = ReturnType<typeof useCreateCoreViewMutation>;
 export type CreateCoreViewMutationResult = Apollo.MutationResult<CreateCoreViewMutation>;
 export type CreateCoreViewMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewMutation, CreateCoreViewMutationVariables>;
-export const CreateCoreViewFieldDocument = gql`
-    mutation CreateCoreViewField($input: CreateViewFieldInput!) {
-  createCoreViewField(input: $input) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type CreateCoreViewFieldMutationFn = Apollo.MutationFunction<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>;
-
-/**
- * __useCreateCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewFieldMutation, { data, loading, error }] = useCreateCoreViewFieldMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>(CreateCoreViewFieldDocument, options);
-      }
-export type CreateCoreViewFieldMutationHookResult = ReturnType<typeof useCreateCoreViewFieldMutation>;
-export type CreateCoreViewFieldMutationResult = Apollo.MutationResult<CreateCoreViewFieldMutation>;
-export type CreateCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>;
 export const CreateCoreViewFilterDocument = gql`
     mutation CreateCoreViewFilter($input: CreateViewFilterInput!) {
   createCoreViewFilter(input: $input) {
