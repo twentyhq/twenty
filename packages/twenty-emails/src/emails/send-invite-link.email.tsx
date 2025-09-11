@@ -3,6 +3,8 @@ import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
+import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
+
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { HighlightedContainer } from 'src/components/HighlightedContainer';
@@ -33,7 +35,6 @@ export const SendInviteLinkEmail = ({
   serverUrl,
   locale,
 }: SendInviteLinkEmailProps) => {
-  import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : DEFAULT_WORKSPACE_LOGO;
