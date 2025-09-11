@@ -29,7 +29,7 @@ const StyledTitle = styled.span`
 
 type WidgetHeaderProps = {
   displayDragHandle: boolean;
-  isEmpty: boolean;
+  isEmpty?: boolean;
   title: string;
   onRemove?: () => void;
   onEdit?: () => void;

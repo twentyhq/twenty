@@ -14,7 +14,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -80,8 +80,6 @@ const PageLayoutRendererContent = ({
     pageLayoutCurrentLayoutsState,
   );
 
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
   const activeTabWidgets = pageLayout.tabs.find(
@@ -111,7 +109,7 @@ const PageLayoutRendererContent = ({
           componentInstanceId={pageLayout.id}
         />
       )}
-      <StyledGridContainer ref={gridContainerRef}>
+      <StyledGridContainer>
         <ResponsiveGridLayout
           className="layout"
           layouts={

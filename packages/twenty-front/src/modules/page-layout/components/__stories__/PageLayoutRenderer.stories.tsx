@@ -10,6 +10,23 @@ import { RecoilRoot } from 'recoil';
 import { PageLayoutType } from '~/generated/graphql';
 import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
 
+const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
+  const canvas = within(canvasElement);
+
+  const revenueElements = await canvas.findAllByText('Revenue');
+  await expect(revenueElements).toHaveLength(2);
+  const goalProgressElements = await canvas.findAllByText('Goal Progress');
+  await expect(goalProgressElements).toHaveLength(2);
+  await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
+  await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
+
+  await expect(await canvas.findByText('$125,000')).toBeVisible();
+
+  await expect(await canvas.findByText('Product Sales')).toBeVisible();
+  await expect(await canvas.findByText('Services')).toBeVisible();
+  await expect(await canvas.findByText('Support')).toBeVisible();
+};
+
 const mixedGraphsPageLayout = {
   id: 'mixed-graphs-layout',
   name: 'Mixed Graph Dashboard',
@@ -188,20 +205,7 @@ export const DesktopView: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const revenueElements = await canvas.findAllByText('Revenue');
-    await expect(revenueElements).toHaveLength(2);
-    const goalProgressElements = await canvas.findAllByText('Goal Progress');
-    await expect(goalProgressElements).toHaveLength(2);
-    await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
-    await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
-
-    await expect(await canvas.findByText('$125,000')).toBeVisible();
-
-    await expect(await canvas.findByText('Product Sales')).toBeVisible();
-    await expect(await canvas.findByText('Services')).toBeVisible();
-    await expect(await canvas.findByText('Support')).toBeVisible();
+    await validatePageLayoutContent(canvasElement);
   },
 };
 
@@ -215,19 +219,6 @@ export const MobileView: Story = {
     },
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const revenueElements = await canvas.findAllByText('Revenue');
-    await expect(revenueElements).toHaveLength(2);
-    const goalProgressElements = await canvas.findAllByText('Goal Progress');
-    await expect(goalProgressElements).toHaveLength(2);
-    await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
-    await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
-
-    await expect(await canvas.findByText('$125,000')).toBeVisible();
-
-    await expect(await canvas.findByText('Product Sales')).toBeVisible();
-    await expect(await canvas.findByText('Services')).toBeVisible();
-    await expect(await canvas.findByText('Support')).toBeVisible();
+    await validatePageLayoutContent(canvasElement);
   },
 };

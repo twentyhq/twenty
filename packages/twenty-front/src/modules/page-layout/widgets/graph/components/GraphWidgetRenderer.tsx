@@ -1,3 +1,4 @@
+import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
@@ -5,7 +6,6 @@ import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/components/Gra
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
-import { GraphType } from '../../../mocks/mockWidgets';
 
 type GraphWidgetRendererProps = {
   widget: GraphWidget;

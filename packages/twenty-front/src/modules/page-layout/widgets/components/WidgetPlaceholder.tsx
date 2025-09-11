@@ -9,7 +9,11 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
-export const WidgetPlaceholder = ({ onClick }: { onClick: () => void }) => {
+type WidgetPlaceholderProps = {
+  onClick: () => void;
+};
+
+export const WidgetPlaceholder = ({ onClick }: WidgetPlaceholderProps) => {
   return (
     <WidgetContainer onClick={onClick}>
       <WidgetHeader displayDragHandle={true} title="Add Widget" isEmpty />

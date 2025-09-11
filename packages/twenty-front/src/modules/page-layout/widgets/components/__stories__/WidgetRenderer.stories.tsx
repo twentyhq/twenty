@@ -18,7 +18,7 @@ const meta: Meta<typeof WidgetRenderer> = {
     },
     displayDragHandle: {
       control: 'boolean',
-      description: 'Show empty state',
+      description: 'Display drag handle',
     },
     onRemove: {
       action: 'onRemove',

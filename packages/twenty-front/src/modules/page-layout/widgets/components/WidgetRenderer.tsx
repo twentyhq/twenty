@@ -30,7 +30,6 @@ export const WidgetRenderer = ({
       <WidgetHeader
         displayDragHandle={displayDragHandle}
         title={widget.title}
-        isEmpty={false}
         onEdit={onEdit}
         onRemove={onRemove}
       />

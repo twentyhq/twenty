@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledPlaceholderContainer = styled.div<{ onClick?: () => void }>`
+const StyledContainer = styled.div<{ onClick?: () => void }>`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -30,9 +30,5 @@ export const WidgetContainer = ({
   children,
   onClick,
 }: WidgetContainerProps) => {
-  return (
-    <StyledPlaceholderContainer onClick={onClick}>
-      {children}
-    </StyledPlaceholderContainer>
-  );
+  return <StyledContainer onClick={onClick}>{children}</StyledContainer>;
 };

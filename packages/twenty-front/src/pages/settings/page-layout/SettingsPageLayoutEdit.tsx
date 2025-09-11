@@ -166,17 +166,17 @@ export const SettingsPageLayoutEdit = () => {
 
   const activeTabWidgets = useMemo(() => {
     if (!activeTabId) return [];
-    const activeTab = pageLayoutDraft?.tabs?.find(
+    const activeTab = pageLayoutDraft.tabs.find(
       (tab) => tab.id === activeTabId,
     );
     return activeTab?.widgets || [];
-  }, [pageLayoutDraft?.tabs, activeTabId]);
+  }, [pageLayoutDraft.tabs, activeTabId]);
 
   const allWidgets = useMemo(
     () =>
-      pageLayoutDraft?.tabs?.flatMap((tab) => tab.widgets).filter(isDefined) ||
+      pageLayoutDraft.tabs.flatMap((tab) => tab.widgets).filter(isDefined) ||
       [],
-    [pageLayoutDraft?.tabs],
+    [pageLayoutDraft.tabs],
   );
 
   const { startPageLayoutDragSelection } = useStartPageLayoutDragSelection();
@@ -235,19 +235,19 @@ export const SettingsPageLayoutEdit = () => {
   }, [createPageLayoutTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
-    return [...(pageLayoutDraft?.tabs || [])]
+    return [...(pageLayoutDraft.tabs || [])]
       .sort((a, b) => a.position - b.position)
       .map((tab) => ({
         id: tab.id,
         title: tab.title,
       }));
-  }, [pageLayoutDraft?.tabs]);
+  }, [pageLayoutDraft.tabs]);
 
   const handleSaveClick = async () => {
     setIsSaving(true);
     try {
       const allWidgets: PageLayoutWidgetWithData[] =
-        pageLayoutDraft?.tabs
+        pageLayoutDraft.tabs
           ?.flatMap((tab) =>
             tab?.widgets
               ?.map((widget) => ({
@@ -264,7 +264,7 @@ export const SettingsPageLayoutEdit = () => {
 
       setPageLayoutDraft((prev) => ({
         ...prev,
-        tabs: pageLayoutDraft?.tabs,
+        tabs: pageLayoutDraft.tabs,
       }));
 
       await savePageLayout(allWidgets);
@@ -324,8 +324,8 @@ export const SettingsPageLayoutEdit = () => {
           </StyledActionButtonContainer>
         }
       >
-        {isDefined(pageLayoutDraft?.tabs?.length) &&
-          pageLayoutDraft?.tabs?.length > 0 && (
+        {isDefined(pageLayoutDraft.tabs.length) &&
+          pageLayoutDraft.tabs.length > 0 && (
             <StyledTabList
               tabs={tabListTabs}
               behaveAsLinks={false}
