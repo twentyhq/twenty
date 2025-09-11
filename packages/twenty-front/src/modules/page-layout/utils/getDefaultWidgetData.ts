@@ -103,8 +103,8 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
         displayType: 'shortNumber',
         prefix: '$',
         suffix: '',
-        xScale: 'linear',
-        yScale: 'linear',
+        xScale: { type: 'linear' },
+        yScale: { type: 'linear', min: 0, max: 'auto' },
         stackedArea: false,
         enableSlices: false,
       };

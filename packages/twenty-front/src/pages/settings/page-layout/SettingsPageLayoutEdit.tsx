@@ -23,7 +23,7 @@ import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSel
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/page-layout/utils/generateCellId';
-import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceHolder';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
