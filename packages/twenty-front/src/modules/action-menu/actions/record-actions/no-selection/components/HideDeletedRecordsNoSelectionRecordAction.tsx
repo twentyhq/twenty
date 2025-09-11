@@ -30,14 +30,16 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
     viewBarId: recordIndexId,
   });
 
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
+  const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
 
   const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
+  const deletedFilter = currentRecordFilters.find(
+    isRecordFilterAboutSoftDelete,
+  );
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 

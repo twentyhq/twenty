@@ -8,6 +8,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent-action.module';
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
+import { EmptyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty-action.module';
 import { FilterActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter-action.module';
 import { FormActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form-action.module';
 import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator-action.module';
@@ -27,6 +28,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FilterActionModule,
     IteratorActionModule,
     AiAgentActionModule,
+    EmptyActionModule,
     FeatureFlagModule,
     AiModule,
   ],

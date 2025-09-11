@@ -102,7 +102,7 @@ export class WorkflowVersionWorkspaceService {
 
     for (const step of workflowVersionToCopy.steps) {
       const duplicatedStep =
-        await this.workflowVersionStepWorkspaceService.duplicateStep({
+        await this.workflowVersionStepWorkspaceService.createDraftStep({
           step,
           workspaceId,
         });
