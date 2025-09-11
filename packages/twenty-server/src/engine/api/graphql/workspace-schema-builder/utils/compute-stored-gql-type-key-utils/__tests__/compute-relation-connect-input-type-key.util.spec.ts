@@ -6,6 +6,6 @@ describe('computeRelationConnectInputTypeKey', () => {
 
     const result = computeRelationConnectInputTypeKey(objectMetadataNameId);
 
-    expect(result).toBe('20202020f4014d8aa73164d007c27-ConnectInput');
+    expect(result).toBe('20202020-f401-4d8a-a731-64d007c27bad-ConnectInput');
   });
 });

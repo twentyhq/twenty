@@ -57,7 +57,7 @@ export class ObjectMetadataObjectTypeGenerator {
     objectMetadata: ObjectMetadataEntity;
     options: WorkspaceBuildSchemaOptions;
   }): GraphQLOutputTypeFieldConfigMap {
-    const allGeneratedFields = {};
+    const allGeneratedFields: GraphQLOutputTypeFieldConfigMap = {};
     let key: string | undefined;
 
     for (const field of objectMetadata.fields) {

@@ -103,7 +103,7 @@ export class FieldInputTypeGenerator {
 
     if (!inputType) {
       this.logger.error(
-        `Could not find a GraphQL type input for ${isDefined(key) ? key : type + kind}`,
+        `Could not find a GraphQL type input for ${isDefined(key) ? key : `type: ${type} / kind: ${kind}`}`,
         {
           type,
           kind,
@@ -113,7 +113,7 @@ export class FieldInputTypeGenerator {
       );
 
       throw new Error(
-        `Could not find a GraphQL input type for ${isDefined(key) ? key : type + kind}`,
+        `Could not find a GraphQL input type for ${isDefined(key) ? key : `type: ${type} / kind: ${kind}`}`,
       );
     }
 

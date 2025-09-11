@@ -4,7 +4,7 @@ export const computeCompositeFieldEnumTypeKey = (
   fieldMetadataType: string,
   compositePropertyName: string,
 ): string => {
-  return `${pascalCase(fieldMetadataType.toString())}${pascalCase(
+  return `${pascalCase(fieldMetadataType)}${pascalCase(
     compositePropertyName,
   )}Enum`;
 };

@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -210,7 +212,7 @@ export class GqlTypeGenerator {
     const workspaceId =
       objectMetadataCollectionWithRelationFields[0]?.workspaceId;
 
-    if (!workspaceId) {
+    if (!isDefined(workspaceId)) {
       throw new Error('Workspace ID not found');
     }
 

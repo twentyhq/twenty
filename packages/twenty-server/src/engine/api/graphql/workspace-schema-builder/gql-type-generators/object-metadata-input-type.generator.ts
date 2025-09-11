@@ -107,10 +107,10 @@ export class ObjectMetadataInputTypeGenerator {
     }
   }
 
-  private getTypeFactoryOptions = <T extends FieldMetadataType>(
+  private getTypeFactoryOptions<T extends FieldMetadataType>(
     fieldMetadata: FieldMetadataEntity<T>,
     kind: InputTypeDefinitionKind,
-  ): TypeOptions => {
+  ): TypeOptions {
     return {
       nullable: fieldMetadata.isNullable ?? undefined,
       defaultValue: fieldMetadata.defaultValue,
@@ -120,7 +120,7 @@ export class ObjectMetadataInputTypeGenerator {
       settings: fieldMetadata.settings,
       isIdField: fieldMetadata.name === 'id',
     };
-  };
+  }
 
   private computeFieldTypeKey(
     objectMetadata: ObjectMetadataEntity,
@@ -220,7 +220,7 @@ export class ObjectMetadataInputTypeGenerator {
     options: WorkspaceBuildSchemaOptions;
     kind: InputTypeDefinitionKind;
   }): GraphQLInputFieldConfigMap {
-    const allGeneratedFields = {};
+    const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       const typeOptions = this.getTypeFactoryOptions(fieldMetadata, kind);
@@ -241,11 +241,7 @@ export class ObjectMetadataInputTypeGenerator {
           kind,
           buildOptions: options,
           typeOptions,
-          key: this.computeFieldTypeKey(
-            objectMetadata,
-            fieldMetadata,
-            InputTypeDefinitionKind.Create,
-          ),
+          key: this.computeFieldTypeKey(objectMetadata, fieldMetadata, kind),
         });
 
         generatedFields = {
