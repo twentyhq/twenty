@@ -32,9 +32,9 @@ describe('useCreatePageLayoutTab', () => {
       newTabId = result.current.createTab.createPageLayoutTab();
     });
 
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.id).toBe('tab-mock-uuid');
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.title).toBe('Tab 1');
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('tab-mock-uuid');
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
     expect(result.current.pageLayoutDraft.tabs[0].widgets).toEqual([]);
 
     expect(result.current.pageLayoutCurrentLayouts['tab-mock-uuid']).toEqual({
@@ -62,7 +62,7 @@ describe('useCreatePageLayoutTab', () => {
       result.current.createTab.createPageLayoutTab('Custom Tab Name');
     });
 
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.title).toBe(
+    expect(result.current.pageLayoutDraft.tabs[0]?.title).toBe(
       'Custom Tab Name',
     );
   });
@@ -91,10 +91,10 @@ describe('useCreatePageLayoutTab', () => {
     });
 
     expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.position).toBe(0);
-    expect(result.current.pageLayoutDraft.tabs?.[0]?.title).toBe('Tab 1');
-    expect(result.current.pageLayoutDraft.tabs?.[1]?.position).toBe(1);
-    expect(result.current.pageLayoutDraft.tabs?.[1]?.title).toBe('Tab 2');
+    expect(result.current.pageLayoutDraft.tabs[0]?.position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0]?.title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[1]?.position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1]?.title).toBe('Tab 2');
   });
 
   it('should create isolated layouts for multiple tabs', () => {
