@@ -77,7 +77,6 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                 removePropertiesFromRecord(viewField, [
                   'updatedAt',
                   'createdAt',
-                  'workspaceId',
                 ]),
               ),
               existingView.viewFields,
