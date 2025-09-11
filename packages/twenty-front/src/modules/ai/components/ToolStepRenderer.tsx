@@ -151,11 +151,7 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
           <StyledContentContainer>
             {isStandardizedFormat ? (
               <>
-                {hasError && (
-                  <div>
-                    <strong>Error:</strong> {toolOutput.error}
-                  </div>
-                )}
+                {hasError && <div>{toolOutput.error}</div>}
                 {hasResult && (
                   <div>
                     <StyledPre>
