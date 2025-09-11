@@ -21,13 +21,13 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
