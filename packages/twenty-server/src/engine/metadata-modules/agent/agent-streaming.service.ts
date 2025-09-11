@@ -75,52 +75,28 @@ export class AgentStreamingService {
         });
 
       let aiResponse = '';
-      let reasoningSummary = '';
       let rawStreamString = '';
 
       for await (const chunk of fullStream) {
         rawStreamString += JSON.stringify(chunk) + '\n';
 
-        switch (chunk.type) {
-          case 'text-delta':
-            aiResponse += chunk.textDelta;
-            this.sendStreamEvent(res, chunk);
-
-            break;
-          // @ts-expect-error will fix later
-          case 'tool-result':
-          case 'tool-call':
-            this.sendStreamEvent(res, chunk);
-            break;
-          case 'reasoning':
-            reasoningSummary += chunk.textDelta || '';
-            this.sendStreamEvent(res, chunk);
-            break;
-          case 'error':
-            {
-              const errorMessage =
-                chunk.error &&
-                typeof chunk.error === 'object' &&
-                'message' in chunk.error
-                  ? chunk.error.message
-                  : 'Something went wrong. Please try again.';
-
-              this.sendStreamEvent(res, chunk);
-              this.logger.error(`Stream error: ${errorMessage}`);
-              res.end();
-            }
-            break;
-          default:
-            this.sendStreamEvent(res, { type: chunk.type });
-            this.logger.log(`Unknown chunk type: ${chunk.type}`);
-            break;
+        if (chunk.type === 'text-delta') {
+          aiResponse += chunk.textDelta;
         }
-      }
 
-      if (!aiResponse) {
-        res.end();
-
-        return;
+        this.sendStreamEvent(
+          res,
+          [
+            'text-delta',
+            'reasoning',
+            'reasoning-signature',
+            'tool-call',
+            'tool-result',
+            'error',
+          ].includes(chunk.type)
+            ? chunk
+            : { type: chunk.type },
+        );
       }
 
       await this.agentChatService.addMessage({
@@ -134,7 +110,6 @@ export class AgentStreamingService {
         threadId,
         role: AgentChatMessageRole.ASSISTANT,
         content: aiResponse,
-        reasoningSummary: reasoningSummary,
         streamData: rawStreamString.trim() || null,
       });
 
