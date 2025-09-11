@@ -7,11 +7,10 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
-import { AIChatMessageStreamRenderer } from '@/ai/components/AIChatMessageStreamRenderer';
+import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { type AgentChatMessage } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -172,7 +171,7 @@ export const AIChatMessage = ({
             isUser={message.role === AgentChatMessageRole.USER}
           >
             {message.role === AgentChatMessageRole.ASSISTANT ? (
-              <AIChatMessageStreamRenderer
+              <AIChatAssistantMessageRenderer
                 streamData={message.streamData || agentStreamingMessage}
               />
             ) : (

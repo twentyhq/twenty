@@ -3,7 +3,7 @@ import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay
 import { TextStepRenderer } from '@/ai/components/TextStepRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import type {
-  AIChatMessageStreamRendererProps,
+  AIChatAssistantMessageRendererProps,
   ParsedStep,
 } from '@/ai/types/streamTypes';
 import { parseStream } from '@/ai/utils/parseStream';
@@ -45,9 +45,9 @@ const StyledToolCallContainer = styled.div`
   }
 `;
 
-export const AIChatMessageStreamRenderer = ({
+export const AIChatAssistantMessageRenderer = ({
   streamData,
-}: AIChatMessageStreamRendererProps) => {
+}: AIChatAssistantMessageRendererProps) => {
   const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
   const isStreaming = Boolean(agentStreamingMessage);
 

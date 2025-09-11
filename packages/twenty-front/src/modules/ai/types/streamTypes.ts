@@ -29,6 +29,6 @@ export type ParsedStep =
   | { type: 'text'; content: string }
   | { type: 'error'; message: string; error?: unknown };
 
-export type AIChatMessageStreamRendererProps = {
+export type AIChatAssistantMessageRendererProps = {
   streamData: string;
 };
