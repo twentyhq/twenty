@@ -130,7 +130,6 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
   const isStandardizedFormat =
     toolOutput && typeof toolOutput === 'object' && 'success' in toolOutput;
 
-  const isSuccess = isStandardizedFormat ? toolOutput.success : true;
   const hasResult = isStandardizedFormat
     ? Boolean(toolOutput.result)
     : Boolean(toolResult?.result);

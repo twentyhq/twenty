@@ -29,7 +29,6 @@ export const parseStream = (streamText: string): ParsedStep[] => {
     try {
       event = JSON.parse(line);
     } catch {
-      console.error('Invalid JSON:', line);
       continue;
     }
 

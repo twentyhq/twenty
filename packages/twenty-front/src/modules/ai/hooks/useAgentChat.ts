@@ -1,4 +1,3 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -38,7 +37,6 @@ type OptimisticMessage = AgentChatMessage & {
 
 export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const apolloClient = useApolloClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
