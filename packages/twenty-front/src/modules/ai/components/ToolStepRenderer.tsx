@@ -25,12 +25,6 @@ const StyledLoadingContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledLoadingText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 const StyledContentContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -75,11 +69,7 @@ const StyledIconTextContainer = styled.div`
   }
 `;
 
-type ToolStepRendererProps = {
-  events: ToolEvent[];
-};
-
-export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
+export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -92,9 +82,7 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
     return null;
   }
 
-  const isLoading = !toolResult;
-
-  const toolOutput = toolResult?.result as any;
+  const toolOutput = toolResult?.result as ToolResultEvent['result'];
   const isStandardizedFormat =
     toolOutput && typeof toolOutput === 'object' && 'success' in toolOutput;
 
@@ -104,14 +92,14 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
   const hasError = isStandardizedFormat ? Boolean(toolOutput.error) : false;
   const isExpandable = hasResult || hasError;
 
-  if (isLoading) {
+  if (!toolResult) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
           <Shimmer>
-            <StyledLoadingText>
+            <StyledDisplayMessage>
               {toolCall.args.loadingMessage}
-            </StyledLoadingText>
+            </StyledDisplayMessage>
           </Shimmer>
         </StyledLoadingContainer>
       </StyledContainer>
