@@ -54,10 +54,15 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   }
 `;
 
-const StyledButtonText = styled.span`
+const StyledDisplayMessage = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledPre = styled.pre`
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  white-space: pre-wrap;
 `;
 
 type ToolStepRendererProps = {
@@ -78,7 +83,17 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
   }
 
   const isLoading = !toolResult;
-  const isExpandable = Boolean(toolResult?.result);
+
+  const toolOutput = toolResult?.result as any;
+  const isStandardizedFormat =
+    toolOutput && typeof toolOutput === 'object' && 'success' in toolOutput;
+
+  const isSuccess = isStandardizedFormat ? toolOutput.success : true;
+  const hasResult = isStandardizedFormat
+    ? Boolean(toolOutput.result)
+    : Boolean(toolResult?.result);
+  const hasError = isStandardizedFormat ? Boolean(toolOutput.error) : false;
+  const isExpandable = hasResult || hasError;
 
   if (isLoading) {
     return (
@@ -94,13 +109,24 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
     );
   }
 
+  const displayMessage =
+    toolResult?.result &&
+    typeof toolResult.result === 'object' &&
+    'message' in toolResult.result
+      ? (toolResult.result as { message: string }).message
+      : undefined;
+
   return (
     <StyledContainer>
       <StyledToggleButton
         onClick={() => setIsExpanded(!isExpanded)}
         isExpandable={isExpandable}
       >
-        <StyledButtonText>{toolCall.args.loadingMessage}</StyledButtonText>
+        {isSuccess ? (
+          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+        ) : (
+          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+        )}
         {isExpandable &&
           (isExpanded ? (
             <IconChevronUp size={theme.icon.size.sm} />
@@ -112,7 +138,24 @@ export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            {toolResult?.result ? JSON.stringify(toolResult.result) : undefined}
+            {isStandardizedFormat ? (
+              <>
+                {hasError && (
+                  <div>
+                    <strong>Error:</strong> {toolOutput.error}
+                  </div>
+                )}
+                {hasResult && (
+                  <div>
+                    <StyledPre>
+                      {JSON.stringify(toolOutput.result, null, 2)}
+                    </StyledPre>
+                  </div>
+                )}
+              </>
+            ) : toolResult?.result ? (
+              JSON.stringify(toolResult.result, null, 2)
+            ) : undefined}
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}
