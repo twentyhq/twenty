@@ -108,6 +108,15 @@ export const parseStream = (streamText: string): ParsedStep[] => {
         }
         flushTextBlock();
         break;
+
+      case 'error':
+        flushTextBlock();
+        output.push({
+          type: 'error',
+          message: event.message || 'An error occurred',
+          error: event.error,
+        });
+        break;
     }
   }
 

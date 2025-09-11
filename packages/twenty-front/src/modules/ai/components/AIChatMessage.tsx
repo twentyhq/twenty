@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
+import { Avatar, IconSparkles } from 'twenty-ui/display';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
@@ -136,20 +136,6 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDotsIconContainer = styled.div`
-  align-items: center;
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledDotsIcon = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.light};
-  transform: rotate(90deg);
-`;
-
 export const AIChatMessage = ({
   message,
   agentStreamingMessage,
@@ -186,15 +172,9 @@ export const AIChatMessage = ({
             isUser={message.role === AgentChatMessageRole.USER}
           >
             {message.role === AgentChatMessageRole.ASSISTANT ? (
-              message.streamData || agentStreamingMessage ? (
-                <AIChatMessageStreamRenderer
-                  streamData={message.streamData || agentStreamingMessage}
-                />
-              ) : (
-                <StyledDotsIconContainer>
-                  <StyledDotsIcon size={theme.icon.size.xl} />
-                </StyledDotsIconContainer>
-              )
+              <AIChatMessageStreamRenderer
+                streamData={message.streamData || agentStreamingMessage}
+              />
             ) : (
               message.content
             )}

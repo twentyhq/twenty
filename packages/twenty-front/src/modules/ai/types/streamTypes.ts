@@ -17,10 +17,17 @@ export type ToolResultEvent = {
 
 export type ToolEvent = ToolCallEvent | ToolResultEvent;
 
+export type ErrorEvent = {
+  type: 'error';
+  message: string;
+  error?: unknown;
+};
+
 export type ParsedStep =
   | { type: 'tool'; events: ToolEvent[] }
   | { type: 'reasoning'; content: string; isThinking: boolean }
-  | { type: 'text'; content: string };
+  | { type: 'text'; content: string }
+  | { type: 'error'; message: string; error?: unknown };
 
 export type AIChatMessageStreamRendererProps = {
   streamData: string;
