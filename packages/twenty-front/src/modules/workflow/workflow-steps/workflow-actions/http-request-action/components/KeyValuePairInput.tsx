@@ -1,6 +1,8 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { AUTO_SET_HEADER_KEYS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/AutoSetHeaderKeys';
+import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isReadOnlyHeaderKey';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -32,7 +34,7 @@ export type KeyValuePair = {
   id: string;
   key: string;
   value: string;
-  isPreexisting?: boolean;
+  isAutoSet: boolean;
 };
 
 export type KeyValuePairInputProps = {
@@ -42,8 +44,6 @@ export type KeyValuePairInputProps = {
   readonly?: boolean;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
-  uniqueNotEditableKeys?: string[];
-  errorMessage?: string;
 };
 
 export const KeyValuePairInput = ({
@@ -52,39 +52,32 @@ export const KeyValuePairInput = ({
   readonly,
   keyPlaceholder = 'Key',
   valuePlaceholder = 'Value',
-  uniqueNotEditableKeys,
   defaultValue,
-  errorMessage,
 }: KeyValuePairInputProps) => {
-  const isUniqueNotEditableKey = (key: string): boolean => {
-    return uniqueNotEditableKeys?.includes(key.trim()) || false;
-  };
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
     const initialPairs = defaultValue
       ? Object.entries(defaultValue).map(([key, value]) => ({
           id: v4(),
           key,
           value,
-          isPreexisting: isUniqueNotEditableKey(key),
+          isAutoSet: isAutoSetHeaderKey(key),
         }))
       : [];
     return initialPairs.length > 0
-      ? [
-          ...initialPairs,
-          { id: v4(), key: '', value: '', isPreexisting: false },
-        ]
-      : [{ id: v4(), key: '', value: '', isPreexisting: false }];
+      ? [...initialPairs, { id: v4(), key: '', value: '', isAutoSet: false }]
+      : [{ id: v4(), key: '', value: '', isAutoSet: false }];
   });
 
   const getKeyValidationError = (pair: KeyValuePair): string | undefined => {
     const trimmedKey = pair.key.trim();
 
-    if (!pair.isPreexisting && isUniqueNotEditableKey(trimmedKey)) {
-      return errorMessage;
+    if (!pair.isAutoSet && isAutoSetHeaderKey(trimmedKey)) {
+      return 'This key should be set through body input';
     }
 
     return undefined;
   };
+
   const handlePairChange = (
     pairId: string,
     field: 'key' | 'value',
@@ -100,14 +93,14 @@ export const KeyValuePairInput = ({
       (field === 'key' || field === 'value') &&
       Boolean(newValue.trim())
     ) {
-      newPairs.push({ id: v4(), key: '', value: '', isPreexisting: false });
+      newPairs.push({ id: v4(), key: '', value: '', isAutoSet: false });
     }
 
     setPairs(newPairs);
 
     const record = newPairs.reduce(
       (acc, pair) => {
-        if (!pair.isPreexisting && isUniqueNotEditableKey(pair.key)) {
+        if (!pair.isAutoSet && isAutoSetHeaderKey(pair.key)) {
           return acc;
         }
         if (pair.key.trim().length > 0) {
@@ -125,12 +118,12 @@ export const KeyValuePairInput = ({
     const newPairs = pairs.filter((pair) => pair.id !== pairId);
     if (
       newPairs.length === 0 ||
-      (newPairs.length === uniqueNotEditableKeys?.length &&
+      (newPairs.length === AUTO_SET_HEADER_KEYS?.length &&
         newPairs.every((pair) =>
-          uniqueNotEditableKeys.includes(pair.key.trim()),
+          AUTO_SET_HEADER_KEYS.includes(pair.key.trim()),
         ))
     ) {
-      newPairs.push({ id: v4(), key: '', value: '' });
+      newPairs.push({ id: v4(), key: '', value: '', isAutoSet: false });
     }
     setPairs(newPairs);
 
@@ -155,7 +148,7 @@ export const KeyValuePairInput = ({
           <StyledKeyValueContainer key={pair.id} readonly={readonly}>
             <FormTextFieldInput
               placeholder={keyPlaceholder}
-              readonly={readonly || pair.isPreexisting}
+              readonly={readonly || pair.isAutoSet}
               defaultValue={pair.key}
               onChange={(value) =>
                 handlePairChange(pair.id, 'key', value ?? '')
@@ -166,7 +159,7 @@ export const KeyValuePairInput = ({
 
             <FormTextFieldInput
               placeholder={valuePlaceholder}
-              readonly={readonly || pair.isPreexisting}
+              readonly={readonly || pair.isAutoSet}
               defaultValue={pair.value}
               onChange={(value) =>
                 handlePairChange(pair.id, 'value', value ?? '')
@@ -176,7 +169,7 @@ export const KeyValuePairInput = ({
 
             {!readonly &&
             pair.id !== pairs[pairs.length - 1].id &&
-            !pair.isPreexisting ? (
+            !pair.isAutoSet ? (
               <Button
                 onClick={() => handleRemovePair(pair.id)}
                 Icon={IconTrash}

@@ -1,4 +1,4 @@
-import { BodyType } from 'twenty-shared/workflow';
+import type { BodyType } from '../types/workflowHttpRequestStep';
 
 export const CONTENT_TYPE_VALUES_HTTP_REQUEST: Record<BodyType, string> = {
   rawJson: 'application/json',

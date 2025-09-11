@@ -183,8 +183,6 @@ export const WorkflowEditActionHttpRequest = ({
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
-              uniqueNotEditableKeys={['content-type']}
-              errorMessage="This key should be set through body input"
             />
 
             {isMethodWithBody(formData.method) && (
