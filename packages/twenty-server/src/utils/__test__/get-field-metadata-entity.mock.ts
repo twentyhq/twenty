@@ -46,6 +46,7 @@ export const getMockFieldMetadataEntity = <
     createdAt: new Date(),
     updatedAt: new Date(),
     isActive: true,
+    virtualField: null,
     ...overrides,
   };
 };

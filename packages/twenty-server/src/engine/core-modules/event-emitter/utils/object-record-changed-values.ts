@@ -22,6 +22,7 @@ export const objectRecordChangedValues = (
         key === 'updatedAt' ||
         key === 'searchVector' ||
         field?.type === FieldMetadataType.RELATION ||
+        field?.virtualField !== null ||
         deepEqual(oldRecordValue, newRecordValue)
       ) {
         return acc;

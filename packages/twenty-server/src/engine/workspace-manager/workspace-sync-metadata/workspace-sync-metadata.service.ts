@@ -11,6 +11,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
@@ -19,6 +20,7 @@ import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/worksp
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
+import { VirtualFieldProcessor } from 'src/modules/virtual-fields/services/virtual-field-processor.service';
 
 interface SynchronizeOptions {
   applyChanges?: boolean;
@@ -40,6 +42,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
     private readonly workspaceSyncAgentService: WorkspaceSyncAgentService,
+    private readonly virtualFieldProcessor: VirtualFieldProcessor,
   ) {}
 
   /**
@@ -259,6 +262,30 @@ export class WorkspaceSyncMetadataService {
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         context.workspaceId,
+      );
+    }
+
+    // Initialize virtual fields
+    if (options.applyChanges) {
+      this.logger.log('Initializing virtual fields for standard objects');
+      const initVirtualFieldsStart = performance.now();
+
+      try {
+        await this.virtualFieldProcessor.processAllRecordsForEntity(
+          STANDARD_OBJECT_IDS.company,
+          context.workspaceId,
+        );
+      } catch (error) {
+        this.logger.warn('Failed to initialize virtual fields', {
+          workspaceId: context.workspaceId,
+          error: error.message,
+        });
+      }
+
+      const initVirtualFieldsEnd = performance.now();
+
+      this.logger.log(
+        `Initialize virtual fields took ${initVirtualFieldsEnd - initVirtualFieldsStart}ms`,
       );
     }
 

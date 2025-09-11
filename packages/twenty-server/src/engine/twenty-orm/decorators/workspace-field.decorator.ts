@@ -8,6 +8,7 @@ import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-me
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { type VirtualField } from 'src/modules/virtual-fields/types/VirtualField';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceFieldOptions<
@@ -25,6 +26,7 @@ export interface WorkspaceFieldOptions<
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
+  virtualField?: VirtualField;
   isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
@@ -104,6 +106,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isActive: options.isActive,
       asExpression: options.asExpression,
       generatedType: options.generatedType,
+      virtualField: options.virtualField,
     });
   };
 }

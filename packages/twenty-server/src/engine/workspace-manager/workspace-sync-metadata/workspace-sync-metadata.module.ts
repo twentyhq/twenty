@@ -25,6 +25,7 @@ import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/worksp
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { VirtualFieldsModule } from 'src/modules/virtual-fields/virtual-fields.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     TypeOrmModule.forFeature([Workspace, FeatureFlag]),
     WorkspaceMetadataVersionModule,
     AgentRoleModule,
+    VirtualFieldsModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

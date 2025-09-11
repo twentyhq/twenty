@@ -93,6 +93,7 @@ const generateSourceFlatFieldMetadata = ({
     universalIdentifier: standardId,
     workspaceId,
     morphId: null,
+    virtualField: null,
   };
 };
 
@@ -154,6 +155,7 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
+    virtualField: null,
     universalIdentifier: standardId,
   };
 };

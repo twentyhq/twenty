@@ -44,6 +44,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     relationTargetFieldMetadataId: null,
     flatRelationTargetObjectMetadata: null,
     relationTargetObjectMetadataId: null,
+    virtualField: null,
     ...overrides,
   };
 };

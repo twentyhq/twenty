@@ -106,6 +106,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
             settings: null,
             defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
             options: generateRatingOptions(),
+            virtualField: null,
           } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
         ],
       };
@@ -131,6 +132,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
             options,
             defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
             settings: null,
+            virtualField: null,
           } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
         ],
       };
@@ -169,6 +171,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           {
             ...commonFlatFieldMetadata,
             type: createFieldInput.type,
+            virtualField: null,
           },
         ],
       };

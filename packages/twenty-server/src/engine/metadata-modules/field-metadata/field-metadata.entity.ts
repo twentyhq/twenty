@@ -25,6 +25,7 @@ import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metad
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { type VirtualField } from 'src/modules/virtual-fields/types/VirtualField';
 
 @Entity('fieldMetadata')
 @Check(
@@ -124,6 +125,9 @@ export class FieldMetadataEntity<
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
+
+  @Column({ type: 'jsonb', nullable: true })
+  virtualField: VirtualField | null;
 
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<

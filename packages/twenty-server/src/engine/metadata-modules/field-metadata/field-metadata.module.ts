@@ -36,6 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { VirtualFieldsModule } from 'src/modules/virtual-fields/virtual-fields.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -66,6 +67,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
         WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
+        VirtualFieldsModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

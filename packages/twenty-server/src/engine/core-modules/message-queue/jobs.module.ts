@@ -14,11 +14,14 @@ import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
@@ -31,10 +34,8 @@ import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
-import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
+import { VirtualFieldsModule } from 'src/modules/virtual-fields/virtual-fields.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
-import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
     AuditJobModule,
     TriggerModule,
     ServerlessFunctionModule,
+    VirtualFieldsModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
