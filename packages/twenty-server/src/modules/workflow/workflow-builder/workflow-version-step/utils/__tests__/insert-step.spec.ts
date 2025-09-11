@@ -3,6 +3,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import {
   type WorkflowAction,
+  type WorkflowIteratorAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
@@ -157,5 +158,90 @@ describe('insertStep', () => {
       ...existingTrigger,
       nextStepIds: ['1', 'new'],
     });
+  });
+
+  it('should add step to iterator initialLoopStepIds when shouldInsertToLoop is true', () => {
+    const existingTrigger = createMockTrigger(['1']);
+    const iteratorStep: WorkflowIteratorAction = {
+      id: '1',
+      name: 'Iterator 1',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          initialLoopStepIds: ['existing-loop-step'],
+          items: [],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+    };
+    const newStep = createMockAction('new');
+
+    const result = insertStep({
+      existingTrigger,
+      existingSteps: [iteratorStep],
+      insertedStep: newStep,
+      options: {
+        type: WorkflowActionType.ITERATOR,
+        settings: {
+          iteratorStepId: '1',
+          shouldInsertToLoop: true,
+        },
+      },
+    });
+
+    const updatedIteratorStep = result
+      .updatedSteps[0] as WorkflowIteratorAction;
+
+    expect(updatedIteratorStep.settings.input.initialLoopStepIds).toEqual([
+      'existing-loop-step',
+      'new',
+    ]);
+  });
+
+  it('should not add step to iterator initialLoopStepIds when shouldInsertToLoop is false', () => {
+    const existingTrigger = createMockTrigger(['1']);
+    const iteratorStep: WorkflowIteratorAction = {
+      id: '1',
+      name: 'Iterator 1',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          initialLoopStepIds: ['existing-loop-step'],
+          items: [],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+    };
+    const newStep = createMockAction('new');
+
+    const result = insertStep({
+      existingTrigger,
+      existingSteps: [iteratorStep],
+      insertedStep: newStep,
+      options: {
+        type: WorkflowActionType.ITERATOR,
+        settings: {
+          iteratorStepId: '1',
+          shouldInsertToLoop: false,
+        },
+      },
+    });
+
+    const updatedIteratorStep = result
+      .updatedSteps[0] as WorkflowIteratorAction;
+
+    expect(updatedIteratorStep.settings.input.initialLoopStepIds).toEqual([
+      'existing-loop-step',
+    ]);
   });
 });

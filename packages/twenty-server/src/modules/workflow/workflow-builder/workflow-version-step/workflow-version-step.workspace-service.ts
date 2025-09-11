@@ -73,8 +73,14 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
-      input;
+    const {
+      workflowVersionId,
+      stepType,
+      parentStepId,
+      nextStepId,
+      position,
+      options,
+    } = input;
 
     const newStep = await this.runStepCreationSideEffectsAndBuildStep({
       type: stepType,
@@ -120,6 +126,7 @@ export class WorkflowVersionStepWorkspaceService {
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
+      options,
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {
