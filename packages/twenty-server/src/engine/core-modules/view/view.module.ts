@@ -15,6 +15,7 @@ import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-fil
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { FlatViewModule } from 'src/engine/core-modules/view/flat-view/flat-view.module';
 import { ViewFieldResolver } from 'src/engine/core-modules/view/resolvers/view-field.resolver';
 import { ViewFilterGroupResolver } from 'src/engine/core-modules/view/resolvers/view-filter-group.resolver';
 import { ViewFilterResolver } from 'src/engine/core-modules/view/resolvers/view-filter.resolver';
@@ -48,6 +49,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceMetadataCacheModule,
     WorkspaceMigrationV2Module,
     ViewCacheModule,
+    FlatViewModule,
   ],
   controllers: [
     ViewController,
