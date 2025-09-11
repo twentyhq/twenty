@@ -933,6 +933,11 @@ export type DeleteTwoFactorAuthenticationMethodOutput = {
   success: Scalars['Boolean'];
 };
 
+export type DeleteViewFieldInput = {
+  /** The id of the view field to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteWebhookDto = {
   id: Scalars['UUID'];
 };
@@ -951,6 +956,11 @@ export type DeletedWorkspaceMember = {
   name: FullName;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
+};
+
+export type DestroyViewFieldInput = {
+  /** The id of the view field to destroy. */
+  id: Scalars['UUID'];
 };
 
 /** Schema update on a table */
@@ -1440,7 +1450,7 @@ export type Mutation = {
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
-  deleteCoreViewField: Scalars['Boolean'];
+  deleteCoreViewField: CoreViewField;
   deleteCoreViewFilter: Scalars['Boolean'];
   deleteCoreViewFilterGroup: Scalars['Boolean'];
   deleteCoreViewGroup: Scalars['Boolean'];
@@ -1465,7 +1475,7 @@ export type Mutation = {
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
   destroyCoreView: Scalars['Boolean'];
-  destroyCoreViewField: Scalars['Boolean'];
+  destroyCoreViewField: CoreViewField;
   destroyCoreViewFilter: Scalars['Boolean'];
   destroyCoreViewFilterGroup: Scalars['Boolean'];
   destroyCoreViewGroup: Scalars['Boolean'];
@@ -1764,7 +1774,7 @@ export type MutationDeleteCoreViewArgs = {
 
 
 export type MutationDeleteCoreViewFieldArgs = {
-  id: Scalars['String'];
+  input: DeleteViewFieldInput;
 };
 
 
@@ -1879,7 +1889,7 @@ export type MutationDestroyCoreViewArgs = {
 
 
 export type MutationDestroyCoreViewFieldArgs = {
-  id: Scalars['String'];
+  input: DestroyViewFieldInput;
 };
 
 
@@ -2140,7 +2150,6 @@ export type MutationUpdateCoreViewArgs = {
 
 
 export type MutationUpdateCoreViewFieldArgs = {
-  id: Scalars['String'];
   input: UpdateViewFieldInput;
 };
 
@@ -3573,6 +3582,13 @@ export type UpdateServerlessFunctionInput = {
 };
 
 export type UpdateViewFieldInput = {
+  /** The id of the view field to update */
+  id: Scalars['UUID'];
+  /** The view field to update */
+  update: UpdateViewFieldInputUpdates;
+};
+
+export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
@@ -5025,11 +5041,11 @@ export type DeleteCoreViewMutationVariables = Exact<{
 export type DeleteCoreViewMutation = { __typename?: 'Mutation', deleteCoreView: boolean };
 
 export type DeleteCoreViewFieldMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DeleteViewFieldInput;
 }>;
 
 
-export type DeleteCoreViewFieldMutation = { __typename?: 'Mutation', deleteCoreViewField: boolean };
+export type DeleteCoreViewFieldMutation = { __typename?: 'Mutation', deleteCoreViewField: { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null } };
 
 export type DeleteCoreViewFilterMutationVariables = Exact<{
   id: Scalars['String'];
@@ -5067,11 +5083,11 @@ export type DestroyCoreViewMutationVariables = Exact<{
 export type DestroyCoreViewMutation = { __typename?: 'Mutation', destroyCoreView: boolean };
 
 export type DestroyCoreViewFieldMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DestroyViewFieldInput;
 }>;
 
 
-export type DestroyCoreViewFieldMutation = { __typename?: 'Mutation', destroyCoreViewField: boolean };
+export type DestroyCoreViewFieldMutation = { __typename?: 'Mutation', destroyCoreViewField: { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null } };
 
 export type DestroyCoreViewFilterMutationVariables = Exact<{
   id: Scalars['String'];
@@ -5108,14 +5124,6 @@ export type UpdateCoreViewMutationVariables = Exact<{
 
 
 export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> } };
-
-export type UpdateCoreViewFieldMutationVariables = Exact<{
-  id: Scalars['String'];
-  input: UpdateViewFieldInput;
-}>;
-
-
-export type UpdateCoreViewFieldMutation = { __typename?: 'Mutation', updateCoreViewField: { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null } };
 
 export type UpdateCoreViewFilterMutationVariables = Exact<{
   id: Scalars['String'];
@@ -10824,10 +10832,12 @@ export type DeleteCoreViewMutationHookResult = ReturnType<typeof useDeleteCoreVi
 export type DeleteCoreViewMutationResult = Apollo.MutationResult<DeleteCoreViewMutation>;
 export type DeleteCoreViewMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewMutation, DeleteCoreViewMutationVariables>;
 export const DeleteCoreViewFieldDocument = gql`
-    mutation DeleteCoreViewField($id: String!) {
-  deleteCoreViewField(id: $id)
+    mutation DeleteCoreViewField($input: DeleteViewFieldInput!) {
+  deleteCoreViewField(input: $input) {
+    ...ViewFieldFragment
+  }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 export type DeleteCoreViewFieldMutationFn = Apollo.MutationFunction<DeleteCoreViewFieldMutation, DeleteCoreViewFieldMutationVariables>;
 
 /**
@@ -10843,7 +10853,7 @@ export type DeleteCoreViewFieldMutationFn = Apollo.MutationFunction<DeleteCoreVi
  * @example
  * const [deleteCoreViewFieldMutation, { data, loading, error }] = useDeleteCoreViewFieldMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -11010,10 +11020,12 @@ export type DestroyCoreViewMutationHookResult = ReturnType<typeof useDestroyCore
 export type DestroyCoreViewMutationResult = Apollo.MutationResult<DestroyCoreViewMutation>;
 export type DestroyCoreViewMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewMutation, DestroyCoreViewMutationVariables>;
 export const DestroyCoreViewFieldDocument = gql`
-    mutation DestroyCoreViewField($id: String!) {
-  destroyCoreViewField(id: $id)
+    mutation DestroyCoreViewField($input: DestroyViewFieldInput!) {
+  destroyCoreViewField(input: $input) {
+    ...ViewFieldFragment
+  }
 }
-    `;
+    ${ViewFieldFragmentFragmentDoc}`;
 export type DestroyCoreViewFieldMutationFn = Apollo.MutationFunction<DestroyCoreViewFieldMutation, DestroyCoreViewFieldMutationVariables>;
 
 /**
@@ -11029,7 +11041,7 @@ export type DestroyCoreViewFieldMutationFn = Apollo.MutationFunction<DestroyCore
  * @example
  * const [destroyCoreViewFieldMutation, { data, loading, error }] = useDestroyCoreViewFieldMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -11198,40 +11210,6 @@ export function useUpdateCoreViewMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateCoreViewMutationHookResult = ReturnType<typeof useUpdateCoreViewMutation>;
 export type UpdateCoreViewMutationResult = Apollo.MutationResult<UpdateCoreViewMutation>;
 export type UpdateCoreViewMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewMutation, UpdateCoreViewMutationVariables>;
-export const UpdateCoreViewFieldDocument = gql`
-    mutation UpdateCoreViewField($id: String!, $input: UpdateViewFieldInput!) {
-  updateCoreViewField(id: $id, input: $input) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type UpdateCoreViewFieldMutationFn = Apollo.MutationFunction<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>;
-
-/**
- * __useUpdateCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewFieldMutation, { data, loading, error }] = useUpdateCoreViewFieldMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>(UpdateCoreViewFieldDocument, options);
-      }
-export type UpdateCoreViewFieldMutationHookResult = ReturnType<typeof useUpdateCoreViewFieldMutation>;
-export type UpdateCoreViewFieldMutationResult = Apollo.MutationResult<UpdateCoreViewFieldMutation>;
-export type UpdateCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>;
 export const UpdateCoreViewFilterDocument = gql`
     mutation UpdateCoreViewFilter($id: String!, $input: UpdateViewFilterInput!) {
   updateCoreViewFilter(id: $id, input: $input) {

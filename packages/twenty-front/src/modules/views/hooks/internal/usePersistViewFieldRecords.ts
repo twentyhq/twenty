@@ -8,7 +8,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewField } from '@/views/types/ViewField';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewField } from '~/generated/graphql';
+import { UpdateViewFieldInput, type CoreViewField } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
   const apolloClient = useApolloClient();
@@ -57,16 +57,18 @@ export const usePersistViewFieldRecords = () => {
 
       return Promise.all(
         viewFieldsToUpdate.map((viewField) =>
-          apolloClient.mutate({
+          apolloClient.mutate<any, { input: UpdateViewFieldInput }>({
             mutation: UPDATE_CORE_VIEW_FIELD,
             variables: {
-              id: viewField.id,
               input: {
-                isVisible: viewField.isVisible,
-                position: viewField.position,
-                size: viewField.size,
-                aggregateOperation: viewField.aggregateOperation,
-              } satisfies Partial<CoreViewField>,
+                id: viewField.id,
+                update: {
+                  isVisible: viewField.isVisible,
+                  position: viewField.position,
+                  size: viewField.size,
+                  aggregateOperation: viewField.aggregateOperation,
+                },
+              },
             },
             update: (_cache, { data }) => {
               const record = data?.['updateCoreViewField'];
