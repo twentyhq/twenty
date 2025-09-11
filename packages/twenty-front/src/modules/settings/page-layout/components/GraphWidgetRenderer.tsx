@@ -1,5 +1,6 @@
 import { GraphWidgetBarChart } from '@/dashboards/widgets/graph/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/dashboards/widgets/graph/components/GraphWidgetGaugeChart';
+import { GraphWidgetLineChart } from '@/dashboards/widgets/graph/components/GraphWidgetLineChart';
 import { GraphWidgetNumberChart } from '@/dashboards/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/widgets/graph/components/GraphWidgetPieChart';
 import { GraphType } from '../mocks/mockWidgets';
@@ -66,6 +67,28 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
           showGrid
           displayType="number"
           id={`bar-chart-${widget.id}`}
+        />
+      );
+
+    case GraphType.LINE:
+      return (
+        <GraphWidgetLineChart
+          id={`line-chart-${widget.id}`}
+          data={widget.data.series}
+          enableArea={widget.data.enableArea}
+          showLegend={widget.data.showLegend}
+          showGrid={widget.data.showGrid}
+          enablePoints={widget.data.enablePoints}
+          xAxisLabel={widget.data.xAxisLabel}
+          yAxisLabel={widget.data.yAxisLabel}
+          displayType={widget.data.displayType}
+          prefix={widget.data.prefix}
+          suffix={widget.data.suffix}
+          xScale={widget.data.xScale}
+          yScale={widget.data.yScale}
+          curve={widget.data.curve}
+          stackedArea={widget.data.stackedArea}
+          enableSlices={widget.data.enableSlices}
         />
       );
 

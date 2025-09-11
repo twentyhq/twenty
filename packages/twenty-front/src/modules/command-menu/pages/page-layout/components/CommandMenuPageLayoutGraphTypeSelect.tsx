@@ -5,8 +5,10 @@ import {
   WidgetType,
 } from '@/settings/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
+
 import {
   IconChartBar,
+  IconChartLine,
   IconChartPie,
   IconGauge,
   IconNumber,
@@ -48,6 +50,11 @@ const graphTypeOptions = [
     type: GraphType.NUMBER,
     icon: IconNumber,
     title: 'Number',
+  },
+  {
+    type: GraphType.LINE,
+    icon: IconChartLine,
+    title: 'Line Chart',
   },
 ];
 
