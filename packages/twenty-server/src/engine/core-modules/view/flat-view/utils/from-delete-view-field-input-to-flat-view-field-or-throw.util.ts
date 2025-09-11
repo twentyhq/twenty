@@ -28,7 +28,7 @@ export const fromDeleteViewFieldInputToFlatViewFieldOrThrow = ({
 
   if (!isDefined(existingFlatViewFieldToDelete)) {
     throw new ViewFieldException(
-      t`View field to delete or not found`,
+      t`View field to delete not found`,
       ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
     );
   }

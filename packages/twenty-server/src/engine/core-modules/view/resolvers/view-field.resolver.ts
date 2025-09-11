@@ -91,7 +91,7 @@ export class ViewFieldResolver {
     });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewFieldDTO)
   async deleteCoreViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -116,7 +116,7 @@ export class ViewFieldResolver {
     return deletedViewField;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewFieldDTO)
   async destroyCoreViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

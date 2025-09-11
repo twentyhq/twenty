@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { ViewCacheModule } from 'src/engine/core-modules/view/cache/services/view-cache.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
@@ -44,6 +45,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       ViewSortEntity,
     ]),
     I18nModule,
+    FeatureFlagModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
     WorkspaceMigrationV2Module,
