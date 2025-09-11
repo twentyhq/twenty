@@ -1,5 +1,5 @@
+import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -30,10 +30,8 @@ export const updateViewData = (overrides: Partial<ViewEntity> = {}) => ({
 });
 
 export const createViewFieldData = (
-  viewId: string,
-  overrides: Partial<ViewFieldEntity> = {},
-) => ({
-  viewId,
+  overrides: CreateViewFieldInput,
+): CreateViewFieldInput => ({
   position: 0,
   isVisible: true,
   size: 150,

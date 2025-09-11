@@ -1,5 +1,4 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
-import { prastoin } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
@@ -27,6 +26,7 @@ import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { createCoreViewField } from 'test/integration/graphql/utils/create-core-view-field.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('View Field Resolver', () => {
@@ -107,17 +107,17 @@ describe('View Field Resolver', () => {
     });
 
     it('should return view fields for a specific view', async () => {
-      const fieldData = createViewFieldData(testViewId, {
+      const fieldData = createViewFieldData({
+        viewId: testViewId,
         position: 0,
         isVisible: true,
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = prastoin({
-        data: fieldData,
+      await createCoreViewField({
+        input: fieldData,
+        expectToFail: false,
       });
-
-      await makeGraphqlAPIRequest(createOperation);
 
       const getOperation = findViewFieldsOperationFactory({
         viewId: testViewId,
@@ -137,19 +137,22 @@ describe('View Field Resolver', () => {
   });
 
   describe('createCoreViewField', () => {
-    it('should create a new view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
+    it.only('should create a new view field', async () => {
+      const fieldData = createViewFieldData({
+        viewId: testViewId,
         position: 1,
         isVisible: true,
         size: 200,
         fieldMetadataId: testFieldMetadataId,
       });
 
-      const operation = prastoin({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createCoreViewField({
+        input: fieldData,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 1,
         isVisible: true,
@@ -167,11 +170,13 @@ describe('View Field Resolver', () => {
         viewId: testViewId,
       };
 
-      const operation = prastoin({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createCoreViewField({
+        input: fieldData,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 2,
         isVisible: false,
@@ -183,17 +188,18 @@ describe('View Field Resolver', () => {
 
   describe('updateCoreViewField', () => {
     it('should update an existing view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
+      const fieldData = createViewFieldData({
+        viewId: testViewId,
         position: 0,
         isVisible: true,
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = prastoin({
-        data: fieldData,
+      const createResponse = await createCoreViewField({
+        input: fieldData,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const updateInput = updateViewFieldData({
         position: 5,
@@ -241,14 +247,15 @@ describe('View Field Resolver', () => {
 
   describe('deleteCoreViewField', () => {
     it('should delete an existing view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
+      const fieldData = createViewFieldData({
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = prastoin({
-        data: fieldData,
+      const createResponse = await createCoreViewField({
+        input: fieldData,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const deleteOperation = deleteViewFieldOperationFactory({
         viewFieldId: viewField.id,
@@ -280,14 +287,17 @@ describe('View Field Resolver', () => {
 
   describe('destroyCoreViewField', () => {
     it('should destroy an existing view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
+      const fieldData = createViewFieldData({
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = prastoin({
-        data: fieldData,
+      const createResponse = await createCoreViewField({
+        input: {
+          ...fieldData
+        },
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const destroyOperation = destroyViewFieldOperationFactory({
         viewFieldId: viewField.id,

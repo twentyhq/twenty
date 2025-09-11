@@ -1,3 +1,4 @@
+import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -28,7 +29,7 @@ export const assertViewStructure = (
 };
 
 export const assertViewFieldStructure = (
-  viewField: ViewFieldEntity,
+  viewField: ViewFieldEntity | ViewFieldDTO,
   expectedFields?: Partial<ViewFieldEntity>,
 ) => {
   expect(viewField).toBeDefined();
