@@ -246,6 +246,7 @@ export const useRecordShowContainerTabs = (
       },
       [CoreObjectNameSingular.Dashboard]: {
         hideSummaryAndFields: true,
+        hideFieldsInSidePanel: true,
         tabs: {
           dashboard: {
             title: 'Dashboard',
@@ -301,7 +302,9 @@ export const useRecordShowContainerTabs = (
             title,
             Icon,
             cards,
-            hide: !(isMobile || isInRightDrawer),
+            hide:
+              !(isMobile || isInRightDrawer) ||
+              recordLayout.hideFieldsInSidePanel,
           };
         }
 
@@ -373,7 +376,10 @@ export const useRecordShowContainerTabs = (
                 id: 'home',
                 title: 'Home',
                 Icon: IconHome,
-                cards: [...tab.cards, ...array[1].cards],
+                cards: [
+                  ...(tab.hide ? [] : tab.cards),
+                  ...(array[1].hide ? [] : array[1].cards),
+                ],
                 hide: false,
               },
             ];
