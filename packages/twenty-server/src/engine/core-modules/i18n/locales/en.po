@@ -269,6 +269,11 @@ msgstr "Annual Recurring Revenue: The actual or estimated annual revenue of the 
 msgid "Any field filter value"
 msgstr "Any field filter value"
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr "Approved access domain already registered."
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -885,6 +890,16 @@ msgstr "Display the records in a side panel or in a record page"
 msgid "Display Value"
 msgstr "Display Value"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr "Domain already used for workspace custom domain"
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Domain is already registered as public domain"
+msgstr "Domain is already registered as public domain"
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -938,10 +953,10 @@ msgstr "Employees"
 msgid "End Date"
 msgstr "End Date"
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2474,6 +2489,11 @@ msgstr "Provided phone number is invalid {number}"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "provider"
+
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
+msgstr "Public domain already registered"
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts

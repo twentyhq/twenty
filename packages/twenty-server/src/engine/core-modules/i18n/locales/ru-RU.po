@@ -274,6 +274,11 @@ msgstr "Ежегодный повторяющийся доход: Фактиче
 msgid "Any field filter value"
 msgstr "Любое значение фильтра поля"
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr ""
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -890,6 +895,16 @@ msgstr "Отобразить записи в боковой панели или 
 msgid "Display Value"
 msgstr "Отображаемое значение"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr ""
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Domain is already registered as public domain"
+msgstr ""
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -943,10 +958,10 @@ msgstr "Сотрудники"
 msgid "End Date"
 msgstr "Дата окончания"
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "Переменная окружения CLOUDFLARE_API_KEY должна быть определена для использования этой функции."
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr ""
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2479,6 +2494,11 @@ msgstr "Предоставленный номер телефона недейс�
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "\\"
+
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
+msgstr ""
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
