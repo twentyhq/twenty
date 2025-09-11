@@ -10,7 +10,7 @@ export const seedPageLayouts = async (
 ) => {
   const pageLayouts = getPageLayoutDataSeeds(workspaceId);
 
-  for (const pageLayout of pageLayouts) {
+  if (pageLayouts.length > 0) {
     await dataSource
       .createQueryBuilder()
       .insert()
@@ -21,20 +21,14 @@ export const seedPageLayouts = async (
         'objectMetadataId',
         'workspaceId',
       ])
-      .values({
-        id: pageLayout.id,
-        name: pageLayout.name,
-        type: pageLayout.type,
-        objectMetadataId: pageLayout.objectMetadataId,
-        workspaceId: pageLayout.workspaceId,
-      })
+      .values(pageLayouts)
       .orIgnore()
       .execute();
   }
 
   const pageLayoutTabs = getPageLayoutTabDataSeeds(workspaceId);
 
-  for (const tab of pageLayoutTabs) {
+  if (pageLayoutTabs.length > 0) {
     await dataSource
       .createQueryBuilder()
       .insert()
@@ -45,13 +39,7 @@ export const seedPageLayouts = async (
         'pageLayoutId',
         'workspaceId',
       ])
-      .values({
-        id: tab.id,
-        title: tab.title,
-        position: tab.position,
-        pageLayoutId: tab.pageLayoutId,
-        workspaceId: tab.workspaceId,
-      })
+      .values(pageLayoutTabs)
       .orIgnore()
       .execute();
   }

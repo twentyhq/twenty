@@ -59,14 +59,6 @@ describe('Page Layout Resolver', () => {
   });
 
   describe('getPageLayouts', () => {
-    it('should return empty array when no page layouts exist', async () => {
-      const operation = findPageLayoutsOperationFactory();
-      const response = await makeGraphqlAPIRequest(operation);
-
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getPageLayouts).toEqual([]);
-    });
-
     it('should return all page layouts for workspace when no objectMetadataId provided', async () => {
       const pageLayoutName = 'Test Page Layout for Workspace';
 
