@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
-import { getImpersonationTokensFromStorage } from './getImpersonationTokensFromStorage.ts.js';
+import { getImpersonationTokens } from './getImpersonationTokens';
 
 export const isImpersonating = (): boolean => {
-  return isDefined(getImpersonationTokensFromStorage());
+  return isDefined(getImpersonationTokens());
 };

@@ -2,7 +2,7 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type AuthTokenPair } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-export const getImpersonationTokensFromStorage = (): AuthTokenPair | undefined => {
+export const getImpersonationTokens = (): AuthTokenPair | undefined => {
   const raw = cookieStorage.getItem('impersonationTokenPair');
   if (!isDefined(raw)) {
     return;

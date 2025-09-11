@@ -4,7 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,8 +20,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WORKSPACE_MEMBER_DELETION_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionID';
-import { workspaceMemberBeingDeletedState } from '@/workspace-member/states/workspaceMemberDeletionState';
+import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionModalID';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
@@ -97,9 +96,7 @@ export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
-  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useRecoilState(
-    workspaceMemberBeingDeletedState,
-  );
+  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<string | undefined>();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const {
@@ -378,13 +375,10 @@ export const SettingsWorkspaceMembers = () => {
                           <ManageMembersDropdownMenu
                             dropdownId={`workspace-member-actions-${workspaceMember.id}`}
                             workspaceMemberId={workspaceMember.id}
-                            userWorkspaceId={
-                              (
-                                workspaceMember as unknown as {
-                                  userWorkspaceId?: string;
-                                }
-                              ).userWorkspaceId
-                            }
+                            onDelete={(id) => {
+                              setWorkspaceMemberToDelete(id);
+                              openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
+                            }}
                           />
                         </StyledButtonContainer>
                       )}
@@ -415,7 +409,7 @@ export const SettingsWorkspaceMembers = () => {
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
-        modalId={WORKSPACE_MEMBER_DELETION_ID}
+        modalId={WORKSPACE_MEMBER_DELETION_MODAL_ID}
         title={t`Account Deletion`}
         subtitle={
           <Trans>
