@@ -13,7 +13,7 @@ import {
 import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-properties-to-compare.constant';
 import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { mergeUpdateInExistingRecord } from 'src/utils/merge-optional-record-in-record.util';
+import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
