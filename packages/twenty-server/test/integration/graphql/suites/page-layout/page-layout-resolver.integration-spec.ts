@@ -18,6 +18,7 @@ import { restorePageLayoutOperationFactory } from 'test/integration/graphql/util
 import { updatePageLayoutOperationFactory } from 'test/integration/graphql/utils/update-page-layout-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { assertPageLayoutStructure } from 'test/integration/utils/page-layout-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -56,6 +57,7 @@ describe('Page Layout Resolver', () => {
 
   afterEach(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
+    await deleteAllRecords('pageLayout');
   });
 
   describe('getPageLayouts', () => {
