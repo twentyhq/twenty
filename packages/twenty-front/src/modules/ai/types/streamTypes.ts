@@ -11,7 +11,12 @@ export type ToolResultEvent = {
   type: 'tool-result';
   toolCallId: string;
   toolName: string;
-  result: unknown;
+  result: {
+    sucess: boolean;
+    result?: unknown;
+    error?: string;
+    message: string;
+  };
   message: string;
 };
 
