@@ -2,15 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconDatabase,
-  IconMail,
-  IconRobot,
-  IconTool,
-  IconWorld,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { Shimmer } from '@/ai/components/ShimmerEffect';
@@ -19,6 +11,7 @@ import type {
   ToolEvent,
   ToolResultEvent,
 } from '@/ai/types/streamTypes';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -85,30 +78,6 @@ const StyledIconTextContainer = styled.div`
 
 type ToolStepRendererProps = {
   events: ToolEvent[];
-};
-
-const getToolIcon = (toolName: string) => {
-  if (toolName.includes('email') || toolName.includes('mail')) {
-    return IconMail;
-  }
-  if (toolName.includes('http') || toolName.includes('request')) {
-    return IconWorld;
-  }
-  if (
-    toolName.includes('create_') ||
-    toolName.includes('update_') ||
-    toolName.includes('find_') ||
-    toolName.includes('delete_')
-  ) {
-    return IconDatabase;
-  }
-  if (toolName.includes('agent') || toolName.includes('ai')) {
-    return IconRobot;
-  }
-  if (toolName.includes('workflow') || toolName.includes('handoff')) {
-    return IconTool;
-  }
-  return IconDatabase;
 };
 
 export const ToolStepRenderer = ({ events }: ToolStepRendererProps) => {
