@@ -14,6 +14,12 @@ import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+const StyledStepsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledDotsIconContainer = styled.div`
   align-items: center;
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
@@ -91,7 +97,7 @@ export const AIChatAssistantMessageRenderer = ({
 
   return (
     <div>
-      {steps.map(renderStep)}
+      <StyledStepsContainer>{steps.map(renderStep)}</StyledStepsContainer>
       {isStreaming && <StyledToolCallContainer />}
     </div>
   );
