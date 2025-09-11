@@ -32,8 +32,6 @@ export const AIChatMessageStreamRenderer = ({
   const steps = parseStream(streamData);
   const theme = useTheme();
 
-  console.log(steps);
-
   if (!streamData || !steps.length) {
     return (
       <StyledDotsIconContainer>
