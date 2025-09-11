@@ -15,7 +15,6 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { WorkspaceFlatViewMapCacheService } from 'src/engine/core-modules/view/flat-view/services/workspace-flat-view-map-cache.service';
 
 @Injectable()
 export class ViewService {
@@ -23,14 +22,9 @@ export class ViewService {
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly i18nService: I18nService,
-    private readonly workspaceFlatViewMapCacheService: WorkspaceFlatViewMapCacheService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    await this.workspaceFlatViewMapCacheService.getExistingOrRecomputeFlatMaps({
-      workspaceId,
-    });
-
     return this.viewRepository.find({
       where: {
         workspaceId,
@@ -124,13 +118,7 @@ export class ViewService {
       isCustom: true,
     });
 
-    const createdView = await this.viewRepository.save(view);
-
-    await this.workspaceFlatViewMapCacheService.invalidateCache({
-      workspaceId: viewData.workspaceId,
-    });
-
-    return createdView;
+    return this.viewRepository.save(view);
   }
 
   async update(
@@ -155,10 +143,6 @@ export class ViewService {
       ...updateData,
     });
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache({
-      workspaceId,
-    });
-
     return { ...existingView, ...updatedView };
   }
 
@@ -177,10 +161,6 @@ export class ViewService {
 
     await this.viewRepository.softDelete(id);
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache({
-      workspaceId,
-    });
-
     return view;
   }
 
@@ -198,10 +178,6 @@ export class ViewService {
     }
 
     await this.viewRepository.delete(id);
-
-    await this.workspaceFlatViewMapCacheService.invalidateCache({
-      workspaceId,
-    });
 
     return true;
   }
