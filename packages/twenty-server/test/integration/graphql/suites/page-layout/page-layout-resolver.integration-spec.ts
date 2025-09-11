@@ -10,16 +10,15 @@ import {
   assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import {
-  cleanupPageLayoutRecordsWithGraphQL,
-  createTestPageLayoutWithGraphQL,
-} from 'test/integration/graphql/utils/page-layout-graphql.util';
+import { createTestPageLayoutWithGraphQL } from 'test/integration/graphql/utils/page-layout-graphql.util';
 import { restorePageLayoutOperationFactory } from 'test/integration/graphql/utils/restore-page-layout-operation-factory.util';
 import { updatePageLayoutOperationFactory } from 'test/integration/graphql/utils/update-page-layout-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { assertPageLayoutStructure } from 'test/integration/utils/page-layout-test.util';
+import {
+  assertPageLayoutStructure,
+  cleanupPageLayoutRecords,
+} from 'test/integration/utils/page-layout-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
@@ -55,9 +54,12 @@ describe('Page Layout Resolver', () => {
     });
   });
 
+  beforeEach(async () => {
+    await cleanupPageLayoutRecords();
+  });
+
   afterEach(async () => {
-    await cleanupPageLayoutRecordsWithGraphQL();
-    await deleteAllRecords('pageLayout');
+    await cleanupPageLayoutRecords();
   });
 
   describe('getPageLayouts', () => {
