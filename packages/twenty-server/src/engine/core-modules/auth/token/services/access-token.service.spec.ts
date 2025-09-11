@@ -160,7 +160,7 @@ describe('AccessTokenService', () => {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       } as Workspace;
-      const mockUserWorkspace = { id: 'uw-1' } as UserWorkspace;
+      const mockUserWorkspace = { id: 'uw-orig' } as UserWorkspace;
       const mockWorkspaceMember = { id: 'wm-1' };
       const mockToken = 'mock-token';
 
@@ -171,7 +171,9 @@ describe('AccessTokenService', () => {
         .mockResolvedValue(mockWorkspace as Workspace);
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
-        .mockResolvedValue(mockUserWorkspace as UserWorkspace);
+        .mockResolvedValueOnce(mockUserWorkspace as UserWorkspace)
+        .mockResolvedValueOnce({ id: 'uw-imp', workspaceId } as UserWorkspace)
+        .mockResolvedValueOnce({ id: 'uw-orig', workspaceId } as UserWorkspace);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({

@@ -1,4 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -6,11 +7,11 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace-impersonation/services/workspace-impersonation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace-impersonation/services/workspace-impersonation.service';
 
 const mockAuditService = {
   createContext: jest.fn().mockReturnValue({
@@ -78,12 +79,16 @@ describe('WorkspaceImpersonationService', () => {
       role: { id: 'role-1', permissionFlags: [] } as unknown as RoleEntity,
     });
 
-    manager.createQueryBuilder.mockReturnValue({
-      innerJoinAndSelect: () => ({ innerJoinAndSelect: () => ({}) }) as any,
-      where: () => ({
-        andWhere: () => ({ setLock: () => ({ getOne: qbGetOne }) }),
-      }),
-    });
+    const qb: any = {};
+
+    qb.innerJoinAndSelect = () => qb;
+    qb.leftJoinAndSelect = () => qb;
+    qb.where = () => qb;
+    qb.andWhere = () => qb;
+    qb.setLock = () => qb;
+    qb.getOne = qbGetOne;
+
+    manager.createQueryBuilder.mockReturnValue(qb);
 
     const dataSource = createMockDataSource(manager);
 
@@ -98,15 +103,9 @@ describe('WorkspaceImpersonationService', () => {
           provide: TwentyORMGlobalManager,
           useValue: mockTwentyORMGlobalManager,
         },
-        { provide: 'DataSource', useValue: dataSource },
+        { provide: getDataSourceToken(), useValue: dataSource },
       ],
-    })
-      .overrideProvider(
-        (WorkspaceImpersonationService as any).dependencies?.dataSource ??
-          'DataSource',
-      )
-      .useValue(dataSource)
-      .compile();
+    }).compile();
 
     service = moduleRef.get(WorkspaceImpersonationService);
     permissionsService = moduleRef.get(PermissionsService) as any;

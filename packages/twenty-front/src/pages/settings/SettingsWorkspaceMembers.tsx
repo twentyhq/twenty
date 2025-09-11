@@ -20,7 +20,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '@/workspace-member/constants/WorkspaceMemberDeletionModalId';
+import { WORKSPACE_MEMBER_DELETION_MODAL_ID } from '../../modules/workspace-member/constants/WorkspaceMemberDeletionModalId';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';

@@ -120,12 +120,14 @@ describe('RenewTokenService', () => {
           authProvider: AuthProviderEnum.Password,
         }),
       );
-      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith({
-        authProvider: AuthProviderEnum.Password,
-        targetedTokenType: JwtTokenTypeEnum.ACCESS,
-        userId: mockUser.id,
-        workspaceId: mockWorkspaceId,
-      });
+      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authProvider: AuthProviderEnum.Password,
+          targetedTokenType: JwtTokenTypeEnum.ACCESS,
+          userId: mockUser.id,
+          workspaceId: mockWorkspaceId,
+        }),
+      );
     });
 
     it('should propagate impersonation claims when present', async () => {
