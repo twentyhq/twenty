@@ -133,6 +133,14 @@ export const GraphWidgetLineChart = ({
     customFormatter,
   };
 
+  const dataMap = useMemo(() => {
+    const map: Record<string, LineChartSeries> = {};
+    data.forEach((series) => {
+      map[series.id] = series;
+    });
+    return map;
+  }, [data]);
+
   const enrichedSeries = useMemo(() => {
     return data.map((series, index) => {
       const colorScheme = getColorScheme(colorRegistry, series.color, index);
@@ -179,7 +187,7 @@ export const GraphWidgetLineChart = ({
   const colors = enrichedSeries.map((series) => series.colorScheme.solid);
 
   const handlePointClick = (point: Point<LineSeries>) => {
-    const series = data.find((s) => s.id === point.seriesId);
+    const series = dataMap[point.seriesId];
     if (isDefined(series)) {
       const dataPoint = series.data[point.indexInSeries];
       if (isDefined(dataPoint?.to) === true) {
@@ -212,7 +220,7 @@ export const GraphWidgetLineChart = ({
       .filter(isDefined);
 
     const hasClickablePoint = slice.points.some((point) => {
-      const series = data.find((s) => s.id === point.seriesId);
+      const series = dataMap[point.seriesId];
       if (isDefined(series)) {
         const dataPoint = series.data[point.indexInSeries];
         return isDefined(dataPoint?.to);
@@ -234,7 +242,7 @@ export const GraphWidgetLineChart = ({
     );
     if (!enrichedSeriesItem) return null;
 
-    const series = data.find((s) => s.id === point.seriesId);
+    const series = dataMap[point.seriesId];
     const dataPoint = series?.data[point.indexInSeries];
 
     return (
