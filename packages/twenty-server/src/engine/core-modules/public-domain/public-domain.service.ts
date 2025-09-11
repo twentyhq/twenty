@@ -32,7 +32,9 @@ export class PublicDomainService {
   }): Promise<void> {
     const formattedDomain = domain.trim().toLowerCase();
 
-    await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
+    await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
+      isPublicDomain: true,
+    });
 
     await this.publicDomainRepository.delete({
       domain: formattedDomain,
@@ -83,12 +85,16 @@ export class PublicDomainService {
       workspaceId: workspace.id,
     });
 
-    await this.dnsManagerService.registerHostname(formattedDomain);
+    await this.dnsManagerService.registerHostname(formattedDomain, {
+      isPublicDomain: true,
+    });
 
     try {
       await this.publicDomainRepository.insert(publicDomain);
     } catch (error) {
-      await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
+      await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
+        isPublicDomain: true,
+      });
 
       throw error;
     }

@@ -1673,7 +1673,7 @@ export type MutationCreatePageLayoutWidgetArgs = {
 
 
 export type MutationCreatePublicDomainArgs = {
-  input: PublicDomainInput;
+  domain: Scalars['String'];
 };
 
 
@@ -1788,7 +1788,7 @@ export type MutationDeletePageLayoutWidgetArgs = {
 
 
 export type MutationDeletePublicDomainArgs = {
-  input: PublicDomainInput;
+  domain: Scalars['String'];
 };
 
 
@@ -2522,10 +2522,6 @@ export type PublicDomain = {
   domain: Scalars['String'];
   id: Scalars['UUID'];
   isValidated: Scalars['Boolean'];
-};
-
-export type PublicDomainInput = {
-  domain: Scalars['String'];
 };
 
 export type PublicFeatureFlag = {

@@ -92,6 +92,7 @@ describe('DnsManagerService', () => {
 
       expect(dnsManagerService.getHostnameId).toHaveBeenCalledWith(
         customDomain,
+        undefined,
       );
     });
 
@@ -135,7 +136,7 @@ describe('DnsManagerService', () => {
 
       const result = await dnsManagerService.getHostnameWithRecords(
         customDomain,
-        false,
+        { isPublicDomain: false },
       );
 
       expect(result).toBeUndefined();
@@ -170,7 +171,7 @@ describe('DnsManagerService', () => {
 
       const result = await dnsManagerService.getHostnameWithRecords(
         customDomain,
-        false,
+        { isPublicDomain: false },
       );
 
       expect(result).toEqual({
@@ -209,7 +210,7 @@ describe('DnsManagerService', () => {
 
       const result = await dnsManagerService.getHostnameWithRecords(
         customDomain,
-        false,
+        { isPublicDomain: false },
       );
 
       expect(result).toEqual({
@@ -255,7 +256,7 @@ describe('DnsManagerService', () => {
 
       const result = await dnsManagerService.getHostnameWithRecords(
         customDomain,
-        true,
+        { isPublicDomain: true },
       );
 
       expect(result).toEqual({
@@ -279,7 +280,9 @@ describe('DnsManagerService', () => {
       (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
       await expect(
-        dnsManagerService.getHostnameWithRecords(customDomain, false),
+        dnsManagerService.getHostnameWithRecords(customDomain, {
+          isPublicDomain: false,
+        }),
       ).rejects.toThrow(Error);
     });
   });
@@ -304,9 +307,13 @@ describe('DnsManagerService', () => {
 
       expect(dnsManagerService.getHostnameId).toHaveBeenCalledWith(
         fromHostname,
+        undefined,
       );
-      expect(dnsManagerService.deleteHostname).toHaveBeenCalledWith('old-id');
-      expect(registerSpy).toHaveBeenCalledWith(toHostname);
+      expect(dnsManagerService.deleteHostname).toHaveBeenCalledWith(
+        'old-id',
+        undefined,
+      );
+      expect(registerSpy).toHaveBeenCalledWith(toHostname, undefined);
     });
   });
 

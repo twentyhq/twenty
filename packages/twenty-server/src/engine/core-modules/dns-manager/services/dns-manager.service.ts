@@ -17,6 +17,10 @@ import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validat
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
+type DnsManagerOptions = {
+  isPublicDomain?: boolean;
+};
+
 @Injectable()
 export class DnsManagerService {
   cloudflareClient?: Cloudflare;
@@ -30,6 +34,138 @@ export class DnsManagerService {
         apiToken: this.twentyConfigService.get('CLOUDFLARE_API_KEY'),
       });
     }
+  }
+
+  async registerHostname(customDomain: string, options?: DnsManagerOptions) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    if (isDefined(await this.getHostnameId(customDomain, options))) {
+      throw new DnsManagerException(
+        'Hostname already registered',
+        DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
+        { userFriendlyMessage: 'Domain is already registered' },
+      );
+    }
+
+    return this.cloudflareClient.customHostnames.create({
+      zone_id: this.getZoneId(options),
+      hostname: customDomain,
+      ssl: this.sslParams,
+    });
+  }
+
+  async getHostnameWithRecords(
+    domain: string,
+    options?: DnsManagerOptions,
+  ): Promise<DomainValidRecords | undefined> {
+    if (
+      options?.isPublicDomain &&
+      !isDefined(this.domainManagerService.getPublicDomainUrl().hostname)
+    ) {
+      throw new DnsManagerException(
+        'Missing public domain URL',
+        DnsManagerExceptionCode.MISSING_PUBLIC_DOMAIN_URL,
+        {
+          userFriendlyMessage:
+            'Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable',
+        },
+      );
+    }
+
+    const customHostname = await this.getHostnameDetails(domain, options);
+
+    if (!isDefined(customHostname)) {
+      return undefined;
+    }
+
+    const { hostname, id, ssl } = customHostname;
+
+    const statuses = this.getHostnameStatuses(customHostname);
+
+    // @ts-expect-error - type definition doesn't reflect the real API
+    const dcvRecords = ssl?.dcv_delegation_records?.[0];
+
+    return {
+      id: id,
+      domain: hostname,
+      records: [
+        {
+          validationType: 'redirection' as const,
+          type: 'cname',
+          status: statuses.redirection,
+          key: hostname,
+          value: options?.isPublicDomain
+            ? this.domainManagerService.getPublicDomainUrl().hostname
+            : this.domainManagerService.getBaseUrl().hostname,
+        },
+        {
+          validationType: 'ssl' as const,
+          type: 'cname',
+          status: statuses.ssl,
+          key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
+          value:
+            dcvRecords?.cname_target ??
+            `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
+        },
+      ],
+    };
+  }
+
+  async updateHostname(
+    fromHostname: string,
+    toHostname: string,
+    options?: DnsManagerOptions,
+  ) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    const fromCustomHostnameId = await this.getHostnameId(
+      fromHostname,
+      options,
+    );
+
+    if (fromCustomHostnameId) {
+      await this.deleteHostname(fromCustomHostnameId, options);
+    }
+
+    return this.registerHostname(toHostname, options);
+  }
+
+  async refreshHostname(
+    domainValidRecords: DomainValidRecords,
+    options?: DnsManagerOptions,
+  ) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    await this.cloudflareClient.customHostnames.edit(domainValidRecords.id, {
+      zone_id: this.getZoneId(options),
+      ssl: this.sslParams,
+    });
+  }
+
+  async deleteHostnameSilently(hostname: string, options?: DnsManagerOptions) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    try {
+      const customHostnameId = await this.getHostnameId(hostname, options);
+
+      if (customHostnameId) {
+        await this.deleteHostname(customHostnameId, options);
+      }
+    } catch {
+      return;
+    }
+  }
+
+  async isHostnameWorking(hostname: string, options?: DnsManagerOptions) {
+    const hostnameDetails = await this.getHostnameDetails(hostname, options);
+
+    if (!isDefined(hostnameDetails)) {
+      return false;
+    }
+
+    const statuses = this.getHostnameStatuses(hostnameDetails);
+
+    return statuses.redirection === 'success' && statuses.ssl === 'success';
   }
 
   private get sslParams(): CustomHostnameCreateParams['ssl'] {
@@ -48,29 +184,20 @@ export class DnsManagerService {
     };
   }
 
-  async registerHostname(customDomain: string) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    if (isDefined(await this.getHostnameId(customDomain))) {
-      throw new DnsManagerException(
-        'Hostname already registered',
-        DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
-        { userFriendlyMessage: 'Domain is already registered' },
-      );
-    }
-
-    return this.cloudflareClient.customHostnames.create({
-      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
-      hostname: customDomain,
-      ssl: this.sslParams,
-    });
+  private getZoneId(options?: DnsManagerOptions): string {
+    return options?.isPublicDomain
+      ? this.twentyConfigService.get('CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID')
+      : this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
   }
 
-  private async getHostnameDetails(hostname: string) {
+  private async getHostnameDetails(
+    hostname: string,
+    options?: DnsManagerOptions,
+  ) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     const customHostnames = await this.cloudflareClient.customHostnames.list({
-      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
+      zone_id: this.getZoneId(options),
       hostname: hostname,
     });
 
@@ -92,8 +219,8 @@ export class DnsManagerService {
     );
   }
 
-  async getHostnameId(hostname: string) {
-    const customHostname = await this.getHostnameDetails(hostname);
+  async getHostnameId(hostname: string, options?: DnsManagerOptions) {
+    const customHostname = await this.getHostnameDetails(hostname, options);
 
     if (!isDefined(customHostname)) {
       return undefined;
@@ -124,117 +251,11 @@ export class DnsManagerService {
     };
   }
 
-  async getHostnameWithRecords(
-    domain: string,
-    isPublicDomain: boolean,
-  ): Promise<DomainValidRecords | undefined> {
-    if (
-      isPublicDomain &&
-      !isDefined(this.domainManagerService.getPublicDomainUrl().hostname)
-    ) {
-      throw new DnsManagerException(
-        'Missing public domain URL',
-        DnsManagerExceptionCode.MISSING_PUBLIC_DOMAIN_URL,
-        {
-          userFriendlyMessage:
-            'Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable',
-        },
-      );
-    }
-
-    const customHostname = await this.getHostnameDetails(domain);
-
-    if (!isDefined(customHostname)) {
-      return undefined;
-    }
-
-    const { hostname, id, ssl } = customHostname;
-
-    const statuses = this.getHostnameStatuses(customHostname);
-
-    // @ts-expect-error - type definition doesn't reflect the real API
-    const dcvRecords = ssl?.dcv_delegation_records?.[0];
-
-    return {
-      id: id,
-      domain: hostname,
-      records: [
-        {
-          validationType: 'redirection' as const,
-          type: 'cname',
-          status: statuses.redirection,
-          key: hostname,
-          value: isPublicDomain
-            ? this.domainManagerService.getPublicDomainUrl().hostname
-            : this.domainManagerService.getBaseUrl().hostname,
-        },
-        {
-          validationType: 'ssl' as const,
-          type: 'cname',
-          status: statuses.ssl,
-          key: dcvRecords?.cname ?? `_acme-challenge.${hostname}`,
-          value:
-            dcvRecords?.cname_target ??
-            `${hostname}.${this.twentyConfigService.get('CLOUDFLARE_DCV_DELEGATION_ID')}.dcv.cloudflare.com`,
-        },
-      ],
-    };
-  }
-
-  async updateHostname(fromHostname: string, toHostname: string) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    const fromCustomHostnameId = await this.getHostnameId(fromHostname);
-
-    if (fromCustomHostnameId) {
-      await this.deleteHostname(fromCustomHostnameId);
-    }
-
-    return this.registerHostname(toHostname);
-  }
-
-  async deleteHostnameSilently(hostname: string) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    try {
-      const customHostnameId = await this.getHostnameId(hostname);
-
-      if (customHostnameId) {
-        await this.cloudflareClient.customHostnames.delete(customHostnameId, {
-          zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
-        });
-      }
-    } catch {
-      return;
-    }
-  }
-
-  async deleteHostname(customHostnameId: string) {
+  async deleteHostname(customHostnameId: string, options?: DnsManagerOptions) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
     await this.cloudflareClient.customHostnames.delete(customHostnameId, {
-      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
+      zone_id: this.getZoneId(options),
     });
-  }
-
-  async refreshHostname(domainValidRecords: DomainValidRecords) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    await this.cloudflareClient.customHostnames.edit(domainValidRecords.id, {
-      zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
-      ssl: this.sslParams,
-    });
-  }
-
-  async isHostnameWorking(hostname: string) {
-    const hostnameDetails = await this.getHostnameDetails(hostname);
-
-    if (!isDefined(hostnameDetails)) {
-      return false;
-    }
-
-    const statuses = this.getHostnameStatuses(hostnameDetails);
-
-    return statuses.redirection === 'success' && statuses.ssl === 'success';
   }
 }

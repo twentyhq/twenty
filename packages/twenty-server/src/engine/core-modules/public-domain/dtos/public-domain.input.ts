@@ -1,8 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ArgsType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsString } from 'class-validator';
 
-@InputType()
+@ArgsType()
 export class PublicDomainInput {
   @Field(() => String)
   @IsString()

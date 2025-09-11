@@ -23,7 +23,7 @@ export class PublicDomainResolver {
 
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
-    @Args('input') { domain }: PublicDomainInput,
+    @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<PublicDomainDTO> {
     return this.publicDomainService.createPublicDomain({
@@ -34,7 +34,7 @@ export class PublicDomainResolver {
 
   @Mutation(() => Boolean)
   async deletePublicDomain(
-    @Args('input') { domain }: PublicDomainInput,
+    @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<boolean> {
     await this.publicDomainService.deletePublicDomain({

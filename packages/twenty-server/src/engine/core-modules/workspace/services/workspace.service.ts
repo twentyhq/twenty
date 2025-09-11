@@ -510,7 +510,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const customDomainWithRecords =
       await this.dnsManagerService.getHostnameWithRecords(
         workspace.customDomain,
-        false,
       );
 
     if (!customDomainWithRecords) return;
