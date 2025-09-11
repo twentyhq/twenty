@@ -16,7 +16,6 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -109,9 +108,6 @@ export class AgentExecutionService {
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
-
-      const isAnthropicModel =
-        registeredModel.provider === ModelProvider.ANTHROPIC;
 
       return {
         system,
