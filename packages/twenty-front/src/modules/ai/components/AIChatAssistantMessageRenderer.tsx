@@ -1,6 +1,5 @@
 import { ErrorStepRenderer } from '@/ai/components/ErrorStepRenderer';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
-import { TextStepRenderer } from '@/ai/components/TextStepRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import type {
   AIChatAssistantMessageRendererProps,
@@ -9,6 +8,7 @@ import type {
 import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';
 
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { agentStreamingMessageState } from '@/ai/states/agentStreamingMessageState';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -81,7 +81,7 @@ export const AIChatAssistantMessageRenderer = ({
           />
         );
       case 'text':
-        return <TextStepRenderer key={index} content={step.content} />;
+        return <LazyMarkdownRenderer text={step.content} />;
       case 'error':
         return (
           <ErrorStepRenderer
