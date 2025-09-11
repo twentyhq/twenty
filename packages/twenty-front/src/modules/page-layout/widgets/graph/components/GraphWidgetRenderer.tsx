@@ -1,6 +1,7 @@
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/components/GraphWidgetLineChart';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
@@ -69,6 +70,28 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
           showGrid
           displayType="number"
           id={`bar-chart-${widget.id}`}
+        />
+      );
+
+    case GraphType.LINE:
+      return (
+        <GraphWidgetLineChart
+          id={`line-chart-${widget.id}`}
+          data={data.series}
+          enableArea={data.enableArea}
+          showLegend={data.showLegend}
+          showGrid={data.showGrid}
+          enablePoints={data.enablePoints}
+          xAxisLabel={data.xAxisLabel}
+          yAxisLabel={data.yAxisLabel}
+          displayType={data.displayType}
+          prefix={data.prefix}
+          suffix={data.suffix}
+          xScale={data.xScale}
+          yScale={data.yScale}
+          curve={data.curve}
+          stackedArea={data.stackedArea}
+          enableSlices={data.enableSlices}
         />
       );
 

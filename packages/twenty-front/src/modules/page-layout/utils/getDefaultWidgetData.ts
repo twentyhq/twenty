@@ -97,9 +97,16 @@ export const getDefaultWidgetData = (graphType: GraphType) => {
         showLegend: true,
         showGrid: true,
         enablePoints: false,
+        xAxisLabel: 'Time',
+        yAxisLabel: 'Value',
         curve: 'monotoneX',
         displayType: 'shortNumber',
         prefix: '$',
+        suffix: '',
+        xScale: 'linear',
+        yScale: 'linear',
+        stackedArea: false,
+        enableSlices: false,
       };
 
     default:
