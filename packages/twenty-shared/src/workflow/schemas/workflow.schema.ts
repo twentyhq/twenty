@@ -223,8 +223,7 @@ export const workflowIteratorActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       items: z.union([z.array(z.union([z.string(), z.number(), z.boolean(), z.null(), z.record(z.any()), z.any()])), z.string()]).optional(),
-      // TODO: should never be a string once fix the UI
-      initialLoopStepIds: z.union([z.array(z.string()), z.string()]).optional(),
+      initialLoopStepIds: z.array(z.string()).optional(),
     }),
   });
 
