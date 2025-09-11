@@ -238,7 +238,7 @@ export const MKT_ORDER_FIELD_IDS = {
   discount: '97e1ed20-01ba-48f0-b3b9-15eca354a115',
   tax: '86a4bf34-9808-4908-b2d6-65cb4d146bc0',
   sInvoiceStatus: '3986dded-a1f3-4f53-9c2a-8e67d1af8cd3',
-
+  licenseStatus: 'd3a61b4a-87d1-41de-ba40-81d0a27bcd10',
   // relations
   mktContracts: '66277a67-41c6-4709-820f-dda8df091ae9', // ONE_TO_MANY relation with contracts
   mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',

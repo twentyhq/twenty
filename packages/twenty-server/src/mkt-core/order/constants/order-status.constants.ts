@@ -117,3 +117,58 @@ export const SINVOICE_STATUS_OPTIONS = [
     position: 4,
   },
 ];
+
+export enum MKT_LICENSE_STATUS {
+  PENDING = 'PENDING',
+  GETTING = 'GETTING',
+  FAILED = 'FAILED',
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS',
+  REVOKED = 'REVOKED',
+  DELETED = 'DELETED',
+}
+
+export const MKT_LICENSE_STATUS_OPTIONS = [
+  {
+    value: MKT_LICENSE_STATUS.PENDING,
+    label: 'Pending',
+    color: 'orange' as TagColor,
+    position: 0,
+  },
+  {
+    value: MKT_LICENSE_STATUS.GETTING,
+    label: 'Getting',
+    color: 'blue' as TagColor,
+    position: 1,
+  },
+  {
+    value: MKT_LICENSE_STATUS.FAILED,
+    label: 'Failed',
+    color: 'red' as TagColor,
+    position: 2,
+  },
+  {
+    value: MKT_LICENSE_STATUS.ERROR,
+    label: 'Error',
+    color: 'gray' as TagColor,
+    position: 3,
+  },
+  {
+    value: MKT_LICENSE_STATUS.SUCCESS,
+    label: 'Success',
+    color: 'green' as TagColor,
+    position: 4,
+  },
+  {
+    value: MKT_LICENSE_STATUS.REVOKED,
+    label: 'Revoked',
+    color: 'purple' as TagColor,
+    position: 5,
+  },
+  {
+    value: MKT_LICENSE_STATUS.DELETED,
+    label: 'Deleted',
+    color: 'gray' as TagColor,
+    position: 6,
+  },
+];
