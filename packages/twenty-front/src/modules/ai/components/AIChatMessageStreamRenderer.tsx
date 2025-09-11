@@ -9,8 +9,10 @@ import type {
 import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';
 
-import { useTheme } from '@emotion/react';
+import { agentStreamingMessageState } from '@/ai/states/agentStreamingMessageState';
+import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 const StyledDotsIconContainer = styled.div`
   align-items: center;
@@ -26,9 +28,29 @@ const StyledDotsIcon = styled(IconDotsVertical)`
   transform: rotate(90deg);
 `;
 
+const dots = keyframes`
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+`;
+
+const StyledToolCallContainer = styled.div`
+  &::after {
+    display: inline-block;
+    content: '';
+    animation: ${dots} 750ms steps(3, end) infinite;
+    width: 2ch;
+    text-align: left;
+  }
+`;
+
 export const AIChatMessageStreamRenderer = ({
   streamData,
 }: AIChatMessageStreamRendererProps) => {
+  const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
+  const isStreaming = Boolean(agentStreamingMessage);
+
   const steps = parseStream(streamData);
   const theme = useTheme();
 
@@ -67,5 +89,10 @@ export const AIChatMessageStreamRenderer = ({
     }
   };
 
-  return <div>{steps.map(renderStep)}</div>;
+  return (
+    <div>
+      {steps.map(renderStep)}
+      {isStreaming && <StyledToolCallContainer />}
+    </div>
+  );
 };
