@@ -15,6 +15,6 @@ export const dateTimeFormatState = createState<{
     timeZone: detectTimeZone(),
     dateFormat: DateFormat.MONTH_FIRST,
     timeFormat: TimeFormat['HOUR_24'],
-    numberFormat: NumberFormat.COMMAS_AND_DOT,
+    numberFormat: NumberFormat.SYSTEM,
   },
 });
