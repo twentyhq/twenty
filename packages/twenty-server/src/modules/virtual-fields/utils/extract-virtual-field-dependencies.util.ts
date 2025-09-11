@@ -1,8 +1,8 @@
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type AllStandardFieldIds } from 'src/modules/virtual-fields/types/AllStandardFieldIds';
 import {
-    type Condition,
-    type VirtualField,
+  type Condition,
+  type VirtualField,
 } from 'src/modules/virtual-fields/types/VirtualField';
 import { resolveField } from 'src/modules/virtual-fields/utils/metadata-resolver.util';
 
