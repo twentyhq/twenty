@@ -14,7 +14,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -52,7 +51,7 @@ export const SEARCH_FIELDS_FOR_MKT_SINVOICE_FILE: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: MKT_SINVOICE_FILE_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['name'], ['fileName']])
-@WorkspaceIsSearchable()
+//@WorkspaceIsSearchable()
 export class MktSInvoiceFileWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MKT_SINVOICE_FILE_FIELD_IDS.name,

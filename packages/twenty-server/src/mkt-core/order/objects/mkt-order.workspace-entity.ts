@@ -155,7 +155,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`SInvoice Status`,
     description: msg`Status of the SInvoice`,
     options: SINVOICE_STATUS_OPTIONS,
-    defaultValue: SINVOICE_STATUS.PENDING,
+    //defaultValue: SINVOICE_STATUS.PENDING,
   })
   @WorkspaceIsNullable()
   sInvoiceStatus?: SINVOICE_STATUS;

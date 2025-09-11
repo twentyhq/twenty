@@ -15,7 +15,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -83,7 +82,7 @@ export const MKT_INVOICE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
   labelIdentifierStandardId: MKT_INVOICE_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['name'], ['sInvoiceCode']])
-@WorkspaceIsSearchable()
+//@WorkspaceIsSearchable()
 export class MktInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MKT_INVOICE_FIELD_IDS.name,
