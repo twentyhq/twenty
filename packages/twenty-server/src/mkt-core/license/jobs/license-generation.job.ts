@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -26,12 +26,16 @@ export class LicenseGenerationJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {
-    this.logger.log(`🔧 [LICENSE JOB] LicenseGenerationJob initialized and registered`);
+    this.logger.log(
+      `🔧 [LICENSE JOB] LicenseGenerationJob initialized and registered`,
+    );
   }
 
   @Process(LicenseGenerationJob.name)
   async handle(data: LicenseGenerationJobData): Promise<void> {
-    this.logger.log(`🚀 [LICENSE JOB] Processing license generation for order: ${data.orderId}`);
+    this.logger.log(
+      `🚀 [LICENSE JOB] Processing license generation for order: ${data.orderId}`,
+    );
 
     try {
       // create workspace context
@@ -58,7 +62,11 @@ export class LicenseGenerationJob {
       // find order with order items
       const order = await orderRepository.findOne({
         where: { id: data.orderId },
-        relations: ['orderItems', 'orderItems.mktProduct', 'orderItems.mktVariant'],
+        relations: [
+          'orderItems',
+          'orderItems.mktProduct',
+          'orderItems.mktVariant',
+        ],
       });
 
       if (!order) {
@@ -77,16 +85,19 @@ export class LicenseGenerationJob {
           `Order ${data.orderId} already has licenses, skipping generation`,
         );
 
-        await orderRepository.update(data.orderId, { 
+        await orderRepository.update(data.orderId, {
           licenseStatus: MKT_ORDER_LICENSE_STATUS.PENDING,
           //note: `${order.note} - Order ${data.orderId} already has licenses, skipping generation`
         });
+
         return;
       }
 
       // check if order has order items
       if (!order.orderItems || order.orderItems.length === 0) {
-        this.logger.warn(`Order ${data.orderId} has no order items, skipping license generation`);
+        this.logger.warn(
+          `Order ${data.orderId} has no order items, skipping license generation`,
+        );
 
         return;
       }
@@ -95,12 +106,13 @@ export class LicenseGenerationJob {
       const licensePromises = order.orderItems.map(async (orderItem, index) => {
         try {
           // generate license name based on order item
-          const productName = orderItem.snapshotProductName || 
-                            orderItem.mktProduct?.name || 
-                            'Sản phẩm';
+          const productName =
+            orderItem.snapshotProductName ||
+            orderItem.mktProduct?.name ||
+            'Sản phẩm';
           const variantName = orderItem.mktVariant?.name;
-          const licenseName = variantName 
-            ? `License cho ${productName} - ${variantName}` 
+          const licenseName = variantName
+            ? `License cho ${productName} - ${variantName}`
             : `License cho ${productName}`;
 
           // call API to get license for this specific order item
@@ -126,7 +138,7 @@ export class LicenseGenerationJob {
 
           // save license
           const savedLicense = await licenseRepository.save(newLicense);
-          
+
           this.logger.log(
             `Successfully created license for order item ${orderItem.id}: ${savedLicense.licenseKey}`,
           );
@@ -137,7 +149,7 @@ export class LicenseGenerationJob {
             `Failed to create license for order item ${orderItem.id}:`,
             error,
           );
-          await orderRepository.update(data.orderId, { 
+          await orderRepository.update(data.orderId, {
             licenseStatus: MKT_ORDER_LICENSE_STATUS.ERROR,
             //note: `${order.note} - Failed to create license for order item ${orderItem.id}: ${error.message}`
           });
@@ -151,7 +163,7 @@ export class LicenseGenerationJob {
       // update order license status to SUCCESS
       await orderRepository.update(data.orderId, {
         licenseStatus: MKT_ORDER_LICENSE_STATUS.SUCCESS,
-        note: `${order.note} - Successfully created ${createdLicenses.length} licenses for order`
+        note: `${order.note} - Successfully created ${createdLicenses.length} licenses for order`,
       });
 
       this.logger.log(
@@ -168,7 +180,10 @@ export class LicenseGenerationJob {
           'mktOrder',
           { shouldBypassPermissionChecks: true },
         );
-      await orderRepository.update(data.orderId, { licenseStatus: MKT_ORDER_LICENSE_STATUS.ERROR });
+
+      await orderRepository.update(data.orderId, {
+        licenseStatus: MKT_ORDER_LICENSE_STATUS.ERROR,
+      });
       throw error;
     }
   }

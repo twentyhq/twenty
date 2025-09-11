@@ -25,7 +25,10 @@ import {
 import { MKT_LICENSE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/objects/mkt-customer.workspace-entity';
-import { MKT_LICENSE_STATUS,MKT_LICENSE_STATUS_OPTIONS } from 'src/mkt-core/license/license.constants';
+import {
+  MKT_LICENSE_STATUS,
+  MKT_LICENSE_STATUS_OPTIONS,
+} from 'src/mkt-core/license/license.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
