@@ -140,7 +140,6 @@ export class AgentStreamingService {
 
       res.end();
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
 
