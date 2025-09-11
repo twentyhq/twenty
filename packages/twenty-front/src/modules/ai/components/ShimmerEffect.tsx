@@ -14,7 +14,7 @@ const StyledShimmerEffect = styled.div`
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-wave 1.5s infinite;
+  animation: shimmer-wave 1s infinite linear;
 
   @keyframes shimmer-wave {
     0% {
