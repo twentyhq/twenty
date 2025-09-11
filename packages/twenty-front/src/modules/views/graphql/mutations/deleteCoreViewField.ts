@@ -1,7 +1,11 @@
+import { VIEW_FIELD_FRAGMENT } from '@/views/graphql/fragments/viewFieldFragment';
 import { gql } from '@apollo/client';
 
 export const DELETE_CORE_VIEW_FIELD = gql`
-  mutation DeleteCoreViewField($id: String!) {
-    deleteCoreViewField(id: $id)
+  ${VIEW_FIELD_FRAGMENT}
+  mutation DeleteCoreViewField($input: DeleteViewFieldInput!) {
+    deleteCoreViewField(input: $input) {
+      ...ViewFieldFragment
+    }
   }
 `;
