@@ -176,7 +176,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             isSourceConnected(id) ||
             (isConnectable(id) && isHovered)
           }
-          // TODO: fix hovered state when multiple source handles
           hovered={
             isSourceHovered({
               nodeId: id,
