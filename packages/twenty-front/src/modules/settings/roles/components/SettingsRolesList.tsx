@@ -6,20 +6,13 @@ import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRo
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { ROLES_LIST_TABS } from '@/settings/roles/constants/RolesListTabs';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  H2Title,
-  IconKey,
-  IconPlus,
-  IconRobot,
-  IconUser,
-} from 'twenty-ui/display';
+import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated/graphql';
@@ -70,28 +63,6 @@ export const SettingsRolesList = () => {
     }
   });
 
-  const tabs = [
-    {
-      id: ROLES_LIST_TABS.TABS_IDS.USER_ROLES,
-      title: t`User Roles`,
-      Icon: IconUser,
-    },
-    ...(isAiEnabled
-      ? [
-          {
-            id: ROLES_LIST_TABS.TABS_IDS.AGENT_ROLES,
-            title: t`Agent Roles`,
-            Icon: IconRobot,
-          },
-        ]
-      : []),
-    {
-      id: ROLES_LIST_TABS.TABS_IDS.API_KEY_ROLES,
-      title: t`API Key Roles`,
-      Icon: IconKey,
-    },
-  ];
-
   const description = isAiEnabled
     ? t`Manage roles and permissions for team members, agents, and API keys`
     : t`Manage roles and permissions for team members and API keys`;
@@ -99,12 +70,6 @@ export const SettingsRolesList = () => {
   return (
     <Section>
       <H2Title title={t`All roles`} description={description} />
-
-      <TabList
-        tabs={tabs}
-        className="tab-list"
-        componentInstanceId={ROLES_LIST_TABS.COMPONENT_INSTANCE_ID}
-      />
 
       <Table>
         <SettingsRolesTableHeader />
