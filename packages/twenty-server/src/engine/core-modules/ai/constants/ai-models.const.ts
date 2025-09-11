@@ -21,6 +21,7 @@ export interface AIModelConfig {
   provider: ModelProvider;
   inputCostPer1kTokensInCents: number;
   outputCostPer1kTokensInCents: number;
+  doesSupportThinking?: boolean;
 }
 
 export const AI_MODELS: AIModelConfig[] = [
@@ -51,6 +52,7 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 1.5,
     outputCostPer1kTokensInCents: 7.5,
+    doesSupportThinking: true,
   },
   {
     modelId: 'claude-sonnet-4-20250514',
@@ -58,6 +60,7 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
+    doesSupportThinking: true,
   },
   {
     modelId: 'claude-3-5-haiku-20241022',
@@ -65,5 +68,6 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,
+    doesSupportThinking: true,
   },
 ];
