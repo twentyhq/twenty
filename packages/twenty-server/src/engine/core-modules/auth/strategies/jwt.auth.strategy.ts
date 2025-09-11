@@ -189,7 +189,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         );
       }
 
-      if ((user?.id as string) !== (payload.sub ?? payload.userId)) {
+      if (user.id !== userId) {
         throw new AuthException(
           'Invalid impersonation token: user ID mismatch',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,

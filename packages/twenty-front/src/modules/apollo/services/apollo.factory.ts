@@ -36,7 +36,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
 import { getCurrentTokenPair } from '../utils/getCurrentTokenPair';
-import { getIsImpersonating } from '../utils/getIsImpersonating';
+import { isImpersonating } from '../utils/IsImpersonating';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -147,7 +147,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           renewToken(uri, getCurrentTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
-                if (getIsImpersonating()) {
+                if (isImpersonating()) {
                   cookieStorage.setItem(
                     'impersonationTokenPair',
                     JSON.stringify(tokens),
