@@ -189,8 +189,8 @@ describe('ToolService', () => {
       );
 
       expect(result.success).toBe(true);
-      expect(result.records).toEqual(records);
-      expect(result.count).toBe(2);
+      expect(result.result.records).toEqual(records);
+      expect(result.result.count).toBe(2);
       expect(mockRepo.find).toHaveBeenCalled();
     });
   });
