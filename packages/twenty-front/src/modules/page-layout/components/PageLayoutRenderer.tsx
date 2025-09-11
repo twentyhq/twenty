@@ -8,6 +8,7 @@ import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayou
 import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -139,7 +140,7 @@ const PageLayoutRendererContent = ({
           {activeTabWidgets?.map((widget) => (
             <div key={widget.id} data-select-disable="true">
               <WidgetPlaceholder title={widget.title}>
-                <WidgetRenderer widget={widget} />
+                <WidgetRenderer widget={widget as Widget} />
               </WidgetPlaceholder>
             </div>
           ))}

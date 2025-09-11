@@ -25,6 +25,7 @@ import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRo
 import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -391,7 +392,7 @@ export const SettingsPageLayoutEdit = () => {
                     onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
                   >
-                    <WidgetRenderer widget={widget} />
+                    <WidgetRenderer widget={widget as Widget} />
                   </WidgetPlaceholder>
                 </div>
               ))
