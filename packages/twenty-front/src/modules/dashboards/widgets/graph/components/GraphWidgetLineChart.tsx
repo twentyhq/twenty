@@ -135,9 +135,9 @@ export const GraphWidgetLineChart = ({
 
   const dataMap = useMemo(() => {
     const map: Record<string, LineChartSeries> = {};
-    data.forEach((series) => {
+    for (const series of data) {
       map[series.id] = series;
-    });
+    }
     return map;
   }, [data]);
 
