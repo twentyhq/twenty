@@ -45,7 +45,7 @@ export class PageLayoutService {
         workspaceId,
         deletedAt: IsNull(),
       },
-      relations: ['tabs'],
+      relations: ['tabs', 'tabs.widgets'],
     });
   }
 
@@ -62,7 +62,7 @@ export class PageLayoutService {
         objectMetadataId,
         deletedAt: IsNull(),
       },
-      relations: ['tabs'],
+      relations: ['tabs', 'tabs.widgets'],
     });
   }
 
@@ -79,7 +79,7 @@ export class PageLayoutService {
         workspaceId,
         deletedAt: IsNull(),
       },
-      relations: ['tabs'],
+      relations: ['tabs', 'tabs.widgets'],
     });
 
     if (!isDefined(pageLayout)) {

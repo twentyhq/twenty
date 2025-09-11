@@ -2547,6 +2547,7 @@ export type PageLayoutTab = {
   position: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  widgets?: Maybe<Array<PageLayoutWidget>>;
 };
 
 export enum PageLayoutType {

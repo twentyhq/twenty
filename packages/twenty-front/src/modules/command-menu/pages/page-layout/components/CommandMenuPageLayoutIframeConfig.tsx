@@ -1,9 +1,9 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { useCreatePageLayoutIframeWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutIframeWidget';
-import { useUpdatePageLayoutWidget } from '@/settings/page-layout/hooks/useUpdatePageLayoutWidget';
-import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
-import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
+import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';

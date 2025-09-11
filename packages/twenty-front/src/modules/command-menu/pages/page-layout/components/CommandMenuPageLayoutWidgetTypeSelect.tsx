@@ -1,7 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutDraggedAreaState } from '@/settings/page-layout/states/pageLayoutDraggedAreaState';
+import { WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
