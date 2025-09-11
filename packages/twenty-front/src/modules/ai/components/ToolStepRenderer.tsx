@@ -38,7 +38,7 @@ const StyledContentContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-const StyledToggleButton = styled.button<{ isExpandable: boolean }>`
+const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   align-items: center;
   background: none;
   border: none;
