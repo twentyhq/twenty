@@ -17,10 +17,18 @@ export const getFirstNonEmptyLineOfRichText = (
     if (contentArray.length === 0) continue;
 
     for (const content of contentArray) {
-      if (isRecord(content) && 'link' in content && typeof (content as any).link === 'string') {
+      if (
+        isRecord(content) &&
+        'link' in content &&
+        typeof (content as any).link === 'string'
+      ) {
         return (content as any).link;
       }
-      if (isRecord(content) && 'text' in content && typeof (content as any).text === 'string') {
+      if (
+        isRecord(content) &&
+        'text' in content &&
+        typeof (content as any).text === 'string'
+      ) {
         const value = (content as any).text.trim();
         if (value !== '') return value;
       }
