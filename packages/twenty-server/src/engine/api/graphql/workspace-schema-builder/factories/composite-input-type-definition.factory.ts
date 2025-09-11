@@ -6,43 +6,75 @@ import {
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { StoredGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-import {
-  type InputTypeDefinition,
-  InputTypeDefinitionKind,
-} from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
-import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-property-target.util';
+import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
+import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
+import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
-
-import { InputTypeFactory } from './input-type.factory';
 
 const hiddenAllowListKind = [
   InputTypeDefinitionKind.Create,
   InputTypeDefinitionKind.Update,
 ];
 
+export interface StoredInputType
+  extends StoredGqlType<GraphQLInputObjectType> {}
+
 @Injectable()
-export class CompositeInputTypeDefinitionFactory {
-  private readonly logger = new Logger(
-    CompositeInputTypeDefinitionFactory.name,
-  );
-  constructor(private readonly inputTypeFactory: InputTypeFactory) {}
+export class CompositeFieldInputTypeGenerator {
+  private readonly logger = new Logger(CompositeFieldInputTypeGenerator.name);
+  constructor(
+    private readonly fieldInputTypeGenerator: FieldInputTypeGenerator,
+  ) {}
+
+  public generate(
+    compositeTypes: CompositeType[],
+    options: WorkspaceBuildSchemaOptions,
+  ): StoredInputType[] {
+    const storedCompositeFieldInputTypes: StoredInputType[] = [];
+
+    for (const compositeType of compositeTypes) {
+      const optionalCompositeType = {
+        ...compositeType,
+        properties: compositeType.properties.map((property) => ({
+          ...property,
+          isRequired: false,
+        })),
+      };
+
+      for (const kind of Object.values(InputTypeDefinitionKind)) {
+        const storedCompositeFieldInputType = this.create(
+          kind === InputTypeDefinitionKind.Create
+            ? compositeType
+            : optionalCompositeType,
+          kind,
+          options,
+        );
+
+        storedCompositeFieldInputTypes.push(storedCompositeFieldInputType);
+      }
+    }
+
+    return storedCompositeFieldInputTypes;
+  }
 
   public create(
     compositeType: CompositeType,
     kind: InputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
-  ): InputTypeDefinition {
-    const name = pascalCase(compositeType.type.toString().toLowerCase());
+  ): StoredInputType {
+    const key = computeCompositeFieldInputTypeKey(compositeType.type, kind);
 
     return {
-      target: compositeType.type.toString(),
-      kind,
+      key,
       type: new GraphQLInputObjectType({
-        name: `${pascalCase(name)}${kind.toString()}Input`,
+        name: `${pascalCase(compositeType.type)}${kind.toString()}Input`,
         fields: this.generateFields(compositeType, kind, options),
       }),
     };
@@ -74,22 +106,20 @@ export class CompositeInputTypeDefinitionFactory {
         continue;
       }
 
-      const target = computeCompositePropertyTarget(
-        compositeType.type,
-        property,
-      );
-      const type = this.inputTypeFactory.create(
-        target,
-        property.type,
+      const type = this.fieldInputTypeGenerator.generate({
+        type: property.type,
         kind,
-        options,
-        {
+        buildOptions: options,
+        typeOptions: {
           nullable: !property.isRequired,
           isArray:
             property.type === FieldMetadataType.MULTI_SELECT ||
             property.isArray,
         },
-      );
+        key: isEnumFieldMetadataType(property.type)
+          ? computeCompositeFieldEnumTypeKey(compositeType.type, property.name)
+          : undefined,
+      });
 
       fields[property.name] = {
         type,

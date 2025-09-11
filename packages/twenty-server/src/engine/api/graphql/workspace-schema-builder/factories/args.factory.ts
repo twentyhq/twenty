@@ -1,24 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type GraphQLFieldConfigArgumentMap } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ArgsMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 
 @Injectable()
-export class ArgsFactory {
-  private readonly logger = new Logger(ArgsFactory.name);
+export class ArgsTypeGenerator {
+  private readonly logger = new Logger(ArgsTypeGenerator.name);
 
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public create(
-    { args, objectMetadataId }: ArgsMetadata,
+  public generate(
+    { args, objectMetadataSingularName }: ArgsMetadata,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLFieldConfigArgumentMap {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
@@ -31,7 +33,7 @@ export class ArgsFactory {
       const arg = args[key];
 
       // Argument is a scalar type
-      if (arg.type) {
+      if (isDefined(arg.type)) {
         const gqlType = this.typeMapperService.mapToGqlType(arg.type, {
           defaultValue: arg.defaultValue,
           nullable: arg.isNullable,
@@ -44,23 +46,26 @@ export class ArgsFactory {
       }
 
       // Argument is an input type
-      if (arg.kind) {
-        const inputType = this.typeDefinitionsStorage.getInputTypeByKey(
-          objectMetadataId,
+      if (isDefined(arg.kind)) {
+        const storagekey = computeObjectMetadataInputTypeKey(
+          objectMetadataSingularName,
           arg.kind,
         );
 
+        const inputType =
+          this.typeDefinitionsStorage.getInputTypeByKey(storagekey);
+
         if (!inputType) {
           this.logger.error(
-            `Could not find a GraphQL input type for ${objectMetadataId}`,
+            `Could not find a GraphQL input type for ${objectMetadataSingularName}`,
             {
-              objectMetadataId,
+              objectMetadataSingularName,
               options,
             },
           );
 
           throw new Error(
-            `Could not find a GraphQL input type for ${objectMetadataId}`,
+            `Could not find a GraphQL input type for ${objectMetadataSingularName}`,
           );
         }
 

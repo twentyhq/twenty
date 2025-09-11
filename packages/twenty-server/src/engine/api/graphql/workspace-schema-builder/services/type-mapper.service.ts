@@ -16,6 +16,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
   type FieldMetadataSettings,
   NumberDataType,
@@ -45,12 +46,11 @@ import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-buil
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface TypeOptions<T = any> {
+export interface TypeOptions {
   nullable?: boolean;
   isArray?: boolean;
   arrayDepth?: number;
-  defaultValue?: T;
+  defaultValue?: FieldMetadataDefaultValue<FieldMetadataType>;
   settings?: FieldMetadataSettings<FieldMetadataType>;
   isIdField?: boolean;
   isRelationConnectField?: boolean;

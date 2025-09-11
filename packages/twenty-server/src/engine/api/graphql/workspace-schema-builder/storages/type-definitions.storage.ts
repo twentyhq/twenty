@@ -7,101 +7,52 @@ import {
 } from 'graphql';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { type EnumTypeDefinition } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
-import {
-  type InputTypeDefinition,
-  type InputTypeDefinitionKind,
-} from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
-import {
-  type ObjectTypeDefinition,
-  type ObjectTypeDefinitionKind,
-} from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
-
-export type GqlInputType = InputTypeDefinition | EnumTypeDefinition;
-
-export type GqlOutputType = ObjectTypeDefinition | EnumTypeDefinition;
+import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
+import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
+import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
+import { StoredEnumGqlType } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/composite-field-enum-type.generator';
 
 // Must be scoped on REQUEST level, because we need to recreate it for each workspaces
 // TODO: Implement properly durable by workspace
 @Injectable({ scope: Scope.REQUEST, durable: true })
 export class TypeDefinitionsStorage {
-  private readonly enumTypeDefinitions = new Map<string, EnumTypeDefinition>();
-  private readonly objectTypeDefinitions = new Map<
-    string,
-    ObjectTypeDefinition
-  >();
-  private readonly inputTypeDefinitions = new Map<
-    string,
-    InputTypeDefinition
-  >();
+  private readonly enumTypes = new Map<string, StoredEnumGqlType>();
+  private readonly objectTypes = new Map<string, StoredObjectType>();
+  private readonly inputTypes = new Map<string, StoredInputType>();
 
-  addEnumTypes(enumDefs: EnumTypeDefinition[]) {
-    enumDefs.forEach((item) => this.enumTypeDefinitions.set(item.target, item));
+  addEnumTypes(enumDefs: StoredEnumGqlType[]) {
+    enumDefs.forEach((item) => this.enumTypes.set(item.key, item));
   }
 
-  addObjectTypes(objectDefs: ObjectTypeDefinition[]) {
-    objectDefs.forEach((item) =>
-      this.objectTypeDefinitions.set(
-        this.generateCompositeKey(item.target, item.kind),
-        item,
-      ),
-    );
+  addObjectTypes(objectDefs: StoredObjectType[]) {
+    objectDefs.forEach((item) => this.objectTypes.set(item.key, item));
   }
 
-  getObjectTypeByKey(
-    target: string,
-    kind: ObjectTypeDefinitionKind,
-  ): GraphQLObjectType | undefined {
-    return this.objectTypeDefinitions.get(
-      this.generateCompositeKey(target, kind),
-    )?.type;
+  getObjectTypeByKey(key: string): GraphQLObjectType | undefined {
+    return this.objectTypes.get(key)?.type;
   }
 
-  getAllObjectTypeDefinitions(): ObjectTypeDefinition[] {
-    return Array.from(this.objectTypeDefinitions.values());
+  getAllObjectTypeDefinitions(): StoredObjectType[] {
+    return Array.from(this.objectTypes.values());
   }
 
-  addInputTypes(inputDefs: InputTypeDefinition[]) {
-    inputDefs.forEach((item) =>
-      this.inputTypeDefinitions.set(
-        this.generateCompositeKey(item.target, item.kind),
-        item,
-      ),
-    );
+  addInputTypes(inputDefs: StoredInputType[]) {
+    inputDefs.forEach((item) => this.inputTypes.set(item.key, item));
   }
 
   getInputTypeByKey(
-    target: string,
-    kind: InputTypeDefinitionKind,
+    key: string,
   ): GraphQLInputObjectType | GraphQLEnumType | undefined {
-    const key = this.generateCompositeKey(target, kind);
-    let definition: GqlInputType | undefined;
-
-    definition ??= this.inputTypeDefinitions.get(key);
-    definition ??= this.enumTypeDefinitions.get(target);
-
-    return definition?.type;
+    return this.inputTypes.get(key)?.type;
   }
 
-  getOutputTypeByKey(
-    target: string,
-    kind: ObjectTypeDefinitionKind,
-  ): GraphQLObjectType | GraphQLEnumType | undefined {
-    const key = this.generateCompositeKey(target, kind);
-    let definition: GqlOutputType | undefined;
-
-    definition ??= this.objectTypeDefinitions.get(key);
-    definition ??= this.enumTypeDefinitions.get(target);
-
-    return definition?.type;
+  getEnumTypeByKey(key: string): GraphQLEnumType | undefined {
+    return this.enumTypes.get(key)?.type;
   }
 
-  getEnumTypeByKey(target: string): GraphQLEnumType | undefined {
-    return this.enumTypeDefinitions.get(target)?.type;
-  }
-
-  getAllInputTypeDefinitions(): InputTypeDefinition[] {
-    return Array.from(this.inputTypeDefinitions.values());
+  getAllInputTypeDefinitions(): StoredInputType[] {
+    return Array.from(this.inputTypes.values());
   }
 
   private generateCompositeKey(

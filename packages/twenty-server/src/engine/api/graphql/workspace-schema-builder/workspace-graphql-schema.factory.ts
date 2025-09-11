@@ -4,48 +4,44 @@ import { GraphQLSchema } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethods } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/mutation-type.factory';
+import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/orphaned-types.factory';
+import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/query-type.factory';
+import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/gql-type.generator';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-import { TypeDefinitionsGenerator } from './type-definitions.generator';
-
-import { MutationTypeFactory } from './factories/mutation-type.factory';
-import { OrphanedTypesFactory } from './factories/orphaned-types.factory';
-import { QueryTypeFactory } from './factories/query-type.factory';
 import { type WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 
 @Injectable()
-export class WorkspaceGraphQLSchemaFactory {
+export class WorkspaceGraphQLSchemaGenerator {
   constructor(
-    private readonly typeDefinitionsGenerator: TypeDefinitionsGenerator,
-    private readonly queryTypeFactory: QueryTypeFactory,
-    private readonly mutationTypeFactory: MutationTypeFactory,
-    private readonly orphanedTypesFactory: OrphanedTypesFactory,
+    private readonly gqlTypeGenerator: GqlTypeGenerator,
+    private readonly queryTypeGenerator: QueryTypeGenerator,
+    private readonly mutationTypeGenerator: MutationTypeGenerator,
+    private readonly orphanedTypesGenerator: OrphanedTypesGenerator,
   ) {}
 
-  async create(
+  async generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
     options: WorkspaceBuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
     // Generate type definitions
-    await this.typeDefinitionsGenerator.generate(
-      objectMetadataCollection,
-      options,
-    );
+    await this.gqlTypeGenerator.generate(objectMetadataCollection, options);
 
     // Generate schema
     const schema = new GraphQLSchema({
-      query: this.queryTypeFactory.create(
+      query: this.queryTypeGenerator.generate(
         objectMetadataCollection,
         [...workspaceResolverBuilderMethods.queries],
         options,
       ),
-      mutation: this.mutationTypeFactory.create(
+      mutation: this.mutationTypeGenerator.generate(
         objectMetadataCollection,
         [...workspaceResolverBuilderMethods.mutations],
         options,
       ),
-      types: this.orphanedTypesFactory.create(),
+      types: this.orphanedTypesGenerator.generate(),
     });
 
     return schema;

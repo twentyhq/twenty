@@ -9,8 +9,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 type AggregationGraphQLType = Pick<AggregationField, 'type' | 'description'>;
 
 @Injectable()
-export class AggregationTypeFactory {
-  public create(
+export class AggregationObjectTypeGenerator {
+  public generate(
     objectMetadata: ObjectMetadataEntity,
   ): Record<string, AggregationGraphQLType> {
     const availableAggregations = getAvailableAggregationsFromObjectFields(

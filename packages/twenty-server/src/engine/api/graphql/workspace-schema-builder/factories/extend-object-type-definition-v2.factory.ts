@@ -1,59 +1,47 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  GraphQLObjectType,
-  type GraphQLFieldConfigArgumentMap,
-  type GraphQLFieldConfigMap,
-} from 'graphql';
+import { GraphQLObjectType, type GraphQLFieldConfigArgumentMap } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
+import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
+import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/args.factory';
+import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
+import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
+import { ExtendedRelationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-type-v2.factory';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-import { ArgsFactory } from './args.factory';
-
-export enum ObjectTypeDefinitionKind {
-  Connection = 'Connection',
-  Edge = 'Edge',
-  Plain = '',
-}
-
-export interface ObjectTypeDefinition {
-  target: string;
-  kind: ObjectTypeDefinitionKind;
-  type: GraphQLObjectType;
-}
-
 @Injectable()
-export class ExtendObjectTypeDefinitionV2Factory {
+export class ExtendedObjectMetadataObjectTypeGenerator {
   private readonly logger = new Logger(
-    ExtendObjectTypeDefinitionV2Factory.name,
+    ExtendedObjectMetadataObjectTypeGenerator.name,
   );
 
   constructor(
-    private readonly relationTypeV2Factory: RelationTypeV2Factory,
-    private readonly argsFactory: ArgsFactory,
+    private readonly extendedRelationObjectTypeGenerator: ExtendedRelationObjectTypeGenerator,
+    private readonly argsTypeGenerator: ArgsTypeGenerator,
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
   ) {}
 
-  public create(
+  public generate(
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
     objectMetadataCollection: ObjectMetadataEntity[],
-  ): ObjectTypeDefinition {
-    const kind = ObjectTypeDefinitionKind.Plain;
-    const gqlType = this.typeDefinitionsStorage.getObjectTypeByKey(
-      objectMetadata.id,
-      kind,
+  ): StoredObjectType {
+    const key = computeObjectMetadataObjectTypeKey(
+      objectMetadata.nameSingular,
+      ObjectTypeDefinitionKind.Plain,
     );
-    const containsRelationField = objectContainsRelationField(objectMetadata);
+
+    const gqlType = this.typeDefinitionsStorage.getObjectTypeByKey(key);
 
     if (!gqlType) {
       this.logger.error(
@@ -70,7 +58,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
     }
 
     // Security check to avoid extending an object that does not need to be extended
-    if (!containsRelationField) {
+    if (!objectContainsRelationField(objectMetadata)) {
       this.logger.error(
         `This object does not need to be extended: ${objectMetadata.id.toString()}`,
         {
@@ -89,8 +77,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
 
     // Recreate the same object type with the new fields
     return {
-      target: objectMetadata.id,
-      kind,
+      key,
       type: new GraphQLObjectType({
         ...config,
         fields: () => ({
@@ -109,10 +96,8 @@ export class ExtendObjectTypeDefinitionV2Factory {
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
     objectMetadataCollection: ObjectMetadataEntity[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): GraphQLFieldConfigMap<any, any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const fields: GraphQLFieldConfigMap<any, any> = {};
+  ): GraphQLOutputTypeFieldConfigMap {
+    const fields: GraphQLOutputTypeFieldConfigMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       // Ignore non-relation fields as they are already defined
@@ -142,29 +127,33 @@ export class ExtendObjectTypeDefinitionV2Factory {
         );
       }
 
-      const relationType = this.relationTypeV2Factory.create(fieldMetadata);
-      let argsType: GraphQLFieldConfigArgumentMap | undefined = undefined;
-
-      if (fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY) {
-        const args = getResolverArgs('findMany');
-
-        argsType = this.argsFactory.create(
-          {
-            args,
-            objectMetadataId: fieldMetadata.relationTargetObjectMetadataId,
-          },
-          options,
-        );
-      }
-
       const objectMetadataTarget = objectMetadataCollection.find(
         (objectMetadata) =>
           objectMetadata.id === fieldMetadata.relationTargetObjectMetadataId,
       );
 
-      if (!objectMetadataTarget) {
+      if (!isDefined(objectMetadataTarget)) {
         throw new Error(
-          `Object Metadata Target not found for Id: ${fieldMetadata.relationTargetObjectMetadataId} on fieldMetadata name: ${fieldMetadata.name}`,
+          `Field Metadata of type RELATION or MORPH_RELATION with id ${fieldMetadata.id} has no relation target object metadata`,
+        );
+      }
+
+      const relationType = this.extendedRelationObjectTypeGenerator.generate(
+        fieldMetadata,
+        objectMetadataTarget,
+      );
+
+      let argsType: GraphQLFieldConfigArgumentMap | undefined = undefined;
+
+      if (fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY) {
+        const args = getResolverArgs('findMany');
+
+        argsType = this.argsTypeGenerator.generate(
+          {
+            args,
+            objectMetadataSingularName: objectMetadataTarget.nameSingular,
+          },
+          options,
         );
       }
 

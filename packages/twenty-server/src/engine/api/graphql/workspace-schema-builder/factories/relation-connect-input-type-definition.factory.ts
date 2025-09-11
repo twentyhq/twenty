@@ -10,40 +10,27 @@ import {
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
-import {
-  type InputTypeDefinition,
-  InputTypeDefinitionKind,
-} from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
-export const formatRelationConnectInputTarget = (objectMetadataId: string) =>
-  `${objectMetadataId}-connect-input`;
-
 @Injectable()
-export class RelationConnectInputTypeDefinitionFactory {
+export class RelationConnectInputTypeGenerator {
   constructor(private readonly typeMapperService: TypeMapperService) {}
 
-  public create(objectMetadata: ObjectMetadataEntity): InputTypeDefinition[] {
+  public generate(objectMetadata: ObjectMetadataEntity): StoredInputType {
     const fields = this.generateRelationConnectInputType(objectMetadata);
-    const target = formatRelationConnectInputTarget(objectMetadata.id);
+    const key = computeRelationConnectInputTypeKey(objectMetadata.id);
 
-    return [
-      {
-        target,
-        kind: InputTypeDefinitionKind.Create,
-        type: fields,
-      },
-      {
-        target,
-        kind: InputTypeDefinitionKind.Update,
-        type: fields,
-      },
-    ];
+    return {
+      key,
+      type: fields,
+    };
   }
 
   private generateRelationConnectInputType(

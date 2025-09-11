@@ -5,18 +5,17 @@ import { type GraphQLNamedType } from 'graphql';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 
 @Injectable()
-export class OrphanedTypesFactory {
+export class OrphanedTypesGenerator {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
   ) {}
 
-  public create(): GraphQLNamedType[] {
-    const objectTypeDefs =
+  public generate(): GraphQLNamedType[] {
+    const objectTypes =
       this.typeDefinitionsStorage.getAllObjectTypeDefinitions();
-    const inputTypeDefs =
-      this.typeDefinitionsStorage.getAllInputTypeDefinitions();
-    const classTypeDefs = [...objectTypeDefs, ...inputTypeDefs];
+    const inputTypes = this.typeDefinitionsStorage.getAllInputTypeDefinitions();
+    const classTypes = [...objectTypes, ...inputTypes];
 
-    return [...classTypeDefs.map(({ type }) => type)];
+    return [...classTypes.map(({ type }) => type)];
   }
 }

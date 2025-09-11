@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
+import { StoredEnumGqlType } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/composite-field-enum-type.generator';
+import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -15,20 +17,15 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 import { pascalCase } from 'src/utils/pascal-case';
 
-export interface EnumTypeDefinition {
-  target: string;
-  type: GraphQLEnumType;
-}
-
 @Injectable()
-export class EnumTypeDefinitionFactory {
-  private readonly logger = new Logger(EnumTypeDefinitionFactory.name);
+export class EnumFieldTypeGenerator {
+  private readonly logger = new Logger(EnumFieldTypeGenerator.name);
 
-  public create(
+  public generate(
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
-  ): EnumTypeDefinition[] {
-    const enumTypeDefinitions: EnumTypeDefinition[] = [];
+  ): StoredEnumGqlType[] {
+    const enumTypeDefinitions: StoredEnumGqlType[] = [];
 
     for (const fieldMetadata of objectMetadata.fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
@@ -36,7 +33,10 @@ export class EnumTypeDefinitionFactory {
       }
 
       enumTypeDefinitions.push({
-        target: fieldMetadata.id,
+        key: computeEnumFieldGqlTypeKey(
+          objectMetadata.nameSingular,
+          fieldMetadata.name,
+        ),
         type: this.generateEnum(
           objectMetadata.nameSingular,
           fieldMetadata,
