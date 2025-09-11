@@ -4,6 +4,7 @@ export type ToolCallEvent = {
   toolName: string;
   args: {
     loadingMessage: string;
+    input: unknown;
   };
 };
 
