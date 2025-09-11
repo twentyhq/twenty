@@ -43,6 +43,11 @@
       "import": "./dist/constants.mjs",
       "require": "./dist/constants.cjs"
     },
+    "./mutations": {
+      "types": "./dist/mutations/index.d.ts",
+      "import": "./dist/mutations.mjs",
+      "require": "./dist/mutations.cjs"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -77,6 +82,7 @@
   "files": [
     "dist",
     "constants",
+    "mutations",
     "testing",
     "translations",
     "types",
@@ -88,6 +94,9 @@
     "*": {
       "constants": [
         "dist/constants/index.d.ts"
+      ],
+      "mutations": [
+        "dist/mutations/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"
