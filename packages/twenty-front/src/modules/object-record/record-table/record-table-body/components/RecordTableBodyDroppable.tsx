@@ -20,7 +20,6 @@ export const RecordTableBodyDroppable = ({
   isDropDisabled,
 }: RecordTableBodyDroppableProps) => {
   const [v4Persistable] = useState(v4());
-  const recordTableBodyId = `record-table-body${recordGroupId ? '-' + recordGroupId : ''}`;
 
   const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
@@ -42,19 +41,20 @@ export const RecordTableBodyDroppable = ({
       isDropDisabled={isDropDisabled}
     >
       {(provided) => (
-        <RecordTableBody
-          id={recordTableBodyId}
-          ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...provided.droppableProps}
-          onMouseLeave={handleMouseLeave}
-        >
-          <RecordTableBodyDroppableContextProvider
-            value={{ droppablePlaceholder: provided.placeholder }}
+        <>
+          <RecordTableBody
+            ref={provided.innerRef}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...provided.droppableProps}
+            onMouseLeave={handleMouseLeave}
           >
-            {children}
-          </RecordTableBodyDroppableContextProvider>
-        </RecordTableBody>
+            <RecordTableBodyDroppableContextProvider
+              value={{ droppablePlaceholder: provided.placeholder }}
+            >
+              {children}
+            </RecordTableBodyDroppableContextProvider>
+          </RecordTableBody>
+        </>
       )}
     </Droppable>
   );

@@ -1,7 +1,9 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -32,6 +34,10 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
+  );
+
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
@@ -43,6 +49,10 @@ export const RecordBoardColumnNewRecordButton = () => {
   });
 
   if (!hasObjectUpdatePermissions) {
+    return null;
+  }
+
+  if (hasAnySoftDeleteFilterOnView) {
     return null;
   }
 

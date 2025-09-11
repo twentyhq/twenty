@@ -135,6 +135,11 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
     case 'create_index':
     case 'delete_index':
     case 'create_view':
+    case 'update_view':
+    case 'delete_view':
+    case 'create_view_field':
+    case 'update_view_field':
+    case 'delete_view_field':
       return flatObjectMetadataMaps;
     default: {
       assertUnreachable(

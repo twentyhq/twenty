@@ -5,13 +5,11 @@ import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledPlusIconHeaderCell = styled.div<{
-  isTableWiderThanScreen: boolean;
   isFirstRowActiveOrFocused: boolean;
 }>`
   border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
@@ -53,12 +51,6 @@ const StyledDropdownContainer = styled.div`
 export const RecordTableHeaderAddColumnButton = () => {
   const theme = useTheme();
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
-
-  const isTableWiderThanScreen =
-    (scrollWrapperHTMLElement?.clientWidth ?? 0) <
-    (scrollWrapperHTMLElement?.scrollWidth ?? 0);
-
   const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
@@ -73,7 +65,6 @@ export const RecordTableHeaderAddColumnButton = () => {
 
   return (
     <StyledPlusIconHeaderCell
-      isTableWiderThanScreen={isTableWiderThanScreen}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
       className="header-cell"
     >

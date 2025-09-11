@@ -8,10 +8,10 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -217,15 +217,20 @@ export const WorkflowEditActionHttpRequest = ({
           </StyledTestTabContent>
         )}
       </WorkflowStepBody>
-      {activeTabId === WorkflowHttpRequestTabId.TEST && (
-        <RightDrawerFooter
-          actions={[
-            <CmdEnterActionButton
-              title="Test"
-              onClick={handleTestRequest}
-              disabled={isTesting || actionOptions.readonly}
-            />,
-          ]}
+      {!actionOptions.readonly && (
+        <WorkflowActionFooter
+          stepId={action.id}
+          additionalActions={
+            activeTabId === WorkflowHttpRequestTabId.TEST
+              ? [
+                  <CmdEnterActionButton
+                    title="Test"
+                    onClick={handleTestRequest}
+                    disabled={isTesting}
+                  />,
+                ]
+              : []
+          }
         />
       )}
     </>

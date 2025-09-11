@@ -10,7 +10,7 @@ export type ShouldBeRegisteredFunctionParams = {
   objectPermissions: ObjectPermissions;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
-  isSoftDeleteFilterActive?: boolean;
+  hasAnySoftDeleteFilterOnView?: boolean;
   isInRightDrawer?: boolean;
   isFavorite?: boolean;
   isRemote?: boolean;

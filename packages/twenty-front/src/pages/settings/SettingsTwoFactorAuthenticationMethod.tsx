@@ -40,6 +40,10 @@ const StyledQRCodeWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledOTPContainer = styled.div`
+  width: fit-content;
+`;
+
 const StyledQRCode = styled(QRCode)`
   height: 137px;
   width: 137px;
@@ -174,7 +178,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 title={t`Verify the code from the app`}
                 description={t`Copy paste the code below`}
               />
-              <TwoFactorAuthenticationVerificationForSettings />
+              <StyledOTPContainer>
+                <TwoFactorAuthenticationVerificationForSettings />
+              </StyledOTPContainer>
             </Section>
           )}
         </SettingsPageContainer>

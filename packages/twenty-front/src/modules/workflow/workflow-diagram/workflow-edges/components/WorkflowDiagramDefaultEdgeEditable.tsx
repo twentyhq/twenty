@@ -1,8 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -53,12 +50,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     targetY,
   });
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-
-  const { createStep } = useCreateStep({ workflow });
+  const { createStep } = useCreateStep();
 
   const { deleteEdge } = useDeleteEdge();
 
