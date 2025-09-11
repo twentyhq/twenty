@@ -1,15 +1,14 @@
-import { FieldMetadataComplexOption } from "src/engine/metadata-modules/field-metadata/dtos/options.input";
-
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum MKT_LICENSE_STATUS {
-  ACTIVE = 'ACTIVE',       // Đang hoạt động, hợp lệ
-  INACTIVE = 'INACTIVE',   // Không hoạt động, bị tạm ngưng
-  EXPIRED = 'EXPIRED',     // Đã hết hạn
-  REVOKED = 'REVOKED',     // Bị thu hồi thủ công
-  ERROR = 'ERROR',         // Có lỗi, trạng thái không hợp lệ
-  DELETED = 'DELETED',     // Đã bị xóa (thường là soft delete)
-  PENDING = 'PENDING',     // Đang chờ xử lý / chờ duyệt
-  OTHER = 'OTHER',         // Trường hợp khác, không nằm trong các trạng thái trên
+  ACTIVE = 'ACTIVE', // Đang hoạt động, hợp lệ
+  INACTIVE = 'INACTIVE', // Không hoạt động, bị tạm ngưng
+  EXPIRED = 'EXPIRED', // Đã hết hạn
+  REVOKED = 'REVOKED', // Bị thu hồi thủ công
+  ERROR = 'ERROR', // Có lỗi, trạng thái không hợp lệ
+  DELETED = 'DELETED', // Đã bị xóa (thường là soft delete)
+  PENDING = 'PENDING', // Đang chờ xử lý / chờ duyệt
+  OTHER = 'OTHER', // Trường hợp khác, không nằm trong các trạng thái trên
 }
 
 export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [

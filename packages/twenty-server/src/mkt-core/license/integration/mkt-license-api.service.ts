@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { firstValueFrom } from 'rxjs';
 
@@ -53,11 +53,15 @@ export class MktLicenseApiService {
         error,
       );
       // generate unique mock license key based on orderId and orderItemId
-      const uniqueSuffix = orderItemId ? `_ITEM_${orderItemId.slice(-8)}` : `_ORDER_${orderId.slice(-8)}`;
+      const uniqueSuffix = orderItemId
+        ? `_ITEM_${orderItemId.slice(-8)}`
+        : `_ORDER_${orderId.slice(-8)}`;
       const mockResponse = {
         licenseKey: `MOCK_LICENSE${uniqueSuffix}_${Date.now()}`,
         status: MKT_LICENSE_STATUS.ACTIVE,
-        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from now
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0], // 1 year from now
       };
 
       this.logger.log(`Mock response:`, mockResponse);
