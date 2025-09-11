@@ -3,23 +3,8 @@ import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-e
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
 import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
+import { isHandleEqual } from '@/workflow/workflow-diagram/workflow-edges/utils/isHandleEqual';
 import { useReactFlow } from '@xyflow/react';
-import { isDefined } from 'twenty-shared/utils';
-
-const isHandleEqual = (
-  handleA: string | null | undefined,
-  handleB: string | null | undefined,
-) => {
-  if (handleA === handleB) {
-    return true;
-  }
-
-  if (!isDefined(handleA) && !isDefined(handleB)) {
-    return true;
-  }
-
-  return false;
-};
 
 export const useEdgeState = () => {
   const reactflow = useReactFlow();
