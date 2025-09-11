@@ -19,8 +19,8 @@ export const useTriggerViewFieldOptimisticEffect = () => {
         updatedViewFields = [],
         deletedViewFields = [],
       }: {
-        createdViewFields?: CoreViewField[];
-        updatedViewFields?: CoreViewField[];
+        createdViewFields?: Omit<CoreViewField, 'workspaceId'>[];
+        updatedViewFields?: Omit<CoreViewField, 'workspaceId'>[];
         deletedViewFields?: Pick<CoreViewField, 'id' | 'viewId'>[];
       }) => {
         const coreViews = getSnapshotValue(snapshot, coreViewsState);
