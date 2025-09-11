@@ -49,7 +49,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
       url: 'https://api.example.com/data',
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'content-type': 'application/json',
         Authorization: 'Bearer token123',
       },
       body: {
@@ -167,7 +167,7 @@ export const WithArrayStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `[
   "frontend",
@@ -217,7 +217,7 @@ export const WithObjectStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `{
   "hey": "frontend",
@@ -273,7 +273,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `[
   "frontend",
@@ -323,7 +323,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `{
   "speciality": "frontend",
