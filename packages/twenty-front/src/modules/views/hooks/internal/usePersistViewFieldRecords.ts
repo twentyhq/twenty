@@ -1,47 +1,47 @@
 import { useCallback } from 'react';
-import { v4 } from 'uuid';
 
-import { CREATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/createCoreViewField';
-import { UPDATE_CORE_VIEW_FIELD } from '@/views/graphql/mutations/updateCoreViewField';
 import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
-import { type GraphQLView } from '@/views/types/GraphQLView';
-import { type ViewField } from '@/views/types/ViewField';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import { UpdateViewFieldInput, type CoreViewField } from '~/generated/graphql';
+import {
+  CreateCoreViewFieldMutationVariables,
+  DeleteCoreViewFieldMutationVariables,
+  DestroyCoreViewFieldMutationVariables,
+  UpdateCoreViewFieldMutationVariables,
+  useCreateCoreViewFieldMutation,
+  useDeleteCoreViewFieldMutation,
+  useDestroyCoreViewFieldMutation,
+  useUpdateCoreViewFieldMutation,
+} from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
   const apolloClient = useApolloClient();
 
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
+  const [createCoreViewFieldMutation] = useCreateCoreViewFieldMutation();
+  const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
+  const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
+  const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
 
   const createCoreViewFieldRecords = useCallback(
-    (
-      viewFieldsToCreate: Omit<ViewField, 'definition'>[],
-      view: Pick<GraphQLView, 'id'>,
-    ) => {
-      if (!viewFieldsToCreate.length) return;
+    (createCoreViewFieldInputs: CreateCoreViewFieldMutationVariables[]) => {
+      if (createCoreViewFieldInputs.length === 0) {
+        return;
+      }
+
       return Promise.all(
-        viewFieldsToCreate.map((viewField) =>
-          apolloClient.mutate({
-            mutation: CREATE_CORE_VIEW_FIELD,
-            variables: {
-              input: {
-                id: v4(),
-                fieldMetadataId: viewField.fieldMetadataId,
-                viewId: view.id,
-                isVisible: viewField.isVisible,
-                position: viewField.position,
-                size: viewField.size,
-              } satisfies Partial<CoreViewField>,
-            },
+        createCoreViewFieldInputs.map(async (variables) =>
+          createCoreViewFieldMutation({
+            variables,
             update: (_cache, { data }) => {
-              const record = data?.['createCoreViewField'];
-              if (!record) return;
+              const createdViewField = data?.createCoreViewField;
+              if (!isDefined(createdViewField)) {
+                return;
+              }
 
               triggerViewFieldOptimisticEffect({
-                createdViewFields: [record],
+                createdViewFields: [createdViewField],
               });
             },
           }),
@@ -52,32 +52,69 @@ export const usePersistViewFieldRecords = () => {
   );
 
   const updateCoreViewFieldRecords = useCallback(
-    (viewFieldsToUpdate: Omit<ViewField, 'definition'>[]) => {
-      if (!viewFieldsToUpdate.length) return;
+    (createCoreViewFieldInputs: UpdateCoreViewFieldMutationVariables[]) => {
+      if (createCoreViewFieldInputs.length === 0) {
+        return;
+      }
 
       return Promise.all(
-        viewFieldsToUpdate.map((viewField) =>
-          apolloClient.mutate<any, { input: UpdateViewFieldInput }>({
-            mutation: UPDATE_CORE_VIEW_FIELD,
-            variables: {
-              input: {
-                id: viewField.id,
-                update: {
-                  isVisible: viewField.isVisible,
-                  position: viewField.position,
-                  size: viewField.size,
-                  aggregateOperation: viewField.aggregateOperation,
-                },
-              },
-            },
+        createCoreViewFieldInputs.map((variables) =>
+          updateCoreViewFieldMutation({
+            variables,
             update: (_cache, { data }) => {
-              const record = data?.['updateCoreViewField'];
-              if (!isDefined(record)) return;
+              const updatedViewField = data?.updateCoreViewField;
+              if (!isDefined(updatedViewField)) {
+                return;
+              }
 
               triggerViewFieldOptimisticEffect({
-                updatedViewFields: [record],
+                updatedViewFields: [updatedViewField],
               });
             },
+          }),
+        ),
+      );
+    },
+    [apolloClient, triggerViewFieldOptimisticEffect],
+  );
+
+  const deleteCoreViewFieldRecords = useCallback(
+    (deleteCoreViewFieldInputs: DeleteCoreViewFieldMutationVariables[]) => {
+      if (deleteCoreViewFieldInputs.length === 0) {
+        return;
+      }
+
+      return Promise.all(
+        deleteCoreViewFieldInputs.map((variables) =>
+          deleteCoreViewFieldMutation({
+            variables,
+            update: (_cache, { data }) => {
+              const deletedViewField = data?.deleteCoreViewField;
+              if (!isDefined(deletedViewField)) {
+                return;
+              }
+
+              triggerViewFieldOptimisticEffect({
+                deletedViewFields: [deletedViewField],
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [apolloClient, triggerViewFieldOptimisticEffect],
+  );
+
+  const destroyCoreViewFieldRecords = useCallback(
+    (destroyCoreViewFieldInputs: DestroyCoreViewFieldMutationVariables[]) => {
+      if (destroyCoreViewFieldInputs.length === 0) {
+        return;
+      }
+
+      return Promise.all(
+        destroyCoreViewFieldInputs.map((variables) =>
+          destroyCoreViewFieldMutation({
+            variables,
           }),
         ),
       );
@@ -88,5 +125,7 @@ export const usePersistViewFieldRecords = () => {
   return {
     createViewFieldRecords: createCoreViewFieldRecords,
     updateViewFieldRecords: updateCoreViewFieldRecords,
+    deleteViewFieldRecords: deleteCoreViewFieldRecords,
+    destroyViewFieldRecords: destroyCoreViewFieldRecords,
   };
 };

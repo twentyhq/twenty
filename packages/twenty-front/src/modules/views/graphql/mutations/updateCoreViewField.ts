@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 
 export const UPDATE_CORE_VIEW_FIELD = gql`
   ${VIEW_FIELD_FRAGMENT}
-  mutation UpdateCoreViewField($id: String!, $input: UpdateViewFieldInput!) {
-    updateCoreViewField(id: $id, input: { ...input, id: $id }) {
+  mutation UpdateCoreViewField($input: UpdateViewFieldInput!) {
+    updateCoreViewField(input: $input) {
       ...ViewFieldFragment
     }
   }
