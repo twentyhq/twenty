@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { Shimmer } from '@/ai/components/ShimmerEffect';
@@ -34,14 +34,14 @@ const StyledReasoningText = styled.div`
   white-space: pre-wrap;
 `;
 
-const StyledToggleButton = styled.button`
+const StyledToggleButton = styled.div`
   align-items: center;
   background: none;
   border: none;
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
@@ -50,6 +50,12 @@ const StyledToggleButton = styled.button`
   &:hover {
     color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const ReasoningSummaryDisplay = ({
@@ -72,7 +78,10 @@ export const ReasoningSummaryDisplay = ({
     <StyledContainer>
       {isThinking && (
         <Shimmer>
-          <StyledThinkingText>Thinking...</StyledThinkingText>
+          <StyledIconContainer>
+            <IconBrain size={theme.icon.size.sm} />
+            <StyledThinkingText>Thinking...</StyledThinkingText>
+          </StyledIconContainer>
         </Shimmer>
       )}
 
@@ -85,7 +94,10 @@ export const ReasoningSummaryDisplay = ({
       {hasContent && !isThinking && (
         <>
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
-            <span>Finished thinking</span>
+            <StyledIconContainer>
+              <IconBrain size={theme.icon.size.sm} />
+              <span>Finished thinking</span>
+            </StyledIconContainer>
             {isExpanded ? (
               <IconChevronUp size={theme.icon.size.sm} />
             ) : (
