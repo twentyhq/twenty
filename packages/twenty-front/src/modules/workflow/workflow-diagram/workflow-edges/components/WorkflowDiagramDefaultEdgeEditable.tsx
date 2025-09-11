@@ -102,7 +102,12 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const handleDeleteBranch = async (event: MouseEvent) => {
     event.stopPropagation();
 
-    await deleteEdge({ source, target });
+    await deleteEdge({
+      source,
+      sourceHandle: sourceHandleId,
+      target,
+      targetHandle: targetHandleId,
+    });
   };
 
   return (

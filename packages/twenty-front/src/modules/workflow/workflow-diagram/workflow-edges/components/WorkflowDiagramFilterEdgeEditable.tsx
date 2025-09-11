@@ -181,7 +181,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const handleDeleteBranchClick = async () => {
     closeDropdown(dropdownId);
 
-    await deleteEdge({ source, target });
+    await deleteEdge({
+      source,
+      sourceHandle: sourceHandleId,
+      target,
+      targetHandle: targetHandleId,
+    });
   };
 
   const { filterCounter } = useFilterCounter({ stepId: data.stepId });

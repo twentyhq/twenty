@@ -68,7 +68,12 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
-    await deleteEdge(edge);
+    await deleteEdge({
+      source: edge.source,
+      target: edge.target,
+      sourceHandle: edge.sourceHandle,
+      targetHandle: edge.targetHandle,
+    });
   };
 
   const onNodeDragStop = async (
