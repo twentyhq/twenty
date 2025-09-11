@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, waitFor, within } from '@storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
@@ -84,6 +85,7 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     SnackBarDecorator,
     WorkspaceDecorator,
     I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
   ],
 };
 

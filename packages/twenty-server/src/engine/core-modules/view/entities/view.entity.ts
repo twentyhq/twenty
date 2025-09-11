@@ -31,7 +31,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'workspaceId',
   'objectMetadataId',
 ])
-export class ViewEntity extends SyncableEntity {
+export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -89,10 +89,10 @@ export class ViewEntity extends SyncableEntity {
     nullable: true,
     default: null,
   })
-  kanbanAggregateOperation?: AggregateOperations | null;
+  kanbanAggregateOperation: AggregateOperations | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  kanbanAggregateOperationFieldMetadataId?: string | null;
+  kanbanAggregateOperationFieldMetadataId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -104,10 +104,10 @@ export class ViewEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })
-  anyFieldFilterValue?: string | null;
+  anyFieldFilterValue: string | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',

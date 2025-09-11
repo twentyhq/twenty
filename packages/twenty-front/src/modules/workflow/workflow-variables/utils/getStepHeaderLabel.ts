@@ -1,11 +1,11 @@
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
-import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
-import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getStepHeaderLabel = (
-  step: StepOutputSchema,
+  step: StepOutputSchemaV2,
   currentPath: string[],
 ) => {
   if (currentPath.length === 0) {
@@ -23,14 +23,14 @@ export const getStepHeaderLabel = (
   }
 
   if (
-    isRecordOutputSchema(previousSubStep) &&
+    isRecordOutputSchemaV2(previousSubStep) &&
     isDefined(previousSubStep.fields[subStepName]?.label)
   ) {
     return previousSubStep.fields[subStepName].label;
   }
 
   if (
-    isBaseOutputSchema(previousSubStep) &&
+    isBaseOutputSchemaV2(previousSubStep) &&
     isDefined(previousSubStep[subStepName]?.label)
   ) {
     return previousSubStep[subStepName].label;

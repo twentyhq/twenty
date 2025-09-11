@@ -7,7 +7,7 @@ import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/
 
 export interface RecordTableBodyEffectsWrapperProps {
   hasRecordGroups: boolean;
-  tableBodyRef: React.RefObject<HTMLTableElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement>;
 }
 
 export const RecordTableBodyEffectsWrapper = ({

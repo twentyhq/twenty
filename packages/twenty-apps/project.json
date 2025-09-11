@@ -1,0 +1,35 @@
+{
+  "name": "twenty-apps",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:apps", "type:applications"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No linting needed for application manifests'"
+      }
+    },
+    "list": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-apps",
+        "command": "find . -name 'twenty-app.json' -exec dirname {} \\; | sed 's|^\\./||' | sort"
+      }
+    },
+    "info": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-apps",
+        "command": "echo 'Available Twenty Applications:' && find . -name 'twenty-app.json' -exec sh -c 'echo \"\\n📦 $(dirname \"$1\" | sed \"s|^\\./||\"): $(jq -r \".label\" \"$1\")\"' _ {} \\;"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-apps",
+        "command": "yarn test"
+      }
+    }
+  }
+}

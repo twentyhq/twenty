@@ -5,7 +5,7 @@ import {
   type RecordFieldNodeValue,
   type RecordOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
-import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const getRecordObjectLabel = (

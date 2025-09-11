@@ -45,7 +45,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.nodes).toEqual(diagram.nodes);
@@ -111,7 +111,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have nodes A and C
@@ -256,7 +256,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have nodes A, C, and D
@@ -348,7 +348,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have node A (filter node B is removed)
@@ -430,7 +430,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should have trigger and C nodes

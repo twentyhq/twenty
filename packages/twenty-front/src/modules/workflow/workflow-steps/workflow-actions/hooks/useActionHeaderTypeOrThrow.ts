@@ -1,9 +1,9 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
-import { useLingui } from '@lingui/react';
+import { useLingui } from '@lingui/react/macro';
 
 export const useActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
-  const { _ } = useLingui();
+  const { i18n } = useLingui();
 
-  return _(getActionHeaderTypeOrThrow(actionType));
+  return i18n._(getActionHeaderTypeOrThrow(actionType));
 };

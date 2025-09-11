@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json",
+  "title": "Twenty App Manifest",
+  "description": "Schema for Twenty application manifest files",
+  "type": "object",
+  "required": ["standardId", "label", "version"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for validation and IDE support"
+    },
+    "standardId": {
+      "type": "string",
+      "description": "Unique identifier for the application (UUID format recommended)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable display name for the application",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what the application does",
+      "maxLength": 1000
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon for the application (emoji or icon name)",
+      "maxLength": 50
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the application",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9-]+)?$"
+    },
+    "agents": {
+      "type": "array",
+      "description": "Optional inline agent definitions (agents are typically discovered from the agents/ folder)",
+      "items": {
+        "type": "object",
+        "description": "Inline agent definition",
+        "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "standardId": "550e8400-e29b-41d4-a716-446655440000",
+      "label": "Customer Support App",
+      "description": "Comprehensive customer support application with AI agents",
+      "icon": "🎧",
+      "version": "1.0.0"
+    }
+  ]
+}

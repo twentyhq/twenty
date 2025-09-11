@@ -21,7 +21,6 @@ const StyledColumnFooterCell = styled.div<{
       width: ${columnWidth}px;
       `}
   text-align: left;
-  transition: 0.3s ease;
   ${({ theme }) => {
     return `
     &:hover {

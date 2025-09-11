@@ -54,6 +54,7 @@ export const handleDuplicateKeyError = (
         `Duplicate ${columnNames} ${duplicatedValues ? `with value ${duplicatedValues}` : ''}. Please set a unique one.`,
         {
           userFriendlyMessage: `This ${columnNames.toLowerCase()} ${duplicatedValues ? `with value ${duplicatedValues}` : ''} is already taken. Please choose a different value.`,
+          isExpected: true,
         },
       );
     }

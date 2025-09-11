@@ -5,5 +5,5 @@ export const isRecordTableScrolledHorizontallyComponentState =
   createComponentState<boolean>({
     key: 'isRecordTableScrolledHorizontallyComponentState',
     componentInstanceContext: RecordTableComponentInstanceContext,
-    defaultValue: true,
+    defaultValue: false,
   });

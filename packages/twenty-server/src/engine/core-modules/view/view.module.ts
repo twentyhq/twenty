@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
+import { ViewCacheModule } from 'src/engine/core-modules/view/cache/services/view-cache.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
 import { ViewFilterController } from 'src/engine/core-modules/view/controllers/view-filter.controller';
@@ -20,14 +21,17 @@ import { ViewFilterResolver } from 'src/engine/core-modules/view/resolvers/view-
 import { ViewGroupResolver } from 'src/engine/core-modules/view/resolvers/view-group.resolver';
 import { ViewSortResolver } from 'src/engine/core-modules/view/resolvers/view-sort.resolver';
 import { ViewResolver } from 'src/engine/core-modules/view/resolvers/view.resolver';
+import { ViewFieldV2Service } from 'src/engine/core-modules/view/services/view-field-v2.service';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
+import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -42,6 +46,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     I18nModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
+    WorkspaceMigrationV2Module,
+    ViewCacheModule,
   ],
   controllers: [
     ViewController,
@@ -64,6 +70,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ViewFilterGroupResolver,
     ViewGroupResolver,
     ViewSortResolver,
+    ViewV2Service,
+    ViewFieldV2Service,
   ],
   exports: [
     ViewService,
@@ -72,6 +80,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ViewFilterGroupService,
     ViewGroupService,
     ViewSortService,
+    ViewV2Service,
+    ViewFieldV2Service,
   ],
 })
 export class CoreViewModule {}

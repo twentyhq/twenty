@@ -20,7 +20,7 @@ export const useMoveRecordField = (recordTableId?: string) => {
   // because otherwise it will just do nothing while moving left and right of non visible record fields
   const moveRecordField = useRecoilCallback(
     ({ snapshot }) =>
-      ({
+      async ({
         direction,
         fieldMetadataItemIdToMove,
       }: {
@@ -73,7 +73,7 @@ export const useMoveRecordField = (recordTableId?: string) => {
             position: currentRecordFieldNewPosition,
           });
 
-          saveViewFields([
+          await saveViewFields([
             mapRecordFieldToViewField({
               ...targetRecordField,
               position: targetRecordFieldNewPosition,
