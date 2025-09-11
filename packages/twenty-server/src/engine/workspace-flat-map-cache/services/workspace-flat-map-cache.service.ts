@@ -40,7 +40,11 @@ export abstract class WorkspaceFlatMapCacheService<
       remoteCacheHash &&
       localCacheHash === remoteCacheHash
     ) {
-      return this.localCacheFlatMaps.get(workspaceId)!;
+      const localCacheFlatMap = this.localCacheFlatMaps.get(workspaceId);
+
+      if (localCacheFlatMap) {
+        return localCacheFlatMap;
+      }
     }
 
     if (remoteCacheHash) {
@@ -113,7 +117,7 @@ export abstract class WorkspaceFlatMapCacheService<
   private generateHash(flatMap: T): string {
     return crypto
       .createHash('sha256')
-      .update(JSON.stringify(flatMap))
+      .update(JSON.stringify(flatMap, Object.keys(flatMap).sort()))
       .digest('hex');
   }
 

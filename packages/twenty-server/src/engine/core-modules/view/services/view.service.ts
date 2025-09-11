@@ -27,10 +27,9 @@ export class ViewService {
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    const flatViewMaps =
-      await this.workspaceFlatViewMapCacheService.getExistingOrRecomputeFlatMaps(
-        workspaceId,
-      );
+    await this.workspaceFlatViewMapCacheService.getExistingOrRecomputeFlatMaps(
+      workspaceId,
+    );
 
     return this.viewRepository.find({
       where: {
