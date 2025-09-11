@@ -1,13 +1,14 @@
 import gql from 'graphql-tag';
-import { UpdateViewFieldInput, } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { VIEW_FIELD_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
+
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 
 export const updateViewFieldOperationFactory = ({
   gqlFields = VIEW_FIELD_GQL_FIELDS,
-  input
+  input,
 }: {
   gqlFields?: string;
-  input: UpdateViewFieldInput
+  input: UpdateViewFieldInput;
 }) => ({
   query: gql`
     mutation UpdateCoreViewField($id: String!, $input: UpdateViewFieldInput!) {
@@ -17,6 +18,6 @@ export const updateViewFieldOperationFactory = ({
     }
   `,
   variables: {
-    input
+    input,
   },
 });

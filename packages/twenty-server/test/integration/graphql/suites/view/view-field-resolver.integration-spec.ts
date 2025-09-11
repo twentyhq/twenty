@@ -21,13 +21,13 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -218,7 +218,7 @@ describe('View Field Resolver', () => {
     });
 
     it('should throw an error when updating non-existent view field', async () => {
-      const operation = updateViewFieldOperationFactory ({
+      const operation = updateViewFieldOperationFactory({
         input: {
           id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
           update: {

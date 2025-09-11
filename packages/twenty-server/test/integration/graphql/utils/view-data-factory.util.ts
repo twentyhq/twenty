@@ -1,4 +1,4 @@
-import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';

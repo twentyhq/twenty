@@ -4,10 +4,10 @@ import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  CreateCoreViewFieldMutationVariables,
-  DeleteCoreViewFieldMutationVariables,
-  DestroyCoreViewFieldMutationVariables,
-  UpdateCoreViewFieldMutationVariables,
+  type CreateCoreViewFieldMutationVariables,
+  type DeleteCoreViewFieldMutationVariables,
+  type DestroyCoreViewFieldMutationVariables,
+  type UpdateCoreViewFieldMutationVariables,
   useCreateCoreViewFieldMutation,
   useDeleteCoreViewFieldMutation,
   useDestroyCoreViewFieldMutation,
