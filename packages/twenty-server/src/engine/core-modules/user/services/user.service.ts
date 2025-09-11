@@ -46,11 +46,21 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return await workspaceMemberRepository.findOne({
+    const workspaceMember = await workspaceMemberRepository.findOne({
       where: {
         userId: user.id,
       },
     });
+
+    // Add null check and return with numberFormat
+    if (!workspaceMember) {
+      return null;
+    }
+
+    return {
+      ...workspaceMember,
+      numberFormat: workspaceMember.numberFormat, // This will include the numberFormat field
+    };
   }
 
   async loadWorkspaceMembers(workspace: Workspace, withDeleted = false) {

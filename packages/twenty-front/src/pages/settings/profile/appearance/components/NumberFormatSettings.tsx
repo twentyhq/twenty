@@ -20,6 +20,10 @@ export const NumberFormatSelect = ({
       value={value}
       options={[
         {
+          label: 'System',
+          value: NumberFormat.SYSTEM,
+        },
+        {
           label: 'Commas and dot (1,234.56)',
           value: NumberFormat.COMMAS_AND_DOT,
         },
@@ -30,10 +34,6 @@ export const NumberFormatSelect = ({
         {
           label: 'Spaces and dot (1 234.56)',
           value: NumberFormat.SPACES_AND_DOT,
-        },
-        {
-          label: 'Magnitude suffixes (1.2k)',
-          value: NumberFormat.MAGNITUDE_SUFFIXES,
         },
       ]}
       onChange={onChange}

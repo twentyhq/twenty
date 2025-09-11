@@ -23,6 +23,7 @@ export const USER_QUERY_FRAGMENT = gql`
     onboardingStatus
     workspaceMember {
       ...WorkspaceMemberQueryFragment
+      numberFormat
     }
     workspaceMembers {
       ...PartialWorkspaceMemberQueryFragment

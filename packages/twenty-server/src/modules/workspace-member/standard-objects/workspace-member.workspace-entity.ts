@@ -51,6 +51,19 @@ export enum WorkspaceMemberTimeFormatEnum {
   HOUR_24 = 'HOUR_24',
 }
 
+export enum WorkspaceMemberNumberFormatEnum {
+  SYSTEM = 'SYSTEM',
+  COMMAS_AND_DOT = 'COMMAS_AND_DOT',
+  SPACES_AND_COMMA = 'SPACES_AND_COMMA',
+  SPACES_AND_DOT = 'SPACES_AND_DOT',
+}
+
+// Register the enum with GraphQL
+registerEnumType(WorkspaceMemberNumberFormatEnum, {
+  name: 'WorkspaceMemberNumberFormatEnum',
+  description: 'Number format for displaying numbers',
+});
+
 registerEnumType(WorkspaceMemberTimeFormatEnum, {
   name: 'WorkspaceMemberTimeFormatEnum',
   description: 'Time time as Military, Standard or system as default',
@@ -376,4 +389,41 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
+    type: FieldMetadataType.SELECT,
+    label: msg`Number format`,
+    description: msg`User's preferred number format`,
+    icon: 'IconNumbers',
+    options: [
+      {
+        value: WorkspaceMemberNumberFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'turquoise',
+      },
+      {
+        value: WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT,
+        label: 'Commas and dot (1,234.56)',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA,
+        label: 'Spaces and comma (1 234,56)',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT,
+        label: 'Spaces and dot (1 234.56)',
+        position: 3,
+        color: 'orange',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberNumberFormatEnum.SYSTEM}'`,
+  })
+  @WorkspaceIsSystem()
+  numberFormat: string;
 }

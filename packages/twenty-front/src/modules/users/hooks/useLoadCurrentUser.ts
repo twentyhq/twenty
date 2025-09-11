@@ -11,9 +11,11 @@ import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
+import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
+import { getNumberFormatFromWorkspaceNumberFormat } from '@/localization/utils/getNumberFormatFromWorkspaceNumberFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useCallback } from 'react';
@@ -108,7 +110,9 @@ export const useLoadCurrentUser = () => {
               user.workspaceMember.timeFormat,
             )
           : TimeFormat[detectTimeFormat()],
-        numberFormat: NumberFormat.COMMAS_AND_DOT,
+        numberFormat: isDefined(user.workspaceMember.numberFormat)
+          ? getNumberFormatFromWorkspaceNumberFormat(user.workspaceMember)
+          : NumberFormat[detectNumberFormat()],
       });
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
