@@ -1,5 +1,5 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
-import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
+import { prastoin } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
@@ -21,13 +21,13 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -113,7 +113,7 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
+      const createOperation = prastoin({
         data: fieldData,
       });
 
@@ -145,7 +145,7 @@ describe('View Field Resolver', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
+      const operation = prastoin({ data: fieldData });
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
@@ -167,7 +167,7 @@ describe('View Field Resolver', () => {
         viewId: testViewId,
       };
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
+      const operation = prastoin({ data: fieldData });
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
@@ -189,7 +189,7 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
+      const createOperation = prastoin({
         data: fieldData,
       });
       const createResponse = await makeGraphqlAPIRequest(createOperation);
@@ -244,7 +244,7 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
+      const createOperation = prastoin({
         data: fieldData,
       });
       const createResponse = await makeGraphqlAPIRequest(createOperation);
@@ -283,7 +283,7 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
+      const createOperation = prastoin({
         data: fieldData,
       });
       const createResponse = await makeGraphqlAPIRequest(createOperation);
