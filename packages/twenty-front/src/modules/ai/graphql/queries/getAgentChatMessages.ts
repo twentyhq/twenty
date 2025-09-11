@@ -8,7 +8,6 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       role
       content
       createdAt
-      reasoningSummary
       streamData
       files {
         id

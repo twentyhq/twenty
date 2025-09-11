@@ -72,7 +72,6 @@ export type AgentChatMessage = {
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
-  reasoningSummary?: Maybe<Scalars['String']>;
   role: Scalars['String'];
   streamData?: Maybe<Scalars['String']>;
   threadId: Scalars['UUID'];

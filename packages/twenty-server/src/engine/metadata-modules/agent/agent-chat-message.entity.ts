@@ -40,9 +40,6 @@ export class AgentChatMessageEntity {
   content: string;
 
   @Column({ type: 'text', nullable: true })
-  reasoningSummary: string | null;
-
-  @Column({ type: 'text', nullable: true })
   streamData: string | null;
 
   @OneToMany(() => FileEntity, (file) => file.message)
