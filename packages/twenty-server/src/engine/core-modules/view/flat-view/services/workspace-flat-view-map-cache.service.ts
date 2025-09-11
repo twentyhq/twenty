@@ -24,7 +24,11 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
     super(cacheStorageService);
   }
 
-  protected async computeFlatMap(workspaceId: string): Promise<FlatViewMaps> {
+  protected async computeFlatMap({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<FlatViewMaps> {
     const views = await this.viewRepository.find({
       where: {
         workspaceId,

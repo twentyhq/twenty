@@ -3,6 +3,8 @@ import { Reflector } from '@nestjs/core';
 
 import crypto from 'crypto';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -29,15 +31,23 @@ export abstract class WorkspaceFlatMapCacheService<
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  protected abstract computeFlatMap(workspaceId: string): Promise<T>;
+  protected abstract computeFlatMap({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<T>;
 
-  async getExistingOrRecomputeFlatMaps(workspaceId: string): Promise<T> {
+  async getExistingOrRecomputeFlatMaps({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<T> {
     const localCacheHash = this.localCacheHashes.get(workspaceId);
-    const remoteCacheHash = await this.getHashFromRemoteCache(workspaceId);
+    const remoteCacheHash = await this.getHashFromRemoteCache({ workspaceId });
 
     if (
-      localCacheHash &&
-      remoteCacheHash &&
+      isDefined(localCacheHash) &&
+      isDefined(remoteCacheHash) &&
       localCacheHash === remoteCacheHash
     ) {
       const localCacheFlatMap = this.localCacheFlatMaps.get(workspaceId);
@@ -48,8 +58,9 @@ export abstract class WorkspaceFlatMapCacheService<
     }
 
     if (remoteCacheHash) {
-      const remoteCacheFlatMap =
-        await this.getFlatMapFromRemoteCache(workspaceId);
+      const remoteCacheFlatMap = await this.getFlatMapFromRemoteCache({
+        workspaceId,
+      });
 
       if (remoteCacheFlatMap) {
         this.localCacheFlatMaps.set(workspaceId, remoteCacheFlatMap);
@@ -59,17 +70,23 @@ export abstract class WorkspaceFlatMapCacheService<
       }
     }
 
-    const freshFlatMap = await this.recomputeAndStoreInCache(workspaceId);
+    const freshFlatMap = await this.recomputeAndStoreInCache({
+      workspaceId,
+    });
 
     return freshFlatMap;
   }
 
-  async recomputeAndStoreInCache(workspaceId: string): Promise<T> {
-    const freshFlatMap = await this.computeFlatMap(workspaceId);
-    const newHash = this.generateHash(freshFlatMap);
+  async recomputeAndStoreInCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<T> {
+    const freshFlatMap = await this.computeFlatMap({ workspaceId });
+    const newHash = this.generateHash({ flatMap: freshFlatMap });
 
-    await this.setFlatMapInRemoteCache(workspaceId, freshFlatMap);
-    await this.setHashInRemoteCache(workspaceId, newHash);
+    await this.setFlatMapInRemoteCache({ workspaceId, flatMap: freshFlatMap });
+    await this.setHashInRemoteCache({ workspaceId, hash: newHash });
 
     this.localCacheFlatMaps.set(workspaceId, freshFlatMap);
     this.localCacheHashes.set(workspaceId, newHash);
@@ -77,8 +94,12 @@ export abstract class WorkspaceFlatMapCacheService<
     return freshFlatMap;
   }
 
-  async invalidateCache(workspaceId: string): Promise<void> {
-    const { flatMapKey, hashKey } = this.buildRemoteCacheKeys(workspaceId);
+  async invalidateCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatMapKey, hashKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     await this.cacheStorageService.del(flatMapKey);
     await this.cacheStorageService.del(hashKey);
@@ -86,7 +107,7 @@ export abstract class WorkspaceFlatMapCacheService<
     this.localCacheFlatMaps.delete(workspaceId);
     this.localCacheHashes.delete(workspaceId);
 
-    await this.recomputeAndStoreInCache(workspaceId);
+    await this.recomputeAndStoreInCache({ workspaceId });
   }
 
   private getFlatMapCacheKey(): string {
@@ -105,7 +126,7 @@ export abstract class WorkspaceFlatMapCacheService<
     return cacheKey;
   }
 
-  private buildRemoteCacheKeys(workspaceId: string) {
+  private buildRemoteCacheKeys({ workspaceId }: { workspaceId: string }) {
     const cacheKey = this.getFlatMapCacheKey();
 
     return {
@@ -114,43 +135,53 @@ export abstract class WorkspaceFlatMapCacheService<
     };
   }
 
-  private generateHash(flatMap: T): string {
+  private generateHash({ flatMap }: { flatMap: T }): string {
     return crypto
       .createHash('sha256')
-      .update(JSON.stringify(flatMap, Object.keys(flatMap).sort()))
+      .update(JSON.stringify(flatMap))
       .digest('hex');
   }
 
-  private async getHashFromRemoteCache(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const { hashKey } = this.buildRemoteCacheKeys(workspaceId);
+  private async getHashFromRemoteCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const { hashKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     return this.cacheStorageService.get<string>(hashKey);
   }
 
-  private async setHashInRemoteCache(
-    workspaceId: string,
-    hash: string,
-  ): Promise<void> {
-    const { hashKey } = this.buildRemoteCacheKeys(workspaceId);
+  private async setHashInRemoteCache({
+    workspaceId,
+    hash,
+  }: {
+    workspaceId: string;
+    hash: string;
+  }): Promise<void> {
+    const { hashKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     await this.cacheStorageService.set(hashKey, hash);
   }
 
-  private async getFlatMapFromRemoteCache(
-    workspaceId: string,
-  ): Promise<T | undefined> {
-    const { flatMapKey } = this.buildRemoteCacheKeys(workspaceId);
+  private async getFlatMapFromRemoteCache({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<T | undefined> {
+    const { flatMapKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     return this.cacheStorageService.get<T>(flatMapKey);
   }
 
-  private async setFlatMapInRemoteCache(
-    workspaceId: string,
-    flatMap: T,
-  ): Promise<void> {
-    const { flatMapKey } = this.buildRemoteCacheKeys(workspaceId);
+  private async setFlatMapInRemoteCache({
+    workspaceId,
+    flatMap,
+  }: {
+    workspaceId: string;
+    flatMap: T;
+  }): Promise<void> {
+    const { flatMapKey } = this.buildRemoteCacheKeys({ workspaceId });
 
     await this.cacheStorageService.set(flatMapKey, flatMap);
   }

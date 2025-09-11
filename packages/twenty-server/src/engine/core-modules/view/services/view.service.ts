@@ -27,9 +27,9 @@ export class ViewService {
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    await this.workspaceFlatViewMapCacheService.getExistingOrRecomputeFlatMaps(
+    await this.workspaceFlatViewMapCacheService.getExistingOrRecomputeFlatMaps({
       workspaceId,
-    );
+    });
 
     return this.viewRepository.find({
       where: {
@@ -126,9 +126,9 @@ export class ViewService {
 
     const createdView = await this.viewRepository.save(view);
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache(
-      viewData.workspaceId,
-    );
+    await this.workspaceFlatViewMapCacheService.invalidateCache({
+      workspaceId: viewData.workspaceId,
+    });
 
     return createdView;
   }
@@ -155,7 +155,9 @@ export class ViewService {
       ...updateData,
     });
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache(workspaceId);
+    await this.workspaceFlatViewMapCacheService.invalidateCache({
+      workspaceId,
+    });
 
     return { ...existingView, ...updatedView };
   }
@@ -175,7 +177,9 @@ export class ViewService {
 
     await this.viewRepository.softDelete(id);
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache(workspaceId);
+    await this.workspaceFlatViewMapCacheService.invalidateCache({
+      workspaceId,
+    });
 
     return view;
   }
@@ -195,7 +199,9 @@ export class ViewService {
 
     await this.viewRepository.delete(id);
 
-    await this.workspaceFlatViewMapCacheService.invalidateCache(workspaceId);
+    await this.workspaceFlatViewMapCacheService.invalidateCache({
+      workspaceId,
+    });
 
     return true;
   }
