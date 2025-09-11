@@ -5,6 +5,6 @@ describe('computeObjectMetadataInputTypeKey', () => {
   it('should compute the correct key for user object with Create kind', () => {
     expect(
       computeObjectMetadataInputTypeKey('user', InputTypeDefinitionKind.Create),
-    ).toBe('UserCreate');
+    ).toBe('UserCreateInput');
   });
 });
