@@ -45,6 +45,9 @@ export class AgentStreamingService {
     recordIdsByObjectMetadataNameSingular,
     res,
   }: StreamAgentChatOptions) {
+    let rawStreamString = '';
+    let aiResponse = '';
+
     try {
       const thread = await this.threadRepository.findOne({
         where: {
@@ -74,9 +77,6 @@ export class AgentStreamingService {
           recordIdsByObjectMetadataNameSingular,
         });
 
-      let aiResponse = '';
-      let rawStreamString = '';
-
       for await (const chunk of fullStream) {
         rawStreamString += JSON.stringify(chunk) + '\n';
 
@@ -98,22 +98,6 @@ export class AgentStreamingService {
             : { type: chunk.type },
         );
       }
-
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-        fileIds,
-      });
-
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.ASSISTANT,
-        content: aiResponse,
-        streamData: rawStreamString.trim() || null,
-      });
-
-      res.end();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
@@ -126,13 +110,31 @@ export class AgentStreamingService {
         this.setupStreamingHeaders(res);
       }
 
-      this.sendStreamEvent(res, {
+      const errorChunk = {
         type: 'error',
         message: errorMessage,
-      });
+      };
 
-      res.end();
+      rawStreamString += JSON.stringify(errorChunk) + '\n';
+
+      this.sendStreamEvent(res, errorChunk);
     }
+
+    await this.agentChatService.addMessage({
+      threadId,
+      role: AgentChatMessageRole.USER,
+      content: userMessage,
+      fileIds,
+    });
+
+    await this.agentChatService.addMessage({
+      threadId,
+      role: AgentChatMessageRole.ASSISTANT,
+      content: aiResponse,
+      streamData: rawStreamString.trim() || null,
+    });
+
+    res.end();
   }
 
   private sendStreamEvent(res: Response, event: object): void {
