@@ -155,7 +155,6 @@ export const ObjectFilterDropdownOptionSelect = ({
   
   const objectRecordsIds = optionsInDropdown.map((option) => option.id);
 
-
   return (
     <SelectableList
       selectableListInstanceId={componentInstanceId}
@@ -164,7 +163,10 @@ export const ObjectFilterDropdownOptionSelect = ({
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (
-          <ObjectFilterDropdownCreateNewOption name={objectFilterDropdownSearchInput}/>
+          <ObjectFilterDropdownCreateNewOption 
+            name={objectFilterDropdownSearchInput}
+            options={fieldMetadataItemUsedInDropdown?.options || []}
+          />
         ) : (
           optionsInDropdown?.map((option) => (
             <MenuItemMultiSelect
