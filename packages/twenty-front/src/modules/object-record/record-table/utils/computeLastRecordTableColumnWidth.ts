@@ -26,7 +26,7 @@ export const computeLastRecordTableColumnWidth = ({
     tableWidth - fixedColumnsWidth - totalColumnsWidth,
   );
 
-  const lastColumnWidth = remainingWidthToFill > 0 ? remainingWidthToFill : 0;
+  const lastColumnWidth = remainingWidthToFill;
 
   return {
     lastColumnWidth,

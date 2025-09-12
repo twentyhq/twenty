@@ -54,7 +54,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
       fontColor={fontColor}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      // width={width}
       zIndex={zIndex}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
