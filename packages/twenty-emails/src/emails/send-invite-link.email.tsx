@@ -77,7 +77,7 @@ export const SendInviteLinkEmail = ({
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Accept invite')} />
       </HighlightedContainer>
-      <WhatIsTwenty />
+      <WhatIsTwenty i18n={i18n} />
     </BaseEmail>
   );
 };
