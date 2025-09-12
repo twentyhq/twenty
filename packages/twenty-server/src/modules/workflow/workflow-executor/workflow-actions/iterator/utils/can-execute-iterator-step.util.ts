@@ -1,4 +1,3 @@
-import { isString } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
@@ -29,19 +28,15 @@ export const canExecuteIteratorStep = ({
       (step) => stepInfos[step.id]?.status === StepStatus.SUCCESS,
     );
   } else {
-    // On the first iteration, the loop steps will not have been started yet.
-    // TODO: remove parsing once the UI is implemented
-    const parsedInitialLoopStepIds = isString(
-      step.settings.input.initialLoopStepIds,
-    )
-      ? JSON.parse(step.settings.input.initialLoopStepIds)
-      : step.settings.input.initialLoopStepIds;
+    const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
-    const stepIdsInLoop = getAllStepIdsInLoop({
-      iteratorStepId: step.id,
-      initialLoopStepIds: parsedInitialLoopStepIds,
-      steps,
-    });
+    const stepIdsInLoop = isDefined(initialLoopStepIds)
+      ? getAllStepIdsInLoop({
+          iteratorStepId: step.id,
+          initialLoopStepIds,
+          steps,
+        })
+      : [];
 
     const parentSteps = stepsTargetingIterator.filter(
       (step) => !stepIdsInLoop.includes(step.id),

@@ -31,6 +31,7 @@ import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-e
 import {
   type WorkflowAction,
   WorkflowActionType,
+  WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -72,13 +73,20 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
-      input;
+    const {
+      workflowVersionId,
+      stepType,
+      parentStepId,
+      nextStepId,
+      position,
+      parentStepOptions,
+    } = input;
 
-    const newStep = await this.getStepDefaultDefinition({
+    const newStep = await this.runStepCreationSideEffectsAndBuildStep({
       type: stepType,
       workspaceId,
       position,
+      workflowVersionId,
     });
 
     const enrichedNewStep = await this.enrichOutputSchema({
@@ -118,6 +126,7 @@ export class WorkflowVersionStepWorkspaceService {
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
+      parentStepOptions,
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {
@@ -513,14 +522,16 @@ export class WorkflowVersionStepWorkspaceService {
     }
   }
 
-  private async getStepDefaultDefinition({
+  private async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
     position,
+    workflowVersionId,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     position?: WorkflowStepPositionInput;
+    workflowVersionId: string;
   }): Promise<WorkflowAction> {
     const newStepId = v4();
 
@@ -722,6 +733,12 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.ITERATOR: {
+        const emptyNodeStep = await this.createEmptyNodeForIteratorStep({
+          iteratorStepId: baseStep.id,
+          workflowVersionId,
+          workspaceId,
+        });
+
         return {
           ...baseStep,
           name: 'Iterator',
@@ -730,7 +747,7 @@ export class WorkflowVersionStepWorkspaceService {
             ...BASE_STEP_DEFINITION,
             input: {
               items: [],
-              initialLoopStepIds: [],
+              initialLoopStepIds: [emptyNodeStep.id],
             },
           },
         };
@@ -860,5 +877,55 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
     }
+  }
+
+  private async createEmptyNodeForIteratorStep({
+    iteratorStepId,
+    workflowVersionId,
+    workspaceId,
+  }: {
+    iteratorStepId: string;
+    workflowVersionId: string;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const existingSteps = workflowVersion.steps ?? [];
+
+    const emptyNodeStep: WorkflowEmptyAction = {
+      id: v4(),
+      name: 'Empty Node',
+      type: WorkflowActionType.EMPTY,
+      valid: true,
+      nextStepIds: [iteratorStepId],
+      settings: {
+        ...BASE_STEP_DEFINITION,
+        input: {},
+      },
+    };
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: [...existingSteps, emptyNodeStep],
+    });
+
+    return emptyNodeStep;
   }
 }

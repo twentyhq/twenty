@@ -849,6 +849,8 @@ export type CreateWorkflowVersionStepInput = {
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
+  /** Step creation options */
+  parentStepOptions?: InputMaybe<Scalars['JSON']>;
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
