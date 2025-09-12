@@ -36,8 +36,8 @@ export class FlatViewValidatorService {
 
     return {
       type: 'update_view',
-      viewLevelErrors: errors,
-      failedViewValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: updatedFlatView.id,
       },
     };
@@ -61,8 +61,8 @@ export class FlatViewValidatorService {
 
     return {
       type: 'delete_view',
-      viewLevelErrors: errors,
-      failedViewValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: viewIdToDelete,
       },
     };
@@ -96,8 +96,8 @@ export class FlatViewValidatorService {
 
     return {
       type: 'create_view',
-      viewLevelErrors: errors,
-      failedViewValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: flatViewToValidate.id,
       },
     };

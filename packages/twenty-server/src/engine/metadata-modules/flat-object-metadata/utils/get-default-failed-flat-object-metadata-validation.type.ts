@@ -1,11 +1,13 @@
-import { type FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 export const getDefaultFailedFlatObjectMetadataValidation = (
-  overrides: Partial<Omit<FailedFlatObjectMetadataValidation, 'type'>> &
-    Pick<FailedFlatObjectMetadataValidation, 'type'>,
-): FailedFlatObjectMetadataValidation => ({
-  fieldLevelErrors: [],
-  objectLevelErrors: [],
-  objectMinimalInformation: {},
+  overrides: Partial<
+    Omit<FailedFlatEntityValidation<FlatObjectMetadata>, 'type'>
+  > &
+    Pick<FailedFlatEntityValidation<FlatObjectMetadata>, 'type'>,
+): FailedFlatEntityValidation<FlatObjectMetadata> => ({
+  errors: [],
+  flatEntityMinimalInformation: {},
   ...overrides,
 });
