@@ -1,12 +1,37 @@
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { type PageLayoutWidgetWithData } from '../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
-export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
+export const usePageLayoutHandleLayoutChange = (pageLayoutId: string) => {
+  const pageLayoutInstanceId =
+    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    tabListInstanceId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutInstanceId,
+  );
+
   const handleLayoutChange = useRecoilCallback(
     ({ snapshot, set }) =>
       (_: Layout[], allLayouts: Layouts) => {
@@ -65,7 +90,7 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
           }));
         }
       },
-    [activeTabId],
+    [activeTabId, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
   );
 
   return { handleLayoutChange };

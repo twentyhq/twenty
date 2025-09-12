@@ -1,7 +1,12 @@
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
-import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
+import { pageLayoutSelectedCellsComponentState } from '../states/pageLayoutSelectedCellsComponentState';
 
 export const useChangePageLayoutDragSelection = () => {
+  const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
+    pageLayoutSelectedCellsComponentState,
+  );
+
   const changePageLayoutDragSelection = useRecoilCallback(
     ({ set }) =>
       (cellId: string, selected: boolean) => {
@@ -15,7 +20,7 @@ export const useChangePageLayoutDragSelection = () => {
           return newSet;
         });
       },
-    [],
+    [pageLayoutSelectedCellsState],
   );
 
   return { changePageLayoutDragSelection };

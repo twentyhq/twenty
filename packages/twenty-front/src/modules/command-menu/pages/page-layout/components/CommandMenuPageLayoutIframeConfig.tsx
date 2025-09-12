@@ -2,8 +2,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
-import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -33,11 +33,16 @@ const StyledButtonContainer = styled.div`
 
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget();
+  const { createPageLayoutIframeWidget } =
+    useCreatePageLayoutIframeWidget(pageLayoutId);
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
-  const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
-    useRecoilState(pageLayoutEditingWidgetIdState);
-  const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+  const [
+    pageLayoutEditingWidgetIdComponent,
+    setPageLayoutEditingWidgetIdComponent,
+  ] = useRecoilState(pageLayoutEditingWidgetIdComponentState);
+  const pageLayoutDraftComponent = useRecoilValue(
+    pageLayoutDraftComponentState,
+  );
 
   const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
   const editingWidget = allWidgets.find(

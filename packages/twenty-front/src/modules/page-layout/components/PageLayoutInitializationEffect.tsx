@@ -1,17 +1,19 @@
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { PageLayoutType } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
-  pageLayoutCurrentLayoutsState,
+  pageLayoutCurrentLayoutsComponentState,
   type TabLayouts,
-} from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
-import { savedPageLayoutsState } from '../states/savedPageLayoutsState';
+} from '../states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '../states/pageLayoutPersistedComponentState';
+import { savedPageLayoutsComponentState } from '../states/savedPageLayoutsComponentState';
 import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 type PageLayoutInitializationEffectProps = {
@@ -24,20 +26,30 @@ export const PageLayoutInitializationEffect = ({
   pageLayout,
 }: PageLayoutInitializationEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const savedPageLayouts = useRecoilValue(savedPageLayoutsState);
+  const savedPageLayouts = useRecoilComponentValue(
+    savedPageLayoutsComponentState,
+  );
+
+  const pageLayoutPersistedComponentCallbackState =
+    useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
+  const pageLayoutDraftComponentCallbackState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+  );
+  const pageLayoutCurrentLayoutsComponentCallbackState =
+    useRecoilComponentCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const initializePageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
       (layout: PageLayoutWithData | undefined) => {
         const currentPersisted = getSnapshotValue(
           snapshot,
-          pageLayoutPersistedState,
+          pageLayoutPersistedComponentCallbackState,
         );
 
         if (isDefined(layout)) {
           if (!isDeeplyEqual(layout, currentPersisted)) {
-            set(pageLayoutPersistedState, layout);
-            set(pageLayoutDraftState, {
+            set(pageLayoutPersistedComponentCallbackState, layout);
+            set(pageLayoutDraftComponentCallbackState, {
               name: layout.name,
               type: layout.type,
               objectMetadataId: layout.objectMetadataId,
@@ -59,9 +71,9 @@ export const PageLayoutInitializationEffect = ({
                   mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
                 };
               });
-              set(pageLayoutCurrentLayoutsState, tabLayouts);
+              set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
             } else {
-              set(pageLayoutCurrentLayoutsState, {});
+              set(pageLayoutCurrentLayoutsComponentCallbackState, {});
             }
           }
         } else {
@@ -76,19 +88,23 @@ export const PageLayoutInitializationEffect = ({
             deletedAt: null,
           };
 
-          set(pageLayoutDraftState, {
+          set(pageLayoutDraftComponentCallbackState, {
             name: '',
             type: PageLayoutType.DASHBOARD,
             objectMetadataId: null,
             tabs: [defaultTab],
           });
-          set(pageLayoutPersistedState, undefined);
-          set(pageLayoutCurrentLayoutsState, {
+          set(pageLayoutPersistedComponentCallbackState, undefined);
+          set(pageLayoutCurrentLayoutsComponentCallbackState, {
             [defaultTab.id]: { desktop: [], mobile: [] },
           });
         }
       },
-    [],
+    [
+      pageLayoutCurrentLayoutsComponentCallbackState,
+      pageLayoutDraftComponentCallbackState,
+      pageLayoutPersistedComponentCallbackState,
+    ],
   );
 
   useEffect(() => {

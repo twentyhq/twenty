@@ -1,8 +1,18 @@
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpdatePageLayoutWidget = () => {
+export const useUpdatePageLayoutWidget = (pageLayoutId: string) => {
+  const pageLayoutInstanceId =
+    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutInstanceId,
+  );
+
   const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
       (widgetId: string, updates: Partial<PageLayoutWidgetWithData>) => {
@@ -16,7 +26,7 @@ export const useUpdatePageLayoutWidget = () => {
           })),
         }));
       },
-    [],
+    [pageLayoutDraftState],
   );
 
   return { updatePageLayoutWidget };

@@ -2,7 +2,8 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
-import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayoutCurrentBreakpointState';
+import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
   Responsive,
@@ -10,7 +11,6 @@ import {
   type Layouts,
   type ResponsiveProps,
 } from 'react-grid-layout';
-import { useSetRecoilState } from 'recoil';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -53,8 +53,8 @@ export const PageLayoutGridLayout = ({
   layouts,
   children,
 }: PageLayoutGridLayoutProps) => {
-  const setPageLayoutCurrentBreakpoint = useSetRecoilState(
-    pageLayoutCurrentBreakpointState,
+  const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
+    pageLayoutCurrentBreakpointComponentState,
   );
 
   return (

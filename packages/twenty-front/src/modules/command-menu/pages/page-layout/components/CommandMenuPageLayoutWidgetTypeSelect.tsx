@@ -1,7 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
@@ -52,7 +52,7 @@ const widgetTypeOptions = [
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const setPageLayoutDraggedArea = useSetRecoilState(
-    pageLayoutDraggedAreaState,
+    pageLayoutDraggedAreaComponentState,
   );
 
   const handleSelectWidget = (widgetType: WidgetType) => {

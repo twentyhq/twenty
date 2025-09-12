@@ -1,7 +1,8 @@
 import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 
-import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -11,10 +12,11 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { useMemo } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { useRecoilValue } from 'recoil';
 import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 const StyledTabList = styled(TabList)`
@@ -26,11 +28,15 @@ type PageLayoutRendererProps = {
 };
 
 export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
-  const pageLayoutCurrentLayouts = useRecoilValue(
-    pageLayoutCurrentLayoutsState,
+  const pageLayoutCurrentLayouts = useRecoilComponentValue(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayout.id,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    pageLayout.id,
+  );
 
   const activeTabWidgets = pageLayout.tabs.find(
     (tab) => tab.id === activeTabId,
@@ -42,25 +48,33 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   }, [activeTabId, pageLayoutCurrentLayouts]);
 
   return (
-    <TabListComponentInstanceContext.Provider
-      value={{ instanceId: pageLayout.id }}
+    <PageLayoutComponentInstanceContext.Provider
+      value={{
+        instanceId: getPageLayoutIdInstanceIdFromPageLayoutId(pageLayout.id),
+      }}
     >
-      <PageLayoutInitializationEffect
-        isEditMode={false}
-        pageLayout={pageLayout}
-      />
-      <StyledTabList
-        tabs={pageLayout.tabs}
-        behaveAsLinks={false}
-        componentInstanceId={pageLayout.id}
-      />
-      <PageLayoutGridLayout layouts={layouts}>
-        {activeTabWidgets?.map((widget) => (
-          <div key={widget.id} data-select-disable="true">
-            <WidgetRenderer widget={widget as Widget} />
-          </div>
-        ))}
-      </PageLayoutGridLayout>
-    </TabListComponentInstanceContext.Provider>
+      <TabListComponentInstanceContext.Provider
+        value={{
+          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+        }}
+      >
+        <PageLayoutInitializationEffect
+          isEditMode={false}
+          pageLayout={pageLayout}
+        />
+        <StyledTabList
+          tabs={pageLayout.tabs}
+          behaveAsLinks={false}
+          componentInstanceId={pageLayout.id}
+        />
+        <PageLayoutGridLayout layouts={layouts}>
+          {activeTabWidgets?.map((widget) => (
+            <div key={widget.id} data-select-disable="true">
+              <WidgetRenderer widget={widget as Widget} />
+            </div>
+          ))}
+        </PageLayoutGridLayout>
+      </TabListComponentInstanceContext.Provider>
+    </PageLayoutComponentInstanceContext.Provider>
   );
 };

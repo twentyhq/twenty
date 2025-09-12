@@ -1,11 +1,26 @@
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { type PageLayoutTabWithData } from '../types/pageLayoutTypes';
 import { createEmptyTabLayout } from '../utils/createEmptyTabLayout';
 
-export const useCreatePageLayoutTab = () => {
+export const useCreatePageLayoutTab = (pageLayoutId: string) => {
+  const pageLayoutInstanceId =
+    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutInstanceId,
+  );
+
   const createPageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
       (title?: string): string => {
@@ -39,7 +54,7 @@ export const useCreatePageLayoutTab = () => {
 
         return newTabId;
       },
-    [],
+    [pageLayoutCurrentLayoutsState, pageLayoutDraftState],
   );
 
   return { createPageLayoutTab };

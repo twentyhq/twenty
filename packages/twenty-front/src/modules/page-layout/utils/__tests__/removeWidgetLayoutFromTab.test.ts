@@ -1,4 +1,4 @@
-import { type TabLayouts } from '../../states/pageLayoutCurrentLayoutsState';
+import { type TabLayouts } from '../../states/pageLayoutCurrentLayoutsComponentState';
 import { removeWidgetLayoutFromTab } from '../removeWidgetLayoutFromTab';
 
 describe('removeWidgetLayoutFromTab', () => {

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { pageLayoutCurrentLayoutsState } from '../../states/pageLayoutCurrentLayoutsState';
+import { pageLayoutCurrentLayoutsComponentState } from '../../states/pageLayoutCurrentLayoutsComponentState';
 import { usePageLayoutHandleLayoutChange } from '../usePageLayoutHandleLayoutChange';
 
 describe('usePageLayoutHandleLayoutChange', () => {
@@ -8,7 +8,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange('tab-1'),
-        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -38,7 +38,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result, rerender } = renderHook(
       ({ tabId }) => ({
         handler: usePageLayoutHandleLayoutChange(tabId),
-        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -74,7 +74,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(null),
-        layouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+        layouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
       }),
       {
         wrapper: RecoilRoot,

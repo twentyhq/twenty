@@ -1,5 +1,5 @@
-import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useCreatePageLayoutTab } from '../useCreatePageLayoutTab';
@@ -19,8 +19,8 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(),
-        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsState),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
+        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
+        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -51,7 +51,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
+        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -75,7 +75,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
+        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -105,7 +105,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(),
-        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsState),
+        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
       }),
       {
         wrapper: RecoilRoot,

@@ -1,8 +1,7 @@
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
-import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createUpdatedTabLayouts } from '@/page-layout/utils/createUpdatedTabLayouts';
@@ -12,16 +11,39 @@ import {
   getWidgetTitle,
 } from '@/page-layout/utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type WidgetType } from '~/generated/graphql';
 
-export const useCreatePageLayoutWidget = () => {
+export const useCreatePageLayoutWidget = (pageLayoutId: string) => {
+  const pageLayoutInstanceId =
+    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
+
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
-    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+    tabListInstanceId,
+  );
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+    pageLayoutDraggedAreaComponentState,
+    pageLayoutInstanceId,
   );
 
   const createPageLayoutWidget = useRecoilCallback(
@@ -100,7 +122,12 @@ export const useCreatePageLayoutWidget = () => {
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [activeTabId],
+    [
+      activeTabId,
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      pageLayoutDraggedAreaState,
+    ],
   );
 
   return { createPageLayoutWidget };

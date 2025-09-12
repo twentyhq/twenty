@@ -1,7 +1,7 @@
 import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -25,11 +25,11 @@ describe('useCreatePageLayoutWidget', () => {
             instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
           }),
         );
-        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftComponentState);
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsState,
+          pageLayoutCurrentLayoutsComponentState,
         );
         const createWidget = useCreatePageLayoutWidget();
         return {
@@ -86,16 +86,16 @@ describe('useCreatePageLayoutWidget', () => {
   it('should handle different graph types', () => {
     const { result } = renderHook(
       () => {
-        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
+        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftComponentState);
         const setActiveTabId = useSetRecoilState(
           activeTabIdComponentState.atomFamily({
             instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
           }),
         );
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsState,
+          pageLayoutCurrentLayoutsComponentState,
         );
         const createWidget = useCreatePageLayoutWidget();
         return {
@@ -173,10 +173,10 @@ describe('useCreatePageLayoutWidget', () => {
   it('should not create widget when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsState,
+          pageLayoutCurrentLayoutsComponentState,
         );
         const createWidget = useCreatePageLayoutWidget();
         return { allWidgets, pageLayoutCurrentLayouts, createWidget };

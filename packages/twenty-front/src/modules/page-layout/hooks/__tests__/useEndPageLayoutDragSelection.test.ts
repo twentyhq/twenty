@@ -4,8 +4,8 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { IconAppWindow } from 'twenty-ui/display';
-import { pageLayoutDraggedAreaState } from '../../states/pageLayoutDraggedAreaState';
-import { pageLayoutSelectedCellsState } from '../../states/pageLayoutSelectedCellsState';
+import { pageLayoutDraggedAreaComponentState } from '../../states/pageLayoutDraggedAreaComponentState';
+import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../../utils/calculateGridBoundsFromSelectedCells';
 import { useEndPageLayoutDragSelection } from '../useEndPageLayoutDragSelection';
 
@@ -31,18 +31,18 @@ describe('useEndPageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
+        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
               set(
-                pageLayoutSelectedCellsState,
+                pageLayoutSelectedCellsComponentState,
                 new Set(['0-0', '0-1', '1-0', '1-1']),
               );
-              set(pageLayoutDraggedAreaState, null);
+              set(pageLayoutDraggedAreaComponentState, null);
             },
             children,
           }),
@@ -80,15 +80,15 @@ describe('useEndPageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
+        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set());
-              set(pageLayoutDraggedAreaState, null);
+              set(pageLayoutSelectedCellsComponentState, new Set());
+              set(pageLayoutDraggedAreaComponentState, null);
             },
             children,
           }),
@@ -111,15 +111,15 @@ describe('useEndPageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
+        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['invalid-cell']));
-              set(pageLayoutDraggedAreaState, null);
+              set(pageLayoutSelectedCellsComponentState, new Set(['invalid-cell']));
+              set(pageLayoutDraggedAreaComponentState, null);
             },
             children,
           }),
@@ -155,13 +155,13 @@ describe('useEndPageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['0-0']));
+              set(pageLayoutSelectedCellsComponentState, new Set(['0-0']));
             },
             children,
           }),
@@ -184,13 +184,13 @@ describe('useEndPageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['0-0']));
+              set(pageLayoutSelectedCellsComponentState, new Set(['0-0']));
             },
             children,
           }),

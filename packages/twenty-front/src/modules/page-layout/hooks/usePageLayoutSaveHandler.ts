@@ -1,21 +1,41 @@
-import { savedPageLayoutsState } from '@/page-layout/states/savedPageLayoutsState';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/pageLayoutEditModeComponentState';
+import { savedPageLayoutsComponentState } from '@/page-layout/states/savedPageLayoutsComponentState';
 import {
   type PageLayoutWidgetWithData,
   type PageLayoutWithData,
 } from '@/page-layout/types/pageLayoutTypes';
-import { useParams } from 'react-router-dom';
+import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { id } from 'date-fns/locale';
 import { useRecoilCallback } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '../states/pageLayoutPersistedComponentState';
 
-export const usePageLayoutSaveHandler = () => {
-  const navigateSettings = useNavigateSettings();
-  const { id } = useParams<{ id: string }>();
-  const isEditMode = id && id !== 'new';
+export const usePageLayoutSaveHandler = (pageLayoutId: string) => {
+  const pageLayoutInstanceId =
+    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const pageLayoutPersistedState = useRecoilComponentCallbackState(
+    pageLayoutPersistedComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const savedPageLayoutsState = useRecoilComponentCallbackState(
+    savedPageLayoutsComponentState,
+    pageLayoutInstanceId,
+  );
+
+  const isPageLayoutInEditModeState = useRecoilComponentCallbackState(
+    isPageLayoutInEditModeComponentState,
+    pageLayoutInstanceId,
+  );
 
   const savePageLayout = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -27,7 +47,11 @@ export const usePageLayoutSaveHandler = () => {
           .getLoadable(savedPageLayoutsState)
           .getValue();
 
-        const existingLayout = isEditMode
+        const isPageLayoutInEditMode = snapshot
+          .getLoadable(isPageLayoutInEditModeState)
+          .getValue();
+
+        const existingLayout = isPageLayoutInEditMode
           ? savedPageLayouts.find((layout) => layout.id === id)
           : undefined;
 
@@ -41,12 +65,12 @@ export const usePageLayoutSaveHandler = () => {
           : pageLayoutDraft.tabs;
 
         const layoutToSave: PageLayoutWithData = {
-          id: isEditMode ? id : uuidv4(),
+          id: isPageLayoutInEditMode ? id : uuidv4(),
           name: pageLayoutDraft.name,
           type: pageLayoutDraft.type,
           objectMetadataId: pageLayoutDraft.objectMetadataId,
           tabs: updatedTabs,
-          createdAt: isEditMode
+          createdAt: isPageLayoutInEditMode
             ? (existingLayout?.createdAt ?? new Date().toISOString())
             : new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -54,7 +78,7 @@ export const usePageLayoutSaveHandler = () => {
         };
 
         set(savedPageLayoutsState, (prev) => {
-          if (isDefined(isEditMode)) {
+          if (isDefined(isPageLayoutInEditMode)) {
             return prev.map((layout) =>
               layout.id === id ? layoutToSave : layout,
             );
@@ -63,10 +87,13 @@ export const usePageLayoutSaveHandler = () => {
         });
 
         set(pageLayoutPersistedState, layoutToSave);
-
-        navigateSettings(SettingsPath.PageLayout);
       },
-    [isEditMode, id, navigateSettings],
+    [
+      pageLayoutDraftState,
+      savedPageLayoutsState,
+      isPageLayoutInEditModeState,
+      pageLayoutPersistedState,
+    ],
   );
 
   return { savePageLayout };

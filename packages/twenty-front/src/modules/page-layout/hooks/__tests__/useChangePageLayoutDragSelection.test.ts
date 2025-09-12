@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { pageLayoutSelectedCellsState } from '../../states/pageLayoutSelectedCellsState';
+import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
 import { useChangePageLayoutDragSelection } from '../useChangePageLayoutDragSelection';
 
 describe('useChangePageLayoutDragSelection', () => {
@@ -9,13 +9,13 @@ describe('useChangePageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['cell-1']));
+              set(pageLayoutSelectedCellsComponentState, new Set(['cell-1']));
             },
             children,
           }),
@@ -41,13 +41,13 @@ describe('useChangePageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['cell-1', 'cell-2']));
+              set(pageLayoutSelectedCellsComponentState, new Set(['cell-1', 'cell-2']));
             },
             children,
           }),
@@ -73,7 +73,7 @@ describe('useChangePageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: RecoilRoot,
@@ -101,13 +101,13 @@ describe('useChangePageLayoutDragSelection', () => {
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsState),
+        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) =>
           RecoilRoot({
             initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsState, new Set(['cell-1']));
+              set(pageLayoutSelectedCellsComponentState, new Set(['cell-1']));
             },
             children,
           }),
