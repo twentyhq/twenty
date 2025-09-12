@@ -33,7 +33,7 @@ export type HasAllProperties<T, U> = [T] extends [new (...args: any[]) => any]
   : [U] extends [new (...args: any[]) => any]
     ? HasAllProperties<T, InstanceType<U>>
     : {
-          [K in keyof U]: K extends keyof T ? Equal<T[K], U[K]> : false;
+          [K in keyof U]-?: K extends keyof T ? Equal<T[K], U[K]> : false;
         }[keyof U] extends true
       ? true
       : false;
@@ -51,6 +51,7 @@ type BasicTests = [
 
   Expect<HasAllProperties<{ a: string; b: number }, { a: string }>>,
   Expect<HasAllProperties<{ a: string; b: number }, { a: string; b: number }>>,
+  Expect<HasAllProperties<{ a?: string; b: number }, { a?: string; b: number }>>,
 
   Expect<HasAllProperties<{ a: never; b: never }, { a: never }>>,
 

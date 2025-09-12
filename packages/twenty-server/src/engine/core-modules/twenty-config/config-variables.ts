@@ -973,11 +973,10 @@ export class ConfigVariables {
   CLOUDFLARE_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ServerConfig,
-    description: 'Base URL for public domains',
+    group: ConfigVariablesGroup.CloudflareConfig,
+    description: 'Zone ID for public domain Cloudflare integration',
     type: ConfigVariableType.STRING,
   })
-  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.PUBLIC_DOMAIN_URL)
   CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID: string;
 

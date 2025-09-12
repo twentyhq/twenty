@@ -1,9 +1,9 @@
 import { isDefined } from 'class-validator';
 
 import {
-  FlatEntityException,
-  FlatEntityExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity.exception';
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 
@@ -17,9 +17,9 @@ export const addFlatEntityToFlatEntityMapsOrThrow = <T extends FlatEntity>({
   flatEntityMaps,
 }: AddFlatEntityToFlatEntityMapsOrThrowArgs<T>): FlatEntityMaps<T> => {
   if (isDefined(flatEntityMaps.byId[flatEntity.id])) {
-    throw new FlatEntityException(
+    throw new FlatEntityMapsException(
       'addFlatEntityToFlatEntityMapsOrThrow: flat entity to add already exists',
-      FlatEntityExceptionCode.ENTITY_ALREADY_EXISTS,
+      FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
     );
   }
 
