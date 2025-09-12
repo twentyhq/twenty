@@ -1,16 +1,10 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
+import { type PageLayoutDraggedArea } from '@/page-layout/types/page-layout-dragged-area';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-type DraggedArea = {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-} | null;
-
 export const pageLayoutDraggedAreaComponentState =
-  createComponentState<DraggedArea>({
+  createComponentState<PageLayoutDraggedArea>({
     key: 'pageLayoutDraggedAreaComponentState',
     defaultValue: null,
     componentInstanceContext: PageLayoutComponentInstanceContext,

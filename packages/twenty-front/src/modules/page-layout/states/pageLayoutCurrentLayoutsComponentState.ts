@@ -1,9 +1,7 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type Layouts } from 'react-grid-layout';
 
+import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
-
-export type TabLayouts = Record<string, Layouts>;
 
 export const pageLayoutCurrentLayoutsComponentState =
   createComponentState<TabLayouts>({
