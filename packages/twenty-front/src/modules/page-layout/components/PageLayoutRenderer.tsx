@@ -13,6 +13,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { useMemo } from 'react';
 import 'react-grid-layout/css/styles.css';
@@ -47,6 +48,11 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
     return pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
   }, [activeTabId, pageLayoutCurrentLayouts]);
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+    pageLayout.id,
+  );
+
   return (
     <>
       <PageLayoutContextStoreEffect pageLayoutId={pageLayout.id} />
@@ -69,7 +75,10 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
           <PageLayoutGridLayout layouts={layouts}>
             {activeTabWidgets?.map((widget) => (
               <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer widget={widget as Widget} />
+                <WidgetRenderer
+                  widget={widget as Widget}
+                  displayDragHandle={isPageLayoutInEditMode}
+                />
               </div>
             ))}
           </PageLayoutGridLayout>

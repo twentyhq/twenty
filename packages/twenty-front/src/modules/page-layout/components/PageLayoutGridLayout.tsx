@@ -1,9 +1,11 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
+import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -70,6 +72,10 @@ export const PageLayoutGridLayout = ({
     activeTabId ?? undefined,
   );
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
   return (
     <StyledGridContainer ref={gridContainerRef}>
       <ResponsiveGridLayout
@@ -81,8 +87,8 @@ export const PageLayoutGridLayout = ({
         maxCols={12}
         containerPadding={[0, 0]}
         margin={[8, 8]}
-        isDraggable={false}
-        isResizable={false}
+        isDraggable={isPageLayoutInEditMode}
+        isResizable={isPageLayoutInEditMode}
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
@@ -92,7 +98,14 @@ export const PageLayoutGridLayout = ({
         }
       >
         {children}
-        <PageLayoutGridLayoutDragSelector gridContainerRef={gridContainerRef} />
+        {isPageLayoutInEditMode && (
+          <>
+            <PageLayoutGridOverlay />
+            <PageLayoutGridLayoutDragSelector
+              gridContainerRef={gridContainerRef}
+            />
+          </>
+        )}
       </ResponsiveGridLayout>
     </StyledGridContainer>
   );
