@@ -1,8 +1,6 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
+import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
@@ -67,7 +65,6 @@ export const IframeWidget = ({
   url,
   title = 'Embedded Content',
 }: IframeWidgetProps) => {
-  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -95,16 +92,7 @@ export const IframeWidget = ({
     <StyledContainer>
       {isLoading && (
         <StyledLoadingContainer>
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton
-              width={120}
-              height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-            />
-          </SkeletonTheme>
+          <ChartSkeletonLoader />
         </StyledLoadingContainer>
       )}
       <StyledIframe
