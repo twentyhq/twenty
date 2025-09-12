@@ -49,7 +49,7 @@ export const useRefreshObjectMetadataItems = (
         }
 
         const objectPermissionsByObjectMetadataId =
-          currentUserWorkspace.objectPermissions.reduce(
+          currentUserWorkspace.objectsPermissions.reduce(
             (acc, objectPermission) => {
               acc[objectPermission.objectMetadataId] = objectPermission;
               return acc;
