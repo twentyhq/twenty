@@ -1,21 +1,21 @@
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { destroyOneViewFieldMetadataQueryFactory } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field-metadata-query-factory.util';
+import { deleteCoreViewFieldQueryFactory } from 'test/integration/metadata/suites/view-field/utils/delete-core-view-field-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
+import { type DeleteViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view-field.input';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 
-export const destroyOneViewFieldMetadata = async ({
+export const deleteOneCoreViewField = async ({
   input,
   gqlFields,
   expectToFail,
-}: PerformMetadataQueryParams<DestroyViewFieldInput>): CommonResponseBody<{
-  destroyOneViewField: ViewFieldEntity;
+}: PerformMetadataQueryParams<DeleteViewFieldInput>): CommonResponseBody<{
+  deleteCoreViewField: ViewFieldEntity;
 }> => {
-  const graphqlOperation = destroyOneViewFieldMetadataQueryFactory({
+  const graphqlOperation = deleteCoreViewFieldQueryFactory({
     input,
     gqlFields,
   });
@@ -25,14 +25,14 @@ export const destroyOneViewFieldMetadata = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'View Field destruction should have failed but did not',
+      errorMessage: 'View Field deletion should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'View Field destruction has failed but should not',
+      errorMessage: 'View Field deletion has failed but should not',
     });
   }
 
