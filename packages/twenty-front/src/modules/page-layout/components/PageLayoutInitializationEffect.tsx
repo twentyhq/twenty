@@ -15,14 +15,12 @@ import { savedPageLayoutsState } from '../states/savedPageLayoutsState';
 import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 type PageLayoutInitializationEffectProps = {
-  layoutId: string | undefined;
-  isEditMode: boolean;
+  isEditMode?: boolean;
   pageLayout?: PageLayoutWithData;
 };
 
 export const PageLayoutInitializationEffect = ({
-  layoutId,
-  isEditMode,
+  isEditMode = false,
   pageLayout,
 }: PageLayoutInitializationEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -96,7 +94,7 @@ export const PageLayoutInitializationEffect = ({
   useEffect(() => {
     if (!isInitialized) {
       const existingLayout = isEditMode
-        ? savedPageLayouts.find((l) => l.id === layoutId)
+        ? savedPageLayouts.find((l) => l.id === pageLayout?.id)
         : undefined;
 
       const layoutToInitialize = existingLayout || pageLayout;
@@ -105,7 +103,7 @@ export const PageLayoutInitializationEffect = ({
       setIsInitialized(true);
     }
   }, [
-    layoutId,
+    pageLayout?.id,
     savedPageLayouts,
     initializePageLayout,
     isInitialized,
