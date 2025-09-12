@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
-import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
-import { WorkspaceMigrationOrchestratorOptimisticEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
-import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
-import { WorkspaceViewFieldMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-field-migration-builder-v2.service';
-import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import {
+  ValidateAndBuilActionsReturnType,
+  ValidateAndBuildActionsArgs,
+  WorkspaceEntityMigrationBuilderV2Service,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import {
   UpdateViewFieldAction,
   WorkspaceMigrationViewFieldActionV2,
@@ -24,63 +21,55 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-field-action';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
-export type CreatedDeletedUpdatedViewFieldInputMatrix = FromTo<
-  FlatViewFieldMaps,
-  'FlatViewFieldMaps'
-> &
-  CustomDeletedCreatedUpdatedMatrix<'flatViewField', FlatViewField> & {
-    buildOptions: WorkspaceViewFieldMigrationV2BuilderOptions;
-    fromFlatViewFieldMaps: FlatViewFieldMaps;
-    dependencyOptimisticEntityMaps: WorkspaceMigrationOrchestratorOptimisticEntityMaps;
-  };
-
-type ValidateAndBuildViewFieldResult<T extends WorkspaceMigrationActionV2> = {
-  failed: FailedFlatViewFieldValidation[];
-  created: T[];
-  deleted: T[];
-  updated: T[];
-  optimisticFlatViewFieldMaps: FlatViewFieldMaps;
-};
-
+type DependencyMaps = ['flatObjectMetadataMaps', 'flatViewMaps'];
 @Injectable()
-export class WorkspaceMigrationV2ViewFieldActionsBuilderService {
+export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
+  FlatViewField,
+  FailedFlatViewFieldValidation, // just be generic
+  WorkspaceMigrationViewFieldActionV2,
+  DependencyMaps
+> {
   constructor(
     private readonly flatViewFieldValidatorService: FlatViewFieldValidatorService,
-  ) {}
+  ) {
+    super();
+  }
 
-  public async validateAndBuildViewFieldActions({
-    createdFlatViewField,
-    deletedFlatViewField,
-    updatedFlatViewField,
+  public async validateAndBuildActions({
+    created: createdFlatViewField,
+    deleted: deletedFlatViewField,
+    updated: updatedFlatViewField,
     buildOptions,
-    fromFlatViewFieldMaps,
-    dependencyOptimisticEntityMaps,
-  }: CreatedDeletedUpdatedViewFieldInputMatrix): Promise<
-    ValidateAndBuildViewFieldResult<WorkspaceMigrationViewFieldActionV2>
+    from: fromFlatViewFieldMaps,
+    dependencyFlatEntityMaps: dependencyOptimisticFlatEntityMaps,
+    // need other maps
+  }: ValidateAndBuildActionsArgs<FlatViewField, DependencyMaps>): Promise<
+    ValidateAndBuilActionsReturnType<
+      FailedFlatViewFieldValidation,
+      WorkspaceMigrationViewFieldActionV2
+    >
   > {
-    const validateAndBuildResult: ValidateAndBuildViewFieldResult<WorkspaceMigrationViewFieldActionV2> =
-      {
-        failed: [],
-        created: [],
-        deleted: [],
-        updated: [],
-        optimisticFlatViewFieldMaps: structuredClone(fromFlatViewFieldMaps),
-      };
-
-    if (
-      !isDefined(dependencyOptimisticEntityMaps.object) ||
-      !isDefined(dependencyOptimisticEntityMaps.view)
-    ) {
-      throw new Error('Dependency optimistic entity maps are not defined');
-    }
+    const validateAndBuildResult: ValidateAndBuilActionsReturnType<
+      FailedFlatViewFieldValidation,
+      WorkspaceMigrationViewFieldActionV2
+    > = {
+      failed: [],
+      created: [],
+      deleted: [],
+      updated: [],
+      optimisticAllFlatEntityMaps: structuredClone({
+        flatViewFieldMaps: fromFlatViewFieldMaps,
+      }),
+    };
 
     for (const flatViewFieldToCreate of createdFlatViewField) {
       const validationErrors =
         await this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
           flatViewFieldToValidate: flatViewFieldToCreate,
           optimisticFlatObjectMetadataMaps:
-            dependencyOptimisticEntityMaps.object,
-          optimisticFlatViewMaps: dependencyOptimisticEntityMaps.view,
+            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+          optimisticFlatViewMaps:
+            dependencyOptimisticFlatEntityMaps.flatViewMaps,
         });
 
       if (validationErrors.viewFieldLevelErrors.length > 0) {

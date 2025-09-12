@@ -4,6 +4,7 @@ import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import {
   FailedEntityMigrationBuildResult,
   SuccessfulEntityMigrationBuildResult,
@@ -13,7 +14,6 @@ import {
   SuccessfulWorkspaceMigrationBuildResult,
   WorkspaceMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { WorkspaceViewFieldMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-field-migration-builder-v2.service';
 import { WorkspaceViewMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
 import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import {
@@ -31,7 +31,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
   constructor(
     private readonly workspaceMigrationBuilderV2Service: WorkspaceMigrationBuilderV2Service,
     private readonly workspaceViewMigrationBuilderV2Service: WorkspaceViewMigrationBuilderV2Service,
-    private readonly workspaceViewFieldMigrationBuilderV2Service: WorkspaceViewFieldMigrationBuilderV2Service,
+    private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ) {}
 
   public async buildWorkspaceMigrations({
@@ -100,7 +100,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
       if (isDefined(toAllFlatEntityMaps.flatViewFieldMaps)) {
         const viewFieldResult =
-          await this.workspaceViewFieldMigrationBuilderV2Service.validateAndBuild(
+          await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
             {
               fromFlatViewFieldMaps: fromAllFlatEntityMaps.flatViewFieldMaps,
               toFlatViewFieldMaps: toAllFlatEntityMaps.flatViewFieldMaps,

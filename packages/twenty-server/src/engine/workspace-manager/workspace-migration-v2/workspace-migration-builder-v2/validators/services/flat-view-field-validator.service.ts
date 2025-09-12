@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 
 @Injectable()
@@ -102,12 +102,16 @@ export class FlatViewFieldValidatorService {
 
   public async validateFlatViewFieldCreation({
     flatViewFieldToValidate,
-    optimisticFlatObjectMetadataMaps,
-    optimisticFlatViewMaps,
+    dependencyOptimisticFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatViewMaps: optimisticFlatViewMaps,
+    },
   }: {
     flatViewFieldToValidate: FlatViewField;
-    optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    optimisticFlatViewMaps: FlatViewMaps;
+    dependencyOptimisticFlatEntityMaps: Pick<
+      AllFlatEntityMaps,
+      'flatObjectMetadataMaps' | 'flatViewMaps'
+    >;
   }): Promise<FailedFlatViewFieldValidation> {
     const errors = [];
 
