@@ -1,12 +1,17 @@
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { PageLayoutType } from '~/generated/graphql';
 import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
+import {
+  PageLayoutTestWrapper,
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+} from './PageLayoutTestWrapper';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
@@ -22,16 +27,25 @@ describe('useCreatePageLayoutWidget', () => {
       () => {
         const setActiveTabId = useSetRecoilState(
           activeTabIdComponentState.atomFamily({
-            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftComponentState);
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsComponentState,
+        const setPageLayoutDraft = useSetRecoilComponentState(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget();
+        const pageLayoutDraft = useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const pageLayoutCurrentLayouts = useRecoilComponentValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createWidget = useCreatePageLayoutWidget(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
         return {
           setActiveTabId,
           setPageLayoutDraft,
@@ -41,7 +55,7 @@ describe('useCreatePageLayoutWidget', () => {
         };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -86,18 +100,27 @@ describe('useCreatePageLayoutWidget', () => {
   it('should handle different graph types', () => {
     const { result } = renderHook(
       () => {
-        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftComponentState);
+        const setPageLayoutDraft = useSetRecoilComponentState(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
         const setActiveTabId = useSetRecoilState(
           activeTabIdComponentState.atomFamily({
-            instanceId: SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsComponentState,
+        const pageLayoutDraft = useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget();
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const pageLayoutCurrentLayouts = useRecoilComponentValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createWidget = useCreatePageLayoutWidget(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
         return {
           setPageLayoutDraft,
           setActiveTabId,
@@ -108,7 +131,7 @@ describe('useCreatePageLayoutWidget', () => {
         };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -173,16 +196,22 @@ describe('useCreatePageLayoutWidget', () => {
   it('should not create widget when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const pageLayoutDraft = useRecoilValue(pageLayoutDraftComponentState);
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilValue(
-          pageLayoutCurrentLayoutsComponentState,
+        const pageLayoutDraft = useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget();
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const pageLayoutCurrentLayouts = useRecoilComponentValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
+        const createWidget = useCreatePageLayoutWidget(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        );
         return { allWidgets, pageLayoutCurrentLayouts, createWidget };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 

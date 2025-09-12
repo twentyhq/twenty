@@ -1,16 +1,42 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconAppWindow } from 'twenty-ui/display';
 import { pageLayoutDraggedAreaComponentState } from '../../states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../../utils/calculateGridBoundsFromSelectedCells';
 import { useEndPageLayoutDragSelection } from '../useEndPageLayoutDragSelection';
+import {
+  PageLayoutTestWrapper,
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+} from './PageLayoutTestWrapper';
 
 jest.mock('@/command-menu/hooks/useNavigateCommandMenu');
 jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
+
+const createInitializeState =
+  (initialSelectedCells?: Set<string>, initialDraggedArea?: any) =>
+  ({ set }: { set: any }) => {
+    if (isDefined(initialSelectedCells)) {
+      set(
+        pageLayoutSelectedCellsComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        initialSelectedCells,
+      );
+    }
+    if (initialDraggedArea !== undefined) {
+      set(
+        pageLayoutDraggedAreaComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        initialDraggedArea,
+      );
+    }
+  };
 
 describe('useEndPageLayoutDragSelection', () => {
   const mockNavigateCommandMenu = jest.fn();
@@ -30,22 +56,29 @@ describe('useEndPageLayoutDragSelection', () => {
 
     const { result } = renderHook(
       () => ({
-        endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
+        endDragSelection: useEndPageLayoutDragSelection(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        selectedCells: useRecoilComponentValue(
+          pageLayoutSelectedCellsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        draggedArea: useRecoilComponentValue(
+          pageLayoutDraggedAreaComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: ({ children }: { children: ReactNode }) =>
-          RecoilRoot({
-            initializeState: ({ set }) => {
-              set(
-                pageLayoutSelectedCellsComponentState,
-                new Set(['0-0', '0-1', '1-0', '1-1']),
-              );
-              set(pageLayoutDraggedAreaComponentState, null);
-            },
-            children,
-          }),
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper
+            initializeState={createInitializeState(
+              new Set(['0-0', '0-1', '1-0', '1-1']),
+              null,
+            )}
+          >
+            {children}
+          </PageLayoutTestWrapper>
+        ),
       },
     );
 
@@ -79,19 +112,26 @@ describe('useEndPageLayoutDragSelection', () => {
 
     const { result } = renderHook(
       () => ({
-        endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
+        endDragSelection: useEndPageLayoutDragSelection(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        selectedCells: useRecoilComponentValue(
+          pageLayoutSelectedCellsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        draggedArea: useRecoilComponentValue(
+          pageLayoutDraggedAreaComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: ({ children }: { children: ReactNode }) =>
-          RecoilRoot({
-            initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsComponentState, new Set());
-              set(pageLayoutDraggedAreaComponentState, null);
-            },
-            children,
-          }),
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper
+            initializeState={createInitializeState(new Set(), null)}
+          >
+            {children}
+          </PageLayoutTestWrapper>
+        ),
       },
     );
 
@@ -110,19 +150,29 @@ describe('useEndPageLayoutDragSelection', () => {
 
     const { result } = renderHook(
       () => ({
-        endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
-        draggedArea: useRecoilValue(pageLayoutDraggedAreaComponentState),
+        endDragSelection: useEndPageLayoutDragSelection(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        selectedCells: useRecoilComponentValue(
+          pageLayoutSelectedCellsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        draggedArea: useRecoilComponentValue(
+          pageLayoutDraggedAreaComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: ({ children }: { children: ReactNode }) =>
-          RecoilRoot({
-            initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsComponentState, new Set(['invalid-cell']));
-              set(pageLayoutDraggedAreaComponentState, null);
-            },
-            children,
-          }),
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper
+            initializeState={createInitializeState(
+              new Set(['invalid-cell']),
+              null,
+            )}
+          >
+            {children}
+          </PageLayoutTestWrapper>
+        ),
       },
     );
 
@@ -139,9 +189,14 @@ describe('useEndPageLayoutDragSelection', () => {
   });
 
   it('should return a function', () => {
-    const { result } = renderHook(() => useEndPageLayoutDragSelection(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(
+      () => useEndPageLayoutDragSelection(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper>{children}</PageLayoutTestWrapper>
+        ),
+      },
+    );
 
     expect(typeof result.current.endPageLayoutDragSelection).toBe('function');
   });
@@ -154,17 +209,22 @@ describe('useEndPageLayoutDragSelection', () => {
 
     const { result } = renderHook(
       () => ({
-        endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
+        endDragSelection: useEndPageLayoutDragSelection(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        selectedCells: useRecoilComponentValue(
+          pageLayoutSelectedCellsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: ({ children }: { children: ReactNode }) =>
-          RecoilRoot({
-            initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsComponentState, new Set(['0-0']));
-            },
-            children,
-          }),
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper
+            initializeState={createInitializeState(new Set(['0-0']))}
+          >
+            {children}
+          </PageLayoutTestWrapper>
+        ),
       },
     );
 
@@ -183,17 +243,22 @@ describe('useEndPageLayoutDragSelection', () => {
 
     const { result } = renderHook(
       () => ({
-        endDragSelection: useEndPageLayoutDragSelection(),
-        selectedCells: useRecoilValue(pageLayoutSelectedCellsComponentState),
+        endDragSelection: useEndPageLayoutDragSelection(
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        selectedCells: useRecoilComponentValue(
+          pageLayoutSelectedCellsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: ({ children }: { children: ReactNode }) =>
-          RecoilRoot({
-            initializeState: ({ set }) => {
-              set(pageLayoutSelectedCellsComponentState, new Set(['0-0']));
-            },
-            children,
-          }),
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <PageLayoutTestWrapper
+            initializeState={createInitializeState(new Set(['0-0']))}
+          >
+            {children}
+          </PageLayoutTestWrapper>
+        ),
       },
     );
 

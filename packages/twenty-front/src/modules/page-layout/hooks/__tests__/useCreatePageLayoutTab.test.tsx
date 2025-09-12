@@ -1,8 +1,12 @@
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useCreatePageLayoutTab } from '../useCreatePageLayoutTab';
+import {
+  PageLayoutTestWrapper,
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+} from './PageLayoutTestWrapper';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(),
@@ -18,12 +22,18 @@ describe('useCreatePageLayoutTab', () => {
     uuidModule.v4.mockReturnValue('mock-uuid');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
-        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
+        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        pageLayoutCurrentLayouts: useRecoilComponentValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        pageLayoutDraft: useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -50,11 +60,14 @@ describe('useCreatePageLayoutTab', () => {
     uuidModule.v4.mockReturnValue('mock-uuid');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
+        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        pageLayoutDraft: useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -74,11 +87,14 @@ describe('useCreatePageLayoutTab', () => {
       .mockReturnValueOnce('mock-uuid-2');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
-        pageLayoutDraft: useRecoilValue(pageLayoutDraftComponentState),
+        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        pageLayoutDraft: useRecoilComponentValue(
+          pageLayoutDraftComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -104,11 +120,14 @@ describe('useCreatePageLayoutTab', () => {
       .mockReturnValueOnce('mock-uuid-2');
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(),
-        pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsComponentState),
+        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        pageLayoutCurrentLayouts: useRecoilComponentValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
       }),
       {
-        wrapper: RecoilRoot,
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
