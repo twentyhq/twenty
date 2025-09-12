@@ -4,6 +4,7 @@ import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
 import { UserContext } from '@/users/contexts/UserContext';
 import { isDefined } from 'twenty-shared/utils';
 import { formatNumber } from '@/localization/utils/formatNumber';
+import { formatAmount } from '~/utils/format/formatAmount';
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
@@ -20,14 +21,10 @@ export const NumberFieldDisplay = () => {
   if (type === 'percentage') {
     formattedValue = `${formatNumber(numericValue * 100, numberFormat)}%`;
   } else if (type === 'shortNumber') {
-    formattedValue = formatNumber(numericValue, numberFormat);
+    formattedValue = formatAmount(numericValue);
   } else {
     formattedValue = formatNumber(numericValue, numberFormat);
   }
 
-  return (
-    <div>
-      <NumberDisplay value={formattedValue} />
-    </div>
-  );
+  return <NumberDisplay value={formattedValue} />;
 };

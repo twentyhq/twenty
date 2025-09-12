@@ -61,5 +61,5 @@ export class WorkspaceMember {
   userWorkspaceId?: string;
 
   @Field(() => WorkspaceMemberNumberFormatEnum, { nullable: true })
-  numberFormat: WorkspaceMemberNumberFormatEnum;
+  numberFormat?: WorkspaceMemberNumberFormatEnum;
 }

@@ -56,8 +56,6 @@ export const NumberFormatSettings = () => {
       logError(error);
     }
   };
-
-  // Example number to show formatu
   const testNumber = 1234.56;
 
   const formatLabel = (format: NumberFormat) => {
