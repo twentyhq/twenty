@@ -76,6 +76,7 @@ export class DevSeederService {
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
       workspaceId,
+      featureFlags,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
