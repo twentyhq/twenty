@@ -1,22 +1,11 @@
-import camelCase from 'lodash.camelcase';
-import { slugify } from 'transliteration';
+import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label-or-throw.utils';
 
 export const computeMetadataNameFromLabel = (label: string): string => {
-  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
-
-  if (prefixedLabel === '') {
-    return '';
+  let metadataName = '';
+  try {
+    metadataName = computeMetadataNameFromLabelOrThrow(label);
+  } catch {
+    /* empty */
   }
-
-  const formattedString = slugify(prefixedLabel, {
-    trim: true,
-    separator: '_',
-    allowedChars: 'a-zA-Z0-9',
-  });
-
-  if (formattedString === '') {
-    throw new Error('Invalid label');
-  }
-
-  return camelCase(formattedString);
+  return metadataName;
 };
