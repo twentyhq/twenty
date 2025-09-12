@@ -1,7 +1,10 @@
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useHTMLElementByIdWhenAvailable } from '~/hooks/useHTMLElementByIdWhenAvailable';
 
-export const useScrollWrapperElement = (targetComponentInstanceId?: string) => {
+export const useScrollWrapperHTMLElement = (
+  targetComponentInstanceId?: string,
+) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     ScrollWrapperComponentInstanceContext,
     targetComponentInstanceId,
@@ -9,9 +12,10 @@ export const useScrollWrapperElement = (targetComponentInstanceId?: string) => {
 
   const scrollWrapperId = `scroll-wrapper-${instanceId}`;
 
-  const element = document.getElementById(scrollWrapperId);
+  const { element: scrollWrapperHTMLElement } =
+    useHTMLElementByIdWhenAvailable(scrollWrapperId);
 
   return {
-    scrollWrapperHTMLElement: element,
+    scrollWrapperHTMLElement,
   };
 };

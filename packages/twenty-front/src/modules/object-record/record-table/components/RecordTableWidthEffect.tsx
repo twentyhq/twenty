@@ -1,29 +1,19 @@
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useHTMLElementByIdWhenAvailable } from '~/hooks/useHTMLElementByIdWhenAvailable';
 
 export const RecordTableWidthEffect = () => {
   const setRecordTableWidth = useSetRecoilComponentState(
     recordTableWidthComponentState,
   );
 
-  const scrollWrapperInstanceId = useAvailableComponentInstanceIdOrThrow(
-    ScrollWrapperComponentInstanceContext,
-  );
-
-  const recordTableScrollWrapperHTMLId = `scroll-wrapper-${scrollWrapperInstanceId}`;
-
-  const { element: scrollWrapperElement } = useHTMLElementByIdWhenAvailable(
-    recordTableScrollWrapperHTMLId,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    const tableWidth = scrollWrapperElement?.clientWidth ?? 0;
+    const tableWidth = scrollWrapperHTMLElement?.clientWidth ?? 0;
 
     if (tableWidth > 0) {
       setRecordTableWidth(tableWidth);
@@ -31,22 +21,22 @@ export const RecordTableWidthEffect = () => {
 
     const tableResizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target === scrollWrapperElement) {
-          const newWidth = scrollWrapperElement.clientWidth;
+        if (entry.target === scrollWrapperHTMLElement) {
+          const newWidth = scrollWrapperHTMLElement.clientWidth;
 
           setRecordTableWidth(newWidth);
         }
       }
     });
 
-    if (isDefined(scrollWrapperElement)) {
-      tableResizeObserver.observe(scrollWrapperElement);
+    if (isDefined(scrollWrapperHTMLElement)) {
+      tableResizeObserver.observe(scrollWrapperHTMLElement);
     }
 
     return () => {
       tableResizeObserver.disconnect();
     };
-  }, [setRecordTableWidth, scrollWrapperElement, scrollWrapperInstanceId]);
+  }, [setRecordTableWidth, scrollWrapperHTMLElement]);
 
   return null;
 };
