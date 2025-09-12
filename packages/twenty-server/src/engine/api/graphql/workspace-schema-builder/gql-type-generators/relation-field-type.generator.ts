@@ -5,7 +5,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
 import { FieldObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-object-type.generator';
 import {
@@ -53,13 +53,13 @@ export class RelationFieldTypeGenerator {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
-    kind: InputTypeDefinitionKind;
+    kind: GqlInputTypeDefinitionKind;
     buildOptions: WorkspaceBuildSchemaOptions;
     typeOptions: TypeOptions;
   }) {
     switch (kind) {
-      case InputTypeDefinitionKind.Filter:
-      case InputTypeDefinitionKind.OrderBy:
+      case GqlInputTypeDefinitionKind.Filter:
+      case GqlInputTypeDefinitionKind.OrderBy:
         return this.generateSimpleRelationFieldInputType({
           fieldMetadata,
           kind,
@@ -67,8 +67,8 @@ export class RelationFieldTypeGenerator {
           typeOptions,
         });
 
-      case InputTypeDefinitionKind.Create:
-      case InputTypeDefinitionKind.Update:
+      case GqlInputTypeDefinitionKind.Create:
+      case GqlInputTypeDefinitionKind.Update:
         return {
           ...this.generateConnectRelationFieldInputType({
             fieldMetadata,
@@ -125,7 +125,7 @@ export class RelationFieldTypeGenerator {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
-    kind: InputTypeDefinitionKind;
+    kind: GqlInputTypeDefinitionKind;
     buildOptions: WorkspaceBuildSchemaOptions;
     typeOptions: TypeOptions;
   }) {

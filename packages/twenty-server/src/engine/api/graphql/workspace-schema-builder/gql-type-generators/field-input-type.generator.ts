@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import {
   TypeMapperService,
   TypeOptions,
@@ -32,7 +32,7 @@ export class FieldInputTypeGenerator {
     key,
   }: {
     type: FieldMetadataType;
-    kind: InputTypeDefinitionKind;
+    kind: GqlInputTypeDefinitionKind;
     buildOptions: WorkspaceBuildSchemaOptions;
     typeOptions: TypeOptions;
     key?: string;
@@ -43,8 +43,8 @@ export class FieldInputTypeGenerator {
       /**
        * Create and Update input types are classic scalar types
        */
-      case InputTypeDefinitionKind.Create:
-      case InputTypeDefinitionKind.Update:
+      case GqlInputTypeDefinitionKind.Create:
+      case GqlInputTypeDefinitionKind.Update:
         inputType = isDefined(key)
           ? this.typeDefinitionsStorage.getEnumTypeByKey(key) ||
             this.typeDefinitionsStorage.getInputTypeByKey(key)
@@ -58,7 +58,7 @@ export class FieldInputTypeGenerator {
       /**
        * Filter input maps to special filter type
        */
-      case InputTypeDefinitionKind.Filter: {
+      case GqlInputTypeDefinitionKind.Filter: {
         if (isEnumFieldMetadataType(type)) {
           if (!isDefined(key)) {
             this.logger.error(
@@ -93,7 +93,7 @@ export class FieldInputTypeGenerator {
       /**
        * OrderBy input maps to special order by type
        */
-      case InputTypeDefinitionKind.OrderBy:
+      case GqlInputTypeDefinitionKind.OrderBy:
         inputType = isDefined(key)
           ? this.typeDefinitionsStorage.getEnumTypeByKey(key) ||
             this.typeDefinitionsStorage.getInputTypeByKey(key)

@@ -13,7 +13,7 @@ import {
   StoredObjectType,
 } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 
 // Must be scoped on REQUEST level, because we need to recreate it for each workspaces
@@ -60,7 +60,7 @@ export class TypeDefinitionsStorage {
 
   private generateCompositeKey(
     target: string | FieldMetadataType,
-    kind: ObjectTypeDefinitionKind | InputTypeDefinitionKind,
+    kind: ObjectTypeDefinitionKind | GqlInputTypeDefinitionKind,
   ): string {
     return `${target.toString()}_${kind.toString()}`;
   }

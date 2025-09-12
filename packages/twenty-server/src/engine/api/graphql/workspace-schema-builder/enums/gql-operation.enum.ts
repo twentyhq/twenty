@@ -1,4 +1,4 @@
-export enum GqlObjectTypeName {
+export enum GqlOperation {
   Query = 'Query',
   Mutation = 'Mutation',
   Subscription = 'Subscription',

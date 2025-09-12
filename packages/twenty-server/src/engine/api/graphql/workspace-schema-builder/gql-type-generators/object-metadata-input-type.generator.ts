@@ -6,7 +6,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
 import { RelationFieldTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/relation-field-type.generator';
 import {
@@ -43,9 +43,9 @@ export class ObjectMetadataInputTypeGenerator {
       })),
     };
 
-    return Object.values(InputTypeDefinitionKind).map((kind) =>
+    return Object.values(GqlInputTypeDefinitionKind).map((kind) =>
       this.generateObjectMetadataInputType(
-        kind === InputTypeDefinitionKind.Create
+        kind === GqlInputTypeDefinitionKind.Create
           ? objectMetadata
           : extendedObjectMetadata,
         kind,
@@ -56,7 +56,7 @@ export class ObjectMetadataInputTypeGenerator {
 
   private generateObjectMetadataInputType(
     objectMetadata: ObjectMetadataEntity,
-    kind: InputTypeDefinitionKind,
+    kind: GqlInputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
   ): StoredInputType {
     const inputType = new GraphQLInputObjectType({
@@ -81,23 +81,23 @@ export class ObjectMetadataInputTypeGenerator {
     objectMetadata: ObjectMetadataEntity;
     options: WorkspaceBuildSchemaOptions;
     inputType: GraphQLInputObjectType;
-    kind: InputTypeDefinitionKind;
+    kind: GqlInputTypeDefinitionKind;
   }): GraphQLInputFieldConfigMap {
     switch (kind) {
-      case InputTypeDefinitionKind.Filter:
+      case GqlInputTypeDefinitionKind.Filter:
         return this.generateObjectMetadataFilterInputTypeField({
           objectMetadata,
           options,
           inputType,
         });
-      case InputTypeDefinitionKind.Create:
-      case InputTypeDefinitionKind.Update:
+      case GqlInputTypeDefinitionKind.Create:
+      case GqlInputTypeDefinitionKind.Update:
         return this.generateObjectMetadataCreateOrUpdateInputTypeFields({
           objectMetadata,
           options,
           kind,
         });
-      case InputTypeDefinitionKind.OrderBy:
+      case GqlInputTypeDefinitionKind.OrderBy:
         return this.generateObjectMetadataOrderByInputTypeField({
           objectMetadata,
           options,
@@ -109,13 +109,13 @@ export class ObjectMetadataInputTypeGenerator {
 
   private getTypeFactoryOptions<T extends FieldMetadataType>(
     fieldMetadata: FieldMetadataEntity<T>,
-    kind: InputTypeDefinitionKind,
+    kind: GqlInputTypeDefinitionKind,
   ): TypeOptions {
     return {
       nullable: fieldMetadata.isNullable ?? undefined,
       defaultValue: fieldMetadata.defaultValue,
       isArray:
-        kind !== InputTypeDefinitionKind.Filter &&
+        kind !== GqlInputTypeDefinitionKind.Filter &&
         fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
       settings: fieldMetadata.settings,
       isIdField: fieldMetadata.name === 'id',
@@ -125,7 +125,7 @@ export class ObjectMetadataInputTypeGenerator {
   private computeFieldTypeKey(
     objectMetadata: ObjectMetadataEntity,
     fieldMetadata: FieldMetadataEntity,
-    kind: InputTypeDefinitionKind,
+    kind: GqlInputTypeDefinitionKind,
   ): string | undefined {
     if (isEnumFieldMetadataType(fieldMetadata.type))
       return computeEnumFieldGqlTypeKey(
@@ -159,7 +159,7 @@ export class ObjectMetadataInputTypeGenerator {
     for (const fieldMetadata of objectMetadata.fields) {
       const typeOptions = this.getTypeFactoryOptions(
         fieldMetadata,
-        InputTypeDefinitionKind.Filter,
+        GqlInputTypeDefinitionKind.Filter,
       );
 
       let generatedField;
@@ -168,20 +168,20 @@ export class ObjectMetadataInputTypeGenerator {
         generatedField =
           this.relationFieldTypeGenerator.generateRelationFieldInputType({
             fieldMetadata,
-            kind: InputTypeDefinitionKind.Filter,
+            kind: GqlInputTypeDefinitionKind.Filter,
             buildOptions: options,
             typeOptions,
           });
       } else {
         const type = this.fieldInputTypeGenerator.generate({
           type: fieldMetadata.type,
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           buildOptions: options,
           typeOptions,
           key: this.computeFieldTypeKey(
             objectMetadata,
             fieldMetadata,
-            InputTypeDefinitionKind.Filter,
+            GqlInputTypeDefinitionKind.Filter,
           ),
         });
 
@@ -218,7 +218,7 @@ export class ObjectMetadataInputTypeGenerator {
   }: {
     objectMetadata: ObjectMetadataEntity;
     options: WorkspaceBuildSchemaOptions;
-    kind: InputTypeDefinitionKind;
+    kind: GqlInputTypeDefinitionKind;
   }): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
@@ -269,7 +269,7 @@ export class ObjectMetadataInputTypeGenerator {
     for (const fieldMetadata of objectMetadata.fields) {
       const typeOptions = this.getTypeFactoryOptions(
         fieldMetadata,
-        InputTypeDefinitionKind.OrderBy,
+        GqlInputTypeDefinitionKind.OrderBy,
       );
 
       let generatedField;
@@ -278,20 +278,20 @@ export class ObjectMetadataInputTypeGenerator {
         generatedField =
           this.relationFieldTypeGenerator.generateRelationFieldInputType({
             fieldMetadata,
-            kind: InputTypeDefinitionKind.OrderBy,
+            kind: GqlInputTypeDefinitionKind.OrderBy,
             buildOptions: options,
             typeOptions,
           });
       } else {
         const type = this.fieldInputTypeGenerator.generate({
           type: fieldMetadata.type,
-          kind: InputTypeDefinitionKind.OrderBy,
+          kind: GqlInputTypeDefinitionKind.OrderBy,
           buildOptions: options,
           typeOptions,
           key: this.computeFieldTypeKey(
             objectMetadata,
             fieldMetadata,
-            InputTypeDefinitionKind.OrderBy,
+            GqlInputTypeDefinitionKind.OrderBy,
           ),
         });
 

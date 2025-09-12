@@ -6,7 +6,7 @@ import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
-import { GqlObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-object-type-name.enum';
+import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/args-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
@@ -31,7 +31,7 @@ export class RootTypeGenerator {
   generate(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
-    objectTypeName: GqlObjectTypeName,
+    objectTypeName: GqlOperation,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLObjectType {
     if (workspaceResolverMethodNames.length === 0) {

@@ -10,7 +10,7 @@ import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/input-type-definition-kind.enum';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
@@ -19,8 +19,8 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 import { pascalCase } from 'src/utils/pascal-case';
 
 const hiddenAllowListKind = [
-  InputTypeDefinitionKind.Create,
-  InputTypeDefinitionKind.Update,
+  GqlInputTypeDefinitionKind.Create,
+  GqlInputTypeDefinitionKind.Update,
 ];
 
 @Injectable()
@@ -45,9 +45,9 @@ export class CompositeFieldInputTypeGenerator {
         })),
       };
 
-      for (const kind of Object.values(InputTypeDefinitionKind)) {
+      for (const kind of Object.values(GqlInputTypeDefinitionKind)) {
         const storedCompositeFieldInputType = this.create(
-          kind === InputTypeDefinitionKind.Create
+          kind === GqlInputTypeDefinitionKind.Create
             ? compositeType
             : optionalCompositeType,
           kind,
@@ -63,7 +63,7 @@ export class CompositeFieldInputTypeGenerator {
 
   public create(
     compositeType: CompositeType,
-    kind: InputTypeDefinitionKind,
+    kind: GqlInputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
   ): StoredInputType {
     const key = computeCompositeFieldInputTypeKey(compositeType.type, kind);
@@ -79,7 +79,7 @@ export class CompositeFieldInputTypeGenerator {
 
   private generateFields(
     compositeType: CompositeType,
-    kind: InputTypeDefinitionKind,
+    kind: GqlInputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};

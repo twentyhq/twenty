@@ -1,4 +1,4 @@
-export enum InputTypeDefinitionKind {
+export enum GqlInputTypeDefinitionKind {
   Create = 'Create',
   Update = 'Update',
   Filter = 'Filter',
