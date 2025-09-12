@@ -1,5 +1,5 @@
-import { type GraphColor } from '../../../types/GraphColor';
-import { type LineChartDataPoint } from './LineChartDataPoint';
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartDataPoint';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 
 export type LineChartSeries = {
   id: string;

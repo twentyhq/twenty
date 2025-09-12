@@ -1,9 +1,9 @@
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
-} from '../../../utils/graphFormatters';
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
 
-export const getAxisLeftConfig = (
+export const getLineChartAxisLeftConfig = (
   yAxisLabel?: string,
   formatOptions?: GraphValueFormatOptions,
 ) => ({

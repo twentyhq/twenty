@@ -1,16 +1,16 @@
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartEnrichedSeries';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
+import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
+import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
+import {
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type ThemeType } from 'twenty-ui/theme';
-import { type GraphColorRegistry } from '../../../types/GraphColorRegistry';
-import { createGradientDef } from '../../../utils/createGradientDef';
-import { getColorScheme } from '../../../utils/getColorScheme';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '../../../utils/graphFormatters';
-import { type LineChartEnrichedSeries } from '../types/LineChartEnrichedSeries';
-import { type LineChartSeries } from '../types/LineChartSeries';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];

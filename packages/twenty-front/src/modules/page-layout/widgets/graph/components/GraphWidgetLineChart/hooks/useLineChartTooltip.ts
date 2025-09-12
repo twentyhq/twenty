@@ -1,15 +1,15 @@
-import {
-  type Point,
-  type SliceTooltipProps,
-  type LineSeries,
-} from '@nivo/line';
-import { isDefined } from 'twenty-shared/utils';
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartEnrichedSeries';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
-} from '../../../utils/graphFormatters';
-import { type LineChartSeries } from '../types/LineChartSeries';
-import { type LineChartEnrichedSeries } from '../types/LineChartEnrichedSeries';
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import {
+  type LineSeries,
+  type Point,
+  type SliceTooltipProps,
+} from '@nivo/line';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLineChartTooltipProps = {
   dataMap: Record<string, LineChartSeries>;

@@ -1,8 +1,8 @@
+import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
 import { type LineSeries, type Point } from '@nivo/line';
 import { isDefined } from 'twenty-shared/utils';
-import { type LineChartSeries } from '../types/LineChartSeries';
 
-export const handlePointClick = (
+export const handleLineChartPointClick = (
   point: Point<LineSeries>,
   dataMap: Record<string, LineChartSeries>,
 ) => {

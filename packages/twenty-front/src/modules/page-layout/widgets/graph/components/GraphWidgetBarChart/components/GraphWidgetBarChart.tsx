@@ -1,12 +1,12 @@
-import { BarChartEndLines } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/components/BarChartEndLines';
-import { useBarChartData } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartData';
-import { useBarChartHandlers } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartHandlers';
-import { useBarChartTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartTooltip';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartDataItem';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartSeries';
-import { getBarColor } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getBarColor';
-import { getChartBarAxisBottomConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getChartBarAxisBottomConfig';
-import { getChartBarAxisLeftConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getChartBarAxisLeftConfig';
+import { BarChartEndLines } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/components/BarChartEndLines';
+import { useBarChartData } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/hooks/useBarChartData';
+import { useBarChartHandlers } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/hooks/useBarChartHandlers';
+import { useBarChartTooltip } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/hooks/useBarChartTooltip';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/types/BarChartSeries';
+import { getBarChartAxisBottomConfig } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/utils/getBarChartAxisBottomConfig';
+import { getBarChartAxisLeftConfig } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/utils/getBarChartAxisLeftConfig';
+import { getBarChartColor } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/utils/getBarChartColor';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -118,14 +118,14 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   });
 
-  const axisBottomConfig = getChartBarAxisBottomConfig(
+  const axisBottomConfig = getBarChartAxisBottomConfig(
     layout,
     xAxisLabel,
     yAxisLabel,
     formatOptions,
   );
 
-  const axisLeftConfig = getChartBarAxisLeftConfig(
+  const axisLeftConfig = getBarChartAxisLeftConfig(
     layout,
     xAxisLabel,
     yAxisLabel,
@@ -167,7 +167,7 @@ export const GraphWidgetBarChart = ({
           layout={layout}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
-          colors={(datum) => getBarColor(datum, barConfigs, theme)}
+          colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
           defs={defs}
           layers={[
             'grid',

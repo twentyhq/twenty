@@ -1,18 +1,18 @@
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { useLineChartData } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/hooks/useLineChartData';
+import { useLineChartTooltip } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/hooks/useLineChartTooltip';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
+import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
+import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { handleLineChartPointClick } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/handleLineChartPointClick';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useId } from 'react';
-import { createGraphColorRegistry } from '../../utils/createGraphColorRegistry';
-import { type GraphValueFormatOptions } from '../../utils/graphFormatters';
-import { GraphWidgetLegend } from '../GraphWidgetLegend';
-import { GraphWidgetTooltip } from '../GraphWidgetTooltip';
-import { useLineChartData } from './hooks/useLineChartData';
-import { useLineChartTooltip } from './hooks/useLineChartTooltip';
-import { type LineChartSeries } from './types/LineChartSeries';
-import { getAxisBottomConfig } from './utils/getAxisBottomConfig';
-import { getAxisLeftConfig } from './utils/getAxisLeftConfig';
-import { handlePointClick } from './utils/handlePointClick';
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -136,11 +136,13 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const axisBottomConfig = getAxisBottomConfig(xAxisLabel);
-  const axisLeftConfig = getAxisLeftConfig(yAxisLabel, formatOptions);
+  const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
+  const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
 
-  const onPointClick = (point: Parameters<typeof handlePointClick>[0]) => {
-    handlePointClick(point, dataMap);
+  const onPointClick = (
+    point: Parameters<typeof handleLineChartPointClick>[0],
+  ) => {
+    handleLineChartPointClick(point, dataMap);
   };
 
   const sliceTooltip = (props: Parameters<typeof renderSliceTooltip>[0]) => {
@@ -199,7 +201,9 @@ export const GraphWidgetLineChart = ({
           }
           onClick={(datum) => {
             if ('seriesId' in datum) {
-              onPointClick(datum as Parameters<typeof handlePointClick>[0]);
+              onPointClick(
+                datum as Parameters<typeof handleLineChartPointClick>[0],
+              );
             }
           }}
           useMesh={true}

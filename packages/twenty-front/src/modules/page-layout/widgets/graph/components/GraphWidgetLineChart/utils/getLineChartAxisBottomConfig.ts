@@ -1,4 +1,4 @@
-export const getAxisBottomConfig = (xAxisLabel?: string) => ({
+export const getLineChartAxisBottomConfig = (xAxisLabel?: string) => ({
   tickSize: 0,
   tickPadding: 5,
   tickRotation: 0,

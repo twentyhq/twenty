@@ -1,7 +1,7 @@
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/types/BarChartDataItem';
 import { type ComputedBarDatum } from '@nivo/bar';
-import { type BarChartDataItem } from '../types/BarChartDataItem';
 
-export const calculateBarEndLineCoordinates = (
+export const calculateBarChartEndLineCoordinates = (
   bar: ComputedBarDatum<BarChartDataItem>,
   layout: 'vertical' | 'horizontal',
 ) => {

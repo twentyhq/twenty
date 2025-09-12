@@ -1,7 +1,7 @@
+import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/components/GraphWidgetBarChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetBarChart } from '../GraphWidgetBarChart/GraphWidgetBarChart';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetBarChart',

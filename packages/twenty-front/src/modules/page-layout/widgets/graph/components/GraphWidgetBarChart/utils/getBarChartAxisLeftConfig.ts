@@ -1,9 +1,9 @@
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
-} from '../../../utils/graphFormatters';
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
 
-export const getChartBarAxisLeftConfig = (
+export const getBarChartAxisLeftConfig = (
   layout: 'vertical' | 'horizontal',
   xAxisLabel?: string,
   yAxisLabel?: string,

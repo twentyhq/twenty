@@ -1,8 +1,8 @@
-import { type ComputedDatum, type BarDatum } from '@nivo/bar';
+import { type BarChartConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartConfig';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { type ThemeType } from 'twenty-ui/theme';
-import { type BarChartConfig } from '../types/BarChartConfig';
 
-export const getBarColor = (
+export const getBarChartColor = (
   datum: ComputedDatum<BarDatum>,
   barConfigs: BarChartConfig[],
   theme: ThemeType,
