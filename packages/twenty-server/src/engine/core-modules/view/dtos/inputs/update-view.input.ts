@@ -10,9 +10,9 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 @InputType()
 export class UpdateViewInput {
   @Field(() => UUIDScalarType, { nullable: true })
-  id?: string;
+  id: string;
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   name?: string;
 
   @Field(() => ViewType, { nullable: true })
