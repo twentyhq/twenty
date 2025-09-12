@@ -8,8 +8,19 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-start;
+  max-width: 100%;
+  overflow: hidden;
+  width: 100%;
+`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -51,7 +62,7 @@ export const RelationFromManyFieldDisplay = () => {
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
 
-    return (
+    return isFocused ? (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {fieldValue
           .map((record) => {
@@ -69,6 +80,24 @@ export const RelationFromManyFieldDisplay = () => {
           })
           .filter(isDefined)}
       </ExpandableList>
+    ) : (
+      <StyledContainer>
+        {fieldValue
+          .map((record) => {
+            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
+              return undefined;
+            }
+            return (
+              <RecordChip
+                key={record.id}
+                objectNameSingular={objectNameSingular}
+                record={record[relationFieldName]}
+                forceDisableClick={disableChipClick}
+              />
+            );
+          })
+          .filter(isDefined)}
+      </StyledContainer>
     );
   } else if (isRelationFromActivityTargets) {
     return (
