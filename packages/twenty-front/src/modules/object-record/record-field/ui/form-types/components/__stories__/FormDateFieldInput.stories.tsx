@@ -312,13 +312,7 @@ export const SwitchesToStandaloneVariable: Story = {
     const variableTag = await canvas.findByText('Creation date');
     expect(variableTag).toBeVisible();
 
-    const removeVariableButton = canvasElement.querySelector(
-      'button .tabler-icon-x',
-    );
-
-    if (!removeVariableButton) {
-      throw new Error('Remove variable button not found');
-    }
+    const removeVariableButton = canvas.getByLabelText('Remove variable');
 
     await Promise.all([
       userEvent.click(removeVariableButton),
@@ -339,8 +333,12 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
     onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
+    if (!args.defaultValue) {
+      throw new Error('This test requires a defaultValue');
+    }
+
     const defaultValueAsDisplayString = parseDateToString({
-      date: new Date(args.defaultValue!),
+      date: new Date(args.defaultValue),
       isDateTimeInput: false,
       userTimezone: undefined,
     });

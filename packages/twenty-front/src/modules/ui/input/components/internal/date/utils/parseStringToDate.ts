@@ -1,6 +1,7 @@
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { isValid, parse } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
+import { isDefined } from 'twenty-shared/utils';
 import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseStringToDateArgs = {
@@ -25,7 +26,7 @@ export const parseStringToDate = ({
     return null;
   }
 
-  if (isDateTimeInput === true && userTimezone !== undefined) {
+  if (isDateTimeInput && isDefined(userTimezone)) {
     return zonedTimeToUtc(parsedDate, userTimezone);
   }
 

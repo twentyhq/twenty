@@ -61,15 +61,7 @@ export const formatDate = (
 ) => {
   try {
     const parsedDate = parseDate(dateToFormat);
-
-    const formatMap: Record<string, string> = {
-      DD: 'MMM d, yyyy',
-      T: 'HH:mm',
-      'DD · T': 'MMM d, yyyy · HH:mm',
-    };
-
-    const dateFnsFormat = formatMap[formatString] || formatString;
-    return format(parsedDate, dateFnsFormat);
+    return format(parsedDate, formatString);
   } catch (error) {
     logError(error);
     return '';
@@ -81,7 +73,7 @@ export const beautifyExactDateTime = (
 ) => {
   const parsedDate = parseDate(dateToBeautify);
   const isTodayDate = isToday(parsedDate);
-  const dateFormat = isTodayDate ? 'T' : 'DD · T';
+  const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm';
   return formatDate(dateToBeautify, dateFormat);
 };
 
@@ -91,7 +83,7 @@ export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
   if (isTodayDate) {
     return t`Today`;
   }
-  return formatDate(dateToBeautify, 'DD');
+  return formatDate(dateToBeautify, 'MMM d, yyyy');
 };
 
 export const beautifyPastDateRelativeToNow = (
