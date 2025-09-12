@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { type ComponentProps } from 'react';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetLineChart } from '../GraphWidgetLineChart';
+import { GraphWidgetLineChart } from '../GraphWidgetLineChart/GraphWidgetLineChart';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
