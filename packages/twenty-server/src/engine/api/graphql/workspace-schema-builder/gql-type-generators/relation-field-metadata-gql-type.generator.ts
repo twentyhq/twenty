@@ -1,101 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
-import { FieldObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-object-type.generator';
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Injectable()
-export class RelationFieldTypeGenerator {
+export class RelationFieldMetadataGqlTypeGenerator {
+  private readonly logger = new Logger(
+    RelationFieldMetadataGqlTypeGenerator.name,
+  );
+
   constructor(
-    private readonly fieldObjectTypeGenerator: FieldObjectTypeGenerator,
     private readonly fieldInputTypeGenerator: FieldInputTypeGenerator,
-    private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  generateRelationFieldObjectType({
+  public generateRelationFieldObjectType({
     fieldMetadata,
-    buildOptions,
     typeOptions,
   }: {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
-    buildOptions: WorkspaceBuildSchemaOptions;
-    typeOptions: TypeOptions;
-  }) {
-    return this.generateSimpleRelationFieldObjectType({
-      fieldMetadata,
-      buildOptions,
-      typeOptions,
-    });
-  }
-
-  generateRelationFieldInputType({
-    fieldMetadata,
-    kind,
-    buildOptions,
-    typeOptions,
-  }: {
-    fieldMetadata: FieldMetadataEntity<
-      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >;
-    kind: GqlInputTypeDefinitionKind;
-    buildOptions: WorkspaceBuildSchemaOptions;
-    typeOptions: TypeOptions;
-  }) {
-    switch (kind) {
-      case GqlInputTypeDefinitionKind.Filter:
-      case GqlInputTypeDefinitionKind.OrderBy:
-        return this.generateSimpleRelationFieldInputType({
-          fieldMetadata,
-          kind,
-          buildOptions,
-          typeOptions,
-        });
-
-      case GqlInputTypeDefinitionKind.Create:
-      case GqlInputTypeDefinitionKind.Update:
-        return {
-          ...this.generateConnectRelationFieldInputType({
-            fieldMetadata,
-            typeOptions,
-          }),
-          ...this.generateSimpleRelationFieldInputType({
-            fieldMetadata,
-            kind,
-            buildOptions,
-            typeOptions,
-          }),
-        };
-
-      default:
-        throw new Error(`Invalid input type kind: ${kind}`);
-    }
-  }
-
-  private generateSimpleRelationFieldObjectType({
-    fieldMetadata,
-    buildOptions,
-    typeOptions,
-  }: {
-    fieldMetadata: FieldMetadataEntity<
-      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >;
-    buildOptions: WorkspaceBuildSchemaOptions;
     typeOptions: TypeOptions;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
@@ -103,30 +38,43 @@ export class RelationFieldTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
+    const type = this.typeMapperService.mapToScalarType(
+      fieldMetadata.type,
+      typeOptions,
+    );
+
+    if (!isDefined(type)) {
+      const message = `Could not find a GraphQL output type for ${type} field metadata`;
+
+      this.logger.error(message, {
+        type,
+        typeOptions,
+      });
+      throw new Error(message);
+    }
+
+    const modifiedType = this.typeMapperService.applyTypeOptions(
+      type,
+      typeOptions,
+    );
+
     return {
       [joinColumnName]: {
-        type: this.fieldObjectTypeGenerator.generate({
-          type: fieldMetadata.type,
-          buildOptions,
-          typeOptions,
-          key: undefined,
-        }),
+        type: modifiedType,
         description: fieldMetadata.description,
       },
     };
   }
 
-  private generateSimpleRelationFieldInputType({
+  public generateSimpleRelationFieldInputType({
     fieldMetadata,
     kind,
-    buildOptions,
     typeOptions,
   }: {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     kind: GqlInputTypeDefinitionKind;
-    buildOptions: WorkspaceBuildSchemaOptions;
     typeOptions: TypeOptions;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
@@ -148,7 +96,7 @@ export class RelationFieldTypeGenerator {
     };
   }
 
-  private generateConnectRelationFieldInputType({
+  public generateConnectRelationFieldInputType({
     fieldMetadata,
     typeOptions,
   }: {
@@ -186,7 +134,7 @@ export class RelationFieldTypeGenerator {
 
     return {
       [fieldMetadataName]: {
-        type: this.typeMapperService.mapToGqlType(type, typeOptions),
+        type: this.typeMapperService.applyTypeOptions(type, typeOptions),
         description: fieldMetadata.description,
       },
     };

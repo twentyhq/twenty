@@ -7,7 +7,7 @@ import { type ArgsMetadata } from 'src/engine/api/graphql/workspace-schema-build
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class ArgsTypeGenerator {
 
       // Argument is a scalar type
       if (isDefined(arg.type)) {
-        const gqlType = this.typeMapperService.mapToGqlType(arg.type, {
+        const gqlType = this.typeMapperService.applyTypeOptions(arg.type, {
           defaultValue: arg.defaultValue,
           nullable: arg.isNullable,
           isArray: arg.isArray,
@@ -69,7 +69,7 @@ export class ArgsTypeGenerator {
           );
         }
 
-        const gqlType = this.typeMapperService.mapToGqlType(inputType, {
+        const gqlType = this.typeMapperService.applyTypeOptions(inputType, {
           nullable: arg.isNullable,
           isArray: arg.isArray,
         });

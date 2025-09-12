@@ -10,7 +10,7 @@ import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/en
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/args-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLRootTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
@@ -115,9 +115,12 @@ export class RootTypeGenerator {
             'destroyMany',
           ];
 
-          const outputType = this.typeMapperService.mapToGqlType(objectType, {
-            isArray: allowedMethodNames.includes(methodName),
-          });
+          const outputType = this.typeMapperService.applyTypeOptions(
+            objectType,
+            {
+              isArray: allowedMethodNames.includes(methodName),
+            },
+          );
 
           fieldConfigMap[name] = {
             type: outputType,

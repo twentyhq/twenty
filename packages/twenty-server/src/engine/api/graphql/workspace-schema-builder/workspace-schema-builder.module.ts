@@ -8,7 +8,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 
 import { TypeMapperService } from './services/type-mapper.service';
-import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
+import { TypeDefinitionsStorage } from './storages/gql-types.storage';
 @Module({
   imports: [
     ObjectMetadataModule,

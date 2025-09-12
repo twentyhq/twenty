@@ -11,7 +11,7 @@ import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { createGqlEnumFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/create-gql-enum-filter-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
@@ -117,6 +117,6 @@ export class FieldInputTypeGenerator {
       );
     }
 
-    return this.typeMapperService.mapToGqlType(inputType, typeOptions);
+    return this.typeMapperService.applyTypeOptions(inputType, typeOptions);
   }
 }

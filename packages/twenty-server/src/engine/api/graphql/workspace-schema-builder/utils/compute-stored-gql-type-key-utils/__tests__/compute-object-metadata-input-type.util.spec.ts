@@ -4,7 +4,10 @@ import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/worksp
 describe('computeObjectMetadataInputTypeKey', () => {
   it('should compute the correct key for user object with Create kind', () => {
     expect(
-      computeObjectMetadataInputTypeKey('user', GqlInputTypeDefinitionKind.Create),
+      computeObjectMetadataInputTypeKey(
+        'user',
+        GqlInputTypeDefinitionKind.Create,
+      ),
     ).toBe('UserCreateInput');
   });
 });

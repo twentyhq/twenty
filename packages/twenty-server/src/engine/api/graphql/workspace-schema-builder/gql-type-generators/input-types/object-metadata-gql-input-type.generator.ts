@@ -3,16 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
-
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
-import { FieldInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/field-input-type.generator';
-import { RelationFieldTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/relation-field-type.generator';
-import {
-  TypeMapperService,
-  TypeOptions,
-} from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { TypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
@@ -24,17 +16,30 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class ObjectMetadataInputTypeGenerator {
+export class ObjectMetadataGqlInputTypeGenerator {
   constructor(
-    private readonly fieldInputTypeGenerator: FieldInputTypeGenerator,
-    private readonly typeMapperService: TypeMapperService,
-    private readonly relationFieldTypeGenerator: RelationFieldTypeGenerator,
+    private readonly objectMetadataCreateGqlInputTypeGenerator: ObjectMetadataCreateGqlInputTypeGenerator,
+    private readonly objectMetadataUpdateGqlInputTypeGenerator: ObjectMetadataUpdateGqlInputTypeGenerator,
+    private readonly objectMetadataFilterGqlInputTypeGenerator: ObjectMetadataFilterGqlInputTypeGenerator,
+    private readonly objectMetadataOrderByGqlInputTypeGenerator: ObjectMetadataOrderByGqlInputTypeGenerator,
   ) {}
 
-  public generate(
-    objectMetadata: ObjectMetadataEntity,
-    options: WorkspaceBuildSchemaOptions,
-  ): StoredInputType[] {
+  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+    this.objectMetadataCreateGqlInputTypeGenerator.buildAndStore(
+      objectMetadata,
+    );
+    this.objectMetadataUpdateGqlInputTypeGenerator.buildAndStore(
+      objectMetadata,
+    );
+    this.objectMetadataFilterGqlInputTypeGenerator.buildAndStore(
+      objectMetadata,
+    );
+    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore(
+      objectMetadata,
+    );
+  }
+
+  public generate(objectMetadata: ObjectMetadataEntity) {
     const extendedObjectMetadata = {
       ...objectMetadata,
       fields: objectMetadata.fields.map((field) => ({
@@ -148,7 +153,7 @@ export class ObjectMetadataInputTypeGenerator {
     options: WorkspaceBuildSchemaOptions;
     inputType: GraphQLInputObjectType;
   }): GraphQLInputFieldConfigMap {
-    const andOrType = this.typeMapperService.mapToGqlType(inputType, {
+    const andOrType = this.typeMapperService.applyTypeOptions(inputType, {
       isArray: true,
       arrayDepth: 1,
       nullable: true,
@@ -204,7 +209,7 @@ export class ObjectMetadataInputTypeGenerator {
         type: andOrType,
       },
       not: {
-        type: this.typeMapperService.mapToGqlType(inputType, {
+        type: this.typeMapperService.applyTypeOptions(inputType, {
           nullable: true,
         }),
       },

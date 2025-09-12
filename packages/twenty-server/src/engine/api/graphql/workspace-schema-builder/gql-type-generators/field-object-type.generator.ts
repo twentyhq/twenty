@@ -4,13 +4,11 @@ import { type GraphQLOutputType } from 'graphql';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
-
 import {
   TypeMapperService,
   type TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
 @Injectable()
 export class FieldObjectTypeGenerator {
@@ -18,7 +16,7 @@ export class FieldObjectTypeGenerator {
 
   constructor(
     private readonly typeMapperService: TypeMapperService,
-    private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
   public generate({
@@ -33,8 +31,7 @@ export class FieldObjectTypeGenerator {
     key?: string;
   }): GraphQLOutputType {
     const gqlType = isDefined(key)
-      ? this.typeDefinitionsStorage.getEnumTypeByKey(key) ||
-        this.typeDefinitionsStorage.getObjectTypeByKey(key)
+      ? this.gqlTypesStorage.getGqlTypeByKey(key)
       : this.typeMapperService.mapToScalarType(
           type,
           typeOptions.settings,
@@ -56,6 +53,6 @@ export class FieldObjectTypeGenerator {
       );
     }
 
-    return this.typeMapperService.mapToGqlType(gqlType, typeOptions);
+    return this.typeMapperService.applyTypeOptions(gqlType, typeOptions);
   }
 }

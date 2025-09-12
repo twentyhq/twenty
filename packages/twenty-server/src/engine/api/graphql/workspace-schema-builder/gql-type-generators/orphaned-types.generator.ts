@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type GraphQLNamedType } from 'graphql';
 
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
 @Injectable()
 export class OrphanedTypesGenerator {

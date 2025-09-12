@@ -10,8 +10,6 @@ import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/query-type.generator';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-import { type WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
-
 @Injectable()
 export class WorkspaceGraphQLSchemaGenerator {
   constructor(
@@ -24,23 +22,18 @@ export class WorkspaceGraphQLSchemaGenerator {
   async generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
-    options: WorkspaceBuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
     // Generate type definitions
-    await this.gqlTypeGenerator.generate(objectMetadataCollection, options);
+    await this.gqlTypeGenerator.generate(objectMetadataCollection);
 
     // Generate schema
     const schema = new GraphQLSchema({
-      query: this.queryTypeGenerator.generate(
-        objectMetadataCollection,
-        [...workspaceResolverBuilderMethods.queries],
-        options,
-      ),
-      mutation: this.mutationTypeGenerator.generate(
-        objectMetadataCollection,
-        [...workspaceResolverBuilderMethods.mutations],
-        options,
-      ),
+      query: this.queryTypeGenerator.generate(objectMetadataCollection, [
+        ...workspaceResolverBuilderMethods.queries,
+      ]),
+      mutation: this.mutationTypeGenerator.generate(objectMetadataCollection, [
+        ...workspaceResolverBuilderMethods.mutations,
+      ]),
       types: this.orphanedTypesGenerator.generate(),
     });
 

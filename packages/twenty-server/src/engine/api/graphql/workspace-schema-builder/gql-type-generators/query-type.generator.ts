@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType } from 'graphql';
 
 import { type WorkspaceResolverBuilderQueryMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-type.generator';
@@ -16,13 +15,11 @@ export class QueryTypeGenerator {
   generate(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderQueryMethodNames[],
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLObjectType {
     return this.rootTypeGenerator.generate(
       objectMetadataCollection,
       workspaceResolverMethodNames,
       GqlOperation.Query,
-      options,
     );
   }
 }
