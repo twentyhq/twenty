@@ -5,9 +5,9 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
-    DateTimePicker,
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  DateTimePicker,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
@@ -21,11 +21,11 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-    useId,
-    useRef,
-    useState,
-    type ChangeEvent,
-    type KeyboardEvent,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
 } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -114,8 +114,8 @@ export const FormDateTimeFieldInput = ({
   );
 
   const draftValueAsDate =
-    isDefined(draftValue.value) && 
-    isNonEmptyString(draftValue.value) && 
+    isDefined(draftValue.value) &&
+    isNonEmptyString(draftValue.value) &&
     draftValue.type === 'static'
       ? new Date(draftValue.value)
       : null;
