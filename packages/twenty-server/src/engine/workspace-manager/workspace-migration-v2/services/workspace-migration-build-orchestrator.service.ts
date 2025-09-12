@@ -102,8 +102,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
         const viewFieldResult =
           await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
             {
-              fromFlatViewFieldMaps: fromAllFlatEntityMaps.flatViewFieldMaps,
-              toFlatViewFieldMaps: toAllFlatEntityMaps.flatViewFieldMaps,
+              from: fromAllFlatEntityMaps.flatViewFieldMaps,
+              to: toAllFlatEntityMaps.flatViewFieldMaps,
               workspaceId,
               buildOptions,
               dependencyOptimisticEntityMaps: {
