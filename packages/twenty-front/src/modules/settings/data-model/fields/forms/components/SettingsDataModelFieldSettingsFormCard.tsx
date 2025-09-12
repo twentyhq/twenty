@@ -166,6 +166,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   objectNameSingular,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
+  console.log(existingFieldMetadataId,"hello")
 
   if (!previewableTypes.includes(fieldType)) {
     return null;

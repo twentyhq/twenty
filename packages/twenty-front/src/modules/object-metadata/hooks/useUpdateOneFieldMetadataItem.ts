@@ -70,7 +70,6 @@ export const useUpdateOneFieldMetadataItem = () => {
     >;
   }) => {
 
-  console.log(updatePayload,"updatePayload");
 
   const result = await mutate({
       variables: {
@@ -117,7 +116,6 @@ export const useUpdateOneFieldMetadataItem = () => {
       }
       cache.evict({ id: `Views:${view.id}` });
     }
-
     return result;
   };
 

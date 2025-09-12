@@ -151,10 +151,11 @@ export const ObjectFilterDropdownOptionSelect = ({
       .includes(objectFilterDropdownSearchInput.toLowerCase()),
   );
 
-  const showNoResult = optionsInDropdown?.length === 0 && IsHasPermissionFlag
+  const showNoResult = optionsInDropdown?.length === 0 
   
   const objectRecordsIds = optionsInDropdown.map((option) => option.id);
 
+  
   return (
     <SelectableList
       selectableListInstanceId={componentInstanceId}
@@ -165,7 +166,8 @@ export const ObjectFilterDropdownOptionSelect = ({
         {showNoResult ? (
           <ObjectFilterDropdownCreateNewOption 
             name={objectFilterDropdownSearchInput}
-            options={fieldMetadataItemUsedInDropdown?.options || []}
+            IsHasPermissionFlag={IsHasPermissionFlag}
+            fieldName={fieldMetadataItemUsedInDropdown?.name || ''}
           />
         ) : (
           optionsInDropdown?.map((option) => (
