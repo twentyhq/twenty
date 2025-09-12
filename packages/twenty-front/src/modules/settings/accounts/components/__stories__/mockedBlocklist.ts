@@ -1,4 +1,4 @@
-import { parseISO } from 'date-fns';
+import { formatISO, parseISO, subDays, subHours } from 'date-fns';
 
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 
@@ -8,8 +8,7 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: 'test1@twenty.com',
     workspaceMemberId: '1',
     createdAt:
-      parseISO('2023-04-26T10:12:42.33625+00:00').minus({ hours: 2 }).toISO() ??
-      '',
+      formatISO(subHours(parseISO('2023-04-26T10:12:42.33625+00:00'), 2)) ?? '',
     __typename: 'BlocklistItem',
   },
   {
@@ -17,8 +16,7 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: 'test2@twenty.com',
     workspaceMemberId: '1',
     createdAt:
-      parseISO('2023-04-26T10:12:42.33625+00:00').minus({ days: 2 }).toISO() ??
-      '',
+      formatISO(subDays(parseISO('2023-04-26T10:12:42.33625+00:00'), 2)) ?? '',
     __typename: 'BlocklistItem',
   },
   {
@@ -26,8 +24,7 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: 'test3@twenty.com',
     workspaceMemberId: '1',
     createdAt:
-      parseISO('2023-04-26T10:12:42.33625+00:00').minus({ days: 3 }).toISO() ??
-      '',
+      formatISO(subDays(parseISO('2023-04-26T10:12:42.33625+00:00'), 3)) ?? '',
     __typename: 'BlocklistItem',
   },
   {
@@ -35,8 +32,7 @@ export const mockedBlocklist: BlocklistItem[] = [
     handle: '@twenty.com',
     workspaceMemberId: '1',
     createdAt:
-      parseISO('2023-04-26T10:12:42.33625+00:00').minus({ days: 4 }).toISO() ??
-      '',
+      formatISO(subDays(parseISO('2023-04-26T10:12:42.33625+00:00'), 4)) ?? '',
     __typename: 'BlocklistItem',
   },
 ];

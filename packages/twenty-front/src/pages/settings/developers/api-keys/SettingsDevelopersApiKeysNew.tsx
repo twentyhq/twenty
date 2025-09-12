@@ -72,7 +72,10 @@ export const SettingsDevelopersApiKeysNew = () => {
   );
 
   const handleSave = async () => {
-    const expiresAt = addDays(new Date(), formValues.expirationDate ?? 30).toISOString();
+    const expiresAt = addDays(
+      new Date(),
+      formValues.expirationDate ?? 30,
+    ).toISOString();
 
     const roleIdToUse = formValues.roleId;
 

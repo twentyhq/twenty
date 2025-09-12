@@ -55,24 +55,21 @@ export const parseDate = (dateToParse: Date | string | number): Date => {
   return formattedDate;
 };
 
-const formatDateWithLuxonFormat = (date: Date, luxonFormat: string): string => {
-  const formatMap: Record<string, string> = {
-    DD: 'MMM d, yyyy',
-    T: 'HH:mm',
-    'DD · T': 'MMM d, yyyy · HH:mm',
-  };
-
-  const dateFnsFormat = formatMap[luxonFormat] || luxonFormat;
-  return format(date, dateFnsFormat);
-};
-
 export const formatDate = (
   dateToFormat: Date | string | number,
   formatString: string,
 ) => {
   try {
     const parsedDate = parseDate(dateToFormat);
-    return formatDateWithLuxonFormat(parsedDate, formatString);
+
+    const formatMap: Record<string, string> = {
+      DD: 'MMM d, yyyy',
+      T: 'HH:mm',
+      'DD · T': 'MMM d, yyyy · HH:mm',
+    };
+
+    const dateFnsFormat = formatMap[formatString] || formatString;
+    return format(parsedDate, dateFnsFormat);
   } catch (error) {
     logError(error);
     return '';

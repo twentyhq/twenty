@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { addMonths, subMonths, setYear, setDate, setMonth } from 'date-fns';
-import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import { addMonths, setDate, setMonth, setYear, subMonths } from 'date-fns';
+import { lazy, Suspense, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -13,7 +13,6 @@ import { DateTimeInput } from '@/ui/input/components/internal/date/components/Da
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { UserContext } from '@/users/contexts/UserContext';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -352,7 +351,6 @@ export const DateTimePicker = ({
 }: DateTimePickerProps) => {
   const internalDate = date ?? new Date();
 
-  const { timeZone } = useContext(UserContext);
   const theme = useTheme();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();

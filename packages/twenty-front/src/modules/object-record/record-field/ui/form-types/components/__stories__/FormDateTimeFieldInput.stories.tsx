@@ -11,7 +11,6 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { format } from 'date-fns';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
@@ -271,7 +270,9 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
           selected: true,
           name: (accessibleName) => {
             // The name looks like "Choose Sunday, December 31st, 1899"
-            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+            return accessibleName.includes(
+              expectedDate.getFullYear().toString(),
+            );
           },
         });
         expect(selectedDay).toBeVisible();
@@ -327,7 +328,9 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
           selected: true,
           name: (accessibleName) => {
             // The name looks like "Choose Thursday, December 30th, 2100"
-            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+            return accessibleName.includes(
+              expectedDate.getFullYear().toString(),
+            );
           },
         });
         expect(selectedDay).toBeVisible();

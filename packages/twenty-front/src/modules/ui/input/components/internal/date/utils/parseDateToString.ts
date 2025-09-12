@@ -1,6 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import { isDefined } from 'twenty-shared/utils';
 import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseDateToStringArgs = {
@@ -18,15 +19,13 @@ export const parseDateToString = ({
 }: ParseDateToStringArgs) => {
   const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
 
-  if (isDateTimeInput && userTimezone) {
+  if (isDateTimeInput && isDefined(userTimezone)) {
     return formatInTimeZone(date, userTimezone, parsingFormat);
   } else if (isDateTimeInput) {
     return format(date, parsingFormat);
   } else {
     const dateWithoutTime = new Date(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate(),
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
     );
     return format(dateWithoutTime, parsingFormat);
   }
