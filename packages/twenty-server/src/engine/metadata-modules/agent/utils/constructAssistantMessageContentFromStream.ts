@@ -1,4 +1,4 @@
-import { type FilePart, type TextPart } from 'ai';
+import { type TextPart } from 'ai';
 
 type ReasoningPart = {
   type: 'reasoning';
@@ -8,10 +8,10 @@ type ReasoningPart = {
 
 export const constructAssistantMessageContentFromStream = (
   streamData: string,
-): Array<TextPart | FilePart | ReasoningPart> => {
+) => {
   const lines = streamData.trim().split('\n');
 
-  const output: Array<TextPart | FilePart | ReasoningPart> = [];
+  const output: Array<TextPart | ReasoningPart> = [];
   let reasoningText = '';
   let textContent = '';
 
