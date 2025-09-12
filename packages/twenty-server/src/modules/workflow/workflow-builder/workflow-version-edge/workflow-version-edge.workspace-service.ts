@@ -96,11 +96,13 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersionId,
     workspaceId,
+    sourceConnectionOptions,
   }: {
     source: string;
     target: string;
     workflowVersionId: string;
     workspaceId: string;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
@@ -147,6 +149,7 @@ export class WorkflowVersionEdgeWorkspaceService {
         target,
         workflowVersion,
         workflowVersionRepository,
+        sourceConnectionOptions,
       });
     }
   }
@@ -394,6 +397,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersion,
     workflowVersionRepository,
+    sourceConnectionOptions,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
@@ -401,6 +405,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const sourceStep = steps.find((step) => step.id === source);
 
@@ -411,7 +416,19 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    if (!sourceStep.nextStepIds?.includes(target)) {
+    // TODO: Remove this once we start using filters as regular steps
+    const isIteratorWithLoopTarget =
+      isDefined(sourceConnectionOptions) &&
+      sourceConnectionOptions.connectedStepType ===
+        WorkflowActionType.ITERATOR &&
+      sourceConnectionOptions.settings.shouldInsertToLoop &&
+      sourceStep.type === WorkflowActionType.ITERATOR &&
+      sourceStep.settings.input.initialLoopStepIds?.includes(target);
+
+    if (
+      !sourceStep.nextStepIds?.includes(target) &&
+      !isIteratorWithLoopTarget
+    ) {
       return await this.handleFilterBetweenSourceAndTarget({
         trigger,
         steps,
@@ -422,12 +439,30 @@ export class WorkflowVersionEdgeWorkspaceService {
       });
     }
 
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: sourceStep.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== target,
-      ),
-    };
+    const { updatedSourceStep, shouldPersist } = isDefined(
+      sourceConnectionOptions,
+    )
+      ? this.buildUpdatedSourceStepForDeletion({
+          sourceStep,
+          target,
+          sourceConnectionOptions,
+        })
+      : {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter(
+              (nextStepId: string) => nextStepId !== target,
+            ),
+          },
+          shouldPersist: true,
+        };
+
+    if (!shouldPersist) {
+      return computeWorkflowVersionStepChanges({
+        trigger,
+        steps,
+      });
+    }
 
     const updatedSteps = steps.map((step) => {
       if (step.id === source) {
@@ -548,6 +583,74 @@ export class WorkflowVersionEdgeWorkspaceService {
       trigger,
       steps: updatedSteps,
     });
+  }
+
+  private buildUpdatedSourceStepForDeletion({
+    sourceStep,
+    target,
+    sourceConnectionOptions,
+  }: {
+    sourceStep: WorkflowAction;
+    target: string;
+    sourceConnectionOptions: WorkflowStepConnectionOptions;
+  }): {
+    updatedSourceStep: WorkflowAction;
+    shouldPersist: boolean;
+  } {
+    switch (sourceConnectionOptions.connectedStepType) {
+      case WorkflowActionType.ITERATOR:
+        if (sourceStep.type !== WorkflowActionType.ITERATOR) {
+          throw new WorkflowVersionEdgeException(
+            `Source step '${sourceStep.id}' is not an iterator`,
+            WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        if (sourceConnectionOptions.settings.shouldInsertToLoop) {
+          const currentInitialLoopStepIds =
+            sourceStep.settings.input.initialLoopStepIds;
+
+          if (!currentInitialLoopStepIds?.includes(target)) {
+            return {
+              updatedSourceStep: sourceStep,
+              shouldPersist: false,
+            };
+          }
+
+          return {
+            updatedSourceStep: {
+              ...sourceStep,
+              settings: {
+                ...sourceStep.settings,
+                input: {
+                  ...sourceStep.settings.input,
+                  initialLoopStepIds: currentInitialLoopStepIds.filter(
+                    (id) => id !== target,
+                  ),
+                },
+              },
+            },
+            shouldPersist: true,
+          };
+        }
+
+        return {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
+          },
+          shouldPersist: true,
+        };
+
+      default:
+        return {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
+          },
+          shouldPersist: true,
+        };
+    }
   }
 
   private findFilterBetweenNodes({
