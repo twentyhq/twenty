@@ -77,8 +77,6 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService {
     for (const flatViewFieldToCreate of createdFlatViewField) {
       const validationErrors =
         await this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
-          _existingFlatViewFieldMaps:
-            validateAndBuildResult.optimisticFlatViewFieldMaps,
           flatViewFieldToValidate: flatViewFieldToCreate,
           optimisticFlatObjectMetadataMaps:
             dependencyOptimisticEntityMaps.object,

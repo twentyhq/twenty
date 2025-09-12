@@ -32,8 +32,8 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(optimisticFlatView)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        message: t`View field to update related view not found`,
+        userFriendlyMessage: t`View field to update related view not found`,
       });
     }
 
@@ -43,8 +43,8 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(existingFlatViewField)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field not found`,
-        userFriendlyMessage: t`View field not found`,
+        message: t`View field to update not found`,
+        userFriendlyMessage: t`View field to update not found`,
       });
     }
 
@@ -75,8 +75,8 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(optimisticFlatView)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        message: t`View field to delete related view not found`,
+        userFriendlyMessage: t`View field to delete related view not found`,
       });
     }
 
@@ -86,8 +86,8 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(existingFlatViewField)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field not found`,
-        userFriendlyMessage: t`View field not found`,
+        message: t`View field to delete not found`,
+        userFriendlyMessage: t`View field to delete not found`,
       });
     }
 
@@ -101,17 +101,23 @@ export class FlatViewFieldValidatorService {
   }
 
   public async validateFlatViewFieldCreation({
-    _existingFlatViewFieldMaps,
     flatViewFieldToValidate,
     optimisticFlatObjectMetadataMaps,
     optimisticFlatViewMaps,
   }: {
-    _existingFlatViewFieldMaps: FlatViewFieldMaps;
     flatViewFieldToValidate: FlatViewField;
     optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     optimisticFlatViewMaps: FlatViewMaps;
   }): Promise<FailedFlatViewFieldValidation> {
     const errors = [];
+
+    if (isDefined(optimisticFlatViewMaps.byId[flatViewFieldToValidate.id])) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field metadata with id ${flatViewFieldToValidate.id} already exists`,
+        userFriendlyMessage: t`View field metadata already exists`,
+      });
+    }
 
     const relatedFlatFieldMetadata =
       findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
