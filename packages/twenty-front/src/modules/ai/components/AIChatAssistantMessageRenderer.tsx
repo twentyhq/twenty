@@ -80,7 +80,7 @@ export const AIChatAssistantMessageRenderer = ({
           />
         );
       case 'text':
-        return <LazyMarkdownRenderer text={step.content} />;
+        return <LazyMarkdownRenderer key={index} text={step.content} />;
       case 'error':
         return (
           <ErrorStepRenderer
