@@ -17,41 +17,34 @@ export const insertStep = ({
   existingSteps,
   existingTrigger,
   insertedStep,
-  parentStepId,
   nextStepId,
-  options,
+  parentStepId,
+  parentStepOptions,
 }: {
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
-  parentStepId?: string;
   nextStepId?: string;
-  options?: WorkflowStepCreationOptions;
+  parentStepId?: string;
+  parentStepOptions?: WorkflowStepCreationOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedInsertedStep: WorkflowAction;
   updatedTrigger: WorkflowTrigger | null;
 } => {
-  let { updatedExistingSteps, updatedTrigger } = isDefined(parentStepId)
+  let { updatedSteps, updatedTrigger } = isDefined(parentStepId)
     ? updateParentStep({
         trigger: existingTrigger,
         steps: existingSteps,
         parentStepId,
         insertedStepId: insertedStep.id,
         nextStepId,
+        parentStepOptions,
       })
     : {
-        updatedExistingSteps: existingSteps,
+        updatedSteps: existingSteps,
         updatedTrigger: existingTrigger,
       };
-
-  if (isDefined(options)) {
-    updatedExistingSteps = updateStepsWithOptions({
-      insertedStepId: insertedStep.id,
-      steps: updatedExistingSteps,
-      options,
-    });
-  }
 
   const updatedInsertedStep = {
     ...insertedStep,
@@ -59,7 +52,7 @@ export const insertStep = ({
   };
 
   return {
-    updatedSteps: [...updatedExistingSteps, updatedInsertedStep],
+    updatedSteps: [...updatedSteps, updatedInsertedStep],
     updatedTrigger,
     updatedInsertedStep,
   };
@@ -71,16 +64,56 @@ const updateParentStep = ({
   parentStepId,
   insertedStepId,
   nextStepId,
+  parentStepOptions,
 }: {
   steps: WorkflowAction[];
   trigger: WorkflowTrigger | null;
   parentStepId: string;
   insertedStepId: string;
   nextStepId?: string;
-}) => {
+  parentStepOptions?: WorkflowStepCreationOptions;
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+} => {
+  if (isDefined(parentStepOptions)) {
+    return updateStepsWithOptions({
+      steps,
+      parentStepId,
+      insertedStepId,
+      parentStepOptions,
+      trigger,
+    });
+  } else {
+    return updateParentStepNextStepIds({
+      steps,
+      trigger,
+      parentStepId,
+      insertedStepId,
+      nextStepId,
+    });
+  }
+};
+
+const updateParentStepNextStepIds = ({
+  steps,
+  trigger,
+  parentStepId,
+  insertedStepId,
+  nextStepId,
+}: {
+  steps: WorkflowAction[];
+  trigger: WorkflowTrigger | null;
+  parentStepId: string;
+  insertedStepId: string;
+  nextStepId?: string;
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+} => {
   let updatedTrigger = trigger;
 
-  let updatedExistingSteps = steps;
+  let updatedSteps = steps;
 
   if (parentStepId === TRIGGER_STEP_ID) {
     if (!trigger) {
@@ -100,7 +133,7 @@ const updateParentStep = ({
       ],
     };
   } else {
-    updatedExistingSteps = steps.map((step) => {
+    updatedSteps = steps.map((step) => {
       if (step.id === parentStepId) {
         return {
           ...step,
@@ -118,28 +151,34 @@ const updateParentStep = ({
   }
 
   return {
-    updatedExistingSteps,
+    updatedSteps,
     updatedTrigger,
   };
 };
 
 const updateStepsWithOptions = ({
+  parentStepId,
   insertedStepId,
   steps,
-  options,
+  parentStepOptions,
+  trigger,
 }: {
+  parentStepId: string;
   insertedStepId: string;
   steps: WorkflowAction[];
-  options: WorkflowStepCreationOptions;
-}): WorkflowAction[] => {
-  switch (options.type) {
+  parentStepOptions: WorkflowStepCreationOptions;
+  trigger: WorkflowTrigger | null;
+}) => {
+  let updatedSteps = steps;
+
+  switch (parentStepOptions.parentStepType) {
     case WorkflowActionType.ITERATOR:
-      if (!options.settings.shouldInsertToLoop) {
-        return steps;
+      if (!parentStepOptions.settings.shouldInsertToLoop) {
+        break;
       }
 
-      return steps.map((step) => {
-        if (step.id === options.settings.iteratorStepId) {
+      updatedSteps = steps.map((step) => {
+        if (step.id === parentStepId) {
           if (step.type !== WorkflowActionType.ITERATOR) {
             throw new WorkflowVersionStepException(
               `Step ${step.id} is not an iterator`,
@@ -164,7 +203,14 @@ const updateStepsWithOptions = ({
 
         return step;
       });
+
+      break;
     default:
-      return steps;
+      break;
   }
+
+  return {
+    updatedSteps,
+    updatedTrigger: trigger,
+  };
 };

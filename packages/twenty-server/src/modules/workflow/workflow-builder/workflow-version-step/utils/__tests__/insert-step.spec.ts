@@ -186,10 +186,10 @@ describe('insertStep', () => {
       existingTrigger,
       existingSteps: [mockIteratorStep],
       insertedStep: newStep,
-      options: {
-        type: WorkflowActionType.ITERATOR,
+      parentStepId: '1',
+      parentStepOptions: {
+        parentStepType: WorkflowActionType.ITERATOR,
         settings: {
-          iteratorStepId: '1',
           shouldInsertToLoop: true,
         },
       },
@@ -212,10 +212,10 @@ describe('insertStep', () => {
       existingTrigger,
       existingSteps: [mockIteratorStep],
       insertedStep: newStep,
-      options: {
-        type: WorkflowActionType.ITERATOR,
+      parentStepId: '1',
+      parentStepOptions: {
+        parentStepType: WorkflowActionType.ITERATOR,
         settings: {
-          iteratorStepId: '1',
           shouldInsertToLoop: false,
         },
       },

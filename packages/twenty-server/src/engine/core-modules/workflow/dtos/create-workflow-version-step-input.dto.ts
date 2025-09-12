@@ -28,6 +28,12 @@ export class CreateWorkflowVersionStepInput {
   })
   parentStepId?: string;
 
+  @Field(() => graphqlTypeJson, {
+    description: 'Step creation options',
+    nullable: true,
+  })
+  parentStepOptions?: WorkflowStepCreationOptions;
+
   @Field(() => UUIDScalarType, {
     description: 'Next step ID',
     nullable: true,
@@ -39,10 +45,4 @@ export class CreateWorkflowVersionStepInput {
     nullable: true,
   })
   position?: WorkflowStepPositionInput;
-
-  @Field(() => graphqlTypeJson, {
-    description: 'Step creation options',
-    nullable: true,
-  })
-  options?: WorkflowStepCreationOptions;
 }
