@@ -152,6 +152,56 @@ describe('AccessTokenService', () => {
       );
     });
 
+    it('embeds impersonation claims when provided', async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const mockUser = { id: userId } as User;
+      const mockWorkspace = {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        id: workspaceId,
+      } as Workspace;
+      const mockUserWorkspace = { id: 'uw-orig' } as UserWorkspace;
+      const mockWorkspaceMember = { id: 'wm-1' };
+      const mockToken = 'mock-token';
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace as Workspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'findOne')
+        .mockResolvedValueOnce(mockUserWorkspace as UserWorkspace)
+        .mockResolvedValueOnce({ id: 'uw-imp', workspaceId } as UserWorkspace)
+        .mockResolvedValueOnce({ id: 'uw-orig', workspaceId } as UserWorkspace);
+      jest
+        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .mockResolvedValue({
+          findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
+        } as any);
+      const signSpy = jest
+        .spyOn(jwtWrapperService, 'sign')
+        .mockReturnValue(mockToken);
+
+      await service.generateAccessToken({
+        userId,
+        workspaceId,
+        authProvider: AuthProviderEnum.Impersonation,
+        isImpersonating: true,
+        impersonatorUserWorkspaceId: 'uw-imp',
+        impersonatedUserWorkspaceId: 'uw-orig',
+      });
+
+      expect(signSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isImpersonating: true,
+          impersonatorUserWorkspaceId: 'uw-imp',
+          impersonatedUserWorkspaceId: 'uw-orig',
+        }),
+        expect.any(Object),
+      );
+    });
+
     it('should throw an error if user is not found', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);

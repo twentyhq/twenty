@@ -48,10 +48,51 @@ export class AccessTokenService {
     userId,
     workspaceId,
     authProvider,
+    isImpersonating,
+    impersonatorUserWorkspaceId,
+    impersonatedUserWorkspaceId,
   }: Omit<
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
   >): Promise<AuthToken> {
+    const isImpersonatingToken = isImpersonating ? true : false;
+    const hasImpersonationFields =
+      impersonatorUserWorkspaceId !== undefined ||
+      impersonatedUserWorkspaceId !== undefined;
+
+    if (!isImpersonatingToken && hasImpersonationFields) {
+      throw new AuthException(
+        'Invalid impersonation parameters',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (isImpersonatingToken) {
+      const impersonatorUserWorkspaceIdValid =
+        impersonatorUserWorkspaceId !== undefined &&
+        impersonatorUserWorkspaceId !== '';
+      const impersonatedUserWorkspaceIdValid =
+        impersonatedUserWorkspaceId !== undefined &&
+        impersonatedUserWorkspaceId !== '';
+
+      if (
+        !impersonatorUserWorkspaceIdValid ||
+        !impersonatedUserWorkspaceIdValid
+      ) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (impersonatorUserWorkspaceId === impersonatedUserWorkspaceId) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+    }
+
     const expiresIn = this.twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -104,6 +145,48 @@ export class AccessTokenService {
 
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
+    if (isImpersonatingToken) {
+      const impersonatorUserWorkspace =
+        await this.userWorkspaceRepository.findOne({
+          where: { id: impersonatorUserWorkspaceId! },
+        });
+      const impersonatedUserWorkspace =
+        await this.userWorkspaceRepository.findOne({
+          where: { id: impersonatedUserWorkspaceId! },
+        });
+
+      if (!impersonatorUserWorkspace || !impersonatedUserWorkspace) {
+        throw new AuthException(
+          'Impersonator or impersonated user workspace not found',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (
+        impersonatorUserWorkspace.workspaceId !== workspaceId ||
+        impersonatedUserWorkspace.workspaceId !== workspaceId
+      ) {
+        throw new AuthException(
+          'Invalid impersonation parameters',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      if (impersonatedUserWorkspaceId !== userWorkspace.id) {
+        throw new AuthException(
+          'Impersonated user workspace ID does not match user workspace ID in token',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
+    }
+
+    const payloadImpersonatorUserWorkspaceId = isImpersonatingToken
+      ? impersonatorUserWorkspaceId
+      : undefined;
+    const payloadOriginalUserWorkspaceId = isImpersonatingToken
+      ? impersonatedUserWorkspaceId
+      : undefined;
+
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
       userId: user.id,
@@ -112,6 +195,9 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
+      isImpersonating: isImpersonatingToken,
+      impersonatorUserWorkspaceId: payloadImpersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
     return {
@@ -131,25 +217,9 @@ export class AccessTokenService {
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
-    const {
-      user,
-      apiKey,
-      workspace,
-      workspaceMemberId,
-      userWorkspace,
-      userWorkspaceId,
-      authProvider,
-    } = await this.jwtStrategy.validate(decoded);
+    const context = await this.jwtStrategy.validate(decoded);
 
-    return {
-      user,
-      apiKey,
-      workspace,
-      userWorkspace,
-      workspaceMemberId,
-      userWorkspaceId,
-      authProvider,
-    };
+    return context;
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {

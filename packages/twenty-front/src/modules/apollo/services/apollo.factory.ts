@@ -35,7 +35,8 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
-import { getTokenPair } from '../utils/getTokenPair';
+import { getCurrentTokenPair } from '../utils/getCurrentTokenPair';
+import { isImpersonating } from '../utils/IsImpersonating';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -94,7 +95,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const authLink = setContext(async (_, { headers }) => {
-        const tokenPair = getTokenPair();
+        const tokenPair = getCurrentTokenPair();
 
         if (isUndefinedOrNull(tokenPair)) {
           return {
@@ -143,11 +144,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         forward: (operation: Operation) => Observable<FetchResult>,
       ) => {
         return fromPromise(
-          renewToken(uri, getTokenPair())
+          renewToken(uri, getCurrentTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
-                onTokenPairChange?.(tokens);
-                cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
+                if (isImpersonating()) {
+                  cookieStorage.setItem(
+                    'impersonationTokenPair',
+                    JSON.stringify(tokens),
+                  );
+                } else {
+                  onTokenPairChange?.(tokens);
+                  cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
+                }
               }
             })
             .catch(() => {

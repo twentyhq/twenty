@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
+import { isUUID } from 'class-validator';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
@@ -107,42 +108,46 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateAccessToken(
     payload: AccessTokenJwtPayload,
   ): Promise<AuthContext> {
-    let user: User | null = null;
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: payload.workspaceId,
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
     const userId = payload.sub ?? payload.userId;
 
-    if (!userId) {
+    if (!payload.workspaceId || !isUUID(payload.workspaceId)) {
       throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
+        'Invalid token',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+    if (!userId || !isUUID(userId)) {
+      throw new AuthException(
+        'Invalid token',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
-    if (!payload.userWorkspaceId) {
+    if (!payload.userWorkspaceId || !isUUID(payload.userWorkspaceId)) {
       throw new AuthException(
         'UserWorkspace not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
 
+    if (payload.isImpersonating === true) {
+      if (
+        !payload.impersonatedUserWorkspaceId ||
+        !isUUID(payload.impersonatedUserWorkspaceId) ||
+        !payload.impersonatorUserWorkspaceId ||
+        !isUUID(payload.impersonatorUserWorkspaceId)
+      ) {
+        throw new AuthException(
+          'Invalid or missing user workspace ID in impersonation token',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+    }
+
     const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        id: payload.userWorkspaceId,
-      },
+      where: { id: payload.userWorkspaceId },
+      relations: ['user', 'workspace'],
     });
 
     userWorkspaceValidator.assertIsDefinedOrThrow(
@@ -156,7 +161,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       ),
     );
 
-    return {
+    const workspace = userWorkspace.workspace;
+    const user = userWorkspace.user;
+
+    if (!workspace || workspace.id !== payload.workspaceId) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const context: AuthContext = {
       user,
       workspace,
       authProvider: payload.authProvider,
@@ -164,6 +179,47 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       userWorkspaceId: userWorkspace.id,
       workspaceMemberId: payload.workspaceMemberId,
     };
+
+    // this validate and attach impersonation metadata if present
+    if (payload.isImpersonating === true) {
+      if (workspace.allowImpersonation !== true) {
+        throw new AuthException(
+          'Impersonation not allowed for this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if (user.id !== userId) {
+        throw new AuthException(
+          'Invalid impersonation token: user ID mismatch',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
+        throw new AuthException(
+          'Original user workspace ID does not match user workspace ID in token',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      if (
+        payload.impersonatedUserWorkspaceId ===
+        payload.impersonatorUserWorkspaceId
+      ) {
+        throw new AuthException(
+          'User cannot impersonate themselves',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      context.impersonationContext = {
+        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      };
+    }
+
+    return context;
   }
 
   private async validateWorkspaceAgnosticToken(

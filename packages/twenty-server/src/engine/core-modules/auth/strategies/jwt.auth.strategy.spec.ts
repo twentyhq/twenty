@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -172,10 +174,15 @@ describe('JwtAuthStrategy', () => {
 
   describe('ACCESS token validation', () => {
     it('should throw AuthExceptionCode if type is ACCESS, no jti, and user not found', async () => {
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
       const payload = {
-        sub: 'sub-default',
+        sub: validUserId,
         type: 'ACCESS',
-        userWorkspaceId: 'userWorkspaceId',
+        userWorkspaceId: validUserWorkspaceId,
+        workspaceId: validWorkspaceId,
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
@@ -202,10 +209,15 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthExceptionCode if type is ACCESS, no jti, and userWorkspace not found', async () => {
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
       const payload = {
-        sub: 'sub-default',
+        sub: validUserId,
         type: 'ACCESS',
-        userWorkspaceId: 'userWorkspaceId',
+        userWorkspaceId: validUserWorkspaceId,
+        workspaceId: validWorkspaceId,
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
@@ -234,10 +246,15 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should not throw if type is ACCESS, no jti, and user and userWorkspace exist', async () => {
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
       const payload = {
-        sub: 'sub-default',
+        sub: validUserId,
         type: 'ACCESS',
-        userWorkspaceId: 'userWorkspaceId',
+        userWorkspaceId: validUserWorkspaceId,
+        workspaceId: validWorkspaceId,
       };
 
       workspaceRepository.findOneBy.mockResolvedValue(new Workspace());
@@ -245,7 +262,9 @@ describe('JwtAuthStrategy', () => {
       userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
 
       userWorkspaceRepository.findOne.mockResolvedValue({
-        id: 'userWorkspaceId',
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
       });
 
       strategy = new JwtAuthStrategy(
@@ -259,7 +278,7 @@ describe('JwtAuthStrategy', () => {
       const user = await strategy.validate(payload as JwtPayload);
 
       expect(user.user?.lastName).toBe('lastNameDefault');
-      expect(user.userWorkspaceId).toBe('userWorkspaceId');
+      expect(user.userWorkspaceId).toBe(validUserWorkspaceId);
     });
   });
 });

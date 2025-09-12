@@ -12,6 +12,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ManageMembersDropdownMenu } from '@/settings/members/ManageMembersDropdownMenu';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -40,7 +41,6 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
-
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -123,6 +123,7 @@ export const SettingsWorkspaceMembers = () => {
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
+    setWorkspaceMemberToDelete(undefined);
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
@@ -375,14 +376,13 @@ export const SettingsWorkspaceMembers = () => {
                     <TableCell align="right">
                       {currentWorkspaceMember?.id !== workspaceMember.id && (
                         <StyledButtonContainer>
-                          <IconButton
-                            onClick={() => {
+                          <ManageMembersDropdownMenu
+                            dropdownId={`workspace-member-actions-${workspaceMember.id}`}
+                            workspaceMemberId={workspaceMember.id}
+                            onDelete={(id) => {
+                              setWorkspaceMemberToDelete(id);
                               openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
-                              setWorkspaceMemberToDelete(workspaceMember.id);
                             }}
-                            variant="tertiary"
-                            size="medium"
-                            Icon={IconTrash}
                           />
                         </StyledButtonContainer>
                       )}

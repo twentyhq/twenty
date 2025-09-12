@@ -8,6 +8,7 @@ export enum PermissionFlagType {
   ADMIN_PANEL = 'ADMIN_PANEL',
   SECURITY = 'SECURITY',
   WORKFLOWS = 'WORKFLOWS',
+  IMPERSONATE = 'IMPERSONATE',
 
   // Tool permissions
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
