@@ -1,10 +1,10 @@
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, type EdgeProps } from '@xyflow/react';
+import { BaseEdge } from '@xyflow/react';
 
 type WorkflowDiagramBaseEdgeProps = Pick<
-  EdgeProps<WorkflowDiagramEdge>,
+  WorkflowDiagramEdgeComponentProps,
   | 'source'
   | 'sourceHandleId'
   | 'target'

@@ -3,7 +3,6 @@ import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-e
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
 import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
-import { isHandleEqual } from '@/workflow/workflow-diagram/workflow-edges/utils/isHandleEqual';
 import { useReactFlow } from '@xyflow/react';
 
 export const useEdgeState = () => {
@@ -25,7 +24,7 @@ export const useEdgeState = () => {
   }) => {
     return (
       workflowSelectedEdge?.source === nodeId &&
-      isHandleEqual(workflowSelectedEdge.sourceHandle, sourceHandle)
+      workflowSelectedEdge.sourceHandle === sourceHandle
     );
   };
 
@@ -38,7 +37,7 @@ export const useEdgeState = () => {
   }) => {
     return (
       workflowHoveredEdge?.source === nodeId &&
-      isHandleEqual(workflowHoveredEdge.sourceHandle, sourceHandle)
+      workflowHoveredEdge.sourceHandle === sourceHandle
     );
   };
 
@@ -51,7 +50,7 @@ export const useEdgeState = () => {
     return (
       isSourceSelected({ nodeId: source, sourceHandle }) &&
       workflowSelectedEdge?.target === target &&
-      isHandleEqual(workflowSelectedEdge.targetHandle, targetHandle)
+      workflowSelectedEdge.targetHandle === targetHandle
     );
   };
 
@@ -64,7 +63,7 @@ export const useEdgeState = () => {
     return (
       isSourceHovered({ nodeId: source, sourceHandle }) &&
       workflowHoveredEdge?.target === target &&
-      isHandleEqual(workflowHoveredEdge.targetHandle, targetHandle)
+      workflowHoveredEdge.targetHandle === targetHandle
     );
   };
 
@@ -79,7 +78,9 @@ export const useEdgeState = () => {
       edges.map((edge) => {
         if (
           edge.source === edgeDescriptor.source &&
-          edge.target === edgeDescriptor.target
+          edge.sourceHandle === edgeDescriptor.sourceHandle &&
+          edge.target === edgeDescriptor.target &&
+          edge.targetHandle === edgeDescriptor.targetHandle
         ) {
           return {
             ...edge,
@@ -107,7 +108,9 @@ export const useEdgeState = () => {
       edges.map((edge) => {
         if (
           edge.source === source &&
+          edge.sourceHandle === sourceHandle &&
           edge.target === target &&
+          edge.targetHandle === targetHandle &&
           edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
         ) {
           return {

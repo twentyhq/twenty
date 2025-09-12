@@ -13,6 +13,7 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -143,12 +144,13 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       )}
 
       <WorkflowDiagramHandleSource
+        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
         type="source"
         position={Position.Bottom}
         selected={
           isSourceSelected({
             nodeId: id,
-            sourceHandle: null,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
           }) ||
           selected ||
           isSourceConnected(id) ||
@@ -157,7 +159,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         hovered={
           isSourceHovered({
             nodeId: id,
-            sourceHandle: null,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
           }) || isHovered
         }
       />

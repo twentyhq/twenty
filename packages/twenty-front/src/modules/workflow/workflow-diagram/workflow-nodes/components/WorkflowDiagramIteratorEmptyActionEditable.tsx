@@ -10,6 +10,7 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
@@ -66,13 +67,14 @@ export const WorkflowDiagramIteratorEmptyActionEditable = ({
       </WorkflowNodeRightPart>
 
       <WorkflowDiagramHandleSource
+        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
         type="source"
         position={Position.Bottom}
         disableHoverEffect
         selected={
           isSourceSelected({
             nodeId: id,
-            sourceHandle: null,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
           }) ||
           selected ||
           isSourceConnected(id) ||
@@ -81,7 +83,7 @@ export const WorkflowDiagramIteratorEmptyActionEditable = ({
         hovered={
           isSourceHovered({
             nodeId: id,
-            sourceHandle: null,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
           }) || isHovered
         }
       />

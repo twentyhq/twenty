@@ -1,3 +1,4 @@
+import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import {
   type OnSelectionChangeParams,
@@ -18,6 +19,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
         return;
       }
+
+      assertEdgeHasDefinedHandlesOrThrow(selectedEdge);
 
       setEdgeSelected({
         source: selectedEdge.source,

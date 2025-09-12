@@ -7,6 +7,7 @@ import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import {
+  type WorkflowConnection,
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -21,7 +22,7 @@ import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { addEdge, type Connection, ReactFlowProvider } from '@xyflow/react';
+import { addEdge, ReactFlowProvider } from '@xyflow/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,7 +51,7 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
-  const onConnect = (edgeConnect: Connection) => {
+  const onConnect = (edgeConnect: WorkflowConnection) => {
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
@@ -60,7 +61,7 @@ export const WorkflowDiagramCanvasEditable = () => {
 
       return {
         ...diagram,
-        edges: addEdge(edgeConnect, diagram.edges),
+        edges: addEdge<WorkflowDiagramEdge>(edgeConnect, diagram.edges),
       };
     });
 
