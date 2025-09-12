@@ -152,7 +152,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'labelSingular',
           'fr-FR',
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Libellé traduit');
       expect(
@@ -160,7 +160,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'labelPlural',
           'fr-FR',
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Libellés traduits');
       expect(
@@ -168,7 +168,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'description',
           'fr-FR',
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Description traduite');
     });
@@ -287,7 +287,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'labelSingular',
           SOURCE_LOCALE,
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Overridden Label');
       expect(
@@ -295,7 +295,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'labelPlural',
           SOURCE_LOCALE,
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Overridden Labels');
       expect(
@@ -303,7 +303,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'description',
           SOURCE_LOCALE,
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('Overridden Description');
       expect(
@@ -311,7 +311,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
           objectMetadata,
           'icon',
           SOURCE_LOCALE,
-        mockI18n,
+          mockI18n,
         ),
       ).toBe('overridden-icon');
     });

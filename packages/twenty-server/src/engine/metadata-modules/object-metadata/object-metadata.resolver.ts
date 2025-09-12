@@ -57,6 +57,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelPlural',
@@ -71,6 +72,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelSingular',
@@ -85,6 +87,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'description',
@@ -100,6 +103,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'icon',
