@@ -3659,9 +3659,7 @@ export type UpdateViewInput = {
   isCompact?: InputMaybe<Scalars['Boolean']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  key?: InputMaybe<ViewKey>;
-  name?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
   type?: InputMaybe<ViewType>;
