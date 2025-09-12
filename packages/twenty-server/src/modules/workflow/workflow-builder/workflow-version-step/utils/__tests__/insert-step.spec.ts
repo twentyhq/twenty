@@ -187,8 +187,8 @@ describe('insertStep', () => {
       existingSteps: [mockIteratorStep],
       insertedStep: newStep,
       parentStepId: '1',
-      parentStepOptions: {
-        parentStepType: WorkflowActionType.ITERATOR,
+      parentStepConnectionOptions: {
+        connectedStepType: WorkflowActionType.ITERATOR,
         settings: {
           shouldInsertToLoop: true,
         },
@@ -213,8 +213,8 @@ describe('insertStep', () => {
       existingSteps: [mockIteratorStep],
       insertedStep: newStep,
       parentStepId: '1',
-      parentStepOptions: {
-        parentStepType: WorkflowActionType.ITERATOR,
+      parentStepConnectionOptions: {
+        connectedStepType: WorkflowActionType.ITERATOR,
         settings: {
           shouldInsertToLoop: false,
         },
