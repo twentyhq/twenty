@@ -1,5 +1,4 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
-import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
@@ -15,19 +14,21 @@ import {
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewFieldStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -113,11 +114,10 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-
-      await makeGraphqlAPIRequest(createOperation);
 
       const getOperation = findViewFieldsOperationFactory({
         viewId: testViewId,
@@ -145,11 +145,13 @@ describe('View Field Resolver', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 1,
         isVisible: true,
@@ -167,11 +169,13 @@ describe('View Field Resolver', () => {
         viewId: testViewId,
       };
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createOneCoreViewField({
+        input: fieldData,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 2,
         isVisible: false,
@@ -189,11 +193,11 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const updateInput = updateViewFieldData({
         position: 5,
@@ -244,11 +248,11 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const deleteOperation = deleteViewFieldOperationFactory({
         viewFieldId: viewField.id,
@@ -283,11 +287,11 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const destroyOperation = destroyViewFieldOperationFactory({
         viewFieldId: viewField.id,

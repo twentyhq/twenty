@@ -1,5 +1,5 @@
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { createOneViewFieldMetadataQueryFactory } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field-metadata-query-factory.util';
+import { createCoreViewFieldQueryFactory } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field-metadata-query-factory.util';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
@@ -9,14 +9,14 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 
-export const createOneViewFieldMetadata = async ({
+export const createOneCoreViewField = async ({
   input,
   gqlFields,
   expectToFail,
 }: PerformMetadataQueryParams<CreateViewFieldInput>): CommonResponseBody<{
-  createOneViewField: ViewFieldEntity;
+  createCoreViewField: ViewFieldEntity;
 }> => {
-  const graphqlOperation = createOneViewFieldMetadataQueryFactory({
+  const graphqlOperation = createCoreViewFieldQueryFactory({
     input,
     gqlFields,
   });
