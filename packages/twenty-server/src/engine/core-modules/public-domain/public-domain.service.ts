@@ -101,4 +101,37 @@ export class PublicDomainService {
 
     return publicDomain;
   }
+
+  async checkPublicDomainsValidRecords(workspace: Workspace) {
+    const publicDomains = await this.publicDomainRepository.find({
+      where: { workspaceId: workspace.id },
+    });
+
+    for (const publicDomain of publicDomains) {
+      const publicDomainWithRecords =
+        await this.dnsManagerService.getHostnameWithRecords(
+          publicDomain.domain,
+          {
+            isPublicDomain: true,
+          },
+        );
+
+      if (!publicDomainWithRecords) return;
+
+      await this.dnsManagerService.refreshHostname(publicDomainWithRecords, {
+        isPublicDomain: true,
+      });
+
+      const isCustomDomainWorking =
+        await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {
+          isPublicDomain: true,
+        });
+
+      if (publicDomain.isValidated !== isCustomDomainWorking) {
+        publicDomain.isValidated = isCustomDomainWorking;
+
+        await this.publicDomainRepository.save(publicDomain);
+      }
+    }
+  }
 }
