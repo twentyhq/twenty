@@ -86,7 +86,7 @@ describe('PageLayoutService', () => {
           workspaceId,
           deletedAt: IsNull(),
         },
-        relations: ['tabs'],
+        relations: ['tabs', 'tabs.widgets'],
       });
       expect(result).toEqual(expectedPageLayouts);
     });
@@ -113,7 +113,7 @@ describe('PageLayoutService', () => {
           objectMetadataId,
           deletedAt: IsNull(),
         },
-        relations: ['tabs'],
+        relations: ['tabs', 'tabs.widgets'],
       });
       expect(result).toEqual(expectedPageLayouts);
     });
@@ -130,6 +130,14 @@ describe('PageLayoutService', () => {
 
       const result = await pageLayoutService.findByIdOrThrow(id, workspaceId);
 
+      expect(pageLayoutRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+        relations: ['tabs', 'tabs.widgets'],
+      });
       expect(result).toEqual(mockPageLayout);
     });
 
