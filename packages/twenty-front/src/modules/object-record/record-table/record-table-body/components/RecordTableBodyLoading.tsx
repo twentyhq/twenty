@@ -5,6 +5,8 @@ import { RecordTableBody } from '@/object-record/record-table/record-table-body/
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
+import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
+import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 
 export const RecordTableBodyLoading = () => {
@@ -12,7 +14,7 @@ export const RecordTableBodyLoading = () => {
 
   return (
     <RecordTableBody>
-      {Array.from({ length: 8 }).map((_, rowIndex) => (
+      {Array.from({ length: 50 }).map((_, rowIndex) => (
         <RecordTableRowContextProvider
           key={rowIndex}
           value={{
@@ -39,9 +41,14 @@ export const RecordTableBodyLoading = () => {
             >
               <RecordTableCellGrip />
               <RecordTableCellCheckbox />
-              {visibleRecordFields.map((recordField) => (
-                <RecordTableCellLoading key={recordField.fieldMetadataItemId} />
+              {visibleRecordFields.map((recordField, index) => (
+                <RecordTableCellLoading
+                  key={recordField.fieldMetadataItemId}
+                  recordFieldIndex={index}
+                />
               ))}
+              <RecordTablePlusButtonCellPlaceholder />
+              <RecordTableLastEmptyCell />
             </RecordTableTr>
           </RecordTableRowDraggableContextProvider>
         </RecordTableRowContextProvider>

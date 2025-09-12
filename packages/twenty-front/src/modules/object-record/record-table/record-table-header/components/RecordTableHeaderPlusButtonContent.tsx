@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -56,16 +57,22 @@ export const RecordTableHeaderPlusButtonContent = () => {
         .includes(fieldMetadataItemToFilter.id),
   );
 
+  const handleFieldMetadataItemMenuItemClick = async (
+    fieldMetadataItem: FieldMetadataItem,
+  ) => {
+    await handleAddColumn({
+      fieldMetadataId: fieldMetadataItem.id,
+    });
+  };
+
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
         {availableFieldMetadataItemsToShow.map((fieldMetadataItem) => (
           <MenuItem
             key={fieldMetadataItem.id}
-            onClick={async () =>
-              await handleAddColumn({
-                fieldMetadataId: fieldMetadataItem.id,
-              })
+            onClick={() =>
+              handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
             }
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}

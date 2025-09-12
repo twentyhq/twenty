@@ -1,9 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCreatePageLayoutWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutWidget';
-import {
-  GraphType,
-  WidgetType,
-} from '@/settings/page-layout/mocks/mockWidgets';
+import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
+import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
 
 import {

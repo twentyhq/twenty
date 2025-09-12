@@ -10,16 +10,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
-
-const StyledTableContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  width: fit-content;
-  height: 100%;
-`;
 
 type RecordTableWithWrappersProps = {
   objectNameSingular: string;
@@ -75,9 +66,7 @@ export const RecordTableWithWrappers = ({
             componentInstanceId={`record-table-scroll-${recordTableId}`}
           >
             <RecordUpdateContext.Provider value={updateRecordMutation}>
-              <StyledTableContainer>
-                <RecordTable />
-              </StyledTableContainer>
+              <RecordTable />
             </RecordUpdateContext.Provider>
           </ScrollWrapper>
         </EntityDeleteContext.Provider>

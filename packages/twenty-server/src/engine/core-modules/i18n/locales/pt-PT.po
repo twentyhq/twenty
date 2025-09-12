@@ -756,6 +756,11 @@ msgstr "Números de Telefone do Contacto"
 msgid "Contact’s X/Twitter account"
 msgstr "Conta X/Twitter do Contacto"
 
+#. js-lingui-id: LZf/L8
+#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+msgid "Could not find flat entity in maps"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -3222,6 +3227,21 @@ msgstr "Tamanho do Campo da Vista"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field target field"
 msgstr "Campo de Destino do Campo da Vista"
+
+#. js-lingui-id: XJlyZS
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to delete not found"
+msgstr ""
+
+#. js-lingui-id: DXyYuh
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to destroy not found"
+msgstr ""
+
+#. js-lingui-id: Fpy/K1
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+msgid "View field to update not found"
+msgstr ""
 
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts

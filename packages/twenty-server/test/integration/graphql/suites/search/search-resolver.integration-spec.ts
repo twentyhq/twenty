@@ -43,6 +43,7 @@ describe('SearchResolver', () => {
     await deleteAllRecords('task');
     await deleteAllRecords('noteTarget');
     await deleteAllRecords('taskTarget');
+    await deleteAllRecords('dashboard');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
 

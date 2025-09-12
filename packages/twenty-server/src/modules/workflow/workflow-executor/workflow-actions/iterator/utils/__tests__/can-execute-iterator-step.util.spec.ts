@@ -22,7 +22,7 @@ const { getAllStepIdsInLoop } = jest.requireMock(
 describe('canExecuteIteratorStep', () => {
   const createMockIteratorStep = (
     id: string,
-    initialLoopStepIds: string[] | string = [],
+    initialLoopStepIds: string[] = [],
   ): WorkflowIteratorAction => ({
     id,
     name: 'Iterator Step',

@@ -13,10 +13,7 @@ import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diag
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import {
-  type WorkflowDiagramEdge,
-  type WorkflowDiagramEdgeData,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramEdgeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -26,6 +23,7 @@ import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/work
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { WorkflowStepFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterCounter';
@@ -34,11 +32,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  EdgeLabelRenderer,
-  type EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
+import { EdgeLabelRenderer, getBezierPath } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,7 +47,7 @@ import {
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramFilterEdgeEditableProps = WorkflowDiagramEdgeComponentProps;
 
 const assertFilterEdgeDataOrThrow: (
   data: WorkflowDiagramEdgeData | undefined,
@@ -86,7 +80,9 @@ const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
 
 export const WorkflowDiagramFilterEdgeEditable = ({
   source,
+  sourceHandleId,
   target,
+  targetHandleId,
   sourceY,
   sourceX,
   targetY,
@@ -179,7 +175,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const handleDeleteBranchClick = async () => {
     closeDropdown(dropdownId);
 
-    await deleteEdge({ source, target });
+    await deleteEdge({
+      source,
+      sourceHandle: sourceHandleId,
+      target,
+      targetHandle: targetHandleId,
+    });
   };
 
   const { filterCounter } = useFilterCounter({ stepId: data.stepId });
@@ -189,7 +190,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     <>
       <WorkflowDiagramBaseEdge
         source={source}
+        sourceHandleId={sourceHandleId}
         target={target}
+        targetHandleId={targetHandleId}
         path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
@@ -218,7 +221,12 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                 textColor={theme.font.color.inverted}
                 counter={filterCounter}
               />
-              {isEdgeHovered({ source, target }) ||
+              {isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              }) ||
               isDropdownOpen ||
               nodeCreationStarted ? (
                 <WorkflowDiagramEdgeButtonGroup

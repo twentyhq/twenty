@@ -9,6 +9,8 @@ import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/ge
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { Position } from '@xyflow/react';
@@ -88,6 +90,7 @@ export const generateNodesAndEdgesForIteratorNode = ({
         ...(edgeTypeBetweenTwoNodes.includes('editable')
           ? { deletable: true, selectable: true }
           : {}),
+        targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
         data: {
           ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION.data,
           labelOptions: {
@@ -128,6 +131,7 @@ export const generateNodesAndEdgesForIteratorNode = ({
       ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
+      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
       data: {
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION.data,
         labelOptions: {
@@ -142,10 +146,12 @@ export const generateNodesAndEdgesForIteratorNode = ({
       type: edgeTypeBetweenTwoNodes,
       id: v4(),
       source: emptyNodeId,
+      sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
       target: step.id,
       ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
+      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
     });
   }
 
@@ -155,10 +161,12 @@ export const generateNodesAndEdgesForIteratorNode = ({
       type: edgeTypeBetweenTwoNodes,
       id: v4(),
       source: step.id,
+      sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
       target: child,
       ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
+      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
       data: {
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION.data,
         labelOptions: {
