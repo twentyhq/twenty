@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -82,37 +81,16 @@ export class PermissionsService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
     const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
-
-    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
-      {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-      };
 
     return {
       permissionFlags,
-      objectRecordsPermissions,
-      objectPermissions,
       objectsPermissions,
     };
   }
 
   public getDefaultUserWorkspacePermissions = () =>
     ({
-      objectRecordsPermissions: {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
-      },
       permissionFlags: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
@@ -126,7 +104,6 @@ export class PermissionsService {
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
       },
-      objectPermissions: {},
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 

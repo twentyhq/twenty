@@ -79,7 +79,7 @@ export class WorkflowVersionStepWorkspaceService {
       parentStepId,
       nextStepId,
       position,
-      parentStepOptions,
+      parentStepConnectionOptions,
     } = input;
 
     const newStep = await this.runStepCreationSideEffectsAndBuildStep({
@@ -126,7 +126,7 @@ export class WorkflowVersionStepWorkspaceService {
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
-      parentStepOptions,
+      parentStepConnectionOptions,
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {

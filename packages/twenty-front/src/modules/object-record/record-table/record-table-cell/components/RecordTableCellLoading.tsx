@@ -1,10 +1,17 @@
 import { RecordTableCellSkeletonLoader } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSkeletonLoader';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 
-export const RecordTableCellLoading = () => {
+export const RecordTableCellLoading = ({
+  recordFieldIndex,
+}: {
+  recordFieldIndex: number;
+}) => {
   return (
-    <RecordTableTd>
+    <RecordTableCellStyleWrapper
+      widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
+    >
       <RecordTableCellSkeletonLoader />
-    </RecordTableTd>
+    </RecordTableCellStyleWrapper>
   );
 };
