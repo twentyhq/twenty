@@ -175,7 +175,7 @@ export const KeyValuePairInput = ({
                 Icon={IconTrash}
               />
             ) : (
-              <Button onClick={() => {}} Icon={IconTrash} disabled={true} />
+              <Button Icon={IconTrash} disabled={true} />
             )}
           </StyledKeyValueContainer>
         ))}
