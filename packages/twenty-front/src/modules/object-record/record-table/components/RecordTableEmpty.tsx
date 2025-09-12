@@ -1,4 +1,4 @@
-import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableLastColumnWidthEffect';
+import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
 import { RecordTableStyleWrapper } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
