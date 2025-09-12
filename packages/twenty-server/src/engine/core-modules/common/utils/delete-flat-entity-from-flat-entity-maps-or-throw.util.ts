@@ -1,11 +1,11 @@
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
-import {
-  FlatEntityException,
-  FlatEntityExceptionCode,
-} from 'src/engine/core-modules/common/exceptions/flat-entity.exception';
 
 export type DeleteFlatEntityFromFlatEntityMapsOrThrowArgs<
   T extends FlatEntity,
@@ -21,9 +21,9 @@ export const deleteFlatEntityFromFlatEntityMapsOrThrow = <
   entityToDeleteId,
 }: DeleteFlatEntityFromFlatEntityMapsOrThrowArgs<T>): FlatEntityMaps<T> => {
   if (!isDefined(flatEntityMaps.byId[entityToDeleteId])) {
-    throw new FlatEntityException(
+    throw new FlatEntityMapsException(
       'deleteFlatEntityFromFlatEntityMapsOrThrow: entity to delete not found',
-      FlatEntityExceptionCode.ENTITY_NOT_FOUND,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
 

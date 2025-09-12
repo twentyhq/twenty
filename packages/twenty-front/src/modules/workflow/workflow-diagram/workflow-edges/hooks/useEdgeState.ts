@@ -1,9 +1,9 @@
-import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdge';
-import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
-import { useReactFlow } from '@xyflow/react';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
+import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
+import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
+import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
+import { useReactFlow } from '@xyflow/react';
 
 export const useEdgeState = () => {
   const reactflow = useReactFlow();
@@ -15,32 +15,73 @@ export const useEdgeState = () => {
     workflowHoveredEdgeComponentState,
   );
 
-  const isSourceSelected = (nodeId: string) => {
-    return workflowSelectedEdge?.source === nodeId;
+  const isSourceSelected = ({
+    nodeId,
+    sourceHandle,
+  }: {
+    nodeId: string;
+    sourceHandle: string | null | undefined;
+  }) => {
+    return (
+      workflowSelectedEdge?.source === nodeId &&
+      workflowSelectedEdge.sourceHandle === sourceHandle
+    );
   };
 
-  const isSourceHovered = (nodeId: string) => {
-    return workflowHoveredEdge?.source === nodeId;
+  const isSourceHovered = ({
+    nodeId,
+    sourceHandle,
+  }: {
+    nodeId: string;
+    sourceHandle: string | null | undefined;
+  }) => {
+    return (
+      workflowHoveredEdge?.source === nodeId &&
+      workflowHoveredEdge.sourceHandle === sourceHandle
+    );
   };
 
-  const isEdgeSelected = ({ source, target }: WorkflowDiagramEdge) => {
-    return isSourceSelected(source) && workflowSelectedEdge?.target === target;
+  const isEdgeSelected = ({
+    source,
+    target,
+    sourceHandle,
+    targetHandle,
+  }: WorkflowDiagramEdgeDescriptor) => {
+    return (
+      isSourceSelected({ nodeId: source, sourceHandle }) &&
+      workflowSelectedEdge?.target === target &&
+      workflowSelectedEdge.targetHandle === targetHandle
+    );
   };
 
-  const isEdgeHovered = ({ source, target }: WorkflowDiagramEdge) => {
-    return isSourceHovered(source) && workflowHoveredEdge?.target === target;
+  const isEdgeHovered = ({
+    source,
+    target,
+    sourceHandle,
+    targetHandle,
+  }: WorkflowDiagramEdgeDescriptor) => {
+    return (
+      isSourceHovered({ nodeId: source, sourceHandle }) &&
+      workflowHoveredEdge?.target === target &&
+      workflowHoveredEdge.targetHandle === targetHandle
+    );
   };
 
-  const setEdgeSelected = ({ source, target }: WorkflowDiagramEdge) => {
-    if (isEdgeSelected({ source, target })) {
+  const setEdgeSelected = (edgeDescriptor: WorkflowDiagramEdgeDescriptor) => {
+    if (isEdgeSelected(edgeDescriptor)) {
       return;
     }
 
-    setWorkflowSelectedEdge({ source, target });
+    setWorkflowSelectedEdge(edgeDescriptor);
 
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
-        if (edge.source === source && edge.target === target) {
+        if (
+          edge.source === edgeDescriptor.source &&
+          edge.sourceHandle === edgeDescriptor.sourceHandle &&
+          edge.target === edgeDescriptor.target &&
+          edge.targetHandle === edgeDescriptor.targetHandle
+        ) {
           return {
             ...edge,
             ...EDGE_BRANCH_ARROW_MARKER.Selected,
@@ -55,14 +96,21 @@ export const useEdgeState = () => {
     );
   };
 
-  const setEdgeHovered = ({ source, target }: WorkflowDiagramEdge) => {
-    setWorkflowHoveredEdge({ source, target });
+  const setEdgeHovered = ({
+    source,
+    target,
+    sourceHandle,
+    targetHandle,
+  }: WorkflowDiagramEdgeDescriptor) => {
+    setWorkflowHoveredEdge({ source, target, sourceHandle, targetHandle });
 
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
         if (
           edge.source === source &&
+          edge.sourceHandle === sourceHandle &&
           edge.target === target &&
+          edge.targetHandle === targetHandle &&
           edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
         ) {
           return {

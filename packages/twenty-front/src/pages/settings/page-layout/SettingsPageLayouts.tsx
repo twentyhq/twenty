@@ -1,5 +1,5 @@
+import { savedPageLayoutsState } from '@/page-layout/states/savedPageLayoutsState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
