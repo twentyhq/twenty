@@ -1,11 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { T } from '@faker-js/faker/dist/airline-BUL6NtOJ';
-import {
-  AllFlatEntityMaps,
-  AllFlatMapsEntities,
-} from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import {
@@ -30,18 +26,18 @@ export type FailedEntityMigrationBuildResult<TFailedValidation> = {
 
 export type ValidateAndBuildArgs<
   T extends FlatEntity,
-  TMaps extends AllFlatMapsEntities[],
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
-  dependencyFlatEntityMaps: Pick<AllFlatEntityMaps, TMaps[number]>;
+  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 } & FromTo<FlatEntityMaps<T>>;
 
 export type ValidateAndBuildActionsArgs<
   T extends FlatEntity,
-  TMaps extends AllFlatMapsEntities[],
-> = ValidateAndBuildArgs<T, TMaps> &
-  DeletedCreatedUpdatedMatrix<T>
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = ValidateAndBuildArgs<T, TRelatedFlatEntityMaps> &
+  DeletedCreatedUpdatedMatrix<T>;
 
 export type ValidateAndBuilActionsReturnType<
   TFailedValidation,
@@ -58,10 +54,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   TFlatEntity extends FlatEntity,
   TFailedValidation, // improve typing poor
   TActionType extends WorkspaceMigrationActionV2,
-  TMaps extends AllFlatMapsEntities[],
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > {
   public async validateAndBuild(
-    args: ValidateAndBuildArgs<TFlatEntity, TMaps>,
+    args: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>,
   ): Promise<
     | SuccessfulEntityMigrationBuildResult
     | FailedEntityMigrationBuildResult<TFailedValidation>
@@ -104,6 +100,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   }
 
   protected abstract validateAndBuildActions(
-    args: ValidateAndBuildActionsArgs<TFlatEntity, T>,
+    args: ValidateAndBuildActionsArgs<TFlatEntity, TRelatedFlatEntityMaps>,
   ): Promise<ValidateAndBuilActionsReturnType<TFailedValidation, TActionType>>;
 }

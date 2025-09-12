@@ -3,27 +3,29 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
+import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 
+type ViewFieldValidationArgs = {
+  flatViewFieldToValidate: FlatViewField;
+  optimisticFlatViewFieldMaps: FlatViewFieldMaps;
+  dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
+};
 @Injectable()
 export class FlatViewFieldValidatorService {
   constructor() {}
 
   public validateFlatViewFieldUpdate({
-    existingFlatViewFieldMaps,
-    updatedFlatViewField,
-    optimisticFlatViewMaps,
-  }: {
-    existingFlatViewFieldMaps: FlatViewFieldMaps;
-    updatedFlatViewField: FlatViewField;
-    optimisticFlatViewMaps: FlatViewMaps;
-  }): FailedFlatViewFieldValidation {
+    dependencyOptimisticFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
+    flatViewFieldToValidate: updatedFlatViewField,
+    optimisticFlatViewFieldMaps,
+  }: ViewFieldValidationArgs): FailedFlatViewFieldValidation {
     const errors = [];
 
     const optimisticFlatView =
@@ -38,7 +40,7 @@ export class FlatViewFieldValidatorService {
     }
 
     const existingFlatViewField =
-      existingFlatViewFieldMaps.byId[updatedFlatViewField.id];
+      optimisticFlatViewFieldMaps.byId[updatedFlatViewField.id];
 
     if (!isDefined(existingFlatViewField)) {
       errors.push({
@@ -60,14 +62,12 @@ export class FlatViewFieldValidatorService {
   }
 
   public validateFlatViewFieldDeletion({
-    existingFlatViewFieldMaps,
-    viewFieldIdToDelete,
-    optimisticFlatViewMaps,
-  }: {
-    existingFlatViewFieldMaps: FlatViewFieldMaps;
-    viewFieldIdToDelete: string;
-    optimisticFlatViewMaps: FlatViewMaps;
-  }): FailedFlatViewFieldValidation {
+    optimisticFlatViewFieldMaps,
+    flatViewFieldToValidate: { id: viewFieldIdToDelete },
+    dependencyOptimisticFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
+  }: ViewFieldValidationArgs): FailedFlatViewFieldValidation {
     const errors = [];
 
     const optimisticFlatView = optimisticFlatViewMaps.byId[viewFieldIdToDelete];
@@ -81,7 +81,7 @@ export class FlatViewFieldValidatorService {
     }
 
     const existingFlatViewField =
-      existingFlatViewFieldMaps.byId[viewFieldIdToDelete];
+      optimisticFlatViewFieldMaps.byId[viewFieldIdToDelete];
 
     if (!isDefined(existingFlatViewField)) {
       errors.push({
@@ -102,20 +102,21 @@ export class FlatViewFieldValidatorService {
 
   public async validateFlatViewFieldCreation({
     flatViewFieldToValidate,
+    optimisticFlatViewFieldMaps,
     dependencyOptimisticFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       flatViewMaps: optimisticFlatViewMaps,
     },
   }: {
     flatViewFieldToValidate: FlatViewField;
-    dependencyOptimisticFlatEntityMaps: Pick<
-      AllFlatEntityMaps,
-      'flatObjectMetadataMaps' | 'flatViewMaps'
-    >;
+    optimisticFlatViewFieldMaps: FlatViewFieldMaps;
+    dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
   }): Promise<FailedFlatViewFieldValidation> {
     const errors = [];
 
-    if (isDefined(optimisticFlatViewMaps.byId[flatViewFieldToValidate.id])) {
+    if (
+      isDefined(optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id])
+    ) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View field metadata with id ${flatViewFieldToValidate.id} already exists`,
