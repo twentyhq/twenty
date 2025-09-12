@@ -490,21 +490,10 @@ describe('Core REST API Find Many endpoint', () => {
     expect(person.company.people).not.toBeDefined();
   });
 
-  it('should support depth 2 parameter', async () => {
-    const response = await makeRestAPIRequest({
+  it('should not support depth 2 parameter', async () => {
+    await makeRestAPIRequest({
       method: 'get',
       path: '/people?depth=2',
-    }).expect(200);
-
-    const people = response.body.data.people;
-
-    const person = people[0];
-
-    expect(person.company.people).toBeDefined();
-
-    // @ts-expect-error legacy noImplicitAny
-    const depth2Person = person.company.people.find((p) => p.id === person.id);
-
-    expect(depth2Person).toBeDefined();
+    }).expect(400);
   });
 });

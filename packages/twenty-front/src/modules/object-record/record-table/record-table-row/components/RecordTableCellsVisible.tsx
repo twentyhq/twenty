@@ -3,8 +3,9 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFirstRowFirstColumn';
+import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
@@ -32,18 +33,17 @@ export const RecordTableCellsVisible = () => {
           <RecordTableCellFirstRowFirstColumn
             isSelected={isSelected}
             isDragging={isDragging}
-            width={visibleRecordFields[0].size}
           >
             <RecordTableCell />
           </RecordTableCellFirstRowFirstColumn>
         ) : (
-          <RecordTableTd
+          <RecordTableCellStyleWrapper
             isSelected={isSelected}
             isDragging={isDragging}
-            width={visibleRecordFields[0].size}
+            widthClassName={getRecordTableColumnFieldWidthClassName(0)}
           >
             <RecordTableCell />
-          </RecordTableTd>
+          </RecordTableCellStyleWrapper>
         )}
       </RecordTableCellWrapper>
       {recordFieldsAfterFirst.map((recordField, recordFieldIndex) => (
@@ -52,13 +52,15 @@ export const RecordTableCellsVisible = () => {
           recordField={recordField}
           recordFieldIndex={recordFieldIndex + 1}
         >
-          <RecordTableTd
+          <RecordTableCellStyleWrapper
             isSelected={isSelected}
             isDragging={isDragging}
-            width={recordField.size}
+            widthClassName={getRecordTableColumnFieldWidthClassName(
+              recordFieldIndex + 1,
+            )}
           >
             <RecordTableCell />
-          </RecordTableTd>
+          </RecordTableCellStyleWrapper>
         </RecordTableCellWrapper>
       ))}
     </>

@@ -802,6 +802,8 @@ export type CreateWebhookDto = {
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
   source: Scalars['String'];
+  /** Workflow version source step connection options */
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Workflow version target step ID */
   target: Scalars['String'];
   /** Workflow version ID */
@@ -811,10 +813,10 @@ export type CreateWorkflowVersionEdgeInput = {
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
+  /** Parent step connection options */
+  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
-  /** Step creation options */
-  parentStepOptions?: InputMaybe<Scalars['JSON']>;
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
@@ -2504,13 +2506,6 @@ export enum PermissionFlagType {
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
 
-export enum PermissionsOnAllObjectRecords {
-  DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
-  READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
-  SOFT_DELETE_ALL_OBJECT_RECORDS = 'SOFT_DELETE_ALL_OBJECT_RECORDS',
-  UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
-}
-
 export type PlaceDetailsResultDto = {
   __typename?: 'PlaceDetailsResultDto';
   city?: Maybe<Scalars['String']>;
@@ -3502,9 +3497,7 @@ export type UpdateViewInput = {
   isCompact?: InputMaybe<Scalars['Boolean']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  key?: InputMaybe<ViewKey>;
   name?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
   type?: InputMaybe<ViewType>;
@@ -3639,8 +3632,7 @@ export type UserWorkspace = {
   id: Scalars['UUID'];
   locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  /** @deprecated Use objectPermissions instead */
-  objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
+  objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];

@@ -1,27 +1,15 @@
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
-import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 
 export const RecordTableLastEmptyCell = () => {
   const { isSelected } = useRecordTableRowContextOrThrow();
-  const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
-
-  const resizeFieldOffset = useRecoilComponentValue(
-    resizeFieldOffsetComponentState,
-  );
-
-  const width =
-    resizeFieldOffset > 0
-      ? lastColumnWidth + resizeFieldOffset
-      : lastColumnWidth;
 
   return (
-    <RecordTableTd
+    <RecordTableCellStyleWrapper
       isSelected={isSelected}
       hasRightBorder={false}
-      width={width}
+      widthClassName={RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME}
     />
   );
 };
