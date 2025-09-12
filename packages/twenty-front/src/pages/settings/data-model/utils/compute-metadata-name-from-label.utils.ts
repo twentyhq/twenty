@@ -14,9 +14,5 @@ export const computeMetadataNameFromLabel = (label: string): string => {
     allowedChars: 'a-zA-Z0-9',
   });
 
-  if (formattedString === '') {
-    throw new Error('Invalid label');
-  }
-
   return camelCase(formattedString);
 };
