@@ -11,7 +11,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { DateTime } from 'luxon';
+import { format } from 'date-fns';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
@@ -257,17 +257,15 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
         );
       }),
       waitFor(() => {
-        const expectedDate = DateTime.fromJSDate(MIN_DATE)
-          .toLocal()
-          .set({
-            day: MIN_DATE.getUTCDate(),
-            month: MIN_DATE.getUTCMonth() + 1,
-            year: MIN_DATE.getUTCFullYear(),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          });
+        const expectedDate = new Date(
+          MIN_DATE.getUTCFullYear(),
+          MIN_DATE.getUTCMonth(),
+          MIN_DATE.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        );
 
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,
@@ -315,17 +313,15 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
         );
       }),
       waitFor(() => {
-        const expectedDate = DateTime.fromJSDate(MAX_DATE)
-          .toLocal()
-          .set({
-            day: MAX_DATE.getUTCDate(),
-            month: MAX_DATE.getUTCMonth() + 1,
-            year: MAX_DATE.getUTCFullYear(),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          });
+        const expectedDate = new Date(
+          MAX_DATE.getUTCFullYear(),
+          MAX_DATE.getUTCMonth(),
+          MAX_DATE.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        );
 
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,

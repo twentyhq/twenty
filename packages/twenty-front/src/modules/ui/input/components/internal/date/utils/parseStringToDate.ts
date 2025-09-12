@@ -1,5 +1,6 @@
 import { type DateFormat } from '@/localization/constants/DateFormat';
-import { DateTime } from 'luxon';
+import { isValid, parse } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseStringToDateArgs = {
@@ -16,18 +17,17 @@ export const parseStringToDate = ({
   dateFormat,
 }: ParseStringToDateArgs) => {
   const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
+  const referenceDate = new Date();
 
-  const parsedDate = isDateTimeInput
-    ? DateTime.fromFormat(dateAsString, parsingFormat, { zone: userTimezone })
-    : DateTime.fromFormat(dateAsString, parsingFormat, { zone: 'utc' });
+  const parsedDate = parse(dateAsString, parsingFormat, referenceDate);
 
-  const isValid = parsedDate.isValid;
-
-  if (!isValid) {
+  if (!isValid(parsedDate)) {
     return null;
   }
 
-  const jsDate = parsedDate.toJSDate();
+  if (isDateTimeInput === true && userTimezone !== undefined) {
+    return zonedTimeToUtc(parsedDate, userTimezone);
+  }
 
-  return jsDate;
+  return parsedDate;
 };
