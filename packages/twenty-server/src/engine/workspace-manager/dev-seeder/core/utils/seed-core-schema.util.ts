@@ -5,6 +5,7 @@ import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/s
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
+import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { seedWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
@@ -51,5 +52,6 @@ export const seedCoreSchema = async ({
 
   if (shouldSeedPageLayouts) {
     await seedPageLayouts(dataSource, schemaName, workspaceId);
+    await seedPageLayoutWidgets(dataSource, schemaName, workspaceId);
   }
 };
