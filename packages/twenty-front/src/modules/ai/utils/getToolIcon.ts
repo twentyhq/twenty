@@ -24,5 +24,5 @@ export const getToolIcon = (toolName: string) => {
     keywords.some((keyword) => toolName.includes(keyword)),
   );
 
-  return mapping?.icon ?? IconDatabase;
+  return mapping?.icon ?? IconTool;
 };
