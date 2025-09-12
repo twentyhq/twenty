@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
@@ -125,10 +126,9 @@ export class CleanerWorkspaceService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
-    const subject = this.i18nService.translateMessage({
-      messageId: 'Action needed to prevent workspace deletion',
-      locale: workspaceMember.locale,
-    });
+    const workspaceDeletionMsg = msg`Action needed to prevent workspace deletion`;
+    const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
+    const subject = i18n._(workspaceDeletionMsg);
 
     this.emailService.send({
       to: workspaceMember.userEmail,

@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { Column, Container, Row } from '@react-email/components';
 import { Link } from 'src/components/Link';
 import { ShadowText } from 'src/components/ShadowText';
@@ -8,6 +8,8 @@ const footerContainerStyle = {
 };
 
 export const Footer = () => {
+  const { i18n } = useLingui();
+
   return (
     <Container style={footerContainerStyle}>
       <Row>

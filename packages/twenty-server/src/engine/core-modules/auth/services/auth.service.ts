@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -486,10 +486,9 @@ export class AuthService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
-    const subject = this.i18nService.translateMessage({
-      messageId: 'Your Password Has Been Successfully Changed',
-      locale: firstUserWorkspace.locale,
-    });
+    const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
+    const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);
+    const subject = i18n._(passwordChangedMsg);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(

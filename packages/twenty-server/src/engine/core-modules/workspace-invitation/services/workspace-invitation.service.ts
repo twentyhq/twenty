@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -309,10 +310,9 @@ export class WorkspaceInvitationService {
           plainText: true,
         });
 
-        const subject = this.i18nService.translateMessage({
-          messageId: 'Join your team on Twenty',
-          locale: sender.locale,
-        });
+        const joinTeamMsg = msg`Join your team on Twenty`;
+        const i18n = this.i18nService.getI18nInstance(sender.locale);
+        const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
           from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,

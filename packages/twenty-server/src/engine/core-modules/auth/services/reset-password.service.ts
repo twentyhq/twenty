@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -165,10 +166,9 @@ export class ResetPasswordService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
-    const subject = this.i18nService.translateMessage({
-      messageId: 'Action Needed to Reset Password',
-      locale,
-    });
+    const resetPasswordMsg = msg`Action Needed to Reset Password`;
+    const i18n = this.i18nService.getI18nInstance(locale);
+    const subject = i18n._(resetPasswordMsg);
 
     this.emailService.send({
       from: `${this.twentyConfigService.get(

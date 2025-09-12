@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -84,10 +85,9 @@ export class EmailVerificationService {
       plainText: true,
     });
 
-    const subject = this.i18nService.translateMessage({
-      messageId: 'Welcome to Twenty: Please Confirm Your Email',
-      locale,
-    });
+    const emailVerificationMsg = msg`Welcome to Twenty: Please Confirm Your Email`;
+    const i18n = this.i18nService.getI18nInstance(locale);
+    const subject = i18n._(emailVerificationMsg);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(

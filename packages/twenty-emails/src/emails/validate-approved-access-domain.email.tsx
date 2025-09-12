@@ -1,4 +1,3 @@
-import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
@@ -11,6 +10,7 @@ import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { capitalize } from 'src/utils/capitalize';
+import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
@@ -36,6 +36,7 @@ export const SendApprovedAccessDomainValidation = ({
   serverUrl,
   locale,
 }: SendApprovedAccessDomainValidationProps) => {
+  const i18n = createI18nInstance(locale);
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
@@ -99,6 +100,6 @@ SendApprovedAccessDomainValidation.PreviewProps = {
   },
   serverUrl: 'https://app.twenty.com',
   locale: 'en',
-} as SendApprovedAccessDomainValidationProps;
+};
 
 export default SendApprovedAccessDomainValidation;

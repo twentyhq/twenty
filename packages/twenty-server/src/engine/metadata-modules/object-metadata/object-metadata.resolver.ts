@@ -31,6 +31,7 @@ import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-meta
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -47,6 +48,7 @@ export class ObjectMetadataResolver {
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly i18nService: I18nService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -54,10 +56,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelPlural',
       context.req.locale,
+      i18n,
     );
   }
 
@@ -66,10 +70,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'labelSingular',
       context.req.locale,
+      i18n,
     );
   }
 
@@ -78,10 +84,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'description',
       context.req.locale,
+      i18n,
     );
   }
 
@@ -91,10 +99,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
     return resolveObjectMetadataStandardOverride(
       objectMetadata,
       'icon',
       context.req.locale,
+      i18n,
     );
   }
 
