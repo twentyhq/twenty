@@ -275,7 +275,7 @@ export class AgentExecutionService {
           return {
             role: 'assistant' as const,
             content: constructAssistantMessageContentFromStream(
-              streamData as string,
+              streamData ?? '',
             ),
           };
         }
