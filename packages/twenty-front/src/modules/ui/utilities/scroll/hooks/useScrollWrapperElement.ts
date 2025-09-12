@@ -7,11 +7,11 @@ export const useScrollWrapperElement = (targetComponentInstanceId?: string) => {
     targetComponentInstanceId,
   );
 
-  const scrollWrapperHTMLElement = document.getElementById(
-    `scroll-wrapper-${instanceId}`,
-  );
+  const scrollWrapperId = `scroll-wrapper-${instanceId}`;
+
+  const element = document.getElementById(scrollWrapperId);
 
   return {
-    scrollWrapperHTMLElement,
+    scrollWrapperHTMLElement: element,
   };
 };
