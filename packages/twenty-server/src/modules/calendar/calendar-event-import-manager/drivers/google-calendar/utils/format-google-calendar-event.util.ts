@@ -1,7 +1,7 @@
 import { type calendar_v3 as calendarV3 } from 'googleapis';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
-import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/types/calendar-event-participant-response-status';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const formatGoogleCalendarEvents = (

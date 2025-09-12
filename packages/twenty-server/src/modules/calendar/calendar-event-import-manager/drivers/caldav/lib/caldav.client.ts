@@ -14,7 +14,7 @@ import {
 } from 'tsdav';
 
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
-import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/types/calendar-event-participant-response-status';
 import {
   type FetchedCalendarEvent,
   type FetchedCalendarEventParticipant,

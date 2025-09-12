@@ -4,7 +4,7 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_IDS,
   getWorkspaceMemberDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/types/calendar-event-participant-response-status';
 
 export type CalendarEventParticipantDataSeed = {
   id: string;
