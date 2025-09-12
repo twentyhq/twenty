@@ -1,6 +1,6 @@
 import { errors } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { z } from 'zod';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label-or-throw.utils';
+import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabelOrThrow';
 
 import { METADATA_LABEL_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataLabelValidPattern';
 export const metadataLabelSchema = (existingLabels?: string[]) => {
