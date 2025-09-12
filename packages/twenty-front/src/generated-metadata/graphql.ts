@@ -838,6 +838,8 @@ export type CreateWebhookDto = {
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
   source: Scalars['String'];
+  /** Workflow version source step connection options */
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Workflow version target step ID */
   target: Scalars['String'];
   /** Workflow version ID */
@@ -847,10 +849,10 @@ export type CreateWorkflowVersionEdgeInput = {
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
+  /** Parent step connection options */
+  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
-  /** Step creation options */
-  parentStepOptions?: InputMaybe<Scalars['JSON']>;
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */

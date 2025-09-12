@@ -5,11 +5,11 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowStepCreationOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import {
-  WorkflowActionType,
   type WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -26,7 +26,7 @@ export const insertStep = ({
   insertedStep: WorkflowAction;
   nextStepId?: string;
   parentStepId?: string;
-  parentStepOptions?: WorkflowStepCreationOptions;
+  parentStepOptions?: WorkflowStepConnectionOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedInsertedStep: WorkflowAction;
@@ -71,7 +71,7 @@ const updateParentStep = ({
   parentStepId: string;
   insertedStepId: string;
   nextStepId?: string;
-  parentStepOptions?: WorkflowStepCreationOptions;
+  parentStepOptions?: WorkflowStepConnectionOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedTrigger: WorkflowTrigger | null;
@@ -166,12 +166,12 @@ const updateStepsWithOptions = ({
   parentStepId: string;
   insertedStepId: string;
   steps: WorkflowAction[];
-  parentStepOptions: WorkflowStepCreationOptions;
+  parentStepOptions: WorkflowStepConnectionOptions;
   trigger: WorkflowTrigger | null;
 }) => {
   let updatedSteps = steps;
 
-  switch (parentStepOptions.parentStepType) {
+  switch (parentStepOptions.connectedStepType) {
     case WorkflowActionType.ITERATOR:
       if (!parentStepOptions.settings.shouldInsertToLoop) {
         break;
