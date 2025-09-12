@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 
-import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
-import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import {
+  FlatEntityValidationReturnType,
+  WorkspaceEntityMigrationBuilderV2Service,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import {
   UpdateViewFieldAction,
   WorkspaceMigrationViewFieldActionV2,
@@ -24,7 +26,6 @@ export type ViewFieldRelatedFlatEntityMaps = Pick<
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatViewField,
-  FailedFlatViewFieldValidation, // should be generic and extends
   WorkspaceMigrationViewFieldActionV2,
   ViewFieldRelatedFlatEntityMaps
 > {
@@ -43,20 +44,22 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
   }): Promise<
-    | { status: 'fail'; errors: any[] }
-    | { status: 'success'; action: WorkspaceMigrationViewFieldActionV2 }
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationViewFieldActionV2,
+      FlatViewField
+    >
   > {
-    const validationErrors =
+    const validationResult =
       await this.flatViewFieldValidatorService.validateFlatViewFieldCreation({
         dependencyOptimisticFlatEntityMaps,
         flatViewFieldToValidate,
         optimisticFlatViewFieldMaps,
       });
 
-    if (validationErrors.viewFieldLevelErrors.length > 0) {
+    if (validationResult.errors.length > 0) {
       return {
         status: 'fail',
-        errors: validationErrors.viewFieldLevelErrors,
+        ...validationResult,
       };
     }
 
@@ -77,20 +80,22 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
   }): Promise<
-    | { status: 'fail'; errors: any[] }
-    | { status: 'success'; action: WorkspaceMigrationViewFieldActionV2 }
+    FlatEntityValidationReturnType<
+      WorkspaceMigrationViewFieldActionV2,
+      FlatViewField
+    >
   > {
-    const validationErrors =
+    const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldDeletion({
         dependencyOptimisticFlatEntityMaps,
         flatViewFieldToValidate,
         optimisticFlatViewFieldMaps,
       });
 
-    if (validationErrors.viewFieldLevelErrors.length > 0) {
+    if (validationResult.errors.length > 0) {
       return {
         status: 'fail',
-        errors: validationErrors.viewFieldLevelErrors,
+        ...validationResult,
       };
     }
 
@@ -111,8 +116,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
   }): Promise<
-    | { status: 'fail'; errors: any[] }
-    | { status: 'success'; action: WorkspaceMigrationViewFieldActionV2 }
+    | FlatEntityValidationReturnType<
+        WorkspaceMigrationViewFieldActionV2,
+        FlatViewField
+      >
     | undefined
   > {
     const viewFieldUpdatedProperties = compareTwoFlatViewField({
@@ -124,17 +131,17 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       return undefined;
     }
 
-    const validationErrors =
+    const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldDeletion({
         dependencyOptimisticFlatEntityMaps,
         flatViewFieldToValidate: toFlatViewField,
         optimisticFlatViewFieldMaps,
       });
 
-    if (validationErrors.viewFieldLevelErrors.length > 0) {
+    if (validationResult.errors.length > 0) {
       return {
         status: 'fail',
-        errors: validationErrors.viewFieldLevelErrors,
+        ...validationResult,
       };
     }
 

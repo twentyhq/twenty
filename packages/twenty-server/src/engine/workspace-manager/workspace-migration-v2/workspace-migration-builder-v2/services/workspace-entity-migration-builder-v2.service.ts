@@ -11,20 +11,21 @@ import {
   DeletedCreatedUpdatedMatrix,
   deletedCreatedUpdatedMatrixDispatcher,
 } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
 export type SuccessfulEntityMigrationBuildResult<
-  TActionType extends WorkspaceMigrationActionV2,
+  TActions extends WorkspaceMigrationActionV2,
 > = {
   status: 'success';
-  actions: TActionType[];
+  actions: TActions[];
   optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
-export type FailedEntityMigrationBuildResult<TFailedValidation> = {
+export type FailedEntityMigrationBuildResult<TFlatEntity extends FlatEntity> = {
   status: 'fail';
-  errors: TFailedValidation[];
+  errors: FailedFlatEntityValidation<TFlatEntity>[];
   optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
@@ -36,6 +37,13 @@ export type ValidateAndBuildArgs<
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 } & FromTo<FlatEntityMaps<T>>;
 
+export type ValidateAndBuildReturnType<
+  TActions extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
+> =
+  | SuccessfulEntityMigrationBuildResult<TActions>
+  | FailedEntityMigrationBuildResult<TFlatEntity>;
+
 export type ValidateAndBuildActionsArgs<
   T extends FlatEntity,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
@@ -43,13 +51,13 @@ export type ValidateAndBuildActionsArgs<
   DeletedCreatedUpdatedMatrix<T>;
 
 export type ValidateAndBuilActionsReturnType<
-  TFailedValidation,
-  TActionType extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
+  TActions extends WorkspaceMigrationActionV2,
 > = {
-  failed: TFailedValidation[];
-  created: TActionType[];
-  deleted: TActionType[];
-  updated: TActionType[];
+  failed: FailedFlatEntityValidation<TFlatEntity>[];
+  created: TActions[];
+  deleted: TActions[];
+  updated: TActions[];
   optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
@@ -62,19 +70,19 @@ type FlatEntityValidationArgs<
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 };
 
-type FlatEntityValidationReturnType<
-  TActionType extends WorkspaceMigrationActionV2,
+export type FlatEntityValidationReturnType<
+  TActions extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
 > =
   | {
       status: 'success';
-      action: TActionType;
+      action: TActions;
     }
-  | { status: 'fail'; errors: any[] };
+  | ({ status: 'fail' } & FailedFlatEntityValidation<TFlatEntity>);
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
   TFlatEntity extends FlatEntity,
-  TFailedValidation, // improve typing poor
-  TActionType extends WorkspaceMigrationActionV2,
+  TActions extends WorkspaceMigrationActionV2,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > {
   public async validateAndBuild({
@@ -83,8 +91,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
   }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
-    | SuccessfulEntityMigrationBuildResult<TActionType>
-    | FailedEntityMigrationBuildResult<TFailedValidation>
+    ValidateAndBuildReturnType<TActions, TFlatEntity>
   > {
     const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
       isDefined,
@@ -102,7 +109,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let optimisticEntityMaps = structuredClone(fromFlatEntityMaps);
 
     const validateAndBuildResult: Omit<
-      ValidateAndBuilActionsReturnType<TFailedValidation, TActionType>,
+      ValidateAndBuilActionsReturnType<TFlatEntity, TActions>,
       'optimisticAllFlatEntityMaps'
     > = {
       failed: [],
@@ -119,7 +126,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult.errors); // TODO
+        validateAndBuildResult.failed.push(validationResult);
         continue;
       }
 
@@ -141,7 +148,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult.errors); // TODO
+        validateAndBuildResult.failed.push(validationResult);
         continue;
       }
 
@@ -165,7 +172,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       }
 
       if (validationResult.status === 'fail') {
-        validateAndBuildResult.failed.push(validationResult.errors); // TODO
+        validateAndBuildResult.failed.push(validationResult);
         continue;
       }
 
@@ -198,15 +205,17 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<FlatEntityValidationReturnType<TActionType>>;
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<FlatEntityValidationReturnType<TActionType>>;
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
   protected abstract validateFlatEntityUpdate(args: {
     flatEntityUpdate: FromTo<TFlatEntity>;
     optimisticEntityMaps: FlatEntityMaps<TFlatEntity>;
     dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-  }): Promise<FlatEntityValidationReturnType<TActionType> | undefined>;
+  }): Promise<
+    FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined
+  >;
 }

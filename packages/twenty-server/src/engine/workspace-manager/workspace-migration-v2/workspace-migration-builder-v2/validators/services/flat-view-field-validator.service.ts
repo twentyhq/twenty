@@ -4,10 +4,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 
 type ViewFieldValidationArgs = {
@@ -25,7 +25,7 @@ export class FlatViewFieldValidatorService {
     },
     flatViewFieldToValidate: updatedFlatViewField,
     optimisticFlatViewFieldMaps,
-  }: ViewFieldValidationArgs): FailedFlatViewFieldValidation {
+  }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
 
     const optimisticFlatView =
@@ -52,8 +52,8 @@ export class FlatViewFieldValidatorService {
 
     return {
       type: 'update_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: updatedFlatViewField.id,
         viewId: updatedFlatViewField.viewId,
         fieldMetadataId: updatedFlatViewField.fieldMetadataId,
@@ -67,7 +67,7 @@ export class FlatViewFieldValidatorService {
     dependencyOptimisticFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
     },
-  }: ViewFieldValidationArgs): FailedFlatViewFieldValidation {
+  }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
 
     const optimisticFlatView = optimisticFlatViewMaps.byId[viewFieldIdToDelete];
@@ -93,8 +93,8 @@ export class FlatViewFieldValidatorService {
 
     return {
       type: 'delete_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: viewFieldIdToDelete,
       },
     };
@@ -111,7 +111,7 @@ export class FlatViewFieldValidatorService {
     flatViewFieldToValidate: FlatViewField;
     optimisticFlatViewFieldMaps: FlatViewFieldMaps;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
-  }): Promise<FailedFlatViewFieldValidation> {
+  }): Promise<FailedFlatEntityValidation<FlatViewField>> {
     const errors = [];
 
     if (
@@ -151,8 +151,8 @@ export class FlatViewFieldValidatorService {
 
     return {
       type: 'create_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: flatViewFieldToValidate.id,
         viewId: flatViewFieldToValidate.viewId,
         fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,

@@ -1,20 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
-import {
-  FailedEntityMigrationBuildResult,
-  SuccessfulEntityMigrationBuildResult,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  FailedWorkspaceMigrationBuildResult,
-  SuccessfulWorkspaceMigrationBuildResult,
-  WorkspaceMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { WorkspaceViewMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
+import { ValidateAndBuildReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import {
   WorkspaceMigrationV2Exception,
@@ -44,18 +38,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
   > {
     try {
       const allActions: WorkspaceMigrationActionV2[] = [];
-      const allFailures: WorkspaceMigrationOrchestratorFailedResult['errors'] =
-        [];
+      const allFailures: FailedFlatEntityValidation<FlatEntity>[] = []; // Should be a record of each tested data
 
       let opstimisticFlatEntityMaps = structuredClone(fromAllFlatEntityMaps);
       const dispatchBuildAndValidationActionResult = (
-        result:
-          | (
-              | SuccessfulWorkspaceMigrationBuildResult
-              | FailedWorkspaceMigrationBuildResult
-            )
-          | SuccessfulEntityMigrationBuildResult
-          | FailedEntityMigrationBuildResult<any>, // improve
+        result: ValidateAndBuildReturnType<
+          WorkspaceMigrationActionV2,
+          FlatEntity
+        >,
       ) => {
         opstimisticFlatEntityMaps = {
           ...opstimisticFlatEntityMaps,
@@ -65,10 +55,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
         if (result.status === 'fail') {
           allFailures.push(...result.errors);
         } else {
-          allActions.push(...result.workspaceMigration.actions);
+          allActions.push(...result.actions);
         }
       };
 
+      //TODO
       if (isDefined(toAllFlatEntityMaps.flatObjectMetadataMaps)) {
         const objectResult =
           await this.workspaceMigrationBuilderV2Service.validateAndBuild({
@@ -80,8 +71,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
           });
 
-        dispatchBuildAndValidationActionResult(objectResult);
+        dispatchBuildAndValidationActionResult(objectResult); // TODO
       }
+      ///
 
       if (isDefined(toAllFlatEntityMaps.flatViewMaps)) {
         const viewResult =
@@ -91,7 +83,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             workspaceId,
             buildOptions,
             dependencyOptimisticEntityMaps: {
-              object: optimisticEntityMaps.object,
+              object: opstimisticFlatEntityMaps.object,
             },
           });
 
@@ -104,11 +96,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
             {
               from: fromAllFlatEntityMaps.flatViewFieldMaps,
               to: toAllFlatEntityMaps.flatViewFieldMaps,
-              workspaceId,
               buildOptions,
-              dependencyOptimisticEntityMaps: {
-                object: optimisticEntityMaps.object,
-                view: optimisticEntityMaps.view,
+              dependencyOptimisticFlatEntityMaps: {
+                flatObjectMetadataMaps:
+                  toAllFlatEntityMaps.flatObjectMetadataMaps,
+                flatViewMaps: toAllFlatEntityMaps.flatViewMaps,
               },
             },
           );
