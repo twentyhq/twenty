@@ -61,7 +61,7 @@ export type ValidateAndBuilActionsReturnType<
   optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
-type FlatEntityValidationArgs<
+export type FlatEntityValidationArgs<
   TFlatEntity extends FlatEntity,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > = {

@@ -9,8 +9,6 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { WorkspaceViewFieldMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-field-migration-builder-v2.service';
-import { WorkspaceViewMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-view-migration-builder-v2.service';
 import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/workspace-migration-builder-validators.module';
 
 @Module({
@@ -23,14 +21,10 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     FlatObjectMetadataValidatorService,
     WorkspaceMigrationV2FieldActionsBuilderService,
     WorkspaceMigrationV2ViewActionsBuilderService,
-    WorkspaceViewMigrationBuilderV2Service,
-    WorkspaceViewFieldMigrationBuilderV2Service,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ],
   exports: [
     WorkspaceMigrationBuilderV2Service,
-    WorkspaceViewMigrationBuilderV2Service,
-    WorkspaceViewFieldMigrationBuilderV2Service,
   ],
 })
 export class WorkspaceMigrationBuilderV2Module {}
