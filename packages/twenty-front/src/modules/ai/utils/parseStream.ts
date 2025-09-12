@@ -54,7 +54,10 @@ export const parseStream = (streamText: string): ParsedStep[] => {
         const toolEntry = output.find(
           (item): item is { type: 'tool'; events: ToolEvent[] } =>
             item.type === 'tool' &&
-            item.events[0]?.toolCallId === event.toolCallId,
+            item.events.some(
+              (e) =>
+                e.type === 'tool-call' && e.toolCallId === event.toolCallId,
+            ),
         );
 
         const resultEvent: ToolResultEvent = {
