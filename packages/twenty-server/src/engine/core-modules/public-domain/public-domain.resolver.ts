@@ -1,5 +1,8 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -10,6 +13,8 @@ import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/publ
 import { PublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/public-domain.input';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -19,7 +24,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 )
 @Resolver()
 export class PublicDomainResolver {
-  constructor(private readonly publicDomainService: PublicDomainService) {}
+  constructor(
+    @InjectRepository(PublicDomain)
+    private readonly publicDomainRepository: Repository<PublicDomain>,
+    private readonly publicDomainService: PublicDomainService,
+  ) {}
 
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
@@ -43,5 +52,22 @@ export class PublicDomainResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => DomainValidRecords, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async checkPublicDomainValidRecords(
+    @Args() { domain }: PublicDomainInput,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<DomainValidRecords | undefined> {
+    const publicDomain = await this.publicDomainRepository.findOne({
+      where: { workspaceId: workspace.id, domain },
+    });
+
+    if (!publicDomain) {
+      return;
+    }
+
+    return this.publicDomainService.checkPublicDomainValidRecords(publicDomain);
   }
 }
