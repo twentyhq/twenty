@@ -1,5 +1,6 @@
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 import { type RadialBarCustomLayerProps } from '@nivo/radial-bar';
+import { isDefined } from 'twenty-shared/utils';
 
 type GaugeChartEndLineProps = {
   center: RadialBarCustomLayerProps['center'];
@@ -19,7 +20,7 @@ export const GaugeChartEndLine = ({
   }
 
   const valueBar = bars?.find((bar) => bar.data.x === 'value');
-  if (!valueBar) {
+  if (!isDefined(valueBar)) {
     return null;
   }
 

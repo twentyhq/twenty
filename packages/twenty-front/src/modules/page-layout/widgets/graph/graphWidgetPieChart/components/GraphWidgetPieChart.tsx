@@ -17,6 +17,7 @@ import {
   type PieCustomLayerProps,
   type PieTooltipProps,
 } from '@nivo/pie';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
@@ -104,7 +105,7 @@ export const GraphWidgetPieChart = ({
 
   const tooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
     const tooltipData = renderTooltip(datum);
-    if (!tooltipData) return null;
+    if (!isDefined(tooltipData)) return null;
 
     return (
       <GraphWidgetTooltip

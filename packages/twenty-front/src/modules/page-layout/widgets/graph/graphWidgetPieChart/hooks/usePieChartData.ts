@@ -1,5 +1,7 @@
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
+import { calculatePieChartAngles } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartAngles';
+import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartPercentage';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
@@ -27,11 +29,10 @@ export const usePieChartData = ({
       const colorScheme = getColorScheme(colorRegistry, item.color, index);
       const isHovered = hoveredSliceId === item.id;
       const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
-      const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+      const percentage = calculatePieChartPercentage(item.value, totalValue);
 
-      const sliceAngle = (percentage / 100) * 360;
-      const middleAngle = cumulativeAngle + sliceAngle / 2;
-      cumulativeAngle += sliceAngle;
+      const angles = calculatePieChartAngles(percentage, cumulativeAngle);
+      cumulativeAngle = angles.newCumulativeAngle;
 
       return {
         ...item,
@@ -39,7 +40,7 @@ export const usePieChartData = ({
         colorScheme,
         isHovered,
         percentage,
-        middleAngle,
+        middleAngle: angles.middleAngle,
       };
     });
   }, [data, colorRegistry, id, hoveredSliceId]);

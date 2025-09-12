@@ -1,6 +1,8 @@
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
+import { calculatePieChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartEndLineCoordinates';
 import { useTheme } from '@emotion/react';
 import { type ComputedDatum } from '@nivo/pie';
+import { isDefined } from 'twenty-shared/utils';
 
 type PieChartEndLinesProps = {
   dataWithArc: readonly ComputedDatum<{
@@ -25,7 +27,11 @@ export const PieChartEndLines = ({
 }: PieChartEndLinesProps) => {
   const theme = useTheme();
 
-  if (!dataWithArc || !Array.isArray(dataWithArc) || dataWithArc.length < 2) {
+  if (
+    !isDefined(dataWithArc) ||
+    !Array.isArray(dataWithArc) ||
+    dataWithArc.length < 2
+  ) {
     return null;
   }
 
@@ -37,11 +43,13 @@ export const PieChartEndLines = ({
           ? enrichedItem.colorScheme.solid
           : theme.border.color.strong;
 
-        const angle = datum.arc.endAngle - Math.PI / 2;
-        const x1 = centerX + Math.cos(angle) * innerRadius;
-        const y1 = centerY + Math.sin(angle) * innerRadius;
-        const x2 = centerX + Math.cos(angle) * radius;
-        const y2 = centerY + Math.sin(angle) * radius;
+        const { x1, y1, x2, y2 } = calculatePieChartEndLineCoordinates(
+          datum.arc.endAngle,
+          centerX,
+          centerY,
+          innerRadius,
+          radius,
+        );
 
         return (
           <line

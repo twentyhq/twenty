@@ -24,7 +24,7 @@ export const usePieChartTooltip = ({
     datum: ComputedDatum<{ id: string; value: number; label?: string }>,
   ) => {
     const item = enrichedData.find((d) => d.id === datum.id);
-    if (!item) return null;
+    if (!isDefined(item)) return null;
 
     const dataItem = data.find((d) => d.id === datum.id);
     const formattedValue = formatGraphValue(

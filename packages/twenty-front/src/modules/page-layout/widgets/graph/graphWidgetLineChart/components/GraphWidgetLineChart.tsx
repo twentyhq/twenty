@@ -13,6 +13,7 @@ import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -157,7 +158,7 @@ export const GraphWidgetLineChart = ({
 
   const pointTooltip = (point: Parameters<typeof renderPointTooltip>[0]) => {
     const tooltipData = renderPointTooltip(point);
-    if (!tooltipData) return null;
+    if (!isDefined(tooltipData)) return null;
     return (
       <GraphWidgetTooltip
         items={tooltipData.items}
