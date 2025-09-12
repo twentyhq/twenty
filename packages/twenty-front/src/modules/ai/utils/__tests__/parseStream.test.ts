@@ -313,22 +313,6 @@ describe('parseStream', () => {
             toolName: 'send_email',
             args: { loadingMessage: 'Sending...', input: {} },
           },
-        ],
-      });
-      expect(result[2]).toEqual({
-        type: 'reasoning',
-        content: 'Let me think...',
-        isThinking: true,
-      });
-      expect(result[3]).toEqual({
-        type: 'tool',
-        events: [
-          {
-            type: 'tool-call',
-            toolCallId: 'call-1',
-            toolName: 'send_email',
-            args: { loadingMessage: 'Sending...', input: {} },
-          },
           {
             type: 'tool-result',
             toolCallId: 'call-1',
@@ -337,6 +321,15 @@ describe('parseStream', () => {
             message: 'Email sent',
           },
         ],
+      });
+      expect(result[2]).toEqual({
+        type: 'reasoning',
+        content: 'Let me think...',
+        isThinking: true,
+      });
+      expect(result[3]).toEqual({
+        type: 'text',
+        content: 'Finished!',
       });
     });
   });
