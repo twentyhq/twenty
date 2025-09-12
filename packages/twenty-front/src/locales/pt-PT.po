@@ -2597,6 +2597,11 @@ msgstr "Array vazio"
 msgid "Empty Inbox"
 msgstr "Caixa de entrada vazia"
 
+#. js-lingui-id: hGwouC
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Empty Node"
+msgstr ""
+
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -2649,11 +2654,6 @@ msgstr "Insira o nome do agente*"
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
 msgstr "Insira um array de itens ou expressão de variável"
-
-#. js-lingui-id: uyFQs5
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
-msgid "Enter array of step IDs"
-msgstr "Insira um array de IDs de etapas"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -3550,11 +3550,6 @@ msgstr "Caixa de entrada"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
 msgstr "Índices"
-
-#. js-lingui-id: T6szT2
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
-msgid "Initial loop step IDs"
-msgstr "IDs iniciais das etapas de loop"
 
 #. js-lingui-id: XU5AOg
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
