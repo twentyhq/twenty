@@ -4,10 +4,11 @@ import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePa
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isValidUrl } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
@@ -36,12 +37,14 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
-  const [
-    pageLayoutEditingWidgetIdComponent,
-    setPageLayoutEditingWidgetIdComponent,
-  ] = useRecoilState(pageLayoutEditingWidgetIdComponentState);
-  const pageLayoutDraftComponent = useRecoilValue(
+  const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
+    useRecoilComponentState(
+      pageLayoutEditingWidgetIdComponentState,
+      pageLayoutId,
+    );
+  const pageLayoutDraft = useRecoilComponentValue(
     pageLayoutDraftComponentState,
+    pageLayoutId,
   );
 
   const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);

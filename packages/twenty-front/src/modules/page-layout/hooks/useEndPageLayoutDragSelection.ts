@@ -1,7 +1,8 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,17 +10,21 @@ import { IconAppWindow } from 'twenty-ui/display';
 import { pageLayoutSelectedCellsComponentState } from '../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
 
-export const useEndPageLayoutDragSelection = (pageLayoutId: string) => {
-  const pageLayoutInstanceId =
-    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+export const useEndPageLayoutDragSelection = (
+  pageLayoutIdFromProps?: string,
+) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
 
   const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
     pageLayoutSelectedCellsComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
   const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
     pageLayoutDraggedAreaComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
   const { navigateCommandMenu } = useNavigateCommandMenu();
 

@@ -1,16 +1,19 @@
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
-import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpdatePageLayoutWidget = (pageLayoutId: string) => {
-  const pageLayoutInstanceId =
-    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
 
   const updatePageLayoutWidget = useRecoilCallback(

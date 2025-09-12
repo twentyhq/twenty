@@ -1,6 +1,7 @@
-import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type Layout, type Layouts } from 'react-grid-layout';
@@ -11,9 +12,13 @@ import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponen
 import { type PageLayoutWidgetWithData } from '../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
-export const usePageLayoutHandleLayoutChange = (pageLayoutId: string) => {
-  const pageLayoutInstanceId =
-    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+export const usePageLayoutHandleLayoutChange = (
+  pageLayoutIdFromProps?: string,
+) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
@@ -24,12 +29,12 @@ export const usePageLayoutHandleLayoutChange = (pageLayoutId: string) => {
 
   const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
     pageLayoutCurrentLayoutsComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
 
   const handleLayoutChange = useRecoilCallback(

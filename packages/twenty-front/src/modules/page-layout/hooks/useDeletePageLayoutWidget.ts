@@ -1,4 +1,5 @@
-import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,18 +8,20 @@ import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponen
 import { removeWidgetFromTab } from '../utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '../utils/removeWidgetLayoutFromTab';
 
-export const useDeletePageLayoutWidget = (pageLayoutId: string) => {
-  const pageLayoutInstanceId =
-    getPageLayoutIdInstanceIdFromPageLayoutId(pageLayoutId);
+export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
 
   const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
     pageLayoutCurrentLayoutsComponentState,
-    pageLayoutInstanceId,
+    pageLayoutId,
   );
 
   const deletePageLayoutWidget = useRecoilCallback(
