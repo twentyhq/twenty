@@ -14,6 +14,7 @@ export enum OrderStatusGraphQL {
   REFUNDED = OrderStatus.REFUNDED,
   DISPUTED = OrderStatus.DISPUTED,
   OTHER = OrderStatus.OTHER,
+  TRIAL = OrderStatus.TRIAL,
 }
 
 registerEnumType(OrderStatusGraphQL, {
@@ -34,6 +35,9 @@ registerEnumType(OrderStatusGraphQL, {
     },
     FULFILLED: {
       description: 'Order has been fulfilled',
+    },
+    TRIAL: {
+      description: 'Order is in trial period',
     },
   },
 });

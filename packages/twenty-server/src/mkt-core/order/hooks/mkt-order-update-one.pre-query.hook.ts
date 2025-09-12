@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject,Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -128,7 +128,10 @@ export class MktOrderUpdateOnePreQueryHook
 
     if (
       currentOrder &&
-      currentOrder.status === OrderStatus.PAID &&
+      (
+        currentOrder.status === OrderStatus.PAID ||
+        currentOrder.status === OrderStatus.TRIAL
+      ) &&
       input?.licenseStatus === MKT_LICENSE_STATUS.GETTING
     ) {
       const jobData: LicenseGenerationJobData = {

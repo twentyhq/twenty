@@ -22,6 +22,7 @@ export function mapGraphQLOrderStatusToEntity(
     [OrderStatusGraphQL.REFUNDED]: OrderStatus.REFUNDED,
     [OrderStatusGraphQL.DISPUTED]: OrderStatus.DISPUTED,
     [OrderStatusGraphQL.OTHER]: OrderStatus.OTHER,
+    [OrderStatusGraphQL.TRIAL]: OrderStatus.TRIAL,
   };
 
   const mappedStatus = statusMap[graphqlStatus];
@@ -51,6 +52,7 @@ export function mapEntityOrderStatusToGraphQL(
     [OrderStatus.REFUNDED]: OrderStatusGraphQL.REFUNDED,
     [OrderStatus.DISPUTED]: OrderStatusGraphQL.DISPUTED,
     [OrderStatus.OTHER]: OrderStatusGraphQL.OTHER,
+    [OrderStatus.TRIAL]: OrderStatusGraphQL.TRIAL,
   };
 
   const mappedStatus = statusMap[entityStatus];

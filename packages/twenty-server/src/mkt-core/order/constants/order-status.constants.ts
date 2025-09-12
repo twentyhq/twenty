@@ -12,6 +12,7 @@ export enum OrderStatus {
   REFUNDED = 'REFUNDED', // đã hoàn tiền
   DISPUTED = 'DISPUTED', // đã xảy ra tranh chấp
   OTHER = 'OTHER', // tình huống ngoại lệ, fallback
+  TRIAL = 'TRIAL', // đang ở trong giai đoạn trial
 }
 
 export const ORDER_STATUS_OPTIONS = [
@@ -75,6 +76,12 @@ export const ORDER_STATUS_OPTIONS = [
     color: 'gray' as TagColor,
     position: 9,
   },
+  {
+    value: OrderStatus.TRIAL,
+    label: 'Trial',
+    color: 'yellow' as TagColor,
+    position: 9,
+  },
 ];
 
 export enum SINVOICE_STATUS {
@@ -119,13 +126,14 @@ export const SINVOICE_STATUS_OPTIONS = [
 ];
 
 export enum MKT_LICENSE_STATUS {
-  PENDING = 'PENDING',
-  GETTING = 'GETTING',
-  FAILED = 'FAILED',
-  ERROR = 'ERROR',
-  SUCCESS = 'SUCCESS',
-  REVOKED = 'REVOKED',
-  DELETED = 'DELETED',
+  PENDING = 'PENDING', // Đang chờ xử lý cấp phép, chưa bắt đầu quá trình lấy license
+  GETTING = 'GETTING', // Đang trong quá trình gọi API hoặc service để lấy license
+  FAILED = 'FAILED',   // Quá trình lấy license thất bại (ví dụ: lỗi network, timeout, dữ liệu không hợp lệ)
+  ERROR = 'ERROR',     // Lỗi hệ thống hoặc lỗi không mong muốn trong khi xử lý license
+  SUCCESS = 'SUCCESS', // License đã được lấy thành công và hợp lệ
+  REVOKED = 'REVOKED', // License đã bị thu hồi (do hết hạn, bị hủy hoặc do vi phạm điều kiện)
+  DELETED = 'DELETED', // License đã bị xóa khỏi hệ thống (không còn được quản lý/truy vết)
+  TRIAL = 'TRIAL', // License đang ở trong giai đoạn trial
 }
 
 export const MKT_LICENSE_STATUS_OPTIONS = [
@@ -170,5 +178,11 @@ export const MKT_LICENSE_STATUS_OPTIONS = [
     label: 'Deleted',
     color: 'gray' as TagColor,
     position: 6,
+  },
+  {
+    value: MKT_LICENSE_STATUS.TRIAL,
+    label: 'Trial',
+    color: 'yellow' as TagColor,
+    position: 7,
   },
 ];

@@ -9,6 +9,7 @@ export enum MKT_LICENSE_STATUS {
   DELETED = 'DELETED', // Đã bị xóa (thường là soft delete)
   PENDING = 'PENDING', // Đang chờ xử lý / chờ duyệt
   OTHER = 'OTHER', // Trường hợp khác, không nằm trong các trạng thái trên
+  TRIAL = 'TRIAL', // License đang ở trong giai đoạn trial
 }
 
 export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
@@ -59,5 +60,11 @@ export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
     label: 'Other',
     position: 7,
     color: 'turquoise',
+  },
+  {
+    value: MKT_LICENSE_STATUS.TRIAL,
+    label: 'Trial',
+    position: 8,
+    color: 'yellow',
   },
 ];

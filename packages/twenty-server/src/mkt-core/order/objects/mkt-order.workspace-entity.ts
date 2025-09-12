@@ -89,6 +89,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Status`,
     description: msg`Current order status`,
     options: ORDER_STATUS_OPTIONS,
+    icon: 'IconProgressCheck',
   })
   @WorkspaceIsNullable()
   status?: OrderStatus;
@@ -168,6 +169,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`License Status`,
     description: msg`Status of the License`,
     options: MKT_LICENSE_STATUS_OPTIONS,
+    icon: 'IconBox',
   })
   @WorkspaceIsNullable()
   licenseStatus?: MKT_LICENSE_STATUS;
