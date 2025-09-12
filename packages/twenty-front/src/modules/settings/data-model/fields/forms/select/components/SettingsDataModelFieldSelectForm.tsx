@@ -20,7 +20,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
@@ -118,7 +118,7 @@ export const SettingsDataModelFieldSelectForm = ({
     });
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
-  const location = useLocation()
+  const location = useLocation();
 
   const {
     control,
@@ -126,7 +126,6 @@ export const SettingsDataModelFieldSelectForm = ({
     watch: watchFormValue,
     getValues,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
-
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
@@ -230,22 +229,25 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
-  const handleStateChange = (newOptionValue:string) => {
-    const newOption = generateNewSelectOption(initialOptions, newOptionValue);
-    const newOptions = [
-      ...initialOptions,
-      newOption
-    ];
-    setFormValue('options', newOptions, { shouldDirty: true });
-  }
+  const handleStateChange = useCallback(
+    (newOptionValue: string) => {
+      const newOption = generateNewSelectOption(initialOptions, newOptionValue);
+      const newOptions = [...initialOptions, newOption];
+      setFormValue('options', newOptions, { shouldDirty: true });
+    },
+    [initialOptions, setFormValue],
+  );
 
-  useEffect(()=>{
-    if(location.state && location.state.CreateNewOption){
-      const newOptionValue = location.state.CreateNewOption as string
-      handleStateChange(newOptionValue)
+  useEffect(() => {
+    const newOptionValue = location.state?.CreateNewOption;
+    if (
+      newOptionValue !== undefined &&
+      newOptionValue !== null &&
+      newOptionValue !== ''
+    ) {
+      handleStateChange(newOptionValue);
     }
-  },[location.state])
-
+  }, [location.state, handleStateChange]);
 
   return (
     <>

@@ -7,7 +7,7 @@ import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/c
 
 export const generateNewSelectOption = (
   options: FieldMetadataItemOption[],
-  name?:string
+  name?: string,
 ): FieldMetadataItemOption => {
   const newOptionLabel = name ?? generateNewSelectOptionLabel(options);
   return {

@@ -24,8 +24,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { PermissionFlagType } from '~/generated/graphql';
-
+import { type PermissionFlagType } from '~/generated/graphql';
 
 export const EMPTY_FILTER_VALUE = '';
 
@@ -56,9 +55,10 @@ export const ObjectFilterDropdownOptionSelect = ({
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
-  
-  const IsHasPermissionFlag = useHasPermissionFlag('DATA_MODEL' as PermissionFlagType);
 
+  const IsHasPermissionFlag = useHasPermissionFlag(
+    'DATA_MODEL' as PermissionFlagType,
+  );
 
   const selectedOptions = useMemo(
     () =>
@@ -151,11 +151,10 @@ export const ObjectFilterDropdownOptionSelect = ({
       .includes(objectFilterDropdownSearchInput.toLowerCase()),
   );
 
-  const showNoResult = optionsInDropdown?.length === 0 
-  
+  const showNoResult = optionsInDropdown?.length === 0;
+
   const objectRecordsIds = optionsInDropdown.map((option) => option.id);
 
-  
   return (
     <SelectableList
       selectableListInstanceId={componentInstanceId}
@@ -164,7 +163,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (
-          <ObjectFilterDropdownCreateNewOption 
+          <ObjectFilterDropdownCreateNewOption
             name={objectFilterDropdownSearchInput}
             IsHasPermissionFlag={IsHasPermissionFlag}
             fieldName={fieldMetadataItemUsedInDropdown?.name || ''}

@@ -69,14 +69,12 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'isLabelSyncedWithName'
     >;
   }) => {
-
-
-  const result = await mutate({
+    const result = await mutate({
       variables: {
         idToUpdate: fieldMetadataIdToUpdate,
         updatePayload: updatePayload,
       },
-  });
+    });
 
     const objectMetadataItemsRefreshed = await refreshObjectMetadataItems();
 
