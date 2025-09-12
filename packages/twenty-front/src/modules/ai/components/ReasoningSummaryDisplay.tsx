@@ -6,6 +6,7 @@ import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { Shimmer } from '@/ai/components/ShimmerEffect';
+import { t } from '@lingui/core/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -81,7 +82,7 @@ export const ReasoningSummaryDisplay = ({
           <Shimmer>
             <StyledIconContainer>
               <IconBrain size={theme.icon.size.sm} />
-              <StyledThinkingText>Thinking...</StyledThinkingText>
+              <StyledThinkingText>{t`Thinking...`}</StyledThinkingText>
             </StyledIconContainer>
           </Shimmer>
           <StyledReasoningContainer>
@@ -95,7 +96,7 @@ export const ReasoningSummaryDisplay = ({
           <StyledToggleButton onClick={() => setIsExpanded(!isExpanded)}>
             <StyledIconContainer>
               <IconBrain size={theme.icon.size.sm} />
-              <span>Finished thinking</span>
+              <span>{t`Finished thinking`}</span>
             </StyledIconContainer>
             {isExpanded ? (
               <IconChevronUp size={theme.icon.size.sm} />
