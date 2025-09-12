@@ -110,20 +110,7 @@ describe('Core REST API Update One endpoint', () => {
       method: 'patch',
       path: `/people/${TEST_PERSON_1_ID}?depth=2`,
       body: updatedData,
-    })
-      .expect(200)
-      .expect((res) => {
-        const updatedPerson = res.body.data.updatePerson;
-
-        expect(updatedPerson.company.people).toBeDefined();
-
-        const depth2Person = updatedPerson.company.people.find(
-          // @ts-expect-error legacy noImplicitAny
-          (p) => p.id === updatedPerson.id,
-        );
-
-        expect(depth2Person).toBeDefined();
-      });
+    }).expect(400);
   });
 
   it('should return a EntityNotFoundError when trying to update a non-existing person', async () => {

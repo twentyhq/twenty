@@ -178,7 +178,7 @@ describe('Core REST API Create Many endpoint', () => {
       });
   });
 
-  it('should support depth 2 parameter', async () => {
+  it('should not support depth 2 parameter', async () => {
     const requestBody = [
       {
         id: TEST_PERSON_1_ID,
@@ -194,26 +194,7 @@ describe('Core REST API Create Many endpoint', () => {
       method: 'post',
       path: `/batch/people?depth=2`,
       body: requestBody,
-    })
-      .expect(201)
-      .expect((res) => {
-        const [createdPerson1, createdPerson2] = res.body.data.createPeople;
-
-        expect(createdPerson1.company.people).toBeDefined();
-        expect(createdPerson2.company.people).toBeDefined();
-
-        const depth2Person1 = createdPerson1.company.people.find(
-          // @ts-expect-error legacy noImplicitAny
-          (p) => p.id === createdPerson1.id,
-        );
-        const depth2Person2 = createdPerson2.company.people.find(
-          // @ts-expect-error legacy noImplicitAny
-          (p) => p.id === createdPerson2.id,
-        );
-
-        expect(depth2Person1).toBeDefined();
-        expect(depth2Person2).toBeDefined();
-      });
+    }).expect(400);
   });
 
   it('should return a BadRequestException when trying to create a person with an existing ID', async () => {
