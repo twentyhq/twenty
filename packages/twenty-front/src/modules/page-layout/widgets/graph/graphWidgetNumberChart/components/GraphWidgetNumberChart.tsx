@@ -1,4 +1,3 @@
-import { type NumberChartData } from '@/page-layout/widgets/graph/graphWidgetNumberChart/types/NumberChartData';
 import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetNumberChart/utils/formatNumberChartTrend';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,7 +8,10 @@ import {
   IconTrendingUp,
 } from 'twenty-ui/display';
 
-type GraphWidgetNumberChartProps = NumberChartData;
+type GraphWidgetNumberChartProps = {
+  value: string;
+  trendPercentage: number;
+};
 
 const StyledTrendPercentageValue = styled.span`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -56,7 +58,10 @@ export const GraphWidgetNumberChart = ({
             size={theme.icon.size.md}
           />
         ) : (
-          <IconTrendingDown color={theme.color.red} size={theme.icon.size.md} />
+          <IconTrendingDown
+            color={theme.adaptiveColors.red4}
+            size={theme.icon.size.md}
+          />
         )}
       </StyledTrendIconContainer>
     </StyledContainer>
