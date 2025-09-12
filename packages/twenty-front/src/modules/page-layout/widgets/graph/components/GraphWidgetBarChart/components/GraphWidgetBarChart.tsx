@@ -1,23 +1,24 @@
+import { BarChartEndLines } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/components/BarChartEndLines';
+import { useBarChartData } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartData';
+import { useBarChartHandlers } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartHandlers';
+import { useBarChartTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/hooks/useBarChartTooltip';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartSeries } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartSeries';
+import { getBarColor } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getBarColor';
+import { getChartBarAxisBottomConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getChartBarAxisBottomConfig';
+import { getChartBarAxisLeftConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/utils/getChartBarAxisLeftConfig';
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import {
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
 import { useId } from 'react';
-import { createGraphColorRegistry } from '../../utils/createGraphColorRegistry';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '../../utils/graphFormatters';
-import { GraphWidgetLegend } from '../GraphWidgetLegend';
-import { GraphWidgetTooltip } from '../GraphWidgetTooltip';
-import { BarChartEndLines } from './components/BarChartEndLines';
-import { useBarChartData } from './hooks/useBarChartData';
-import { useBarChartHandlers } from './hooks/useBarChartHandlers';
-import { useBarChartTooltip } from './hooks/useBarChartTooltip';
-import { type BarChartDataItem } from './types/BarChartDataItem';
-import { type BarChartSeries } from './types/BarChartSeries';
-import { getAxisBottomConfig } from './utils/getAxisBottomConfig';
-import { getAxisLeftConfig } from './utils/getAxisLeftConfig';
-import { getBarColor } from './utils/getBarColor';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -117,14 +118,14 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   });
 
-  const axisBottomConfig = getAxisBottomConfig(
+  const axisBottomConfig = getChartBarAxisBottomConfig(
     layout,
     xAxisLabel,
     yAxisLabel,
     formatOptions,
   );
 
-  const axisLeftConfig = getAxisLeftConfig(
+  const axisLeftConfig = getChartBarAxisLeftConfig(
     layout,
     xAxisLabel,
     yAxisLabel,
@@ -133,7 +134,7 @@ export const GraphWidgetBarChart = ({
 
   const renderTooltip = (datum: Parameters<typeof createTooltip>[0]) => {
     const tooltipData = createTooltip(datum);
-    if (!tooltipData) return null;
+    if (!isDefined(tooltipData)) return null;
 
     return (
       <GraphWidgetTooltip
@@ -192,7 +193,7 @@ export const GraphWidgetBarChart = ({
           tooltip={(props) => renderTooltip(props)}
           onClick={handleBarClick}
           onMouseEnter={(datum) => {
-            if (datum.id !== undefined && datum.indexValue !== undefined) {
+            if (isDefined(datum.id) && isDefined(datum.indexValue)) {
               setHoveredBar({
                 key: String(datum.id),
                 indexValue: datum.indexValue,

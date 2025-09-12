@@ -3,7 +3,7 @@ import {
   type GraphValueFormatOptions,
 } from '../../../utils/graphFormatters';
 
-export const getAxisBottomConfig = (
+export const getChartBarAxisBottomConfig = (
   layout: 'vertical' | 'horizontal',
   xAxisLabel?: string,
   yAxisLabel?: string,

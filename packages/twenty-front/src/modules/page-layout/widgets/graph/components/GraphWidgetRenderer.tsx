@@ -1,6 +1,6 @@
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
-import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/GraphWidgetBarChart';
+import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/components/GraphWidgetLineChart/GraphWidgetLineChart';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
