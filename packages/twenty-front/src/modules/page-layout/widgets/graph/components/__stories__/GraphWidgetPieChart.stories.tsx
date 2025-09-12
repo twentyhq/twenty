@@ -1,7 +1,7 @@
+import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetPieChart } from '../GraphWidgetPieChart';
 
 const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',

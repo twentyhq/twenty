@@ -1,3 +1,5 @@
+import { type NumberChartData } from '@/page-layout/widgets/graph/graphWidgetNumberChart/types/NumberChartData';
+import { formatNumberChartTrend } from '@/page-layout/widgets/graph/graphWidgetNumberChart/utils/formatNumberChartTrend';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -7,11 +9,7 @@ import {
   IconTrendingUp,
 } from 'twenty-ui/display';
 
-// props are subjected to change
-type GraphWidgetNumberChartProps = {
-  value: string;
-  trendPercentage: number;
-};
+type GraphWidgetNumberChartProps = NumberChartData;
 
 const StyledTrendPercentageValue = styled.span`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -43,8 +41,8 @@ export const GraphWidgetNumberChart = ({
   trendPercentage,
 }: GraphWidgetNumberChartProps) => {
   const theme = useTheme();
-  const formattedPercentage =
-    trendPercentage >= 0 ? `+${trendPercentage}` : `${trendPercentage}`;
+  const formattedPercentage = formatNumberChartTrend(trendPercentage);
+
   return (
     <StyledContainer>
       <StyledH1Title title={value} fontColor={H1TitleFontColor.Primary} />
@@ -58,7 +56,6 @@ export const GraphWidgetNumberChart = ({
             size={theme.icon.size.md}
           />
         ) : (
-          // question for product - whats the exact red here? cant see it on figma
           <IconTrendingDown color={theme.color.red} size={theme.icon.size.md} />
         )}
       </StyledTrendIconContainer>

@@ -1,0 +1,150 @@
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { PieChartEndLines } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartEndLines';
+import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
+import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
+import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
+import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import {
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import {
+  ResponsivePie,
+  type PieCustomLayerProps,
+  type PieTooltipProps,
+} from '@nivo/pie';
+
+type GraphWidgetPieChartProps = {
+  data: PieChartDataItem[];
+  showLegend?: boolean;
+  id: string;
+} & GraphValueFormatOptions;
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+`;
+
+const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
+  flex: 1;
+  position: relative;
+  width: 100%;
+
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
+    svg g path[fill^="url(#"] {
+      cursor: pointer;
+    }
+  `}
+`;
+
+export const GraphWidgetPieChart = ({
+  data,
+  showLegend = true,
+  id,
+  displayType,
+  decimals,
+  prefix,
+  suffix,
+  customFormatter,
+}: GraphWidgetPieChartProps) => {
+  const theme = useTheme();
+  const colorRegistry = createGraphColorRegistry(theme);
+
+  const formatOptions: GraphValueFormatOptions = {
+    displayType,
+    decimals,
+    prefix,
+    suffix,
+    customFormatter,
+  };
+
+  const {
+    hoveredSliceId,
+    setHoveredSliceId,
+    handleSliceClick,
+    hasClickableItems,
+  } = usePieChartHandlers({ data });
+
+  const { enrichedData, defs, fill } = usePieChartData({
+    data,
+    colorRegistry,
+    id,
+    hoveredSliceId,
+  });
+
+  const { renderTooltip } = usePieChartTooltip({
+    enrichedData,
+    data,
+    formatOptions,
+    displayType,
+  });
+
+  const renderSliceEndLines = (
+    layerProps: PieCustomLayerProps<PieChartDataItem>,
+  ) => (
+    <PieChartEndLines
+      dataWithArc={layerProps.dataWithArc}
+      centerX={layerProps.centerX}
+      centerY={layerProps.centerY}
+      innerRadius={layerProps.innerRadius}
+      radius={layerProps.radius}
+      enrichedData={enrichedData}
+    />
+  );
+
+  const tooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
+    const tooltipData = renderTooltip(datum);
+    if (!tooltipData) return null;
+
+    return (
+      <GraphWidgetTooltip
+        items={[tooltipData.tooltipItem]}
+        showClickHint={tooltipData.showClickHint}
+      />
+    );
+  };
+
+  return (
+    <StyledContainer id={id}>
+      <StyledChartContainer $isClickable={hasClickableItems}>
+        <ResponsivePie
+          data={data}
+          innerRadius={0.8}
+          colors={enrichedData.map((item) => `url(#${item.gradientId})`)}
+          borderWidth={0}
+          enableArcLinkLabels={false}
+          enableArcLabels={false}
+          tooltip={tooltip}
+          onClick={handleSliceClick}
+          onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
+          onMouseLeave={() => setHoveredSliceId(null)}
+          defs={defs}
+          fill={fill}
+          layers={['arcs', renderSliceEndLines]}
+        />
+      </StyledChartContainer>
+      <GraphWidgetLegend
+        show={showLegend}
+        items={enrichedData.map((item) => ({
+          id: item.id,
+          label: item.label || item.id,
+          formattedValue: formatGraphValue(
+            displayType === 'percentage' ? item.percentage / 100 : item.value,
+            formatOptions,
+          ),
+          color: item.colorScheme.solid,
+        }))}
+      />
+    </StyledContainer>
+  );
+};
