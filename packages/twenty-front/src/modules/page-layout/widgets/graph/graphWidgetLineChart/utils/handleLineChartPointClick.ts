@@ -1,4 +1,4 @@
-import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type LineSeries, type Point } from '@nivo/line';
 import { isDefined } from 'twenty-shared/utils';
 

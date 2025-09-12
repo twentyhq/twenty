@@ -1,10 +1,10 @@
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { useLineChartData } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/hooks/useLineChartData';
-import { useLineChartTooltip } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/hooks/useLineChartTooltip';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
-import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
-import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
-import { handleLineChartPointClick } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/utils/handleLineChartPointClick';
+import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
+import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
+import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';

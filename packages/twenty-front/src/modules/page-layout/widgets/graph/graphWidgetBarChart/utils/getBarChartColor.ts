@@ -1,4 +1,4 @@
-import { type BarChartConfig } from '@/page-layout/widgets/graph/components/GraphWidgetBarChart/types/BarChartConfig';
+import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { type ThemeType } from 'twenty-ui/theme';
 

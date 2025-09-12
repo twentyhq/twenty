@@ -1,4 +1,4 @@
-import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/components/GraphWidgetLineChart';
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { type ComponentProps } from 'react';

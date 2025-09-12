@@ -1,7 +1,7 @@
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { useState } from 'react';
-import { type ComputedDatum, type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
-import { type BarChartDataItem } from '../types/BarChartDataItem';
 
 type UseBarChartHandlersProps = {
   data: BarChartDataItem[];

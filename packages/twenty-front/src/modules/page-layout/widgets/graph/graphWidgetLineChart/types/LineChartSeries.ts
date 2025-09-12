@@ -1,4 +1,4 @@
-import { type LineChartDataPoint } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartDataPoint';
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 
 export type LineChartSeries = {

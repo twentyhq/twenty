@@ -1,6 +1,6 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/types/BarChartDataItem';
-import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/types/BarChartEnrichedKey';
-import { calculateBarChartEndLineCoordinates } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/utils/calculateBarChartEndLineCoordinates';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
+import { calculateBarChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartEndLineCoordinates';
 import { type ComputedBarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 

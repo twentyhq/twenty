@@ -1,8 +1,8 @@
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
-import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/components/graphWidgetBarChart/components/GraphWidgetBarChart';
+import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/components/GraphWidgetGaugeChart';
-import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/components/GraphWidgetLineChart';
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/components/GraphWidgetPieChart';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';

@@ -1,11 +1,11 @@
-import { type ComputedDatum, type BarDatum } from '@nivo/bar';
-import { isDefined } from 'twenty-shared/utils';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
-} from '../../../utils/graphFormatters';
-import { type BarChartDataItem } from '../types/BarChartDataItem';
-import { type BarChartEnrichedKey } from '../types/BarChartEnrichedKey';
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseBarChartTooltipProps = {
   hoveredBar: { key: string; indexValue: string | number } | null;

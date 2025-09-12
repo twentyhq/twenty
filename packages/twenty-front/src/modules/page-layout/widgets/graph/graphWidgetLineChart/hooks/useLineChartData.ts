@@ -1,5 +1,5 @@
-import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartEnrichedSeries';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';

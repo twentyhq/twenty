@@ -1,5 +1,5 @@
-import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartEnrichedSeries';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/components/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,

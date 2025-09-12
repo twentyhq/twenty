@@ -1,11 +1,11 @@
+import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
+import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
+import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useMemo } from 'react';
-import { type GraphColorRegistry } from '../../../types/GraphColorRegistry';
-import { getColorScheme } from '../../../utils/getColorScheme';
-import { createGradientDef } from '../../../utils/createGradientDef';
-import { type BarChartDataItem } from '../types/BarChartDataItem';
-import { type BarChartSeries } from '../types/BarChartSeries';
-import { type BarChartConfig } from '../types/BarChartConfig';
-import { type BarChartEnrichedKey } from '../types/BarChartEnrichedKey';
 
 type UseBarChartDataProps = {
   data: BarChartDataItem[];
