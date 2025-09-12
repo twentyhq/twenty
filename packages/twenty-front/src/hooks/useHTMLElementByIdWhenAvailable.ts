@@ -20,20 +20,22 @@ export const useHTMLElementByIdWhenAvailable = (id: string) => {
     const mutationObserver = new MutationObserver(() => {
       const elementObserved = document.getElementById(id);
 
-      if (isDefined(elementObserved) && !isDefined(element)) {
+      if (isDefined(elementObserved)) {
         setElement(elementObserved);
         setIsObserving(false);
         mutationObserver.disconnect();
       }
     });
 
-    if (!isObserving && !isDefined(element)) {
-      setIsObserving(true);
-      mutationObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    }
+    setIsObserving(true);
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      mutationObserver.disconnect();
+    };
   }, [element, id, isObserving]);
 
   return {
