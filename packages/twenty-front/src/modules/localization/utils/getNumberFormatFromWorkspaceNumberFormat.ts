@@ -1,15 +1,14 @@
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
-import { type NumberFormat } from '@/localization/constants/NumberFormat';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { type WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
 
 export const getNumberFormatFromWorkspaceNumberFormat = (
-  workspaceMember: Pick<WorkspaceMember, 'numberFormat'>,
-): keyof typeof NumberFormat => {
-  // If the user has selected SYSTEM, detect the format from the browser
-  if (workspaceMember.numberFormat === 'SYSTEM') {
-    return detectNumberFormat();
+  numberFormat: WorkspaceMemberNumberFormatEnum,
+): NumberFormat => {
+  if (numberFormat === 'SYSTEM') {
+    return NumberFormat.SYSTEM;
   }
 
-  // Otherwise, use the user's explicit preference
-  return workspaceMember.numberFormat ?? 'COMMAS_AND_DOT';
+  return (
+    (numberFormat as unknown as NumberFormat) ?? NumberFormat.COMMAS_AND_DOT
+  );
 };

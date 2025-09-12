@@ -8,6 +8,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/DateTimeFieldDisplay',
@@ -22,6 +23,7 @@ const meta: Meta = {
             dateFormat: DateFormat.SYSTEM,
             timeFormat: TimeFormat.SYSTEM,
             timeZone: 'UTC',
+            numberFormat: NumberFormat.SYSTEM,
           }}
         >
           <Story />
