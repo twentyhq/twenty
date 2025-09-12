@@ -5,6 +5,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilCallback } from 'recoil';
 
@@ -136,6 +137,21 @@ export const useCopyContextStoreStates = () => {
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreCurrentViewType,
+        );
+
+        const contextStorePageLayoutId = snapshot
+          .getLoadable(
+            contextStorePageLayoutIdComponentState.atomFamily({
+              instanceId: instanceIdToCopyFrom,
+            }),
+          )
+          .getValue();
+
+        set(
+          contextStorePageLayoutIdComponentState.atomFamily({
+            instanceId: instanceIdToCopyTo,
+          }),
+          contextStorePageLayoutId,
         );
       },
     [],

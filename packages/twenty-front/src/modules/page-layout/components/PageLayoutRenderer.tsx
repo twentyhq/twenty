@@ -1,3 +1,4 @@
+import { PageLayoutContextStoreEffect } from '@/page-layout/components/PageLayoutContextStoreEffect';
 import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 
@@ -47,30 +48,33 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   }, [activeTabId, pageLayoutCurrentLayouts]);
 
   return (
-    <PageLayoutComponentInstanceContext.Provider
-      value={{
-        instanceId: pageLayout.id,
-      }}
-    >
-      <TabListComponentInstanceContext.Provider
+    <>
+      <PageLayoutContextStoreEffect pageLayoutId={pageLayout.id} />
+      <PageLayoutComponentInstanceContext.Provider
         value={{
-          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+          instanceId: pageLayout.id,
         }}
       >
-        <PageLayoutInitializationEffect pageLayout={pageLayout} />
-        <StyledTabList
-          tabs={pageLayout.tabs}
-          behaveAsLinks={false}
-          componentInstanceId={pageLayout.id}
-        />
-        <PageLayoutGridLayout layouts={layouts}>
-          {activeTabWidgets?.map((widget) => (
-            <div key={widget.id} data-select-disable="true">
-              <WidgetRenderer widget={widget as Widget} />
-            </div>
-          ))}
-        </PageLayoutGridLayout>
-      </TabListComponentInstanceContext.Provider>
-    </PageLayoutComponentInstanceContext.Provider>
+        <TabListComponentInstanceContext.Provider
+          value={{
+            instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+          }}
+        >
+          <PageLayoutInitializationEffect pageLayout={pageLayout} />
+          <StyledTabList
+            tabs={pageLayout.tabs}
+            behaveAsLinks={false}
+            componentInstanceId={pageLayout.id}
+          />
+          <PageLayoutGridLayout layouts={layouts}>
+            {activeTabWidgets?.map((widget) => (
+              <div key={widget.id} data-select-disable="true">
+                <WidgetRenderer widget={widget as Widget} />
+              </div>
+            ))}
+          </PageLayoutGridLayout>
+        </TabListComponentInstanceContext.Provider>
+      </PageLayoutComponentInstanceContext.Provider>
+    </>
   );
 };
