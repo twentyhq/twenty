@@ -1,4 +1,4 @@
-import { type TabLayouts } from '../../states/pageLayoutCurrentLayoutsComponentState';
+import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 import { createUpdatedTabLayouts } from '../createUpdatedTabLayouts';
 
 describe('createUpdatedTabLayouts', () => {

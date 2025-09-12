@@ -1,10 +1,15 @@
+import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
+import { useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -57,8 +62,16 @@ export const PageLayoutGridLayout = ({
     pageLayoutCurrentBreakpointComponentState,
   );
 
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+
+  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+
+  const { handleLayoutChange } = usePageLayoutHandleLayoutChange(
+    activeTabId ?? undefined,
+  );
+
   return (
-    <StyledGridContainer>
+    <StyledGridContainer ref={gridContainerRef}>
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
@@ -73,11 +86,13 @@ export const PageLayoutGridLayout = ({
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
+        onLayoutChange={handleLayoutChange}
         onBreakpointChange={(newBreakpoint) =>
           setPageLayoutCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
         }
       >
         {children}
+        <PageLayoutGridLayoutDragSelector gridContainerRef={gridContainerRef} />
       </ResponsiveGridLayout>
     </StyledGridContainer>
   );

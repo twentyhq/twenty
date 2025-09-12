@@ -12,7 +12,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
-import { getPageLayoutIdInstanceIdFromPageLayoutId } from '@/page-layout/utils/getPageLayoutIdInstanceIdFromPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { useMemo } from 'react';
 import 'react-grid-layout/css/styles.css';
@@ -50,7 +49,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   return (
     <PageLayoutComponentInstanceContext.Provider
       value={{
-        instanceId: getPageLayoutIdInstanceIdFromPageLayoutId(pageLayout.id),
+        instanceId: pageLayout.id,
       }}
     >
       <TabListComponentInstanceContext.Provider
@@ -58,10 +57,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
           instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
         }}
       >
-        <PageLayoutInitializationEffect
-          isEditMode={false}
-          pageLayout={pageLayout}
-        />
+        <PageLayoutInitializationEffect pageLayout={pageLayout} />
         <StyledTabList
           tabs={pageLayout.tabs}
           behaveAsLinks={false}

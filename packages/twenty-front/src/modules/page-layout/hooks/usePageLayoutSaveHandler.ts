@@ -1,5 +1,5 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/pageLayoutEditModeComponentState';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { savedPageLayoutsComponentState } from '@/page-layout/states/savedPageLayoutsComponentState';
 import {
   type PageLayoutWidgetWithData,

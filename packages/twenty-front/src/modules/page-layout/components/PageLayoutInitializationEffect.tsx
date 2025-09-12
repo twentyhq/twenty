@@ -1,3 +1,10 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { savedPageLayoutsComponentState } from '@/page-layout/states/savedPageLayoutsComponentState';
+import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -7,24 +14,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { PageLayoutType } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import {
-  pageLayoutCurrentLayoutsComponentState,
-  type TabLayouts,
-} from '../states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '../states/pageLayoutPersistedComponentState';
-import { savedPageLayoutsComponentState } from '../states/savedPageLayoutsComponentState';
-import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 type PageLayoutInitializationEffectProps = {
-  isEditMode?: boolean;
   pageLayout?: PageLayoutWithData;
 };
 
 export const PageLayoutInitializationEffect = ({
-  isEditMode = false,
   pageLayout,
 }: PageLayoutInitializationEffectProps) => {
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+    pageLayout?.id,
+  );
+
   const [isInitialized, setIsInitialized] = useState(false);
   const savedPageLayouts = useRecoilComponentValue(
     savedPageLayoutsComponentState,
@@ -109,7 +111,7 @@ export const PageLayoutInitializationEffect = ({
 
   useEffect(() => {
     if (!isInitialized) {
-      const existingLayout = isEditMode
+      const existingLayout = isPageLayoutInEditMode
         ? savedPageLayouts.find((l) => l.id === pageLayout?.id)
         : undefined;
 
@@ -123,7 +125,7 @@ export const PageLayoutInitializationEffect = ({
     savedPageLayouts,
     initializePageLayout,
     isInitialized,
-    isEditMode,
+    isPageLayoutInEditMode,
     pageLayout,
   ]);
 
