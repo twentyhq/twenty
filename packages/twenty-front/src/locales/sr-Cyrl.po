@@ -305,6 +305,7 @@ msgstr "ACS Url копиран у клипборд"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
 msgid "Action"
 msgstr "Акција"
 
@@ -365,6 +366,11 @@ msgstr "Додај окидач"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Додајте налог"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
+msgid "Add an Action"
+msgstr ""
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1317,7 +1323,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Кликните на штиклицу да примените ваше промене."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/widgets/graph/components/GraphWidgetTooltip.tsx
+#: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr "Кликните да видите податке"
 
@@ -1393,6 +1399,12 @@ msgstr "Компактан приказ"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "Компаније"
+
+#. js-lingui-id: 2PsTzL
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "completed"
+msgstr ""
 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -2585,6 +2597,11 @@ msgstr "Празан низ"
 msgid "Empty Inbox"
 msgstr "Празан пријемни сандуче"
 
+#. js-lingui-id: hGwouC
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Empty Node"
+msgstr ""
+
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -2637,11 +2654,6 @@ msgstr "Унесите име агента*"
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
 msgstr "Унесите низ ставки или варијабилни израз"
-
-#. js-lingui-id: uyFQs5
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
-msgid "Enter array of step IDs"
-msgstr "Унесите низ ID бројеве корака"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -3539,11 +3551,6 @@ msgstr "Пријемно сандуче"
 msgid "Indexes"
 msgstr "Индекси"
 
-#. js-lingui-id: T6szT2
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
-msgid "Initial loop step IDs"
-msgstr "Почетни ID бројеви корака понављања"
-
 #. js-lingui-id: XU5AOg
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Input"
@@ -4048,6 +4055,12 @@ msgstr "Потражите кориснике и управљајте њихов
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Look up users to impersonate them."
 msgstr "Потражите кориснике да их имперсонирате."
+
+#. js-lingui-id: tL2lBI
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
+msgid "loop"
+msgstr ""
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5051,11 +5064,11 @@ msgstr "Дозволе · {objectLabelSingular}"
 msgid "Phone number copied to clipboard"
 msgstr "Број телефона копиран у клипборд"
 
-#. js-lingui-id: FdlpPK
-#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#. js-lingui-id: vqKcU0
+#: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
-msgid "Pick a {nameSingular} record"
-msgstr "Изаберите запис за {nameSingular}"
+msgid "Pick a {objectLabel} record"
+msgstr ""
 
 #. js-lingui-id: N0+GsR
 #: src/pages/settings/SettingsWorkspace.tsx

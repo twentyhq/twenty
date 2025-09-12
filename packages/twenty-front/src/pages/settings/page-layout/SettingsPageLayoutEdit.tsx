@@ -1,32 +1,33 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
-import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
-import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
-import { WidgetRenderer } from '@/settings/page-layout/components/WidgetRenderer';
-import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
+import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
+import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
-} from '@/settings/page-layout/constants/PageLayoutBreakpoints';
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/settings/page-layout/constants/SettingsPageLayoutTabsInstanceId';
-import { useChangePageLayoutDragSelection } from '@/settings/page-layout/hooks/useChangePageLayoutDragSelection';
-import { useCreatePageLayoutTab } from '@/settings/page-layout/hooks/useCreatePageLayoutTab';
-import { useDeletePageLayoutWidget } from '@/settings/page-layout/hooks/useDeletePageLayoutWidget';
-import { useEndPageLayoutDragSelection } from '@/settings/page-layout/hooks/useEndPageLayoutDragSelection';
-import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
-import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
-import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
-import { useStartPageLayoutDragSelection } from '@/settings/page-layout/hooks/useStartPageLayoutDragSelection';
-import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
-import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
-import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
-import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
-import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
-import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
+} from '@/page-layout/constants/PageLayoutBreakpoints';
+import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
+import { useChangePageLayoutDragSelection } from '@/page-layout/hooks/useChangePageLayoutDragSelection';
+import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
+import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
+import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
+import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutSaveHandler } from '@/page-layout/hooks/usePageLayoutSaveHandler';
+import { useStartPageLayoutDragSelection } from '@/page-layout/hooks/useStartPageLayoutDragSelection';
+import { WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutCurrentBreakpointState } from '@/page-layout/states/pageLayoutCurrentBreakpointState';
+import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
+import { pageLayoutSelectedCellsState } from '@/page-layout/states/pageLayoutSelectedCellsState';
+import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
+import { generateCellId } from '@/page-layout/utils/generateCellId';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -46,13 +47,13 @@ import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledGridContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.primary};
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -168,11 +169,11 @@ export const SettingsPageLayoutEdit = () => {
     const activeTab = pageLayoutDraft.tabs.find(
       (tab) => tab.id === activeTabId,
     );
-    return activeTab?.widgets || [];
+    return activeTab?.widgets ?? [];
   }, [pageLayoutDraft.tabs, activeTabId]);
 
   const allWidgets = useMemo(
-    () => pageLayoutDraft.tabs.flatMap((tab) => tab.widgets),
+    () => pageLayoutDraft.tabs.flatMap((tab) => tab.widgets).filter(isDefined),
     [pageLayoutDraft.tabs],
   );
 
@@ -232,7 +233,7 @@ export const SettingsPageLayoutEdit = () => {
   }, [createPageLayoutTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
-    return [...pageLayoutDraft.tabs]
+    return [...(pageLayoutDraft.tabs ?? [])]
       .sort((a, b) => a.position - b.position)
       .map((tab) => ({
         id: tab.id,
@@ -243,17 +244,17 @@ export const SettingsPageLayoutEdit = () => {
   const handleSaveClick = async () => {
     setIsSaving(true);
     try {
-      const allWidgets: PageLayoutWidget[] = pageLayoutDraft.tabs.flatMap(
-        (tab) =>
+      const allWidgets: PageLayoutWidgetWithData[] =
+        pageLayoutDraft.tabs.flatMap((tab) =>
           tab.widgets.map((widget) => ({
             ...widget,
-            pageLayoutTabId: widget.pageLayoutTabId || tab.id,
+            pageLayoutTabId: widget.pageLayoutTabId ?? tab.id,
             objectMetadataId: widget.objectMetadataId || null,
-            createdAt: widget.createdAt || new Date().toISOString(),
+            createdAt: widget.createdAt ?? new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            deletedAt: widget.deletedAt || null,
+            deletedAt: widget.deletedAt ?? null,
           })),
-      );
+        );
 
       setPageLayoutDraft((prev) => ({
         ...prev,
@@ -352,7 +353,7 @@ export const SettingsPageLayoutEdit = () => {
             layouts={
               isEmptyState || !activeTabId
                 ? EMPTY_LAYOUT
-                : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
+                : (pageLayoutCurrentLayouts[activeTabId] ?? EMPTY_LAYOUT)
             }
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
@@ -373,19 +374,18 @@ export const SettingsPageLayoutEdit = () => {
             }
           >
             {isEmptyState ? (
-              <div key="empty-placeholder" onClick={handleOpenAddWidget}>
-                <PageLayoutWidgetPlaceholder title="" isEmpty />
+              <div key="empty-placeholder" data-select-disable="true">
+                <WidgetPlaceholder onClick={handleOpenAddWidget} />
               </div>
             ) : (
               activeTabWidgets.map((widget) => (
                 <div key={widget.id} data-select-disable="true">
-                  <PageLayoutWidgetPlaceholder
-                    title={widget.title}
+                  <WidgetRenderer
+                    widget={widget as Widget}
+                    displayDragHandle={true}
                     onRemove={() => deletePageLayoutWidget(widget.id)}
                     onEdit={() => handleEditWidget(widget.id)}
-                  >
-                    <WidgetRenderer widget={widget} />
-                  </PageLayoutWidgetPlaceholder>
+                  />
                 </div>
               ))
             )}

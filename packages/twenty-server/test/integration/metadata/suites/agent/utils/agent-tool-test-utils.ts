@@ -177,6 +177,8 @@ export const createAgentToolTestModule =
       label: 'Test Agent',
       icon: 'IconTest',
       isCustom: false,
+      applicationId: null,
+      application: null,
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',

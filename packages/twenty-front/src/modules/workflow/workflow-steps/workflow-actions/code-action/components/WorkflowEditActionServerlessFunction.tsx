@@ -24,7 +24,6 @@ import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctio
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -44,6 +43,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -515,15 +515,20 @@ export const WorkflowEditActionServerlessFunction = ({
             </>
           )}
         </WorkflowStepBody>
-        {activeTabId === WorkflowServerlessFunctionTabId.TEST && (
-          <RightDrawerFooter
-            actions={[
-              <CmdEnterActionButton
-                title="Test"
-                onClick={handleRunFunction}
-                disabled={isTesting || actionOptions.readonly}
-              />,
-            ]}
+        {!actionOptions.readonly && (
+          <WorkflowActionFooter
+            stepId={action.id}
+            additionalActions={
+              activeTabId === WorkflowServerlessFunctionTabId.TEST
+                ? [
+                    <CmdEnterActionButton
+                      title="Test"
+                      onClick={handleRunFunction}
+                      disabled={isTesting}
+                    />,
+                  ]
+                : []
+            }
           />
         )}
         {fullScreenOverlay}

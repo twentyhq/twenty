@@ -6,23 +6,22 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkOutputSchema';
+import { type FieldOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import {
-  type BaseOutputSchema,
-  type LinkOutputSchema,
-  type StepOutputSchema,
-} from '../types/StepOutputSchema';
+import { isBaseOutputSchemaV2 } from '../types/guards/isBaseOutputSchemaV2';
+import { isLinkOutputSchema } from '../types/guards/isLinkOutputSchema';
+import { isRecordOutputSchemaV2 } from '../types/guards/isRecordOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '../utils/getCurrentSubStepFromPath';
-import { isBaseOutputSchema } from '../utils/isBaseOutputSchema';
-import { isLinkOutputSchema } from '../utils/isLinkOutputSchema';
-import { isRecordOutputSchema } from '../utils/isRecordOutputSchema';
 
 type UseVariableDropdownProps = {
-  step: StepOutputSchema;
+  step: StepOutputSchemaV2;
   onSelect: (value: string) => void;
   onBack: () => void;
 };
@@ -72,9 +71,9 @@ export const useVariableDropdown = ({
 
     if (isLinkOutputSchema(currentSubStep)) {
       return { link: currentSubStep.link };
-    } else if (isRecordOutputSchema(currentSubStep)) {
+    } else if (isRecordOutputSchemaV2(currentSubStep)) {
       return currentSubStep.fields;
-    } else if (isBaseOutputSchema(currentSubStep)) {
+    } else if (isBaseOutputSchemaV2(currentSubStep)) {
       return currentSubStep;
     }
   };
@@ -83,7 +82,9 @@ export const useVariableDropdown = ({
     const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
     const handleSelectBaseOutputSchema = (
-      baseOutputSchema: BaseOutputSchema,
+      baseOutputSchema:
+        | BaseOutputSchemaV2
+        | Record<string, FieldOutputSchemaV2>,
     ) => {
       if (!baseOutputSchema[key]?.isLeaf) {
         setCurrentPath([...currentPath, key]);
@@ -136,9 +137,9 @@ export const useVariableDropdown = ({
 
     if (isLinkOutputSchema(currentSubStep)) {
       handleSelectLinkOutputSchema(currentSubStep);
-    } else if (isRecordOutputSchema(currentSubStep)) {
+    } else if (isRecordOutputSchemaV2(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep.fields);
-    } else if (isBaseOutputSchema(currentSubStep)) {
+    } else if (isBaseOutputSchemaV2(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep);
     }
   };

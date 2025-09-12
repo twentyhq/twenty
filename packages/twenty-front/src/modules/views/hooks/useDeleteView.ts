@@ -1,5 +1,5 @@
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useDeleteCoreViewMutation } from '~/generated/graphql';
@@ -14,7 +14,7 @@ export const useDeleteView = () => {
       async (viewId: string) => {
         const currentView = snapshot
           .getLoadable(
-            prefetchViewFromViewIdFamilySelector({
+            coreViewFromViewIdFamilySelector({
               viewId,
             }),
           )

@@ -1,0 +1,66 @@
+{
+  "name": "twenty-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "tags": ["scope:cli"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "commands": ["rimraf dist", "tsc"]
+      },
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "command": "tsx src/cli.ts"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "command": "node dist/cli.js"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "command": "tsc --noEmit"
+      }
+    },
+    "lint": {
+      "options": {
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+        "maxWarnings": 0
+      },
+      "configurations": {
+        "ci": { 
+          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+          "maxWarnings": 0
+        },
+        "fix": {}
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true,
+          "watchAll": false
+        }
+      }
+    }
+  }
+}

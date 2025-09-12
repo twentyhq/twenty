@@ -6,13 +6,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
 
-type WorkflowDiagramHandleSourceProps = {
-  selected: boolean;
-  hovered?: boolean;
-  readOnly?: boolean;
-  runStatus?: WorkflowRunStepStatus;
-};
-
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
 const StyledHandle = styled(Handle, {
@@ -23,7 +16,7 @@ const StyledHandle = styled(Handle, {
     prop !== 'runStatus',
 })<{
   type: HandleProps['type'];
-  disableHoverEffect: boolean;
+  disableHoverEffect?: boolean;
   selected: boolean;
   hovered?: boolean;
   runStatus?: WorkflowRunStepStatus;
@@ -37,7 +30,7 @@ const StyledHandle = styled(Handle, {
       if (!selected) {
         return css`
           background: ${theme.background.primary};
-          border-color: ${hovered && !disableHoverEffect
+          border-color: ${hovered && disableHoverEffect !== true
             ? theme.font.color.light
             : theme.border.color.strong};
         `;
@@ -56,45 +49,55 @@ const StyledHandle = styled(Handle, {
       border-color 0.1s;
     z-index: 1;
 
-    transform: translate(-50%, 50%);
-    transform-origin: bottom left;
+    ${({ position }) => {
+      if (position === Position.Right) {
+        return css`
+          transform: translate(50%, -50%);
+          transform-origin: top right;
+        `;
+      }
+
+      return css`
+        transform: translate(-50%, 50%);
+        transform-origin: bottom left;
+      `;
+    }}
 
     &.connectionindicator {
       cursor: pointer;
     }
 
-    ${({ disableHoverEffect, theme }) => {
-      if (disableHoverEffect) {
-        return undefined;
-      }
+    &:hover {
+      ${({ disableHoverEffect, theme }) => {
+        if (disableHoverEffect === true) {
+          return undefined;
+        }
 
-      const colors = getWorkflowDiagramColors({ theme });
+        const colors = getWorkflowDiagramColors({ theme });
 
-      return css`
-        &:hover {
+        return css`
           background: ${colors.selected.background} !important;
           border-color: ${colors.selected.borderColor} !important;
-          transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
+        `;
+      }}
+
+      ${({ disableHoverEffect, position }) => {
+        if (disableHoverEffect === true) {
+          return undefined;
         }
-      `;
-    }}
+
+        if (position === Position.Right) {
+          return css`
+            transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(50%, -50%);
+          `;
+        }
+
+        return css`
+          transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
+        `;
+      }}
+    }
   }
 `;
 
-export const WorkflowDiagramHandleSource = ({
-  selected,
-  hovered = false,
-  readOnly = false,
-  runStatus,
-}: WorkflowDiagramHandleSourceProps) => {
-  return (
-    <StyledHandle
-      type="source"
-      position={Position.Bottom}
-      disableHoverEffect={readOnly}
-      selected={selected}
-      hovered={hovered}
-      runStatus={runStatus}
-    />
-  );
-};
+export { StyledHandle as WorkflowDiagramHandleSource };

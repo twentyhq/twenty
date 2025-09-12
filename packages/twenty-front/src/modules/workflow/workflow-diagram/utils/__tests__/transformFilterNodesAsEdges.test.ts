@@ -34,7 +34,9 @@ describe('transformFilterNodesAsEdges', () => {
         {
           id: 'A-C',
           source: 'A',
+          sourceHandle: 'default',
           target: 'C',
+          targetHandle: 'default',
           data: {
             edgeType: 'default',
           },
@@ -45,7 +47,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.nodes).toEqual(diagram.nodes);
@@ -96,13 +98,17 @@ describe('transformFilterNodesAsEdges', () => {
         {
           id: 'A-B',
           source: 'A',
+          sourceHandle: 'default',
           target: 'B',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
         {
           id: 'B-C',
           source: 'B',
+          sourceHandle: 'default',
           target: 'C',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
       ],
@@ -111,7 +117,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have nodes A and C
@@ -148,7 +154,9 @@ describe('transformFilterNodesAsEdges', () => {
       id: 'A-C-filter-B',
       type: 'filter--editable',
       source: 'A',
+      sourceHandle: 'default',
       target: 'C',
+      targetHandle: 'default',
       selectable: true,
       deletable: true,
       data: {
@@ -229,25 +237,33 @@ describe('transformFilterNodesAsEdges', () => {
         {
           id: 'A-B1',
           source: 'A',
+          sourceHandle: 'default',
           target: 'B1',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
         {
           id: 'B1-C',
           source: 'B1',
+          sourceHandle: 'default',
           target: 'C',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
         {
           id: 'C-B2',
           source: 'C',
+          sourceHandle: 'default',
           target: 'B2',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
         {
           id: 'B2-D',
           source: 'B2',
+          sourceHandle: 'default',
           target: 'D',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
       ],
@@ -256,7 +272,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have nodes A, C, and D
@@ -275,7 +291,9 @@ describe('transformFilterNodesAsEdges', () => {
       id: 'A-C-filter-B1',
       type: 'filter--editable',
       source: 'A',
+      sourceHandle: 'default',
       target: 'C',
+      targetHandle: 'default',
       selectable: true,
       deletable: true,
       data: {
@@ -294,7 +312,9 @@ describe('transformFilterNodesAsEdges', () => {
       id: 'C-D-filter-B2',
       type: 'filter--editable',
       source: 'C',
+      sourceHandle: 'default',
       target: 'D',
+      targetHandle: 'default',
       selectable: true,
       deletable: true,
       data: {
@@ -339,7 +359,9 @@ describe('transformFilterNodesAsEdges', () => {
         {
           id: 'A-B',
           source: 'A',
+          sourceHandle: 'default',
           target: 'B',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
       ],
@@ -348,7 +370,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should only have node A (filter node B is removed)
@@ -415,13 +437,17 @@ describe('transformFilterNodesAsEdges', () => {
         {
           id: 'trigger-B',
           source: 'trigger',
+          sourceHandle: 'default',
           target: 'B',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
         {
           id: 'B-C',
           source: 'B',
+          sourceHandle: 'default',
           target: 'C',
+          targetHandle: 'default',
           data: { edgeType: 'default' },
         },
       ],
@@ -430,7 +456,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      workflowContext: 'workflow',
     });
 
     // Should have trigger and C nodes
@@ -467,7 +493,9 @@ describe('transformFilterNodesAsEdges', () => {
         id: 'trigger-C-filter-B',
         type: 'filter--editable',
         source: 'trigger',
+        sourceHandle: 'default',
         target: 'C',
+        targetHandle: 'default',
         selectable: true,
         deletable: true,
         data: {

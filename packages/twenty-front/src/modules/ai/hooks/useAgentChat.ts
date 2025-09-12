@@ -18,7 +18,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
@@ -84,7 +84,8 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
 
   const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement(scrollWrapperId);
+  const { scrollWrapperHTMLElement } =
+    useScrollWrapperHTMLElement(scrollWrapperId);
 
   const scrollToBottom = () => {
     scrollWrapperHTMLElement?.scroll({

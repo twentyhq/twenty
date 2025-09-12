@@ -894,6 +894,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Base URL for public domains',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  PUBLIC_DOMAIN_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Secret key for the application',
     isEnvOnly: true,
@@ -962,6 +971,14 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
   CLOUDFLARE_ZONE_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CloudflareConfig,
+    description: 'Zone ID for public domain Cloudflare integration',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.PUBLIC_DOMAIN_URL)
+  CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,

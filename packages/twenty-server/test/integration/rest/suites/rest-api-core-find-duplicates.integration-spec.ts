@@ -240,8 +240,8 @@ describe('Core REST API Find Duplicates endpoint', () => {
     expect(personDuplicated2.company.people).not.toBeDefined();
   });
 
-  it('should support depth 2 parameter', async () => {
-    const response = await makeRestAPIRequest({
+  it('should not support depth 2 parameter', async () => {
+    await makeRestAPIRequest({
       method: 'post',
       path: `/people/duplicates?depth=2`,
       body: {
@@ -254,29 +254,6 @@ describe('Core REST API Find Duplicates endpoint', () => {
           },
         ],
       },
-    }).expect(200);
-
-    const data = response.body.data;
-
-    expect(data.length).toBe(1);
-    const duplicatesInfo = data[0];
-
-    const [personDuplicated1, personDuplicated2] =
-      duplicatesInfo.personDuplicates;
-
-    expect(personDuplicated1.company.people).toBeDefined();
-    expect(personDuplicated2.company.people).toBeDefined();
-
-    const depth2Person1 = personDuplicated1.company.people.find(
-      // @ts-expect-error legacy noImplicitAny
-      (p) => p.id === personDuplicated1.id,
-    );
-    const depth2Person2 = personDuplicated2.company.people.find(
-      // @ts-expect-error legacy noImplicitAny
-      (p) => p.id === personDuplicated2.id,
-    );
-
-    expect(depth2Person1).toBeDefined();
-    expect(depth2Person2).toBeDefined();
+    }).expect(400);
   });
 });

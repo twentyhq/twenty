@@ -4,7 +4,7 @@ export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS = gql`
   mutation CheckCustomDomainValidRecords {
     checkCustomDomainValidRecords {
       id
-      customDomain
+      domain
       records {
         type
         key

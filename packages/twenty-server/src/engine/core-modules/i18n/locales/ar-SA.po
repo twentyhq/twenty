@@ -274,6 +274,11 @@ msgstr "الإيراد السنوي المتكرر: الإيراد السنوي 
 msgid "Any field filter value"
 msgstr "أي قيمة تصفية الحقل"
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr ""
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -330,6 +335,11 @@ msgstr "مؤلف المرفق"
 msgid "Attachment company"
 msgstr "شركة المرفق"
 
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr ""
+
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment full path"
@@ -370,6 +380,7 @@ msgstr "نوع المرفق"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -390,6 +401,11 @@ msgstr "مرفقات مرتبطة بالشركة"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Attachments linked to the contact."
 msgstr "المرفقات المرتبطة بجهة الاتصال."
+
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -740,12 +756,18 @@ msgstr "أرقام هواتف جهة الاتصال"
 msgid "Contact’s X/Twitter account"
 msgstr "حساب جهة الاتصال على تويتر"
 
+#. js-lingui-id: LZf/L8
+#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+msgid "Could not find flat entity in maps"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
@@ -781,7 +803,10 @@ msgid "Custom Connection Parameters"
 msgstr "معلمات اتصال مخصصة"
 
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "لوحة"
 
@@ -789,6 +814,11 @@ msgstr "لوحة"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "تخطيط صفحة لوحة القيادة"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr ""
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -870,6 +900,16 @@ msgstr "عرض السجلات في لوحة جانبية أو في صفحة ال
 msgid "Display Value"
 msgstr "قيمة العرض"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr ""
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Domain is already registered as public domain"
+msgstr ""
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -923,15 +963,20 @@ msgstr "الموظفون"
 msgid "End Date"
 msgstr "تاريخ الانتهاء"
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "يجب تعريف متغير البيئة CLOUDFLARE_API_KEY لاستخدام هذه الميزة."
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr ""
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "شركة الحدث"
+
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr ""
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1058,6 +1103,11 @@ msgstr "المفضلة"
 msgid "Favorite company"
 msgstr "شركة مفضلة"
 
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr ""
+
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1130,6 +1180,7 @@ msgstr "عضو مفضل في المساحة العملية"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1149,6 +1200,11 @@ msgstr "المفضلات المرتبطة بالشركة"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "المفضلات المرتبطة بالجهة الاتصال"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1217,6 +1273,12 @@ msgstr "الحقل المعرف كمعرف الملصق غير موجود"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Field Metadata Id"
 msgstr "معرف بيانات الحقل"
+
+#. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Field metadata not found"
+msgstr ""
 
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
@@ -2096,6 +2158,12 @@ msgstr "التسمية قصيرة جدًا"
 msgid "Object Metadata Id"
 msgstr "معرف بيانات الكائن"
 
+#. js-lingui-id: xrblgA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Object metadata not found"
+msgstr ""
+
 #. js-lingui-id: lG0Qqm
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to delete not found"
@@ -2369,6 +2437,7 @@ msgstr "نقطة الاتصال"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2430,6 +2499,11 @@ msgstr "رقم الهاتف المقدم غير صالح {number}"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "provider"
 msgstr "مزود الخدمة"
+
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
+msgstr ""
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2796,6 +2870,7 @@ msgstr "عنوان URL لموقع الشركة الإلكتروني. نستخد�
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
@@ -2923,6 +2998,7 @@ msgstr "المنطقة الزمنية"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2932,6 +3008,11 @@ msgstr "أنشطة الجدول الزمني"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "أنشطة الجدول الزمني المرتبطة بالشركة"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr ""
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -3118,6 +3199,14 @@ msgstr "حقل العرض"
 msgid "View field already exists."
 msgstr "حقل العرض موجود بالفعل."
 
+#. js-lingui-id: ZRfCZM
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field not found"
+msgstr ""
+
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3138,6 +3227,21 @@ msgstr "حجم حقل العرض"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field target field"
 msgstr "حقل هدف حقل العرض"
+
+#. js-lingui-id: XJlyZS
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to delete not found"
+msgstr ""
+
+#. js-lingui-id: DXyYuh
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to destroy not found"
+msgstr ""
+
+#. js-lingui-id: Fpy/K1
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+msgid "View field to update not found"
+msgstr ""
 
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3252,6 +3356,20 @@ msgstr "مفتاح العرض"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View name"
 msgstr "اسم العرض"
+
+#. js-lingui-id: F4A9mL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View not found"
+msgstr ""
 
 #. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts

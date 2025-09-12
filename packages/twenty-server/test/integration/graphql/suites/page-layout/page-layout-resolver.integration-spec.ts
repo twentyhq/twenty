@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_ID } from 'test/integration/constants/test-page-layout-ids.constants';
 import { createPageLayoutOperationFactory } from 'test/integration/graphql/utils/create-page-layout-operation-factory.util';
 import { deletePageLayoutOperationFactory } from 'test/integration/graphql/utils/delete-page-layout-operation-factory.util';
@@ -9,15 +10,15 @@ import {
   assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import {
-  cleanupPageLayoutRecordsWithGraphQL,
-  createTestPageLayoutWithGraphQL,
-} from 'test/integration/graphql/utils/page-layout-graphql.util';
+import { createTestPageLayoutWithGraphQL } from 'test/integration/graphql/utils/page-layout-graphql.util';
 import { restorePageLayoutOperationFactory } from 'test/integration/graphql/utils/restore-page-layout-operation-factory.util';
 import { updatePageLayoutOperationFactory } from 'test/integration/graphql/utils/update-page-layout-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { assertPageLayoutStructure } from 'test/integration/utils/page-layout-test.util';
+import {
+  assertPageLayoutStructure,
+  cleanupPageLayoutRecords,
+} from 'test/integration/utils/page-layout-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
@@ -51,21 +52,14 @@ describe('Page Layout Resolver', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupPageLayoutRecords();
   });
 
-  afterEach(async () => {
-    await cleanupPageLayoutRecordsWithGraphQL();
+  beforeEach(async () => {
+    await cleanupPageLayoutRecords();
   });
 
   describe('getPageLayouts', () => {
-    it('should return empty array when no page layouts exist', async () => {
-      const operation = findPageLayoutsOperationFactory();
-      const response = await makeGraphqlAPIRequest(operation);
-
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getPageLayouts).toEqual([]);
-    });
-
     it('should return all page layouts for workspace when no objectMetadataId provided', async () => {
       const pageLayoutName = 'Test Page Layout for Workspace';
 
@@ -366,6 +360,72 @@ describe('Page Layout Resolver', () => {
           TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
         ),
       );
+    });
+
+    it('should destroy all associated dashboards when page layout is of type dashboard', async () => {
+      const dashboardId = '20202020-304c-44f2-ba7b-070762ff0e8a';
+
+      const pageLayout = await createTestPageLayoutWithGraphQL({
+        name: 'Page Layout to Destroy',
+        type: PageLayoutType.DASHBOARD,
+      });
+
+      const findOneDashboardOperation = {
+        query: gql`
+          query Dashboard($filter: DashboardFilterInput!) {
+            dashboard(filter: $filter) {
+              id
+            }
+          }
+        `,
+        variables: {
+          filter: { id: { eq: dashboardId } },
+        },
+      };
+
+      await makeGraphqlAPIRequest({
+        query: gql`
+          mutation CreateDashboard($input: CreateDashboardInput!) {
+            createDashboard(input: $input) {
+              pageLayoutId
+              id
+              title
+            }
+          }
+        `,
+        variables: {
+          input: {
+            id: dashboardId,
+            name: 'Dashboard to Destroy',
+            pageLayoutId: pageLayout.id,
+          },
+        },
+      });
+
+      const findOneDashboardResponseBeforeDestroy = await makeGraphqlAPIRequest(
+        findOneDashboardOperation,
+      );
+
+      expect(
+        findOneDashboardResponseBeforeDestroy.body.data.dashboard,
+      ).toBeDefined();
+
+      const destroyOperation = destroyPageLayoutOperationFactory({
+        pageLayoutId: pageLayout.id,
+      });
+      const destroyResponse = await makeGraphqlAPIRequest(destroyOperation);
+
+      const findOneDashboardResponseAfterDestroy = await makeGraphqlAPIRequest(
+        findOneDashboardOperation,
+      );
+
+      assertGraphQLSuccessfulResponse(destroyResponse);
+      expect(destroyResponse.body.data.destroyPageLayout).toBe(true);
+
+      expect(findOneDashboardResponseAfterDestroy.body.errors).toBeDefined();
+      expect(
+        findOneDashboardResponseAfterDestroy.body.errors[0].extensions.code,
+      ).toBe(ErrorCode.NOT_FOUND);
     });
   });
 
