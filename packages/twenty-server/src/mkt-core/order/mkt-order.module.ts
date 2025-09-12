@@ -7,9 +7,6 @@ import { MktOrderUpdateOnePreQueryHook } from './hooks/mkt-order-update-one.pre-
 
 @Module({
   imports: [MessageQueueModule],
-  providers: [
-    MktOrderUpdateOnePreQueryHook,
-    MktOrderItemUpdateOnePreQueryHook,
-  ],
+  providers: [MktOrderUpdateOnePreQueryHook, MktOrderItemUpdateOnePreQueryHook],
 })
 export class MktOrderModule {}

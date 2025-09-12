@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -8,7 +8,10 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { MktLicenseApiService } from 'src/mkt-core/license/integration/mkt-license-api.service';
 import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/license.constants';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
-import { MKT_LICENSE_STATUS as MKT_ORDER_LICENSE_STATUS,OrderStatus as ORDER_STATUS } from 'src/mkt-core/order/constants/order-status.constants';
+import {
+  MKT_LICENSE_STATUS as MKT_ORDER_LICENSE_STATUS,
+  OrderStatus as ORDER_STATUS,
+} from 'src/mkt-core/order/constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 export interface LicenseGenerationJobData {
@@ -87,7 +90,7 @@ export class LicenseGenerationJob {
 
         await orderRepository.update(data.orderId, {
           licenseStatus: MKT_ORDER_LICENSE_STATUS.PENDING,
-          note: `${order.note} - Order ${data.orderId} already has licenses, skipping generation`
+          note: `${order.note} - Order ${data.orderId} already has licenses, skipping generation`,
         });
 
         return;
@@ -102,7 +105,10 @@ export class LicenseGenerationJob {
         return;
       }
 
-      const licenseStatus = order.status === ORDER_STATUS.TRIAL ? MKT_ORDER_LICENSE_STATUS.TRIAL : MKT_ORDER_LICENSE_STATUS.SUCCESS
+      const licenseStatus =
+        order.status === ORDER_STATUS.TRIAL
+          ? MKT_ORDER_LICENSE_STATUS.TRIAL
+          : MKT_ORDER_LICENSE_STATUS.SUCCESS;
       // create licenses for each order item
       const licensePromises = order.orderItems.map(async (orderItem, index) => {
         try {

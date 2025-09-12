@@ -128,8 +128,8 @@ export const SINVOICE_STATUS_OPTIONS = [
 export enum MKT_LICENSE_STATUS {
   PENDING = 'PENDING', // Đang chờ xử lý cấp phép, chưa bắt đầu quá trình lấy license
   GETTING = 'GETTING', // Đang trong quá trình gọi API hoặc service để lấy license
-  FAILED = 'FAILED',   // Quá trình lấy license thất bại (ví dụ: lỗi network, timeout, dữ liệu không hợp lệ)
-  ERROR = 'ERROR',     // Lỗi hệ thống hoặc lỗi không mong muốn trong khi xử lý license
+  FAILED = 'FAILED', // Quá trình lấy license thất bại (ví dụ: lỗi network, timeout, dữ liệu không hợp lệ)
+  ERROR = 'ERROR', // Lỗi hệ thống hoặc lỗi không mong muốn trong khi xử lý license
   SUCCESS = 'SUCCESS', // License đã được lấy thành công và hợp lệ
   REVOKED = 'REVOKED', // License đã bị thu hồi (do hết hạn, bị hủy hoặc do vi phạm điều kiện)
   DELETED = 'DELETED', // License đã bị xóa khỏi hệ thống (không còn được quản lý/truy vết)
