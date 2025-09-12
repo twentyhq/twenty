@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
@@ -20,14 +21,15 @@ export type WorkspaceMigrationV2BuilderOptions = {
   isSystemBuild: boolean;
 };
 
-type SuccessfulWorkspaceMigrationBuildResult = {
+export type SuccessfulWorkspaceMigrationBuildResult = {
   status: 'success';
   workspaceMigration: WorkspaceMigrationV2;
-  optimisticFlatEntityMaps: FlatObjectMetadataMaps;
+  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
 export type FailedWorkspaceMigrationBuildResult = {
   status: 'fail';
+  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
   errors: (
     | FailedFlatObjectMetadataValidation
     | FailedFlatFieldMetadataValidation
@@ -130,6 +132,10 @@ export class WorkspaceMigrationBuilderV2Service {
       return {
         status: 'fail',
         errors: allValidateAndBuildResultFailures,
+        optimisticAllFlatEntityMaps: {
+          flatObjectMetadataMaps:
+            fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
+        },
       };
     }
 
@@ -148,8 +154,10 @@ export class WorkspaceMigrationBuilderV2Service {
           ...indexWorkspaceMigrationActions, // Should be handled separately from objects
         ],
       },
-      optimisticFlatEntityMaps:
-        fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
+      optimisticAllFlatEntityMaps: {
+        flatObjectMetadataMaps:
+          fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
+      },
     };
   }
 }

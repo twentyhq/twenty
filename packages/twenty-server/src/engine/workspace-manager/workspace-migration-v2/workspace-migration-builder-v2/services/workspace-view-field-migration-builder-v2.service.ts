@@ -5,7 +5,6 @@ import { type FromTo } from 'twenty-shared/types';
 import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { WorkspaceMigrationOrchestratorOptimisticEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import {
   FailedEntityMigrationBuildResult,
@@ -24,13 +23,12 @@ export type FailedWorkspaceViewFieldMigrationBuildResult =
 export type WorkspaceViewFieldMigrationBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceViewFieldMigrationV2BuilderOptions;
-  dependencyOptimisticEntityMaps: WorkspaceMigrationOrchestratorOptimisticEntityMaps;
 } & FromTo<FlatViewFieldMaps, 'FlatViewFieldMaps'>;
 
 @Injectable()
 export class WorkspaceViewFieldMigrationBuilderV2Service extends WorkspaceEntityMigrationBuilderV2Service<
   FlatViewFieldMaps,
-  FlatViewField,
+  FlatViewField, // Could factorize
   FailedFlatViewFieldValidation,
   WorkspaceMigrationViewFieldActionV2,
   WorkspaceViewFieldMigrationBuildArgs
@@ -42,7 +40,7 @@ export class WorkspaceViewFieldMigrationBuilderV2Service extends WorkspaceEntity
   }
 
   protected async validateAndBuildActions(
-    args: WorkspaceViewFieldMigrationBuildArgs & {
+    args: WorkspaceViewFieldMigrationBuildArgs & { // could create tpye generic here
       created: FlatViewField[];
       updated: { from: FlatViewField; to: FlatViewField }[];
       deleted: FlatViewField[];

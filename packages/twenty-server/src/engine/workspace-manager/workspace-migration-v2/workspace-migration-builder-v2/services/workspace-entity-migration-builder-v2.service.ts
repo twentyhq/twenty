@@ -1,21 +1,23 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 
-export type SuccessfulEntityMigrationBuildResult<TFlatEntityMaps> = {
+export type SuccessfulEntityMigrationBuildResult = {
   status: 'success';
   workspaceMigration: WorkspaceMigrationV2;
-  optimisticFlatEntityMaps: TFlatEntityMaps;
+  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
 export type FailedEntityMigrationBuildResult<TFailedValidation> = {
   status: 'fail';
   errors: TFailedValidation[];
+  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
 };
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
@@ -28,7 +30,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   public async validateAndBuild(
     args: TBuildArgs,
   ): Promise<
-    | SuccessfulEntityMigrationBuildResult<TFlatEntityMaps>
+    | SuccessfulEntityMigrationBuildResult
     | FailedEntityMigrationBuildResult<TFailedValidation>
   > {
     const { from: fromEntityMaps, to: toEntityMaps } =
@@ -55,6 +57,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       return {
         status: 'fail',
         errors: result.failed,
+        optimisticAllFlatEntityMaps: result.optimisticAllFlatEntityMaps,
       };
     }
 
@@ -64,7 +67,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         workspaceId: args.workspaceId,
         actions: [...result.deleted, ...result.created, ...result.updated],
       },
-      optimisticFlatEntityMaps: result.optimisticMaps,
+      optimisticAllFlatEntityMaps: result.optimisticAllFlatEntityMaps,
     };
   }
 
@@ -97,6 +100,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     created: TActionType[];
     deleted: TActionType[];
     updated: TActionType[];
-    optimisticMaps: TFlatEntityMaps;
+    optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
   }>;
 }
