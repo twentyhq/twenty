@@ -1,7 +1,7 @@
+import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetGaugeChart } from '../GraphWidgetGaugeChart';
 
 const meta: Meta<typeof GraphWidgetGaugeChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetGaugeChart',
