@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -28,6 +27,7 @@ import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.
 import { type ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -45,6 +45,7 @@ export class ResetPasswordService {
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly emailService: EmailService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async generatePasswordResetToken(
@@ -165,14 +166,16 @@ export class ResetPasswordService {
     const html = render(emailTemplate, { pretty: true });
     const text = render(emailTemplate, { plainText: true });
 
-    i18n.activate(locale);
+    const resetPasswordMsg = msg`Action Needed to Reset Password`;
+    const i18n = this.i18nService.getI18nInstance(locale);
+    const subject = i18n._(resetPasswordMsg);
 
     this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: t`Action Needed to Reset Password`,
+      subject,
       text,
       html,
     });

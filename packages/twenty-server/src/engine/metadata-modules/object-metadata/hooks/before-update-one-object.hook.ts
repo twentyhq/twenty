@@ -4,7 +4,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { i18n } from '@lingui/core';
 import {
   type BeforeUpdateOneHook,
   type UpdateOneInputType,
@@ -13,6 +12,7 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -26,7 +26,10 @@ interface StandardObjectUpdate extends Partial<UpdateObjectPayload> {
 export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   implements BeforeUpdateOneHook<T>
 {
-  constructor(readonly objectMetadataService: ObjectMetadataService) {}
+  constructor(
+    readonly objectMetadataService: ObjectMetadataService,
+    private readonly i18nService: I18nService,
+  ) {}
 
   // TODO: this logic could be moved to a policy guard
   async run(
@@ -220,6 +223,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
+    const i18n = this.i18nService.getI18nInstance(locale);
     const translatedMessage = i18n._(messageId);
 
     if (newValue !== translatedMessage) {

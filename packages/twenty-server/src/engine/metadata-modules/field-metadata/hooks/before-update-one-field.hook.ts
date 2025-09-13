@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { i18n } from '@lingui/core';
 import {
   type BeforeUpdateOneHook,
   type UpdateOneInputType,
@@ -13,6 +12,7 @@ import {
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -30,6 +30,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
   constructor(
     readonly fieldMetadataService: FieldMetadataService,
     readonly objectMetadataService: ObjectMetadataService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async run(
@@ -289,6 +290,7 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     locale: keyof typeof APP_LOCALES,
   ): boolean {
     const messageId = generateMessageId(originalValue ?? '');
+    const i18n = this.i18nService.getI18nInstance(locale);
     const translatedMessage = i18n._(messageId);
 
     if (newValue !== translatedMessage) {
