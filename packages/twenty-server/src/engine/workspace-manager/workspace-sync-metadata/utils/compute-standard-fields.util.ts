@@ -58,6 +58,7 @@ export const computeStandardFields = (
           settings: null,
           standardOverrides: null,
           morphId: null,
+          virtualField: null,
         });
       }
     } else {

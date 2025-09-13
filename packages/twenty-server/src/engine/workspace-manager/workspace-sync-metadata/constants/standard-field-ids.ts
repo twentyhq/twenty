@@ -127,6 +127,10 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   createdBy: '20202020-fabc-451d-ab7d-412170916baa',
   people: '20202020-3213-4ddf-9494-6422bcff8d7c',
   accountOwner: '20202020-95b8-4e10-9881-edb5d4765f9d',
+  lastCalendarEventDate: '20202020-12ef-43cd-8901-234567890abc',
+  connectionStrength: '20202020-9876-4321-abcd-ef1234567890',
+  strongestConnection: '20202020-5432-1098-bcde-f23456789012',
+  customerTier: '20202020-abcd-1234-5678-ef9012345678',
   // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-c2a5-4c9b-9d9a-582bcd57fbc8',
   taskTargets: '20202020-cb17-4a61-8f8f-3be6730480de',

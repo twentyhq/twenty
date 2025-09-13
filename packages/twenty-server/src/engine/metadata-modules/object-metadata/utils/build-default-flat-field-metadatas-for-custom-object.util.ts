@@ -48,6 +48,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
@@ -80,6 +81,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -112,6 +114,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -144,6 +147,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -176,6 +180,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
@@ -208,6 +213,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
@@ -240,6 +246,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetObjectMetadataId: null,
     settings: null,
     morphId: null,
+    virtualField: null,
   };
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
@@ -275,6 +282,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       generatedType: 'STORED',
     },
     morphId: null,
+    virtualField: null,
   };
 
   return {
