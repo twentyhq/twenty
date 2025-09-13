@@ -139,7 +139,7 @@ export default defineConfig(({ command, mode }) => {
             '**/RecordTableBodyDroppable.tsx',
             '**/RecordTableCellBaseContainer.tsx',
             '**/RecordTableCellTd.tsx',
-            '**/RecordTableTd.tsx',
+            '**/RecordTableCellStyleWrapper.tsx',
             '**/RecordTableHeaderDragDropColumn.tsx',
             '**/ActorDisplay.tsx',
             '**/BooleanDisplay.tsx',

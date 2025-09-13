@@ -1,15 +1,13 @@
 import styled from '@emotion/styled';
 
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { IconListViewGrip } from 'twenty-ui/input';
-
-export const TABLE_CELL_GRIP_WIDTH = 16;
 
 const StyledContainer = styled.div`
   height: 32px;
-  width: ${TABLE_CELL_GRIP_WIDTH};
   border-color: transparent;
   cursor: grab;
   display: flex;
@@ -34,19 +32,19 @@ export const RecordTableCellGrip = () => {
     useRecordTableRowDraggableContextOrThrow();
 
   return (
-    <RecordTableTd
+    <RecordTableCellStyleWrapper
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
       data-select-disable
       hasRightBorder={false}
       hasBottomBorder={false}
-      width={TABLE_CELL_GRIP_WIDTH}
+      widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}
     >
       <StyledContainer>
         <StyledIconWrapper className="icon" isDragging={isDragging}>
           <IconListViewGrip />
         </StyledIconWrapper>
       </StyledContainer>
-    </RecordTableTd>
+    </RecordTableCellStyleWrapper>
   );
 };

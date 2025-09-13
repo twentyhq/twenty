@@ -12,15 +12,18 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
+  type WorkflowConnection,
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeType,
   type WorkflowDiagramNode,
   type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
 import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -32,7 +35,6 @@ import {
   useReactFlow,
   type Connection,
   type EdgeChange,
-  type EdgeProps,
   type FitViewOptions,
   type NodeChange,
   type NodeProps,
@@ -119,7 +121,7 @@ export const WorkflowDiagramCanvasBase = ({
     Record<
       WorkflowDiagramEdgeType,
       React.ComponentType<
-        EdgeProps & {
+        WorkflowDiagramEdgeComponentProps & {
           data: any;
           type: any;
         }
@@ -131,7 +133,7 @@ export const WorkflowDiagramCanvasBase = ({
   tagColor: TagColor;
   tagText: string;
   onInit?: () => void;
-  onConnect?: (params: Connection) => void;
+  onConnect?: (params: WorkflowConnection) => void;
   onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
   nodesConnectable?: boolean;
@@ -438,6 +440,8 @@ export const WorkflowDiagramCanvasBase = ({
       setEdgeHovered({
         source: hoveredEdge.source,
         target: hoveredEdge.target,
+        sourceHandle: hoveredEdge.sourceHandle,
+        targetHandle: hoveredEdge.targetHandle,
       });
     },
     [setEdgeHovered],
@@ -446,6 +450,12 @@ export const WorkflowDiagramCanvasBase = ({
   const onEdgeMouseLeave = useCallback(() => {
     clearEdgeHover();
   }, [clearEdgeHover]);
+
+  const handleConnect = (connection: Connection) => {
+    assertWorkflowConnectionOrThrow(connection);
+
+    onConnect?.(connection);
+  };
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -457,6 +467,7 @@ export const WorkflowDiagramCanvasBase = ({
         maxZoom={defaultFitViewOptions.maxZoom}
         defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
         nodeTypes={nodeTypes}
+        // @ts-expect-error We override Reactflow types for sourceHandle and targetHandle to be required
         edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
@@ -464,7 +475,7 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgeMouseLeave={onEdgeMouseLeave}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
-        onConnect={onConnect}
+        onConnect={handleConnect}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}

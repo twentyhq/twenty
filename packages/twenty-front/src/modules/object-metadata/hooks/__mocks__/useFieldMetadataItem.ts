@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType, PermissionsOnAllObjectRecords } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
@@ -167,12 +167,6 @@ export const responseData = {
       workspaceMembers: [],
       currentUserWorkspace: {
         permissionFlags: ['DATA_MODEL'],
-        objectRecordsPermissions: [
-          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS,
-        ],
       },
       currentWorkspace: {
         id: 'test-workspace-id',

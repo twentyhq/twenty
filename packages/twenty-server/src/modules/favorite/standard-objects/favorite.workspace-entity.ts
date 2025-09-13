@@ -4,12 +4,14 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -221,10 +223,16 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'favorites',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
   @WorkspaceIsNullable()
   dashboard: Relation<DashboardWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('dashboard')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
   dashboardId: string;
 
   @WorkspaceField({
