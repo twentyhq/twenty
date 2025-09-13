@@ -124,7 +124,7 @@ export const IconPicker = ({
   clickableComponent,
   dropdownWidth,
   dropdownOffset,
-  maxIconsVisible = 25,
+  maxIconsVisible,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -146,6 +146,21 @@ export const IconPicker = ({
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
+
+  const isScrollable: boolean = maxIconsVisible === undefined;
+  const [visibleCount, setVisibleCount] = useState(maxIconsVisible ?? 50);
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    if (!isScrollable || !isMouseInsideIconList) return;
+    const target = event.currentTarget;
+    const isBottom =
+      target.scrollTop + target.clientHeight >= target.scrollHeight - 10;
+
+    if (isBottom) {
+      setVisibleCount((prev) => prev + 50);
+    }
+  };
+
   const matchingSearchIconKeys = useMemo(() => {
     if (icons == null) return [];
     const scoreIconMatch = (iconKey: string, searchString: string) => {
@@ -186,9 +201,9 @@ export const IconPicker = ({
           ...filteredAndSortedIconKeys.filter(
             (iconKey) => iconKey !== selectedIconKey,
           ),
-        ].slice(0, maxIconsVisible)
-      : filteredAndSortedIconKeys.slice(0, maxIconsVisible);
-  }, [icons, searchString, selectedIconKey, maxIconsVisible]);
+        ].slice(0, visibleCount)
+      : filteredAndSortedIconKeys.slice(0, visibleCount);
+  }, [icons, searchString, selectedIconKey, visibleCount]);
 
   const iconKeys2d = useMemo(
     () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
@@ -246,7 +261,11 @@ export const IconPicker = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                <DropdownMenuItemsContainer>
+                <DropdownMenuItemsContainer
+                  hasMaxHeight
+                  scrollable={isScrollable}
+                  onScroll={handleScroll}
+                >
                   <StyledMenuIconItemsContainer>
                     {matchingSearchIconKeys.map((iconKey) => (
                       <IconPickerIcon

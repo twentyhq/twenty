@@ -44,16 +44,19 @@ export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
   scrollable = true,
+  onScroll,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   scrollable?: boolean;
+  onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
 }) => {
   return scrollable === true ? (
     <StyledScrollableContainer
       maxHeight={
         hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
       }
+      onScroll={onScroll}
     >
       <StyledExternalContainer role="listbox">
         <StyledInternalContainer>{children}</StyledInternalContainer>
