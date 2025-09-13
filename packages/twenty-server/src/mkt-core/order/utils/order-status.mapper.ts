@@ -1,4 +1,4 @@
-import { OrderStatus } from 'src/mkt-core/order/constants/order-status.constants';
+import { ORDER_STATUS as OrderStatus } from 'src/mkt-core/order/constants/order-status.constants';
 import { OrderStatusGraphQL } from 'src/mkt-core/order/graphql/order-status.enum';
 
 /**

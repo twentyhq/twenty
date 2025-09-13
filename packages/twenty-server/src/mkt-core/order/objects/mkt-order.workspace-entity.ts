@@ -28,10 +28,10 @@ import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invo
 import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import {
-  MKT_LICENSE_STATUS,
-  MKT_LICENSE_STATUS_OPTIONS,
+  MKT_ORDER_LICENSE_STATUS,
+  MKT_ORDER_LICENSE_STATUS_OPTIONS,
+  ORDER_STATUS,
   ORDER_STATUS_OPTIONS,
-  OrderStatus,
   SINVOICE_STATUS,
   SINVOICE_STATUS_OPTIONS,
 } from 'src/mkt-core/order/constants';
@@ -76,6 +76,17 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.trialLicense,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Trial License`,
+    description: msg`Whether the order has a trial license`,
+    icon: 'IconBox',
+    defaultValue: false,
+  })
+  @WorkspaceIsNullable()
+  trialLicense?: boolean; 
+
+  @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.orderCode,
     type: FieldMetadataType.TEXT,
     label: msg`Order Code`,
@@ -92,7 +103,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconProgressCheck',
   })
   @WorkspaceIsNullable()
-  status?: OrderStatus;
+  status?: ORDER_STATUS;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.totalAmount,
@@ -168,11 +179,11 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.SELECT,
     label: msg`License Status`,
     description: msg`Status of the License`,
-    options: MKT_LICENSE_STATUS_OPTIONS,
+    options: MKT_ORDER_LICENSE_STATUS_OPTIONS,
     icon: 'IconBox',
   })
   @WorkspaceIsNullable()
-  licenseStatus?: MKT_LICENSE_STATUS;
+  licenseStatus?: MKT_ORDER_LICENSE_STATUS;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.orderItems,

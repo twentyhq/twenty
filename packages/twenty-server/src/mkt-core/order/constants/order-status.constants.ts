@@ -1,6 +1,6 @@
 import { TagColor } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
-export enum OrderStatus {
+export enum ORDER_STATUS {
   ON_HOLD = 'ON_HOLD', // đơn hàng mới tạo, chờ xử lý
   PAID = 'PAID', // đã thanh toán thành công
   FAILED = 'FAILED', // thanh toán thất bại
@@ -17,67 +17,67 @@ export enum OrderStatus {
 
 export const ORDER_STATUS_OPTIONS = [
   {
-    value: OrderStatus.ON_HOLD,
+    value: ORDER_STATUS.ON_HOLD,
     label: 'On Hold',
     color: 'gray' as TagColor,
     position: 0,
   },
   {
-    value: OrderStatus.PAID,
+    value: ORDER_STATUS.PAID,
     label: 'Paid',
     color: 'green' as TagColor,
     position: 1,
   },
   {
-    value: OrderStatus.FAILED,
+    value: ORDER_STATUS.FAILED,
     label: 'Failed',
     color: 'red' as TagColor,
     position: 2,
   },
   {
-    value: OrderStatus.CANCELLED,
+    value: ORDER_STATUS.CANCELLED,
     label: 'Cancelled',
     color: 'orange' as TagColor,
     position: 3,
   },
   {
-    value: OrderStatus.FULFILLED,
+    value: ORDER_STATUS.FULFILLED,
     label: 'Fulfilled',
     color: 'blue' as TagColor,
     position: 4,
   },
   {
-    value: OrderStatus.EXPIRED,
+    value: ORDER_STATUS.EXPIRED,
     label: 'Expired',
     color: 'red' as TagColor,
     position: 5,
   },
   {
-    value: OrderStatus.PROCESSING,
+    value: ORDER_STATUS.PROCESSING,
     label: 'Processing',
     color: 'blue' as TagColor,
     position: 6,
   },
   {
-    value: OrderStatus.COMPLETED,
+    value: ORDER_STATUS.COMPLETED,
     label: 'Completed',
     color: 'green' as TagColor,
     position: 7,
   },
   {
-    value: OrderStatus.REFUNDED,
+    value: ORDER_STATUS.REFUNDED,
     label: 'Refunded',
     color: 'purple' as TagColor,
     position: 8,
   },
   {
-    value: OrderStatus.OTHER,
+    value: ORDER_STATUS.OTHER,
     label: 'Other',
     color: 'gray' as TagColor,
     position: 9,
   },
   {
-    value: OrderStatus.TRIAL,
+    value: ORDER_STATUS.TRIAL,
     label: 'Trial',
     color: 'yellow' as TagColor,
     position: 9,
@@ -125,7 +125,7 @@ export const SINVOICE_STATUS_OPTIONS = [
   },
 ];
 
-export enum MKT_LICENSE_STATUS {
+export enum MKT_ORDER_LICENSE_STATUS {
   PENDING = 'PENDING', // Đang chờ xử lý cấp phép, chưa bắt đầu quá trình lấy license
   GETTING = 'GETTING', // Đang trong quá trình gọi API hoặc service để lấy license
   FAILED = 'FAILED', // Quá trình lấy license thất bại (ví dụ: lỗi network, timeout, dữ liệu không hợp lệ)
@@ -136,51 +136,51 @@ export enum MKT_LICENSE_STATUS {
   TRIAL = 'TRIAL', // License đang ở trong giai đoạn trial
 }
 
-export const MKT_LICENSE_STATUS_OPTIONS = [
+export const MKT_ORDER_LICENSE_STATUS_OPTIONS = [
   {
-    value: MKT_LICENSE_STATUS.PENDING,
+    value: MKT_ORDER_LICENSE_STATUS.PENDING,
     label: 'Pending',
     color: 'orange' as TagColor,
     position: 0,
   },
   {
-    value: MKT_LICENSE_STATUS.GETTING,
+    value: MKT_ORDER_LICENSE_STATUS.GETTING,
     label: 'Getting',
     color: 'blue' as TagColor,
     position: 1,
   },
   {
-    value: MKT_LICENSE_STATUS.FAILED,
+    value: MKT_ORDER_LICENSE_STATUS.FAILED,
     label: 'Failed',
     color: 'red' as TagColor,
     position: 2,
   },
   {
-    value: MKT_LICENSE_STATUS.ERROR,
+    value: MKT_ORDER_LICENSE_STATUS.ERROR,
     label: 'Error',
     color: 'gray' as TagColor,
     position: 3,
   },
   {
-    value: MKT_LICENSE_STATUS.SUCCESS,
+    value: MKT_ORDER_LICENSE_STATUS.SUCCESS,
     label: 'Success',
     color: 'green' as TagColor,
     position: 4,
   },
   {
-    value: MKT_LICENSE_STATUS.REVOKED,
+    value: MKT_ORDER_LICENSE_STATUS.REVOKED,
     label: 'Revoked',
     color: 'purple' as TagColor,
     position: 5,
   },
   {
-    value: MKT_LICENSE_STATUS.DELETED,
+    value: MKT_ORDER_LICENSE_STATUS.DELETED,
     label: 'Deleted',
     color: 'gray' as TagColor,
     position: 6,
   },
   {
-    value: MKT_LICENSE_STATUS.TRIAL,
+    value: MKT_ORDER_LICENSE_STATUS.TRIAL,
     label: 'Trial',
     color: 'yellow' as TagColor,
     position: 7,
