@@ -70,6 +70,16 @@ export type FlatEntityValidationArgs<
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 };
 
+export type FlatEntityUpdateValidationArgs<
+  TFlatEntity extends FlatEntity,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = Omit<
+  FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  'flatEntityToValidate'
+> & {
+  flatEntityUpdate: FromTo<TFlatEntity>;
+};
+
 export type FlatEntityValidationReturnType<
   TActions extends WorkspaceMigrationActionV2,
   TFlatEntity extends FlatEntity,
@@ -214,11 +224,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
   ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
   // Create util type
-  protected abstract validateFlatEntityUpdate(args: {
-    flatEntityUpdate: FromTo<TFlatEntity>;
-    optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
-    dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
-  }): Promise<
-    FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined
-  >;
+  protected abstract validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined>;
 }

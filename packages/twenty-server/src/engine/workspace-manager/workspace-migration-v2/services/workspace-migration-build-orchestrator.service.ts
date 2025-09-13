@@ -6,6 +6,7 @@ import {
   OrchestratorFailureReport,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
+  WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
@@ -34,7 +35,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     fromAllFlatEntityMaps,
     toAllFlatEntityMaps,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
-    WorkspaceMigrationOrchestratorFailedResult | undefined
+    | WorkspaceMigrationOrchestratorFailedResult
+    | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
     try {
       const allActions: WorkspaceMigrationActionV2[] = [];
@@ -134,9 +136,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
       }
 
-      // TODO: return workspace migration
-
-      return;
+      return {
+        status: 'success',
+        workspaceMigration: {
+          actions: allActions,
+          workspaceId,
+        },
+      };
     } catch (error) {
       this.logger.error(error);
       throw new WorkspaceMigrationV2Exception(

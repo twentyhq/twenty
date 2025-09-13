@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FromTo } from 'twenty-shared/types';
-
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
 import {
+  FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
@@ -111,11 +109,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatViewField, to: toFlatViewField },
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-  }: {
-    flatEntityUpdate: FromTo<FlatViewField>;
-    optimisticFlatEntityMaps: FlatEntityMaps<FlatViewField>;
-    dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
-  }): Promise<
+  }: FlatEntityUpdateValidationArgs<
+    FlatViewField,
+    ViewFieldRelatedFlatEntityMaps
+  >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationViewFieldActionV2,
         FlatViewField

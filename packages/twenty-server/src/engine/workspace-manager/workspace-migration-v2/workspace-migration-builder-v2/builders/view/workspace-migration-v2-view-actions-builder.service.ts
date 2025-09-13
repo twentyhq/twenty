@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FromTo } from 'twenty-shared/types';
-
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { compareTwoFlatView } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view.util';
 import {
+  FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
@@ -68,12 +66,8 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
   protected async validateFlatEntityDeletion({
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatViewToValidate,
-    optimisticEntityMaps: optimisticFlatViewMaps,
-  }: {
-    flatEntityToValidate: FlatView;
-    optimisticEntityMaps: FlatEntityMaps<FlatView>;
-    dependencyOptimisticFlatEntityMaps: ViewRelatedFlatEntityMaps;
-  }): Promise<
+    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+  }: FlatEntityValidationArgs<FlatView, ViewRelatedFlatEntityMaps>): Promise<
     FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
   > {
     const validationResult =
@@ -99,12 +93,11 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
   protected async validateFlatEntityUpdate({
     dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatView, to: toFlatView },
-    optimisticEntityMaps: optimisticFlatViewMaps,
-  }: {
-    flatEntityUpdate: FromTo<FlatView>;
-    optimisticEntityMaps: FlatEntityMaps<FlatView>;
-    dependencyOptimisticFlatEntityMaps: ViewRelatedFlatEntityMaps;
-  }): Promise<
+    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+  }: FlatEntityUpdateValidationArgs<
+    FlatView,
+    ViewRelatedFlatEntityMaps
+  >): Promise<
     | FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
     | undefined
   > {
