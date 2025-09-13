@@ -1,4 +1,5 @@
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
+import { calculateGaugeChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/utils/calculateGaugeChartEndLineCoordinates';
 import { type RadialBarCustomLayerProps } from '@nivo/radial-bar';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,15 +25,14 @@ export const GaugeChartEndLine = ({
     return null;
   }
 
-  const endAngle = valueBar.arc.endAngle - Math.PI / 2;
-  const arcInnerRadius = valueBar.arc.innerRadius;
-  const arcOuterRadius = valueBar.arc.outerRadius;
-
   const [centerX, centerY] = center;
-  const x1 = centerX + Math.cos(endAngle) * arcInnerRadius;
-  const y1 = centerY + Math.sin(endAngle) * arcInnerRadius;
-  const x2 = centerX + Math.cos(endAngle) * arcOuterRadius;
-  const y2 = centerY + Math.sin(endAngle) * arcOuterRadius;
+  const { x1, y1, x2, y2 } = calculateGaugeChartEndLineCoordinates(
+    valueBar.arc.endAngle,
+    centerX,
+    centerY,
+    valueBar.arc.innerRadius,
+    valueBar.arc.outerRadius,
+  );
 
   return (
     <g>
