@@ -197,7 +197,7 @@ describe('McpService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        parameters: { jsonSchema: { type: 'object', properties: {} } },
+        inputSchema: { jsonSchema: { type: 'object', properties: {} } },
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -245,7 +245,7 @@ describe('McpService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        parameters: { jsonSchema: { type: 'object', properties: {} } },
+        inputSchema: { jsonSchema: { type: 'object', properties: {} } },
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -299,7 +299,7 @@ describe('McpService', () => {
       const mockToolsMap = {
         testTool: {
           description: 'Test tool',
-          parameters: { jsonSchema: { type: 'object', properties: {} } },
+          inputSchema: { jsonSchema: { type: 'object', properties: {} } },
         },
       };
 

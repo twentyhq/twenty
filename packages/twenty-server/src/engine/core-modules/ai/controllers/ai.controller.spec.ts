@@ -61,7 +61,7 @@ describe('AiController', () => {
       const mockRequest = {
         messages: [{ role: 'user' as const, content: 'Hello' }],
         temperature: 0.7,
-        maxTokens: 100,
+        maxOutputTokens: 100,
       };
 
       const mockRes = {
@@ -75,8 +75,8 @@ describe('AiController', () => {
       aiService.getModel.mockReturnValue(mockModel);
 
       const mockUsage = {
-        promptTokens: 10,
-        completionTokens: 20,
+        inputTokens: 10,
+        outputTokens: 20,
         totalTokens: 30,
       };
 
@@ -96,7 +96,7 @@ describe('AiController', () => {
         messages: mockRequest.messages,
         options: {
           temperature: 0.7,
-          maxTokens: 100,
+          maxOutputTokens: 100,
           model: mockModel,
         },
       });

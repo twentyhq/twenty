@@ -23,7 +23,7 @@ export class SendEmailTool implements Tool {
 
   description =
     'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
-  parameters = SendEmailToolParametersZodSchema;
+  inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,

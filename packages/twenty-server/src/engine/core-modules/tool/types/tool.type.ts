@@ -7,7 +7,7 @@ import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions
 
 export type Tool = {
   description: string;
-  parameters: JSONSchema7 | ZodType;
+  inputSchema: JSONSchema7 | ZodType;
   execute(input: ToolInput): Promise<ToolOutput>;
   flag?: PermissionFlagType;
 };

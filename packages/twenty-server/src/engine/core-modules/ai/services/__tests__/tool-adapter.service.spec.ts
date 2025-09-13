@@ -33,7 +33,7 @@ describe('ToolAdapterService', () => {
   }));
   const unflaggedTool: Tool = {
     description: 'HTTP Request tool',
-    parameters: { type: 'object', properties: {} },
+    inputSchema: { type: 'object', properties: {} },
     execute: unflaggedToolExecute,
   };
 
@@ -44,7 +44,7 @@ describe('ToolAdapterService', () => {
   }));
   const flaggedTool: Tool = {
     description: 'Send Email tool',
-    parameters: { type: 'object', properties: {} },
+    inputSchema: { type: 'object', properties: {} },
     execute: flaggedToolExecute,
     flag: PermissionFlagType.SEND_EMAIL_TOOL,
   };

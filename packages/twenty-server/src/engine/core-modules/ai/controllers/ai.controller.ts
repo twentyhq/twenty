@@ -8,21 +8,22 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type CoreMessage } from 'ai';
+import { type ModelMessage } from 'ai';
 import { Response } from 'express';
 
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 export interface ChatRequest {
-  messages: CoreMessage[];
+  messages: ModelMessage[];
   temperature?: number;
-  maxTokens?: number;
+  maxOutputTokens?: number;
 }
 
 @Controller('chat')
@@ -32,6 +33,7 @@ export class AiController {
     private readonly aiService: AiService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly aiBillingService: AIBillingService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
   @Post()
@@ -52,7 +54,7 @@ export class AiController {
       );
     }
 
-    const { messages, temperature, maxTokens } = request;
+    const { messages, temperature, maxOutputTokens } = request;
 
     if (!messages || messages.length === 0) {
       throw new HttpException(
@@ -63,26 +65,26 @@ export class AiController {
 
     try {
       // TODO: Add support for custom models
-      const model = this.aiService.getModel(undefined);
+      const registeredModel = this.aiModelRegistryService.getDefaultModel();
 
       const result = this.aiService.streamText({
         messages,
         options: {
           temperature,
-          maxTokens,
-          model,
+          maxOutputTokens,
+          model: registeredModel.model,
         },
       });
 
       result.usage.then((usage) => {
         this.aiBillingService.calculateAndBillUsage(
-          model.modelId,
+          registeredModel.modelId,
           usage,
           workspace.id,
         );
       });
 
-      result.pipeDataStreamToResponse(res);
+      result.pipeUIMessageStreamToResponse(res);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';

@@ -4,10 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Readable } from 'stream';
 
 import {
-  type CoreMessage,
   type CoreUserMessage,
   type FilePart,
   type ImagePart,
+  LanguageModelUsage,
+  type ModelMessage,
   streamText,
   ToolSet,
   type UserContent,
@@ -42,11 +43,7 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
   result: object;
-  usage: {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-  };
+  usage: LanguageModelUsage;
 }
 
 @Injectable()
@@ -70,14 +67,12 @@ export class AgentExecutionService {
 
   async prepareAIRequestConfig({
     messages,
-    prompt,
     system,
     agent,
   }: {
     system: string;
     agent: AgentEntity | null;
-    prompt?: string;
-    messages?: CoreMessage[];
+    messages: ModelMessage[];
   }) {
     try {
       if (agent) {
@@ -113,8 +108,7 @@ export class AgentExecutionService {
         system,
         tools,
         model: registeredModel.model,
-        ...(messages && { messages }),
-        ...(prompt && { prompt }),
+        messages,
         maxSteps: AGENT_CONFIG.MAX_STEPS,
         ...(registeredModel.doesSupportThinking && {
           providerOptions: {
@@ -250,20 +244,20 @@ export class AgentExecutionService {
       return {
         type: 'image',
         image: fileBuffer,
-        mimeType: file.type,
+        mediaType: file.type,
       };
     } else {
       return {
         type: 'file',
         data: fileBuffer,
-        mimeType: file.type,
+        mediaType: file.type,
       };
     }
   }
 
   private mapMessagesToCoreMessages(
     messages: AgentChatMessageEntity[],
-  ): CoreMessage[] {
+  ): ModelMessage[] {
     return messages
       .map(({ role, streamData, content }) => {
         if (role === AgentChatMessageRole.USER) {
@@ -304,7 +298,8 @@ export class AgentExecutionService {
       where: { id: agentId },
     });
 
-    const llmMessages: CoreMessage[] = this.mapMessagesToCoreMessages(messages);
+    const llmMessages: ModelMessage[] =
+      this.mapMessagesToCoreMessages(messages);
 
     let contextString = '';
 
