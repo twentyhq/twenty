@@ -19168,6 +19168,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-bold@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "@tiptap/extension-bold@npm:3.4.2"
+  peerDependencies:
+    "@tiptap/core": ^3.4.2
+  checksum: 10c0/f37a5701432f47c09e979c9944edccfe5fe0009b51666bd0719096e8744465bf3c38c5a405510af57aa275208bde408f6c1cd0d685a265d1659cc89ddca47cb4
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-bubble-menu@npm:^2.12.0":
   version: 2.12.0
   resolution: "@tiptap/extension-bubble-menu@npm:2.12.0"
@@ -19281,6 +19290,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-italic@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "@tiptap/extension-italic@npm:3.4.2"
+  peerDependencies:
+    "@tiptap/core": ^3.4.2
+  checksum: 10c0/ea18f40b4676d97bc85a8d29a9625239189567260a4f13ebde3aca9253c7514d9ad21cde9ecea97b6de2dabb54db392a0504d483385b185d112e702dc5f288f7
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-link@npm:^2.11.5":
   version: 2.12.0
   resolution: "@tiptap/extension-link@npm:2.12.0"
@@ -19317,6 +19335,15 @@ __metadata:
   peerDependencies:
     "@tiptap/core": ^2.7.0
   checksum: 10c0/b949eff6db6a8bcfbec8e4f6f653b678125969077392f2452d6b6fe7e0104d2106e2cd3ea925b8229322b9951865b22e6ef48e0869a5ce755e764114882ba4d2
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-strike@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "@tiptap/extension-strike@npm:3.4.2"
+  peerDependencies:
+    "@tiptap/core": ^3.4.2
+  checksum: 10c0/d763200cdcd579461492d6960705d56e9d5af4fcce026b826adc559ab5dbb2abb371cc65ac9e08b3398265a71a0bba96c864ed7a55ea69fdaf39e54d49ba8a6a
   languageName: node
   linkType: hard
 
@@ -19362,6 +19389,15 @@ __metadata:
   peerDependencies:
     "@tiptap/core": ^2.7.0
   checksum: 10c0/b00460567545e92501e29647dadd973091a892f14f813838ca9023a144c6e8f6d9571de47e025fed32bb48c75197e81941c34aee9d4402c67ebf718a9c084c07
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-underline@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "@tiptap/extension-underline@npm:3.4.2"
+  peerDependencies:
+    "@tiptap/core": ^3.4.2
+  checksum: 10c0/f4b716e1dd10f3d56232fc6a1f658ca31733ea0c604ec8cf674cbe20b86c5ba84a99f32c60a85f99c87f10ee1e9967d4262a057ddfdfb513de8ff5ded7272e13
   languageName: node
   linkType: hard
 
@@ -51635,10 +51671,14 @@ __metadata:
     "@react-pdf/renderer": "npm:^4.1.6"
     "@scalar/api-reference-react": "npm:^0.4.36"
     "@tiptap/core": "npm:^3.4.2"
+    "@tiptap/extension-bold": "npm:^3.4.2"
     "@tiptap/extension-document": "npm:^3.4.2"
     "@tiptap/extension-hard-break": "npm:^3.4.2"
+    "@tiptap/extension-italic": "npm:^3.4.2"
     "@tiptap/extension-paragraph": "npm:^3.4.2"
+    "@tiptap/extension-strike": "npm:^3.4.2"
     "@tiptap/extension-text": "npm:^3.4.2"
+    "@tiptap/extension-underline": "npm:^3.4.2"
     "@tiptap/extensions": "npm:^3.4.2"
     "@tiptap/react": "npm:^3.4.2"
     "@types/apollo-upload-client": "npm:^17.0.2"

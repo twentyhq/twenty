@@ -4,6 +4,7 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FormEmailFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select } from '@/ui/input/components/Select';
@@ -283,7 +284,7 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <FormTextFieldInput
+          <FormEmailFieldInput
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
@@ -292,7 +293,6 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
-            multiline
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
