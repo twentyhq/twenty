@@ -18,7 +18,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const fields = [nameTextField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    expect(result).toContain("to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))");
+    expect(result).toContain(
+      "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"name\"), ''))",
+    );
   });
 
   it('should handle multiple fields', () => {
@@ -29,11 +31,21 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     ] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    expect(result).toContain('COALESCE(public.unaccent_immutable("nameFirstName"), \'\')');
-    expect(result).toContain('COALESCE(public.unaccent_immutable("nameLastName"), \'\')');
-    expect(result).toContain('COALESCE(public.unaccent_immutable("jobTitle"), \'\')');
-    expect(result).toContain('COALESCE(public.unaccent_immutable("emailsPrimaryEmail"), \'\')');
-    expect(result).toContain('COALESCE(public.unaccent_immutable(SPLIT_PART("emailsPrimaryEmail", \'@\', 2)), \'\')');
+    expect(result).toContain(
+      'COALESCE(public.unaccent_immutable("nameFirstName"), \'\')',
+    );
+    expect(result).toContain(
+      'COALESCE(public.unaccent_immutable("nameLastName"), \'\')',
+    );
+    expect(result).toContain(
+      'COALESCE(public.unaccent_immutable("jobTitle"), \'\')',
+    );
+    expect(result).toContain(
+      'COALESCE(public.unaccent_immutable("emailsPrimaryEmail"), \'\')',
+    );
+    expect(result).toContain(
+      "COALESCE(public.unaccent_immutable(SPLIT_PART(\"emailsPrimaryEmail\", '@', 2)), '')",
+    );
   });
 
   it('should handle rich text fields', () => {
@@ -42,7 +54,9 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     ] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    expect(result).toBe("to_tsvector('simple', COALESCE(public.unaccent_immutable(\"body\"), ''))");
+    expect(result).toBe(
+      "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"body\"), ''))",
+    );
   });
 
   it('should handle rich text v2 fields', () => {
