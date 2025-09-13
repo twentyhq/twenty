@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
-import { renderEmail } from 'twenty-emails';
+import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -118,7 +119,9 @@ export class SendEmailTool implements Tool {
       );
 
       const parsedBody = parseEmailBody(body);
-      const { html: htmlBody, text: textBody } = await renderEmail(parsedBody);
+      const reactMarkup = reactMarkupFromJSON(parsedBody);
+      const htmlBody = await render(reactMarkup);
+      const textBody = toPlainText(htmlBody);
 
       const { JSDOM } = await import('jsdom');
       const window = new JSDOM('').window;

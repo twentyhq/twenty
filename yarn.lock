@@ -51561,6 +51561,7 @@ __metadata:
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
+    "@tiptap/core": "npm:^3.4.2"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     react-email: "npm:4.0.3"

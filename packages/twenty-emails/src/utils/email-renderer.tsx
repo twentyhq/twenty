@@ -1,42 +1,9 @@
-import {
-  Body,
-  Container,
-  Head,
-  Html,
-  Text,
-  render as renderReactEmail,
-} from '@react-email/components';
+import { Body, Container, Head, Html, Text } from '@react-email/components';
+import type { JSONContent } from '@tiptap/core';
 import { Fragment, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export type JSONContent = {
-  type?: string;
-  attrs?: Record<string, unknown>;
-  content?: JSONContent[];
-  marks?: {
-    type: string;
-    attrs?: Record<string, unknown>;
-    [key: string]: unknown;
-  }[];
-  text?: string;
-};
-
-export interface MarkType {
-  [key: string]: unknown;
-  type: string;
-  attrs?: Record<string, unknown> | undefined;
-}
-
-type RenderOptions = {
-  pretty?: boolean;
-} & (
-  | {
-      plainText?: false;
-    }
-  | {
-      plainText?: true;
-    }
-);
+type MarkType = NonNullable<JSONContent['marks']>[number];
 
 export class EmailRenderer {
   private readonly marksOrder = [
@@ -49,19 +16,6 @@ export class EmailRenderer {
   ];
 
   constructor() {}
-
-  async render(
-    json: JSONContent | string,
-    options?: RenderOptions,
-  ): Promise<string> {
-    if (typeof json === 'string') {
-      return json;
-    }
-
-    const markup = this.markup(json);
-
-    return renderReactEmail(markup, options);
-  }
 
   markup(json: JSONContent) {
     const jsxNodes = this.getMappedContent(json);
@@ -181,9 +135,11 @@ export class EmailRenderer {
   }
 }
 
-export const renderEmail = async (json: JSONContent | string) => {
+export const reactMarkupFromJSON = (json: JSONContent | string) => {
+  if (typeof json === 'string') {
+    return json;
+  }
+
   const renderer = new EmailRenderer();
-  const html = await renderer.render(json);
-  const text = await renderer.render(json, { plainText: true });
-  return { html, text };
+  return renderer.markup(json);
 };
