@@ -22,14 +22,14 @@ import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engi
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
-import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFieldV2Service {
   constructor(
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
-    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   // TODO: move to cache service
@@ -79,10 +79,10 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            viewField: {
+          fromToAllFlatEntityMaps: {
+            flatViewFieldMaps: {
               fromFlatViewFieldMaps: existingFlatViewFieldMaps,
               toFlatViewFieldMaps,
             },
@@ -133,10 +133,10 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            viewField: {
+          fromToAllFlatEntityMaps: {
+            flatViewFieldMaps: {
               fromFlatViewFieldMaps: existingFlatViewFieldMaps,
               toFlatViewFieldMaps,
             },
@@ -187,10 +187,10 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            viewField: {
+          fromToAllFlatEntityMaps: {
+            flatViewFieldMaps: {
               fromFlatViewFieldMaps: existingFlatViewFieldMaps,
               toFlatViewFieldMaps,
             },
@@ -240,10 +240,10 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            viewField: {
+          fromToAllFlatEntityMaps: {
+            flatViewFieldMaps: {
               fromFlatViewFieldMaps: existingFlatViewFieldMaps,
               toFlatViewFieldMaps,
             },

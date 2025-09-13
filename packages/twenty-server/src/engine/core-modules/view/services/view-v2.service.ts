@@ -11,24 +11,24 @@ import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-module
 import { ViewCacheService } from 'src/engine/core-modules/view/cache/services/view-cache.service';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
-import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewV2Service {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
-    private readonly workspaceMigrationOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly viewCacheService: ViewCacheService,
   ) {}
 
@@ -63,10 +63,10 @@ export class ViewV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            view: {
+          fromToAllFlatEntityMaps: {
+            flatViewMaps: {
               fromFlatViewMaps: existingFlatViewMaps,
               toFlatViewMaps,
             },
@@ -136,10 +136,10 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            view: {
+          fromToAllFlatEntityMaps: {
+            flatViewMaps: {
               fromFlatViewMaps: existingFlatViewMaps,
               toFlatViewMaps,
             },
@@ -192,11 +192,11 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          entityMaps: {
-            view: {
-              fromFlatViewMaps: existingFlatViewMaps,
+          fromToAllFlatEntityMaps: {
+            flatViewMaps: {
+              fromFlatViewMaps: existingFlatViewMaps, // could extract only related // would need to create tooling
               toFlatViewMaps,
             },
           },
