@@ -1,5 +1,6 @@
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -40,7 +41,7 @@ export const ObjectFilterDropdownCreateNewOption = ({
     <>
       {isHasPermissionFlag ? (
         <>
-          <MenuItem text="No results" />
+          <MenuItem text={t`No results`} />
           <DropdownMenuSeparator />
           <MenuItem
             text={

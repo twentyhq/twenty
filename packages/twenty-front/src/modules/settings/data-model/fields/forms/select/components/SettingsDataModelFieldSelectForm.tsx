@@ -20,7 +20,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
@@ -206,6 +206,14 @@ export const SettingsDataModelFieldSelectForm = ({
     }
   };
 
+  const mergedInitialOptions = useMemo(() => {
+    const newOptionValue = location.state?.CreateNewOption;
+    if (!newOptionValue) return initialOptions;
+
+    const newOption = generateNewSelectOption(initialOptions, newOptionValue);
+    return [...initialOptions, newOption];
+  }, [initialOptions, location.state?.CreateNewOption]);
+
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');
 
@@ -229,26 +237,6 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
-  const handleStateChange = useCallback(
-    (newOptionValue: string) => {
-      const newOption = generateNewSelectOption(initialOptions, newOptionValue);
-      const newOptions = [...initialOptions, newOption];
-      setFormValue('options', newOptions, { shouldDirty: true });
-    },
-    [initialOptions, setFormValue],
-  );
-
-  useEffect(() => {
-    const newOptionValue = location.state?.CreateNewOption;
-    if (
-      newOptionValue !== undefined &&
-      newOptionValue !== null &&
-      newOptionValue !== ''
-    ) {
-      handleStateChange(newOptionValue);
-    }
-  }, [location.state, handleStateChange]);
-
   return (
     <>
       <Controller
@@ -260,7 +248,7 @@ export const SettingsDataModelFieldSelectForm = ({
       <Controller
         name="options"
         control={control}
-        defaultValue={initialOptions}
+        defaultValue={mergedInitialOptions}
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
