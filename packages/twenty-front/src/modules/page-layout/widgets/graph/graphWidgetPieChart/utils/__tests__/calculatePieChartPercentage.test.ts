@@ -51,7 +51,7 @@ describe('calculatePieChartPercentage', () => {
   });
   it('should handle NaN inputs', () => {
     expect(calculatePieChartPercentage(NaN, 100)).toBeNaN();
-    expect(calculatePieChartPercentage(100, NaN)).toBe(0);
-    expect(calculatePieChartPercentage(NaN, NaN)).toBe(0);
+    expect(calculatePieChartPercentage(100, NaN)).toBeNaN();
+    expect(calculatePieChartPercentage(NaN, NaN)).toBeNaN();
   });
 });
