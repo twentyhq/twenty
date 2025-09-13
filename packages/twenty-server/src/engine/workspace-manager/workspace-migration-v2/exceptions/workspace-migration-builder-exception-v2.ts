@@ -1,8 +1,8 @@
-import { type FailedWorkspaceMigrationBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationOrchestratorFailedResult } from "src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type";
 
 export class WorkspaceMigrationBuilderExceptionV2 extends Error {
   constructor(
-    public readonly failedWorkspaceMigrationBuildResult: FailedWorkspaceMigrationBuildResult,
+    public readonly failedWorkspaceMigrationBuildResult: WorkspaceMigrationOrchestratorFailedResult,
     message = 'Workspace migration builder failed',
   ) {
     super(message);

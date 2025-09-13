@@ -4,26 +4,28 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FailedFlatViewFieldValidation } from 'src/engine/core-modules/view/flat-view/types/failed-flat-view-field-validation.type';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 
+type ViewFieldValidationArgs = {
+  flatViewFieldToValidate: FlatViewField;
+  optimisticFlatViewFieldMaps: FlatViewFieldMaps;
+  dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
+};
 @Injectable()
 export class FlatViewFieldValidatorService {
   constructor() {}
 
   public validateFlatViewFieldUpdate({
-    existingFlatViewFieldMaps,
-    updatedFlatViewField,
-    optimisticFlatViewMaps,
-  }: {
-    existingFlatViewFieldMaps: FlatViewFieldMaps;
-    updatedFlatViewField: FlatViewField;
-    optimisticFlatViewMaps: FlatViewMaps;
-  }): FailedFlatViewFieldValidation {
+    dependencyOptimisticFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
+    flatViewFieldToValidate: updatedFlatViewField,
+    optimisticFlatViewFieldMaps,
+  }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
 
     const optimisticFlatView =
@@ -32,26 +34,26 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(optimisticFlatView)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        message: t`View field to update related view not found`,
+        userFriendlyMessage: t`View field to update related view not found`,
       });
     }
 
     const existingFlatViewField =
-      existingFlatViewFieldMaps.byId[updatedFlatViewField.id];
+      optimisticFlatViewFieldMaps.byId[updatedFlatViewField.id];
 
     if (!isDefined(existingFlatViewField)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field not found`,
-        userFriendlyMessage: t`View field not found`,
+        message: t`View field to update not found`,
+        userFriendlyMessage: t`View field to update not found`,
       });
     }
 
     return {
       type: 'update_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: updatedFlatViewField.id,
         viewId: updatedFlatViewField.viewId,
         fieldMetadataId: updatedFlatViewField.fieldMetadataId,
@@ -60,14 +62,12 @@ export class FlatViewFieldValidatorService {
   }
 
   public validateFlatViewFieldDeletion({
-    existingFlatViewFieldMaps,
-    viewFieldIdToDelete,
-    optimisticFlatViewMaps,
-  }: {
-    existingFlatViewFieldMaps: FlatViewFieldMaps;
-    viewFieldIdToDelete: string;
-    optimisticFlatViewMaps: FlatViewMaps;
-  }): FailedFlatViewFieldValidation {
+    optimisticFlatViewFieldMaps,
+    flatViewFieldToValidate: { id: viewFieldIdToDelete },
+    dependencyOptimisticFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
+  }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
 
     const optimisticFlatView = optimisticFlatViewMaps.byId[viewFieldIdToDelete];
@@ -75,43 +75,54 @@ export class FlatViewFieldValidatorService {
     if (!isDefined(optimisticFlatView)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        message: t`View field to delete related view not found`,
+        userFriendlyMessage: t`View field to delete related view not found`,
       });
     }
 
     const existingFlatViewField =
-      existingFlatViewFieldMaps.byId[viewFieldIdToDelete];
+      optimisticFlatViewFieldMaps.byId[viewFieldIdToDelete];
 
     if (!isDefined(existingFlatViewField)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field not found`,
-        userFriendlyMessage: t`View field not found`,
+        message: t`View field to delete not found`,
+        userFriendlyMessage: t`View field to delete not found`,
       });
     }
 
     return {
       type: 'delete_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: viewFieldIdToDelete,
       },
     };
   }
 
   public async validateFlatViewFieldCreation({
-    _existingFlatViewFieldMaps,
     flatViewFieldToValidate,
-    optimisticFlatObjectMetadataMaps,
-    optimisticFlatViewMaps,
+    optimisticFlatViewFieldMaps,
+    dependencyOptimisticFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatViewMaps: optimisticFlatViewMaps,
+    },
   }: {
-    _existingFlatViewFieldMaps: FlatViewFieldMaps;
     flatViewFieldToValidate: FlatViewField;
-    optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    optimisticFlatViewMaps: FlatViewMaps;
-  }): Promise<FailedFlatViewFieldValidation> {
+    optimisticFlatViewFieldMaps: FlatViewFieldMaps;
+    dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
+  }): Promise<FailedFlatEntityValidation<FlatViewField>> {
     const errors = [];
+
+    if (
+      isDefined(optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id])
+    ) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field metadata with id ${flatViewFieldToValidate.id} already exists`,
+        userFriendlyMessage: t`View field metadata already exists`,
+      });
+    }
 
     const relatedFlatFieldMetadata =
       findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
@@ -140,8 +151,8 @@ export class FlatViewFieldValidatorService {
 
     return {
       type: 'create_view_field',
-      viewFieldLevelErrors: errors,
-      failedViewFieldValidationMinimalInformation: {
+      errors,
+      flatEntityMinimalInformation: {
         id: flatViewFieldToValidate.id,
         viewId: flatViewFieldToValidate.viewId,
         fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,
