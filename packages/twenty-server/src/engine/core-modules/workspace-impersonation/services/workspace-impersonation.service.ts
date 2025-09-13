@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
 
-import { DataSource, EntityManager } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
@@ -29,8 +30,11 @@ export class WorkspaceImpersonationService {
     private readonly auditService: AuditService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
-    private readonly dataSource: DataSource,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(UserWorkspace)
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(RoleTargetsEntity)
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
   ) {}
 
   async impersonateWorkspaceUser({
@@ -45,8 +49,8 @@ export class WorkspaceImpersonationService {
     return await this.impersonateCore({
       workspaceId,
       impersonatorUserWorkspaceId,
-      resolveTarget: async (manager) =>
-        await manager.findOne(UserWorkspace, {
+      resolveTarget: async () =>
+        await this.userWorkspaceRepository.findOne({
           where: { id: targetUserWorkspaceId },
         }),
     });
@@ -64,7 +68,7 @@ export class WorkspaceImpersonationService {
     return await this.impersonateCore({
       workspaceId,
       impersonatorUserWorkspaceId,
-      resolveTarget: async (manager) => {
+      resolveTarget: async () => {
         const workspaceMemberRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
@@ -76,7 +80,7 @@ export class WorkspaceImpersonationService {
 
         if (!workspaceMember) return null;
 
-        return await manager.findOne(UserWorkspace, {
+        return await this.userWorkspaceRepository.findOne({
           where: { userId: workspaceMember.userId, workspaceId },
         });
       },
@@ -90,71 +94,63 @@ export class WorkspaceImpersonationService {
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
-    resolveTarget: (manager: EntityManager) => Promise<UserWorkspace | null>;
+    resolveTarget: () => Promise<UserWorkspace | null>;
   }): Promise<AuthTokens> {
-    const { targetUserId, targetUserWorkspaceId, impersonatorUserId } =
-      await this.dataSource.transaction(async (manager) => {
-        const target = await resolveTarget(manager);
+    const target = await resolveTarget();
 
-        if (!target || target.workspaceId !== workspaceId) {
-          throw new AuthException(
-            'User workspace not found in current workspace',
-            AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-          );
-        }
+    if (!target || target.workspaceId !== workspaceId) {
+      throw new AuthException(
+        'User workspace not found in current workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
 
-        const impersonatorUserWorkspace = await manager.findOne(UserWorkspace, {
-          where: { id: impersonatorUserWorkspaceId },
-        });
-
-        if (
-          impersonatorUserWorkspace &&
-          impersonatorUserWorkspace.userId === target.userId
-        ) {
-          throw new AuthException(
-            'Cannot impersonate yourself',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
-
-        const roleTargetWithRole = await manager
-          .createQueryBuilder(RoleTargetsEntity, 'rt')
-          .innerJoinAndSelect('rt.role', 'role')
-          .leftJoinAndSelect('role.permissionFlags', 'permissionFlags')
-          .where('rt.userWorkspaceId = :userWorkspaceId', {
-            userWorkspaceId: impersonatorUserWorkspaceId,
-          })
-          .andWhere('rt.workspaceId = :workspaceId', { workspaceId })
-          .setLock('pessimistic_read', undefined, ['rt', 'role'])
-          .getOne();
-
-        const hasImpersonatePermission =
-          !!roleTargetWithRole &&
-          this.permissionsService.checkRolePermissions(
-            (roleTargetWithRole as RoleTargetsEntity & { role: RoleEntity })
-              .role,
-            PermissionFlagType.IMPERSONATE,
-          );
-
-        if (!hasImpersonatePermission) {
-          throw new AuthException(
-            'Forbidden',
-            AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          );
-        }
-
-        return {
-          targetUserId: target.userId,
-          targetUserWorkspaceId: target.id,
-          impersonatorUserId: impersonatorUserWorkspace?.userId ?? null,
-        };
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: impersonatorUserWorkspaceId },
       });
 
+    if (
+      impersonatorUserWorkspace &&
+      impersonatorUserWorkspace.userId === target.userId
+    ) {
+      throw new AuthException(
+        'Cannot impersonate yourself',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const roleTargetWithRole = await this.roleTargetsRepository
+      .createQueryBuilder('rt')
+      .innerJoinAndSelect('rt.role', 'role')
+      .leftJoinAndSelect('role.permissionFlags', 'permissionFlags')
+      .where('rt.userWorkspaceId = :userWorkspaceId', {
+        userWorkspaceId: impersonatorUserWorkspaceId,
+      })
+      .andWhere('rt.workspaceId = :workspaceId', { workspaceId })
+      .getOne();
+
+    const hasImpersonatePermission =
+      !!roleTargetWithRole &&
+      this.permissionsService.checkRolePermissions(
+        (roleTargetWithRole as RoleTargetsEntity & { role: RoleEntity }).role,
+        PermissionFlagType.IMPERSONATE,
+      );
+
+    if (!hasImpersonatePermission) {
+      throw new AuthException(
+        'Forbidden',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const { userId: targetUserId, id: targetUserWorkspaceId } = target;
+    const impersonatorUserId = impersonatorUserWorkspace?.userId ?? null;
     const correlationId = randomUUID();
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userId: impersonatorUserId ?? null,
+      userId: impersonatorUserId,
     });
 
     await analytics.insertWorkspaceEvent('Monitoring', {

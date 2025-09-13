@@ -43,7 +43,7 @@ const createMockManager = (overrides: Partial<any> = {}) => ({
 });
 
 const createMockDataSource = (manager: any) => ({
-  transaction: jest.fn(async (fn: (m: any) => Promise<any>) => fn(manager)),
+  manager,
 });
 
 const workspaceId = 'ws-1';
@@ -85,7 +85,6 @@ describe('WorkspaceImpersonationService', () => {
     qb.leftJoinAndSelect = () => qb;
     qb.where = () => qb;
     qb.andWhere = () => qb;
-    qb.setLock = () => qb;
     qb.getOne = qbGetOne;
 
     manager.createQueryBuilder.mockReturnValue(qb);
@@ -108,9 +107,9 @@ describe('WorkspaceImpersonationService', () => {
     }).compile();
 
     service = moduleRef.get(WorkspaceImpersonationService);
-    permissionsService = moduleRef.get(PermissionsService) as any;
-    accessTokenService = moduleRef.get(AccessTokenService) as any;
-    refreshTokenService = moduleRef.get(RefreshTokenService) as any;
+    permissionsService = moduleRef.get(PermissionsService);
+    accessTokenService = moduleRef.get(AccessTokenService);
+    refreshTokenService = moduleRef.get(RefreshTokenService);
 
     return { manager, dataSource };
   };
