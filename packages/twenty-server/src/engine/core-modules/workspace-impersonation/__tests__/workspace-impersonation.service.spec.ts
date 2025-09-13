@@ -1,15 +1,16 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace-impersonation/services/workspace-impersonation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -103,6 +104,16 @@ describe('WorkspaceImpersonationService', () => {
           useValue: mockTwentyORMGlobalManager,
         },
         { provide: getDataSourceToken(), useValue: dataSource },
+        {
+          provide: getRepositoryToken(UserWorkspace),
+          useValue: manager,
+        },
+        {
+          provide: getRepositoryToken(RoleTargetsEntity),
+          useValue: {
+            createQueryBuilder: manager.createQueryBuilder,
+          },
+        },
       ],
     }).compile();
 
