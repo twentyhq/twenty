@@ -30,18 +30,30 @@ export const NumberFormatSettings = () => {
     2,
   );
 
+  const getWorkspaceFormat = (
+    value: NumberFormat,
+  ): WorkspaceMemberNumberFormatEnum => {
+    switch (value) {
+      case NumberFormat.SYSTEM:
+        return WorkspaceMemberNumberFormatEnum.SYSTEM;
+      case NumberFormat.COMMAS_AND_DOT:
+        return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
+      case NumberFormat.SPACES_AND_COMMA:
+        return WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA;
+      case NumberFormat.SPACES_AND_DOT:
+        return WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT;
+      default:
+        return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
+    }
+  };
+
   const handleNumberFormatChange = async (value: NumberFormat) => {
     if (!currentWorkspaceMember?.id) {
       logError('User is not logged in');
       return;
     }
 
-    const workspaceNumberFormat =
-      value === NumberFormat.SYSTEM
-        ? WorkspaceMemberNumberFormatEnum.SYSTEM
-        : WorkspaceMemberNumberFormatEnum[
-            value as keyof typeof WorkspaceMemberNumberFormatEnum
-          ];
+    const workspaceNumberFormat = getWorkspaceFormat(value);
 
     try {
       await updateOneRecord({
@@ -58,7 +70,10 @@ export const NumberFormatSettings = () => {
 
       setDateTimeFormat((prev) => ({
         ...prev,
-        numberFormat: value,
+        numberFormat:
+          value === NumberFormat.SYSTEM
+            ? NumberFormat[detectNumberFormat()]
+            : value,
       }));
     } catch (error) {
       logError(error);
