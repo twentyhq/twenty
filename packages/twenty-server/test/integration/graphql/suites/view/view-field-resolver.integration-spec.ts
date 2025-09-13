@@ -15,13 +15,13 @@ import {
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewFieldStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -40,11 +40,12 @@ describe('View Field Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myFieldTestObject',
+        namePlural: 'myFieldTestObjects',
+        labelSingular: 'My Field Test Object',
+        labelPlural: 'My Field Test Objects',
         icon: 'Icon123',
       },
     });
@@ -64,6 +65,7 @@ describe('View Field Resolver', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: createFieldInput,
       gqlFields: `
           id
@@ -78,8 +80,10 @@ describe('View Field Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -91,10 +95,6 @@ describe('View Field Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewFields', () => {
@@ -201,8 +201,10 @@ describe('View Field Resolver', () => {
         size: 300,
       });
       const updateOperation = updateViewFieldOperationFactory({
-        viewFieldId: viewField.id,
-        data: updateInput,
+        input: {
+          id: viewField.id,
+          update: updateInput,
+        },
       });
       const response = await makeGraphqlAPIRequest(updateOperation);
 
@@ -217,7 +219,12 @@ describe('View Field Resolver', () => {
 
     it('should throw an error when updating non-existent view field', async () => {
       const operation = updateViewFieldOperationFactory({
-        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+          update: {
+            position: 1,
+          },
+        },
       });
       const response = await makeGraphqlAPIRequest(operation);
 
@@ -249,7 +256,9 @@ describe('View Field Resolver', () => {
       const response = await makeGraphqlAPIRequest(deleteOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewField).toBe(true);
+      expect(response.body.data.deleteCoreViewField).toMatchObject({
+        id: viewField.id,
+      });
     });
 
     it('should throw an error when deleting non-existent view field', async () => {
@@ -286,7 +295,9 @@ describe('View Field Resolver', () => {
       const response = await makeGraphqlAPIRequest(destroyOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewField).toBe(true);
+      expect(response.body.data.destroyCoreViewField).toMatchObject({
+        id: viewField.id,
+      });
     });
 
     it('should throw an error when destroying non-existent view field', async () => {

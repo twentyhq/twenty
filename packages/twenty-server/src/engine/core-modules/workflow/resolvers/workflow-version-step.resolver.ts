@@ -7,6 +7,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
+import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step-input.dto';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
@@ -123,5 +124,20 @@ export class WorkflowVersionStepResolver {
     });
 
     return step;
+  }
+
+  @Mutation(() => WorkflowVersionStepChangesDTO)
+  async duplicateWorkflowVersionStep(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Args('input')
+    { stepId, workflowVersionId }: DuplicateWorkflowVersionStepInput,
+  ): Promise<WorkflowVersionStepChangesDTO> {
+    return this.workflowVersionStepWorkspaceService.duplicateWorkflowVersionStep(
+      {
+        workspaceId,
+        workflowVersionId,
+        stepId,
+      },
+    );
   }
 }

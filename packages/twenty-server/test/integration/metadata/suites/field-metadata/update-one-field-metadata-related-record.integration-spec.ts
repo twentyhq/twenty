@@ -1,18 +1,24 @@
 import { faker } from '@faker-js/faker';
-import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
-import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import {
+  createTestViewFilterWithRestApi,
+  createTestViewWithRestApi,
+  findViewFilterWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
   type EnumFieldMetadataType,
   FieldMetadataType,
 } from 'twenty-shared/types';
-import { isDefined, parseJson } from 'twenty-shared/utils';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { isDefined } from 'twenty-shared/utils';
 
+import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
+import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { type ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -28,7 +34,7 @@ const generateOption = (index: number): Option => ({
 });
 const generateOptions = (length: number) =>
   Array.from({ length }, (_value, index) => generateOption(index));
-const updateOption = ({ value, label, ...option }: Option) => ({
+const fakeOptionUpdate = ({ value, label, ...option }: Option) => ({
   ...option,
   value: `${value}_UPDATED`,
   label: `${label} updated`,
@@ -39,7 +45,6 @@ const ALL_OPTIONS = generateOptions(10);
 const isEven = (_value: unknown, index: number) => index % 2 === 0;
 
 type ViewFilterUpdate = {
-  displayValue: string;
   value: string[];
 };
 
@@ -101,22 +106,14 @@ describe('update-one-field-metadata-related-record', () => {
         `,
     });
 
-    const {
-      data: { createOneResponse: createOneView },
-    } = await createOneOperation<{
-      id: string;
-      objectMetadataId: string;
-      type: string;
-    }>({
-      objectMetadataSingularName: 'view',
-      input: {
-        id: faker.string.uuid(),
-        objectMetadataId: createOneObject.id,
-        type: 'table',
-      },
+    const createdView = await createTestViewWithRestApi({
+      id: faker.string.uuid(),
+      name: 'Test View',
+      objectMetadataId: createOneObject.id,
+      type: ViewType.TABLE,
     });
 
-    return { createOneObject, createOneField, createOneView };
+    return { createOneObject, createOneField, createdView };
   };
 
   afterEach(async () => {
@@ -142,7 +139,7 @@ describe('update-one-field-metadata-related-record', () => {
         context: {
           updateOptions: (options) =>
             options.map((option, index) =>
-              isEven(option, index) ? updateOption(option) : option,
+              isEven(option, index) ? fakeOptionUpdate(option) : option,
             ),
         },
       },
@@ -150,10 +147,9 @@ describe('update-one-field-metadata-related-record', () => {
         title: 'should update related solo selected option view filter',
         context: {
           createViewFilter: {
-            displayValue: ALL_OPTIONS[5].label,
             value: [ALL_OPTIONS[5].value],
           },
-          updateOptions: (options) => [updateOption(options[5])],
+          updateOptions: (options) => [fakeOptionUpdate(options[5])],
         },
       },
       {
@@ -168,7 +164,6 @@ describe('update-one-field-metadata-related-record', () => {
           'should handle reordering of options while maintaining view filter values',
         context: {
           createViewFilter: {
-            displayValue: '2 options',
             value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
           },
           updateOptions: (options) => [...options].reverse(),
@@ -190,34 +185,12 @@ describe('update-one-field-metadata-related-record', () => {
             type: fieldType,
           },
           createViewFilter: {
-            displayValue: '2 options',
             value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
           },
           updateOptions: (options) => [
             ...options,
             ...generateOptions(6).slice(5),
           ],
-        },
-      },
-      {
-        title:
-          'should update display value with options label if less than 3 options are selected',
-        context: {
-          updateOptions: (options) => options.slice(8),
-        },
-      },
-      {
-        title: 'should update the display value on an option label change only',
-        context: {
-          createViewFilter: {
-            displayValue: 'Option 3',
-            value: ALL_OPTIONS.slice(0, 3).map((option) => option.value),
-          },
-          updateOptions: (options) =>
-            options.map((option) => ({
-              ...option,
-              label: `${option.label} updated`,
-            })),
         },
       },
     ];
@@ -228,34 +201,20 @@ describe('update-one-field-metadata-related-record', () => {
         context: {
           expected,
           createViewFilter = {
-            displayValue: '10 options',
             value: ALL_OPTIONS.map((option) => option.value),
           },
           fieldMetadata = { options: ALL_OPTIONS, type: fieldType },
           updateOptions,
         },
       }) => {
-        const { createOneField, createOneView } =
+        const { createOneField, createdView } =
           await createObjectSelectFieldAndView(fieldMetadata);
-        const {
-          data: { createOneResponse: createOneViewFilter },
-        } = await createOneOperation<{
-          id: string;
-          viewId: string;
-          fieldMetadataId: string;
-          operand: string;
-          value: string;
-          displayValue: string;
-        }>({
-          objectMetadataSingularName: 'viewFilter',
-          input: {
-            id: faker.string.uuid(),
-            viewId: createOneView.id,
-            fieldMetadataId: createOneField.id,
-            operand: 'is',
-            value: JSON.stringify(createViewFilter.value),
-            displayValue: createViewFilter.displayValue,
-          },
+
+        const createdViewFilter = await createTestViewFilterWithRestApi({
+          viewId: createdView.id,
+          fieldMetadataId: createOneField.id,
+          operand: ViewFilterOperand.IS,
+          value: createViewFilter.value,
         });
 
         const optionsWithIds = createOneField.options;
@@ -278,41 +237,38 @@ describe('update-one-field-metadata-related-record', () => {
         `,
         });
 
-        const {
-          data: { findResponse },
-          errors,
-        } = await findOneOperation({
-          gqlFields: `
-        id
-        displayValue
-        value
-        `,
-          objectMetadataSingularName: 'viewFilter',
-          filter: {
-            id: { eq: createOneViewFilter.id },
-          },
-        });
+        const updatedViewFilter = await findViewFilterWithRestApi(
+          createdViewFilter.id,
+        );
 
         if (expected !== undefined) {
-          expect(findResponse).toBe(expected);
-          expect(errors).toMatchSnapshot();
+          expect(updatedViewFilter).toBe(expected);
 
           return;
         }
 
-        const parsedViewFilterValues = parseJson<string[]>(findResponse.value);
+        if (!isDefined(updatedViewFilter)) {
+          throw new Error(
+            'updatedViewFilter is not defined but should be at this point',
+          );
+        }
 
-        expect(parsedViewFilterValues).not.toBeNull();
-        if (parsedViewFilterValues === null) {
+        expect(updatedViewFilter.value).not.toBeNull();
+        if (updatedViewFilter.value === null) {
           throw new Error('Invariant parsedValue should not be null');
         }
         expect(updatedOptions.map((option) => option.value)).toEqual(
-          expect.arrayContaining(parsedViewFilterValues),
+          expect.arrayContaining(updatedViewFilter.value as string[]),
         );
 
-        expect(findResponse).toMatchSnapshot({
-          id: expect.any(String),
-        });
+        expect({
+          value: updatedViewFilter.value,
+          operand: updatedViewFilter.operand,
+          viewFilterGroupId: updatedViewFilter.viewFilterGroupId,
+          positionInViewFilterGroup:
+            updatedViewFilter.positionInViewFilterGroup,
+          subFieldName: updatedViewFilter.subFieldName,
+        }).toMatchSnapshot();
       },
     );
 
@@ -335,7 +291,7 @@ describe('update-one-field-metadata-related-record', () => {
     test.each(failingTestCases)(
       '$title',
       async ({ context: { createViewFilterValue } }) => {
-        const { createOneField, createOneView } =
+        const { createOneField, createdView } =
           await createObjectSelectFieldAndView({
             options: ALL_OPTIONS,
             type: fieldType,
@@ -343,23 +299,12 @@ describe('update-one-field-metadata-related-record', () => {
 
         const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
 
-        await createOneOperation<{
-          id: string;
-          viewId: string;
-          fieldMetadataId: string;
-          operand: string;
-          value: string;
-          displayValue: string;
-        }>({
-          objectMetadataSingularName: 'viewFilter',
-          input: {
-            id: viewFilterId,
-            viewId: createOneView.id,
-            fieldMetadataId: createOneField.id,
-            operand: 'is',
-            value: createViewFilterValue as unknown as string,
-            displayValue: '10 options',
-          },
+        await createTestViewFilterWithRestApi({
+          id: viewFilterId,
+          viewId: createdView.id,
+          fieldMetadataId: createOneField.id,
+          operand: ViewFilterOperand.IS,
+          value: createViewFilterValue as unknown as ViewFilterValue,
         });
 
         const optionsWithIds = createOneField.options;
@@ -368,7 +313,7 @@ describe('update-one-field-metadata-related-record', () => {
           throw new Error('optionsWithIds is not defined');
         }
         const updatePayload = {
-          options: optionsWithIds.map((option) => updateOption(option)),
+          options: optionsWithIds.map((option) => fakeOptionUpdate(option)),
         };
         const { errors, data } = await updateOneFieldMetadata({
           input: {

@@ -132,6 +132,29 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
       );
     });
 
+    it('should throw if trigger is not found', async () => {
+      const mockWorkflowVersionWithoutTrigger = {
+        ...mockWorkflowVersion,
+        trigger: null,
+      } as WorkflowVersionWorkspaceEntity;
+
+      workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+        mockWorkflowVersionWithoutTrigger,
+      );
+
+      const call = async () =>
+        await service.createWorkflowVersionEdge({
+          source: TRIGGER_STEP_ID,
+          target: 'step-1',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+      await expect(call).rejects.toThrow(
+        `Trigger not found in workflowVersion '${mockWorkflowVersionId}'`,
+      );
+    });
+
     describe('with source is the trigger', () => {
       it('should create an edge between trigger and step-1', async () => {
         const result = await service.createWorkflowVersionEdge({
@@ -191,6 +214,160 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     });
 
     describe('with source is a step', () => {
+      describe('with iterator step', () => {
+        const mockIteratorStep = {
+          id: 'iterator-step',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              initialLoopStepIds: ['step-1'],
+            },
+          },
+          nextStepIds: ['step-2'],
+        } as WorkflowAction;
+
+        beforeEach(() => {
+          const mockStepsWithIterator = [...mockSteps, mockIteratorStep];
+          const mockWorkflowVersionWithIterator = {
+            ...mockWorkflowVersion,
+            steps: mockStepsWithIterator,
+          } as WorkflowVersionWorkspaceEntity;
+
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+            mockWorkflowVersionWithIterator,
+          );
+        });
+
+        it('should add target to initialLoopStepIds when shouldInsertToLoop is true', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-3',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                shouldInsertToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                settings: expect.objectContaining({
+                  input: expect.objectContaining({
+                    initialLoopStepIds: ['step-1', 'step-3'],
+                  }),
+                }),
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2'],
+            },
+          });
+        });
+
+        it('should not duplicate target in initialLoopStepIds when it already exists', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                shouldInsertToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).not.toHaveBeenCalled();
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2'],
+            },
+          });
+        });
+
+        it('should throw if source is not an iterator but connection options are for iterator', async () => {
+          const call = async () =>
+            await service.createWorkflowVersionEdge({
+              source: 'step-1',
+              target: 'step-3',
+              workflowVersionId: mockWorkflowVersionId,
+              workspaceId: mockWorkspaceId,
+              sourceConnectionOptions: {
+                connectedStepType: WorkflowActionType.ITERATOR,
+                settings: {
+                  shouldInsertToLoop: true,
+                },
+              },
+            });
+
+          await expect(call).rejects.toThrow(
+            `Source step 'step-1' is not an iterator`,
+          );
+        });
+
+        it('should create normal edge when shouldInsertToLoop is false', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-3',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                shouldInsertToLoop: false,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                nextStepIds: ['step-2', 'step-3'],
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2', 'step-3'],
+            },
+          });
+        });
+      });
+
       it('should create an edge between step-2 and step-3', async () => {
         const result = await service.createWorkflowVersionEdge({
           source: 'step-2',

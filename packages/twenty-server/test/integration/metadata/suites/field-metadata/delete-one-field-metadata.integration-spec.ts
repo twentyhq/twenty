@@ -1,6 +1,3 @@
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -10,8 +7,15 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import {
+  createTestViewWithRestApi,
+  findViewByIdWithRestApi,
+} from 'test/integration/rest/utils/view-rest-api.util';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 describe('deleteOne', () => {
@@ -45,27 +49,14 @@ describe('deleteOne', () => {
 
       testFieldId = createdFieldData.createOneField.id;
 
-      // create view
-      const graphqlOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'View',
-        gqlFields: `
-          id
-          kanbanAggregateOperationFieldMetadataId
-          kanbanAggregateOperation
-        `,
-        data: {
-          kanbanAggregateOperationFieldMetadataId: testFieldId,
-          kanbanAggregateOperation: 'MAX',
-          objectMetadataId: listingObjectId,
-          name: 'By Type',
-          type: ViewType.KANBAN,
-          icon: 'IconLayoutKanban',
-        },
+      const createdView = await createTestViewWithRestApi({
+        name: generateRecordName('By Type'),
+        objectMetadataId: listingObjectId,
+        type: ViewType.KANBAN,
+        kanbanAggregateOperationFieldMetadataId: testFieldId,
+        kanbanAggregateOperation: AggregateOperations.MAX,
+        icon: 'IconLayoutKanban',
       });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-      const createdView = response.body.data.createView;
 
       viewId = createdView.id;
     });
@@ -76,30 +67,17 @@ describe('deleteOne', () => {
       });
     });
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
-      // Arrange
-      // 1. Check that view has expcted kanbanAggregateOperationFieldMetadataId and kanbanAggregateOperation
-      const findViewOperation = findOneOperationFactory({
-        objectMetadataSingularName: 'view',
-        gqlFields: `
-          id
-          kanbanAggregateOperationFieldMetadataId
-          kanbanAggregateOperation
-        `,
-        filter: {
-          id: {
-            eq: viewId,
-          },
-        },
-      });
+      const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 
-      const viewResponse = await makeGraphqlAPIRequest(findViewOperation);
+      if (!isDefined(viewThatShouldBeUpdated)) {
+        throw new Error('View not found, this should not happen');
+      }
 
       expect(
-        viewResponse.body.data.view.kanbanAggregateOperationFieldMetadataId,
+        viewThatShouldBeUpdated.kanbanAggregateOperationFieldMetadataId,
       ).toBe(testFieldId);
-      expect(viewResponse.body.data.view.kanbanAggregateOperation).toBe('MAX');
+      expect(viewThatShouldBeUpdated.kanbanAggregateOperation).toBe('MAX');
 
-      // Deactivate field to be able to delete it after
       await updateOneFieldMetadata({
         input: {
           idToUpdate: testFieldId,
@@ -111,26 +89,22 @@ describe('deleteOne', () => {
           `,
       });
 
-      // Act
       const { data } = await deleteOneFieldMetadata({
         input: { idToDelete: testFieldId },
       });
 
-      // Assert
-      // 1. Field is deleted
       expect(data.deleteOneField.id).toBe(testFieldId);
 
-      // 2. Kanban aggregate operation has been reset on view using this field as kanbanAggregateOperationFieldMetadataId
-      const updatedViewResponse =
-        await makeGraphqlAPIRequest(findViewOperation);
+      const updatedViewResponse = await findViewByIdWithRestApi(viewId);
+
+      if (!isDefined(updatedViewResponse)) {
+        throw new Error('View not found, this should not happen');
+      }
 
       expect(
-        updatedViewResponse.body.data.view
-          .kanbanAggregateOperationFieldMetadataId,
+        updatedViewResponse.kanbanAggregateOperationFieldMetadataId,
       ).toBeNull();
-      expect(updatedViewResponse.body.data.view.kanbanAggregateOperation).toBe(
-        'COUNT',
-      );
+      expect(updatedViewResponse.kanbanAggregateOperation).toBe(null);
     });
   });
 });

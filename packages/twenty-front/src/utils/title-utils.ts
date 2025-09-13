@@ -1,21 +1,5 @@
-import { AppBasePath } from '@/types/AppBasePath';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
-
-export enum SettingsPageTitles {
-  Accounts = 'Account - Settings',
-  Experience = 'Experience - Settings',
-  Profile = 'Profile - Settings',
-  Objects = 'Data model - Settings',
-  Members = 'Members - Settings',
-  Developers = 'Developers - Settings',
-  Apis = 'API Keys - Settings',
-  Webhooks = 'Webhooks - Settings',
-  Integration = 'Integrations - Settings',
-  ServerlessFunctions = 'Functions - Settings',
-  General = 'General - Settings',
-  Default = 'Settings',
-}
+import { t } from '@lingui/core/macro';
+import { AppBasePath, AppPath, SettingsPath } from 'twenty-shared/types';
 
 enum SettingsPathPrefixes {
   Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,
@@ -42,33 +26,33 @@ export const getPageTitleFromPath = (pathname: string): string => {
   const pathnameOrPrefix = getPathnameOrPrefix(pathname);
   switch (pathnameOrPrefix) {
     case AppPath.Verify:
-      return 'Verify';
+      return t`Verify`;
     case AppPath.SignInUp:
-      return 'Sign in or Create an account';
+      return t`Sign in or Create an account`;
     case AppPath.Invite:
-      return 'Invite';
+      return t`Invite`;
     case AppPath.CreateWorkspace:
-      return 'Create Workspace';
+      return t`Create Workspace`;
     case AppPath.CreateProfile:
-      return 'Create Profile';
+      return t`Create Profile`;
     case SettingsPathPrefixes.Experience:
-      return SettingsPageTitles.Experience;
+      return t`Experience - Settings`;
     case SettingsPathPrefixes.Accounts:
-      return SettingsPageTitles.Accounts;
+      return t`Account - Settings`;
     case SettingsPathPrefixes.Profile:
-      return SettingsPageTitles.Profile;
+      return t`Profile - Settings`;
     case SettingsPathPrefixes.Members:
-      return SettingsPageTitles.Members;
+      return t`Members - Settings`;
     case SettingsPathPrefixes.Objects:
-      return SettingsPageTitles.Objects;
+      return t`Data model - Settings`;
     case SettingsPathPrefixes.ApiWebhooks:
-      return SettingsPageTitles.Apis;
+      return t`API Keys - Settings`;
     case SettingsPathPrefixes.ServerlessFunctions:
-      return SettingsPageTitles.ServerlessFunctions;
+      return t`Functions - Settings`;
     case SettingsPathPrefixes.Integration:
-      return SettingsPageTitles.Integration;
+      return t`Integrations - Settings`;
     case SettingsPathPrefixes.General:
-      return SettingsPageTitles.General;
+      return t`General - Settings`;
     default:
       return 'Twenty';
   }

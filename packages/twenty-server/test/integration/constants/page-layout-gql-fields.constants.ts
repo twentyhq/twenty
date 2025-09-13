@@ -1,7 +1,6 @@
 export const PAGE_LAYOUT_GQL_FIELDS = `
   id
   name
-  workspaceId
   type
   objectMetadataId
   createdAt
@@ -14,6 +13,24 @@ export const PAGE_LAYOUT_TAB_GQL_FIELDS = `
   title
   position
   pageLayoutId
+  createdAt
+  updatedAt
+  deletedAt
+`;
+
+export const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
+  id
+  title
+  type
+  pageLayoutTabId
+  objectMetadataId
+  gridPosition {
+    row
+    column
+    rowSpan
+    columnSpan
+  }
+  configuration
   createdAt
   updatedAt
   deletedAt

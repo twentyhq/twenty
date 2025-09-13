@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
@@ -7,7 +8,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
   objectMetadataItem,
@@ -38,8 +39,14 @@ export const useRecordTableRecordGqlFields = ({
 
   const gqlFieldsList = Object.fromEntries(
     visibleRecordFields.flatMap((recordField) => {
-      const fieldMetadataItem =
+      const fieldMetadataItem: FieldMetadataItem | undefined =
         fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+      if (!isDefined(fieldMetadataItem)) {
+        throw new Error(
+          `Field ${recordField.fieldMetadataItemId} is missing, please refresh the page. If the problem persists, please contact support.`,
+        );
+      }
 
       const isMorphRelation =
         fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
@@ -48,22 +55,14 @@ export const useRecordTableRecordGqlFields = ({
         return [[fieldMetadataItem.name, true]];
       }
 
-      if (
-        !isDefined(fieldMetadataItem) ||
-        !isDefined(fieldMetadataItem.morphRelations)
-      ) {
+      if (!isDefined(fieldMetadataItem.morphRelations)) {
         throw new Error(
           `Field ${fieldMetadataItem.name} is missing, please refresh the page. If the problem persists, please contact support.`,
         );
       }
 
       return fieldMetadataItem.morphRelations.map((morphRelation) => [
-        computeMorphRelationFieldName({
-          fieldName: fieldMetadataItem.name,
-          relationDirection: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
-        }),
+        morphRelation.sourceFieldMetadata.name,
         true,
       ]);
     }),

@@ -19,6 +19,7 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    morphId: null,
     fieldPermissions: [],
     icon: null,
     indexFieldMetadatas: {} as IndexFieldMetadataEntity,

@@ -2,7 +2,6 @@ import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entit
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 
 export const cleanupPageLayoutRecords = async (): Promise<void> => {
-  // @ts-expect-error legacy noImplicitAny
   await global.testDataSource.query(`DELETE from "core"."pageLayout"`);
 };
 
@@ -14,7 +13,6 @@ export const assertPageLayoutStructure = (
   expect(pageLayout.id).toEqual(expect.any(String));
   expect(pageLayout.name).toEqual(expect.any(String));
   expect(Object.values(PageLayoutType)).toContain(pageLayout.type);
-  expect(pageLayout.workspaceId).toEqual(expect.any(String));
   expect(pageLayout.createdAt).toEqual(expect.any(String));
   expect(pageLayout.updatedAt).toEqual(expect.any(String));
 

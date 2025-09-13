@@ -92,6 +92,7 @@ const generateSourceFlatFieldMetadata = ({
     type: FieldMetadataType.RELATION,
     universalIdentifier: standardId,
     workspaceId,
+    morphId: null,
   };
 };
 
@@ -124,6 +125,7 @@ const generateTargetFlatFieldMetadata = ({
   });
 
   return {
+    morphId: null,
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,

@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
+import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -29,6 +29,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -38,8 +39,10 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    private readonly viewV2Service: ViewV2Service,
   ) {}
 
   async updateOne({
@@ -94,7 +97,7 @@ export class ObjectMetadataServiceV2 {
           toFlatObjectMetadataMaps,
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
+            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -123,6 +126,14 @@ export class ObjectMetadataServiceV2 {
       throw new ObjectMetadataException(
         'Updated object metadata not found in recomputed cache',
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (isDefined(updateObjectInput.update.labelIdentifierFieldMetadataId)) {
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
       );
     }
 
@@ -188,7 +199,7 @@ export class ObjectMetadataServiceV2 {
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           buildOptions: {
-            inferDeletionFromMissingObjectFieldIndex: true,
+            inferDeletionFromMissingEntities: true,
             isSystemBuild: false,
           },
           workspaceId,
@@ -278,7 +289,7 @@ export class ObjectMetadataServiceV2 {
           toFlatObjectMetadataMaps,
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
+            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -307,26 +318,6 @@ export class ObjectMetadataServiceV2 {
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
-
-    const [view] = await this.viewRepository.find({
-      where: {
-        objectMetadataId: createdFlatObjectMetadata.id,
-        key: ViewKey.INDEX,
-        workspaceId,
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ObjectMetadataException(
-        'View not created',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    await this.objectMetadataRelatedRecordsService.createViewWorkspaceFavorite(
-      workspaceId,
-      view.id,
-    );
 
     return createdFlatObjectMetadata;
   }

@@ -7,6 +7,7 @@ import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
 import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
+import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
@@ -24,15 +25,14 @@ export const USER_QUERY_FRAGMENT = gql`
       ...WorkspaceMemberQueryFragment
     }
     workspaceMembers {
-      ...WorkspaceMemberQueryFragment
+      ...PartialWorkspaceMemberQueryFragment
     }
     deletedWorkspaceMembers {
       ...DeletedWorkspaceMemberQueryFragment
     }
     currentUserWorkspace {
       permissionFlags
-      objectRecordsPermissions
-      objectPermissions {
+      objectsPermissions {
         ...ObjectPermissionFragment
       }
       twoFactorAuthenticationMethodSummary {
@@ -111,6 +111,7 @@ export const USER_QUERY_FRAGMENT = gql`
 
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${OBJECT_PERMISSION_FRAGMENT}
   ${WORKSPACE_URLS_FRAGMENT}
   ${ROLE_FRAGMENT}

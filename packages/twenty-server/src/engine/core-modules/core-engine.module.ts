@@ -8,6 +8,7 @@ import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-pane
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
@@ -52,6 +53,8 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
+import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -69,6 +72,7 @@ import { FileModule } from './file/file.module';
     FeatureFlagModule,
     FileModule,
     OpenApiModule,
+    ApplicationModule,
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
@@ -77,6 +81,8 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
+    PublicDomainModule,
+    DnsManagerModule,
     PostgresCredentialsModule,
     WorkflowApiModule,
     WorkspaceEventEmitterModule,

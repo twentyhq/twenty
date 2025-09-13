@@ -6,6 +6,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
@@ -398,6 +399,7 @@ export const WorkflowEditActionFormBuilder = ({
           </StyledAddFieldButtonContainer>
         )}
       </StyledWorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
   );
 };

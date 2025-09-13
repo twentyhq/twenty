@@ -101,20 +101,6 @@ export const WorkflowEditActionIterator = ({
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
-        {/* TODO: remove once the UI is implemented */}
-        <FormTextFieldInput
-          label={t`Initial loop step IDs`}
-          placeholder={t`Enter array of step IDs`}
-          defaultValue={
-            Array.isArray(formData.initialLoopStepIds)
-              ? JSON.stringify(formData.initialLoopStepIds)
-              : (formData.initialLoopStepIds as string) || ''
-          }
-          onChange={(value: string) =>
-            handleFieldChange('initialLoopStepIds', value)
-          }
-          readonly={actionOptions.readonly}
-        />
       </WorkflowStepBody>
     </>
   );

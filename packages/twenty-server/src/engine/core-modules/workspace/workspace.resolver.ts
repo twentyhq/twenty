@@ -65,10 +65,9 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-
-import { Workspace } from './workspace.entity';
-
-import { WorkspaceService } from './services/workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
@@ -386,5 +385,13 @@ export class WorkspaceResolver {
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);
     }
+  }
+
+  @Mutation(() => DomainValidRecords, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async checkCustomDomainValidRecords(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<DomainValidRecords | undefined> {
+    return this.workspaceService.checkCustomDomainValidRecords(workspace);
   }
 }

@@ -9,7 +9,7 @@ describe('getWorkflowVersionDiagram', () => {
   it('returns an empty diagram if the provided workflow version', () => {
     const result = getWorkflowVersionDiagram({
       workflowVersion: undefined,
-      isEditable: true,
+      workflowContext: 'workflow',
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -33,7 +33,7 @@ describe('getWorkflowVersionDiagram', () => {
         updatedAt: '',
         workflowId: '',
       },
-      isEditable: true,
+      workflowContext: 'workflow',
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -77,7 +77,7 @@ describe('getWorkflowVersionDiagram', () => {
         updatedAt: '',
         workflowId: '',
       },
-      isEditable: true,
+      workflowContext: 'workflow',
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -145,7 +145,7 @@ describe('getWorkflowVersionDiagram', () => {
         updatedAt: '',
         workflowId: '',
       },
-      isEditable: true,
+      workflowContext: 'workflow',
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -161,7 +161,9 @@ describe('getWorkflowVersionDiagram', () => {
       "markerStart": undefined,
       "selectable": true,
       "source": "trigger",
+      "sourceHandle": "default",
       "target": "step-1",
+      "targetHandle": "default",
       "type": "empty-filter--editable",
       "zIndex": -2,
     },

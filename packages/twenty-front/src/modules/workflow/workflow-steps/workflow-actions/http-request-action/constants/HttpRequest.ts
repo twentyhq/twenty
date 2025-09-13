@@ -4,6 +4,7 @@ const {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   JSON_RESPONSE_PLACEHOLDER,
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE,
+  BODY_TYPES,
 } = {
   HTTP_METHODS: [
     { label: 'GET', value: 'GET' },
@@ -25,6 +26,13 @@ const {
     duration: undefined,
     error: undefined,
   },
+  BODY_TYPES: {
+    KEY_VALUE: 'keyValue',
+    RAW_JSON: 'rawJson',
+    FORM_DATA: 'formData',
+    TEXT: 'text',
+    NONE: 'none',
+  } as const,
 };
 
 export type HttpMethodWithBody = (typeof METHODS_WITH_BODY)[number];
@@ -41,6 +49,7 @@ export type HttpRequestFormData = {
 };
 
 export {
+  BODY_TYPES,
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE,
   DEFAULT_JSON_BODY_PLACEHOLDER,
   HTTP_METHODS,

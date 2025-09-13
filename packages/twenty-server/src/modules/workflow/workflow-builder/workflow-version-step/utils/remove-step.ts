@@ -59,6 +59,27 @@ const removeOneStep = ({
           };
         }
 
+        if (
+          step.type === WorkflowActionType.ITERATOR &&
+          isDefined(step.settings.input.initialLoopStepIds) &&
+          step.settings.input.initialLoopStepIds.includes(stepIdToDelete)
+        ) {
+          return {
+            ...step,
+            settings: {
+              ...step.settings,
+              input: {
+                ...step.settings.input,
+                initialLoopStepIds: computeUpdatedNextStepIds({
+                  existingNextStepIds: step.settings.input.initialLoopStepIds,
+                  stepIdToRemove: stepIdToDelete,
+                  stepToDeleteChildrenIds: stepToDeleteChildrenIds,
+                }),
+              },
+            },
+          };
+        }
+
         return step;
       }) ?? [];
 

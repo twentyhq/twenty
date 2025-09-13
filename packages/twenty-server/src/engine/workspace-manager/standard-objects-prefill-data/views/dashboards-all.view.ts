@@ -6,6 +6,7 @@ import {
   DASHBOARD_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export const dashboardsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
@@ -27,6 +28,7 @@ export const dashboardsAllView = (
     position: 0,
     icon: 'IconLayoutDashboard',
     kanbanFieldMetadataId: '',
+    openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     filters: [],
     fields: [
       {
@@ -42,7 +44,7 @@ export const dashboardsAllView = (
         fieldMetadataId:
           dashboardObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+              field.standardId === DASHBOARD_STANDARD_FIELD_IDS.createdBy,
           )?.id ?? '',
         position: 1,
         isVisible: true,
@@ -52,9 +54,19 @@ export const dashboardsAllView = (
         fieldMetadataId:
           dashboardObjectMetadata.fields.find(
             (field) =>
-              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',
         position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          dashboardObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+          )?.id ?? '',
+        position: 3,
         isVisible: true,
         size: 150,
       },

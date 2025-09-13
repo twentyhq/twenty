@@ -31,6 +31,7 @@ import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-e
 import {
   type WorkflowAction,
   WorkflowActionType,
+  WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -47,6 +48,8 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
     },
   },
 };
+
+const DUPLICATED_STEP_POSITION_OFFSET = 50;
 
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
@@ -70,13 +73,20 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     input: CreateWorkflowVersionStepInput;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const { workflowVersionId, stepType, parentStepId, nextStepId, position } =
-      input;
+    const {
+      workflowVersionId,
+      stepType,
+      parentStepId,
+      nextStepId,
+      position,
+      parentStepConnectionOptions,
+    } = input;
 
-    const newStep = await this.getStepDefaultDefinition({
+    const newStep = await this.runStepCreationSideEffectsAndBuildStep({
       type: stepType,
       workspaceId,
       position,
+      workflowVersionId,
     });
 
     const enrichedNewStep = await this.enrichOutputSchema({
@@ -116,6 +126,7 @@ export class WorkflowVersionStepWorkspaceService {
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
+      parentStepConnectionOptions,
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {
@@ -279,36 +290,69 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
-  async duplicateStep({
-    step,
+  async duplicateWorkflowVersionStep({
     workspaceId,
+    workflowVersionId,
+    stepId,
   }: {
-    step: WorkflowAction;
     workspaceId: string;
-  }): Promise<WorkflowAction> {
-    switch (step.type) {
-      case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.usePublishedVersionAsDraft({
-          id: step.settings.input.serverlessFunctionId,
-          version: step.settings.input.serverlessFunctionVersion,
-          workspaceId,
-        });
+    workflowVersionId: string;
+    stepId: string;
+  }): Promise<WorkflowVersionStepChangesDTO> {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
 
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              serverlessFunctionVersion: 'draft',
-            },
-          },
-        };
-      }
-      default: {
-        return step;
-      }
+    const workflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
+
+    const stepToDuplicate = workflowVersion.steps?.find(
+      (step) => step.id === stepId,
+    );
+
+    if (!isDefined(stepToDuplicate)) {
+      throw new WorkflowVersionStepException(
+        'Step not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const duplicatedStep = await this.createStepForDuplicate({
+      step: stepToDuplicate,
+      workspaceId,
+    });
+
+    const { updatedSteps, updatedInsertedStep, updatedTrigger } = insertStep({
+      existingSteps: workflowVersion.steps ?? [],
+      existingTrigger: workflowVersion.trigger,
+      insertedStep: duplicatedStep,
+    });
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: updatedSteps,
+      trigger: updatedTrigger,
+    });
+
+    return computeWorkflowVersionStepChanges({
+      createdStep: updatedInsertedStep,
+      trigger: updatedTrigger,
+      steps: updatedSteps,
+    });
   }
 
   async submitFormStep({
@@ -370,6 +414,38 @@ export class WorkflowVersionStepWorkspaceService {
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  async createDraftStep({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        await this.serverlessFunctionService.createDraftFromPublishedVersion({
+          id: step.settings.input.serverlessFunctionId,
+          version: step.settings.input.serverlessFunctionVersion,
+          workspaceId,
+        });
+
+        return {
+          ...step,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              serverlessFunctionVersion: 'draft',
+            },
+          },
+        };
+      }
+      default: {
+        return step;
+      }
+    }
   }
 
   private async enrichOutputSchema({
@@ -446,14 +522,16 @@ export class WorkflowVersionStepWorkspaceService {
     }
   }
 
-  private async getStepDefaultDefinition({
+  private async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
     position,
+    workflowVersionId,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     position?: WorkflowStepPositionInput;
+    workflowVersionId: string;
   }): Promise<WorkflowAction> {
     const newStepId = v4();
 
@@ -655,6 +733,12 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       case WorkflowActionType.ITERATOR: {
+        const emptyNodeStep = await this.createEmptyNodeForIteratorStep({
+          iteratorStepId: baseStep.id,
+          workflowVersionId,
+          workspaceId,
+        });
+
         return {
           ...baseStep,
           name: 'Iterator',
@@ -663,7 +747,7 @@ export class WorkflowVersionStepWorkspaceService {
             ...BASE_STEP_DEFINITION,
             input: {
               items: [],
-              initialLoopStepIds: [],
+              initialLoopStepIds: [emptyNodeStep.id],
             },
           },
         };
@@ -744,5 +828,104 @@ export class WorkflowVersionStepWorkspaceService {
 
       return acc;
     }, {});
+  }
+
+  private async createStepForDuplicate({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    const duplicatedStepPosition = {
+      x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+    };
+
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        const newServerlessFunction =
+          await this.serverlessFunctionService.duplicateServerlessFunction({
+            id: step.settings.input.serverlessFunctionId,
+            version: step.settings.input.serverlessFunctionVersion,
+            workspaceId,
+          });
+
+        return {
+          ...step,
+          id: v4(),
+          name: `${step.name} (Duplicate)`,
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              serverlessFunctionId: newServerlessFunction.id,
+              serverlessFunctionVersion: 'draft',
+            },
+          },
+        };
+      }
+      default: {
+        return {
+          ...step,
+          id: v4(),
+          name: `${step.name} (Duplicate)`,
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+        };
+      }
+    }
+  }
+
+  private async createEmptyNodeForIteratorStep({
+    iteratorStepId,
+    workflowVersionId,
+    workspaceId,
+  }: {
+    iteratorStepId: string;
+    workflowVersionId: string;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionId,
+      },
+    });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const existingSteps = workflowVersion.steps ?? [];
+
+    const emptyNodeStep: WorkflowEmptyAction = {
+      id: v4(),
+      name: 'Empty Node',
+      type: WorkflowActionType.EMPTY,
+      valid: true,
+      nextStepIds: [iteratorStepId],
+      settings: {
+        ...BASE_STEP_DEFINITION,
+        input: {},
+      },
+    };
+
+    await workflowVersionRepository.update(workflowVersion.id, {
+      steps: [...existingSteps, emptyNodeStep],
+    });
+
+    return emptyNodeStep;
   }
 }

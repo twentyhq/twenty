@@ -3,10 +3,10 @@ import {
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertRestApiErrorNotFoundResponse,
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -20,6 +20,7 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import {
   generateViewFieldExceptionMessage,
@@ -36,6 +37,7 @@ describe('View Field REST API', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myTestObject',
         namePlural: 'myTestObjects',
@@ -60,6 +62,7 @@ describe('View Field REST API', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: createFieldInput,
       gqlFields: `
           id
@@ -74,6 +77,7 @@ describe('View Field REST API', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
   });
@@ -219,8 +223,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -308,8 +311,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(getResponse);
-      expect(getResponse.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(getResponse);
     });
 
     it('should return 404 error when deleting non-existent view field', async () => {
@@ -319,14 +321,7 @@ describe('View Field REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_FIELD_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 });

@@ -1,20 +1,13 @@
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
-import {
-  type WorkflowStepType,
-  type WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { type WorkflowStepType } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCreateStep = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion | undefined;
-}) => {
+export const useCreateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilComponentState(
@@ -26,12 +19,6 @@ export const useCreateStep = ({
 
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
-
-  if (!isDefined(workflow)) {
-    return {
-      createStep: async () => undefined,
-    };
-  }
 
   const createStep = async ({
     newStepType,

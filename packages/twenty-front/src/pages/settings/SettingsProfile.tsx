@@ -8,12 +8,12 @@ import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconShield, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
@@ -71,9 +71,9 @@ export const SettingsProfile = () => {
               Icon={<IconShield />}
               Status={
                 has2FAMethod ? (
-                  <Status text={'Active'} color={'turquoise'} />
+                  <Status text={t`Active`} color="turquoise" />
                 ) : (
-                  <Status text={'Deactivated'} color={'gray'} />
+                  <Status text={t`Deactivated`} color="gray" />
                 )
               }
             />

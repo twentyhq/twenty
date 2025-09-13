@@ -104,8 +104,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -123,7 +121,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
+        "sourceHandle": "default",
         "target": "step1",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -138,7 +138,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step1",
+        "sourceHandle": "default",
         "target": "step2",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -153,7 +155,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step2",
+        "sourceHandle": "default",
         "target": "step3",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -337,8 +341,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -356,7 +358,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
+        "sourceHandle": "default",
         "target": "step1",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -371,7 +375,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step1",
+        "sourceHandle": "default",
         "target": "step2",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -386,7 +392,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step2",
+        "sourceHandle": "default",
         "target": "step3",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -570,8 +578,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -589,7 +595,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
+        "sourceHandle": "default",
         "target": "step1",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -604,7 +612,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step1",
+        "sourceHandle": "default",
         "target": "step2",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -619,7 +629,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step2",
+        "sourceHandle": "default",
         "target": "step3",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -822,8 +834,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -841,7 +851,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
+        "sourceHandle": "default",
         "target": "step1",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -856,7 +868,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step1",
+        "sourceHandle": "default",
         "target": "step2",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -871,7 +885,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step2",
+        "sourceHandle": "default",
         "target": "step3",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -886,7 +902,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "step3",
+        "sourceHandle": "default",
         "target": "step4",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },
@@ -1055,8 +1073,6 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-
-      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -1074,7 +1090,9 @@ describe('generateWorkflowRunDiagram', () => {
         "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
+        "sourceHandle": "default",
         "target": "step1",
+        "targetHandle": "default",
         "type": "empty-filter--run",
         "zIndex": -2,
       },

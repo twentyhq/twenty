@@ -4,9 +4,9 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -17,7 +17,6 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -26,7 +25,7 @@ import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type WorkspaceMember,
@@ -119,9 +118,9 @@ export const UserProviderEffect = () => {
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
         ...queryData.currentUser.currentUserWorkspace,
-        objectPermissions:
+        objectsPermissions:
           (queryData.currentUser.currentUserWorkspace
-            .objectPermissions as Array<
+            .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });
@@ -176,10 +175,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
-      setCurrentWorkspaceMembers(
-        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
-          [],
-      );
+      setCurrentWorkspaceMembers(workspaceMembers);
     }
 
     if (isDefined(deletedWorkspaceMembers)) {

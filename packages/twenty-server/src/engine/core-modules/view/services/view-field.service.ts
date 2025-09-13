@@ -107,9 +107,49 @@ export class ViewFieldService {
       );
     }
 
-    const viewField = this.viewFieldRepository.create(viewFieldData);
+    try {
+      const viewField = this.viewFieldRepository.create(viewFieldData);
 
-    return this.viewFieldRepository.save(viewField);
+      const savedViewField = await this.viewFieldRepository.save(viewField);
+      const createdViewField = await this.findById(
+        savedViewField.id,
+        viewFieldData.workspaceId,
+      );
+
+      if (!isDefined(createdViewField)) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          ),
+          ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+            ),
+          },
+        );
+      }
+
+      return createdViewField;
+    } catch (error) {
+      if (
+        error.message.includes('duplicate key value violates unique constraint')
+      ) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+          ),
+          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+            ),
+          },
+        );
+      }
+
+      throw error;
+    }
   }
 
   async update(
@@ -155,7 +195,7 @@ export class ViewFieldService {
     return viewField;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
+  async destroy(id: string, workspaceId: string): Promise<ViewFieldEntity> {
     const viewField = await this.findById(id, workspaceId);
 
     if (!isDefined(viewField)) {
@@ -170,6 +210,6 @@ export class ViewFieldService {
 
     await this.viewFieldRepository.delete(id);
 
-    return true;
+    return viewField;
   }
 }

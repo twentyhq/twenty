@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import chunk from 'lodash.chunk';
+import { In, IsNull } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
@@ -11,20 +13,123 @@ import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/uti
 @Injectable()
 export class MessagingMessageCleanerService {
   private readonly logger = new Logger(MessagingMessageCleanerService.name);
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+  ) {}
 
-  public async cleanWorkspaceThreads(workspaceId: string) {
+  async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
+    workspaceId,
+    messageExternalIds,
+    messageChannelId,
+  }: {
+    workspaceId: string;
+    messageExternalIds: string[];
+    messageChannelId: string;
+  }) {
+    const messageRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageWorkspaceEntity>(
+        workspaceId,
+        'message',
+      );
+
+    const messageChannelMessageAssociationRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
+        'messageChannelMessageAssociation',
+      );
+
     const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
+        'messageThread',
+      );
+
+    const messageExternalIdsChunks = chunk(messageExternalIds, 500);
+
+    for (const messageExternalIdsChunk of messageExternalIdsChunks) {
+      const messageChannelMessageAssociationsToDelete =
+        await messageChannelMessageAssociationRepository.find({
+          where: {
+            messageExternalId: In(messageExternalIdsChunk),
+            messageChannelId,
+          },
+        });
+
+      if (messageChannelMessageAssociationsToDelete.length <= 0) {
+        continue;
+      }
+
+      await messageChannelMessageAssociationRepository.delete(
+        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+      );
+
+      this.logger.log(
+        `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageAssociationsToDelete.length} message channel message associations`,
+      );
+
+      const orphanMessages = await messageRepository.find({
+        where: {
+          id: In(
+            messageChannelMessageAssociationsToDelete.map(
+              ({ messageId }) => messageId,
+            ),
+          ),
+          messageChannelMessageAssociations: {
+            id: IsNull(),
+          },
+        },
+      });
+
+      if (orphanMessages.length <= 0) {
+        continue;
+      }
+
+      this.logger.log(
+        `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
+      );
+
+      await messageRepository.delete(orphanMessages.map(({ id }) => id));
+
+      const orphanMessageThreads = await messageThreadRepository.find({
+        where: {
+          id: In(orphanMessages.map(({ messageThreadId }) => messageThreadId)),
+          messages: {
+            id: IsNull(),
+          },
+        },
+      });
+
+      if (orphanMessageThreads.length <= 0) {
+        continue;
+      }
+
+      this.logger.log(
+        `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
+      );
+
+      await messageThreadRepository.delete(
+        orphanMessageThreads.map(({ id }) => id),
+      );
+    }
+  }
+
+  public async cleanOrphanMessagesAndThreads(workspaceId: string) {
+    const messageThreadRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
+        workspaceId,
         'messageThread',
       );
 
     const messageRepository =
-      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageWorkspaceEntity>(
+        workspaceId,
         'message',
       );
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {

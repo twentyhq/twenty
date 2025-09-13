@@ -1,7 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutDraggedAreaState } from '@/settings/page-layout/states/pageLayoutDraggedAreaState';
+import { WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
@@ -45,7 +45,7 @@ const widgetTypeOptions = [
     type: WidgetType.IFRAME,
     icon: IconFrame,
     title: 'Add an iframe',
-    disabled: true,
+    disabled: false,
   },
 ];
 
@@ -56,14 +56,24 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   );
 
   const handleSelectWidget = (widgetType: WidgetType) => {
-    if (widgetType === WidgetType.GRAPH) {
-      navigateCommandMenu({
-        page: CommandMenuPages.PageLayoutGraphTypeSelect,
-        pageTitle: 'Select Graph Type',
-        pageIcon: IconChartPie,
-      });
-    } else {
-      setPageLayoutDraggedArea(null);
+    switch (widgetType) {
+      case WidgetType.GRAPH:
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutGraphTypeSelect,
+          pageTitle: 'Select Graph Type',
+          pageIcon: IconChartPie,
+        });
+        break;
+      case WidgetType.IFRAME:
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutIframeConfig,
+          pageTitle: 'Configure iFrame',
+          pageIcon: IconFrame,
+        });
+        break;
+      default:
+        setPageLayoutDraggedArea(null);
+        break;
     }
   };
 

@@ -112,9 +112,9 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
           )}
         </StyledMainContentContainer>
         <MainButton
-          title={'Next'}
+          title={t`Next`}
           onClick={handleClick}
-          variant={'primary'}
+          variant="primary"
           fullWidth
         />
       </StyledForm>

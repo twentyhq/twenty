@@ -11,7 +11,6 @@ import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
@@ -21,6 +20,7 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -80,7 +80,7 @@ const StyledFilterContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const StyledSeperatorContainer = styled.div`
+const StyledSeparatorContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   display: flex;
@@ -90,7 +90,7 @@ const StyledSeperatorContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledSeperator = styled.div`
+const StyledSeparator = styled.div`
   align-self: stretch;
   background: ${({ theme }) => theme.background.quaternary};
   width: 1px;
@@ -148,19 +148,19 @@ export const ViewBarDetails = ({
   const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
     useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
+  const { isSeeDeletedRecordsFilter } = useCheckIsSoftDeleteFilter();
 
-  const softDeleteFilter = currentRecordFilters.find((recordFilter) =>
-    checkIsSoftDeleteFilter(recordFilter),
+  const allSoftDeletedRecordsFilter = currentRecordFilters.find(
+    (recordFilter) => isSeeDeletedRecordsFilter(recordFilter),
   );
 
   const recordFilters = useMemo(() => {
     return currentRecordFilters.filter(
       (recordFilter) =>
         !recordFilter.recordFilterGroupId &&
-        !checkIsSoftDeleteFilter(recordFilter),
+        !isSeeDeletedRecordsFilter(recordFilter),
     );
-  }, [currentRecordFilters, checkIsSoftDeleteFilter]);
+  }, [currentRecordFilters, isSeeDeletedRecordsFilter]);
 
   const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
     useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
@@ -222,17 +222,17 @@ export const ViewBarDetails = ({
           defaultEnableYScroll={false}
         >
           <StyledChipContainer>
-            {isDefined(softDeleteFilter) && (
+            {isDefined(allSoftDeletedRecordsFilter) && (
               <SoftDeleteFilterChip
-                key={softDeleteFilter.fieldMetadataId}
-                recordFilter={softDeleteFilter}
+                key={allSoftDeletedRecordsFilter.fieldMetadataId}
+                recordFilter={allSoftDeletedRecordsFilter}
                 viewBarId={viewBarId}
               />
             )}
-            {isDefined(softDeleteFilter) && (
-              <StyledSeperatorContainer>
-                <StyledSeperator />
-              </StyledSeperatorContainer>
+            {isDefined(allSoftDeletedRecordsFilter) && (
+              <StyledSeparatorContainer>
+                <StyledSeparator />
+              </StyledSeparatorContainer>
             )}
             {currentRecordSorts.map((recordSort) => (
               <EditableSortChip
@@ -242,9 +242,9 @@ export const ViewBarDetails = ({
             ))}
             {isNonEmptyArray(recordFilters) &&
               isNonEmptyArray(currentRecordSorts) && (
-                <StyledSeperatorContainer>
-                  <StyledSeperator />
-                </StyledSeperatorContainer>
+                <StyledSeparatorContainer>
+                  <StyledSeparator />
+                </StyledSeparatorContainer>
               )}
             {shouldShowAnyFieldSearchChip && <AnyFieldSearchDropdownButton />}
             {shouldShowAdvancedFilterDropdownButton && (

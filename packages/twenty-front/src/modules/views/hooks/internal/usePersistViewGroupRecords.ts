@@ -3,8 +3,10 @@ import { useCallback } from 'react';
 import { CREATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/createCoreViewGroup';
 import { DESTROY_CORE_VIEW_GROUP } from '@/views/graphql/mutations/destroyCoreViewGroup';
 import { UPDATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/updateCoreViewGroup';
+import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useApolloClient } from '@apollo/client';
+import { type CoreViewGroup } from '~/generated/graphql';
 
 type CreateViewGroupRecordsArgs = {
   viewGroupsToCreate: ViewGroup[];
@@ -13,6 +15,9 @@ type CreateViewGroupRecordsArgs = {
 
 export const usePersistViewGroupRecords = () => {
   const apolloClient = useApolloClient();
+
+  const { triggerViewGroupOptimisticEffect } =
+    useTriggerViewGroupOptimisticEffect();
 
   const createCoreViewGroupRecords = useCallback(
     ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
@@ -32,11 +37,19 @@ export const usePersistViewGroupRecords = () => {
                 position: viewGroup.position,
               },
             },
+            update: (_cache, { data }) => {
+              const record = data?.['createCoreViewGroup'];
+              if (!record) return;
+
+              triggerViewGroupOptimisticEffect({
+                createdViewGroups: [record],
+              });
+            },
           }),
         ),
       );
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   const updateCoreViewGroupRecords = useCallback(
@@ -44,7 +57,7 @@ export const usePersistViewGroupRecords = () => {
       if (!viewGroupsToUpdate.length) return;
 
       const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
-        apolloClient.mutate<{ updateCoreViewGroup: ViewGroup }>({
+        apolloClient.mutate<{ updateCoreViewGroup: CoreViewGroup }>({
           mutation: UPDATE_CORE_VIEW_GROUP,
           variables: {
             id: viewGroup.id,
@@ -55,35 +68,24 @@ export const usePersistViewGroupRecords = () => {
           },
           // Avoid cache being updated with stale data
           fetchPolicy: 'no-cache',
+          update: (_cache, { data }) => {
+            const record = data?.['updateCoreViewGroup'];
+            if (!record) return;
+
+            triggerViewGroupOptimisticEffect({
+              updatedViewGroups: [record],
+            });
+          },
         }),
       );
 
-      const mutationResults = await Promise.all(mutationPromises);
-
-      // FixMe: Using useUpdateOneRecord hook that call triggerUpdateRecordsOptimisticEffect is actaully causing multiple records to be created
-      // This is a temporary fix
-      mutationResults.forEach(({ data }) => {
-        const record = data?.['updateCoreViewGroup'];
-
-        if (!record) return;
-
-        apolloClient.cache.modify({
-          id: apolloClient.cache.identify({
-            __typename: 'CoreViewGroup',
-            id: record.id,
-          }),
-          fields: {
-            isVisible: () => record.isVisible,
-            position: () => record.position,
-          },
-        });
-      });
+      return Promise.all(mutationPromises);
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   const deleteCoreViewGroupRecords = useCallback(
-    async (viewGroupsToDelete: ViewGroup[]) => {
+    async (viewGroupsToDelete: Pick<CoreViewGroup, 'id' | 'viewId'>[]) => {
       if (!viewGroupsToDelete.length) return;
 
       return Promise.all(
@@ -93,11 +95,16 @@ export const usePersistViewGroupRecords = () => {
             variables: {
               id: viewGroup.id,
             },
+            update: () => {
+              triggerViewGroupOptimisticEffect({
+                deletedViewGroups: [viewGroup],
+              });
+            },
           }),
         ),
       );
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   return {

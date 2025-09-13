@@ -25,7 +25,7 @@ export const AuthModal = ({ children }: AuthModalProps) => {
       <AuthModalMountEffect />
       <Modal
         modalId={AUTH_MODAL_ID}
-        padding={'none'}
+        padding="none"
         size={config.size}
         modalVariant={config.variant}
       >

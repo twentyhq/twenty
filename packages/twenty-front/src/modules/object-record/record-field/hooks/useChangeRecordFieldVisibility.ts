@@ -26,7 +26,7 @@ export const useChangeRecordFieldVisibility = (
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
-  const changeRecordFieldVisibility = ({
+  const changeRecordFieldVisibility = async ({
     fieldMetadataId,
     isVisible,
   }: {
@@ -56,7 +56,7 @@ export const useChangeRecordFieldVisibility = (
 
       upsertRecordField(recordFieldToUpsert);
 
-      saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
+      await saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
     } else {
       updateRecordField(fieldMetadataId, {
         isVisible: shouldShowFieldMetadataItem,
