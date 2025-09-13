@@ -13,11 +13,11 @@ const AddStyleContainer = {
 
 export const ObjectFilterDropdownCreateNewOption = ({
   name,
-  IsHasPermissionFlag,
+  isHasPermissionFlag,
   fieldName,
 }: {
   name: string;
-  IsHasPermissionFlag: boolean;
+  isHasPermissionFlag: boolean;
   fieldName: string;
 }) => {
   const navigateSettings = useNavigateSettings();
@@ -38,7 +38,7 @@ export const ObjectFilterDropdownCreateNewOption = ({
 
   return (
     <>
-      {IsHasPermissionFlag ? (
+      {isHasPermissionFlag ? (
         <>
           <MenuItem text="No results" />
           <DropdownMenuSeparator />

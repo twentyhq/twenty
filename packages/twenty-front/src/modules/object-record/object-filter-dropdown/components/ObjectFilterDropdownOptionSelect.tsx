@@ -56,7 +56,7 @@ export const ObjectFilterDropdownOptionSelect = ({
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const IsHasPermissionFlag = useHasPermissionFlag(
+  const isHasPermissionFlag = useHasPermissionFlag(
     'DATA_MODEL' as PermissionFlagType,
   );
 
@@ -165,7 +165,7 @@ export const ObjectFilterDropdownOptionSelect = ({
         {showNoResult ? (
           <ObjectFilterDropdownCreateNewOption
             name={objectFilterDropdownSearchInput}
-            IsHasPermissionFlag={IsHasPermissionFlag}
+            isHasPermissionFlag={isHasPermissionFlag}
             fieldName={fieldMetadataItemUsedInDropdown?.name || ''}
           />
         ) : (
