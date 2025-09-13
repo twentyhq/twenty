@@ -162,8 +162,8 @@ export class ResetPasswordService {
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     i18n.activate(locale);
 
