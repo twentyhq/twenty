@@ -2,7 +2,6 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
-import { view } from 'framer-motion';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useUpdateCoreViewMutation } from '~/generated/graphql';

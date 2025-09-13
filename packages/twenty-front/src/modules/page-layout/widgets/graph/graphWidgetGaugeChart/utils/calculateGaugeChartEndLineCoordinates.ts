@@ -6,7 +6,7 @@ export const calculateGaugeChartEndLineCoordinates = (
   outerRadius: number,
 ) => {
   const adjustedAngle = endAngle - Math.PI / 2;
-  
+
   const x1 = centerX + Math.cos(adjustedAngle) * innerRadius;
   const y1 = centerY + Math.sin(adjustedAngle) * innerRadius;
   const x2 = centerX + Math.cos(adjustedAngle) * outerRadius;
