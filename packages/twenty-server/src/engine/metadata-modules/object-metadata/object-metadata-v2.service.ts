@@ -93,8 +93,12 @@ export class ObjectMetadataServiceV2 {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              fromFlatObjectMetadataMaps,
+              toFlatObjectMetadataMaps,
+            },
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
@@ -196,8 +200,12 @@ export class ObjectMetadataServiceV2 {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              fromFlatObjectMetadataMaps,
+              toFlatObjectMetadataMaps,
+            },
+          },
           buildOptions: {
             inferDeletionFromMissingEntities: true,
             isSystemBuild: false,
@@ -285,8 +293,12 @@ export class ObjectMetadataServiceV2 {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              fromFlatObjectMetadataMaps,
+              toFlatObjectMetadataMaps,
+            },
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
