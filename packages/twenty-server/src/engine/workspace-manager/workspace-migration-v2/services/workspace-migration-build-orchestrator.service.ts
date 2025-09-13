@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
@@ -15,7 +17,6 @@ import {
   WorkspaceMigrationV2Exception,
   WorkspaceMigrationV2ExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -41,18 +42,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const allActions: WorkspaceMigrationActionV2[] = [];
       const allFailures: FailedFlatEntityValidation<FlatEntity>[] = []; // Should be a record of each tested data
 
-      let opstimisticFlatEntityMaps = structuredClone(fromAllFlatEntityMaps);
+      let opstimisticAllFlatEntityMaps = structuredClone(fromAllFlatEntityMaps);
       const dispatchBuildAndValidationActionResult = (
         result: ValidateAndBuildReturnType<
           WorkspaceMigrationActionV2,
           FlatEntity
         >,
       ) => {
-        opstimisticFlatEntityMaps = {
-          ...opstimisticFlatEntityMaps,
-          ...result.optimisticAllFlatEntityMaps,
-        };
-
         if (result.status === 'fail') {
           allFailures.push(...result.errors);
         } else {
@@ -72,7 +68,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
           });
 
-        dispatchBuildAndValidationActionResult(objectResult); // TODO
+        // TODO
+        opstimisticAllFlatEntityMaps = {
+          ...opstimisticAllFlatEntityMaps,
+          flatObjectMetadataMaps: objectResult.optimisticFlatObjectMetadataMaps,
+        };
+        ///
+
+        if (objectResult.status === 'fail') {
+          allFailures.push(...objectResult.errors);
+        } else {
+          allActions.push(...objectResult.workspaceMigration.actions);
+        }
       }
       ///
 
@@ -90,6 +97,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             },
           );
 
+        opstimisticAllFlatEntityMaps = {
+          ...opstimisticAllFlatEntityMaps,
+          flatViewMaps: viewResult.optimisticFlatEntityMaps,
+        };
         dispatchBuildAndValidationActionResult(viewResult);
       }
 
@@ -108,6 +119,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             },
           );
 
+        opstimisticAllFlatEntityMaps = {
+          ...opstimisticAllFlatEntityMaps,
+          flatViewFieldMaps: viewFieldResult.optimisticFlatEntityMaps,
+        };
         dispatchBuildAndValidationActionResult(viewFieldResult);
       }
 

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
@@ -24,12 +23,12 @@ export type WorkspaceMigrationV2BuilderOptions = {
 export type SuccessfulWorkspaceMigrationBuildResult = {
   status: 'success';
   workspaceMigration: WorkspaceMigrationV2;
-  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
+  optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
 
 export type FailedWorkspaceMigrationBuildResult = {
   status: 'fail';
-  optimisticAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
+  optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   errors: FailedFlatEntityValidation<FlatEntity>[];
 };
 
@@ -129,10 +128,8 @@ export class WorkspaceMigrationBuilderV2Service {
       return {
         status: 'fail',
         errors: allValidateAndBuildResultFailures,
-        optimisticAllFlatEntityMaps: {
-          flatObjectMetadataMaps:
-            fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
-        },
+        optimisticFlatObjectMetadataMaps:
+          fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
       };
     }
 
@@ -151,10 +148,8 @@ export class WorkspaceMigrationBuilderV2Service {
           ...indexWorkspaceMigrationActions, // Should be handled separately from objects
         ],
       },
-      optimisticAllFlatEntityMaps: {
-        flatObjectMetadataMaps:
-          fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
-      },
+      optimisticFlatObjectMetadataMaps:
+        fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
     };
   }
 }

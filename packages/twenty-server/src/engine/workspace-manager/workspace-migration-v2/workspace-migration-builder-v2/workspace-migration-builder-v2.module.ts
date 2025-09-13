@@ -23,8 +23,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2ViewActionsBuilderService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ],
-  exports: [
-    WorkspaceMigrationBuilderV2Service,
-  ],
+  exports: [WorkspaceMigrationBuilderV2Service],
 })
 export class WorkspaceMigrationBuilderV2Module {}

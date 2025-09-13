@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+
+import { FromTo } from 'twenty-shared/types';
+
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
 import {
+  FlatEntityValidationArgs,
   FlatEntityValidationReturnType,
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
@@ -17,7 +20,6 @@ import {
   getWorkspaceMigrationV2ViewFieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-field-action';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
-import { FromTo } from 'twenty-shared/types';
 
 export type ViewFieldRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
@@ -38,12 +40,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
   protected async validateFlatEntityCreation({
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatViewFieldToValidate,
-    optimisticEntityMaps: optimisticFlatViewFieldMaps,
-  }: {
-    flatEntityToValidate: FlatViewField;
-    optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
-    dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
-  }): Promise<
+    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
+  }: FlatEntityValidationArgs<
+    FlatViewField,
+    ViewFieldRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationViewFieldActionV2,
       FlatViewField
@@ -74,12 +75,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
   protected async validateFlatEntityDeletion({
     dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatViewFieldToValidate,
-    optimisticEntityMaps: optimisticFlatViewFieldMaps,
-  }: {
-    flatEntityToValidate: FlatViewField;
-    optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
-    dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
-  }): Promise<
+    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
+  }: FlatEntityValidationArgs<
+    FlatViewField,
+    ViewFieldRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationViewFieldActionV2,
       FlatViewField
@@ -110,10 +110,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
   protected async validateFlatEntityUpdate({
     dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: { from: fromFlatViewField, to: toFlatViewField },
-    optimisticEntityMaps: optimisticFlatViewFieldMaps,
+    optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
   }: {
     flatEntityUpdate: FromTo<FlatViewField>;
-    optimisticEntityMaps: FlatEntityMaps<FlatViewField>;
+    optimisticFlatEntityMaps: FlatEntityMaps<FlatViewField>;
     dependencyOptimisticFlatEntityMaps: ViewFieldRelatedFlatEntityMaps;
   }): Promise<
     | FlatEntityValidationReturnType<

@@ -7,12 +7,13 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-
-import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-import { DeleteViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view-field.input';
-import { DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
-import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
+
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type DeleteViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view-field.input';
+import { type DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
+import { type UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
+
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
@@ -73,6 +74,7 @@ describe('View Field Resolver - Failing Operations - v2', () => {
         expect(response.errors).toBeDefined();
         expect(response.errors.length).toBe(1);
         const [firstError] = response.errors;
+
         expect(firstError).toMatchSnapshot();
       },
     );
@@ -109,6 +111,7 @@ describe('View Field Resolver - Failing Operations - v2', () => {
         expect(response.errors).toBeDefined();
         expect(response.errors.length).toBe(1);
         const [firstError] = response.errors;
+
         expect(firstError).toMatchSnapshot();
       },
     );
@@ -142,6 +145,7 @@ describe('View Field Resolver - Failing Operations - v2', () => {
         expect(response.errors).toBeDefined();
         expect(response.errors.length).toBe(1);
         const [firstError] = response.errors;
+
         expect(firstError).toMatchSnapshot();
       },
     );
@@ -175,6 +179,7 @@ describe('View Field Resolver - Failing Operations - v2', () => {
         expect(response.errors).toBeDefined();
         expect(response.errors.length).toBe(1);
         const [firstError] = response.errors;
+
         expect(firstError).toMatchSnapshot();
       },
     );

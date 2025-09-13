@@ -1,7 +1,5 @@
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
-import {
-  assertGraphQLSuccessfulResponse,
-} from 'test/integration/graphql/utils/graphql-test-assertions.util';
+import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   createViewFieldData,
@@ -17,6 +15,7 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
@@ -43,7 +42,9 @@ describe('View Field Resolver - Successful Operations', () => {
       {
         name: 'getCoreViewFields - empty array',
         operation: async () => {
-          const operation = findViewFieldsOperationFactory({ viewId: testSetup.testViewId });
+          const operation = findViewFieldsOperationFactory({
+            viewId: testSetup.testViewId,
+          });
           const response = await makeGraphqlAPIRequest(operation);
 
           assertGraphQLSuccessfulResponse(response);
@@ -219,11 +220,8 @@ describe('View Field Resolver - Successful Operations', () => {
       },
     ];
 
-    test.each(testCases)(
-      '$name should succeed',
-      async ({ operation }) => {
-        await operation();
-      },
-    );
+    test.each(testCases)('$name should succeed', async ({ operation }) => {
+      await operation();
+    });
   });
 });
