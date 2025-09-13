@@ -31,6 +31,7 @@ import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { constructAssistantMessageContentFromStream } from 'src/engine/metadata-modules/agent/utils/constructAssistantMessageContentFromStream';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -115,6 +116,16 @@ export class AgentExecutionService {
         ...(messages && { messages }),
         ...(prompt && { prompt }),
         maxSteps: AGENT_CONFIG.MAX_STEPS,
+        ...(registeredModel.doesSupportThinking && {
+          providerOptions: {
+            anthropic: {
+              thinking: {
+                type: 'enabled',
+                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
+              },
+            },
+          },
+        }),
       };
     } catch (error) {
       this.logger.error(
@@ -250,6 +261,28 @@ export class AgentExecutionService {
     }
   }
 
+  private mapMessagesToCoreMessages(
+    messages: AgentChatMessageEntity[],
+  ): CoreMessage[] {
+    return messages
+      .map(({ role, streamData, content }) => {
+        if (role === AgentChatMessageRole.USER) {
+          return {
+            role: 'user' as const,
+            content,
+          };
+        } else {
+          return {
+            role: 'assistant' as const,
+            content: constructAssistantMessageContentFromStream(
+              streamData ?? '',
+            ),
+          };
+        }
+      })
+      .filter((message) => message.content.length > 0);
+  }
+
   async streamChatResponse({
     workspace,
     userWorkspaceId,
@@ -271,10 +304,7 @@ export class AgentExecutionService {
       where: { id: agentId },
     });
 
-    const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
-      role,
-      content,
-    }));
+    const llmMessages: CoreMessage[] = this.mapMessagesToCoreMessages(messages);
 
     let contextString = '';
 

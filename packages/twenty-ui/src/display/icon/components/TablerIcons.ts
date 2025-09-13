@@ -29,6 +29,7 @@ export {
   IconBrackets,
   IconBracketsAngle,
   IconBracketsContain,
+  IconBrain,
   IconBrandDaysCounter,
   IconBrandGithub,
   IconBrandGoogle,

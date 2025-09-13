@@ -39,6 +39,9 @@ export class AgentChatMessageEntity {
   @Column('text')
   content: string;
 
+  @Column({ type: 'text', nullable: true })
+  streamData: string | null;
+
   @OneToMany(() => FileEntity, (file) => file.message)
   files: Relation<FileEntity[]>;
 

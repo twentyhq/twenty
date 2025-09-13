@@ -73,6 +73,7 @@ export type AgentChatMessage = {
   files: Array<File>;
   id: Scalars['UUID'];
   role: Scalars['String'];
+  streamData?: Maybe<Scalars['String']>;
   threadId: Scalars['UUID'];
 };
 
