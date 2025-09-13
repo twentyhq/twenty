@@ -3,6 +3,8 @@ import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
+import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
+
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { HighlightedContainer } from 'src/components/HighlightedContainer';
@@ -12,8 +14,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { type APP_LOCALES } from 'twenty-shared/translations';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { APP_LOCALES, getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -36,7 +37,7 @@ export const SendInviteLinkEmail = ({
 }: SendInviteLinkEmailProps) => {
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
-    : null;
+    : DEFAULT_WORKSPACE_LOGO;
 
   const senderName = capitalize(sender.firstName);
   const senderEmail = sender.email;
@@ -63,16 +64,12 @@ export const SendInviteLinkEmail = ({
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspaceLogo ? (
-          <Img
-            src={workspaceLogo}
-            width={40}
-            height={40}
-            alt="Workspace logo"
-          />
-        ) : (
-          <></>
-        )}
+        <Img
+          src={workspaceLogo}
+          width={40}
+          height={40}
+          alt="Workspace logo"
+        />
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Accept invite')} />
       </HighlightedContainer>
