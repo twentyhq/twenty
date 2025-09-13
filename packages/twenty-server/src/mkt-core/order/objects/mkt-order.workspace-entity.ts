@@ -84,7 +84,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: false,
   })
   @WorkspaceIsNullable()
-  trialLicense?: boolean; 
+  trialLicense?: boolean;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.orderCode,

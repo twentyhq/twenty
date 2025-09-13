@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -82,44 +82,75 @@ export class LicenseGenerationJob {
       // 2.1 if status PAID and trialLicense = false → 4.3.2 Create order normally
       if (order?.status === ORDER_STATUS.PAID && !order?.trialLicense) {
         // validate for normal order
-        const isValid = await this.validateForNormalOrder(order, licenseRepository, orderRepository);
+        const isValid = await this.validateForNormalOrder(
+          order,
+          licenseRepository,
+          orderRepository,
+        );
+
         if (!isValid) {
           return;
         }
-        const createdLicenses = await this.createLicensesForOrderItems(order, licenseRepository);
-        await this.updateOrderLicenseStatus(
-          order, orderRepository, 
-          createdLicenses as MktLicenseWorkspaceEntity[], 
-          MKT_ORDER_LICENSE_STATUS.SUCCESS
+        const createdLicenses = await this.createLicensesForOrderItems(
+          order,
+          licenseRepository,
         );
+
+        await this.updateOrderLicenseStatus(
+          order,
+          orderRepository,
+          createdLicenses as MktLicenseWorkspaceEntity[],
+          MKT_ORDER_LICENSE_STATUS.SUCCESS,
+        );
+
         return;
       }
       // 2.2 if status TRAIL → 4.3.2 Create order trial
       if (order?.status === ORDER_STATUS.TRIAL) {
-        const isValid = await this.validateForNormalOrder(order, licenseRepository, orderRepository);
+        const isValid = await this.validateForNormalOrder(
+          order,
+          licenseRepository,
+          orderRepository,
+        );
+
         if (!isValid) {
           return;
         }
-        const createdLicenses = await this.createLicensesForOrderItems(order, licenseRepository);
-        await this.updateOrderLicenseStatus(
-          order, orderRepository, 
-          createdLicenses as MktLicenseWorkspaceEntity[], 
-          MKT_ORDER_LICENSE_STATUS.TRIAL
+        const createdLicenses = await this.createLicensesForOrderItems(
+          order,
+          licenseRepository,
         );
+
+        await this.updateOrderLicenseStatus(
+          order,
+          orderRepository,
+          createdLicenses as MktLicenseWorkspaceEntity[],
+          MKT_ORDER_LICENSE_STATUS.TRIAL,
+        );
+
         return;
       }
 
       // 2.3 if status PAID and trialLicense = true → 4.3.2 Trial to paid conversion
       if (order?.status === ORDER_STATUS.PAID && order?.trialLicense) {
         this.logger.log(`Order ${data.orderId} is PAID, converting to PAID`);
-        const currentLicenses = await licenseRepository.find({ where: { mktOrderId: order.id } });
-        await this.updateLicenseForTrialToPaidConversion(order, licenseRepository, currentLicenses as MktLicenseWorkspaceEntity[]);
-        await this.updateOrderLicenseStatus(
-          order, orderRepository, 
-          currentLicenses as MktLicenseWorkspaceEntity[], 
-          MKT_ORDER_LICENSE_STATUS.SUCCESS,
-          true // change trialLicense to false after trial to paid conversion
+        const currentLicenses = await licenseRepository.find({
+          where: { mktOrderId: order.id },
+        });
+
+        await this.updateLicenseForTrialToPaidConversion(
+          order,
+          licenseRepository,
+          currentLicenses as MktLicenseWorkspaceEntity[],
         );
+        await this.updateOrderLicenseStatus(
+          order,
+          orderRepository,
+          currentLicenses as MktLicenseWorkspaceEntity[],
+          MKT_ORDER_LICENSE_STATUS.SUCCESS,
+          true, // change trialLicense to false after trial to paid conversion
+        );
+
         return;
       }
     } catch (error) {
@@ -140,16 +171,24 @@ export class LicenseGenerationJob {
       throw error;
     }
   }
-  
+
   private async updateLicenseForTrialToPaidConversion(
-    order: MktOrderWorkspaceEntity, 
-    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>, 
-    currentLicenses: MktLicenseWorkspaceEntity[]
+    order: MktOrderWorkspaceEntity,
+    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>,
+    currentLicenses: MktLicenseWorkspaceEntity[],
   ): Promise<MktLicenseWorkspaceEntity[]> {
-    this.logger.log(`Generating license for trial to paid conversion ${order.id}`);
+    this.logger.log(
+      `Generating license for trial to paid conversion ${order.id}`,
+    );
     const licensePromises = currentLicenses.map(async (license) => {
       try {
-        const licenseApiResponse = await this.mktLicenseApiService.fetchLicenseFromApi(order.id, license.name, license.id);
+        const licenseApiResponse =
+          await this.mktLicenseApiService.fetchLicenseFromApi(
+            order.id,
+            license.name,
+            license.id,
+          );
+
         await licenseRepository.update(license.id, {
           //licenseKey: licenseApiResponse.licenseKey,
           status: MKT_LICENSE_STATUS.ACTIVE,
@@ -158,41 +197,47 @@ export class LicenseGenerationJob {
           licenseUuid: licenseApiResponse.licenseUuid as string,
         });
       } catch (error) {
-        this.logger.error(`Failed to update license for trial to paid conversion ${license.id}:`, error);
+        this.logger.error(
+          `Failed to update license for trial to paid conversion ${license.id}:`,
+          error,
+        );
         throw error;
       }
     });
     const updatedLicenses = await Promise.all(licensePromises);
 
-    this.logger.log(`Successfully updated license for trial to paid conversion ${order.id}`);
+    this.logger.log(
+      `Successfully updated license for trial to paid conversion ${order.id}`,
+    );
+
     return updatedLicenses as unknown as MktLicenseWorkspaceEntity[];
   }
 
   private async createLicensesForOrderItems(
-    order: MktOrderWorkspaceEntity, 
-    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>, 
+    order: MktOrderWorkspaceEntity,
+    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>,
   ): Promise<MktLicenseWorkspaceEntity[]> {
     this.logger.log(`Creating licenses for order items ${order.id}`);
 
     const licensePromises = order.orderItems.map(async (orderItem, index) => {
       try {
-          // generate license name based on order item
-          const productName =
-            orderItem.snapshotProductName ||
-            orderItem.mktProduct?.name ||
-            'Sản phẩm';
-          const variantName = orderItem.mktVariant?.name;
-          const licenseName = variantName
-            ? `License cho ${productName} - ${variantName}`
-            : `License cho ${productName}`;
+        // generate license name based on order item
+        const productName =
+          orderItem.snapshotProductName ||
+          orderItem.mktProduct?.name ||
+          'Sản phẩm';
+        const variantName = orderItem.mktVariant?.name;
+        const licenseName = variantName
+          ? `License cho ${productName} - ${variantName}`
+          : `License cho ${productName}`;
 
-          // call API to get license for this specific order item
-          const licenseApiResponse =
-            await this.mktLicenseApiService.fetchLicenseFromApi(
-              order.id,
-              licenseName,
-              orderItem.id, // pass order item ID for unique license generation
-            );
+        // call API to get license for this specific order item
+        const licenseApiResponse =
+          await this.mktLicenseApiService.fetchLicenseFromApi(
+            order.id,
+            licenseName,
+            orderItem.id, // pass order item ID for unique license generation
+          );
         const newLicense = licenseRepository.create({
           name: licenseName,
           licenseKey: licenseApiResponse.licenseKey,
@@ -206,6 +251,7 @@ export class LicenseGenerationJob {
         });
         // save license
         const savedLicense = await licenseRepository.save(newLicense);
+
         return savedLicense as MktLicenseWorkspaceEntity;
       } catch (error) {
         this.logger.error(
@@ -214,20 +260,23 @@ export class LicenseGenerationJob {
         );
         throw error;
       }
-  });
-  
-  const createdLicenses = await Promise.all(licensePromises) as MktLicenseWorkspaceEntity[];
+    });
+
+    const createdLicenses = (await Promise.all(
+      licensePromises,
+    )) as MktLicenseWorkspaceEntity[];
 
     this.logger.log(
       `Successfully created ${createdLicenses.length} licenses for order: ${order.id}`,
     );
+
     return createdLicenses;
   }
 
   private async validateForNormalOrder(
-    order: MktOrderWorkspaceEntity, 
-    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>, 
-    orderRepository: WorkspaceRepository<MktOrderWorkspaceEntity>
+    order: MktOrderWorkspaceEntity,
+    licenseRepository: WorkspaceRepository<MktLicenseWorkspaceEntity>,
+    orderRepository: WorkspaceRepository<MktOrderWorkspaceEntity>,
   ): Promise<boolean> {
     this.logger.log(`Validating for normal order ${order.id}`);
     this.logger.log(`Generating license for normal order ${order.id}`);
@@ -236,7 +285,7 @@ export class LicenseGenerationJob {
     const existingLicenses = await licenseRepository.find({
       where: { mktOrderId: order.id },
     });
-    
+
     if (existingLicenses.length > 0) {
       this.logger.log(
         `Order ${order.id} already has licenses, skipping generation`,
@@ -258,19 +307,22 @@ export class LicenseGenerationJob {
 
       return false;
     }
+
     return true;
   }
 
   private async updateOrderLicenseStatus(
-    order: MktOrderWorkspaceEntity, 
+    order: MktOrderWorkspaceEntity,
     orderRepository: WorkspaceRepository<MktOrderWorkspaceEntity>,
     licenses: MktLicenseWorkspaceEntity[],
     status: MKT_ORDER_LICENSE_STATUS,
-    trialLicense?: boolean
+    trialLicense?: boolean,
   ): Promise<void> {
-    const note = order.status === ORDER_STATUS.TRIAL ? 
-        `Order is TRAIL, successfully created ${licenses.length} licenses for order` : 
-        `Order is PAID, successfully created ${licenses.length} licenses for order`;
+    const note =
+      order.status === ORDER_STATUS.TRIAL
+        ? `Order is TRAIL, successfully created ${licenses.length} licenses for order`
+        : `Order is PAID, successfully created ${licenses.length} licenses for order`;
+
     await orderRepository.update(order.id, {
       licenseStatus: status,
       note: `${order.note} - ${note}`,

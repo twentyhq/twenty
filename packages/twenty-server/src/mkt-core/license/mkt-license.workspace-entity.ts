@@ -144,7 +144,6 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   licenseUuid?: string;
 
-
   @WorkspaceRelation({
     standardId: MKT_LICENSE_FIELD_IDS.mktVariant,
     type: RelationType.MANY_TO_ONE,
