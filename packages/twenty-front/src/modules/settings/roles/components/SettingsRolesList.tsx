@@ -17,7 +17,7 @@ import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
