@@ -2,15 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import {
+  OrchestratorFailureReport,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
-import { ValidateAndBuildReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import {
@@ -40,21 +38,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
   > {
     try {
       const allActions: WorkspaceMigrationActionV2[] = [];
-      const allFailures: FailedFlatEntityValidation<FlatEntity>[] = []; // Should be a record of each tested data
+      const orchestratorFailureReport: OrchestratorFailureReport = {
+        flatObjectMetadata: [],
+        flatView: [],
+        flatViewField: [],
+      };
 
       let opstimisticAllFlatEntityMaps = structuredClone(fromAllFlatEntityMaps);
-      const dispatchBuildAndValidationActionResult = (
-        result: ValidateAndBuildReturnType<
-          WorkspaceMigrationActionV2,
-          FlatEntity
-        >,
-      ) => {
-        if (result.status === 'fail') {
-          allFailures.push(...result.errors);
-        } else {
-          allActions.push(...result.actions);
-        }
-      };
 
       if (isDefined(toAllFlatEntityMaps.flatObjectMetadataMaps)) {
         const objectResult =
@@ -73,7 +63,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
 
         if (objectResult.status === 'fail') {
-          allFailures.push(...objectResult.errors);
+          orchestratorFailureReport.flatObjectMetadata.push(
+            ...objectResult.errors,
+          );
         } else {
           allActions.push(...objectResult.workspaceMigration.actions);
         }
@@ -97,7 +89,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...opstimisticAllFlatEntityMaps,
           flatViewMaps: viewResult.optimisticFlatEntityMaps,
         };
-        dispatchBuildAndValidationActionResult(viewResult);
+
+        if (viewResult.status === 'fail') {
+          orchestratorFailureReport.flatView.push(...viewResult.errors);
+        } else {
+          allActions.push(...viewResult.actions);
+        }
       }
 
       if (isDefined(toAllFlatEntityMaps.flatViewFieldMaps)) {
@@ -119,13 +116,21 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...opstimisticAllFlatEntityMaps,
           flatViewFieldMaps: viewFieldResult.optimisticFlatEntityMaps,
         };
-        dispatchBuildAndValidationActionResult(viewFieldResult);
+
+        if (viewFieldResult.status === 'fail') {
+          orchestratorFailureReport.flatViewField.push(
+            ...viewFieldResult.errors,
+          );
+        } else {
+          allActions.push(...viewFieldResult.actions);
+        }
       }
 
-      if (allFailures.length > 0) {
+      const allErrors = Object.values(orchestratorFailureReport);
+      if (allErrors.some((report) => report.length > 0)) {
         return {
           status: 'fail',
-          errors: allFailures,
+          report: orchestratorFailureReport,
         };
       }
 

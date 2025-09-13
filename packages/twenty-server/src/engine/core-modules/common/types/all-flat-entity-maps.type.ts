@@ -9,4 +9,6 @@ export type AllFlatEntityMaps = {
   flatViewFieldMaps: FlatViewFieldMaps;
 };
 
-export type AllFlatMapsEntities = keyof AllFlatEntityMaps;
+// export type AllFlatEntityMaps = {
+//   [P in keyof AllFlatEntities as `${P}Maps`]: FlatEntityMaps<AllFlatEntities[P]>;
+// };
