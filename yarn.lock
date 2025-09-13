@@ -19338,15 +19338,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tiptap/extension-text-style@npm:^3.4.2":
-  version: 3.4.2
-  resolution: "@tiptap/extension-text-style@npm:3.4.2"
-  peerDependencies:
-    "@tiptap/core": ^3.4.2
-  checksum: 10c0/8ec30f42629d6cf69599c5671d0ad491441a254f32fd6fe85aa01d2057d4419f00e312cafe4775d8d6317bdf5869ff33e254dcb79313ad11e3304b3387b84447
-  languageName: node
-  linkType: hard
-
 "@tiptap/extension-text@npm:^2.11.5":
   version: 2.12.0
   resolution: "@tiptap/extension-text@npm:2.12.0"
@@ -51648,7 +51639,6 @@ __metadata:
     "@tiptap/extension-hard-break": "npm:^3.4.2"
     "@tiptap/extension-paragraph": "npm:^3.4.2"
     "@tiptap/extension-text": "npm:^3.4.2"
-    "@tiptap/extension-text-style": "npm:^3.4.2"
     "@tiptap/extensions": "npm:^3.4.2"
     "@tiptap/react": "npm:^3.4.2"
     "@types/apollo-upload-client": "npm:^17.0.2"
