@@ -1,12 +1,13 @@
-import { type FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ValidationErrorFieldResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/validate-error-response.type';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 export const fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse =
   (
-    failedFlatFieldMetadataValidation: FailedFlatFieldMetadataValidation,
+    failedFlatFieldMetadataValidation: FailedFlatEntityValidation<FlatFieldMetadata>,
   ): ValidationErrorFieldResponse => {
     const { id, name, objectMetadataId } =
-      failedFlatFieldMetadataValidation.fieldMinimalInformation;
+      failedFlatFieldMetadataValidation.flatEntityMinimalInformation;
 
     return {
       operation: failedFlatFieldMetadataValidation.type,

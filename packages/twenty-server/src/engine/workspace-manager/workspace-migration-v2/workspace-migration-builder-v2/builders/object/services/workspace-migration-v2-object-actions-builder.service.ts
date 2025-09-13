@@ -72,8 +72,14 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
           },
         );
 
-      if (validationErrors.errors.length > 0) {
-        validateAndBuildResult.failed.push(validationErrors);
+      if (
+        validationErrors.fieldValidationResults.length > 0 ||
+        validationErrors.objectValidationResult.errors.length > 0
+      ) {
+        validateAndBuildResult.failed.push(
+          validationErrors.objectValidationResult,
+          ...validationErrors.fieldValidationResults,
+        );
         continue;
       }
 

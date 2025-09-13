@@ -56,7 +56,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         }
       };
 
-      //TODO
       if (isDefined(toAllFlatEntityMaps.flatObjectMetadataMaps)) {
         const objectResult =
           await this.workspaceMigrationBuilderV2Service.validateAndBuild({
@@ -68,12 +67,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
           });
 
-        // TODO
         opstimisticAllFlatEntityMaps = {
           ...opstimisticAllFlatEntityMaps,
           flatObjectMetadataMaps: objectResult.optimisticFlatObjectMetadataMaps,
         };
-        ///
 
         if (objectResult.status === 'fail') {
           allFailures.push(...objectResult.errors);
@@ -81,7 +78,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
           allActions.push(...objectResult.workspaceMigration.actions);
         }
       }
-      ///
 
       if (isDefined(toAllFlatEntityMaps.flatViewMaps)) {
         const viewResult =
@@ -133,7 +129,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
       }
 
-      // TODO: return workspace migrations
+      // TODO: return workspace migration
 
       return;
     } catch (error) {
