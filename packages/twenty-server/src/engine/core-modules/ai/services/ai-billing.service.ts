@@ -30,9 +30,9 @@ export class AIBillingService {
     }
 
     const inputCost =
-      (usage.inputTokens ?? 0 / 1000) * model.inputCostPer1kTokensInCents;
+      ((usage.inputTokens ?? 0) / 1000) * model.inputCostPer1kTokensInCents;
     const outputCost =
-      (usage.outputTokens ?? 0 / 1000) * model.outputCostPer1kTokensInCents;
+      ((usage.outputTokens ?? 0) / 1000) * model.outputCostPer1kTokensInCents;
 
     const totalCost = inputCost + outputCost;
 
