@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
-import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import { addMonths, setDate, setMonth, setYear, subMonths } from 'date-fns';
+import { lazy, Suspense, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -13,7 +13,6 @@ import { DateTimeInput } from '@/ui/input/components/internal/date/components/Da
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { UserContext } from '@/users/contexts/UserContext';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -352,7 +351,6 @@ export const DateTimePicker = ({
 }: DateTimePickerProps) => {
   const internalDate = date ?? new Date();
 
-  const { timeZone } = useContext(UserContext);
   const theme = useTheme();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
@@ -380,90 +378,60 @@ export const DateTimePicker = ({
   };
 
   const handleAddMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .plus({ months: 1 })
-      .toJSDate();
-
+    const dateParsed = addMonths(internalDate, 1);
     onChange?.(dateParsed);
   };
 
   const handleSubtractMonth = () => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .minus({ months: 1 })
-      .toJSDate();
-
+    const dateParsed = subMonths(internalDate, 1);
     onChange?.(dateParsed);
   };
 
   const handleChangeYear = (year: number) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, { zone: timeZone })
-      .set({ year: year })
-      .toJSDate();
-
+    const dateParsed = setYear(internalDate, year);
     onChange?.(dateParsed);
   };
 
   const handleDateChange = (date: Date) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, {
-      zone: isDateTimeInput ? timeZone : 'local',
-    })
-      .set({
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      })
-      .toJSDate();
+    let dateParsed = setYear(internalDate, date.getFullYear());
+    dateParsed = setMonth(dateParsed, date.getMonth());
+    dateParsed = setDate(dateParsed, date.getDate());
 
     onChange?.(dateParsed);
   };
 
   const handleDateSelect = (date: Date) => {
-    const dateParsed = DateTime.fromJSDate(internalDate, {
-      zone: isDateTimeInput ? timeZone : 'local',
-    })
-      .set({
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      })
-      .toJSDate();
+    let dateParsed = setYear(internalDate, date.getFullYear());
+    dateParsed = setMonth(dateParsed, date.getMonth());
+    dateParsed = setDate(dateParsed, date.getDate());
 
     handleClose?.(dateParsed);
   };
 
-  const dateWithoutTime = DateTime.fromJSDate(internalDate)
-    .toLocal()
-    .set({
-      day: internalDate.getUTCDate(),
-      month: internalDate.getUTCMonth() + 1,
-      year: internalDate.getUTCFullYear(),
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    })
-    .toJSDate();
-
-  const dateParsed = DateTime.fromJSDate(internalDate, {
-    zone: isDateTimeInput ? timeZone : 'local',
-  });
+  const dateWithoutTime = new Date(
+    internalDate.getUTCFullYear(),
+    internalDate.getUTCMonth(),
+    internalDate.getUTCDate(),
+    0,
+    0,
+    0,
+    0,
+  );
 
   // We have to force a end of day on the computer local timezone with the given date
   // Because JS Date API cannot hold a timezone other than the local one
   // And if we don't do that workaround we will have problems when changing the date
   // Because the shown date will have 1 day more or less than the real date
   // Leading to bugs where we select 1st of January and it shows 31st of December for example
-  const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
-    day: dateParsed.get('day'),
-    month: dateParsed.get('month'),
-    year: dateParsed.get('year'),
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-  });
-
-  const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
+  const endOfDayInLocalTimezone = new Date(
+    internalDate.getFullYear(),
+    internalDate.getMonth(),
+    internalDate.getDate(),
+    23,
+    59,
+    59,
+    999,
+  );
 
   const dateToUse = isDateTimeInput ? endOfDayInLocalTimezone : dateWithoutTime;
 

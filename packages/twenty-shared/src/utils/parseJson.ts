@@ -1,8 +1,12 @@
 import { isDefined } from "@/utils/validation";
 
-export const parseJson = <T>(rawJson: string | boolean | null | number): T | null => {
+export const parseJson = <T>(rawJson: string | boolean | null | number | undefined): T | null => {
   try {
     if (!isDefined(rawJson)) {
+      return null;
+    }
+
+    if (rawJson === '') {
       return null;
     }
 

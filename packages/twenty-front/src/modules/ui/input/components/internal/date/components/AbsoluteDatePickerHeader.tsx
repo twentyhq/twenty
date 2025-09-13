@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -60,17 +59,15 @@ export const AbsoluteDatePickerHeader = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
-    day: date.getDate(),
-    month: date.getMonth() + 1,
-    year: date.getFullYear(),
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-  });
-
-  const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
+  const endOfDayInLocalTimezone = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    23,
+    59,
+    59,
+    999,
+  );
 
   return (
     <>
