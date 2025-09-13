@@ -81,7 +81,7 @@ export class AgentStreamingService {
         rawStreamString += JSON.stringify(chunk) + '\n';
 
         if (chunk.type === 'text-delta') {
-          aiResponse += chunk.textDelta;
+          aiResponse += chunk.text;
         }
 
         this.sendStreamEvent(
