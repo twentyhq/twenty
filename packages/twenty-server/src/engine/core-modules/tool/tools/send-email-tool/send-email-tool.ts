@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
+import { renderEmail } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -16,6 +17,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { parseEmailBody } from 'src/utils/parse-email-body';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -115,10 +117,13 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
+      const parsedBody = parseEmailBody(body);
+      const { html: htmlBody, text: textBody } = await renderEmail(parsedBody);
+
       const { JSDOM } = await import('jsdom');
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(body || '');
+      const safeBody = purify.sanitize(textBody || '');
       const safeSubject = purify.sanitize(subject || '');
 
       await this.sendMessageService.sendMessage(
@@ -126,6 +131,7 @@ export class SendEmailTool implements Tool {
           to: email,
           subject: safeSubject,
           body: safeBody,
+          html: htmlBody,
         },
         connectedAccount,
       );

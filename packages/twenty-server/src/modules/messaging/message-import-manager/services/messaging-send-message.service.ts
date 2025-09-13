@@ -12,14 +12,15 @@ import {
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
-import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
+import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
+  html?: string;
 }
 
 @Injectable()
@@ -130,6 +131,7 @@ export class MessagingSendMessageService {
           to: sendMessageInput.to,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
+          ...(sendMessageInput.html ? { html: sendMessageInput.html } : {}),
         });
         break;
       }
