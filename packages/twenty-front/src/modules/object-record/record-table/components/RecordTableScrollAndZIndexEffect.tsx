@@ -1,14 +1,14 @@
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollAndZIndexEffect = () => {
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
     isRecordTableScrolledHorizontallyComponentState,

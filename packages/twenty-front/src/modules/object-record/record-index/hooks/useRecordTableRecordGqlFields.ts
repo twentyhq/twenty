@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
@@ -38,8 +39,14 @@ export const useRecordTableRecordGqlFields = ({
 
   const gqlFieldsList = Object.fromEntries(
     visibleRecordFields.flatMap((recordField) => {
-      const fieldMetadataItem =
+      const fieldMetadataItem: FieldMetadataItem | undefined =
         fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+      if (!isDefined(fieldMetadataItem)) {
+        throw new Error(
+          `Field ${recordField.fieldMetadataItemId} is missing, please refresh the page. If the problem persists, please contact support.`,
+        );
+      }
 
       const isMorphRelation =
         fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
@@ -48,10 +55,7 @@ export const useRecordTableRecordGqlFields = ({
         return [[fieldMetadataItem.name, true]];
       }
 
-      if (
-        !isDefined(fieldMetadataItem) ||
-        !isDefined(fieldMetadataItem.morphRelations)
-      ) {
+      if (!isDefined(fieldMetadataItem.morphRelations)) {
         throw new Error(
           `Field ${fieldMetadataItem.name} is missing, please refresh the page. If the problem persists, please contact support.`,
         );

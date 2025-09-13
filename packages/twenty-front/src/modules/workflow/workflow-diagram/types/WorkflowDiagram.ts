@@ -6,12 +6,25 @@ import {
 import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { type MessageDescriptor } from '@lingui/core';
-import { type Edge, type Node, type Position } from '@xyflow/react';
+import {
+  type Connection,
+  type Edge,
+  type Node,
+  type Position,
+} from '@xyflow/react';
 import { type StepStatus } from 'twenty-shared/workflow';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
-export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData>;
+export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData> & {
+  sourceHandle: string;
+  targetHandle: string;
+};
+
+export type WorkflowConnection = Connection & {
+  sourceHandle: string;
+  targetHandle: string;
+};
 
 export type WorkflowRunDiagramNode = Node<WorkflowRunDiagramNodeData>;
 

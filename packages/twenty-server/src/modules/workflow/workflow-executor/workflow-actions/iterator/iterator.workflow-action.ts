@@ -50,11 +50,6 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     const { items, initialLoopStepIds } = iteratorInput;
 
-    // TODO: remove once the UI is implemented
-    const parsedInitialLoopStepIds = isString(initialLoopStepIds)
-      ? JSON.parse(initialLoopStepIds)
-      : initialLoopStepIds;
-
     const parsedItems = isString(items) ? JSON.parse(items) : items;
 
     if (!Array.isArray(parsedItems)) {
@@ -64,7 +59,11 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       );
     }
 
-    if (parsedInitialLoopStepIds.length === 0 || parsedItems.length === 0) {
+    if (
+      !isDefined(initialLoopStepIds) ||
+      initialLoopStepIds.length === 0 ||
+      parsedItems.length === 0
+    ) {
       return {
         result: {
           currentItemIndex: 0,
@@ -109,7 +108,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     if (!hasProcessedAllItems) {
       await this.resetStepsInLoop({
         iteratorStepId,
-        initialLoopStepIds: parsedInitialLoopStepIds,
+        initialLoopStepIds,
         workflowRunId: runInfo.workflowRunId,
         workspaceId: runInfo.workspaceId,
         steps,
