@@ -1,7 +1,6 @@
 import { i18n } from '@lingui/core';
-import { formatDistanceToNow } from 'date-fns';
+import { addDays, format, formatDistanceToNow, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { DateTime } from 'luxon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as enMessages } from '~/locales/generated/en';
 import { messages as frMessages } from '~/locales/generated/fr-FR';
@@ -19,10 +18,6 @@ import { logError } from '../logError';
 i18n.load(SOURCE_LOCALE, enMessages);
 i18n.activate(SOURCE_LOCALE);
 
-const getLuxonLocale = () => {
-  return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE;
-};
-
 jest.mock('~/utils/logError');
 jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
@@ -30,20 +25,16 @@ describe('beautifyExactDateTime', () => {
   it('should return the date in the correct format with time', () => {
     const mockDate = '2023-01-01T12:13:24';
     const actualDate = new Date(mockDate);
-    const expected = DateTime.fromJSDate(actualDate)
-      .setLocale(getLuxonLocale())
-      .toFormat('DD · T');
+    const expected = format(actualDate, 'MMM d, yyyy · HH:mm');
 
     const result = beautifyExactDateTime(mockDate);
     expect(result).toEqual(expected);
   });
   it('should return the time in the correct format for a datetime that is today', () => {
-    const todayString = DateTime.local().toISODate();
+    const todayString = '2024-01-01'; // Using the mocked date
     const mockDate = `${todayString}T12:13:24`;
     const actualDate = new Date(mockDate);
-    const expected = DateTime.fromJSDate(actualDate)
-      .setLocale(getLuxonLocale())
-      .toFormat('T');
+    const expected = format(actualDate, 'HH:mm');
 
     const result = beautifyExactDateTime(mockDate);
     expect(result).toEqual(expected);
@@ -54,15 +45,13 @@ describe('beautifyExactDate', () => {
   it('should return the past date in the correct format without time', () => {
     const mockDate = '2023-01-01T12:13:24';
     const actualDate = new Date(mockDate);
-    const expected = DateTime.fromJSDate(actualDate)
-      .setLocale(getLuxonLocale())
-      .toFormat('DD');
+    const expected = format(actualDate, 'MMM d, yyyy');
 
     const result = beautifyExactDate(mockDate);
     expect(result).toEqual(expected);
   });
   it('should return "Today" if the date is today', () => {
-    const todayString = DateTime.local().toISODate();
+    const todayString = '2024-01-01'; // Using the mocked date
     const mockDate = `${todayString}T12:13:24`;
     const expected = 'Today';
 
@@ -162,25 +151,25 @@ describe('hasDatePassed', () => {
   });
 
   it('should return true when passed past date', () => {
-    const now = DateTime.local();
-    const pastDate = now.minus({ day: 1 });
+    const now = new Date();
+    const pastDate = subDays(now, 1);
 
-    const result = hasDatePassed(pastDate.toJSDate());
+    const result = hasDatePassed(pastDate);
     expect(result).toEqual(true);
   });
 
   it('should return false when passed future date', () => {
-    const now = DateTime.local();
-    const futureDate = now.plus({ days: 1 });
+    const now = new Date();
+    const futureDate = addDays(now, 1);
 
-    const result = hasDatePassed(futureDate.toJSDate());
+    const result = hasDatePassed(futureDate);
     expect(result).toEqual(false);
   });
 
   it('should return false when passed current date', () => {
-    const now = DateTime.local();
+    const now = new Date();
 
-    const result = hasDatePassed(now.toJSDate());
+    const result = hasDatePassed(now);
     expect(result).toEqual(false);
   });
 });

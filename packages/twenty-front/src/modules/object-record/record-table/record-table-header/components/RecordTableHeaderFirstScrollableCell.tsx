@@ -7,15 +7,14 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
-import { COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/ColumnMinWidth';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
-import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { cx } from '@linaria/core';
 import { filterOutByProperty } from 'twenty-shared/utils';
 
 export const RecordTableHeaderFirstScrollableCell = () => {
@@ -40,25 +39,6 @@ export const RecordTableHeaderFirstScrollableCell = () => {
       labelIdentifierFieldMetadataItem?.id,
     ),
   )[0] as RecordField | undefined;
-
-  const resizeFieldOffset = useRecoilComponentValue(
-    resizeFieldOffsetComponentState,
-  );
-
-  const resizedFieldMetadataItemId = useRecoilComponentValue(
-    resizedFieldMetadataIdComponentState,
-  );
-
-  const widthOffsetWhileResizing =
-    resizedFieldMetadataItemId === recordField?.fieldMetadataItemId
-      ? resizeFieldOffset
-      : 0;
-
-  const baseWidth = recordField?.size ?? 0;
-
-  const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
-
-  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
@@ -86,12 +66,8 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   return (
     <RecordTableHeaderCellContainer
-      className="header-cell"
+      className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
       key={recordField.fieldMetadataItemId}
-      isResizing={
-        resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-      }
-      columnWidth={columnWidth}
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
       zIndex={zIndex}
     >

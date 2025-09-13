@@ -1,23 +1,17 @@
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
+import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
-export const DEFAULT_RECORD_TABLE_TD_WIDTH = 32;
-
-export const StyledTd = styled.div<{
+export const StyledCell = styled.div<{
   backgroundColor: string;
   borderColor: string;
   isDragging?: boolean;
   fontColor: string;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  width: number;
 }>`
-  min-width: ${({ width }) => width}px;
-  width: ${({ width }) => width}px;
-  max-width: ${({ width }) => width}px;
-
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
@@ -34,13 +28,13 @@ export const StyledTd = styled.div<{
     isDragging ? 'transparent' : backgroundColor};
 `;
 
-export const RecordTableTd = ({
+export const RecordTableCellStyleWrapper = ({
   children,
   isSelected,
   isDragging,
   hasRightBorder = true,
   hasBottomBorder = true,
-  width = DEFAULT_RECORD_TABLE_TD_WIDTH,
+  widthClassName,
   ...dragHandleProps
 }: {
   className?: string;
@@ -49,7 +43,7 @@ export const RecordTableTd = ({
   isDragging?: boolean;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  width?: number;
+  widthClassName: string;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
@@ -62,19 +56,18 @@ export const RecordTableTd = ({
   const fontColor = theme.font.color.primary;
 
   return (
-    <StyledTd
+    <StyledCell
       isDragging={isDragging}
       backgroundColor={tdBackgroundColor}
       borderColor={borderColor}
       fontColor={fontColor}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      width={width}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
-      className="table-cell"
+      className={cx('table-cell', widthClassName)}
     >
       {children}
-    </StyledTd>
+    </StyledCell>
   );
 };

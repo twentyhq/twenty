@@ -33,11 +33,7 @@ const traverseSteps = ({
       const nestedIteratorInput = step.settings
         .input as WorkflowIteratorActionInput;
 
-      if (
-        nestedIteratorInput.initialLoopStepIds &&
-        // TODO: To remove once we remove the string input for initialLoopStepIds
-        Array.isArray(nestedIteratorInput.initialLoopStepIds)
-      ) {
+      if (nestedIteratorInput.initialLoopStepIds) {
         const nestedLoopStepIds = getAllStepIdsInLoop({
           iteratorStepId: stepId,
           initialLoopStepIds: nestedIteratorInput.initialLoopStepIds,
