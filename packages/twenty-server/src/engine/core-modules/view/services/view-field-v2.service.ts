@@ -79,7 +79,7 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             viewField: {
@@ -133,7 +133,7 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             viewField: {
@@ -187,7 +187,7 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             viewField: {
@@ -240,7 +240,7 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             viewField: {

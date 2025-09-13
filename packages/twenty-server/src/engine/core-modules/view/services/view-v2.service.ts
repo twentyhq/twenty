@@ -11,11 +11,11 @@ import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-module
 import { ViewCacheService } from 'src/engine/core-modules/view/cache/services/view-cache.service';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
+    ViewException,
+    ViewExceptionCode,
+    ViewExceptionMessageKey,
+    generateViewExceptionMessage,
+    generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
@@ -63,7 +63,7 @@ export class ViewV2Service {
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             view: {
@@ -136,7 +136,7 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             view: {
@@ -192,7 +192,7 @@ export class ViewV2Service {
       });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigrations(
+      await this.workspaceMigrationOrchestratorService.buildWorkspaceMigration(
         {
           entityMaps: {
             view: {

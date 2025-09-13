@@ -36,6 +36,7 @@ export type WorkspaceMigrationBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
 } & FromTo<FlatObjectMetadataMaps, 'FlatObjectMetadataMaps'>;
+// TODO deprecate this file
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
   constructor(
