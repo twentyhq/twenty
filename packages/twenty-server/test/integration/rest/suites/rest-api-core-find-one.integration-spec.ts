@@ -115,23 +115,10 @@ describe('Core REST API Find One endpoint', () => {
       });
   });
 
-  it('should support depth 2 parameter', async () => {
+  it('should not support depth 2 parameter', async () => {
     await makeRestAPIRequest({
       method: 'get',
       path: `/people/${TEST_PERSON_1_ID}?depth=2`,
-    })
-      .expect(200)
-      .expect((res) => {
-        const person = res.body.data.person;
-
-        expect(person.company.people).toBeDefined();
-
-        const depth2Person = person.company.people.find(
-          // @ts-expect-error legacy noImplicitAny
-          (p) => p.id === person.id,
-        );
-
-        expect(depth2Person).toBeDefined();
-      });
+    }).expect(400);
   });
 });

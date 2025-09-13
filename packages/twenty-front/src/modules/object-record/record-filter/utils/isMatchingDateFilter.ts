@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { parseISO, isEqual, isAfter, isBefore } from 'date-fns';
 
 import { type DateFilter } from '@/object-record//graphql/types/RecordGqlOperationFilter';
 
@@ -11,10 +11,10 @@ export const isMatchingDateFilter = ({
 }) => {
   switch (true) {
     case dateFilter.eq !== undefined: {
-      return DateTime.fromISO(value).equals(DateTime.fromISO(dateFilter.eq));
+      return isEqual(parseISO(value), parseISO(dateFilter.eq));
     }
     case dateFilter.neq !== undefined: {
-      return !DateTime.fromISO(value).equals(DateTime.fromISO(dateFilter.neq));
+      return !isEqual(parseISO(value), parseISO(dateFilter.neq));
     }
     case dateFilter.in !== undefined: {
       return dateFilter.in.includes(value);
@@ -27,16 +27,20 @@ export const isMatchingDateFilter = ({
       }
     }
     case dateFilter.gt !== undefined: {
-      return DateTime.fromISO(value) > DateTime.fromISO(dateFilter.gt);
+      return isAfter(parseISO(value), parseISO(dateFilter.gt));
     }
     case dateFilter.gte !== undefined: {
-      return DateTime.fromISO(value) >= DateTime.fromISO(dateFilter.gte);
+      const valueDate = parseISO(value);
+      const filterDate = parseISO(dateFilter.gte);
+      return isAfter(valueDate, filterDate) || isEqual(valueDate, filterDate);
     }
     case dateFilter.lt !== undefined: {
-      return DateTime.fromISO(value) < DateTime.fromISO(dateFilter.lt);
+      return isBefore(parseISO(value), parseISO(dateFilter.lt));
     }
     case dateFilter.lte !== undefined: {
-      return DateTime.fromISO(value) <= DateTime.fromISO(dateFilter.lte);
+      const valueDate = parseISO(value);
+      const filterDate = parseISO(dateFilter.lte);
+      return isBefore(valueDate, filterDate) || isEqual(valueDate, filterDate);
     }
     default: {
       throw new Error(

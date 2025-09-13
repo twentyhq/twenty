@@ -5,11 +5,11 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowStepCreationOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import {
-  WorkflowActionType,
   type WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -19,14 +19,14 @@ export const insertStep = ({
   insertedStep,
   nextStepId,
   parentStepId,
-  parentStepOptions,
+  parentStepConnectionOptions,
 }: {
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
   nextStepId?: string;
   parentStepId?: string;
-  parentStepOptions?: WorkflowStepCreationOptions;
+  parentStepConnectionOptions?: WorkflowStepConnectionOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedInsertedStep: WorkflowAction;
@@ -39,7 +39,7 @@ export const insertStep = ({
         parentStepId,
         insertedStepId: insertedStep.id,
         nextStepId,
-        parentStepOptions,
+        parentStepConnectionOptions,
       })
     : {
         updatedSteps: existingSteps,
@@ -64,24 +64,24 @@ const updateParentStep = ({
   parentStepId,
   insertedStepId,
   nextStepId,
-  parentStepOptions,
+  parentStepConnectionOptions,
 }: {
   steps: WorkflowAction[];
   trigger: WorkflowTrigger | null;
   parentStepId: string;
   insertedStepId: string;
   nextStepId?: string;
-  parentStepOptions?: WorkflowStepCreationOptions;
+  parentStepConnectionOptions?: WorkflowStepConnectionOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedTrigger: WorkflowTrigger | null;
 } => {
-  if (isDefined(parentStepOptions)) {
+  if (isDefined(parentStepConnectionOptions)) {
     return updateStepsWithOptions({
       steps,
       parentStepId,
       insertedStepId,
-      parentStepOptions,
+      parentStepConnectionOptions,
       trigger,
     });
   } else {
@@ -160,20 +160,20 @@ const updateStepsWithOptions = ({
   parentStepId,
   insertedStepId,
   steps,
-  parentStepOptions,
+  parentStepConnectionOptions,
   trigger,
 }: {
   parentStepId: string;
   insertedStepId: string;
   steps: WorkflowAction[];
-  parentStepOptions: WorkflowStepCreationOptions;
+  parentStepConnectionOptions: WorkflowStepConnectionOptions;
   trigger: WorkflowTrigger | null;
 }) => {
   let updatedSteps = steps;
 
-  switch (parentStepOptions.parentStepType) {
+  switch (parentStepConnectionOptions.connectedStepType) {
     case WorkflowActionType.ITERATOR:
-      if (!parentStepOptions.settings.shouldInsertToLoop) {
+      if (!parentStepConnectionOptions.settings.shouldInsertToLoop) {
         break;
       }
 
