@@ -14,7 +14,6 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -53,7 +52,7 @@ export const SEARCH_FIELDS_FOR_MKT_LICENSE: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: MKT_LICENSE_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['name'], ['licenseKey']])
-@WorkspaceIsSearchable()
+//@WorkspaceIsSearchable()
 export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.name,
@@ -134,6 +133,16 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   expiresAt?: Date;
+
+  @WorkspaceField({
+    standardId: MKT_LICENSE_FIELD_IDS.licenseUuid,
+    type: FieldMetadataType.TEXT,
+    label: msg`License UUID`,
+    description: msg`License UUID`,
+    icon: 'IconUuid',
+  })
+  @WorkspaceIsNullable()
+  licenseUuid?: string;
 
   @WorkspaceRelation({
     standardId: MKT_LICENSE_FIELD_IDS.mktVariant,

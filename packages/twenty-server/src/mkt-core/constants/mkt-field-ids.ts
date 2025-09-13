@@ -239,6 +239,7 @@ export const MKT_ORDER_FIELD_IDS = {
   tax: '86a4bf34-9808-4908-b2d6-65cb4d146bc0',
   sInvoiceStatus: '3986dded-a1f3-4f53-9c2a-8e67d1af8cd3',
   licenseStatus: 'd3a61b4a-87d1-41de-ba40-81d0a27bcd10',
+  trialLicense: '3449bef1-e719-42d9-8cf6-df3f5d47983c',
   // relations
   mktContracts: '66277a67-41c6-4709-820f-dda8df091ae9', // ONE_TO_MANY relation with contracts
   mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',
@@ -292,6 +293,7 @@ export const MKT_LICENSE_FIELD_IDS = {
   lastLoginAt: '803df1b5-d057-438e-abcf-d6e4840df0a4',
   deviceInfo: '7dc3c246-0a81-48b0-9343-70bf0431dfca',
   notes: 'dbf0752c-ed7c-45eb-88c0-e390ec42aed0',
+  licenseUuid: '6f95b280-6fe8-4e6d-a722-aeb84efb67b8',
   // relations
   mktCustomer: '11a10308-2c5c-4322-847d-4ec12d056d9c',
   mktSales: '4bb927d7-a6d2-4746-b771-731cb6ab9950', // nullable

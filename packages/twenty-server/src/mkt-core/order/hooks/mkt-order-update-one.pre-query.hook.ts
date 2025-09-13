@@ -13,8 +13,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { SInvoiceIntegrationJobData } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
 import { LicenseGenerationJobData } from 'src/mkt-core/license/jobs/license-generation.job';
 import {
-  MKT_LICENSE_STATUS,
-  OrderStatus,
+  MKT_ORDER_LICENSE_STATUS,
+  ORDER_STATUS,
   SINVOICE_STATUS,
 } from 'src/mkt-core/order/constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
@@ -70,11 +70,28 @@ export class MktOrderUpdateOnePreQueryHook
     this.logger.log(
       `Adding License integration job to queue for order ${orderId}`,
     );
-    await this.licenseIntegration(orderId, workspaceId, input, currentOrder);
 
-    input.updatedAt = new Date().toISOString();
+    const inputWithTrialLicense = {
+      ...input,
+      ...(input?.status === ORDER_STATUS.TRIAL && { trialLicense: true }),
+    };
 
-    return payload;
+    await this.licenseIntegration(
+      orderId,
+      workspaceId,
+      inputWithTrialLicense,
+      currentOrder,
+    );
+
+    const inputWithUpdatedAt = {
+      ...inputWithTrialLicense,
+      updatedAt: new Date().toISOString(),
+    };
+
+    return {
+      ...payload,
+      data: inputWithUpdatedAt,
+    };
   }
 
   private async sInvoiceIntegration(
@@ -85,7 +102,7 @@ export class MktOrderUpdateOnePreQueryHook
   ): Promise<void> {
     if (
       currentOrder &&
-      currentOrder.status === OrderStatus.PAID &&
+      currentOrder.status === ORDER_STATUS.PAID &&
       input?.sInvoiceStatus === SINVOICE_STATUS.SEND
     ) {
       const jobData: SInvoiceIntegrationJobData = {
@@ -123,13 +140,14 @@ export class MktOrderUpdateOnePreQueryHook
       `[LICENSE DEBUG] Input license status: ${input?.licenseStatus}`,
     );
     this.logger.log(
-      `[LICENSE DEBUG] Required conditions: currentOrder exists: ${!!currentOrder}, status is PAID: ${currentOrder?.status === OrderStatus.PAID}, licenseStatus is GETTING: ${input?.licenseStatus === MKT_LICENSE_STATUS.GETTING}`,
+      `[LICENSE DEBUG] Required conditions: currentOrder exists: ${!!currentOrder}, status is PAID: ${currentOrder?.status === ORDER_STATUS.PAID}, licenseStatus is GETTING: ${input?.licenseStatus === MKT_ORDER_LICENSE_STATUS.GETTING}`,
     );
 
     if (
       currentOrder &&
-      currentOrder.status === OrderStatus.PAID &&
-      input?.licenseStatus === MKT_LICENSE_STATUS.GETTING
+      (currentOrder.status === ORDER_STATUS.PAID ||
+        currentOrder.status === ORDER_STATUS.TRIAL) &&
+      input?.licenseStatus === MKT_ORDER_LICENSE_STATUS.GETTING
     ) {
       const jobData: LicenseGenerationJobData = {
         orderId,

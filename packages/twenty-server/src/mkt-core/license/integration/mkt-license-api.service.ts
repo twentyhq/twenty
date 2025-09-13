@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { firstValueFrom } from 'rxjs';
+import { v4 } from 'uuid';
 
 import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/license.constants';
 
@@ -9,6 +10,7 @@ export interface LicenseApiResponse {
   licenseKey: string;
   status: string;
   expiresAt: string;
+  licenseUuid?: string | null;
   // add other fields according to API response
 }
 
@@ -22,6 +24,7 @@ export class MktLicenseApiService {
     orderId: string,
     orderName: string,
     orderItemId?: string,
+    licenseUuid?: string,
   ): Promise<LicenseApiResponse> {
     try {
       this.logger.log(`Fetching license from API for order: ${orderId}`);
@@ -35,6 +38,7 @@ export class MktLicenseApiService {
         orderId,
         orderName,
         ...(orderItemId && { orderItemId }), // include orderItemId if provided
+        ...(licenseUuid && { licenseUuid }), // include licenseUuid if provided
         // add other necessary information
       };
 
@@ -56,12 +60,14 @@ export class MktLicenseApiService {
       const uniqueSuffix = orderItemId
         ? `_ITEM_${orderItemId.slice(-8)}`
         : `_ORDER_${orderId.slice(-8)}`;
+
       const mockResponse = {
         licenseKey: `MOCK_LICENSE${uniqueSuffix}_${Date.now()}`,
         status: MKT_LICENSE_STATUS.ACTIVE,
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
           .toISOString()
           .split('T')[0], // 1 year from now
+        licenseUuid: licenseUuid ? licenseUuid : v4(),
       };
 
       this.logger.log(`Mock response:`, mockResponse);

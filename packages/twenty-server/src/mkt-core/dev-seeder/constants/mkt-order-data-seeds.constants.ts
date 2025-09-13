@@ -1,11 +1,11 @@
-import { OrderStatus, SINVOICE_STATUS } from 'src/mkt-core/order/constants';
+import { ORDER_STATUS, SINVOICE_STATUS } from 'src/mkt-core/order/constants';
 
 type MktOrderDataSeed = {
   id: string;
   name: string;
   position: number;
   orderCode: string;
-  status: OrderStatus;
+  status: ORDER_STATUS;
   subtotal: number;
   tax: number;
   discount: number;
@@ -64,7 +64,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Care Package - Gói chăm sóc Facebook',
     position: 1,
     orderCode: 'MKT-CARE-2024-001',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 11000000,
     tax: 1100000,
     discount: 0,
@@ -82,7 +82,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Viral Package - Gói viral video',
     position: 2,
     orderCode: 'MKT-VIRAL-2024-002',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 16000000,
     tax: 1600000,
     discount: 500000,
@@ -100,7 +100,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT UID Package - Gói phân tích data',
     position: 3,
     orderCode: 'MKT-UID-2024-003',
-    status: OrderStatus.ON_HOLD,
+    status: ORDER_STATUS.ON_HOLD,
     subtotal: 6000000,
     tax: 600000,
     discount: 0,
@@ -118,7 +118,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Insta Package - Gói Instagram marketing',
     position: 4,
     orderCode: 'MKT-INSTA-2024-004',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 15000000,
     tax: 1500000,
     discount: 0,
@@ -136,7 +136,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Tube Package - Gói quản lý YouTube',
     position: 5,
     orderCode: 'MKT-TUBE-2024-005',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 9000000,
     tax: 900000,
     discount: 0,
@@ -154,7 +154,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Post Package - Gói đăng bài Facebook',
     position: 6,
     orderCode: 'MKT-POST-2024-006',
-    status: OrderStatus.FULFILLED,
+    status: ORDER_STATUS.FULFILLED,
     subtotal: 3000000,
     tax: 300000,
     discount: 0,
@@ -172,7 +172,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Zalo Package - Gói marketing Zalo',
     position: 7,
     orderCode: 'MKT-ZALO-2024-007',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 5000000,
     tax: 500000,
     discount: 0,
@@ -190,7 +190,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Group Package - Gói quản lý Group Facebook',
     position: 8,
     orderCode: 'MKT-GROUP-2024-008',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 16000000,
     tax: 1600000,
     discount: 1000000,
@@ -208,7 +208,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Twitter Package - Gói marketing Twitter/X',
     position: 9,
     orderCode: 'MKT-TWITTER-2024-009',
-    status: OrderStatus.FAILED,
+    status: ORDER_STATUS.FAILED,
     subtotal: 3000000,
     tax: 300000,
     discount: 0,
@@ -226,7 +226,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Page Package - Gói quản lý Fanpage',
     position: 10,
     orderCode: 'MKT-PAGE-2024-010',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 5000000,
     tax: 500000,
     discount: 0,
@@ -244,7 +244,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Maps Package - Gói scan Google Maps',
     position: 11,
     orderCode: 'MKT-MAPS-2024-011',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 9000000,
     tax: 900000,
     discount: 0,
@@ -262,7 +262,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng MKT Maps Forever - Gói vĩnh viễn Google Maps',
     position: 12,
     orderCode: 'MKT-MAPS-FOREVER-2024-012',
-    status: OrderStatus.PAID,
+    status: ORDER_STATUS.PAID,
     subtotal: 10000000,
     tax: 1000000,
     discount: 0,
@@ -280,7 +280,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     name: 'Đơn hàng Combo Package - Gói tổng hợp UID + Post',
     position: 13,
     orderCode: 'MKT-COMBO-2024-013',
-    status: OrderStatus.CANCELLED,
+    status: ORDER_STATUS.CANCELLED,
     subtotal: 8500000,
     tax: 850000,
     discount: 0,

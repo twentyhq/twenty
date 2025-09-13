@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { OrderStatus } from 'src/mkt-core/order/constants';
+import { ORDER_STATUS as OrderStatus } from 'src/mkt-core/order/constants';
 
 export enum OrderStatusGraphQL {
   ON_HOLD = OrderStatus.ON_HOLD,
@@ -14,6 +14,7 @@ export enum OrderStatusGraphQL {
   REFUNDED = OrderStatus.REFUNDED,
   DISPUTED = OrderStatus.DISPUTED,
   OTHER = OrderStatus.OTHER,
+  TRIAL = OrderStatus.TRIAL,
 }
 
 registerEnumType(OrderStatusGraphQL, {
@@ -34,6 +35,9 @@ registerEnumType(OrderStatusGraphQL, {
     },
     FULFILLED: {
       description: 'Order has been fulfilled',
+    },
+    TRIAL: {
+      description: 'Order is in trial period',
     },
   },
 });
