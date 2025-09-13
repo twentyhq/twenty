@@ -77,7 +77,7 @@ describe('RenewTokenService', () => {
         expiresAt: new Date(),
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
       };
-      const mockAppToken = {
+      const mockAppToken: Partial<AppToken> = {
         id: mockTokenId,
         workspaceId: mockWorkspaceId,
       } as AppToken;

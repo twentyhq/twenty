@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -20,10 +22,11 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { type ApolloError } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -41,6 +44,7 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
+import { IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID } from '../../modules/auth/graphql/mutations/impersonateWorkspaceByMemberId';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -102,6 +106,12 @@ export const SettingsWorkspaceMembers = () => {
     string | undefined
   >();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const { setImpersonationTokens } = useAuth();
+  const { loadCurrentUser } = useLoadCurrentUser();
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const [impersonateByWorkspaceMemberId] = useMutation(
+    IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID,
+  );
 
   const {
     records: workspaceMembers,
@@ -124,6 +134,34 @@ export const SettingsWorkspaceMembers = () => {
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
     setWorkspaceMemberToDelete(undefined);
+  };
+
+  const handleImpersonate = async (workspaceMemberId: string) => {
+    try {
+      const variables = { targetWorkspaceMemberId: workspaceMemberId };
+      const { data, errors } = await impersonateByWorkspaceMemberId({
+        variables,
+      });
+
+      if (isDefined(errors)) {
+        enqueueErrorSnackBar({
+          message: t`Cannot impersonate selected user`,
+          options: { duration: 2000 },
+        });
+        return;
+      }
+
+      const tokens = data?.impersonateWorkspaceUserByWorkspaceMemberId?.tokens;
+      if (isDefined(tokens)) {
+        setImpersonationTokens(tokens);
+        await loadCurrentUser();
+        await refreshObjectMetadataItems();
+      }
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
+      });
+    }
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
@@ -379,6 +417,7 @@ export const SettingsWorkspaceMembers = () => {
                           <ManageMembersDropdownMenu
                             dropdownId={`workspace-member-actions-${workspaceMember.id}`}
                             workspaceMemberId={workspaceMember.id}
+                            onImpersonate={handleImpersonate}
                             onDelete={(id) => {
                               setWorkspaceMemberToDelete(id);
                               openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
