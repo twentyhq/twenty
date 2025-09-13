@@ -7,7 +7,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { mergeInProgressState } from '../states/mergeInProgressState';
+import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -28,7 +28,7 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetRecoilState(mergeInProgressState);
+  const setMergeInProgress = useSetRecoilState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

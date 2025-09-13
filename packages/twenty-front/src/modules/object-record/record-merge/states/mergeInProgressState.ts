@@ -1,6 +1,6 @@
 import { createState } from 'twenty-ui/utilities';
 
-export const mergeInProgressState = createState<boolean>({
-  key: 'mergeInProgressState',
+export const isMergeInProgressState = createState<boolean>({
+  key: 'isMergeInProgress',
   defaultValue: false,
 });
