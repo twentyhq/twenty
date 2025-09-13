@@ -3,8 +3,7 @@ import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-e
 export type WorkflowIteratorActionInput = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items?: Array<any> | string;
-  // testing purpose, should never be a string nor undefined
-  initialLoopStepIds?: string[] | string;
+  initialLoopStepIds?: string[];
 };
 
 export type WorkflowIteratorActionSettings = BaseWorkflowActionSettings & {

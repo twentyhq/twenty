@@ -1,16 +1,15 @@
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import {
-  DEFAULT_RECORD_TABLE_TD_WIDTH,
-  StyledTd,
-} from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { StyledCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
+import { cx } from '@linaria/core';
 import { useContext, type ReactNode } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
 
-const StyledRecordTableTd = styled(StyledTd)<{ zIndex: number }>`
+const StyledRecordTableTd = styled(StyledCell)<{ zIndex: number }>`
   z-index: ${({ zIndex }) => zIndex};
 `;
 
@@ -20,7 +19,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
   isDragging,
   hasRightBorder = true,
   hasBottomBorder = true,
-  width = DEFAULT_RECORD_TABLE_TD_WIDTH,
   ...dragHandleProps
 }: {
   className?: string;
@@ -29,7 +27,6 @@ export const RecordTableCellFirstRowFirstColumn = ({
   isDragging?: boolean;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
-  width?: number;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
@@ -57,11 +54,13 @@ export const RecordTableCellFirstRowFirstColumn = ({
       fontColor={fontColor}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      width={width}
       zIndex={zIndex}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
-      className="table-cell-0-0"
+      className={cx(
+        'table-cell-0-0',
+        getRecordTableColumnFieldWidthClassName(0),
+      )}
     >
       {children}
     </StyledRecordTableTd>

@@ -138,14 +138,12 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     css`
       & .hoverable-buttons {
         opacity: 0;
-        position: fixed;
         right: ${theme.spacing(2)};
       }
 
       &:hover {
         & .hoverable-buttons {
           opacity: 1;
-          position: static;
         }
       }
     `};
