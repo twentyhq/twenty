@@ -1,29 +1,26 @@
-import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { convertOutputSchemaToJson } from '../convertOutputSchemaToJson';
 
 describe('convertOutputSchemaToJson', () => {
   it('should convert simple object schema to JSON', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       name: {
         isLeaf: true,
         type: 'string',
         label: 'name',
         value: 'John',
-        icon: 'IconText',
       },
       age: {
         isLeaf: true,
         type: 'number',
         label: 'age',
         value: 25,
-        icon: 'IconNumber',
       },
       isActive: {
         isLeaf: true,
         type: 'boolean',
         label: 'isActive',
         value: true,
-        icon: 'IconCheckbox',
       },
     };
     const expected = {
@@ -35,27 +32,24 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should convert array schema to JSON array', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       '0': {
         isLeaf: true,
         type: 'string',
         label: '0',
         value: 'first',
-        icon: 'IconText',
       },
       '1': {
         isLeaf: true,
         type: 'string',
         label: '1',
         value: 'second',
-        icon: 'IconText',
       },
       '2': {
         isLeaf: true,
         type: 'string',
         label: '2',
         value: 'third',
-        icon: 'IconText',
       },
     };
     const expected = ['first', 'second', 'third'];
@@ -63,9 +57,10 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should convert nested object schema to JSON', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       user: {
         isLeaf: false,
+        type: 'object',
         label: 'user',
         value: {
           name: {
@@ -73,17 +68,16 @@ describe('convertOutputSchemaToJson', () => {
             type: 'string',
             label: 'name',
             value: 'John',
-            icon: 'IconText',
           },
           age: {
             isLeaf: true,
             type: 'number',
             label: 'age',
             value: 25,
-            icon: 'IconNumber',
           },
           address: {
             isLeaf: false,
+            type: 'object',
             label: 'address',
             value: {
               city: {
@@ -91,20 +85,16 @@ describe('convertOutputSchemaToJson', () => {
                 type: 'string',
                 label: 'city',
                 value: 'New York',
-                icon: 'IconText',
               },
               country: {
                 isLeaf: true,
                 type: 'string',
                 label: 'country',
                 value: 'USA',
-                icon: 'IconText',
               },
             },
-            icon: 'IconBox',
           },
         },
-        icon: 'IconBox',
       },
     };
     const expected = {
@@ -121,9 +111,10 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should convert nested array schema to JSON', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       '0': {
         isLeaf: false,
+        type: 'object',
         label: '0',
         value: {
           '0': {
@@ -131,20 +122,18 @@ describe('convertOutputSchemaToJson', () => {
             type: 'number',
             label: '0',
             value: 1,
-            icon: 'IconNumber',
           },
           '1': {
             isLeaf: true,
             type: 'number',
             label: '1',
             value: 2,
-            icon: 'IconNumber',
           },
         },
-        icon: 'IconBox',
       },
       '1': {
         isLeaf: false,
+        type: 'object',
         label: '1',
         value: {
           '0': {
@@ -152,17 +141,14 @@ describe('convertOutputSchemaToJson', () => {
             type: 'number',
             label: '0',
             value: 3,
-            icon: 'IconNumber',
           },
           '1': {
             isLeaf: true,
             type: 'number',
             label: '1',
             value: 4,
-            icon: 'IconNumber',
           },
         },
-        icon: 'IconBox',
       },
     };
     const expected = [
@@ -173,13 +159,15 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should handle mixed array and object schema', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       users: {
         isLeaf: false,
+        type: 'object',
         label: 'users',
         value: {
           '0': {
             isLeaf: false,
+            type: 'object',
             label: '0',
             value: {
               name: {
@@ -187,20 +175,18 @@ describe('convertOutputSchemaToJson', () => {
                 type: 'string',
                 label: 'name',
                 value: 'John',
-                icon: 'IconText',
               },
               age: {
                 isLeaf: true,
                 type: 'number',
                 label: 'age',
                 value: 25,
-                icon: 'IconNumber',
               },
             },
-            icon: 'IconBox',
           },
           '1': {
             isLeaf: false,
+            type: 'object',
             label: '1',
             value: {
               name: {
@@ -208,23 +194,20 @@ describe('convertOutputSchemaToJson', () => {
                 type: 'string',
                 label: 'name',
                 value: 'Jane',
-                icon: 'IconText',
               },
               age: {
                 isLeaf: true,
                 type: 'number',
                 label: 'age',
                 value: 30,
-                icon: 'IconNumber',
               },
             },
-            icon: 'IconBox',
           },
         },
-        icon: 'IconBox',
       },
       metadata: {
         isLeaf: false,
+        type: 'object',
         label: 'metadata',
         value: {
           count: {
@@ -232,17 +215,14 @@ describe('convertOutputSchemaToJson', () => {
             type: 'number',
             label: 'count',
             value: 2,
-            icon: 'IconNumber',
           },
           active: {
             isLeaf: true,
             type: 'boolean',
             label: 'active',
             value: true,
-            icon: 'IconCheckbox',
           },
         },
-        icon: 'IconBox',
       },
     };
     const expected = {
@@ -265,20 +245,18 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should handle null values', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       name: {
         isLeaf: true,
         type: 'unknown',
         label: 'name',
         value: null,
-        icon: 'IconQuestionMark',
       },
       age: {
         isLeaf: true,
         type: 'unknown',
         label: 'age',
         value: null,
-        icon: 'IconQuestionMark',
       },
     };
     const expected = {
@@ -289,23 +267,26 @@ describe('convertOutputSchemaToJson', () => {
   });
 
   it('should handle empty object schema', () => {
-    const schema: BaseOutputSchema = {};
+    const schema: BaseOutputSchemaV2 = {};
     const expected = {};
     expect(convertOutputSchemaToJson(schema)).toEqual(expected);
   });
 
   it('should handle complex nested structure', () => {
-    const schema: BaseOutputSchema = {
+    const schema: BaseOutputSchemaV2 = {
       data: {
         isLeaf: false,
+        type: 'object',
         label: 'data',
         value: {
           users: {
             isLeaf: false,
+            type: 'object',
             label: 'users',
             value: {
               '0': {
                 isLeaf: false,
+                type: 'object',
                 label: '0',
                 value: {
                   id: {
@@ -313,17 +294,16 @@ describe('convertOutputSchemaToJson', () => {
                     type: 'number',
                     label: 'id',
                     value: 1,
-                    icon: 'IconNumber',
                   },
                   name: {
                     isLeaf: true,
                     type: 'string',
                     label: 'name',
                     value: 'John',
-                    icon: 'IconText',
                   },
                   roles: {
                     isLeaf: false,
+                    type: 'object',
                     label: 'roles',
                     value: {
                       '0': {
@@ -331,20 +311,18 @@ describe('convertOutputSchemaToJson', () => {
                         type: 'string',
                         label: '0',
                         value: 'admin',
-                        icon: 'IconText',
                       },
                       '1': {
                         isLeaf: true,
                         type: 'string',
                         label: '1',
                         value: 'user',
-                        icon: 'IconText',
                       },
                     },
-                    icon: 'IconBox',
                   },
                   settings: {
                     isLeaf: false,
+                    type: 'object',
                     label: 'settings',
                     value: {
                       theme: {
@@ -352,26 +330,22 @@ describe('convertOutputSchemaToJson', () => {
                         type: 'string',
                         label: 'theme',
                         value: 'dark',
-                        icon: 'IconText',
                       },
                       notifications: {
                         isLeaf: true,
                         type: 'boolean',
                         label: 'notifications',
                         value: true,
-                        icon: 'IconCheckbox',
                       },
                     },
-                    icon: 'IconBox',
                   },
                 },
-                icon: 'IconBox',
               },
             },
-            icon: 'IconBox',
           },
           metadata: {
             isLeaf: false,
+            type: 'object',
             label: 'metadata',
             value: {
               total: {
@@ -379,20 +353,16 @@ describe('convertOutputSchemaToJson', () => {
                 type: 'number',
                 label: 'total',
                 value: 1,
-                icon: 'IconNumber',
               },
               page: {
                 isLeaf: true,
                 type: 'number',
                 label: 'page',
                 value: 1,
-                icon: 'IconNumber',
               },
             },
-            icon: 'IconBox',
           },
         },
-        icon: 'IconBox',
       },
     };
     const expected = {

@@ -75,8 +75,8 @@ export const useLoadCurrentUser = () => {
     if (isDefined(user.currentUserWorkspace)) {
       setCurrentUserWorkspace({
         ...user.currentUserWorkspace,
-        objectPermissions:
-          (user.currentUserWorkspace.objectPermissions as Array<
+        objectsPermissions:
+          (user.currentUserWorkspace.objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });

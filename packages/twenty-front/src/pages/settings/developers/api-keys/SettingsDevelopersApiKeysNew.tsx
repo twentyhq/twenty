@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { addDays } from 'date-fns';
 import { useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -11,7 +11,6 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -20,7 +19,6 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-  FeatureFlagKey,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
   useGetRolesQuery,
@@ -34,7 +32,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
     onCompleted: (data) => {
-      if (isApiKeyRolesEnabled && isDefined(data?.getRoles)) {
+      if (isDefined(data?.getRoles)) {
         const defaultRole = data.getRoles.find(
           (role) => role.id === currentWorkspace?.defaultRole?.id,
         );
@@ -52,11 +50,6 @@ export const SettingsDevelopersApiKeysNew = () => {
     },
   });
   const roles = rolesData?.getRoles ?? [];
-  const isApiKeyRolesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-  );
-
-  const adminRole = roles.find((role) => role.label === 'Admin');
 
   const [formValues, setFormValues] = useState<{
     name: string;
@@ -79,13 +72,12 @@ export const SettingsDevelopersApiKeysNew = () => {
   );
 
   const handleSave = async () => {
-    const expiresAt = DateTime.now()
-      .plus({ days: formValues.expirationDate ?? 30 })
-      .toString();
+    const expiresAt = addDays(
+      new Date(),
+      formValues.expirationDate ?? 30,
+    ).toISOString();
 
-    const roleIdToUse = isApiKeyRolesEnabled
-      ? formValues.roleId
-      : adminRole?.id;
+    const roleIdToUse = formValues.roleId;
 
     if (!roleIdToUse) {
       return;
@@ -125,9 +117,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   };
 
-  const canSave = isApiKeyRolesEnabled
-    ? !!formValues.name && !!formValues.roleId && createApiKey
-    : !!formValues.name && !!adminRole?.id && createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
 
   if (rolesLoading) {
     return <SettingsSkeletonLoader />;
@@ -178,24 +168,22 @@ export const SettingsDevelopersApiKeysNew = () => {
             fullWidth
           />
         </Section>
-        {isApiKeyRolesEnabled && (
-          <Section>
-            <H2Title
-              title={t`Role`}
-              description={t`What this API can do: Select a user role to define its permissions.`}
-            />
-            <SettingsDevelopersRoleSelector
-              value={formValues.roleId}
-              onChange={(roleId) => {
-                setFormValues((prevState) => ({
-                  ...prevState,
-                  roleId,
-                }));
-              }}
-              roles={roles}
-            />
-          </Section>
-        )}
+        <Section>
+          <H2Title
+            title={t`Role`}
+            description={t`What this API can do: Select a user role to define its permissions.`}
+          />
+          <SettingsDevelopersRoleSelector
+            value={formValues.roleId}
+            onChange={(roleId) => {
+              setFormValues((prevState) => ({
+                ...prevState,
+                roleId,
+              }));
+            }}
+            roles={roles}
+          />
+        </Section>
         <Section>
           <H2Title
             title={t`Expiration Date`}

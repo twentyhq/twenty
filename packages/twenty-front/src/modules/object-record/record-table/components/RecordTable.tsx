@@ -24,7 +24,7 @@ export const RecordTable = () => {
     objectMetadataItem.id,
   );
 
-  const tableBodyRef = useRef<HTMLTableElement>(null);
+  const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,

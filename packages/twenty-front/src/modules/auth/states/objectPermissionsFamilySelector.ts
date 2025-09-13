@@ -27,7 +27,7 @@ export const objectPermissionsFamilySelector = selectorFamily<
         };
       }
 
-      const objectPermissions = currentUserWorkspace?.objectPermissions?.find(
+      const objectPermissions = currentUserWorkspace?.objectsPermissions?.find(
         (permission) => permission.objectMetadataId === objectMetadataItem.id,
       );
 

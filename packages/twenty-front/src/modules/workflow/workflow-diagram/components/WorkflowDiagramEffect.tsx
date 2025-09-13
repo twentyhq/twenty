@@ -48,7 +48,7 @@ export const WorkflowDiagramEffect = () => {
 
         const nextWorkflowDiagram = getWorkflowVersionDiagram({
           workflowVersion: currentVersion,
-          isEditable: true,
+          workflowContext: 'workflow',
         });
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;

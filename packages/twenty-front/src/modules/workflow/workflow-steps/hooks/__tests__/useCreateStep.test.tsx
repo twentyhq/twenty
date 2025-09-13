@@ -1,4 +1,3 @@
-import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
@@ -44,17 +43,6 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe('useCreateStep', () => {
-  const mockWorkflow = {
-    id: '123',
-    currentVersion: {
-      id: '456',
-      status: 'DRAFT',
-      steps: [],
-      trigger: { type: 'manual' },
-    },
-    versions: [],
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -63,15 +51,9 @@ describe('useCreateStep', () => {
     const mockWorkflowVersionId = 'version-123';
     mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
 
-    const { result } = renderHook(
-      () =>
-        useCreateStep({
-          workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
-        }),
-      {
-        wrapper,
-      },
-    );
+    const { result } = renderHook(() => useCreateStep(), {
+      wrapper,
+    });
 
     await act(async () => {
       await result.current.createStep({

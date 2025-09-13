@@ -3,7 +3,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/coreViewsByObjectMetadataIdFamilySelector';
+import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterableFieldsWithVectorSearch';
 
@@ -11,7 +11,7 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -71,7 +71,17 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             continue;
           }
 
-          if (!isDeeplyEqual(coreView.viewFields, existingView.viewFields)) {
+          if (
+            !isDeeplyEqual(
+              coreView.viewFields.map((viewField) =>
+                removePropertiesFromRecord(viewField, [
+                  'updatedAt',
+                  'createdAt',
+                ]),
+              ),
+              existingView.viewFields,
+            )
+          ) {
             const view = convertCoreViewToView(coreView);
             set(
               currentRecordFieldsComponentState.atomFamily({

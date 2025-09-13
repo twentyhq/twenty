@@ -8,10 +8,11 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -105,14 +106,12 @@ export const WorkflowEditActionHttpRequest = ({
     onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
   });
-
   const { outputSchema, handleOutputSchemaChange, error } =
     useHttpRequestOutputSchema({
       action,
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
-
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
@@ -177,6 +176,7 @@ export const WorkflowEditActionHttpRequest = ({
             />
 
             <KeyValuePairInput
+              key={getBodyTypeFromHeaders(formData.headers) || 'none'}
               label="Headers Input"
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
@@ -188,8 +188,11 @@ export const WorkflowEditActionHttpRequest = ({
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value) => handleFieldChange('body', value)}
+                onChange={(value, type = 'body') =>
+                  handleFieldChange(type, value)
+                }
                 readonly={actionOptions.readonly}
+                headers={formData.headers}
               />
             )}
 
@@ -217,15 +220,20 @@ export const WorkflowEditActionHttpRequest = ({
           </StyledTestTabContent>
         )}
       </WorkflowStepBody>
-      {activeTabId === WorkflowHttpRequestTabId.TEST && (
-        <RightDrawerFooter
-          actions={[
-            <CmdEnterActionButton
-              title="Test"
-              onClick={handleTestRequest}
-              disabled={isTesting || actionOptions.readonly}
-            />,
-          ]}
+      {!actionOptions.readonly && (
+        <WorkflowActionFooter
+          stepId={action.id}
+          additionalActions={
+            activeTabId === WorkflowHttpRequestTabId.TEST
+              ? [
+                  <CmdEnterActionButton
+                    title="Test"
+                    onClick={handleTestRequest}
+                    disabled={isTesting}
+                  />,
+                ]
+              : []
+          }
         />
       )}
     </>
