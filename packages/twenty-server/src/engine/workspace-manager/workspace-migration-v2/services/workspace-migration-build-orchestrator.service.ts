@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import {
   OrchestratorFailureReport,
   WorkspaceMigrationOrchestratorBuildArgs,
@@ -28,8 +29,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
   public async buildWorkspaceMigration({
     workspaceId,
     buildOptions,
-    fromAllFlatEntityMaps,
-    toAllFlatEntityMaps,
+    fromToAllFlatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatViewFieldMaps,
+      flatViewMaps,
+    },
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -41,14 +45,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewField: [],
     };
 
-    let opstimisticAllFlatEntityMaps = structuredClone(fromAllFlatEntityMaps);
+    let opstimisticAllFlatEntityMaps: AllFlatEntityMaps = structuredClone(
+      fromAllFlatEntityMaps, // TODO
+    );
 
-    if (isDefined(toAllFlatEntityMaps.flatObjectMetadataMaps)) {
+    if (isDefined(flatObjectMetadataMaps)) {
+      const { fromFlatObjectMetadataMaps, toFlatObjectMetadataMaps } =
+        flatObjectMetadataMaps;
+
       const objectResult =
         await this.workspaceMigrationBuilderV2Service.validateAndBuild({
-          fromFlatObjectMetadataMaps:
-            fromAllFlatEntityMaps.flatObjectMetadataMaps,
-          toFlatObjectMetadataMaps: toAllFlatEntityMaps.flatObjectMetadataMaps,
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
           workspaceId,
           buildOptions,
         });
@@ -67,16 +75,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(toAllFlatEntityMaps.flatViewMaps)) {
+    if (isDefined(flatViewMaps)) {
+      const { fromFlatViewMaps, toFlatViewMaps } = flatViewMaps;
       const viewResult =
         await this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild(
           {
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
-                toAllFlatEntityMaps.flatObjectMetadataMaps,
+                opstimisticAllFlatEntityMaps.flatObjectMetadataMaps,
             },
-            from: fromAllFlatEntityMaps.flatViewMaps,
-            to: toAllFlatEntityMaps.flatViewMaps,
+            from: fromFlatViewMaps,
+            to: toFlatViewMaps,
             buildOptions,
           },
         );
@@ -93,17 +102,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(toAllFlatEntityMaps.flatViewFieldMaps)) {
+    if (isDefined(flatViewFieldMaps)) {
+      const { fromFlatViewFieldMaps, toFlatViewFieldMaps } = flatViewFieldMaps;
       const viewFieldResult =
         await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
           {
-            from: fromAllFlatEntityMaps.flatViewFieldMaps,
-            to: toAllFlatEntityMaps.flatViewFieldMaps,
+            from: fromFlatViewFieldMaps,
+            to: toFlatViewFieldMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
-                toAllFlatEntityMaps.flatObjectMetadataMaps,
-              flatViewMaps: toAllFlatEntityMaps.flatViewMaps,
+                opstimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatViewMaps: opstimisticAllFlatEntityMaps.flatViewMaps,
             },
           },
         );

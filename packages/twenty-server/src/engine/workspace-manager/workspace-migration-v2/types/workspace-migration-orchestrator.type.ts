@@ -9,7 +9,10 @@ import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-mig
 export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
-} & FromTo<AllFlatEntityMaps, 'allFlatEntityMaps'>;
+  fromToAllFlatEntityMaps: {
+    [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P], P>;
+  };
+};
 
 export type OrchestratorFailureReport = {
   [P in keyof AllFlatEntities]: FailedFlatEntityValidation<
