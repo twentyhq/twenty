@@ -10,6 +10,7 @@ export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
   const { numberFormat } = useContext(UserContext);
   const type = fieldDefinition.metadata.settings?.type;
+  const decimals = fieldDefinition.metadata.settings?.decimals;
 
   if (!isDefined(fieldValue)) {
     return <NumberDisplay value={null} />;
@@ -19,11 +20,11 @@ export const NumberFieldDisplay = () => {
   let formattedValue: string;
 
   if (type === 'percentage') {
-    formattedValue = `${formatNumber(numericValue * 100, numberFormat)}%`;
+    formattedValue = `${formatNumber(numericValue * 100, numberFormat, decimals)}%`;
   } else if (type === 'shortNumber') {
     formattedValue = formatAmount(numericValue);
   } else {
-    formattedValue = formatNumber(numericValue, numberFormat);
+    formattedValue = formatNumber(numericValue, numberFormat, decimals);
   }
 
   return <NumberDisplay value={formattedValue} />;

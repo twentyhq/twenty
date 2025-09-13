@@ -1,21 +1,25 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 
 export const detectNumberFormat = (): NumberFormat => {
-  try {
-    const language = navigator.language;
+  const testNumber = 1234567.89;
+  const language = navigator?.language || 'en-US';
+  const formatter = new Intl.NumberFormat(language);
+  const parts = formatter.formatToParts(testNumber);
 
-    if (language.startsWith('en')) {
-      return NumberFormat.COMMAS_AND_DOT;
-    }
-    if (language.startsWith('fr')) {
-      return NumberFormat.SPACES_AND_COMMA;
-    }
-    if (language.startsWith('de')) {
-      return NumberFormat.SPACES_AND_DOT;
-    }
+  const thousandSeparator =
+    parts.find((part) => part.type === 'group')?.value || '';
+  const decimalSeparator =
+    parts.find((part) => part.type === 'decimal')?.value || '';
 
-    return NumberFormat.COMMAS_AND_DOT;
-  } catch {
+  if (thousandSeparator === ',' && decimalSeparator === '.') {
     return NumberFormat.COMMAS_AND_DOT;
   }
+  if (thousandSeparator === ' ' && decimalSeparator === ',') {
+    return NumberFormat.SPACES_AND_COMMA;
+  }
+  if (thousandSeparator === ' ' && decimalSeparator === '.') {
+    return NumberFormat.SPACES_AND_DOT;
+  }
+
+  return NumberFormat.COMMAS_AND_DOT;
 };

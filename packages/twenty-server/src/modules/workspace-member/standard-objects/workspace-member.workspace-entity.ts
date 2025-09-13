@@ -58,7 +58,6 @@ export enum WorkspaceMemberNumberFormatEnum {
   SPACES_AND_DOT = 'SPACES_AND_DOT',
 }
 
-// Register the enum with GraphQL
 registerEnumType(WorkspaceMemberNumberFormatEnum, {
   name: 'WorkspaceMemberNumberFormatEnum',
   description: 'Number format for displaying numbers',

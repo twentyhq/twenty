@@ -24,6 +24,12 @@ export const NumberFormatSettings = () => {
     currentWorkspaceMemberState,
   );
 
+  const systemNumberFormatLabel = formatNumber(
+    1234.56,
+    detectNumberFormat(),
+    2,
+  );
+
   const handleNumberFormatChange = async (value: NumberFormat) => {
     if (!currentWorkspaceMember?.id) {
       logError('User is not logged in');
@@ -33,7 +39,9 @@ export const NumberFormatSettings = () => {
     const workspaceNumberFormat =
       value === NumberFormat.SYSTEM
         ? WorkspaceMemberNumberFormatEnum.SYSTEM
-        : (value as unknown as WorkspaceMemberNumberFormatEnum);
+        : WorkspaceMemberNumberFormatEnum[
+            value as keyof typeof WorkspaceMemberNumberFormatEnum
+          ];
 
     try {
       await updateOneRecord({
@@ -56,19 +64,12 @@ export const NumberFormatSettings = () => {
       logError(error);
     }
   };
-  const testNumber = 1234.56;
 
-  const formatLabel = (format: NumberFormat) => {
-    if (format === NumberFormat.SYSTEM) {
-      return formatNumber(testNumber, detectNumberFormat());
-    }
-    return formatNumber(testNumber, format);
-  };
-
-  const systemFormatLabel = formatLabel(NumberFormat.SYSTEM);
-  const commasAndDotLabel = formatLabel(NumberFormat.COMMAS_AND_DOT);
-  const spacesAndCommaLabel = formatLabel(NumberFormat.SPACES_AND_COMMA);
-  const spacesAndDotLabel = formatLabel(NumberFormat.SPACES_AND_DOT);
+  const numberFormat =
+    currentWorkspaceMember?.numberFormat ===
+    WorkspaceMemberNumberFormatEnum.SYSTEM
+      ? NumberFormat.SYSTEM
+      : dateTimeFormat.numberFormat;
 
   return (
     <Select
@@ -76,22 +77,22 @@ export const NumberFormatSettings = () => {
       label={t`Number format`}
       fullWidth
       dropdownWidthAuto
-      value={dateTimeFormat.numberFormat}
+      value={numberFormat}
       options={[
         {
-          label: t`System Settings - ${systemFormatLabel}`,
+          label: t`System Settings - ${systemNumberFormatLabel}`,
           value: NumberFormat.SYSTEM,
         },
         {
-          label: t`Commas and dot (${commasAndDotLabel})`,
+          label: t`Commas and dot (1,234.56)`,
           value: NumberFormat.COMMAS_AND_DOT,
         },
         {
-          label: t`Spaces and comma (${spacesAndCommaLabel})`,
+          label: t`Spaces and comma (1 234,56)`,
           value: NumberFormat.SPACES_AND_COMMA,
         },
         {
-          label: t`Spaces and dot (${spacesAndDotLabel})`,
+          label: t`Spaces and dot (1 234.56)`,
           value: NumberFormat.SPACES_AND_DOT,
         },
       ]}
