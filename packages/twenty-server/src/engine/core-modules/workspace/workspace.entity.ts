@@ -21,7 +21,9 @@ import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { OutboundMessageDomain } from 'src/engine/core-modules/outbound-message-domain/outbound-message-domain.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
@@ -41,7 +43,6 @@ import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-hand
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -115,6 +116,12 @@ export class Workspace {
     (approvedAccessDomain) => approvedAccessDomain.workspace,
   )
   approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
+
+  @OneToMany(
+    () => OutboundMessageDomain,
+    (outboundMessageDomain) => outboundMessageDomain.workspace,
+  )
+  outboundMessageDomains: Relation<OutboundMessageDomain[]>;
 
   @OneToMany(() => PublicDomain, (publicDomain) => publicDomain.workspace)
   publicDomains: Relation<PublicDomain[]>;
