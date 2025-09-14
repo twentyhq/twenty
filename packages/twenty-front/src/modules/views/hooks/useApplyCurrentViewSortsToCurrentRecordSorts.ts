@@ -3,7 +3,6 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,7 +23,11 @@ export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
 
   const applyCurrentViewSortsToCurrentRecordSorts = () => {
     if (isDefined(currentView)) {
-      setCurrentRecordSorts(mapViewSortsToSorts(currentView.viewSorts));
+      const recordSorts = currentView.viewSorts.map((viewSort) => {
+        const { viewId: _viewId, ...recordSort } = viewSort;
+        return recordSort;
+      });
+      setCurrentRecordSorts(recordSorts);
     }
   };
 
