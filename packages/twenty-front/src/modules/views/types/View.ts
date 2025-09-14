@@ -1,11 +1,11 @@
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type ViewField } from '@/views/types/ViewField';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { type ViewSort } from '@/views/types/ViewSort';
 import { type ViewType } from '@/views/types/ViewType';
 
 export type View = {
@@ -19,7 +19,7 @@ export type View = {
   viewGroups: ViewGroup[];
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
-  viewSorts: ViewSort[];
+  viewSorts: CoreViewSortEssential[];
   /**
    * @deprecated Use `viewGroups.fieldMetadataId` instead.
    */
