@@ -81,9 +81,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const isDefaultView = currentView?.key === 'INDEX';
   const nbsp = '\u00A0';
 
-
   const featureFlags = useFeatureFlagsMap();
-  const hasCalendarViewEnabled = featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
+  const hasCalendarViewEnabled =
+    featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
 
   const selectableItemIdArray = [
     ViewType.Table,

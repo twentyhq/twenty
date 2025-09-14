@@ -86,12 +86,15 @@ export const ViewPickerContentCreateMode = () => {
 
   const featureFlags = useFeatureFlagsMap();
 
-  const hasCalendarViewEnabled = featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
+  const hasCalendarViewEnabled =
+    featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
 
-  const viewPickerTypeOptions = VIEW_PICKER_TYPE_SELECT_OPTIONS.filter((option) => {
-    return option.value !== ViewType.Calendar || hasCalendarViewEnabled;
-  });
-  
+  const viewPickerTypeOptions = VIEW_PICKER_TYPE_SELECT_OPTIONS.filter(
+    (option) => {
+      return option.value !== ViewType.Calendar || hasCalendarViewEnabled;
+    },
+  );
+
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: async () => {
