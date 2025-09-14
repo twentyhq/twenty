@@ -37,6 +37,7 @@ export class ViewV2Service {
 
   async createOne(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
     const { workspaceId } = viewData;
+
     if (!isDefined(workspaceId)) {
       throw new ViewException(
         generateViewExceptionMessage(

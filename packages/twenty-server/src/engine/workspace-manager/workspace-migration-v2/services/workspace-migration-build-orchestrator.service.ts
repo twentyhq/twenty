@@ -38,9 +38,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
     const allFromToFlatEntityMapsKeys = Object.keys(
       fromToAllFlatEntityMaps,
     ) as (keyof AllFlatEntityMaps)[];
+
     return allFromToFlatEntityMapsKeys.reduce<AllFlatEntityMaps>(
       (allFlatEntityMaps, currFlatMaps) => {
         const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
+
         if (!isDefined(fromToOccurence)) {
           return allFlatEntityMaps;
         }
@@ -157,6 +159,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     const allErrors = Object.values(orchestratorFailureReport);
+
     if (allErrors.some((report) => report.length > 0)) {
       return {
         status: 'fail',

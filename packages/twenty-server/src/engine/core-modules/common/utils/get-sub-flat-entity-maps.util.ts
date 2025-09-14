@@ -1,9 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getSubFlatEntityMaps = <T extends FlatEntity>({
   flatEntityIds,

@@ -125,9 +125,10 @@ export class FlatViewFieldValidatorService {
     if (
       isDefined(optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id])
     ) {
+      const flatViewFieldId = flatViewFieldToValidate.id;
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field metadata with id ${flatViewFieldToValidate.id} already exists`,
+        message: t`View field metadata with id ${flatViewFieldId} already exists`,
         userFriendlyMessage: t`View field metadata already exists`,
       });
     }

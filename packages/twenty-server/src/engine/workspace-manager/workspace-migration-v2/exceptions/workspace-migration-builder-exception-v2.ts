@@ -1,4 +1,4 @@
-import { WorkspaceMigrationOrchestratorFailedResult } from "src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type";
+import { type WorkspaceMigrationOrchestratorFailedResult } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 
 export class WorkspaceMigrationBuilderExceptionV2 extends Error {
   constructor(
