@@ -43,8 +43,7 @@ const StyledWorkflowSendEmailBodyInnerContainer = styled.div`
   flex-grow: 1;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-sizing: border-box;
   display: flex;
