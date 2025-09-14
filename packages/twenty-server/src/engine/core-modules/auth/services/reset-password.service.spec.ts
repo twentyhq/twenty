@@ -23,6 +23,7 @@ jest.mock('@react-email/render', () => ({
     if (options?.plainText) {
       return 'Plain Text Email';
     }
+
     return '<html><body>HTML email content</body></html>';
   }),
 }));
