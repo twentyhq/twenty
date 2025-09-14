@@ -93,7 +93,7 @@ export class FlatViewFieldValidatorService {
       if (!isDefined(existingFlatViewField.deletedAt)) {
         errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View view to delete has not been soft deleted`,
+          message: t`View field to delete has not been soft deleted`,
           userFriendlyMessage: t`View field to delete has not been soft deleted`,
         });
       }

@@ -15,6 +15,7 @@ import {
 } from 'test/integration/utils/view-test.util';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type DeleteViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view-field.input';
 
 import {
   cleanupViewFieldTestV2,
@@ -37,28 +38,40 @@ describe('View Field Resolver - Successful Operations - v2', () => {
     await cleanupViewRecords();
   });
 
-  describe('successful operations', () => {
-    const testCases = [
-      {
-        name: 'getCoreViewFields - empty array',
-        operation: async () => {
+  const eachTestingContext = [
+    {
+      name: 'with standard setup',
+      setup: () => testSetup,
+    },
+  ];
+
+  describe('getCoreViewFields', () => {
+    describe('when getting empty fields', () => {
+      test.each(eachTestingContext)(
+        '$name should return empty array',
+        async ({ setup }) => {
+          const context = setup();
           const operation = findViewFieldsOperationFactory({
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           });
           const response = await makeGraphqlAPIRequest(operation);
 
           assertGraphQLSuccessfulResponse(response);
           expect(response.body.data.getCoreViewFields).toEqual([]);
         },
-      },
-      {
-        name: 'getCoreViewFields - with fields',
-        operation: async () => {
-          const fieldData = createViewFieldData(testSetup.testViewId, {
+      );
+    });
+
+    describe('when getting existing fields', () => {
+      test.each(eachTestingContext)(
+        '$name should return fields',
+        async ({ setup }) => {
+          const context = setup();
+          const fieldData = createViewFieldData(context.testViewId, {
             position: 0,
             isVisible: true,
             size: 150,
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
           });
 
           await createOneCoreViewField({
@@ -67,29 +80,35 @@ describe('View Field Resolver - Successful Operations - v2', () => {
           });
 
           const getOperation = findViewFieldsOperationFactory({
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           });
           const response = await makeGraphqlAPIRequest(getOperation);
 
           assertGraphQLSuccessfulResponse(response);
           expect(response.body.data.getCoreViewFields).toHaveLength(1);
           assertViewFieldStructure(response.body.data.getCoreViewFields[0], {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
             position: 0,
             isVisible: true,
             size: 150,
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           });
         },
-      },
-      {
-        name: 'createCoreViewField - visible field',
-        operation: async () => {
-          const fieldData = createViewFieldData(testSetup.testViewId, {
+      );
+    });
+  });
+
+  describe('createCoreViewField', () => {
+    describe('when creating visible field', () => {
+      test.each(eachTestingContext)(
+        '$name should create visible field',
+        async ({ setup }) => {
+          const context = setup();
+          const fieldData = createViewFieldData(context.testViewId, {
             position: 1,
             isVisible: true,
             size: 200,
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
           });
 
           const response = await createOneCoreViewField({
@@ -99,23 +118,27 @@ describe('View Field Resolver - Successful Operations - v2', () => {
 
           assertGraphQLSuccessfulResponse({ body: response, status: 200 });
           assertViewFieldStructure(response.data.createCoreViewField, {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
             position: 1,
             isVisible: true,
             size: 200,
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           });
         },
-      },
-      {
-        name: 'createCoreViewField - hidden field',
-        operation: async () => {
+      );
+    });
+
+    describe('when creating hidden field', () => {
+      test.each(eachTestingContext)(
+        '$name should create hidden field',
+        async ({ setup }) => {
+          const context = setup();
           const fieldData = {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
             position: 2,
             isVisible: false,
             size: 100,
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           };
 
           const response = await createOneCoreViewField({
@@ -125,22 +148,28 @@ describe('View Field Resolver - Successful Operations - v2', () => {
 
           assertGraphQLSuccessfulResponse({ body: response, status: 200 });
           assertViewFieldStructure(response.data.createCoreViewField, {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
             position: 2,
             isVisible: false,
             size: 100,
-            viewId: testSetup.testViewId,
+            viewId: context.testViewId,
           });
         },
-      },
-      {
-        name: 'updateCoreViewField',
-        operation: async () => {
-          const fieldData = createViewFieldData(testSetup.testViewId, {
+      );
+    });
+  });
+
+  describe('updateCoreViewField', () => {
+    describe('when updating field properties', () => {
+      test.each(eachTestingContext)(
+        '$name should update field',
+        async ({ setup }) => {
+          const context = setup();
+          const fieldData = createViewFieldData(context.testViewId, {
             position: 0,
             isVisible: true,
             size: 150,
-            fieldMetadataId: testSetup.testFieldMetadataId,
+            fieldMetadataId: context.testFieldMetadataId,
           });
           const createResponse = await createOneCoreViewField({
             input: fieldData as CreateViewFieldInput,
@@ -169,12 +198,18 @@ describe('View Field Resolver - Successful Operations - v2', () => {
             size: 300,
           });
         },
-      },
-      {
-        name: 'deleteCoreViewField',
-        operation: async () => {
-          const fieldData = createViewFieldData(testSetup.testViewId, {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+      );
+    });
+  });
+
+  describe('deleteCoreViewField', () => {
+    describe('when deleting existing field', () => {
+      test.each(eachTestingContext)(
+        '$name should delete field',
+        async ({ setup }) => {
+          const context = setup();
+          const fieldData = createViewFieldData(context.testViewId, {
+            fieldMetadataId: context.testFieldMetadataId,
           });
           const createResponse = await createOneCoreViewField({
             input: fieldData as CreateViewFieldInput,
@@ -183,7 +218,7 @@ describe('View Field Resolver - Successful Operations - v2', () => {
           const viewField = createResponse.data.createCoreViewField;
 
           const response = await deleteOneCoreViewField({
-            input: { id: viewField.id },
+            input: { id: viewField.id } as DeleteViewFieldInput,
             expectToFail: false,
           });
 
@@ -192,12 +227,18 @@ describe('View Field Resolver - Successful Operations - v2', () => {
             id: viewField.id,
           });
         },
-      },
-      {
-        name: 'destroyCoreViewField',
-        operation: async () => {
-          const fieldData = createViewFieldData(testSetup.testViewId, {
-            fieldMetadataId: testSetup.testFieldMetadataId,
+      );
+    });
+  });
+
+  describe('destroyCoreViewField', () => {
+    describe('when destroying existing field', () => {
+      test.each(eachTestingContext)(
+        '$name should destroy field',
+        async ({ setup }) => {
+          const context = setup();
+          const fieldData = createViewFieldData(context.testViewId, {
+            fieldMetadataId: context.testFieldMetadataId,
           });
           const createResponse = await createOneCoreViewField({
             input: fieldData as CreateViewFieldInput,
@@ -217,11 +258,7 @@ describe('View Field Resolver - Successful Operations - v2', () => {
             id: viewField.id,
           });
         },
-      },
-    ];
-
-    test.each(testCases)('$name should succeed', async ({ operation }) => {
-      await operation();
+      );
     });
   });
 });
