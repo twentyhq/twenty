@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -20,6 +21,7 @@ import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/vie
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewCalendarLayout } from 'src/engine/core-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -31,6 +33,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'workspaceId',
   'objectMetadataId',
 ])
+@Check(
+  'CHK_VIEW_CALENDAR_LAYOUT_NOT_NULL_WHEN_TYPE_CALENDAR',
+  `("type" != 'CALENDAR' OR "calendarLayout" IS NOT NULL)`,
+)
 export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -93,6 +99,14 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
 
   @Column({ nullable: true, type: 'uuid' })
   kanbanAggregateOperationFieldMetadataId: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewCalendarLayout),
+    nullable: true,
+    default: null,
+  })
+  calendarLayout: ViewCalendarLayout | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

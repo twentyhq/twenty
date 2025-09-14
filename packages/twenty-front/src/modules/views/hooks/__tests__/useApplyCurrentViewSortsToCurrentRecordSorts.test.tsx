@@ -1,19 +1,17 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-
-import { type ViewSort } from '@/views/types/ViewSort';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { coreViewsState } from '@/views/states/coreViewState';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewSortDirection, type CoreViewSort } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,
@@ -43,24 +41,21 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     throw new Error('Missing mock field metadata item with type TEXT');
   }
 
-  const mockViewSort: ViewSort = {
-    __typename: 'ViewSort',
+  const mockViewSort: CoreViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
-    direction: 'asc',
+    direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   const allCompaniesView = mockedViewsData[0];
   const allCompaniesCoreView = mockedCoreViewsData[0];
 
-  const mockCoreViewSort: Omit<CoreViewSort, 'workspaceId'> = {
-    __typename: 'CoreViewSort',
+  const mockCoreViewSort: CoreViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    viewId: allCompaniesCoreView.id,
+    viewId: 'view-1',
   };
 
   const mockView = {
@@ -111,7 +106,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
-      } satisfies RecordSort,
+      },
     ]);
   });
 

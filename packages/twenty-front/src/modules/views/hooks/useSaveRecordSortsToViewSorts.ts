@@ -37,7 +37,9 @@ export const useSaveRecordSortsToViewSorts = () => {
           currentRecordSortsCallbackState,
         );
 
-        const newViewSorts = currentRecordSorts.map(mapRecordSortToViewSort);
+        const newViewSorts = currentRecordSorts.map((recordSort) =>
+          mapRecordSortToViewSort(recordSort, currentView.id),
+        );
 
         const viewSortsToCreate = getViewSortsToCreate(
           currentViewSorts,
@@ -54,13 +56,9 @@ export const useSaveRecordSortsToViewSorts = () => {
           newViewSorts,
         );
 
-        const viewSortIdsToDelete = viewSortsToDelete.map(
-          (viewSort) => viewSort.id,
-        );
-
         await createViewSortRecords(viewSortsToCreate, currentView);
         await updateViewSortRecords(viewSortsToUpdate);
-        await deleteViewSortRecords(viewSortIdsToDelete);
+        await deleteViewSortRecords(viewSortsToDelete);
       },
     [
       currentView,

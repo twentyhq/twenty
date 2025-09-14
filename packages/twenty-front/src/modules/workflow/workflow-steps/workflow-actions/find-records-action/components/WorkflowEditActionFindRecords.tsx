@@ -185,6 +185,7 @@ export const WorkflowEditActionFindRecords = ({
                 objectNameSingular: selectedObjectMetadataItem.nameSingular,
                 objectMetadataItem: selectedObjectMetadataItem,
                 recordIndexId: instanceId,
+                viewBarInstanceId: instanceId,
                 objectPermissionsByObjectMetadataId,
                 labelIdentifierFieldMetadataItem,
                 recordFieldByFieldMetadataItemId,

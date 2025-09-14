@@ -530,6 +530,7 @@ export type ConnectionParametersOutput = {
 export type CoreView = {
   __typename?: 'CoreView';
   anyFieldFilterValue?: Maybe<Scalars['String']>;
+  calendarLayout?: Maybe<ViewCalendarLayout>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon: Scalars['String'];
@@ -809,6 +810,7 @@ export type CreateViewGroupInput = {
 
 export type CreateViewInput = {
   anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
   icon: Scalars['String'];
   id?: InputMaybe<Scalars['UUID']>;
   isCompact?: InputMaybe<Scalars['Boolean']>;
@@ -1033,6 +1035,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
@@ -3655,6 +3658,7 @@ export type UpdateViewGroupInput = {
 
 export type UpdateViewInput = {
   anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
   isCompact?: InputMaybe<Scalars['Boolean']>;
@@ -3837,6 +3841,12 @@ export type VersionInfo = {
   latestVersion: Scalars['String'];
 };
 
+export enum ViewCalendarLayout {
+  DAY = 'DAY',
+  MONTH = 'MONTH',
+  WEEK = 'WEEK'
+}
+
 export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',
   NOT = 'NOT',
@@ -3877,6 +3887,7 @@ export enum ViewSortDirection {
 }
 
 export enum ViewType {
+  CALENDAR = 'CALENDAR',
   KANBAN = 'KANBAN',
   TABLE = 'TABLE'
 }

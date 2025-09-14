@@ -6,6 +6,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergePreviewProps = {
@@ -20,6 +21,7 @@ export const useMergePreview = ({
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
   const mergeSettings = useRecoilValue(mergeSettingsState);
+  const isMergeInProgress = useRecoilValue(isMergeInProgressState);
   const { records: selectedRecords } = useFindManyRecordsSelectedInContextStore(
     {
       limit: 10,
@@ -39,7 +41,7 @@ export const useMergePreview = ({
 
   useEffect(() => {
     const fetchPreview = async () => {
-      if (selectedRecords.length < 2) return;
+      if (selectedRecords.length < 2 || isMergeInProgress) return;
       setIsGeneratingPreview(true);
       try {
         const previewRecord = await mergeManyRecords({
@@ -62,7 +64,7 @@ export const useMergePreview = ({
       }
     };
 
-    if (selectedRecords.length > 0) {
+    if (selectedRecords.length > 0 && !isMergeInProgress) {
       fetchPreview();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
