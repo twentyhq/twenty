@@ -22,7 +22,7 @@ import {
   type ViewFieldTestSetup,
 } from './utils/setup-view-field-test-v2.util';
 
-describe('View Field Resolver - Successful Operations', () => {
+describe('View Field Resolver - Successful Operations - v2', () => {
   let testSetup: ViewFieldTestSetup;
 
   beforeAll(async () => {

@@ -1,13 +1,13 @@
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 
 export type ViewFieldTestSetup = {
   testViewId: string;
@@ -26,7 +26,7 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
     data: {
       createOneObject: { id: objectMetadataId },
     },
-  } = await createOneObjectMetadata({
+  } = await forceCreateOneObjectMetadata({
     expectToFail: false,
     input: {
       nameSingular: 'myFieldTestObjectV2',

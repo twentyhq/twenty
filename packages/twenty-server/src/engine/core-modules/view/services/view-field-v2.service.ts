@@ -47,6 +47,10 @@ export class ViewFieldV2Service {
       await this.viewCacheService.getExistingFlatViewFieldMapsFromCache({
         workspaceId,
       });
+    const { flatViewMaps: existingFlatViewMaps } =
+      await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
+        workspaceId,
+      });
 
     const flatViewFieldToCreate =
       fromCreateViewFieldInputToFlatViewFieldToCreate({
@@ -70,6 +74,7 @@ export class ViewFieldV2Service {
           },
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            flatViewMaps: existingFlatViewMaps,
           },
           buildOptions: {
             isSystemBuild: false,
