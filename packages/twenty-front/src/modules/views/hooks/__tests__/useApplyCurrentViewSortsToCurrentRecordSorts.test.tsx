@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -107,7 +106,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
-      } satisfies RecordSort,
+      },
     ]);
   });
 

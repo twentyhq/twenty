@@ -23,7 +23,11 @@ export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
 
   const applyCurrentViewSortsToCurrentRecordSorts = () => {
     if (isDefined(currentView)) {
-      setCurrentRecordSorts(currentView.viewSorts);
+      const recordSorts = currentView.viewSorts.map((viewSort) => {
+        const { viewId: _viewId, ...recordSort } = viewSort;
+        return recordSort;
+      });
+      setCurrentRecordSorts(recordSorts);
     }
   };
 
