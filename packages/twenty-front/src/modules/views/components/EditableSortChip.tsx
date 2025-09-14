@@ -24,7 +24,14 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   );
 
   const handleClick = () => {
-    upsertRecordSort(recordSort);
+    const newSort: RecordSort = {
+      ...recordSort,
+      direction:
+        recordSort.direction === ViewSortDirection.ASC
+          ? ViewSortDirection.DESC
+          : ViewSortDirection.ASC,
+    };
+    upsertRecordSort(newSort);
   };
 
   return (
