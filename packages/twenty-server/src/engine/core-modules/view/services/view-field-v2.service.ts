@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,7 +13,6 @@ import { DeleteViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/d
 import { DestroyViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromDeleteViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util';
 import { fromDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util';
@@ -27,7 +25,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewFieldV2Service {
   constructor(
-    @InjectRepository(ViewFieldEntity)
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly viewCacheService: ViewCacheService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
