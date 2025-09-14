@@ -1,6 +1,33 @@
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { unaccentText } from 'src/engine/core-modules/search/utils/unaccent-text';
 
 describe('Unaccent Search Integration', () => {
+  describe('JavaScript unaccent function', () => {
+    it('should unaccent common diacritical marks', () => {
+      expect(unaccentText('café')).toBe('cafe');
+      expect(unaccentText('résumé')).toBe('resume');
+      expect(unaccentText('naïve')).toBe('naive');
+      expect(unaccentText('José García')).toBe('Jose Garcia');
+      expect(unaccentText('François Müller')).toBe('Francois Muller');
+      expect(unaccentText('Åsa Ström')).toBe('Asa Strom');
+      expect(unaccentText('Björk')).toBe('Bjork');
+      expect(unaccentText('Zürich')).toBe('Zurich');
+      expect(unaccentText('Piñata')).toBe('Pinata');
+    });
+
+    it('should handle empty and null values', () => {
+      expect(unaccentText('')).toBe('');
+      expect(unaccentText(null as any)).toBe(null);
+      expect(unaccentText(undefined as any)).toBe(undefined);
+    });
+
+    it('should preserve non-accented text', () => {
+      expect(unaccentText('Hello World')).toBe('Hello World');
+      expect(unaccentText('123 ABC xyz')).toBe('123 ABC xyz');
+      expect(unaccentText('Company Inc.')).toBe('Company Inc.');
+    });
+  });
+
   describe('computeWhereConditionParts with unaccent', () => {
     it('should handle search operator with accented characters', () => {
       const result = computeWhereConditionParts({
@@ -198,6 +225,99 @@ describe('Unaccent Search Integration', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].title).toBe('Café du Monde');
+    });
+  });
+
+  describe('Search service with JavaScript unaccent approach', () => {
+    it('should test JavaScript-side unaccent integration', async () => {
+      // Create test table mimicking workspace table structure
+      await global.testDataSource.query(`
+        CREATE TEMPORARY TABLE test_search_service (
+          id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+          name TEXT,
+          "searchVector" tsvector GENERATED ALWAYS AS (
+            to_tsvector('simple', public.unaccent_immutable(COALESCE(name, '')))
+          ) STORED
+        )
+      `);
+
+      // Insert test data with accented characters (searchVector auto-generated)
+      await global.testDataSource.query(`
+        INSERT INTO test_search_service (name) VALUES
+        ('Café du Commerce'),
+        ('Résumé Services Inc'),
+        ('Jose Garcia Plain'),
+        ('Müller & Söhne GmbH')
+      `);
+
+      // Test the approach used in SearchService:
+      // 1. JavaScript unaccents the search input: 'café' -> 'cafe'
+      // 2. formatSearchTerms formats it: 'cafe' -> 'cafe:*'
+      // 3. PostgreSQL searches the unaccented searchVector
+
+      // Test 1: Search for accented input should find accented company
+      const searchInput1 = 'café';
+      const unaccentedInput1 = unaccentText(searchInput1);
+      const formattedTerms1 = `${unaccentedInput1}:*`;
+
+      const result1 = await global.testDataSource.query(`
+        SELECT name FROM test_search_service
+        WHERE "searchVector" @@ to_tsquery('simple', $1)
+      `, [formattedTerms1]);
+
+      expect(result1).toHaveLength(1);
+      expect(result1[0].name).toBe('Café du Commerce');
+
+      // Test 2: Search for 'resume' should find 'Résumé Services Inc'
+      const searchInput2 = 'résumé'; // User types accented
+      const unaccentedInput2 = unaccentText(searchInput2); // JavaScript unaccents to 'resume'
+      const formattedTerms2 = `${unaccentedInput2}:*`; // Becomes 'resume:*'
+
+      const result2 = await global.testDataSource.query(`
+        SELECT name FROM test_search_service
+        WHERE "searchVector" @@ to_tsquery('simple', $1)
+      `, [formattedTerms2]);
+
+      expect(result2).toHaveLength(1);
+      expect(result2[0].name).toBe('Résumé Services Inc');
+
+      // Test 3: Search for 'muller' should find 'Müller & Söhne GmbH'
+      const searchInput3 = 'müller';
+      const unaccentedInput3 = unaccentText(searchInput3);
+      const formattedTerms3 = `${unaccentedInput3}:*`;
+
+      const result3 = await global.testDataSource.query(`
+        SELECT name FROM test_search_service
+        WHERE "searchVector" @@ to_tsquery('simple', $1)
+      `, [formattedTerms3]);
+
+      expect(result3).toHaveLength(1);
+      expect(result3[0].name).toBe('Müller & Söhne GmbH');
+
+      // Test 4: Verify both accented and non-accented searches work for plain text
+      const searchInput4a = 'jose'; // Non-accented search
+      const searchInput4b = 'josé'; // Accented search
+      const unaccentedInput4a = unaccentText(searchInput4a); // 'jose'
+      const unaccentedInput4b = unaccentText(searchInput4b); // 'jose'
+      const formattedTerms4 = `${unaccentedInput4a}:*`; // Both become 'jose:*'
+
+      const result4 = await global.testDataSource.query(`
+        SELECT name FROM test_search_service
+        WHERE "searchVector" @@ to_tsquery('simple', $1)
+      `, [formattedTerms4]);
+
+      expect(result4).toHaveLength(1);
+      expect(result4[0].name).toBe('Jose Garcia Plain');
+
+      // Verify same result with accented search
+      const formattedTerms4b = `${unaccentedInput4b}:*`;
+      const result4b = await global.testDataSource.query(`
+        SELECT name FROM test_search_service
+        WHERE "searchVector" @@ to_tsquery('simple', $1)
+      `, [formattedTerms4b]);
+
+      expect(result4b).toHaveLength(1);
+      expect(result4b[0].name).toBe('Jose Garcia Plain');
     });
   });
 });

@@ -29,6 +29,7 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { unaccentText } from 'src/engine/core-modules/search/utils/unaccent-text';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
@@ -84,13 +85,15 @@ export class SearchService {
               objectMetadataItem.nameSingular,
             );
 
+          const unaccentedSearchInput = unaccentText(searchInput);
+
           return {
             objectMetadataItem,
             records: await this.buildSearchQueryAndGetRecords({
               entityManager: repository,
               objectMetadataItem,
-              searchTerms: formatSearchTerms(searchInput, 'and'),
-              searchTermsOr: formatSearchTerms(searchInput, 'or'),
+              searchTerms: formatSearchTerms(unaccentedSearchInput, 'and'),
+              searchTermsOr: formatSearchTerms(unaccentedSearchInput, 'or'),
               limit: limit as number,
               filter: filter ?? ({} as ObjectRecordFilter),
               after,
