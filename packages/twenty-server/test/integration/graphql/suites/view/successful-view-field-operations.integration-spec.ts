@@ -30,7 +30,7 @@ describe('View Field Resolver - Successful Operations', () => {
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testSetup.testObjectMetadataId);
+    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
   });
 
   beforeEach(async () => {

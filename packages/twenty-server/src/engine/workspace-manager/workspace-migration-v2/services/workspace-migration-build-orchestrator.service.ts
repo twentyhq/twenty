@@ -70,9 +70,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
   > {
     const allActions: WorkspaceMigrationActionV2[] = [];
     const orchestratorFailureReport: OrchestratorFailureReport = {
-      flatObjectMetadata: [],
-      flatView: [],
-      flatViewField: [],
+      objectMetadata: [],
+      view: [],
+      viewField: [],
     };
 
     const opstimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -98,9 +98,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         objectResult.optimisticFlatObjectMetadataMaps;
 
       if (objectResult.status === 'fail') {
-        orchestratorFailureReport.flatObjectMetadata.push(
-          ...objectResult.errors,
-        );
+        orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
       } else {
         allActions.push(...objectResult.workspaceMigration.actions);
       }
@@ -125,7 +123,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         viewResult.optimisticFlatEntityMaps;
 
       if (viewResult.status === 'fail') {
-        orchestratorFailureReport.flatView.push(...viewResult.errors);
+        orchestratorFailureReport.view.push(...viewResult.errors);
       } else {
         allActions.push(...viewResult.actions);
       }
@@ -152,7 +150,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         viewFieldResult.optimisticFlatEntityMaps;
 
       if (viewFieldResult.status === 'fail') {
-        orchestratorFailureReport.flatViewField.push(...viewFieldResult.errors);
+        orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
       } else {
         allActions.push(...viewFieldResult.actions);
       }
