@@ -51,19 +51,30 @@ export class SearchFieldMetadataService {
     fieldMetadataId: string,
     workspaceId: string,
   ): Promise<SearchFieldMetadataEntity> {
-    const existing = await this.searchFieldMetadataRepository.findOne({
+    // Use upsert to handle race conditions atomically
+    const result = await this.searchFieldMetadataRepository
+      .createQueryBuilder()
+      .insert()
+      .into(SearchFieldMetadataEntity)
+      .values({
+        objectMetadataId,
+        fieldMetadataId,
+        workspaceId,
+      })
+      .orIgnore()
+      .returning('*')
+      .execute();
+
+    if (result.raw.length > 0) {
+      return result.raw[0] as SearchFieldMetadataEntity;
+    }
+
+    // If no insert occurred (duplicate), fetch the existing record
+    const existing = await this.searchFieldMetadataRepository.findOneOrFail({
       where: { objectMetadataId, fieldMetadataId },
     });
 
-    if (existing) {
-      return existing;
-    }
-
-    return await this.searchFieldMetadataRepository.save({
-      objectMetadataId,
-      fieldMetadataId,
-      workspaceId,
-    });
+    return existing;
   }
 
   async setFieldNonSearchable(
