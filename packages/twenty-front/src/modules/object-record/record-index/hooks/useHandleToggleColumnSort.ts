@@ -7,7 +7,6 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated/graphql';
-import { fieldMetadataId } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 
 type UseHandleToggleColumnSortProps = {
   objectMetadataItemId: string;
