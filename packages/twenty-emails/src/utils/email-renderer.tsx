@@ -1,4 +1,11 @@
-import { Body, Container, Head, Html, Text } from '@react-email/components';
+import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Text,
+} from '@react-email/components';
 import type { JSONContent } from '@tiptap/core';
 import { Fragment, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -99,6 +106,8 @@ export class EmailRenderer {
         return this.paragraph(node);
       case 'text':
         return this.text(node);
+      case 'heading':
+        return this.heading(node);
       default:
         return <>{node.type}</>;
     }
@@ -132,6 +141,34 @@ export class EmailRenderer {
     const { text } = node;
 
     return text ? <>{text}</> : <>&nbsp;</>;
+  }
+
+  heading(node: JSONContent): ReactNode {
+    const { level } = node;
+
+    if (level === 1) {
+      return (
+        <Heading as="h1" style={{ fontSize: '36px' }}>
+          {this.getMappedContent(node)}
+        </Heading>
+      );
+    }
+
+    if (level === 2) {
+      return (
+        <Heading as="h2" style={{ fontSize: '30px' }}>
+          {this.getMappedContent(node)}
+        </Heading>
+      );
+    }
+
+    if (level === 3) {
+      return (
+        <Heading as="h3" style={{ fontSize: '24px' }}>
+          {this.getMappedContent(node)}
+        </Heading>
+      );
+    }
   }
 }
 
