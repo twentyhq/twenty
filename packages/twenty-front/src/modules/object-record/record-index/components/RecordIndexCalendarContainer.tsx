@@ -2,18 +2,19 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordTableComponentInstanceContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 type RecordIndexCalendarContainerProps = {
   recordCalendarInstanceId: string;
   viewBarInstanceId: string;
-  objectNameSingular: string;
 };
 
 export const RecordIndexCalendarContainer = ({
   viewBarInstanceId,
   recordCalendarInstanceId,
-  objectNameSingular,
 }: RecordIndexCalendarContainerProps) => {
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
