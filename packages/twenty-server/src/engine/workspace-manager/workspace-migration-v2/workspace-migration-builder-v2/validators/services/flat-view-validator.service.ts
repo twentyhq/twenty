@@ -57,6 +57,14 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: t`View not found`,
       });
+    } else {
+      if (!isDefined(existingFlatView.deletedAt)) {
+        errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`View to delete has not been soft deleted`,
+          userFriendlyMessage: t`View to delete has not been soft deleted`,
+        });
+      }
     }
 
     return {
