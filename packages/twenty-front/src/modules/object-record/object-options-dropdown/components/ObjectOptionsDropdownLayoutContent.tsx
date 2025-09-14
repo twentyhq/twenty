@@ -163,7 +163,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   text={t`Calendar`}
                   selected={currentView?.type === ViewType.Calendar}
                   focused={selectedItemId === ViewType.Calendar}
-                  onClick={ handleSelectCalendarViewType}
+                  onClick={handleSelectCalendarViewType}
                 />
               </SelectableListItem>
             )}

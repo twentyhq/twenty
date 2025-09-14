@@ -79,9 +79,10 @@ export const ViewPickerContentCreateMode = () => {
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
     useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
 
-
-  const [viewPickerCalendarFieldMetadataId, setViewPickerCalendarFieldMetadataId] =
-    useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  const [
+    viewPickerCalendarFieldMetadataId,
+    setViewPickerCalendarFieldMetadataId,
+  ] = useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
 
   const [viewPickerType, setViewPickerType] = useRecoilComponentState(
     viewPickerTypeComponentState,
