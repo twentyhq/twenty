@@ -20,6 +20,7 @@ import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/vie
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewCalendarLayout } from 'src/engine/core-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -132,4 +133,12 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     (viewFilterGroup) => viewFilterGroup.view,
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewCalendarLayout),
+    nullable: true,
+    default: null,
+  })
+  calendarLayout: ViewCalendarLayout;
 }
