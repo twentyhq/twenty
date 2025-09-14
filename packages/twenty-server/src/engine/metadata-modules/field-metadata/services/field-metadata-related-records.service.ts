@@ -103,9 +103,7 @@ export class FieldMetadataRelatedRecordsService {
         );
 
         if (!existingViewGroup) {
-          throw new Error(
-            `View group not found for option "${oldOption.value}" during update.`,
-          );
+          continue;
         }
 
         this.viewGroupService.update(

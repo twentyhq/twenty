@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { expect, waitFor, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
@@ -13,18 +13,21 @@ import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
-  const revenueElements = await canvas.findAllByText('Revenue');
-  await expect(revenueElements).toHaveLength(2);
-  const goalProgressElements = await canvas.findAllByText('Goal Progress');
-  await expect(goalProgressElements).toHaveLength(2);
+  await waitFor(async () => {
+    const revenueElements = canvas.getAllByText('Revenue');
+    expect(revenueElements).toHaveLength(2);
+
+    const goalProgressElements = canvas.getAllByText('Goal Progress');
+    expect(goalProgressElements).toHaveLength(2);
+
+    expect(canvas.getByText('Product Sales')).toBeInTheDocument();
+    expect(canvas.getByText('Services')).toBeInTheDocument();
+    expect(canvas.getByText('Support')).toBeInTheDocument();
+  });
+
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
-
   await expect(await canvas.findByText('$125,000')).toBeVisible();
-
-  await expect(await canvas.findByText('Product Sales')).toBeVisible();
-  await expect(await canvas.findByText('Services')).toBeVisible();
-  await expect(await canvas.findByText('Support')).toBeVisible();
 };
 
 const mixedGraphsPageLayout = {
