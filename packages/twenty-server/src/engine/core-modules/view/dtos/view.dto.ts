@@ -9,6 +9,7 @@ import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filte
 import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
 import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
+import { ViewCalendarLayout } from 'src/engine/core-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -16,6 +17,7 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });
 registerEnumType(ViewKey, { name: 'ViewKey' });
+registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
 
 @ObjectType('CoreView')
 export class ViewDTO {
@@ -63,6 +65,9 @@ export class ViewDTO {
 
   @Field(() => String, { nullable: true })
   anyFieldFilterValue?: string | null;
+
+  @Field(() => ViewCalendarLayout, { nullable: true })
+  calendarLayout: ViewCalendarLayout | null;
 
   @Field()
   createdAt: Date;
