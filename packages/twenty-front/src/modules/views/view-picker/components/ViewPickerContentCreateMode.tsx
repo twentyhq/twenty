@@ -42,7 +42,7 @@ import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledNoKanbanFieldAvailableContainer = styled.div`
+const StyledFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   margin: ${({ theme }) => theme.spacing(1, 2)};
@@ -217,10 +217,10 @@ export const ViewPickerContentCreateMode = () => {
               />
             </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
-              <StyledNoKanbanFieldAvailableContainer>
+              <StyledFieldAvailableContainer>
                 Set up a Select field on {objectMetadataItem.labelPlural} to
                 create a Kanban
-              </StyledNoKanbanFieldAvailableContainer>
+              </StyledFieldAvailableContainer>
             )}
           </>
         )}
@@ -247,10 +247,10 @@ export const ViewPickerContentCreateMode = () => {
               />
             </ViewPickerSelectContainer>
             {availableFieldsForCalendar.length === 0 && (
-              <StyledNoKanbanFieldAvailableContainer>
+              <StyledFieldAvailableContainer>
                 Set up a Date field on {objectMetadataItem.labelPlural} to
                 create a Calendar
-              </StyledNoKanbanFieldAvailableContainer>
+              </StyledFieldAvailableContainer>
             )}
           </>
         )}

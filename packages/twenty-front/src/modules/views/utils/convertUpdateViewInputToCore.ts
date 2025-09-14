@@ -37,8 +37,10 @@ export const convertUpdateViewInputToCore = (
     ...(convertedKey && { key: convertedKey }),
     ...(convertedOpenRecordIn && { openRecordIn: convertedOpenRecordIn }),
     ...(convertedType && { type: convertedType }),
-    ...(view.calendarLayout && { calendarLayout: view.calendarLayout }),
-    ...(view.calendarFieldMetadataId && {
+    ...(isDefined(view.calendarLayout) && {
+      calendarLayout: view.calendarLayout,
+    }),
+    ...(isDefined(view.calendarFieldMetadataId) && {
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
   };
