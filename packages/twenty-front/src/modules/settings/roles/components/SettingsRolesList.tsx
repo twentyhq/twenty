@@ -59,14 +59,18 @@ export const SettingsRolesList = () => {
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
     let matchesTab = false;
 
-    if (activeTabId === ROLES_LIST_TABS.TABS_IDS.USER_ROLES) {
-      matchesTab = role.canBeAssignedToUsers;
-    } else if (activeTabId === ROLES_LIST_TABS.TABS_IDS.AGENT_ROLES) {
-      matchesTab = role.canBeAssignedToAgents;
-    } else if (activeTabId === ROLES_LIST_TABS.TABS_IDS.API_KEY_ROLES) {
-      matchesTab = role.canBeAssignedToApiKeys;
-    } else {
-      matchesTab = role.canBeAssignedToUsers;
+    switch (activeTabId) {
+      case ROLES_LIST_TABS.TABS_IDS.USER_ROLES:
+        matchesTab = role.canBeAssignedToUsers;
+        break;
+      case ROLES_LIST_TABS.TABS_IDS.AGENT_ROLES:
+        matchesTab = role.canBeAssignedToAgents;
+        break;
+      case ROLES_LIST_TABS.TABS_IDS.API_KEY_ROLES:
+        matchesTab = role.canBeAssignedToApiKeys;
+        break;
+      default:
+        matchesTab = role.canBeAssignedToUsers;
     }
 
     return (
