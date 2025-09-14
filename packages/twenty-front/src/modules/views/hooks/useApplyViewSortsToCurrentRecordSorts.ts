@@ -10,7 +10,11 @@ export const useApplyViewSortsToCurrentRecordSorts = () => {
   const applyViewSortsToCurrentRecordSorts = (
     viewSorts: CoreViewSortEssential[],
   ) => {
-    setCurrentRecordSorts(viewSorts);
+    const recordSorts = viewSorts.map((viewSort) => {
+      const { viewId: _viewId, ...recordSort } = viewSort;
+      return recordSort;
+    });
+    setCurrentRecordSorts(recordSorts);
   };
 
   return {
