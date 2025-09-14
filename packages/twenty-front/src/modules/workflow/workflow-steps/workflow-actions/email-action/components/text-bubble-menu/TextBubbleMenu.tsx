@@ -1,4 +1,7 @@
+import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/BubbleMenuIconButton';
+import { TurnIntoBlockDropdown } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useTextBubbleState';
+import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
@@ -8,7 +11,16 @@ import {
   IconUnderline,
 } from 'twenty-ui/display';
 
-import { FloatingIconButtonGroup } from 'twenty-ui/input';
+const StyledBubbleMenuContainer = styled.div`
+  backdrop-filter: blur(20px);
+  background-color: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) =>
+    `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+`;
 
 type TextBubbleMenuProps = {
   editor: Editor;
@@ -43,7 +55,20 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
 
   return (
     <BubbleMenu editor={editor}>
-      <FloatingIconButtonGroup iconButtons={iconButtons} />
+      <StyledBubbleMenuContainer>
+        <TurnIntoBlockDropdown editor={editor} />
+        {iconButtons.map(({ Icon, onClick, isActive }, index) => {
+          return (
+            <BubbleMenuIconButton
+              key={`bubble-menu-icon-button-${index}`}
+              Icon={Icon}
+              onClick={onClick}
+              isActive={isActive}
+              size="medium"
+            />
+          );
+        })}
+      </StyledBubbleMenuContainer>
     </BubbleMenu>
   );
 };

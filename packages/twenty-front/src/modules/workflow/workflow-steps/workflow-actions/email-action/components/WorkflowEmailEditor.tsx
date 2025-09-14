@@ -50,6 +50,18 @@ const StyledEditorContainer = styled.div<{
       color: ${({ theme }) => theme.color.blue};
       padding: ${({ theme }) => theme.spacing(1)};
     }
+
+    h1 {
+      font-size: 36px;
+    }
+
+    h2 {
+      font-size: 30px;
+    }
+
+    h3 {
+      font-size: 24px;
+    }
   }
 
   .ProseMirror-focused {

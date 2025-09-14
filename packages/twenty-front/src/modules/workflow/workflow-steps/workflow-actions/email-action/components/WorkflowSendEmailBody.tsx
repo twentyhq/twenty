@@ -1,5 +1,4 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
-import { useEmailEditor } from '@/object-record/record-field/ui/form-types/hooks/useEmailEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
@@ -18,6 +17,7 @@ import {
   StyledFullScreenOverlay,
 } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction';
 import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowEmailEditor';
+import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useId, useRef, useState } from 'react';

@@ -56,6 +56,7 @@
     "@tiptap/extension-bold": "^3.4.2",
     "@tiptap/extension-document": "^3.4.2",
     "@tiptap/extension-hard-break": "^3.4.2",
+    "@tiptap/extension-heading": "^3.4.2",
     "@tiptap/extension-italic": "^3.4.2",
     "@tiptap/extension-paragraph": "^3.4.2",
     "@tiptap/extension-strike": "^3.4.2",

@@ -3,6 +3,7 @@ import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Bold } from '@tiptap/extension-bold';
 import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
+import { Heading } from '@tiptap/extension-heading';
 import { Italic } from '@tiptap/extension-italic';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Strike } from '@tiptap/extension-strike';
@@ -42,6 +43,9 @@ export const useEmailEditor = (
         Italic,
         Strike,
         Underline,
+        Heading.configure({
+          levels: [1, 2, 3],
+        }),
       ],
       content: isDefined(defaultValue)
         ? getInitialEmailEditorContent(defaultValue)
