@@ -100,6 +100,14 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @Column({ nullable: true, type: 'uuid' })
   kanbanAggregateOperationFieldMetadataId: string | null;
 
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewCalendarLayout),
+    nullable: true,
+    default: null,
+  })
+  calendarLayout: ViewCalendarLayout | null;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -138,12 +146,4 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     (viewFilterGroup) => viewFilterGroup.view,
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
-
-  @Column({
-    type: 'enum',
-    enum: Object.values(ViewCalendarLayout),
-    nullable: true,
-    default: null,
-  })
-  calendarLayout: ViewCalendarLayout;
 }
