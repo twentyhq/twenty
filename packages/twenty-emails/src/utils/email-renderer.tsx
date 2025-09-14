@@ -56,9 +56,6 @@ export class EmailRenderer {
     // It will wrap the text with the corresponding mark type
     const text = node?.text || <>&nbsp;</>;
     const marks = node?.marks || [];
-
-    // sort the marks by uderline, bold, italic, textStyle, link
-    // so that the text will be wrapped in the correct order
     marks.sort((a, b) => {
       return this.marksOrder.indexOf(a.type) - this.marksOrder.indexOf(b.type);
     });
@@ -76,6 +73,8 @@ export class EmailRenderer {
             return this.italic(mark, text);
           case 'strike':
             return this.strike(mark, text);
+          case 'link':
+            return this.link(mark, text);
           default:
             return <>{text}</>;
         }
@@ -98,6 +97,25 @@ export class EmailRenderer {
 
   private strike(_: MarkType, text: ReactNode): ReactNode {
     return <s style={{ textDecoration: 'line-through' }}>{text}</s>;
+  }
+
+  private link(mark: MarkType, text: ReactNode): ReactNode {
+    const {
+      href,
+      target = '_blank',
+      rel = 'noopener noreferrer',
+    } = mark?.attrs || {};
+
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        style={{ textDecoration: 'underline' }}
+      >
+        {text}
+      </a>
+    );
   }
 
   private renderNode(node: JSONContent): ReactNode {
@@ -139,17 +157,24 @@ export class EmailRenderer {
     }
 
     const { text } = node;
+    if (!isDefined(text)) {
+      return <>&nbsp;</>;
+    }
 
-    return text ? <>{text}</> : <>&nbsp;</>;
+    return <>{text}</>;
   }
 
   heading(node: JSONContent): ReactNode {
-    const { level } = node;
+    const { level } = node?.attrs || {};
+    if (!isDefined(level)) {
+      return null;
+    }
 
+    const content = this.getMappedContent(node);
     if (level === 1) {
       return (
         <Heading as="h1" style={{ fontSize: '36px' }}>
-          {this.getMappedContent(node)}
+          {content}
         </Heading>
       );
     }
@@ -157,7 +182,7 @@ export class EmailRenderer {
     if (level === 2) {
       return (
         <Heading as="h2" style={{ fontSize: '30px' }}>
-          {this.getMappedContent(node)}
+          {content}
         </Heading>
       );
     }
@@ -165,7 +190,7 @@ export class EmailRenderer {
     if (level === 3) {
       return (
         <Heading as="h3" style={{ fontSize: '24px' }}>
-          {this.getMappedContent(node)}
+          {content}
         </Heading>
       );
     }
