@@ -1,4 +1,5 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
+import { LinkBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/link-bubble-menu/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TextBubbleMenu';
 import styled from '@emotion/styled';
 import { EditorContent, type Editor } from '@tiptap/react';
@@ -82,6 +83,7 @@ export const WorkflowEmailEditor = ({
     <StyledEditorContainer readonly={readonly}>
       <EditorContent className="editor-content" editor={editor} />
       <TextBubbleMenu editor={editor} />
+      <LinkBubbleMenu editor={editor} />
     </StyledEditorContainer>
   );
 };

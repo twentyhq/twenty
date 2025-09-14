@@ -2,6 +2,7 @@ import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions
 import { EditLinkPopover } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover';
 import { TurnIntoBlockDropdown } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useTextBubbleState';
+import { isTextSelected } from '@/workflow/workflow-steps/workflow-actions/email-action/utils/isTextSelected';
 import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
@@ -12,7 +13,7 @@ import {
   IconUnderline,
 } from 'twenty-ui/display';
 
-const StyledBubbleMenuContainer = styled.div`
+export const StyledBubbleMenuContainer = styled.div`
   backdrop-filter: blur(20px);
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -29,7 +30,7 @@ type TextBubbleMenuProps = {
 
 export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
   const state = useTextBubbleState(editor);
-  const iconButtons = [
+  const menuActions = [
     {
       Icon: IconBold,
       onClick: () => editor.chain().focus().toggleBold().run(),
@@ -52,11 +53,19 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
     },
   ];
 
+  const handleShouldShow = () => {
+    return isTextSelected({ editor });
+  };
+
   return (
-    <BubbleMenu editor={editor}>
+    <BubbleMenu
+      pluginKey="text-bubble-menu"
+      editor={editor}
+      shouldShow={handleShouldShow}
+    >
       <StyledBubbleMenuContainer>
         <TurnIntoBlockDropdown editor={editor} />
-        {iconButtons.map(({ Icon, onClick, isActive }, index) => {
+        {menuActions.map(({ Icon, onClick, isActive }, index) => {
           return (
             <BubbleMenuIconButton
               key={`bubble-menu-icon-button-${index}`}
