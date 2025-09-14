@@ -142,6 +142,7 @@ const meta: Meta = {
             // TODO: update performance mocks with new data, and merge with common mocks if possible
             objectMetadataItem: mockPerformance.objectMetadataItem as any,
             recordIndexId: 'recordIndexId',
+            viewBarInstanceId: 'recordIndexId',
             fieldDefinitionByFieldMetadataItemId,
             fieldMetadataItemByFieldMetadataItemId,
             labelIdentifierFieldMetadataItem,

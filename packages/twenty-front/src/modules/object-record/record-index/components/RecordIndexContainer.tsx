@@ -66,10 +66,7 @@ export const RecordIndexContainer = () => {
         <RecordIndexFiltersToContextStoreEffect />
         {recordIndexViewType === ViewType.Table && (
           <>
-            <RecordIndexTableContainer
-              recordTableId={recordIndexId}
-              viewBarId={recordIndexId}
-            />
+            <RecordIndexTableContainer recordTableId={recordIndexId} />
             <RecordIndexTableContainerEffect />
           </>
         )}
