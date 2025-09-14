@@ -7,6 +7,7 @@ describe('getViewSortsToCreate', () => {
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should return all sorts when current sorts array is empty', () => {

@@ -15,7 +15,6 @@ import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistView
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
@@ -206,14 +205,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           });
 
           const viewSortsToCreate = currentRecordSorts
-            .map(mapRecordSortToViewSort)
-            .map(
-              (viewSort) =>
-                ({
-                  ...viewSort,
-                  id: v4(),
-                }) satisfies CoreViewSortEssential,
-            );
+            .map((recordSort) => mapRecordSortToViewSort(recordSort, newViewId))
+            .map((viewSort) => ({
+              ...viewSort,
+              id: v4(),
+            }));
 
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, {
             id: newViewId,

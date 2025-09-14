@@ -36,6 +36,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should apply view sorts to current record sorts', () => {

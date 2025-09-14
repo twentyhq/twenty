@@ -3,8 +3,10 @@ import { type CoreViewSort } from '~/generated/graphql';
 
 export const mapRecordSortToViewSort = (
   recordSort: RecordSort,
-): Pick<CoreViewSort, 'id' | 'fieldMetadataId' | 'direction'> => {
+  viewId: string,
+): Pick<CoreViewSort, 'id' | 'fieldMetadataId' | 'direction' | 'viewId'> => {
   return {
     ...recordSort,
+    viewId,
   };
 };

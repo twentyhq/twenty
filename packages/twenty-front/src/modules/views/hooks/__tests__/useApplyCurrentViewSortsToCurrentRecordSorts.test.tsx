@@ -46,6 +46,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   const allCompaniesView = mockedViewsData[0];
@@ -55,6 +56,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   const mockView = {

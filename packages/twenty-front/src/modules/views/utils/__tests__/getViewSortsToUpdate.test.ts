@@ -7,6 +7,7 @@ describe('getViewSortsToUpdate', () => {
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should return empty array when current sorts array is empty', () => {
