@@ -86,10 +86,10 @@ const StyledSearchInput = styled(SettingsTextInput)`
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
   max-height: 488px;
   overflow-y: auto;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledNoMembers = styled(TableCell)`
