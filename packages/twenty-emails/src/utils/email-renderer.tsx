@@ -126,6 +126,8 @@ export class EmailRenderer {
         return this.text(node);
       case 'heading':
         return this.heading(node);
+      case 'variableTag':
+        return this.variableTag(node);
       default:
         return <>{node.type}</>;
     }
@@ -194,6 +196,15 @@ export class EmailRenderer {
         </Heading>
       );
     }
+  }
+
+  variableTag(node: JSONContent): ReactNode {
+    const { variable } = node?.attrs || {};
+    if (!isDefined(variable)) {
+      return <>&nbsp;</>;
+    }
+
+    return <>{variable}</>;
   }
 }
 
