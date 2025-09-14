@@ -34,7 +34,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'objectMetadataId',
 ])
 @Check(
-  'CHK_VIEW_CALENDAR_LAYOUT_AND_CALENDAR_FIELD_METADATA_ID_NOT_NULL_WHEN_TYPE_CALENDAR',
+  'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
 export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {

@@ -17,6 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
@@ -62,7 +63,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
-
+  const { availableFieldsForCalendar, navigateToDateFieldSettings } =
+    useGetAvailableFieldsForCalendar();
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectKanbanViewType = async () => {
@@ -75,6 +77,19 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     }
     if (currentView?.type !== ViewType.Kanban) {
       await setAndPersistViewType(ViewType.Kanban);
+    }
+  };
+
+  const handleSelectCalendarViewType = async () => {
+    if (isDefaultView) {
+      return;
+    }
+    if (availableFieldsForCalendar.length === 0) {
+      navigateToDateFieldSettings();
+      closeDropdown(dropdownId);
+    }
+    if (currentView?.type !== ViewType.Calendar) {
+      await setAndPersistViewType(ViewType.Calendar);
     }
   };
 
@@ -148,9 +163,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   text={t`Calendar`}
                   selected={currentView?.type === ViewType.Calendar}
                   focused={selectedItemId === ViewType.Calendar}
-                  onClick={() => {
-                    setAndPersistViewType(ViewType.Calendar);
-                  }}
+                  onClick={ handleSelectCalendarViewType}
                 />
               </SelectableListItem>
             )}

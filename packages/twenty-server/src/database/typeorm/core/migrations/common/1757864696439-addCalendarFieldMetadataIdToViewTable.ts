@@ -13,13 +13,13 @@ export class AddCalendarFieldMetadataIdToViewTable1757864696439
       `ALTER TABLE "core"."view" ADD "calendarFieldMetadataId" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."view" ADD CONSTRAINT "CHK_VIEW_CALENDAR_LAYOUT_AND_CALENDAR_FIELD_METADATA_ID_NOT_NULL_WHEN_TYPE_CALENDAR" CHECK (("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL)))`,
+      `ALTER TABLE "core"."view" ADD CONSTRAINT "CHK_VIEW_CALENDAR_INTEGRITY" CHECK (("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL)))`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."view" DROP CONSTRAINT "CHK_VIEW_CALENDAR_LAYOUT_AND_CALENDAR_FIELD_METADATA_ID_NOT_NULL_WHEN_TYPE_CALENDAR"`,
+      `ALTER TABLE "core"."view" DROP CONSTRAINT "CHK_VIEW_CALENDAR_INTEGRITY"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."view" DROP COLUMN "calendarFieldMetadataId"`,
