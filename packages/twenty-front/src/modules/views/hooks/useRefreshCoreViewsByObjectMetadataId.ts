@@ -9,7 +9,7 @@ import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterable
 
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { view } from 'framer-motion';
 import { useRecoilCallback } from 'recoil';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
@@ -121,7 +121,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                   view.id,
                 ),
               }),
-              mapViewSortsToSorts(view.viewSorts),
+              view.viewSorts,
             );
           }
         }
