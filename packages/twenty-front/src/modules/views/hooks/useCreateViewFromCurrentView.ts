@@ -27,6 +27,7 @@ import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import {
   type CreateCoreViewFieldMutationVariables,
   useCreateCoreViewMutation,
@@ -111,6 +112,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         set(isPersistingViewFieldsState, true);
 
+        const viewType = type ?? sourceView.type;
+
         const result = await createCoreViewMutation({
           variables: {
             input: {
@@ -125,12 +128,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 shouldCopyFiltersAndSortsAndAggregate
                   ? sourceView.kanbanAggregateOperationFieldMetadataId
                   : undefined,
-              type: convertViewTypeToCore(type ?? sourceView.type),
+              type: convertViewTypeToCore(viewType),
               objectMetadataId: sourceView.objectMetadataId,
               openRecordIn: convertViewOpenRecordInToCore(
                 sourceView.openRecordIn,
               ),
               anyFieldFilterValue: anyFieldFilterValue,
+              calendarLayout:
+                viewType === ViewType.Calendar
+                  ? ViewCalendarLayout.MONTH
+                  : undefined,
             },
           },
         });
