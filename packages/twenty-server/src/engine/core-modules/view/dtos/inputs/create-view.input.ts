@@ -50,4 +50,7 @@ export class CreateViewInput {
 
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout?: ViewCalendarLayout;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  calendarLayoutFieldMetadataId?: string;
 }

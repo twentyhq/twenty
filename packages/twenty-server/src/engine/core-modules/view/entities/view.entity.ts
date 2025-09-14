@@ -34,8 +34,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'objectMetadataId',
 ])
 @Check(
-  'CHK_VIEW_CALENDAR_LAYOUT_NOT_NULL_WHEN_TYPE_CALENDAR',
-  `("type" != 'CALENDAR' OR "calendarLayout" IS NOT NULL)`,
+  'CHK_VIEW_CALENDAR_LAYOUT_AND_CALENDAR_FIELD_METADATA_ID_NOT_NULL_WHEN_TYPE_CALENDAR',
+  `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
 export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
@@ -107,6 +107,9 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     default: null,
   })
   calendarLayout: ViewCalendarLayout | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  calendarFieldMetadataId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
