@@ -1,18 +1,18 @@
-import { type RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
-import { type ViewSort } from '@/views/types/ViewSort';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
+import { ViewSortDirection } from '~/generated/graphql';
 import { getViewSortsToUpdate } from '../getViewSortsToUpdate';
 
 describe('getViewSortsToUpdate', () => {
-  const baseSort: ViewSort = {
-    __typename: 'ViewSort',
+  const baseSort: CoreViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: 'field-1',
-    direction: 'asc' as RecordSortDirection,
+    direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should return empty array when current sorts array is empty', () => {
-    const currentViewSorts: ViewSort[] = [];
-    const newViewSorts: ViewSort[] = [baseSort];
+    const currentViewSorts: CoreViewSortEssential[] = [];
+    const newViewSorts: CoreViewSortEssential[] = [baseSort];
 
     const result = getViewSortsToUpdate(currentViewSorts, newViewSorts);
 
@@ -20,8 +20,8 @@ describe('getViewSortsToUpdate', () => {
   });
 
   it('should return empty array when new sorts array is empty', () => {
-    const currentViewSorts: ViewSort[] = [baseSort];
-    const newViewSorts: ViewSort[] = [];
+    const currentViewSorts: CoreViewSortEssential[] = [baseSort];
+    const newViewSorts: CoreViewSortEssential[] = [];
 
     const result = getViewSortsToUpdate(currentViewSorts, newViewSorts);
 
@@ -32,11 +32,11 @@ describe('getViewSortsToUpdate', () => {
     const existingSort = { ...baseSort };
     const updatedSort = {
       ...baseSort,
-      direction: 'desc',
-    } satisfies ViewSort;
+      direction: ViewSortDirection.DESC,
+    } satisfies CoreViewSortEssential;
 
-    const currentViewSorts: ViewSort[] = [existingSort];
-    const newViewSorts: ViewSort[] = [updatedSort];
+    const currentViewSorts: CoreViewSortEssential[] = [existingSort];
+    const newViewSorts: CoreViewSortEssential[] = [updatedSort];
 
     const result = getViewSortsToUpdate(currentViewSorts, newViewSorts);
 
@@ -47,8 +47,8 @@ describe('getViewSortsToUpdate', () => {
     const existingSort = { ...baseSort };
     const sameSort = { ...baseSort };
 
-    const currentViewSorts: ViewSort[] = [existingSort];
-    const newViewSorts: ViewSort[] = [sameSort];
+    const currentViewSorts: CoreViewSortEssential[] = [existingSort];
+    const newViewSorts: CoreViewSortEssential[] = [sameSort];
 
     const result = getViewSortsToUpdate(currentViewSorts, newViewSorts);
 
@@ -56,8 +56,8 @@ describe('getViewSortsToUpdate', () => {
   });
 
   it('should handle empty arrays for both inputs', () => {
-    const currentViewSorts: ViewSort[] = [];
-    const newViewSorts: ViewSort[] = [];
+    const currentViewSorts: CoreViewSortEssential[] = [];
+    const newViewSorts: CoreViewSortEssential[] = [];
 
     const result = getViewSortsToUpdate(currentViewSorts, newViewSorts);
 
