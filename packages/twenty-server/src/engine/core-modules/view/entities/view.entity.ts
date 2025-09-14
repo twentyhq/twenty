@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -32,6 +33,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'workspaceId',
   'objectMetadataId',
 ])
+@Check(
+  'CHK_VIEW_CALENDAR_LAYOUT_NOT_NULL_WHEN_TYPE_CALENDAR',
+  `("type" != 'CALENDAR' OR "calendarLayout" IS NOT NULL)`,
+)
 export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
