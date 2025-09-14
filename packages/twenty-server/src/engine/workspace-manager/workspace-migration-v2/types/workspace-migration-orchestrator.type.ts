@@ -12,6 +12,7 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   fromToAllFlatEntityMaps: {
     [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
   };
+  dependencyAllFlatEntityMaps?: Partial<AllFlatEntityMaps>;
 };
 
 export type OrchestratorFailureReport = {

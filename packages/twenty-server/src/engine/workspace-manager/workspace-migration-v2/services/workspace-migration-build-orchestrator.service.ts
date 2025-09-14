@@ -27,9 +27,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ) {}
 
-  private setupOptimisticCache(
-    fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'],
-  ): AllFlatEntityMaps {
+  // This does not handle dependency maps correctly
+  private setupOptimisticCache({
+    fromToAllFlatEntityMaps,
+    dependencyAllFlatEntityMaps,
+  }: Pick<
+    WorkspaceMigrationOrchestratorBuildArgs,
+    'fromToAllFlatEntityMaps' | 'dependencyAllFlatEntityMaps'
+  >): AllFlatEntityMaps {
     const allFromToFlatEntityMapsKeys = Object.keys(
       fromToAllFlatEntityMaps,
     ) as (keyof AllFlatEntityMaps)[];
@@ -45,7 +50,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
           [currFlatMaps]: fromToOccurence.from,
         };
       },
-      EMPTY_ALL_FLAT_ENTITY_MAPS,
+      {
+        ...EMPTY_ALL_FLAT_ENTITY_MAPS,
+        ...dependencyAllFlatEntityMaps,
+      },
     );
   }
 
@@ -53,6 +61,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceId,
     buildOptions,
     fromToAllFlatEntityMaps,
+    dependencyAllFlatEntityMaps,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -64,9 +73,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewField: [],
     };
 
-    const opstimisticAllFlatEntityMaps = this.setupOptimisticCache(
+    const opstimisticAllFlatEntityMaps = this.setupOptimisticCache({
       fromToAllFlatEntityMaps,
-    );
+      dependencyAllFlatEntityMaps,
+    });
     const { flatObjectMetadataMaps, flatViewFieldMaps, flatViewMaps } =
       fromToAllFlatEntityMaps;
 

@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewCacheService } from 'src/engine/core-modules/view/cache/services/view-cache.service';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
@@ -20,6 +21,7 @@ import {
 import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -30,10 +32,12 @@ export class ViewV2Service {
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly viewCacheService: ViewCacheService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async createOne(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
-    if (!isDefined(viewData.workspaceId)) {
+    const { workspaceId } = viewData;
+    if (!isDefined(workspaceId)) {
       throw new ViewException(
         generateViewExceptionMessage(
           ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
@@ -47,9 +51,16 @@ export class ViewV2Service {
       );
     }
 
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewMaps: existingFlatViewMaps } =
       await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
-        workspaceId: viewData.workspaceId,
+        workspaceId,
       });
 
     const flatViewFromCreateInput = fromPartialFlatViewToFlatViewWithDefault({
@@ -71,11 +82,14 @@ export class ViewV2Service {
               to: toFlatViewMaps,
             },
           },
+          dependencyAllFlatEntityMaps: {
+            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
           },
-          workspaceId: viewData.workspaceId,
+          workspaceId,
         },
       );
 
@@ -129,18 +143,21 @@ export class ViewV2Service {
       universalIdentifier: existingViewToUpdate.universalIdentifier ?? '',
     });
 
-    const toFlatViewMaps: FlatViewMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: flatViewFromUpdateInput,
-        flatEntityMaps: existingFlatViewMaps,
-      });
+    const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [flatViewFromUpdateInput.id],
+      flatEntityMaps: existingFlatViewMaps,
+    });
+    const toFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+      flatEntity: flatViewFromUpdateInput,
+      flatEntityMaps: fromFlatViewMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
             flatViewMaps: {
-              from: existingFlatViewMaps,
+              from: fromFlatViewMaps,
               to: toFlatViewMaps,
             },
           },
@@ -185,9 +202,13 @@ export class ViewV2Service {
       );
     }
 
+    const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [existingViewToDelete.id],
+      flatEntityMaps: existingFlatViewMaps,
+    });
     const toFlatViewMaps: FlatViewMaps =
       deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityMaps: existingFlatViewMaps,
+        flatEntityMaps: fromFlatViewMaps,
         entityToDeleteId: existingViewToDelete.id,
       });
 
@@ -196,7 +217,7 @@ export class ViewV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewMaps: {
-              from: existingFlatViewMaps, // could extract only related // would need to create tooling
+              from: fromFlatViewMaps,
               to: toFlatViewMaps,
             },
           },
