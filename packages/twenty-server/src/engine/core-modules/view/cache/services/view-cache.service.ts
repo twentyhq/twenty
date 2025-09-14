@@ -21,6 +21,7 @@ export class ViewCacheService {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
   ) {}
 
