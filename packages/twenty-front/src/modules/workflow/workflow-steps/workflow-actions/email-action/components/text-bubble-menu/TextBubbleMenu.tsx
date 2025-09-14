@@ -1,4 +1,5 @@
 import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/BubbleMenuIconButton';
+import { EditLinkPopover } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover';
 import { TurnIntoBlockDropdown } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useTextBubbleState';
 import styled from '@emotion/styled';
@@ -39,13 +40,11 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       onClick: () => editor.chain().focus().toggleItalic().run(),
       isActive: state.isItalic,
     },
-
     {
       Icon: IconUnderline,
       onClick: () => editor.chain().focus().toggleUnderline().run(),
       isActive: state.isUnderline,
     },
-
     {
       Icon: IconStrikethrough,
       onClick: () => editor.chain().focus().toggleStrike().run(),
@@ -68,6 +67,7 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
             />
           );
         })}
+        <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
       </StyledBubbleMenuContainer>
     </BubbleMenu>
   );

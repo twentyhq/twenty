@@ -10,6 +10,8 @@ export const useTextBubbleState = (editor: Editor) => {
         isItalic: ctx.editor.isActive('italic'),
         isStrike: ctx.editor.isActive('strike'),
         isUnderline: ctx.editor.isActive('underline'),
+        isLink: ctx.editor.isActive('link'),
+        linkHref: ctx.editor.getAttributes('link').href,
       };
     },
   });

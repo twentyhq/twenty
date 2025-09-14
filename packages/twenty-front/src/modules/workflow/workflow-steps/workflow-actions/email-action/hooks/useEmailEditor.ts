@@ -5,6 +5,7 @@ import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
 import { Heading } from '@tiptap/extension-heading';
 import { Italic } from '@tiptap/extension-italic';
+import { Link } from '@tiptap/extension-link';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Strike } from '@tiptap/extension-strike';
 import { Text } from '@tiptap/extension-text';
@@ -45,6 +46,9 @@ export const useEmailEditor = (
         Underline,
         Heading.configure({
           levels: [1, 2, 3],
+        }),
+        Link.configure({
+          openOnClick: false,
         }),
       ],
       content: isDefined(defaultValue)
