@@ -4,7 +4,6 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FormEmailFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select } from '@/ui/input/components/Select';
@@ -15,6 +14,7 @@ import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -221,6 +221,7 @@ export const WorkflowEditActionSendEmail = ({
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
+
   return (
     !loading && (
       <>
@@ -284,7 +285,8 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <FormEmailFieldInput
+          <WorkflowSendEmailBody
+            action={action}
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}

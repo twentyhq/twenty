@@ -1,0 +1,217 @@
+import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { useEmailEditor } from '@/object-record/record-field/ui/form-types/hooks/useEmailEditor';
+import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import {
+  Breadcrumb,
+  type BreadcrumbProps,
+} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import {
+  StyledFullScreenContent,
+  StyledFullScreenHeader,
+  StyledFullScreenOverlay,
+} from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction';
+import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowEmailEditor';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { IconMaximize } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
+
+const StyledWorkflowSendEmailBodyContainer = styled(FormFieldInputContainer)`
+  flex-grow: 1;
+`;
+
+const StyledWorkflowSendEmailFieldContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  flex-grow: 1;
+`;
+
+const StyledWorkflowSendEmailBodyInnerContainer = styled.div`
+  flex-grow: 1;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+
+  box-sizing: border-box;
+  display: flex;
+  overflow: auto;
+  width: 100%;
+`;
+
+const StyledEmailEditorActionButtonContainer = styled.div`
+  position: absolute;
+  top: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(2)};
+  z-index: 1;
+`;
+
+const StyledFullScreenEmailEditorContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  flex: 1;
+  min-height: 0;
+  padding: ${({ theme }) => theme.spacing(2)};
+  overflow-y: auto;
+`;
+
+type WorkflowSendEmailBodyProps = {
+  action: WorkflowSendEmailAction;
+  label?: string;
+  error?: string;
+  hint?: string;
+  defaultValue: string | undefined | null;
+  onChange: (value: string) => void;
+  readonly?: boolean;
+  placeholder?: string;
+  VariablePicker?: VariablePickerComponent;
+};
+
+export const WorkflowSendEmailBody = ({
+  action,
+  label,
+  error,
+  hint,
+  defaultValue,
+  placeholder,
+  onChange,
+  readonly,
+  VariablePicker,
+}: WorkflowSendEmailBodyProps) => {
+  const isMobile = useIsMobile();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const fullScreenOverlayRef = useRef<HTMLDivElement>(null);
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+
+  const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
+
+  const instanceId = useId();
+  const editor = useEmailEditor(
+    {
+      placeholder: placeholder ?? 'Enter email',
+      readonly,
+      defaultValue,
+      onUpdate: (editor) => {
+        const jsonContent = editor.getJSON();
+        onChange(JSON.stringify(jsonContent));
+      },
+    },
+    [isFullScreen],
+  );
+
+  const handleEnterFullScreen = () => {
+    setIsFullScreen(true);
+  };
+
+  const handleExitFullScreen = () => {
+    setIsFullScreen(false);
+  };
+
+  const handleVariableTagInsert = (variableName: string) => {
+    if (!isDefined(editor)) {
+      throw new Error(
+        'Expected the editor to be defined when a variable is selected',
+      );
+    }
+
+    editor.commands.insertVariableTag(variableName);
+  };
+
+  const breadcrumbLinks: BreadcrumbProps['links'] = [
+    {
+      children: workflow?.name?.trim() || t`Untitled Workflow`,
+      href: '#',
+    },
+    {
+      children: headerTitle,
+      href: '#',
+    },
+    {
+      children: t`Email Editor`,
+    },
+  ];
+
+  const fullScreenOverlay = isFullScreen
+    ? createPortal(
+        <StyledFullScreenOverlay
+          ref={fullScreenOverlayRef}
+          data-globally-prevent-click-outside="true"
+          tabIndex={-1}
+        >
+          <StyledFullScreenHeader
+            title={<Breadcrumb links={breadcrumbLinks} />}
+            hasClosePageButton={!isMobile}
+            onClosePage={handleExitFullScreen}
+          />
+          <StyledFullScreenContent data-globally-prevent-click-outside="true">
+            <StyledFullScreenEmailEditorContainer>
+              <WorkflowEmailEditor editor={editor} readonly={readonly} />
+            </StyledFullScreenEmailEditorContainer>
+          </StyledFullScreenContent>
+        </StyledFullScreenOverlay>,
+        document.body,
+      )
+    : null;
+
+  if (!isDefined(editor)) {
+    return null;
+  }
+
+  return (
+    <>
+      <StyledWorkflowSendEmailBodyContainer>
+        {label ? <InputLabel>{label}</InputLabel> : null}
+
+        <StyledWorkflowSendEmailFieldContainer>
+          <StyledWorkflowSendEmailBodyInnerContainer>
+            {!isFullScreen && (
+              <WorkflowEmailEditor editor={editor} readonly={readonly} />
+            )}
+
+            <StyledEmailEditorActionButtonContainer>
+              {!readonly && !isFullScreen && (
+                <LightIconButton
+                  Icon={IconMaximize}
+                  onClick={handleEnterFullScreen}
+                  title={t`Expand to Full Screen`}
+                  size="small"
+                  accent="tertiary"
+                />
+              )}
+
+              {VariablePicker && !readonly ? (
+                <VariablePicker
+                  instanceId={instanceId}
+                  multiline={false}
+                  onVariableSelect={handleVariableTagInsert}
+                />
+              ) : null}
+            </StyledEmailEditorActionButtonContainer>
+          </StyledWorkflowSendEmailBodyInnerContainer>
+        </StyledWorkflowSendEmailFieldContainer>
+        {hint && <InputHint>{hint}</InputHint>}
+        {error && <InputErrorHelper>{error}</InputErrorHelper>}
+      </StyledWorkflowSendEmailBodyContainer>
+
+      {fullScreenOverlay}
+    </>
+  );
+};

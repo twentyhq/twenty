@@ -68,7 +68,7 @@ const StyledCodeEditorContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledFullScreenOverlay = styled.div`
+export const StyledFullScreenOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -82,11 +82,11 @@ const StyledFullScreenOverlay = styled.div`
   z-index: ${RootStackingContextZIndices.Dialog};
 `;
 
-const StyledFullScreenHeader = styled(PageHeader)`
+export const StyledFullScreenHeader = styled(PageHeader)`
   padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledFullScreenContent = styled.div`
+export const StyledFullScreenContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};

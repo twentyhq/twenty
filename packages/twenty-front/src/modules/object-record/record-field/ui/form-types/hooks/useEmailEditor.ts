@@ -10,6 +10,7 @@ import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
 import { Placeholder, UndoRedo } from '@tiptap/extensions';
 import { type Editor, useEditor } from '@tiptap/react';
+import { type DependencyList } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseEmailEditorProps = {
@@ -19,43 +20,44 @@ type UseEmailEditorProps = {
   onUpdate: (editor: Editor) => void;
 };
 
-export const useEmailEditor = ({
-  placeholder,
-  readonly,
-  defaultValue,
-  onUpdate,
-}: UseEmailEditorProps) => {
-  const editor = useEditor({
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder,
-      }),
-      VariableTag,
-      HardBreak.configure({
-        keepMarks: false,
-      }),
-      UndoRedo,
-      Bold,
-      Italic,
-      Strike,
-      Underline,
-    ],
-    content: isDefined(defaultValue)
-      ? getInitialEmailEditorContent(defaultValue)
-      : undefined,
-    editable: !readonly,
-    onUpdate: ({ editor }) => {
-      onUpdate(editor);
+export const useEmailEditor = (
+  { placeholder, readonly, defaultValue, onUpdate }: UseEmailEditorProps,
+  dependencies?: DependencyList,
+) => {
+  const editor = useEditor(
+    {
+      extensions: [
+        Document,
+        Paragraph,
+        Text,
+        Placeholder.configure({
+          placeholder,
+        }),
+        VariableTag,
+        HardBreak.configure({
+          keepMarks: false,
+        }),
+        UndoRedo,
+        Bold,
+        Italic,
+        Strike,
+        Underline,
+      ],
+      content: isDefined(defaultValue)
+        ? getInitialEmailEditorContent(defaultValue)
+        : undefined,
+      editable: !readonly,
+      onUpdate: ({ editor }) => {
+        onUpdate(editor);
+      },
+      editorProps: {
+        scrollThreshold: 60,
+        scrollMargin: 60,
+      },
+      injectCSS: false,
     },
-    editorProps: {
-      scrollThreshold: 60,
-      scrollMargin: 60,
-    },
-    injectCSS: false,
-  });
+    dependencies,
+  );
 
   return editor;
 };

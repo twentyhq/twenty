@@ -16,8 +16,8 @@ const StyledEditorContainer = styled.div<{
   .editor-content {
     flex-grow: 1;
     width: 100%;
-    min-height: ${EMAIL_EDITOR_MIN_HEIGHT}px;
     height: 100%;
+    min-height: ${EMAIL_EDITOR_MIN_HEIGHT}px;
   }
 
   .tiptap {
