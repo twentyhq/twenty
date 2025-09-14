@@ -20,7 +20,7 @@ interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
-  html?: string;
+  html: string;
 }
 
 @Injectable()
@@ -86,8 +86,8 @@ export class MessagingSendMessageService {
         const message = {
           subject: sendMessageInput.subject,
           body: {
-            contentType: 'Text',
-            content: sendMessageInput.body,
+            contentType: 'HTML',
+            content: sendMessageInput.html,
           },
           toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
         };
@@ -131,7 +131,7 @@ export class MessagingSendMessageService {
           to: sendMessageInput.to,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
-          ...(sendMessageInput.html ? { html: sendMessageInput.html } : {}),
+          html: sendMessageInput.html,
         });
         break;
       }

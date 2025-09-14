@@ -126,15 +126,15 @@ export class SendEmailTool implements Tool {
       const { JSDOM } = await import('jsdom');
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(textBody || '');
+      const safeHtmlBody = purify.sanitize(htmlBody || '');
       const safeSubject = purify.sanitize(subject || '');
 
       await this.sendMessageService.sendMessage(
         {
           to: email,
           subject: safeSubject,
-          body: safeBody,
-          html: htmlBody,
+          body: textBody,
+          html: safeHtmlBody,
         },
         connectedAccount,
       );
