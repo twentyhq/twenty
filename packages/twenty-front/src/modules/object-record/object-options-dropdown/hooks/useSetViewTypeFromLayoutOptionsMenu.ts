@@ -17,6 +17,7 @@ import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ViewCalendarLayout } from '~/generated/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
@@ -129,7 +130,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             }
             return await updateCurrentView(updateCurrentViewParams);
           }
-          case ViewType.Table:
+          case ViewType.Table: {
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
               ...existingCoreViews.filter(
@@ -146,6 +147,27 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 viewTypeIconMapping(viewType).displayName;
             }
             return await updateCurrentView(updateCurrentViewParams);
+          }
+          case ViewType.Calendar: {
+            setRecordIndexViewType(viewType);
+            set(coreViewsState, [
+              ...existingCoreViews.filter(
+                (coreView) => coreView.id !== currentView.id,
+              ),
+              {
+                ...currentCoreView,
+                type: convertViewTypeToCore(viewType),
+                calendarLayout: ViewCalendarLayout.MONTH,
+              },
+            ]);
+
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
+            }
+            updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
+            return await updateCurrentView(updateCurrentViewParams);
+          }
           default: {
             return assertUnreachable(viewType);
           }
@@ -174,6 +196,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     if (
       oldViewType === ViewType.Table &&
       oldIcon === viewTypeIconMapping(ViewType.Table).displayName
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.Calendar &&
+      oldIcon === viewTypeIconMapping(ViewType.Calendar).displayName
     ) {
       return true;
     }

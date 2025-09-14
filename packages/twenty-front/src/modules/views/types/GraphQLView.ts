@@ -7,6 +7,7 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { type ViewType } from '@/views/types/ViewType';
+import { type ViewCalendarLayout } from '~/generated/graphql';
 
 export type GraphQLView = {
   id: string;
@@ -30,4 +31,5 @@ export type GraphQLView = {
   position: number;
   icon: string;
   anyFieldFilterValue?: string | null;
+  calendarLayout?: ViewCalendarLayout | null;
 };
