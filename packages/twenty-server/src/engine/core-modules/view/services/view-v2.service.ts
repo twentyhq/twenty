@@ -67,8 +67,8 @@ export class ViewV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewMaps: {
-              fromFlatViewMaps: existingFlatViewMaps,
-              toFlatViewMaps,
+              from: existingFlatViewMaps,
+              to: toFlatViewMaps,
             },
           },
           buildOptions: {
@@ -140,8 +140,8 @@ export class ViewV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewMaps: {
-              fromFlatViewMaps: existingFlatViewMaps,
-              toFlatViewMaps,
+              from: existingFlatViewMaps,
+              to: toFlatViewMaps,
             },
           },
           buildOptions: {
@@ -196,8 +196,8 @@ export class ViewV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewMaps: {
-              fromFlatViewMaps: existingFlatViewMaps, // could extract only related // would need to create tooling
-              toFlatViewMaps,
+              from: existingFlatViewMaps, // could extract only related // would need to create tooling
+              to: toFlatViewMaps,
             },
           },
           buildOptions: {

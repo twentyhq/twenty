@@ -95,8 +95,8 @@ export class ObjectMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           buildOptions: {
@@ -202,8 +202,8 @@ export class ObjectMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           buildOptions: {
@@ -295,8 +295,8 @@ export class ObjectMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           buildOptions: {

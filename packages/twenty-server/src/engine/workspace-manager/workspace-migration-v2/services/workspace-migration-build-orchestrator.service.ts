@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import {
   OrchestratorFailureReport,
@@ -26,14 +27,32 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ) {}
 
+  private setupOptimisticCache(
+    fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'],
+  ): AllFlatEntityMaps {
+    const allFromToFlatEntityMapsKeys = Object.keys(
+      fromToAllFlatEntityMaps,
+    ) as (keyof AllFlatEntityMaps)[];
+    return allFromToFlatEntityMapsKeys.reduce<AllFlatEntityMaps>(
+      (allFlatEntityMaps, currFlatMaps) => {
+        const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
+        if (!isDefined(fromToOccurence)) {
+          return allFlatEntityMaps;
+        }
+
+        return {
+          ...allFlatEntityMaps,
+          [currFlatMaps]: fromToOccurence.from,
+        };
+      },
+      EMPTY_ALL_FLAT_ENTITY_MAPS,
+    );
+  }
+
   public async buildWorkspaceMigration({
     workspaceId,
     buildOptions,
-    fromToAllFlatEntityMaps: {
-      flatObjectMetadataMaps,
-      flatViewFieldMaps,
-      flatViewMaps,
-    },
+    fromToAllFlatEntityMaps,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -45,12 +64,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewField: [],
     };
 
-    let opstimisticAllFlatEntityMaps: AllFlatEntityMaps = structuredClone(
-      fromAllFlatEntityMaps, // TODO
+    const opstimisticAllFlatEntityMaps = this.setupOptimisticCache(
+      fromToAllFlatEntityMaps,
     );
+    const { flatObjectMetadataMaps, flatViewFieldMaps, flatViewMaps } =
+      fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
-      const { fromFlatObjectMetadataMaps, toFlatObjectMetadataMaps } =
+      const { from: fromFlatObjectMetadataMaps, to: toFlatObjectMetadataMaps } =
         flatObjectMetadataMaps;
 
       const objectResult =
@@ -61,10 +82,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
           buildOptions,
         });
 
-      opstimisticAllFlatEntityMaps = {
-        ...opstimisticAllFlatEntityMaps,
-        flatObjectMetadataMaps: objectResult.optimisticFlatObjectMetadataMaps,
-      };
+      opstimisticAllFlatEntityMaps.flatObjectMetadataMaps =
+        objectResult.optimisticFlatObjectMetadataMaps;
 
       if (objectResult.status === 'fail') {
         orchestratorFailureReport.flatObjectMetadata.push(
@@ -76,7 +95,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     if (isDefined(flatViewMaps)) {
-      const { fromFlatViewMaps, toFlatViewMaps } = flatViewMaps;
+      const { from: fromFlatViewMaps, to: toFlatViewMaps } = flatViewMaps;
       const viewResult =
         await this.workspaceMigrationV2ViewActionsBuilderService.validateAndBuild(
           {
@@ -90,10 +109,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      opstimisticAllFlatEntityMaps = {
-        ...opstimisticAllFlatEntityMaps,
-        flatViewMaps: viewResult.optimisticFlatEntityMaps,
-      };
+      opstimisticAllFlatEntityMaps.flatViewMaps =
+        viewResult.optimisticFlatEntityMaps;
 
       if (viewResult.status === 'fail') {
         orchestratorFailureReport.flatView.push(...viewResult.errors);
@@ -103,7 +120,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     if (isDefined(flatViewFieldMaps)) {
-      const { fromFlatViewFieldMaps, toFlatViewFieldMaps } = flatViewFieldMaps;
+      const { from: fromFlatViewFieldMaps, to: toFlatViewFieldMaps } =
+        flatViewFieldMaps;
       const viewFieldResult =
         await this.workspaceMigrationV2ViewFieldActionsBuilderService.validateAndBuild(
           {
@@ -118,10 +136,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      opstimisticAllFlatEntityMaps = {
-        ...opstimisticAllFlatEntityMaps,
-        flatViewFieldMaps: viewFieldResult.optimisticFlatEntityMaps,
-      };
+      opstimisticAllFlatEntityMaps.flatViewFieldMaps =
+        viewFieldResult.optimisticFlatEntityMaps;
 
       if (viewFieldResult.status === 'fail') {
         orchestratorFailureReport.flatViewField.push(...viewFieldResult.errors);

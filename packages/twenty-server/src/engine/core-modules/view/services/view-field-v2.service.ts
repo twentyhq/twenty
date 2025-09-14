@@ -83,8 +83,8 @@ export class ViewFieldV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: {
-              fromFlatViewFieldMaps: existingFlatViewFieldMaps,
-              toFlatViewFieldMaps,
+              from: existingFlatViewFieldMaps,
+              to: toFlatViewFieldMaps,
             },
           },
           buildOptions: {
@@ -137,8 +137,8 @@ export class ViewFieldV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: {
-              fromFlatViewFieldMaps: existingFlatViewFieldMaps,
-              toFlatViewFieldMaps,
+              from: existingFlatViewFieldMaps,
+              to: toFlatViewFieldMaps,
             },
           },
           buildOptions: {
@@ -191,8 +191,8 @@ export class ViewFieldV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: {
-              fromFlatViewFieldMaps: existingFlatViewFieldMaps,
-              toFlatViewFieldMaps,
+              from: existingFlatViewFieldMaps,
+              to: toFlatViewFieldMaps,
             },
           },
           buildOptions: {
@@ -244,8 +244,8 @@ export class ViewFieldV2Service {
         {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: {
-              fromFlatViewFieldMaps: existingFlatViewFieldMaps,
-              toFlatViewFieldMaps,
+              from: existingFlatViewFieldMaps,
+              to: toFlatViewFieldMaps,
             },
           },
           buildOptions: {

@@ -108,8 +108,8 @@ export class FieldMetadataServiceV2 {
           },
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           workspaceId,
@@ -182,8 +182,8 @@ export class FieldMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           buildOptions: {
@@ -275,8 +275,8 @@ export class FieldMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              fromFlatObjectMetadataMaps,
-              toFlatObjectMetadataMaps,
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
             },
           },
           buildOptions: {

@@ -10,7 +10,7 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
   fromToAllFlatEntityMaps: {
-    [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P], P>;
+    [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
   };
 };
 
