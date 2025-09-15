@@ -7,6 +7,7 @@ import { ViewGroupException } from 'src/engine/core-modules/view/exceptions/view
 import { ViewSortException } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 import { ViewException } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { viewGraphqlApiExceptionHandler } from 'src/engine/core-modules/view/utils/view-graphql-api-exception-handler.util';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 
 @Catch(
   ViewException,
@@ -15,6 +16,7 @@ import { viewGraphqlApiExceptionHandler } from 'src/engine/core-modules/view/uti
   ViewFilterGroupException,
   ViewGroupException,
   ViewSortException,
+  WorkspaceMigrationBuilderExceptionV2,
 )
 export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(
@@ -24,7 +26,8 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
       | ViewFilterException
       | ViewFilterGroupException
       | ViewGroupException
-      | ViewSortException,
+      | ViewSortException
+      | WorkspaceMigrationBuilderExceptionV2
   ) {
     return viewGraphqlApiExceptionHandler(exception);
   }

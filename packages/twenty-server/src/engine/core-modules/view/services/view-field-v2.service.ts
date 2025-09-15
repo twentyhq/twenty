@@ -19,7 +19,6 @@ import { fromDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/core
 import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -205,7 +204,8 @@ export class ViewFieldV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationOrchestratorException(
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
         'Multiple validation errors occurred while updating view field',
       );
     }
@@ -273,7 +273,8 @@ export class ViewFieldV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationOrchestratorException(
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
         'Multiple validation errors occurred while deleting view field',
       );
     }

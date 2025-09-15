@@ -22,7 +22,7 @@ import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/fl
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspaceMigrationOrchestratorException } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-orchestrator-exception';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -95,7 +95,8 @@ export class ViewV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationOrchestratorException(
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
         'Multiple validation errors occurred while creating view',
       );
     }
@@ -171,7 +172,8 @@ export class ViewV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationOrchestratorException(
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
         'Multiple validation errors occurred while updating view',
       );
     }
@@ -231,7 +233,8 @@ export class ViewV2Service {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationOrchestratorException(
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
         'Multiple validation errors occurred while deleting view',
       );
     }

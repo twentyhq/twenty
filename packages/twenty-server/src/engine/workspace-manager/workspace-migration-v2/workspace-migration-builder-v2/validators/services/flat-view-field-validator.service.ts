@@ -64,21 +64,8 @@ export class FlatViewFieldValidatorService {
   public validateFlatViewFieldDeletion({
     optimisticFlatViewFieldMaps,
     flatViewFieldToValidate: { id: viewFieldIdToDelete },
-    dependencyOptimisticFlatEntityMaps: {
-      flatViewMaps: optimisticFlatViewMaps,
-    },
   }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
-
-    const optimisticFlatView = optimisticFlatViewMaps.byId[viewFieldIdToDelete];
-
-    if (!isDefined(optimisticFlatView)) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field to delete related view not found`,
-        userFriendlyMessage: t`View field to delete related view not found`,
-      });
-    }
 
     const existingFlatViewField =
       optimisticFlatViewFieldMaps.byId[viewFieldIdToDelete];
@@ -156,6 +143,23 @@ export class FlatViewFieldValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
         userFriendlyMessage: t`View not found`,
+      });
+    }
+
+    const allFlatViewFields = Object.values(
+      optimisticFlatViewFieldMaps.byId,
+    ).filter(isDefined);
+    const matchingFlatView = allFlatViewFields.find(
+      (flatViewField) =>
+        flatViewField.viewId === flatViewFieldToValidate.viewId &&
+        flatViewField.fieldMetadataId ===
+          flatViewFieldToValidate.fieldMetadataId,
+    );
+    if (isDefined(matchingFlatView)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field with same fieldmetadataId and viewId already exists`,
+        userFriendlyMessage: t`View field already exists`,
       });
     }
 

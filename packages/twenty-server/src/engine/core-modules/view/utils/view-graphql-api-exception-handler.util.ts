@@ -28,8 +28,14 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { workspaceMigrationBuilderExceptionV2Formatter } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter';
 
 export const viewGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+    return workspaceMigrationBuilderExceptionV2Formatter(error);
+  }
+
   if (error instanceof ViewException) {
     switch (error.code) {
       case ViewExceptionCode.VIEW_NOT_FOUND:
