@@ -1,20 +1,35 @@
 import { RecordCalendarMonthBodyCard } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyCard';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   display: flex;
   width: calc(100% / 7);
   flex-direction: column;
   min-height: 122px;
+  padding: ${({ theme }) => theme.spacing(0.5)};
+  background: ${({ theme }) => theme.background.primary};
+  
+  &:not(:last-child) {
+    border-right: 0.5px solid ${({ theme }) => theme.border.color.light};
+  }
+
+  ${({ isOtherMonth, theme }) =>
+    isOtherMonth &&
+    css`
+      background: ${theme.background.secondary};
+      color: ${theme.font.color.light};
+    `}
+
 `;
 
 const StyledDayHeader = styled.div`
   display: flex;
-  width: 100%;
   text-align: right;
   justify-content: flex-end;
+  padding: 7px 5px;
 `;
 
 const StyledCardsContainer = styled.div`
@@ -34,8 +49,10 @@ export const RecordCalendarMonthBodyDay = ({
     day.toDateString(),
   );
 
+  const isOtherMonth = day.getMonth() !== new Date().getMonth();
+
   return (
-    <StyledContainer>
+    <StyledContainer isOtherMonth={isOtherMonth}>
       <StyledDayHeader>{day.getDate()}</StyledDayHeader>
       <StyledCardsContainer>
         {recordIds.slice(0, 5).map((recordId) => (
