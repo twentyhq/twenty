@@ -2588,6 +2588,7 @@ export type Query = {
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
+  findManyPublicDomains: Array<PublicDomain>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;

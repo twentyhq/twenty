@@ -9,6 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
 
 const StyledMainContent = styled.div`
   display: flex;
@@ -50,6 +51,13 @@ export const SettingsDomains = () => {
               description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
             />
             <SettingsApprovedAccessDomainsListCard />
+          </StyledSection>
+          <StyledSection>
+            <H2Title
+              title={t`Public Domains`}
+              description={t`Provision a complete and secure hosting environment on these domains.`}
+            />
+            <SettingsPublicDomainsListCard />
           </StyledSection>
         </StyledMainContent>
       </SettingsPageContainer>

@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Query, Args, Mutation, Resolver } from '@nestjs/graphql';
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -29,6 +29,15 @@ export class PublicDomainResolver {
     private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly publicDomainService: PublicDomainService,
   ) {}
+
+  @Query(() => [PublicDomainDTO])
+  async findManyPublicDomains(
+    @AuthWorkspace() currentWorkspace: Workspace,
+  ): Promise<PublicDomainDTO[]> {
+    return await this.publicDomainRepository.find({
+      where: { workspaceId: currentWorkspace.id },
+    });
+  }
 
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
