@@ -5,23 +5,22 @@ import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Equal, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { ViewCacheService } from 'src/engine/core-modules/view/cache/services/view-cache.service';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
+    ViewException,
+    ViewExceptionCode,
+    ViewExceptionMessageKey,
+    generateViewExceptionMessage,
+    generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
 import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -31,8 +30,7 @@ export class ViewV2Service {
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly viewCacheService: ViewCacheService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
   ) {}
 
   async createOne(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
@@ -52,16 +50,10 @@ export class ViewV2Service {
       );
     }
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewMaps: existingFlatViewMaps } =
-      await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
+    const { flatObjectMetadataMaps, flatViewMaps: existingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
+        flatEntities: ['flatObjectMetadataMaps', 'flatViewMaps'],
       });
 
     const flatViewFromCreateInput = fromPartialFlatViewToFlatViewWithDefault({
@@ -84,7 +76,7 @@ export class ViewV2Service {
             },
           },
           dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            flatObjectMetadataMaps: flatObjectMetadataMaps,
           },
           buildOptions: {
             isSystemBuild: false,
@@ -116,8 +108,9 @@ export class ViewV2Service {
     updateData: Partial<ViewEntity>,
   ): Promise<ViewEntity> {
     const { flatViewMaps: existingFlatViewMaps } =
-      await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
+        flatEntities: ['flatViewMaps'],
       });
 
     const existingView = existingFlatViewMaps.byId[id];
@@ -189,8 +182,9 @@ export class ViewV2Service {
 
   async deleteOne(id: string, workspaceId: string): Promise<boolean> {
     const { flatViewMaps: existingFlatViewMaps } =
-      await this.viewCacheService.getExistingOrRecomputeFlatViewMaps({
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
+        flatEntities: ['flatViewMaps'],
       });
 
     const existingViewToDelete = existingFlatViewMaps.byId[id];
