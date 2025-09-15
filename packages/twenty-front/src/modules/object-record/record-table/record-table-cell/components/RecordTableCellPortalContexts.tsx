@@ -42,6 +42,12 @@ export const RecordTableCellPortalContexts = ({
     return null;
   }
 
+  const recordField = visibleRecordFields[hoverPosition.column];
+
+  if (!isDefined(recordField)) {
+    return null;
+  }
+
   return (
     <RecordTableRowContextProvider
       value={{
@@ -59,13 +65,11 @@ export const RecordTableCellPortalContexts = ({
     >
       <RecordTableCellContext.Provider
         value={{
-          recordField: visibleRecordFields[hoverPosition.column],
+          recordField,
           cellPosition: hoverPosition,
         }}
       >
-        <RecordTableCellFieldContextWrapper
-          recordField={visibleRecordFields[hoverPosition.column]}
-        >
+        <RecordTableCellFieldContextWrapper recordField={recordField}>
           {children}
         </RecordTableCellFieldContextWrapper>
       </RecordTableCellContext.Provider>
