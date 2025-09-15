@@ -7,7 +7,6 @@ import {
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -66,11 +65,7 @@ export const PageLayoutGridLayout = ({
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
-
-  const { handleLayoutChange } = usePageLayoutHandleLayoutChange(
-    activeTabId ?? undefined,
-  );
+  const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
