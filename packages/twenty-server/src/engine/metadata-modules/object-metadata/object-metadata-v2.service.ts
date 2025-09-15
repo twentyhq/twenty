@@ -21,8 +21,8 @@ import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-    ObjectMetadataException,
-    ObjectMetadataExceptionCode,
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -124,9 +124,11 @@ export class ObjectMetadataServiceV2 {
     }
 
     if (isDefined(updateObjectInput.update.labelIdentifierFieldMetadataId)) {
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-        workspaceId,
-      });
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
+      );
     }
 
     return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
@@ -208,7 +210,9 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    return fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadataToDelete);
+    return fromFlatObjectMetadataToObjectMetadataDto(
+      flatObjectMetadataToDelete,
+    );
   }
 
   async createOne({

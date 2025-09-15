@@ -34,13 +34,17 @@ export class ViewFieldV2Service {
     createViewFieldInput: CreateViewFieldInput;
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
-    const { 
+    const {
       flatObjectMetadataMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
       workspaceId,
-      flatEntities: ['flatObjectMetadataMaps', 'flatViewFieldMaps', 'flatViewMaps'],
+      flatEntities: [
+        'flatObjectMetadataMaps',
+        'flatViewFieldMaps',
+        'flatViewMaps',
+      ],
     });
 
     const flatViewFieldToCreate =
@@ -225,7 +229,7 @@ export class ViewFieldV2Service {
     destroyViewFieldInput: DestroyViewFieldInput;
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
-    const { 
+    const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({

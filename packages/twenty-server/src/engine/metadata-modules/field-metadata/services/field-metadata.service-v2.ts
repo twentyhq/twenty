@@ -11,8 +11,8 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
@@ -122,7 +122,9 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadatasToDelete[0]);
+    return fromFlatFieldMetadataToFieldMetadataDto(
+      flatFieldMetadatasToDelete[0],
+    );
   }
 
   async updateOne({

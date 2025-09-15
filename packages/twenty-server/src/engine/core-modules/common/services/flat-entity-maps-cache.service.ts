@@ -6,8 +6,8 @@ import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/
 import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import {
-    WorkspaceFlatMapCacheException,
-    WorkspaceFlatMapCacheExceptionCode,
+  WorkspaceFlatMapCacheException,
+  WorkspaceFlatMapCacheExceptionCode,
 } from 'src/engine/workspace-flat-map-cache/exceptions/workspace-flat-map-cache.exception';
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
 
@@ -52,6 +52,7 @@ export class FlatEntityMapsCacheService {
           workspaceId,
         });
 
+        // @ts-expect-error Expected error due to generic looping
         allFlatEntityMaps[flatEntityName] = result;
       } catch (error) {
         this.logger.error(
