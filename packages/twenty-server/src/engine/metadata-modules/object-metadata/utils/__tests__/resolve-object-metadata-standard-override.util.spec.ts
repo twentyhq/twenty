@@ -1,21 +1,24 @@
-import { i18n } from '@lingui/core';
+import { type I18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 
-jest.mock('@lingui/core');
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
 
-const mockI18n = i18n as jest.Mocked<typeof i18n>;
 const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
 >;
 
 describe('resolveObjectMetadataStandardOverride', () => {
+  let mockI18n: jest.Mocked<I18n>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockI18n = {
+      _: jest.fn(),
+    } as unknown as jest.Mocked<I18n>;
   });
 
   describe('Custom objects', () => {
@@ -353,6 +356,9 @@ describe('resolveObjectMetadataStandardOverride', () => {
           labelSingular: undefined,
         },
       };
+
+      mockGenerateMessageId.mockReturnValue('generated-message-id');
+      mockI18n._.mockReturnValue('generated-message-id');
 
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
