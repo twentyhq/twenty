@@ -5,9 +5,9 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 
+import { WorkspaceMigrationTypeService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-type.service';
 import { WorkspaceMigrationRunnerService } from './workspace-migration-runner.service';
 
-import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 @Module({
   imports: [WorkspaceDataSourceModule, WorkspaceMigrationModule],
