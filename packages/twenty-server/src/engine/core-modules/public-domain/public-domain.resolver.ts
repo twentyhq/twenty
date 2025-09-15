@@ -55,7 +55,6 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
   async checkPublicDomainValidRecords(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() workspace: Workspace,

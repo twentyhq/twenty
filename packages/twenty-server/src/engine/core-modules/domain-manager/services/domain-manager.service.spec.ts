@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -72,7 +72,6 @@ describe('DomainManagerService', () => {
         DomainManagerService,
         {
           provide: getRepositoryToken(Workspace),
-          useClass: Repository,
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -80,7 +79,6 @@ describe('DomainManagerService', () => {
         },
         {
           provide: getRepositoryToken(PublicDomain),
-          useClass: Repository,
           useValue: {
             findOne: jest.fn(),
           },
@@ -246,7 +244,7 @@ describe('DomainManagerService', () => {
         {
           id: 'workspace-id',
         },
-      ] as unknown as Promise<Workspace[]>);
+      ] as unknown as Workspace[]);
 
       const result =
         await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -276,7 +274,7 @@ describe('DomainManagerService', () => {
         {
           id: 'workspace-id2',
         },
-      ] as unknown as Promise<Workspace[]>);
+      ] as unknown as Workspace[]);
 
       const result =
         await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -368,7 +366,7 @@ describe('DomainManagerService', () => {
       expect(result?.id).toEqual('workspace-id1');
     });
 
-    it('should return undefined is nothing found', async () => {
+    it('should return undefined if nothing found', async () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {

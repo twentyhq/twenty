@@ -127,14 +127,4 @@ export class PublicDomainService {
 
     return publicDomainWithRecords;
   }
-
-  async checkPublicDomainsValidRecords(workspace: Workspace) {
-    const publicDomains = await this.publicDomainRepository.find({
-      where: { workspaceId: workspace.id },
-    });
-
-    for (const publicDomain of publicDomains) {
-      await this.checkPublicDomainValidRecords(publicDomain);
-    }
-  }
 }
