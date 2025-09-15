@@ -36,7 +36,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
-    pageLayout.id,
+    getTabListInstanceIdFromPageLayoutId(pageLayout.id),
   );
 
   const activeTabWidgets = pageLayout.tabs.find(
@@ -70,7 +70,9 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
           <StyledTabList
             tabs={pageLayout.tabs}
             behaveAsLinks={false}
-            componentInstanceId={pageLayout.id}
+            componentInstanceId={getTabListInstanceIdFromPageLayoutId(
+              pageLayout.id,
+            )}
           />
           <PageLayoutGridLayout layouts={layouts}>
             {activeTabWidgets?.map((widget) => (
