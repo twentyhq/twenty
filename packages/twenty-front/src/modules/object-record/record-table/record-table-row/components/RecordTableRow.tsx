@@ -18,12 +18,14 @@ type RecordTableRowProps = {
   recordId: string;
   rowIndexForFocus: number;
   rowIndexForDrag: number;
+  isFirstRowOfGroup: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
   rowIndexForFocus,
   rowIndexForDrag,
+  isFirstRowOfGroup,
 }: RecordTableRowProps) => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
   const listenedFields = getDefaultRecordFieldsToListen({
@@ -42,6 +44,7 @@ export const RecordTableRow = ({
       recordId={recordId}
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
+      isFirstRowOfGroup={isFirstRowOfGroup}
     >
       {isRowFocusActive && isFocused && (
         <>

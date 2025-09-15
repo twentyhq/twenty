@@ -28,9 +28,6 @@ const StyledColumnFooterCell = styled.div<{
     &:hover {
       background: ${theme.background.secondary};
     };
-    &:active {
-      background: ${theme.background.tertiary};
-    };
     `;
   }};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;

@@ -17,6 +17,7 @@ type RecordTableDraggableTrProps = {
   isDragDisabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
+  isFirstRowOfGroup?: boolean;
 };
 
 export const RecordTableDraggableTr = ({
@@ -27,6 +28,7 @@ export const RecordTableDraggableTr = ({
   isDragDisabled,
   onClick,
   children,
+  isFirstRowOfGroup,
 }: RecordTableDraggableTrProps) => {
   const theme = useTheme();
   const { recordTableId } = useRecordTableContextOrThrow();
@@ -68,6 +70,7 @@ export const RecordTableDraggableTr = ({
             data-virtualized-id={recordId}
             data-selectable-id={recordId}
             onClick={onClick}
+            isFirstRowOfGroup={isFirstRowOfGroup}
           >
             <RecordTableRowDraggableContextProvider
               value={{
