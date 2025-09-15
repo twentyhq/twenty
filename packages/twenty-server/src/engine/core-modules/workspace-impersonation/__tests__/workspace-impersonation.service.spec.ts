@@ -12,6 +12,8 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 const mockAuditService = {
@@ -22,6 +24,14 @@ const mockAuditService = {
 
 const mockPermissionsService = {
   checkRolePermissions: jest.fn(),
+};
+
+const mockUserRoleService = {
+  getRoleIdForUserWorkspace: jest.fn().mockResolvedValue('role-id'),
+};
+
+const mockRoleService = {
+  getRoleById: jest.fn().mockResolvedValue({ id: 'role-id' }),
 };
 
 const mockAccessTokenService = {
@@ -96,6 +106,8 @@ describe('WorkspaceImpersonationService', () => {
       providers: [
         WorkspaceImpersonationService,
         { provide: PermissionsService, useValue: mockPermissionsService },
+        { provide: UserRoleService, useValue: mockUserRoleService },
+        { provide: RoleService, useValue: mockRoleService },
         { provide: AuditService, useValue: mockAuditService },
         { provide: AccessTokenService, useValue: mockAccessTokenService },
         { provide: RefreshTokenService, useValue: mockRefreshTokenService },
@@ -121,12 +133,35 @@ describe('WorkspaceImpersonationService', () => {
     permissionsService = moduleRef.get(PermissionsService);
     accessTokenService = moduleRef.get(AccessTokenService);
     refreshTokenService = moduleRef.get(RefreshTokenService);
+    const userRoleService = moduleRef.get(UserRoleService);
+    const roleService = moduleRef.get(RoleService);
 
-    return { manager, dataSource };
+    return {
+      manager,
+      dataSource,
+      permissionsService,
+      accessTokenService,
+      refreshTokenService,
+      userRoleService,
+      roleService,
+    };
   };
 
   it('impersonates successfully by userWorkspaceId', async () => {
-    const { manager } = await buildModule();
+    const {
+      manager,
+      permissionsService,
+      accessTokenService,
+      refreshTokenService,
+    } = await buildModule();
+
+    (
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace as jest.Mock
+    ).mockResolvedValue({
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'member-id', userId: targetUserId }),
+    });
 
     manager.findOne
       .mockResolvedValueOnce({
@@ -148,10 +183,10 @@ describe('WorkspaceImpersonationService', () => {
       tokenResult.refreshToken,
     );
 
-    const result = await service.impersonateWorkspaceUser({
+    const result = await service.impersonateWorkspaceUserByMemberId({
       workspaceId,
       impersonatorUserWorkspaceId: impersonatorUWId,
-      targetUserWorkspaceId: targetUWId,
+      targetWorkspaceMemberId: 'member-id',
     });
 
     expect(result.tokens).toEqual(tokenResult);
@@ -185,10 +220,10 @@ describe('WorkspaceImpersonationService', () => {
     permissionsService.checkRolePermissions.mockReturnValue(false);
 
     await expect(
-      service.impersonateWorkspaceUser({
+      service.impersonateWorkspaceUserByMemberId({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
-        targetUserWorkspaceId: targetUWId,
+        targetWorkspaceMemberId: 'member-id',
       }),
     ).rejects.toThrow(AuthException);
   });
@@ -196,19 +231,33 @@ describe('WorkspaceImpersonationService', () => {
   it('throws when target user workspace is missing', async () => {
     const { manager } = await buildModule();
 
+    // Mock the workspace member repository to return a workspace member
+    (
+      mockTwentyORMGlobalManager.getRepositoryForWorkspace as jest.Mock
+    ).mockResolvedValue({
+      findOne: jest
+        .fn()
+        .mockResolvedValue({ id: 'member-id', userId: targetUserId }),
+    });
+
     manager.findOne.mockResolvedValueOnce(null); // target not found
 
     await expect(
-      service.impersonateWorkspaceUser({
+      service.impersonateWorkspaceUserByMemberId({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
-        targetUserWorkspaceId: targetUWId,
+        targetWorkspaceMemberId: 'member-id',
       }),
     ).rejects.toThrow(AuthException);
   });
 
   it('impersonates successfully by workspaceMemberId', async () => {
-    const { manager } = await buildModule();
+    const {
+      manager,
+      permissionsService,
+      accessTokenService,
+      refreshTokenService,
+    } = await buildModule();
 
     (
       mockTwentyORMGlobalManager.getRepositoryForWorkspace as jest.Mock
@@ -230,6 +279,7 @@ describe('WorkspaceImpersonationService', () => {
       } as UserWorkspace);
 
     permissionsService.checkRolePermissions.mockReturnValue(true);
+
     accessTokenService.generateAccessToken.mockResolvedValue(
       tokenResult.accessOrWorkspaceAgnosticToken,
     );
