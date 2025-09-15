@@ -5,11 +5,16 @@ import {
 import { type RecordActionOutputSchema } from '@/workflow/workflow-variables/types/RecordActionOutputSchema';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
-const RECORD_ACTION_TYPES = ['CREATE_RECORD', 'UPDATE_RECORD', 'DELETE_RECORD'];
+const RECORD_STEP_TYPES = [
+  'CREATE_RECORD',
+  'UPDATE_RECORD',
+  'DELETE_RECORD',
+  'MANUAL',
+];
 
-export const isRecordActionOutputSchema = (
+export const isRecordStepOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
   schema: OutputSchemaV2,
 ): schema is RecordActionOutputSchema => {
-  return RECORD_ACTION_TYPES.includes(stepType);
+  return RECORD_STEP_TYPES.includes(stepType);
 };
