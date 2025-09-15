@@ -11,16 +11,18 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { IconCalendarMonth, IconCalendarWeek, IconTimelineEvent } from '@tabler/icons-react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  IconChevronLeft
+  IconCalendarMonth,
+  IconCalendarWeek,
+  IconChevronLeft,
+  IconTimelineEvent,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarViewContent = () => {
-  const { onContentChange, resetContent } = useObjectOptionsDropdown();
+  const { resetContent } = useObjectOptionsDropdown();
   const recordIndexCalendarLayout = useRecoilValue(
     recordIndexCalendarLayoutState,
   );
@@ -34,8 +36,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
 
-  const { closeDropdown } =
-  useObjectOptionsDropdown();
+  const { closeDropdown } = useObjectOptionsDropdown();
 
   const selectableItemIdArray = [
     ViewCalendarLayout.WEEK,
@@ -43,9 +44,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
     ViewCalendarLayout.DAY,
   ];
 
-  const handleCalendarViewChange = async (
-    calendarView: ViewCalendarLayout,
-  ) => {
+  const handleCalendarViewChange = async (calendarView: ViewCalendarLayout) => {
     setRecordIndexCalendarLayout(calendarView);
     await updateCurrentView({
       calendarLayout: calendarView,
@@ -74,67 +73,39 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
             onEnter={() => {
-              handleCalendarViewChange(
-                ViewCalendarLayout.WEEK
-              )
+              handleCalendarViewChange(ViewCalendarLayout.WEEK);
             }}
           >
             <MenuItemSelect
               LeftIcon={IconCalendarWeek}
               text={t`Week`}
-              selected={
-                recordIndexCalendarLayout === ViewCalendarLayout.WEEK
-              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
-              onClick={() => {
-                handleCalendarViewChange(
-                  ViewCalendarLayout.WEEK,
-                );
-              }}
+              disabled
             />
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.MONTH}
-            onEnter={() =>
-              handleCalendarViewChange(
-                ViewCalendarLayout.MONTH,
-              )
-            }
+            onEnter={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
           >
             <MenuItemSelect
               LeftIcon={IconCalendarMonth}
               text={t`Month`}
-              selected={
-                recordIndexCalendarLayout === ViewCalendarLayout.MONTH
-              }
-              onClick={() =>
-                handleCalendarViewChange(
-                  ViewCalendarLayout.MONTH,
-                )
-              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
+              onClick={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
               focused={selectedItemId === ViewCalendarLayout.MONTH}
             />
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.DAY}
-            onEnter={() =>
-              handleCalendarViewChange(
-                ViewCalendarLayout.DAY,
-              )
-            }
+            onEnter={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
           >
             <MenuItemSelect
               LeftIcon={IconTimelineEvent}
               text={t`Timeline`}
-              selected={
-                recordIndexCalendarLayout === ViewCalendarLayout.DAY
-              }
-              onClick={() =>
-                handleCalendarViewChange(
-                  ViewCalendarLayout.DAY,
-                )
-              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
               focused={selectedItemId === ViewCalendarLayout.DAY}
+              disabled
             />
           </SelectableListItem>
         </SelectableList>

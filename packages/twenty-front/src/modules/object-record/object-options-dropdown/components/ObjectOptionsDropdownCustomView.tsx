@@ -20,12 +20,12 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconCalendarWeek } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   IconCalendar,
+  IconCalendarWeek,
   IconCopy,
   IconLayoutList,
   IconListDetails,
@@ -67,7 +67,9 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const isDefaultView = currentView?.key === ViewKey.Index;
 
-  const recordIndexCalendarLayout = useRecoilValue(recordIndexCalendarLayoutState);
+  const recordIndexCalendarLayout = useRecoilValue(
+    recordIndexCalendarLayoutState,
+  );
 
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -176,8 +178,8 @@ export const ObjectOptionsDropdownCustomView = ({
                     recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                       ? t`Month`
                       : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
-                      ? t`Week`
-                      : t`Day`
+                        ? t`Week`
+                        : t`Day`
                   }
                 />
               </SelectableListItem>

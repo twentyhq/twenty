@@ -22,11 +22,12 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
-import { IconCalendar, IconCalendarWeek } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBaselineDensitySmall,
+  IconCalendar,
+  IconCalendarWeek,
   IconChevronLeft,
   IconLayoutList,
   IconLayoutNavbar,
@@ -57,7 +58,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     });
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
-  const recordIndexCalendarLayout = useRecoilValue(recordIndexCalendarLayoutState);
+  const recordIndexCalendarLayout = useRecoilValue(
+    recordIndexCalendarLayoutState,
+  );
   const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
   );
@@ -114,7 +117,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(!isDefaultView && hasCalendarViewEnabled ? [ViewType.Calendar] : []),
     ViewOpenRecordInType.SIDE_PANEL,
     ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
-    ...(currentView?.type === ViewType.Calendar ? ['CalendarView', 'CalendarDateField'] : []),
+    ...(currentView?.type === ViewType.Calendar
+      ? ['CalendarView', 'CalendarDateField']
+      : []),
   ];
 
   const selectedItemId = useRecoilComponentValue(
@@ -234,8 +239,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
                         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
-                        ? t`Week`
-                        : t`Day`
+                          ? t`Week`
+                          : t`Day`
                     }
                     hasSubMenu
                   />
