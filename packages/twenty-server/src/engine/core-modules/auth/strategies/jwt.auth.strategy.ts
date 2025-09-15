@@ -143,6 +143,16 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         );
       }
+
+      if (
+        payload.impersonatedUserWorkspaceId ===
+        payload.impersonatorUserWorkspaceId
+      ) {
+        throw new AuthException(
+          'Invalid impersonation token: cannot impersonate self',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
@@ -180,101 +190,106 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       workspaceMemberId: payload.workspaceMemberId,
     };
 
-    // Validate and attach impersonation metadata if present
     if (payload.isImpersonating === true) {
-      // Check if workspace allows impersonation
-      if (workspace.allowImpersonation !== true) {
-        throw new AuthException(
-          'Impersonation not allowed for this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Validate that required impersonation fields are present
-      if (
-        !payload.impersonatedUserWorkspaceId ||
-        !payload.impersonatorUserWorkspaceId
-      ) {
-        throw new AuthException(
-          'Invalid impersonation token: missing required fields',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Prevent self-impersonation
-      if (
-        payload.impersonatedUserWorkspaceId ===
-        payload.impersonatorUserWorkspaceId
-      ) {
-        throw new AuthException(
-          'User cannot impersonate themselves',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Validate that the current user workspace matches the impersonated user workspace
-      if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
-        throw new AuthException(
-          'Token user workspace ID does not match impersonated user workspace ID',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Validate that the impersonated user actually exists in this workspace
-      const impersonatedUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { 
-          id: payload.impersonatedUserWorkspaceId,
-          workspaceId: workspace.id 
-        },
-        relations: ['user'],
-      });
-
-      if (!impersonatedUserWorkspace) {
-        throw new AuthException(
-          'Impersonated user workspace not found',
-          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-        );
-      }
-
-      // Validate that the impersonator user workspace exists in this workspace
-      const impersonatorUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { 
-          id: payload.impersonatorUserWorkspaceId,
-          workspaceId: workspace.id 
-        },
-        relations: ['user'],
-      });
-
-      if (!impersonatorUserWorkspace) {
-        throw new AuthException(
-          'Impersonator user workspace not found',
-          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-        );
-      }
-
-      // Validate that the current user is actually the impersonated user
-      if (user.id !== impersonatedUserWorkspace.user.id) {
-        throw new AuthException(
-          'Token user does not match impersonated user',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Additional security: verify the impersonator user has canImpersonate flag
-      if (impersonatorUserWorkspace.user.canImpersonate !== true) {
-        throw new AuthException(
-          'Impersonator user does not have impersonation permissions',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      context.impersonationContext = {
-        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
-      };
+      context.impersonationContext = await this.validateImpersonation(
+        payload,
+        workspace,
+        user,
+      );
     }
 
     return context;
+  }
+
+  private async validateImpersonation(
+    payload: AccessTokenJwtPayload,
+    workspace: Workspace,
+    user: User,
+  ) {
+    if (workspace.allowImpersonation !== true) {
+      throw new AuthException(
+        'Impersonation not allowed for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      !payload.impersonatedUserWorkspaceId ||
+      !payload.impersonatorUserWorkspaceId
+    ) {
+      throw new AuthException(
+        'Invalid impersonation token: missing required fields',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      payload.impersonatedUserWorkspaceId ===
+      payload.impersonatorUserWorkspaceId
+    ) {
+      throw new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
+      throw new AuthException(
+        'Token user workspace ID does not match impersonated user workspace ID',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const impersonatedUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: {
+          id: payload.impersonatedUserWorkspaceId,
+          workspaceId: workspace.id,
+        },
+        relations: ['user'],
+      });
+
+    if (!impersonatedUserWorkspace) {
+      throw new AuthException(
+        'Impersonated user workspace not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: {
+          id: payload.impersonatorUserWorkspaceId,
+          workspaceId: workspace.id,
+        },
+        relations: ['user'],
+      });
+
+    if (!impersonatorUserWorkspace) {
+      throw new AuthException(
+        'Impersonator user workspace not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (user.id !== impersonatedUserWorkspace.user.id) {
+      throw new AuthException(
+        'Token user does not match impersonated user',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (impersonatorUserWorkspace.user.canImpersonate !== true) {
+      throw new AuthException(
+        'Impersonator user does not have impersonation permissions',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return {
+      impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+    };
   }
 
   private async validateWorkspaceAgnosticToken(
