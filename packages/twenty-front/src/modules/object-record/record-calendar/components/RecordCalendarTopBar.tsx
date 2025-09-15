@@ -1,5 +1,5 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { recordCalendarSelectedDateState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateState';
+import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { Select } from '@/ui/input/components/Select';
@@ -9,9 +9,10 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { addMonths, format, subMonths } from 'date-fns';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
@@ -48,7 +49,7 @@ export const RecordCalendarTopBar = () => {
   );
 
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
-    useRecoilState(recordCalendarSelectedDateState);
+    useRecoilComponentState(recordCalendarSelectedDateComponentState);
 
   const datePickerDropdownId = `record-calendar-date-picker-${recordCalendarId}`;
   const { closeDropdown } = useCloseDropdown();

@@ -2,6 +2,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter';
+import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -15,12 +16,10 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { recordCalendarSelectedDateState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateState';
 
 export const RecordIndexCalendarDataLoaderEffect = () => {
-  const recordCalendarSelectedDate = useRecoilValue(
-    recordCalendarSelectedDateState,
+  const recordCalendarSelectedDate = useRecoilComponentValue(
+    recordCalendarSelectedDateComponentState,
   );
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
