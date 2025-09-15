@@ -1,3 +1,4 @@
+import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { BarChartEndLines } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartEndLines';
@@ -44,20 +45,6 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: center;
   width: 100%;
-`;
-
-const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
-  flex: 1;
-  position: relative;
-  width: 100%;
-
-  ${({ $isClickable }) =>
-    $isClickable &&
-    `
-    svg g[transform] rect[fill^="url(#gradient-"] {
-      cursor: pointer;
-    }
-  `}
 `;
 
 export const GraphWidgetBarChart = ({
@@ -159,7 +146,10 @@ export const GraphWidgetBarChart = ({
 
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer $isClickable={hasClickableItems}>
+      <GraphWidgetChartContainer
+        $isClickable={hasClickableItems}
+        $cursorSelector='svg g[transform] rect[fill^="url(#gradient-"]'
+      >
         <ResponsiveBar
           data={data}
           keys={keys}
@@ -206,7 +196,7 @@ export const GraphWidgetBarChart = ({
           onMouseLeave={() => setHoveredBar(null)}
           theme={chartTheme}
         />
-      </StyledChartContainer>
+      </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend}
         items={enrichedKeys.map((item) => {
