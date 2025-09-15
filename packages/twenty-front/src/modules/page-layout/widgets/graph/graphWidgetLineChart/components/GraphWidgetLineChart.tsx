@@ -1,4 +1,6 @@
+import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
@@ -6,7 +8,6 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
@@ -64,20 +65,6 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: center;
   width: 100%;
-`;
-
-const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
-  flex: 1;
-  position: relative;
-  width: 100%;
-
-  ${({ $isClickable }) =>
-    $isClickable &&
-    `
-    svg g circle {
-      cursor: pointer;
-    }
-  `}
 `;
 
 export const GraphWidgetLineChart = ({
@@ -176,7 +163,10 @@ export const GraphWidgetLineChart = ({
 
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer $isClickable={hasClickableItems}>
+      <GraphWidgetChartContainer
+        $isClickable={hasClickableItems}
+        $cursorSelector="svg g circle"
+      >
         <ResponsiveLine
           data={nivoData}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
@@ -218,7 +208,7 @@ export const GraphWidgetLineChart = ({
           crosshairType="cross"
           theme={chartTheme}
         />
-      </StyledChartContainer>
+      </GraphWidgetChartContainer>
       <GraphWidgetLegend show={showLegend} items={legendItems} />
     </StyledContainer>
   );

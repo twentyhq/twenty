@@ -31,11 +31,7 @@ export const useLineChartData = ({
   theme,
   formatOptions,
 }: UseLineChartDataProps) => {
-  const dataMap: Record<string, LineChartSeries> = {};
-  for (const series of data) {
-    dataMap[series.id] = series;
-  }
-
+  const dataMap = Object.fromEntries(data.map((series) => [series.id, series]));
   const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
       const colorScheme = getColorScheme(colorRegistry, series.color, index);
@@ -60,24 +56,24 @@ export const useLineChartData = ({
     })),
   }));
 
-  const defs = enrichedSeries
-    .filter((series) => series.shouldEnableArea)
-    .map((series) =>
-      createGradientDef(
-        series.colorScheme,
-        series.gradientId,
-        false,
-        90,
-        theme.name === 'light',
-      ),
-    );
+  const seriesWithArea = enrichedSeries.filter(
+    (series) => series.shouldEnableArea,
+  );
 
-  const fill = enrichedSeries
-    .filter((series) => series.shouldEnableArea)
-    .map((series) => ({
-      match: { id: series.id },
-      id: series.gradientId,
-    }));
+  const defs = seriesWithArea.map((series) =>
+    createGradientDef(
+      series.colorScheme,
+      series.gradientId,
+      false,
+      90,
+      theme.name === 'light',
+    ),
+  );
+
+  const fill = seriesWithArea.map((series) => ({
+    match: { id: series.id },
+    id: series.gradientId,
+  }));
 
   const colors = enrichedSeries.map((series) => series.colorScheme.solid);
 

@@ -22,11 +22,15 @@ export const useLineChartTooltip = ({
   enrichedSeries,
   formatOptions,
 }: UseLineChartTooltipProps) => {
+  const enrichedSeriesMap = new Map(
+    enrichedSeries.map((series) => [series.id, series]),
+  );
+
   const createSliceTooltipData = ({ slice }: SliceTooltipProps<LineSeries>) => {
     const tooltipItems = slice.points
       .map((point) => {
-        const enrichedSeriesItem = enrichedSeries.find(
-          (s) => s.id === point.seriesId,
+        const enrichedSeriesItem = enrichedSeriesMap.get(
+          String(point.seriesId),
         );
         if (!enrichedSeriesItem) return null;
 
@@ -57,9 +61,7 @@ export const useLineChartTooltip = ({
   };
 
   const createPointTooltipData = (point: Point<LineSeries>) => {
-    const enrichedSeriesItem = enrichedSeries.find(
-      (s) => s.id === point.seriesId,
-    );
+    const enrichedSeriesItem = enrichedSeriesMap.get(String(point.seriesId));
     if (!enrichedSeriesItem) return null;
 
     const series = dataMap[point.seriesId];
