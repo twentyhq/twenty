@@ -35,6 +35,7 @@ export class ViewCacheService {
       where: {
         workspaceId,
       },
+      withDeleted: true,
       relations: ['viewFields'],
       select: {
         viewFields: {
@@ -57,7 +58,10 @@ export class ViewCacheService {
   }): Promise<{ flatViewFieldMaps: FlatViewFieldMaps }> {
     // TODO: get from cache later
     const existingViewFields = await this.viewFieldRepository.find({
-      where: { workspaceId },
+      where: { 
+        workspaceId,
+      },
+      withDeleted: true,
     });
 
     const flatViewFieldMaps: FlatViewFieldMaps = {

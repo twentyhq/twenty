@@ -3,11 +3,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 export type ViewFieldTestSetup = {
   testViewId: string;
@@ -26,7 +25,7 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
     data: {
       createOneObject: { id: objectMetadataId },
     },
-  } = await forceCreateOneObjectMetadata({
+  } = await createOneObjectMetadata({
     expectToFail: false,
     input: {
       nameSingular: 'myFieldTestObjectV2',
@@ -58,8 +57,6 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
     `,
   });
 
-  await cleanupViewRecords();
-
   const view = await createTestViewWithGraphQL({
     name: 'Test View for Fields',
     objectMetadataId,
@@ -88,7 +85,6 @@ export const cleanupViewFieldTestV2 = async (
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
   } finally {
     await updateFeatureFlag({
       expectToFail: false,

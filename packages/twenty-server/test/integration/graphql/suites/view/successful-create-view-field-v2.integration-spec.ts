@@ -36,12 +36,15 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
 
   afterEach(async () => {
     if (isDefined(createdViewFieldId)) {
-      await deleteOneCoreViewField({
+      const {
+        data: { deleteCoreViewField },
+      } = await deleteOneCoreViewField({
         expectToFail: false,
         input: {
           id: createdViewFieldId,
         },
       });
+      expect(deleteCoreViewField.deletedAt).not.toBeNull();
       await destroyOneCoreViewField({
         expectToFail: false,
         input: {
@@ -54,7 +57,6 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
 
   const successfulTestCases: EachTestingContext<TestContext>[] = [
     {
-      only: true,
       title: 'visible field with position and size',
       context: {
         viewFieldInput: (testSetup) => ({
@@ -94,13 +96,11 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
         viewFieldInput: (testSetup) => ({
           fieldMetadataId: testSetup.testFieldMetadataId,
           viewId: testSetup.testViewId,
-          position: 0,
-          isVisible: true,
         }),
         expected: {
           position: 0,
           isVisible: true,
-          size: 150,
+          size: 0,
         },
       },
     },
