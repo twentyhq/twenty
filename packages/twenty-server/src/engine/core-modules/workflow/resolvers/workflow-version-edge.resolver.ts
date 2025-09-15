@@ -56,13 +56,19 @@ export class WorkflowVersionEdgeResolver {
   async deleteWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
+    {
+      source,
+      target,
+      workflowVersionId,
+      sourceConnectionOptions,
+    }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
     return this.workflowVersionEdgeWorkspaceService.deleteWorkflowVersionEdge({
       source,
       target,
       workflowVersionId,
       workspaceId,
+      sourceConnectionOptions,
     });
   }
 }
