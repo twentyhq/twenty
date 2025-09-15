@@ -1,13 +1,9 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
-import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
-import { findFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
-import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import {
@@ -21,7 +17,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
   T extends WorkspaceMigrationActionV2,
 >({
   action,
-  flatObjectMetadataMaps,
+  allFlatEntityMaps: flatObjectMetadataMaps,
 }: Omit<
   WorkspaceMigrationActionRunnerArgs<T>,
   'queryRunner'
@@ -71,65 +67,6 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
       return replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: updatedFlatObjectMetadata,
         flatObjectMetadataMaps,
-      });
-    }
-    case 'create_field': {
-      const updatedFlatObjectMetadataMaps =
-        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: action.flatFieldMetadata,
-          flatObjectMetadataMaps,
-        });
-
-      if (!isDefined(updatedFlatObjectMetadataMaps)) {
-        throw new WorkspaceMigrationRunnerException(
-          `Workspace migration failed: dispatchAndAddFlatFieldMetadataInFlatObjectMetadataMaps failed`,
-          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
-        );
-      }
-
-      return updatedFlatObjectMetadataMaps;
-    }
-    case 'update_field': {
-      const { fieldMetadataId, objectMetadataId } = action;
-      const existingFlatFieldMetadata =
-        findFlatFieldMetadataInFlatObjectMetadataMaps({
-          fieldMetadataId,
-          objectMetadataId,
-          flatObjectMetadataMaps,
-        });
-
-      if (!isDefined(existingFlatFieldMetadata)) {
-        throw new WorkspaceMigrationRunnerException(
-          `Workspace migration failed: Field metadata not found in cache`,
-          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
-        );
-      }
-
-      const updatedFlatFieldMetadata = {
-        ...existingFlatFieldMetadata,
-        ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
-      };
-
-      const updatedFlatObjectMetadataMaps =
-        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: updatedFlatFieldMetadata,
-          flatObjectMetadataMaps,
-        });
-
-      if (!isDefined(updatedFlatObjectMetadataMaps)) {
-        throw new WorkspaceMigrationRunnerException(
-          `Workspace migration failed: dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps failed`,
-          WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
-        );
-      }
-
-      return updatedFlatObjectMetadataMaps;
-    }
-    case 'delete_field': {
-      return deleteFieldFromFlatObjectMetadataMapsOrThrow({
-        fieldMetadataId: action.fieldMetadataId,
-        flatObjectMetadataMaps,
-        objectMetadataId: action.objectMetadataId,
       });
     }
     case 'create_index':

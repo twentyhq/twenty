@@ -1,6 +1,8 @@
 import { SetMetadata } from '@nestjs/common';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 
 import {
+  WorkspaceMigrationActionV2,
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
@@ -12,8 +14,12 @@ export interface WorkspaceMigrationRunnerActionHandlerService<
 > {
   execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
-  ): Promise<void>;
+  ): Promise<AllFlatEntityMaps>;
 }
+
+export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
+  T extends WorkspaceMigrationActionV2,
+> = Pick<WorkspaceMigrationActionRunnerArgs<T>, 'allFlatEntityMaps' | 'action'>;
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   T extends WorkspaceMigrationActionTypeV2,
@@ -27,13 +33,22 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
   ): Promise<void>;
 
+  abstract optimisticallyApplyActionOnAllFlatEntityMaps(
+    args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<ExtractAction<T>>,
+  ): AllFlatEntityMaps;
+
   async execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
-  ): Promise<void> {
+  ): Promise<AllFlatEntityMaps> {
     await Promise.all([
       this.executeForMetadata(context),
       this.executeForWorkspaceSchema(context),
     ]);
+
+    return this.optimisticallyApplyActionOnAllFlatEntityMaps({
+      action: context.action,
+      allFlatEntityMaps: context.allFlatEntityMaps,
+    });
   }
 }
 

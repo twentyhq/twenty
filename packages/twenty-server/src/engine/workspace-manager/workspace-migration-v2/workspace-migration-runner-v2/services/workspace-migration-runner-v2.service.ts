@@ -41,7 +41,7 @@ export class WorkspaceMigrationRunnerV2Service {
           action.type,
           {
             action,
-            allFlatEntityMaps: optimisticFlatObjectMetadataMaps,
+            allFlatEntityMaps,
             queryRunner,
             workspaceId,
           },
@@ -50,7 +50,7 @@ export class WorkspaceMigrationRunnerV2Service {
         optimisticFlatObjectMetadataMaps =
           applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
             action,
-            allFlatEntityMaps: optimisticFlatObjectMetadataMaps,
+            allFlatEntityMaps,
             workspaceId,
           });
       }
