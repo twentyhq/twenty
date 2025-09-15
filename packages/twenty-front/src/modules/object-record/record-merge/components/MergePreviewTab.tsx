@@ -1,8 +1,14 @@
 import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
-import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
+import React, { Suspense } from 'react';
+
+const LazyFieldCard = React.lazy(() =>
+  import('@/object-record/record-show/components/CardComponents').then(
+    (mod) => ({ default: mod.CardComponents.FieldCard }),
+  ),
+);
 
 type MergePreviewTabProps = {
   objectNameSingular: string;
@@ -29,14 +35,16 @@ export const MergePreviewTab = ({
         isInRightDrawer={true}
       />
 
-      <CardComponents.FieldCard
-        targetableObject={{
-          targetObjectNameSingular: objectNameSingular,
-          id: recordId,
-        }}
-        showDuplicatesSection={false}
-        isInRightDrawer={true}
-      />
+      <Suspense fallback={<div>Loading card...</div>}>
+        <LazyFieldCard
+          targetableObject={{
+            targetObjectNameSingular: objectNameSingular,
+            id: recordId,
+          }}
+          showDuplicatesSection={false}
+          isInRightDrawer={true}
+        />
+      </Suspense>
     </Section>
   );
 };

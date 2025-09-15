@@ -12,7 +12,6 @@ import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +26,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
-      ({
+      async ({
         objectMetadataItem,
         recordId,
       }: {
@@ -51,6 +50,10 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         ) {
           return;
         }
+
+        const { generateWorkflowRunDiagram } = await import(
+          '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram'
+        );
 
         const { stepToOpenByDefault } = generateWorkflowRunDiagram({
           steps: workflowRunRecord.state.flow.steps,
