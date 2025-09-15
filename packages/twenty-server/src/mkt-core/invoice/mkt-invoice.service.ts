@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -102,7 +102,10 @@ export class MktInvoiceService {
 
       return orderItemNames;
     } catch (error) {
-      this.logger.error(`MktInvoiceService: Error getting orderItem names:`, error as Error);
+      this.logger.error(
+        `MktInvoiceService: Error getting orderItem names:`,
+        error as Error,
+      );
 
       return null;
     }
