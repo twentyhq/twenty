@@ -9,9 +9,13 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -68,6 +72,20 @@ export const RecordTableContent = ({
 
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
+  const setRecordTableHoverPosition = useSetRecoilComponentState(
+    recordTableHoverPositionComponentState,
+  );
+
+  const isSomeCellInEditMode = useRecoilComponentValue(
+    isSomeCellInEditModeComponentSelector,
+  );
+
+  const handleMouseLeave = () => {
+    if (!isSomeCellInEditMode) {
+      setRecordTableHoverPosition(null);
+    }
+  };
+
   return (
     <StyledTableContainer ref={containerRef}>
       <RecordTableStyleWrapper
@@ -76,6 +94,7 @@ export const RecordTableContent = ({
         visibleRecordFields={visibleRecordFields}
         lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
+        onMouseLeave={handleMouseLeave}
       >
         <RecordTableHeader />
         {hasRecordGroups ? (
