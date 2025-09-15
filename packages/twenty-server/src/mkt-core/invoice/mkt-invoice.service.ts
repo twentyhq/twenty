@@ -136,7 +136,6 @@ export class MktInvoiceService {
       });
 
       if (!orderItems || orderItems.length === 0) {
-        console.log(`No orderItems found for order ${mktOrderId}`);
 
         return null;
       }
@@ -150,7 +149,6 @@ export class MktInvoiceService {
         );
 
       if (orderItemNames.length === 0) {
-        console.log(`No valid orderItem names found for order ${mktOrderId}`);
 
         return null;
       }

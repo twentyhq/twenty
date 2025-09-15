@@ -7,8 +7,8 @@ import {
   ORDER_ACTION,
   ORDER_STATUS,
   SINVOICE_STATUS,
-} from '../constants/order-status.constants';
-import { MktOrderWorkspaceEntity } from '../objects/mkt-order.workspace-entity';
+} from 'src/mkt-core/order/constants/order-status.constants';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
 
 export class OrderActionService {
   private readonly logger = new Logger(OrderActionService.name);
