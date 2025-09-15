@@ -1,9 +1,12 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordCalendar } from '@/object-record/record-calendar/components/RecordCalendar';
+import { RecordIndexCalendarDataLoaderEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarDataLoaderEffect';
 import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordIndexCalendarContainerProps = {
   recordCalendarInstanceId: string;
@@ -24,6 +27,15 @@ export const RecordIndexCalendarContainer = ({
     objectMetadataItem.id,
   );
 
+  const { currentView } = useGetCurrentViewOnly();
+
+  if (
+    !isDefined(currentView) ||
+    !isDefined(currentView.calendarFieldMetadataId)
+  ) {
+    return null;
+  }
+
   return (
     <RecordCalendarComponentInstanceContext.Provider
       value={{
@@ -40,6 +52,7 @@ export const RecordIndexCalendarContainer = ({
         }}
       >
         <RecordCalendar />
+        <RecordIndexCalendarDataLoaderEffect />
       </RecordCalendarContextProvider>
     </RecordCalendarComponentInstanceContext.Provider>
   );
