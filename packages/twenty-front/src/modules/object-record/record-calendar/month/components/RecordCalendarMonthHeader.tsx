@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 const StyledContainer = styled.div`
   display: flex;
   height: 24px;
+  width: 100%;
 `;
 
 export const RecordCalendarMonthHeader = () => {

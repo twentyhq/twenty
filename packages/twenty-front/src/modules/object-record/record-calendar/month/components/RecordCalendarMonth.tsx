@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 const StyledContainer = styled.div`
   display: flex;
   height: 24px;
+  flex-direction: column;
 `;
 
 export const RecordCalendarMonth = () => {
