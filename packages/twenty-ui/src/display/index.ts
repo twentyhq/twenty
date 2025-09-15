@@ -106,6 +106,8 @@ export {
   IconCalendarRepeat,
   IconCalendarTime,
   IconCalendarX,
+  IconCalendarMonth,
+  IconCalendarWeek,
   IconChartBar,
   IconChartCandle,
   IconChartDots3,

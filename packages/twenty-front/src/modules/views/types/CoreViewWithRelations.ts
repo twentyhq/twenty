@@ -1,10 +1,11 @@
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import {
   type AggregateOperations,
   type CoreViewField,
   type CoreViewFilter,
   type CoreViewFilterGroup,
   type CoreViewGroup,
-  type CoreViewSort,
+  type ViewCalendarLayout,
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewType,
@@ -27,9 +28,11 @@ export type CoreViewWithRelations = {
     CoreViewFilterGroup,
     'workspaceId' | 'createdAt' | 'updatedAt'
   >[];
-  viewSorts: Omit<CoreViewSort, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
+  viewSorts: CoreViewSortEssential[];
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
+  calendarFieldMetadataId?: string | null;
+  calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;
   openRecordIn: ViewOpenRecordIn;

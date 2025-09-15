@@ -1,3 +1,4 @@
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import styled from '@emotion/styled';
 
 const StyledHeaderCell = styled.div<{
@@ -10,8 +11,8 @@ const StyledHeaderCell = styled.div<{
 
   position: relative;
 
-  height: 32px;
-  max-height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
