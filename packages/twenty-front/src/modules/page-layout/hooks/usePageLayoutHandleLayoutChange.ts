@@ -46,6 +46,9 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
                     title: widget.title,
                     type: widget.type,
                     objectMetadataId: null,
+                    hasAccess:
+                      tab.widgets.find((w) => w.id === widget.id)?.hasAccess ??
+                      true,
                     gridPosition: widget.gridPosition,
                     configuration: widget.configuration || undefined,
                     data: widget.data,

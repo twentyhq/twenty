@@ -7,6 +7,7 @@ import {
 // TODO: Remove this once we query the data from the database
 export type PageLayoutWidgetWithData = PageLayoutWidget & {
   data?: Record<string, any>;
+  hasAccess?: boolean;
 };
 
 export type PageLayoutTabWithData = Omit<PageLayoutTab, 'widgets'> & {

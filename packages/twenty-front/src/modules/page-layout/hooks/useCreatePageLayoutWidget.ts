@@ -73,6 +73,7 @@ export const useCreatePageLayoutWidget = () => {
           },
           data: widgetData as Record<string, unknown>,
           objectMetadataId: null,
+          hasAccess: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,

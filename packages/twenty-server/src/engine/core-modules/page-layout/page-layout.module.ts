@@ -13,6 +13,8 @@ import { PageLayoutResolver } from 'src/engine/core-modules/page-layout/resolver
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
@@ -23,6 +25,8 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
       PageLayoutWidgetEntity,
     ]),
     TwentyORMModule,
+    UserRoleModule,
+    WorkspacePermissionsCacheModule,
   ],
   controllers: [
     PageLayoutController,

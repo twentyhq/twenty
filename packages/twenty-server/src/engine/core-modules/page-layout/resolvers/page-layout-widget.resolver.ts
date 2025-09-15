@@ -7,8 +7,11 @@ import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/pa
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Resolver(() => PageLayoutWidgetDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
@@ -16,17 +19,57 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+    private readonly userRoleService: UserRoleService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   @Query(() => [PageLayoutWidgetDTO])
   async getPageLayoutWidgets(
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('pageLayoutTabId', { type: () => String }) pageLayoutTabId: string,
   ): Promise<PageLayoutWidgetDTO[]> {
-    return this.pageLayoutWidgetService.findByPageLayoutTabId(
+    const widgets = await this.pageLayoutWidgetService.findByPageLayoutTabId(
       workspace.id,
       pageLayoutTabId,
     );
+
+    const [userRole] = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId: workspace.id,
+      })
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+    if (!userRole) {
+      return widgets.map((widget) => ({
+        ...widget,
+        hasAccess: false,
+      }));
+    }
+
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId: workspace.id,
+      });
+
+    const userObjectPermissions = rolesPermissions[userRole.id] ?? {};
+
+    return widgets.map((widget) => {
+      let hasAccess = true;
+
+      if (widget.objectMetadataId) {
+        const objectPermission = userObjectPermissions[widget.objectMetadataId];
+
+        hasAccess = objectPermission?.canRead === true;
+      }
+
+      return {
+        ...widget,
+        configuration: hasAccess ? widget.configuration : null,
+        hasAccess,
+      };
+    });
   }
 
   @Query(() => PageLayoutWidgetDTO)

@@ -80,6 +80,7 @@ describe('usePageLayoutDraftState', () => {
                 configuration: { graphType: GraphType.BAR },
                 data: {},
                 objectMetadataId: null,
+                hasAccess: true,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 deletedAt: null,

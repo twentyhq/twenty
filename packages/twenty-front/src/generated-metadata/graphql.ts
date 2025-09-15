@@ -2571,6 +2571,8 @@ export type PageLayoutWidget = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
+  /** Whether the user has access to view this widget content */
+  hasAccess: Scalars['Boolean'];
   id: Scalars['UUID'];
   objectMetadataId?: Maybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
