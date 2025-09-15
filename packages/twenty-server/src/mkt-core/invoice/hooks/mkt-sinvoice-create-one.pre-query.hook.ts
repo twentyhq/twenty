@@ -70,7 +70,9 @@ export class MktSInvoiceCreateOnePreQueryHook
       }
 
       const orderItems = await orderItemRepository.find({
-        where: { mktOrderId: input.mktOrderId } as any,
+        where: { mktOrderId: input.mktOrderId } as unknown as {
+          mktOrderId: string;
+        },
       });
 
       if (!orderItems || orderItems.length === 0) {
@@ -248,8 +250,15 @@ export class MktSInvoiceCreateOnePreQueryHook
    */
   private async createSInvoiceItemsFromOrderItems(
     orderItems: MktOrderItemWorkspaceEntity[],
-    itemInfo: any[],
-  ): Promise<any[]> {
+    itemInfo: Array<{
+      lineNumber: number;
+      selection?: number;
+      itemTotalAmountWithoutTax: number;
+      itemTotalAmountAfterDiscount?: number;
+      itemTotalAmountWithTax: number;
+      taxAmount: number;
+    }>,
+  ): Promise<Array<Partial<MktOrderItemWorkspaceEntity>>> {
     return await orderItems.map((orderItem, index) => {
       const item = itemInfo[index];
 
@@ -281,7 +290,7 @@ export class MktSInvoiceCreateOnePreQueryHook
         itemNote: null,
         isIncreaseItem: false,
         position: index + 1,
-      };
+      } as Partial<MktOrderItemWorkspaceEntity>;
     });
   }
 }

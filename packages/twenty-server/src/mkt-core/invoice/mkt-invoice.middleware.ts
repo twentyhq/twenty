@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 
 import { NextFunction, Request, Response } from 'express';
 
@@ -6,6 +6,7 @@ import { MktInvoiceService } from 'src/mkt-core/invoice/mkt-invoice.service';
 
 @Injectable()
 export class MktInvoiceMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(MktInvoiceMiddleware.name);
   constructor(private readonly mktInvoiceService: MktInvoiceService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -14,9 +15,9 @@ export class MktInvoiceMiddleware implements NestMiddleware {
         await this.customizeGraphQLRequest(req);
       }
     } catch (error) {
-      console.error(
+      this.logger.error(
         'Error in GraphQL request customization middleware:',
-        error,
+        error as Error,
       );
     }
 

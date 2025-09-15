@@ -7,8 +7,8 @@ export type CreateInvoiceResponse = {
   transactionUuid?: string;
   invoiceNo?: string;
   message?: string;
-  [key: string]: any;
-  result: any;
+  [key: string]: unknown;
+  result: unknown;
 };
 
 export type sInvoiceType = {
@@ -87,8 +87,8 @@ export type sInvoicePayload = {
     itemTotalAmountWithTax: number | null;
     taxPercentage: number | null;
     taxAmount: number | null;
-    discount: any | null;
-    itemDiscount: any | null;
+    discount: number | null;
+    itemDiscount: number | null;
     itemNote: string | null;
     isIncreaseItem: boolean | null;
   }[];

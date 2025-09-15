@@ -256,7 +256,7 @@ export class MktSInvoiceFileUpdateOnePreQueryHook
 
       // Generate file name with timestamp to avoid conflicts
       const fileExtension = currentFile.fileType?.toLowerCase() || 'pdf';
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const _timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const fileName = `${currentFile.invoiceNo}.${fileExtension}`;
       const filePath = path.join(uploadsDir, fileName);
 

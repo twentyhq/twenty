@@ -14,8 +14,8 @@ type CreateInvoiceResponse = {
   transactionUuid?: string;
   invoiceNo?: string;
   message?: string;
-  [key: string]: any;
-  result: any;
+  [key: string]: unknown;
+  result: unknown;
 };
 
 type sInvoiceType = {
@@ -98,7 +98,7 @@ export class SInvoiceIntegrationService {
     }
 
     const items = await orderItemRepository.find({
-      where: { mktOrderId: orderId } as any,
+      where: { mktOrderId: orderId } as unknown as { mktOrderId: string },
     });
 
     if (!items || items.length === 0) {
@@ -259,12 +259,15 @@ export class SInvoiceIntegrationService {
         supplierTaxCode: this.taxCode,
         templateCode: this.templateCode,
         invoiceSeries: this.invoiceSeries,
-        invoiceNo: response.invoiceNo,
-        transactionUuid: response.transactionUuid || transactionUuid,
+        invoiceNo: (response as { invoiceNo?: string })?.invoiceNo,
+        transactionUuid:
+          (response as { transactionUuid?: string })?.transactionUuid ||
+          transactionUuid,
         issueDate: String(nowMs),
       };
-    } catch (error: any) {
-      const errMsg = error?.response?.data || error?.message;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: unknown }; message?: string };
+      const errMsg = err?.response?.data || err?.message;
 
       this.logger.error(
         `Create S-Invoice failed for order ${orderId}: ${JSON.stringify(errMsg)}`,

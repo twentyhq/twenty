@@ -1,8 +1,6 @@
 import { MKT_PRODUCT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/product-seeder/mkt-product-data-seeds.constants';
-
-import { MKT_VARIANT_DATA_SEEDS_IDS } from '../product-seeder/mkt-variant-data-seeds.constants';
-
-import { MKT_ORDER_DATA_SEEDS_IDS } from './mkt-order-data-seeds.constants';
+import { MKT_VARIANT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/product-seeder/mkt-variant-data-seeds.constants';
+import { MKT_ORDER_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-order-data-seeds.constants';
 
 type MktOrderItemDataSeed = {
   id: string;

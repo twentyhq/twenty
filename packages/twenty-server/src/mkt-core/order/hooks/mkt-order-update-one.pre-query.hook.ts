@@ -9,15 +9,17 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SInvoiceIntegrationJobData } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
 import { LicenseGenerationJobData } from 'src/mkt-core/license/jobs/license-generation.job';
 import {
-  MKT_ORDER_LICENSE_STATUS,
+  ORDER_ACTION,
   ORDER_STATUS,
-  SINVOICE_STATUS,
 } from 'src/mkt-core/order/constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
+import { OrderActionService } from 'src/mkt-core/order/services/order.action.service';
+import { OrderPayloadService } from 'src/mkt-core/order/services/order.payload.service';
 
 @WorkspaceQueryHook('mktOrder.updateOne')
 export class MktOrderUpdateOnePreQueryHook
@@ -32,6 +34,8 @@ export class MktOrderUpdateOnePreQueryHook
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly orderActionService: OrderActionService,
+    private readonly orderPayloadService: OrderPayloadService,
   ) {}
 
   async execute(
@@ -41,56 +45,87 @@ export class MktOrderUpdateOnePreQueryHook
   ): Promise<UpdateOneResolverArgs<MktOrderWorkspaceEntity>> {
     const input = payload?.data;
     const orderId = payload?.id;
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+    const workspaceId =
+      this.scopedWorkspaceContextFactory.create().workspaceId || '';
 
     if (!orderId || !workspaceId) return payload;
-
     const orderRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
         workspaceId,
         'mktOrder',
         { shouldBypassPermissionChecks: true },
       );
-    const currentOrder = await orderRepository.findOne({
-      where: { id: orderId },
-      relations: ['orderItems'],
-    });
+    const currentOrder = await this.getOrder(orderId, orderRepository);
 
-    this.logger.log(`Validating updatedAt for order ${orderId}`);
-    await this.validateUpdatedAtOrThrow(input, currentOrder);
+    await this.validateOrder(orderId, workspaceId);
+    const action = (await this.orderActionService.getAction(
+      payload,
+      currentOrder,
+    )) as ORDER_ACTION | null;
 
-    this.logger.log(`Updating order information for order ${orderId}`);
-    await this.updateOrderInformation(workspaceId, payload, currentOrder);
-
-    this.logger.log(
-      `Adding S-Invoice integration job to queue for order ${orderId}`,
+    this.logger.log(`action: ${action}`);
+    if (action === null) {
+      this.logger.log(`current order status ${currentOrder?.status}`);
+      this.logger.log(`input status ${input?.status}`);
+      this.logger.log(`input trialLicense ${input?.trialLicense}`);
+      this.logger.log(`input licenseStatus ${input?.licenseStatus}`);
+      this.logger.log(`input sInvoiceStatus ${input?.sInvoiceStatus}`);
+      this.logger.log(
+        `current order trialLicense ${currentOrder?.trialLicense}`,
+      );
+      this.logger.log(
+        `current order licenseStatus ${currentOrder?.licenseStatus}`,
+      );
+      this.logger.log(
+        `current order sInvoiceStatus ${currentOrder?.sInvoiceStatus}`,
+      );
+    }
+    // 1 → Draft → Confirmed
+    await this.confirmOrder(
+      payload,
+      orderId,
+      workspaceId,
+      currentOrder,
+      action,
     );
-    await this.sInvoiceIntegration(orderId, workspaceId, input, currentOrder);
-
-    this.logger.log(
-      `Adding License integration job to queue for order ${orderId}`,
-    );
-
-    const inputWithTrialLicense = {
-      ...input,
-      ...(input?.status === ORDER_STATUS.TRIAL && { trialLicense: true }),
-    };
+    // 2 → Confirmed → Trial (TRIAL)
+    await this.trialOrder(payload, orderId, workspaceId, currentOrder, action);
+    // 3 → Confirmed → Paid (PAID)
+    await this.paidOrder(payload, orderId, workspaceId, currentOrder, action);
+    // 4 → Processing (PROCESSING)
+    // 5 → Completed (COMPLETED)
+    // 6 → Locked (LOCKED)
+    // 7 → Cancelled (CANCELLED)
 
     await this.licenseIntegration(
       orderId,
       workspaceId,
-      inputWithTrialLicense,
+      input,
       currentOrder,
+      action,
+    );
+    await this.sInvoiceIntegration(
+      orderId,
+      workspaceId,
+      input,
+      currentOrder,
+      action,
     );
 
-    const inputWithUpdatedAt = {
-      ...inputWithTrialLicense,
-      updatedAt: new Date().toISOString(),
-    };
+    //this.logger.log(`Validating updatedAt for order ${orderId}`);
+    //await this.validateUpdatedAtOrThrow(input, currentOrder);
+
+    const newPayload = await this.orderPayloadService.getNewPayload(
+      payload,
+      action,
+    );
 
     return {
-      ...payload,
-      data: inputWithUpdatedAt,
+      ...newPayload,
+      data: {
+        ...(newPayload.data as MktOrderWorkspaceEntity),
+        updatedAt: new Date().toISOString(),
+      },
     };
   }
 
@@ -99,12 +134,12 @@ export class MktOrderUpdateOnePreQueryHook
     workspaceId: string,
     input: Partial<MktOrderWorkspaceEntity>,
     currentOrder: MktOrderWorkspaceEntity | null,
+    action: ORDER_ACTION | null,
   ): Promise<void> {
-    if (
-      currentOrder &&
-      currentOrder.status === ORDER_STATUS.PAID &&
-      input?.sInvoiceStatus === SINVOICE_STATUS.SEND
-    ) {
+    if (action === ORDER_ACTION.SINVOICE) {
+      this.logger.log(
+        `Adding S-Invoice integration job to queue for order ${orderId}`,
+      );
       const jobData: SInvoiceIntegrationJobData = {
         orderId,
         workspaceId,
@@ -129,26 +164,12 @@ export class MktOrderUpdateOnePreQueryHook
     workspaceId: string,
     input: Partial<MktOrderWorkspaceEntity>,
     currentOrder: MktOrderWorkspaceEntity | null,
+    action: ORDER_ACTION | null,
   ): Promise<void> {
-    this.logger.log(
-      `[LICENSE DEBUG] licenseIntegration called for order: ${orderId}`,
-    );
-    this.logger.log(
-      `[LICENSE DEBUG] Current order status: ${currentOrder?.status}`,
-    );
-    this.logger.log(
-      `[LICENSE DEBUG] Input license status: ${input?.licenseStatus}`,
-    );
-    this.logger.log(
-      `[LICENSE DEBUG] Required conditions: currentOrder exists: ${!!currentOrder}, status is PAID: ${currentOrder?.status === ORDER_STATUS.PAID}, licenseStatus is GETTING: ${input?.licenseStatus === MKT_ORDER_LICENSE_STATUS.GETTING}`,
-    );
-
-    if (
-      currentOrder &&
-      (currentOrder.status === ORDER_STATUS.PAID ||
-        currentOrder.status === ORDER_STATUS.TRIAL) &&
-      input?.licenseStatus === MKT_ORDER_LICENSE_STATUS.GETTING
-    ) {
+    if (action === ORDER_ACTION.LICENSE) {
+      this.logger.log(
+        `Adding License integration job to queue for order ${orderId}`,
+      );
       const jobData: LicenseGenerationJobData = {
         orderId,
         workspaceId,
@@ -395,7 +416,7 @@ export class MktOrderUpdateOnePreQueryHook
     }
   }
 
-  async updateOrderInformation(
+  private async updateOrderInformation(
     workspaceId: string,
     payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
     currentOrder: MktOrderWorkspaceEntity | null,
@@ -451,6 +472,76 @@ export class MktOrderUpdateOnePreQueryHook
         discount: calculatedValues.discount,
         totalAmount: calculatedValues.totalAmount,
       };
+    }
+  }
+
+  private async validateOrder(
+    orderId: string,
+    workspaceId: string | null,
+  ): Promise<void> {
+    if (!orderId || !workspaceId) {
+      throw new Error('Order ID and workspace ID are required');
+    }
+  }
+
+  private async getOrder(
+    orderId: string,
+    orderRepository: WorkspaceRepository<MktOrderWorkspaceEntity>,
+  ): Promise<MktOrderWorkspaceEntity | null> {
+    const currentOrder = await orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['orderItems'],
+    });
+
+    return currentOrder;
+  }
+
+  private async confirmOrder(
+    payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
+    orderId: string,
+    workspaceId: string,
+    currentOrder: MktOrderWorkspaceEntity | null,
+    action: ORDER_ACTION | null,
+  ): Promise<void> {
+    if (
+      action === ORDER_ACTION.CONFIRMED ||
+      action === ORDER_ACTION.TRIAL_TO_CONFIRMED
+    ) {
+      await this.updateOrderInformation(workspaceId, payload, currentOrder);
+    }
+  }
+
+  private async trialOrder(
+    payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
+    orderId: string,
+    workspaceId: string,
+    currentOrder: MktOrderWorkspaceEntity | null,
+    action: ORDER_ACTION | null,
+  ): Promise<void> {
+    const _input = payload.data;
+
+    if (action !== ORDER_ACTION.TRIAL) {
+      return;
+    }
+    payload.data = {
+      ...payload.data,
+      ...(payload.data?.status === ORDER_STATUS.TRIAL && {
+        trialLicense: true,
+      }),
+    };
+  }
+
+  private async paidOrder(
+    payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
+    orderId: string,
+    workspaceId: string,
+    currentOrder: MktOrderWorkspaceEntity | null,
+    action: ORDER_ACTION | null,
+  ): Promise<void> {
+    const _input = payload.data;
+
+    if (action !== ORDER_ACTION.PAID) {
+      return;
     }
   }
 }
