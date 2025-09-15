@@ -5,6 +5,7 @@ import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-st
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isSameDay, isSameMonth } from 'date-fns';
 
 const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   display: flex;
@@ -67,9 +68,9 @@ export const RecordCalendarMonthBodyDay = ({
     day.toDateString(),
   );
 
-  const isToday = day.toDateString() === new Date().toDateString();
+  const isToday = isSameDay(day, new Date());
 
-  const isOtherMonth = day.getMonth() !== recordCalendarSelectedDate.getMonth();
+  const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
 
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
