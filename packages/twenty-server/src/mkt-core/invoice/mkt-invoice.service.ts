@@ -136,7 +136,6 @@ export class MktInvoiceService {
       });
 
       if (!orderItems || orderItems.length === 0) {
-
         return null;
       }
 
@@ -149,7 +148,6 @@ export class MktInvoiceService {
         );
 
       if (orderItemNames.length === 0) {
-
         return null;
       }
 
