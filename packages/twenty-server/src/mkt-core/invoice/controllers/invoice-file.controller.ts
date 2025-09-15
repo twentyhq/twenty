@@ -16,12 +16,14 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Request, Response } from 'express';
+import { Request,Response } from 'express';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 @Controller('api/files/invoice-files')
 export class InvoiceFileController {
+  @UseGuards(PublicEndpointGuard)
   @Get(':fileName')
   async downloadFile(
     @Param('fileName') fileName: string,
@@ -88,11 +90,11 @@ export class InvoiceFileController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Post('regenerate-url')
   async regenerateDownloadUrl(
     @Body() body: { fileName: string },
-    @Req() req: Request,
+    @Req() _req: Request,
   ) {
     const { fileName } = body;
 
@@ -129,7 +131,7 @@ export class InvoiceFileController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserAuthGuard)
   @Post(':fileName')
   async adminDownloadFile(
     @Param('fileName') fileName: string,
