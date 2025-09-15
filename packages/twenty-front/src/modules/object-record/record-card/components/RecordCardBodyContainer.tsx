@@ -18,4 +18,4 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
-export { StyledBoardCardBody as RecordBoardCardBodyContainer };
+export { StyledBoardCardBody as RecordCardBodyContainer };
