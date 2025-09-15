@@ -58,7 +58,7 @@ export class ViewCacheService {
   }): Promise<{ flatViewFieldMaps: FlatViewFieldMaps }> {
     // TODO: get from cache later
     const existingViewFields = await this.viewFieldRepository.find({
-      where: { 
+      where: {
         workspaceId,
       },
       withDeleted: true,

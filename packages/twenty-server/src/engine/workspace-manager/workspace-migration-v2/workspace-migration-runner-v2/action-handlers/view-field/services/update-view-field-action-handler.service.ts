@@ -25,6 +25,7 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
     const update = fromWorkspaceMigrationUpdateActionToPartialEntity(action);
+
     await viewFieldRepository.update(viewFieldId, update);
   }
 

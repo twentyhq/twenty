@@ -253,8 +253,7 @@ export class ViewFieldV2Service {
     });
 
     const validateAndBuildResult =
-      await this.
-      workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: {

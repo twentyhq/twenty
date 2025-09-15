@@ -1,17 +1,17 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
-    cleanupViewFieldTestV2,
-    setupViewFieldTestV2,
-    type ViewFieldTestSetup,
+  cleanupViewFieldTestV2,
+  setupViewFieldTestV2,
+  type ViewFieldTestSetup,
 } from './utils/setup-view-field-test-v2.util';
 
 describe('View Field Resolver - Failing Create Operation - v2', () => {
@@ -29,26 +29,27 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
     input: CreateViewFieldInput;
   };
 
-  const createViewFieldTestCases: EachTestingContext<CreateViewFieldTestCase>[] = [
-    {
-      title: 'non-existent field metadata',
-      context: (testSetup) => ({
-        input: {
-          viewId: testSetup.testViewId,
-          fieldMetadataId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
-        },
-      }),
-    },
-    {
-      title: 'non-existent view metadata',
-      context: (testSetup) => ({
-        input: {
-          viewId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
-          fieldMetadataId: testSetup.testFieldMetadataId,
-        },
-      }),
-    },
-  ];
+  const createViewFieldTestCases: EachTestingContext<CreateViewFieldTestCase>[] =
+    [
+      {
+        title: 'non-existent field metadata',
+        context: (testSetup) => ({
+          input: {
+            viewId: testSetup.testViewId,
+            fieldMetadataId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+          },
+        }),
+      },
+      {
+        title: 'non-existent view metadata',
+        context: (testSetup) => ({
+          input: {
+            viewId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+            fieldMetadataId: testSetup.testFieldMetadataId,
+          },
+        }),
+      },
+    ];
 
   it.each(eachTestingContextFilter(createViewFieldTestCases))(
     'should fail to create view field when $title',

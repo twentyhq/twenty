@@ -142,6 +142,7 @@ export class FlatViewFieldValidatorService {
         flatViewField.fieldMetadataId ===
           flatViewFieldToValidate.fieldMetadataId,
     );
+
     if (isDefined(matchingFlatView)) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,

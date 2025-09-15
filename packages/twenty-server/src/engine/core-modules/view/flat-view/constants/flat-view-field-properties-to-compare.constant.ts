@@ -3,5 +3,5 @@ import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types
 
 export const FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE = [
   ...FLAT_VIEW_EDITABLE_PROPERTIES,
-  'deletedAt'
+  'deletedAt',
 ] as const satisfies (keyof FlatViewField)[];

@@ -1,16 +1,16 @@
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import {
-  EachTestingContext,
+  type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
-import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
@@ -44,6 +44,7 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
           id: createdViewFieldId,
         },
       });
+
       expect(deleteCoreViewField.deletedAt).not.toBeNull();
       await destroyOneCoreViewField({
         expectToFail: false,

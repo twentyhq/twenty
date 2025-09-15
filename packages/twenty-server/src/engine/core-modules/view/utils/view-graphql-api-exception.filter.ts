@@ -27,7 +27,7 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
       | ViewFilterGroupException
       | ViewGroupException
       | ViewSortException
-      | WorkspaceMigrationBuilderExceptionV2
+      | WorkspaceMigrationBuilderExceptionV2,
   ) {
     return viewGraphqlApiExceptionHandler(exception);
   }
