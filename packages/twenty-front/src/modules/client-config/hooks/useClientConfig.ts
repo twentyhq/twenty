@@ -18,6 +18,7 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isOutboundMessageDomainsEnabledState } from '@/client-config/states/isOutboundMessageDomainsEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -105,6 +106,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsImapSmtpCaldavEnabled = useSetRecoilState(
     isImapSmtpCaldavEnabledState,
   );
+  const setIsOutboundMessageDomainsEnabled = useSetRecoilState(
+    isOutboundMessageDomainsEnabledState,
+  );
 
   const setAppVersion = useSetRecoilState(appVersionState);
 
@@ -179,6 +183,9 @@ export const useClientConfig = (): UseClientConfigResult => {
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
+      setIsOutboundMessageDomainsEnabled(
+        clientConfig?.isOutboundMessageDomainsEnabled,
+      );
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -211,6 +218,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
+    setIsOutboundMessageDomainsEnabled,
     setLabPublicFeatureFlags,
     setMicrosoftCalendarEnabled,
     setMicrosoftMessagingEnabled,

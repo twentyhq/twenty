@@ -31,18 +31,7 @@ export class OutboundMessageDomainResolver {
         currentWorkspace,
       );
 
-    return {
-      id: outboundMessageDomain.id,
-      domain: outboundMessageDomain.domain,
-      driver: outboundMessageDomain.driver,
-      status: outboundMessageDomain.status,
-      syncStatus: outboundMessageDomain.syncStatus,
-      verifiedAt: outboundMessageDomain.verifiedAt,
-      lastSyncedAt: outboundMessageDomain.lastSyncedAt,
-      syncError: outboundMessageDomain.syncError,
-      createdAt: outboundMessageDomain.createdAt,
-      updatedAt: outboundMessageDomain.updatedAt,
-    };
+    return outboundMessageDomain;
   }
 
   @Mutation(() => Boolean)
@@ -60,53 +49,16 @@ export class OutboundMessageDomainResolver {
 
   @Mutation(() => OutboundMessageDomainDto)
   async verifyOutboundMessageDomain(
-    @Args('input') { id, verificationToken }: VerifyOutboundMessageDomainInput,
+    @Args('input') { id }: VerifyOutboundMessageDomainInput,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<OutboundMessageDomainDto> {
     const outboundMessageDomain =
       await this.outboundMessageDomainService.verifyOutboundMessageDomain(
         currentWorkspace,
         id,
-        verificationToken,
       );
 
-    return {
-      id: outboundMessageDomain.id,
-      domain: outboundMessageDomain.domain,
-      driver: outboundMessageDomain.driver,
-      status: outboundMessageDomain.status,
-      syncStatus: outboundMessageDomain.syncStatus,
-      verifiedAt: outboundMessageDomain.verifiedAt,
-      lastSyncedAt: outboundMessageDomain.lastSyncedAt,
-      syncError: outboundMessageDomain.syncError,
-      createdAt: outboundMessageDomain.createdAt,
-      updatedAt: outboundMessageDomain.updatedAt,
-    };
-  }
-
-  @Mutation(() => OutboundMessageDomainDto)
-  async syncOutboundMessageDomain(
-    @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: Workspace,
-  ): Promise<OutboundMessageDomainDto> {
-    const outboundMessageDomain =
-      await this.outboundMessageDomainService.syncOutboundMessageDomain(
-        currentWorkspace,
-        id,
-      );
-
-    return {
-      id: outboundMessageDomain.id,
-      domain: outboundMessageDomain.domain,
-      driver: outboundMessageDomain.driver,
-      status: outboundMessageDomain.status,
-      syncStatus: outboundMessageDomain.syncStatus,
-      verifiedAt: outboundMessageDomain.verifiedAt,
-      lastSyncedAt: outboundMessageDomain.lastSyncedAt,
-      syncError: outboundMessageDomain.syncError,
-      createdAt: outboundMessageDomain.createdAt,
-      updatedAt: outboundMessageDomain.updatedAt,
-    };
+    return outboundMessageDomain;
   }
 
   @Query(() => [OutboundMessageDomainDto])
@@ -118,28 +70,6 @@ export class OutboundMessageDomainResolver {
         currentWorkspace,
       );
 
-    return outboundMessageDomains.map((domain) => ({
-      id: domain.id,
-      domain: domain.domain,
-      driver: domain.driver,
-      status: domain.status,
-      syncStatus: domain.syncStatus,
-      verifiedAt: domain.verifiedAt,
-      lastSyncedAt: domain.lastSyncedAt,
-      syncError: domain.syncError,
-      createdAt: domain.createdAt,
-      updatedAt: domain.updatedAt,
-    }));
-  }
-
-  @Query(() => String)
-  async getOutboundMessageDomainVerificationToken(
-    @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: Workspace,
-  ): Promise<string> {
-    return await this.outboundMessageDomainService.getVerificationToken(
-      currentWorkspace,
-      id,
-    );
+    return outboundMessageDomains;
   }
 }

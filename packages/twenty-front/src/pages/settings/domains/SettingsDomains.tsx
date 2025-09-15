@@ -5,10 +5,13 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { FeatureFlagKey } from '~/generated/graphql';
+import { SettingsOutboundMessageDomains } from '~/pages/settings/outbound-message-domains/SettingsOutboundMessageDomains';
 
 const StyledMainContent = styled.div`
   display: flex;
@@ -23,6 +26,10 @@ const StyledSection = styled(Section)`
 
 export const SettingsDomains = () => {
   const { t } = useLingui();
+
+  const isOutboundMessageDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -51,6 +58,15 @@ export const SettingsDomains = () => {
             />
             <SettingsApprovedAccessDomainsListCard />
           </StyledSection>
+          {isOutboundMessageDomainsEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Outbound Message Domains`}
+                description={t`Configure and verify domains for sending outbound emails from this workspace.`}
+              />
+              <SettingsOutboundMessageDomains />
+            </StyledSection>
+          )}
         </StyledMainContent>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

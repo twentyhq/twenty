@@ -3,13 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { BaseDriverConfig } from 'src/engine/core-modules/outbound-message-domain/drivers/interfaces/driver-config.interface';
-
 import { OutboundMessageDomainDriverFactory } from 'src/engine/core-modules/outbound-message-domain/drivers/outbound-message-domain-driver.factory';
-import {
-  OutboundMessageDomainStatus,
-  OutboundMessageDomainSyncStatus,
-} from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
+import { OutboundMessageDomainStatus } from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
 import { CreateOutboundMessageDomainInput } from 'src/engine/core-modules/outbound-message-domain/dtos/create-outbound-message-domain.input';
 import { OutboundMessageDomain } from 'src/engine/core-modules/outbound-message-domain/outbound-message-domain.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,17 +34,20 @@ export class OutboundMessageDomainService {
       );
     }
 
-    const outboundMessageDomain =
-      await this.outboundMessageDomainRepository.save({
-        domain: createOutboundMessageDomainInput.domain,
-        driver: createOutboundMessageDomainInput.driver,
-        driverConfig: createOutboundMessageDomainInput.driverConfig || {},
-        status: OutboundMessageDomainStatus.PENDING,
-        syncStatus: OutboundMessageDomainSyncStatus.NOT_SYNCED,
-        workspaceId: workspace.id,
-      });
+    const domainToCreate = {
+      domain: createOutboundMessageDomainInput.domain,
+      driver: createOutboundMessageDomainInput.driver,
+      status: OutboundMessageDomainStatus.PENDING,
+      workspaceId: workspace.id,
+    } as OutboundMessageDomain;
 
-    return outboundMessageDomain;
+    const driver = this.outboundMessageDomainDriverFactory.getCurrentDriver();
+    const verifiedDomain = await driver.verifyDomain(domainToCreate);
+
+    const savedDomain =
+      await this.outboundMessageDomainRepository.save(verifiedDomain);
+
+    return savedDomain;
   }
 
   async deleteOutboundMessageDomain(
@@ -97,7 +95,6 @@ export class OutboundMessageDomainService {
   async verifyOutboundMessageDomain(
     workspace: Workspace,
     outboundMessageDomainId: string,
-    verificationToken?: string,
   ): Promise<OutboundMessageDomain> {
     const outboundMessageDomain = await this.getOutboundMessageDomain(
       workspace,
@@ -136,8 +133,13 @@ export class OutboundMessageDomainService {
 
     // Set sync status to syncing
     await this.outboundMessageDomainRepository.update(
-      { id: outboundMessageDomainId },
-      { syncStatus: OutboundMessageDomainSyncStatus.SYNCING },
+      {
+        id: outboundMessageDomainId,
+      },
+      {
+        verificationRecords: outboundMessageDomain.verificationRecords,
+        status: OutboundMessageDomainStatus.PENDING,
+      },
     );
 
     try {
@@ -152,8 +154,7 @@ export class OutboundMessageDomainService {
       await this.outboundMessageDomainRepository.update(
         { id: outboundMessageDomainId },
         {
-          syncStatus: OutboundMessageDomainSyncStatus.FAILED,
-          syncError: error instanceof Error ? error.message : 'Unknown error',
+          verificationRecords: outboundMessageDomain.verificationRecords,
         },
       );
 
@@ -178,7 +179,6 @@ export class OutboundMessageDomainService {
 
     return await driver.getDomainVerificationRecords(
       outboundMessageDomain.domain,
-      outboundMessageDomain.driverConfig as unknown as BaseDriverConfig,
     );
   }
 }

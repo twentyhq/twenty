@@ -1,18 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { type AwsSesError } from 'src/engine/core-modules/outbound-message-domain/drivers/aws-ses/types/aws-ses-error.type';
 import {
   OutboundMessageDomainDriverException,
   OutboundMessageDomainDriverExceptionCode,
 } from 'src/engine/core-modules/outbound-message-domain/drivers/exceptions/outbound-message-domain-driver.exception';
-
-interface AwsSesError {
-  name?: string;
-  message?: string;
-  $metadata?: {
-    httpStatusCode?: number;
-    requestId?: string;
-  };
-}
 
 @Injectable()
 export class AwsSesHandleErrorService {
@@ -50,38 +42,57 @@ export class AwsSesHandleErrorService {
   }
 
   private isTemporary(name: string, httpStatus?: number): boolean {
-    if (httpStatus && httpStatus >= 500) return true;
+    if (httpStatus && httpStatus >= 500) {
+      return true;
+    }
 
-    return new Set([
-      'ThrottlingException',
-      'ServiceUnavailable',
-      'InternalFailure',
-      'RequestTimeout',
-      'TooManyRequestsException',
-    ]).has(name);
+    if (
+      name === 'ThrottlingException' ||
+      name === 'ServiceUnavailable' ||
+      name === 'InternalFailure' ||
+      name === 'RequestTimeout' ||
+      name === 'TooManyRequestsException'
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   private isInsufficientPermissions(
     name: string,
     httpStatus?: number,
   ): boolean {
-    if (httpStatus === 403) return true;
+    if (httpStatus === 403) {
+      return true;
+    }
 
-    return new Set(['AccessDeniedException', 'AccountSuspendedException']).has(
-      name,
-    );
+    if (
+      name === 'AccessDeniedException' ||
+      name === 'AccountSuspendedException'
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   private isConfigurationError(name: string, httpStatus?: number): boolean {
-    if (httpStatus === 400) return true;
+    if (httpStatus === 400) {
+      return true;
+    }
 
-    return new Set([
-      'InvalidParameterValue',
-      'InvalidParameterCombination',
-      'MissingParameter',
-      'MessageRejected',
-      'MailFromDomainNotVerifiedException',
-      'FromEmailAddressNotVerifiedException',
-    ]).has(name);
+    if (
+      name === 'InvalidParameterValue' ||
+      name === 'InvalidParameterCombination' ||
+      name === 'MissingParameter' ||
+      name === 'MessageRejected' ||
+      name === 'MailFromDomainNotVerifiedException' ||
+      name === 'FromEmailAddressNotVerifiedException'
+    ) {
+      return true;
+    }
+
+    return false;
   }
 }

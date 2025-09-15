@@ -23,13 +23,18 @@ export class AwsSesClientProvider {
       const secretAccessKey = this.twentyConfigService.get(
         'AWS_SES_SECRET_ACCESS_KEY',
       );
+      const sessionToken = this.twentyConfigService.get(
+        'AWS_SES_SESSION_TOKEN',
+      );
 
-      if (accessKeyId && secretAccessKey) {
+      if (accessKeyId && secretAccessKey && sessionToken) {
         config.credentials = {
           accessKeyId,
           secretAccessKey,
+          sessionToken,
         };
       }
+      console.log('config', config);
 
       this.sesClient = new SESClient(config);
     }

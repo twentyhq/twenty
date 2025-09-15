@@ -323,6 +323,22 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
+const SettingsNewOutboundMessageDomain = lazy(() =>
+  import(
+    '~/pages/settings/outbound-message-domains/SettingsNewOutboundMessageDomain'
+  ).then((module) => ({
+    default: module.SettingsNewOutboundMessageDomain,
+  })),
+);
+
+const SettingsOutboundMessageDomainDetail = lazy(() =>
+  import(
+    '~/pages/settings/outbound-message-domains/SettingsOutboundMessageDomainDetail'
+  ).then((module) => ({
+    default: module.SettingsOutboundMessageDomainDetail,
+  })),
+);
+
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -444,6 +460,14 @@ export const SettingsRoutes = ({
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.NewOutboundMessageDomain}
+          element={<SettingsNewOutboundMessageDomain />}
+        />
+        <Route
+          path={SettingsPath.OutboundMessageDomainDetail}
+          element={<SettingsOutboundMessageDomainDetail />}
+        />
       </Route>
       <Route
         element={

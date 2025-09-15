@@ -8,8 +8,4 @@ export class VerifyOutboundMessageDomainInput {
   @IsString()
   @IsNotEmpty()
   id: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  verificationToken?: string;
 }

@@ -32,6 +32,7 @@ export type ClientConfig = {
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
+  isOutboundMessageDomainsEnabled: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

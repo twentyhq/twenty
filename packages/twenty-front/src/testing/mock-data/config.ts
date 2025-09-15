@@ -56,4 +56,5 @@ export const mockedClientConfig: ClientConfig = {
   isConfigVariablesInDbEnabled: false,
   isImapSmtpCaldavEnabled: false,
   isTwoFactorAuthenticationEnabled: false,
+  isOutboundMessageDomainsEnabled: false,
 };

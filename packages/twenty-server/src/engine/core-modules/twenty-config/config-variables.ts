@@ -1224,11 +1224,28 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWSSeSSettings,
     isSensitive: true,
+    description: 'AWS session token',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SESSION_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWSSeSSettings,
+    isSensitive: true,
     description: 'AWS secret access key',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
   AWS_SES_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWSSeSSettings,
+    description: 'AWS Account ID for SES ARN construction',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCOUNT_ID: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

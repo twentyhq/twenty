@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/outbound-message-domain/drivers/interfaces/driver-config.interface';
 import { type OutboundMessageDomainDriverInterface } from 'src/engine/core-modules/outbound-message-domain/drivers/interfaces/outbound-message-domain-driver.interface';
 
-import { AwsSesDriver } from 'src/engine/core-modules/outbound-message-domain/drivers/aws-ses.driver';
 import { AwsSesClientProvider } from 'src/engine/core-modules/outbound-message-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesDriver } from 'src/engine/core-modules/outbound-message-domain/drivers/aws-ses/services/aws-ses-driver.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/outbound-message-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { OutboundMessageDomainDriver } from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -41,18 +41,24 @@ export class OutboundMessageDomainDriverFactory extends DriverFactoryBase<Outbou
     switch (driver) {
       case OutboundMessageDomainDriver.AWS_SES: {
         const region = this.twentyConfigService.get('AWS_SES_REGION');
+        const accountId = this.twentyConfigService.get('AWS_SES_ACCOUNT_ID');
         const accessKeyId = this.twentyConfigService.get(
           'AWS_SES_ACCESS_KEY_ID',
         );
         const secretAccessKey = this.twentyConfigService.get(
           'AWS_SES_SECRET_ACCESS_KEY',
         );
+        const sessionToken = this.twentyConfigService.get(
+          'AWS_SES_SESSION_TOKEN',
+        );
 
         const awsConfig: AwsSesDriverConfig = {
           driver: OutboundMessageDomainDriver.AWS_SES,
           region,
+          accountId,
           accessKeyId,
           secretAccessKey,
+          sessionToken,
         };
 
         return new AwsSesDriver(

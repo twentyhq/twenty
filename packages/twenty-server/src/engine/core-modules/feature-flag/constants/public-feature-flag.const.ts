@@ -31,6 +31,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'https://twenty.com/images/lab/is-message-folder-control-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
+    metadata: {
+      label: 'Outbound Message Domain',
+      description: 'Send emails from your own domain',
+      imagePath:
+        'https://twenty.com/images/lab/is-outbound-message-domain-enabled.png',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

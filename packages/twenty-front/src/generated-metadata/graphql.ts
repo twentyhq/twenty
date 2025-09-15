@@ -465,6 +465,7 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
+  AWSSeSSettings = 'AWSSeSSettings',
   AnalyticsConfig = 'AnalyticsConfig',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
@@ -719,6 +720,11 @@ export type CreateOneObjectInput = {
   object: CreateObjectInput;
 };
 
+export type CreateOutboundMessageDomainInput = {
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
+};
+
 export type CreatePageLayoutInput = {
   name: Scalars['String'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -910,6 +916,10 @@ export type DeleteOneObjectInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteOutboundMessageDomainInput = {
+  id: Scalars['String'];
+};
+
 export type DeleteSsoInput = {
   identityProviderId: Scalars['UUID'];
 };
@@ -1044,6 +1054,7 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
+  IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED = 'IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
@@ -1454,6 +1465,7 @@ export type Mutation = {
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createOutboundMessageDomain: OutboundMessageDomain;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1479,6 +1491,7 @@ export type Mutation = {
   deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
+  deleteOutboundMessageDomain: Scalars['Boolean'];
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
   deletePageLayoutWidget: PageLayoutWidget;
@@ -1580,6 +1593,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyOutboundMessageDomain: OutboundMessageDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1740,6 +1754,11 @@ export type MutationCreateOneServerlessFunctionArgs = {
 };
 
 
+export type MutationCreateOutboundMessageDomainArgs = {
+  input: CreateOutboundMessageDomainInput;
+};
+
+
 export type MutationCreatePageLayoutArgs = {
   input: CreatePageLayoutInput;
 };
@@ -1857,6 +1876,11 @@ export type MutationDeleteOneRoleArgs = {
 
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type MutationDeleteOutboundMessageDomainArgs = {
+  input: DeleteOutboundMessageDomainInput;
 };
 
 
@@ -2365,6 +2389,11 @@ export type MutationValidateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationVerifyOutboundMessageDomainArgs = {
+  input: VerifyOutboundMessageDomainInput;
+};
+
+
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
 };
@@ -2522,6 +2551,29 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
+
+export type OutboundMessageDomain = {
+  __typename?: 'OutboundMessageDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
+  id: Scalars['UUID'];
+  status: OutboundMessageDomainStatus;
+  updatedAt: Scalars['DateTime'];
+  verificationRecords?: Maybe<Array<VerificationRecord>>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum OutboundMessageDomainDriver {
+  AWS_SES = 'AWS_SES'
+}
+
+export enum OutboundMessageDomainStatus {
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
+  VERIFIED = 'VERIFIED'
+}
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -2698,6 +2750,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
+  getOutboundMessageDomains: Array<OutboundMessageDomain>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
@@ -3832,6 +3885,18 @@ export type ValidatePasswordResetToken = {
   id: Scalars['UUID'];
 };
 
+export type VerificationRecord = {
+  __typename?: 'VerificationRecord';
+  name: Scalars['String'];
+  priority?: Maybe<Scalars['Float']>;
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type VerifyOutboundMessageDomainInput = {
+  id: Scalars['String'];
+};
+
 export type VerifyTwoFactorAuthenticationMethodOutput = {
   __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
   success: Scalars['Boolean'];
@@ -4803,6 +4868,32 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
+
+export type CreateOutboundMessageDomainMutationVariables = Exact<{
+  input: CreateOutboundMessageDomainInput;
+}>;
+
+
+export type CreateOutboundMessageDomainMutation = { __typename?: 'Mutation', createOutboundMessageDomain: { __typename?: 'OutboundMessageDomain', id: string, domain: string, driver: OutboundMessageDomainDriver, status: OutboundMessageDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, name: string, value: string, priority?: number | null }> | null } };
+
+export type DeleteOutboundMessageDomainMutationVariables = Exact<{
+  input: DeleteOutboundMessageDomainInput;
+}>;
+
+
+export type DeleteOutboundMessageDomainMutation = { __typename?: 'Mutation', deleteOutboundMessageDomain: boolean };
+
+export type VerifyOutboundMessageDomainMutationVariables = Exact<{
+  input: VerifyOutboundMessageDomainInput;
+}>;
+
+
+export type VerifyOutboundMessageDomainMutation = { __typename?: 'Mutation', verifyOutboundMessageDomain: { __typename?: 'OutboundMessageDomain', id: string, domain: string, driver: OutboundMessageDomainDriver, status: OutboundMessageDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string } };
+
+export type GetOutboundMessageDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOutboundMessageDomainsQuery = { __typename?: 'Query', getOutboundMessageDomains: Array<{ __typename?: 'OutboundMessageDomain', id: string, domain: string, driver: OutboundMessageDomainDriver, status: OutboundMessageDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, name: string, value: string, priority?: number | null }> | null }> };
 
 export type ApiKeyForRoleFragmentFragment = { __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null };
 
@@ -9602,6 +9693,167 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const CreateOutboundMessageDomainDocument = gql`
+    mutation CreateOutboundMessageDomain($input: CreateOutboundMessageDomainInput!) {
+  createOutboundMessageDomain(input: $input) {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    verificationRecords {
+      type
+      name
+      value
+      priority
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateOutboundMessageDomainMutationFn = Apollo.MutationFunction<CreateOutboundMessageDomainMutation, CreateOutboundMessageDomainMutationVariables>;
+
+/**
+ * __useCreateOutboundMessageDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateOutboundMessageDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOutboundMessageDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOutboundMessageDomainMutation, { data, loading, error }] = useCreateOutboundMessageDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOutboundMessageDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateOutboundMessageDomainMutation, CreateOutboundMessageDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOutboundMessageDomainMutation, CreateOutboundMessageDomainMutationVariables>(CreateOutboundMessageDomainDocument, options);
+      }
+export type CreateOutboundMessageDomainMutationHookResult = ReturnType<typeof useCreateOutboundMessageDomainMutation>;
+export type CreateOutboundMessageDomainMutationResult = Apollo.MutationResult<CreateOutboundMessageDomainMutation>;
+export type CreateOutboundMessageDomainMutationOptions = Apollo.BaseMutationOptions<CreateOutboundMessageDomainMutation, CreateOutboundMessageDomainMutationVariables>;
+export const DeleteOutboundMessageDomainDocument = gql`
+    mutation DeleteOutboundMessageDomain($input: DeleteOutboundMessageDomainInput!) {
+  deleteOutboundMessageDomain(input: $input)
+}
+    `;
+export type DeleteOutboundMessageDomainMutationFn = Apollo.MutationFunction<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>;
+
+/**
+ * __useDeleteOutboundMessageDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteOutboundMessageDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOutboundMessageDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOutboundMessageDomainMutation, { data, loading, error }] = useDeleteOutboundMessageDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteOutboundMessageDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>(DeleteOutboundMessageDomainDocument, options);
+      }
+export type DeleteOutboundMessageDomainMutationHookResult = ReturnType<typeof useDeleteOutboundMessageDomainMutation>;
+export type DeleteOutboundMessageDomainMutationResult = Apollo.MutationResult<DeleteOutboundMessageDomainMutation>;
+export type DeleteOutboundMessageDomainMutationOptions = Apollo.BaseMutationOptions<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>;
+export const VerifyOutboundMessageDomainDocument = gql`
+    mutation VerifyOutboundMessageDomain($input: VerifyOutboundMessageDomainInput!) {
+  verifyOutboundMessageDomain(input: $input) {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type VerifyOutboundMessageDomainMutationFn = Apollo.MutationFunction<VerifyOutboundMessageDomainMutation, VerifyOutboundMessageDomainMutationVariables>;
+
+/**
+ * __useVerifyOutboundMessageDomainMutation__
+ *
+ * To run a mutation, you first call `useVerifyOutboundMessageDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyOutboundMessageDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyOutboundMessageDomainMutation, { data, loading, error }] = useVerifyOutboundMessageDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useVerifyOutboundMessageDomainMutation(baseOptions?: Apollo.MutationHookOptions<VerifyOutboundMessageDomainMutation, VerifyOutboundMessageDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyOutboundMessageDomainMutation, VerifyOutboundMessageDomainMutationVariables>(VerifyOutboundMessageDomainDocument, options);
+      }
+export type VerifyOutboundMessageDomainMutationHookResult = ReturnType<typeof useVerifyOutboundMessageDomainMutation>;
+export type VerifyOutboundMessageDomainMutationResult = Apollo.MutationResult<VerifyOutboundMessageDomainMutation>;
+export type VerifyOutboundMessageDomainMutationOptions = Apollo.BaseMutationOptions<VerifyOutboundMessageDomainMutation, VerifyOutboundMessageDomainMutationVariables>;
+export const GetOutboundMessageDomainsDocument = gql`
+    query GetOutboundMessageDomains {
+  getOutboundMessageDomains {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    verificationRecords {
+      type
+      name
+      value
+      priority
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetOutboundMessageDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetOutboundMessageDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOutboundMessageDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOutboundMessageDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOutboundMessageDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetOutboundMessageDomainsQuery, GetOutboundMessageDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOutboundMessageDomainsQuery, GetOutboundMessageDomainsQueryVariables>(GetOutboundMessageDomainsDocument, options);
+      }
+export function useGetOutboundMessageDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOutboundMessageDomainsQuery, GetOutboundMessageDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOutboundMessageDomainsQuery, GetOutboundMessageDomainsQueryVariables>(GetOutboundMessageDomainsDocument, options);
+        }
+export type GetOutboundMessageDomainsQueryHookResult = ReturnType<typeof useGetOutboundMessageDomainsQuery>;
+export type GetOutboundMessageDomainsLazyQueryHookResult = ReturnType<typeof useGetOutboundMessageDomainsLazyQuery>;
+export type GetOutboundMessageDomainsQueryResult = Apollo.QueryResult<GetOutboundMessageDomainsQuery, GetOutboundMessageDomainsQueryVariables>;
 export const CreateOneRoleDocument = gql`
     mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
   createOneRole(createRoleInput: $createRoleInput) {

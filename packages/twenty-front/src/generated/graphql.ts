@@ -465,6 +465,7 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
+  AWSSeSSettings = 'AWSSeSSettings',
   AnalyticsConfig = 'AnalyticsConfig',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
@@ -691,6 +692,11 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateOutboundMessageDomainInput = {
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
+};
+
 export type CreatePageLayoutInput = {
   name: Scalars['String'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -874,6 +880,10 @@ export type DeleteOneObjectInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteOutboundMessageDomainInput = {
+  id: Scalars['String'];
+};
+
 export type DeleteSsoInput = {
   identityProviderId: Scalars['UUID'];
 };
@@ -1008,6 +1018,7 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
+  IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED = 'IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
@@ -1410,6 +1421,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createOutboundMessageDomain: OutboundMessageDomain;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1434,6 +1446,7 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
+  deleteOutboundMessageDomain: Scalars['Boolean'];
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
   deletePageLayoutWidget: PageLayoutWidget;
@@ -1531,6 +1544,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyOutboundMessageDomain: OutboundMessageDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1676,6 +1690,11 @@ export type MutationCreateOneServerlessFunctionArgs = {
 };
 
 
+export type MutationCreateOutboundMessageDomainArgs = {
+  input: CreateOutboundMessageDomainInput;
+};
+
+
 export type MutationCreatePageLayoutArgs = {
   input: CreatePageLayoutInput;
 };
@@ -1788,6 +1807,11 @@ export type MutationDeleteOneRoleArgs = {
 
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type MutationDeleteOutboundMessageDomainArgs = {
+  input: DeleteOutboundMessageDomainInput;
 };
 
 
@@ -2276,6 +2300,11 @@ export type MutationValidateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationVerifyOutboundMessageDomainArgs = {
+  input: VerifyOutboundMessageDomainInput;
+};
+
+
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
 };
@@ -2433,6 +2462,29 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
+
+export type OutboundMessageDomain = {
+  __typename?: 'OutboundMessageDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
+  id: Scalars['UUID'];
+  status: OutboundMessageDomainStatus;
+  updatedAt: Scalars['DateTime'];
+  verificationRecords?: Maybe<Array<VerificationRecord>>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum OutboundMessageDomainDriver {
+  AWS_SES = 'AWS_SES'
+}
+
+export enum OutboundMessageDomainStatus {
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
+  VERIFIED = 'VERIFIED'
+}
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -2606,6 +2658,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
+  getOutboundMessageDomains: Array<OutboundMessageDomain>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
@@ -3658,6 +3711,18 @@ export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   id: Scalars['UUID'];
+};
+
+export type VerificationRecord = {
+  __typename?: 'VerificationRecord';
+  name: Scalars['String'];
+  priority?: Maybe<Scalars['Float']>;
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type VerifyOutboundMessageDomainInput = {
+  id: Scalars['String'];
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {

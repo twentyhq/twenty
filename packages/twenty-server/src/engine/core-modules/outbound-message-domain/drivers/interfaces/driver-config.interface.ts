@@ -7,12 +7,8 @@ export interface BaseDriverConfig {
 export interface AwsSesDriverConfig extends BaseDriverConfig {
   driver: OutboundMessageDomainDriver.AWS_SES;
   region: string;
+  accountId: string;
   accessKeyId?: string;
   secretAccessKey?: string;
+  sessionToken?: string;
 }
-
-export type DriverConfig = AwsSesDriverConfig;
-
-export type DriverConfigMap = {
-  [OutboundMessageDomainDriver.AWS_SES]: AwsSesDriverConfig;
-};
