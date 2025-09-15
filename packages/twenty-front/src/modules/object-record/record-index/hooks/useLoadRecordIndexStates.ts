@@ -210,11 +210,12 @@ export const useLoadRecordIndexStates = () => {
       onViewFieldsChange,
       setRecordGroupsFromViewGroups,
       setContextStoreTargetedRecordsRuleComponentState,
-      setRecordIndexIsCompactModeActive,
-      setRecordIndexViewKanbanAggregateOperationState,
-      setRecordIndexViewKanbanFieldMetadataIdState,
       setRecordIndexViewType,
       setRecordIndexOpenRecordIn,
+      setRecordIndexViewKanbanFieldMetadataIdState,
+      setRecordIndexCalendarFieldMetadataIdState,
+      setRecordIndexViewKanbanAggregateOperationState,
+      setRecordIndexIsCompactModeActive,
     ],
   );
 
