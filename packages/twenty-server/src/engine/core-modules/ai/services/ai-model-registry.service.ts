@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { createOpenAI, openai } from '@ai-sdk/openai';
+import { xai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
 import {
   AI_MODELS,
-  type AIModelConfig,
   ModelProvider,
+  type AIModelConfig,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -38,6 +39,12 @@ export class AiModelRegistryService {
 
     if (anthropicApiKey) {
       this.registerAnthropicModels();
+    }
+
+    const grokApiKey = this.twentyConfigService.get('XAI_API_KEY');
+
+    if (grokApiKey) {
+      this.registerGrokModels();
     }
 
     const openaiCompatibleBaseUrl = this.twentyConfigService.get(
@@ -79,6 +86,20 @@ export class AiModelRegistryService {
         modelId: modelConfig.modelId,
         provider: ModelProvider.ANTHROPIC,
         model: anthropic(modelConfig.modelId),
+      });
+    });
+  }
+
+  private registerGrokModels(): void {
+    const grokModels = AI_MODELS.filter(
+      (model) => model.provider === ModelProvider.GROK,
+    );
+
+    grokModels.forEach((modelConfig) => {
+      this.modelRegistry.set(modelConfig.modelId, {
+        modelId: modelConfig.modelId,
+        provider: ModelProvider.GROK,
+        model: xai(modelConfig.modelId) as unknown as LanguageModel,
       });
     });
   }
@@ -205,6 +226,9 @@ export class AiModelRegistryService {
         break;
       case ModelProvider.ANTHROPIC:
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
+        break;
+      case ModelProvider.GROK:
+        apiKey = this.twentyConfigService.get('XAI_API_KEY');
         break;
       case ModelProvider.OPENAI_COMPATIBLE:
         apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');

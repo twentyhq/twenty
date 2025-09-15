@@ -1054,6 +1054,15 @@ export class ConfigVariables {
   OPENAI_COMPATIBLE_API_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Grok integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  XAI_API_KEY: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

@@ -48,7 +48,20 @@
       "type": "string",
       "description": "AI model to use for this agent",
       "default": "auto",
-      "enum": ["auto", "gpt-4", "gpt-4-turbo", "gpt-3.5-turbo", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+      "enum": [
+        "auto",
+        "gpt-4",
+        "gpt-4-turbo",
+        "gpt-3.5-turbo",
+        "claude-3-opus",
+        "claude-3-sonnet",
+        "claude-3-haiku",
+        "grok-1",
+        "grok-1.5",
+        "grok-2",
+        "grok-3",
+        "grok-4"
+      ]
     },
     "responseFormat": {
       "type": "object",
