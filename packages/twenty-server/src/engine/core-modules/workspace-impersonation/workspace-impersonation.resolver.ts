@@ -13,10 +13,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-import {
-  ImpersonateWorkspaceMemberInput,
-  ImpersonateWorkspaceUserInput,
-} from './dtos/impersonate-workspace-user.input';
+import { ImpersonateWorkspaceMemberInput } from './dtos/impersonate-workspace-user.input';
 import { WorkspaceImpersonationService } from './services/workspace-impersonation.service';
 
 @Resolver()
@@ -26,30 +23,6 @@ export class WorkspaceImpersonationResolver {
     private readonly workspaceImpersonationService: WorkspaceImpersonationService,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.IMPERSONATE),
-  )
-  @Mutation(() => AuthTokens)
-  async impersonateWorkspaceUser(
-    @Args() { targetUserWorkspaceId }: ImpersonateWorkspaceUserInput,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
-  ): Promise<AuthTokens> {
-    const currentUserWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-        userId: user.id,
-        workspaceId: workspace.id,
-      });
-
-    return await this.workspaceImpersonationService.impersonateWorkspaceUser({
-      workspaceId: workspace.id,
-      impersonatorUserWorkspaceId: currentUserWorkspace.id,
-      targetUserWorkspaceId,
-    });
-  }
 
   @UseGuards(
     WorkspaceAuthGuard,

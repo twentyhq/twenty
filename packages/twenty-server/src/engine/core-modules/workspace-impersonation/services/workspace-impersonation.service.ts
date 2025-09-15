@@ -18,8 +18,8 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -31,30 +31,11 @@ export class WorkspaceImpersonationService {
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly userRoleService: UserRoleService,
+    private readonly roleService: RoleService,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
   ) {}
-
-  async impersonateWorkspaceUser({
-    workspaceId,
-    impersonatorUserWorkspaceId,
-    targetUserWorkspaceId,
-  }: {
-    workspaceId: string;
-    impersonatorUserWorkspaceId: string;
-    targetUserWorkspaceId: string;
-  }): Promise<AuthTokens> {
-    return await this.impersonateCore({
-      workspaceId,
-      impersonatorUserWorkspaceId,
-      resolveTarget: async () =>
-        await this.userWorkspaceRepository.findOne({
-          where: { id: targetUserWorkspaceId },
-        }),
-    });
-  }
 
   async impersonateWorkspaceUserByMemberId({
     workspaceId,
@@ -120,20 +101,30 @@ export class WorkspaceImpersonationService {
       );
     }
 
-    const roleTargetWithRole = await this.roleTargetsRepository
-      .createQueryBuilder('rt')
-      .innerJoinAndSelect('rt.role', 'role')
-      .leftJoinAndSelect('role.permissionFlags', 'permissionFlags')
-      .where('rt.userWorkspaceId = :userWorkspaceId', {
-        userWorkspaceId: impersonatorUserWorkspaceId,
-      })
-      .andWhere('rt.workspaceId = :workspaceId', { workspaceId })
-      .getOne();
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      userWorkspaceId: impersonatorUserWorkspaceId,
+      workspaceId,
+    });
+
+    if (!roleId) {
+      throw new AuthException(
+        'No role found for user workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const role = await this.roleService.getRoleById(roleId, workspaceId);
+
+    if (!role) {
+      throw new AuthException(
+        'Role not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const hasImpersonatePermission =
-      !!roleTargetWithRole &&
       this.permissionsService.checkRolePermissions(
-        (roleTargetWithRole as RoleTargetsEntity & { role: RoleEntity }).role,
+        role,
         PermissionFlagType.IMPERSONATE,
       );
 

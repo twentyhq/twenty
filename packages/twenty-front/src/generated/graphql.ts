@@ -1465,7 +1465,6 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
-  impersonateWorkspaceUser: AuthTokens;
   impersonateWorkspaceUserByWorkspaceMemberId: AuthTokens;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
@@ -1957,11 +1956,6 @@ export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-
-export type MutationImpersonateWorkspaceUserArgs = {
-  targetUserWorkspaceId: Scalars['UUID'];
 };
 
 

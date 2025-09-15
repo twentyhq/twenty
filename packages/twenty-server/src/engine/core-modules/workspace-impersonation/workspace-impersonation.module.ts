@@ -9,7 +9,7 @@ import { WorkspaceImpersonationService } from 'src/engine/core-modules/workspace
 import { WorkspaceImpersonationResolver } from 'src/engine/core-modules/workspace-impersonation/workspace-impersonation.resolver';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
@@ -17,9 +17,10 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     AuthModule,
     UserWorkspaceModule,
     PermissionsModule,
+    RoleModule,
     UserRoleModule,
     AuditModule,
-    TypeOrmModule.forFeature([UserWorkspace, Workspace, RoleTargetsEntity]),
+    TypeOrmModule.forFeature([UserWorkspace, Workspace]),
   ],
   providers: [WorkspaceImpersonationService, WorkspaceImpersonationResolver],
   exports: [WorkspaceImpersonationService],
