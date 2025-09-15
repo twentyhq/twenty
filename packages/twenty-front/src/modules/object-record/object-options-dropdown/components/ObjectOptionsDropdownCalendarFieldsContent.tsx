@@ -11,7 +11,6 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -53,13 +52,6 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
     closeDropdown();
   };
 
-  const handleResetCalendarField = async () => {
-    await updateCurrentView({
-      calendarFieldMetadataId: null,
-    });
-    closeDropdown();
-  };
-
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -80,11 +72,6 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          text={t`None`}
-          selected={!isDefined(calendarFieldMetadata)}
-          onClick={handleResetCalendarField}
-        />
         {filteredCalendarFields.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
