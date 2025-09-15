@@ -17,12 +17,6 @@ import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-sc
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-//tododo
-//0 - Check renaming
-//1 - all is called from this buildAndStore service - By Kind
-//2 - in Schema generator, 1 build and store 2 fetch
-//3 - One only storage for all
-//4 - Rename Extended to Enrich With Relation
 @Injectable()
 export class GqlTypeGenerator {
   private readonly logger = new Logger(GqlTypeGenerator.name);

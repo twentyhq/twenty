@@ -142,7 +142,6 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
             throw new Error(message);
           }
         }
-        //tododo - refacto
         generatedFields = {
           [fieldMetadata.name]: {
             type,
