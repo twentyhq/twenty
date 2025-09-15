@@ -15,9 +15,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { recordCalendarSelectedDateState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateState';
 
 export const RecordIndexCalendarDataLoaderEffect = () => {
-  const selectedDate = new Date();
+  const recordCalendarSelectedDate = useRecoilValue(
+    recordCalendarSelectedDateState,
+  );
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -57,8 +61,9 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
       filterValue: anyFieldFilterValue,
     });
 
-  const { dateRangeFilter } =
-    useRecordCalendarQueryDateRangeFilter(selectedDate);
+  const { dateRangeFilter } = useRecordCalendarQueryDateRangeFilter(
+    recordCalendarSelectedDate,
+  );
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
 
