@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
@@ -66,7 +66,7 @@ export class MktSInvoiceCreateOnePostQueryHook
         );
 
       // 1) prioritize using items already calculated from pre-hook if available
-      const meta = (created as unknown as Record<string, any>)
+      const meta = (created as unknown as Record<string, unknown>)
         .__preComputedItems as
         | Array<Partial<MktSInvoiceItemWorkspaceEntity>>
         | undefined;
@@ -85,9 +85,11 @@ export class MktSInvoiceCreateOnePostQueryHook
           );
 
         const orderItems = await orderItemRepository.find({
-          where: { mktOrderId: created.mktOrderId } as any,
+          where: { mktOrderId: created.mktOrderId } as unknown as {
+            mktOrderId: string;
+          },
         });
-        const order = await orderRepository.findOne({
+        const _order = await orderRepository.findOne({
           where: { id: created.mktOrderId },
         });
 
@@ -170,7 +172,7 @@ export class MktSInvoiceCreateOnePostQueryHook
       );
 
       // ===== Create Metadata =====
-      const metaMeta = (created as unknown as Record<string, any>)
+      const metaMeta = (created as unknown as Record<string, unknown>)
         .__preComputedMetadata as
         | Array<Partial<MktSInvoiceMetadataWorkspaceEntity>>
         | undefined;
@@ -220,7 +222,9 @@ export class MktSInvoiceCreateOnePostQueryHook
               name: 'Order Code',
               keyLabel: 'orderCode',
               keyTag: 'ORDER_CODE',
-              stringValue: (created as any).transactionUuid,
+              stringValue: (
+                created as unknown as { transactionUuid?: string | null }
+              ).transactionUuid,
             },
             {
               name: 'Buyer Name',
@@ -241,7 +245,7 @@ export class MktSInvoiceCreateOnePostQueryHook
               stringValue: String(created.totalAmountWithTax ?? ''),
             },
           ];
-        const metadataToCreate = await Promise.all(
+        const _metadataToCreate = await Promise.all(
           baseMetadata.map(async (m) => {
             const position =
               await this.recordPositionService.buildRecordPosition({
@@ -264,7 +268,7 @@ export class MktSInvoiceCreateOnePostQueryHook
       }
 
       // ===== Create Payments =====
-      const metaPayments = (created as unknown as Record<string, any>)
+      const metaPayments = (created as unknown as Record<string, unknown>)
         .__preComputedPayments as
         | Array<Partial<MktSInvoicePaymentWorkspaceEntity>>
         | undefined;
@@ -337,7 +341,7 @@ export class MktSInvoiceCreateOnePostQueryHook
       }
 
       // ===== Create Tax Breakdowns =====
-      const metaTax = (created as unknown as Record<string, any>)
+      const metaTax = (created as unknown as Record<string, unknown>)
         .__preComputedTaxBreakdowns as
         | Array<Partial<MktSInvoiceTaxBreakdownWorkspaceEntity>>
         | undefined;
@@ -388,7 +392,9 @@ export class MktSInvoiceCreateOnePostQueryHook
             { shouldBypassPermissionChecks: true },
           );
         const orderItemsForTax = await orderItemRepository.find({
-          where: { mktOrderId: created.mktOrderId } as any,
+          where: { mktOrderId: created.mktOrderId } as unknown as {
+            mktOrderId: string;
+          },
         });
         const groups = new Map<
           number,
@@ -412,7 +418,7 @@ export class MktSInvoiceCreateOnePostQueryHook
         });
         const taxesToCreate = await Promise.all(
           Array.from(groups.entries()).map(
-            async ([taxPercentage, agg], idx) => {
+            async ([taxPercentage, agg], _idx) => {
               const position =
                 await this.recordPositionService.buildRecordPosition({
                   value: 'last',
@@ -445,7 +451,9 @@ export class MktSInvoiceCreateOnePostQueryHook
       // ===== Soft-delete other SInvoices of the same order (keep the newly created) =====
       if (created.mktOrderId) {
         const sameOrderInvoices = await sInvoiceRepository.find({
-          where: { mktOrderId: created.mktOrderId } as any,
+          where: { mktOrderId: created.mktOrderId } as unknown as {
+            mktOrderId: string;
+          },
         });
 
         const idsToDelete = sameOrderInvoices

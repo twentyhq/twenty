@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
-import axios, { AxiosInstance } from 'axios';
+import axios,{ AxiosInstance } from 'axios';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -235,8 +235,9 @@ export class SInvoiceIntegrationService {
       this.logger.log(
         `[S-INVOICE] Response: ${JSON.stringify(sInvoiceUpdate)}`,
       );
-    } catch (error: any) {
-      const errMsg = error?.response?.data || error?.message;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: unknown }; message?: string };
+      const errMsg = err?.response?.data || err?.message;
 
       this.logger.error(
         `Create S-Invoice failed for order ${orderId}: ${JSON.stringify(errMsg)}`,
@@ -251,9 +252,9 @@ export class SInvoiceIntegrationService {
       this.logger.log(
         `[S-INVOICE] Response: ${JSON.stringify(sInvoiceUpdate)}`,
       );
-    } finally {
-      return sInvoiceUpdate;
     }
+
+    return sInvoiceUpdate;
   }
 
   async saveSInvoice(sInvoiceUpdate: sInvoiceUpdate, sInvoiceId: string) {
@@ -412,8 +413,9 @@ export class SInvoiceIntegrationService {
       );
 
       return result;
-    } catch (error: any) {
-      const errMsg = error?.response?.data || error?.message;
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: unknown }; message?: string };
+      const errMsg = err?.response?.data || err?.message;
 
       this.logger.error(
         `[S-INVOICE SERVICE] Failed to get invoice file for invoiceNo ${invoiceNo}: ${JSON.stringify(errMsg)}`,

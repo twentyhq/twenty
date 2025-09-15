@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -219,7 +219,7 @@ export class LicenseGenerationJob {
   ): Promise<MktLicenseWorkspaceEntity[]> {
     this.logger.log(`Creating licenses for order items ${order.id}`);
 
-    const licensePromises = order.orderItems.map(async (orderItem, index) => {
+    const licensePromises = order.orderItems.map(async (orderItem, _index) => {
       try {
         // generate license name based on order item
         const productName =

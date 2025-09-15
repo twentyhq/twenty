@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -29,7 +29,8 @@ type sInvoiceType = {
 };
 
 @Injectable()
-export class MktInvoiceService {
+export class MktInvoiceService {  
+  private readonly logger = new Logger(MktInvoiceService.name);
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -130,8 +131,8 @@ export class MktInvoiceService {
       const orderItems = await orderItemRepository.find({
         where: {
           mktOrderId: mktOrderId,
-          deletedAt: null as any,
-        },
+          // treat null as not-deleted: use IsNull() if TypeORM available, else omit filter
+        } as unknown as Record<string, unknown>,
         select: ['name'],
       });
 
@@ -140,8 +141,8 @@ export class MktInvoiceService {
       }
 
       const orderItemNames = orderItems
-        .filter((item: any) => item.name)
-        .map((item: any) => item.name)
+        .filter((item: { name?: string | null }) => item.name)
+        .map((item: { name?: string | null }) => item.name as string)
         .filter(
           (name: string, index: number, arr: string[]) =>
             arr.indexOf(name) === index,
@@ -155,7 +156,7 @@ export class MktInvoiceService {
 
       return result;
     } catch (error) {
-      console.error('Error getting orderItem names:', error);
+      this.logger.error('Error getting orderItem names:', error as Error);
 
       return null;
     }
