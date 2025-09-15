@@ -1,6 +1,10 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 import {
@@ -57,7 +61,25 @@ const graphTypeOptions = [
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { createPageLayoutWidget } = useCreatePageLayoutWidget();
+
+  const commandMenuPageInstanceId = useComponentInstanceStateContext(
+    CommandMenuPageComponentInstanceContext,
+  )?.instanceId;
+
+  if (!commandMenuPageInstanceId) {
+    throw new Error('Command menu page instance id is not defined');
+  }
+
+  const pageLayoutId = useRecoilComponentValue(
+    contextStorePageLayoutIdComponentState,
+    commandMenuPageInstanceId,
+  );
+
+  if (!pageLayoutId) {
+    throw new Error('Page layout id is not defined');
+  }
+
+  const { createPageLayoutWidget } = useCreatePageLayoutWidget(pageLayoutId);
 
   const handleSelectGraphType = (graphType: GraphType) => {
     createPageLayoutWidget(WidgetType.GRAPH, graphType);

@@ -1,6 +1,6 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
@@ -54,8 +54,6 @@ const widgetTypeOptions = [
 ];
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
-  const { navigateCommandMenu } = useNavigateCommandMenu();
-
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
@@ -78,22 +76,26 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     pageLayoutId,
   );
 
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+
   const handleSelectWidget = (widgetType: WidgetType) => {
     switch (widgetType) {
-      case WidgetType.GRAPH:
-        navigateCommandMenu({
-          page: CommandMenuPages.PageLayoutGraphTypeSelect,
-          pageTitle: 'Select Graph Type',
-          pageIcon: IconChartPie,
+      case WidgetType.GRAPH: {
+        navigatePageLayoutCommandMenu({
+          pageLayoutId,
+          commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
         });
+
         break;
-      case WidgetType.IFRAME:
-        navigateCommandMenu({
-          page: CommandMenuPages.PageLayoutIframeConfig,
-          pageTitle: 'Configure iFrame',
-          pageIcon: IconFrame,
+      }
+      case WidgetType.IFRAME: {
+        navigatePageLayoutCommandMenu({
+          pageLayoutId,
+          commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
         });
+
         break;
+      }
       default:
         setPageLayoutDraggedArea(null);
         break;

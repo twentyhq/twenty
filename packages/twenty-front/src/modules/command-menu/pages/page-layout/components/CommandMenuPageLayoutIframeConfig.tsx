@@ -57,7 +57,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
 
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);
-  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
       pageLayoutEditingWidgetIdComponentState,

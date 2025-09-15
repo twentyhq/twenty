@@ -1,12 +1,13 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAppWindow } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 import { pageLayoutSelectedCellsComponentState } from '../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
 
@@ -26,7 +27,8 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const endPageLayoutDragSelection = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -43,20 +45,26 @@ export const useEndPageLayoutDragSelection = (
           if (isDefined(draggedBounds)) {
             set(pageLayoutDraggedAreaState, draggedBounds);
 
-            navigateCommandMenu({
-              page: CommandMenuPages.PageLayoutWidgetTypeSelect,
-              pageTitle: 'Add Widget',
-              pageIcon: IconAppWindow,
-              resetNavigationStack: true,
-            });
+            const pageComponentInstanceId = v4();
 
-            set(pageLayoutSelectedCellsState, new Set());
+            set(
+              contextStorePageLayoutIdComponentState.atomFamily({
+                instanceId: pageComponentInstanceId,
+              }),
+              pageLayoutId,
+            );
+
+            navigatePageLayoutCommandMenu({
+              pageLayoutId,
+              commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+            });
           }
         }
       },
     [
-      navigateCommandMenu,
+      navigatePageLayoutCommandMenu,
       pageLayoutDraggedAreaState,
+      pageLayoutId,
       pageLayoutSelectedCellsState,
     ],
   );
