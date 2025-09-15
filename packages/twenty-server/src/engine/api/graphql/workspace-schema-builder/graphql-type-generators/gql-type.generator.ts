@@ -2,16 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
-import { CompositeFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/enum-types/composite-field-metadata-gql-enum-type.generator';
-import { EnumFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/enum-types/enum-field-metadata-gql-enum-type.generator';
-import { CompositeFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/input-types/composite-field-metadata-gql-input-type.generator';
-import { ObjectMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/input-types/object-metadata-gql-input-type.generator';
-import { RelationConnectGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/input-types/relation-connect-gql-input-type.generator';
-import { CompositeFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/object-types/composite-field-metadata-gql-object-type.generator';
-import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/object-types/connection-gql-object-type.generator';
-import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/object-types/edge-gql-object-type.generator';
-import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/object-types/object-metadata-gql-object-type.generator';
-import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
+import { CompositeFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/composite-field-metadata-gql-enum-type.generator';
+import { EnumFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/enum-field-metadata-gql-enum-type.generator';
+import { CompositeFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/composite-field-metadata-gql-input-type.generator';
+import { ObjectMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/object-metadata-gql-input-type.generator';
+import { RelationConnectGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-connect-gql-input-type.generator';
+import { CompositeFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/composite-field-metadata-gql-object-type.generator';
+import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/connection-gql-object-type.generator';
+import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/edge-gql-object-type.generator';
+import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
+import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { objectContainsMorphRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-morph-relation-field.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -34,12 +34,11 @@ export class GqlTypeGenerator {
     private readonly relationConnectGqlInputTypeGenerator: RelationConnectGqlInputTypeGenerator,
   ) {}
 
-  async buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
+  buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.buildAndStoreCompositeFieldMetadataGqlTypes(compositeTypeCollection);
-
-    await this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
+    this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
   }
 
   private buildAndStoreCompositeFieldMetadataGqlTypes(
@@ -49,18 +48,16 @@ export class GqlTypeGenerator {
       this.compositeFieldMetadataGqlEnumTypeGenerator.buildAndStore(
         compositeType,
       );
-
       this.compositeFieldMetadataGqlObjectTypeGenerator.buildAndStore(
         compositeType,
       );
-
       this.compositeFieldMetadataGqlInputTypeGenerator.buildAndStore(
         compositeType,
       );
     }
   }
 
-  private async buildAndStoreObjectMetadataGqlTypes(
+  private buildAndStoreObjectMetadataGqlTypes(
     dynamicObjectMetadataCollection: ObjectMetadataEntity[],
   ) {
     this.logger.log(
@@ -74,10 +71,9 @@ export class GqlTypeGenerator {
       this.objectMetadataGqlObjectTypeGenerator.buildAndStore(objectMetadata);
       this.edgeGqlObjectTypeGenerator.buildAndStore(objectMetadata);
       this.connectionGqlObjectTypeGenerator.buildAndStore(objectMetadata);
-
       this.relationConnectGqlInputTypeGenerator.buildAndStore(objectMetadata);
-
       this.objectMetadataGqlInputTypeGenerator.buildAndStore(objectMetadata);
+
       if (
         objectContainsRelationField(objectMetadata) ||
         objectContainsMorphRelationField(objectMetadata)

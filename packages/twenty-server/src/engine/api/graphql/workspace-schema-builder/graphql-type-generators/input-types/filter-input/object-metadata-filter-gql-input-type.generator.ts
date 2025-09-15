@@ -11,7 +11,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
-import { RelationFieldMetadataGqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/relation-field-metadata-gql-type.generator';
+import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
@@ -32,7 +32,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   );
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
-    private readonly relationFieldMetadataGqlTypeGenerator: RelationFieldMetadataGqlTypeGenerator,
+    private readonly relationFieldMetadataGqlInputTypeGenerator: RelationFieldMetadataGqlInputTypeGenerator,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
@@ -74,7 +74,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
       if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
         generatedFields =
-          this.relationFieldMetadataGqlTypeGenerator.generateSimpleRelationFieldFilterInputType(
+          this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldFilterInputType(
             {
               fieldMetadata,
               typeOptions,

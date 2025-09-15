@@ -4,7 +4,7 @@ import { GraphQLObjectType, isInputObjectType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
-import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/aggregation-type.generator';
+import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/aggregation-type.generator';
 import { PageInfoType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';

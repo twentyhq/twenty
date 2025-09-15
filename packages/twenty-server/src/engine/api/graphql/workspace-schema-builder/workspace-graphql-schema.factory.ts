@@ -4,9 +4,9 @@ import { GraphQLSchema } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethods } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/gql-type.generator';
-import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-types/mutation-type.generator';
-import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-types/query-type.generator';
+import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/gql-type.generator';
+import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
+import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -19,11 +19,11 @@ export class WorkspaceGraphQLSchemaGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  async generateSchema(
+  generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
-  ): Promise<GraphQLSchema> {
-    await this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
+  ): GraphQLSchema {
+    this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
 
     // Generate schema
     const schema = new GraphQLSchema({

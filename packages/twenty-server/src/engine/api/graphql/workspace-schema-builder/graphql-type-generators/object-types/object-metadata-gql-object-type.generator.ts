@@ -9,7 +9,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
-import { RelationFieldMetadataGqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/relation-field-metadata-gql-type.generator';
+import { RelationFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/relation-field-metadata-gql-object-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
@@ -30,7 +30,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
   );
 
   constructor(
-    private readonly relationFieldMetadataGqlTypeGenerator: RelationFieldMetadataGqlTypeGenerator,
+    private readonly relationFieldMetadataGqlObjectTypeGenerator: RelationFieldMetadataGqlObjectTypeGenerator,
     private readonly gqlTypesStorage: GqlTypesStorage,
     private readonly typeMapperService: TypeMapperService,
   ) {}
@@ -68,7 +68,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
 
       if (isMorphOrRelationFieldMetadataType(field.type)) {
         const relationFieldObjectType =
-          this.relationFieldMetadataGqlTypeGenerator.generateRelationFieldObjectType(
+          this.relationFieldMetadataGqlObjectTypeGenerator.generateRelationFieldObjectType(
             {
               fieldMetadata: field as FieldMetadataEntity<
                 FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION

@@ -14,57 +14,15 @@ import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspa
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Injectable()
-export class RelationFieldMetadataGqlTypeGenerator {
+export class RelationFieldMetadataGqlInputTypeGenerator {
   private readonly logger = new Logger(
-    RelationFieldMetadataGqlTypeGenerator.name,
+    RelationFieldMetadataGqlInputTypeGenerator.name,
   );
 
   constructor(
     private readonly typeMapperService: TypeMapperService,
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
-
-  public generateRelationFieldObjectType({
-    fieldMetadata,
-    typeOptions,
-  }: {
-    fieldMetadata: FieldMetadataEntity<
-      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >;
-    typeOptions: TypeOptions;
-  }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
-      return {};
-
-    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
-
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
-      typeOptions,
-    );
-
-    if (!isDefined(type)) {
-      const message = `Could not find a GraphQL output type for ${type} field metadata`;
-
-      this.logger.error(message, {
-        type,
-        typeOptions,
-      });
-      throw new Error(message);
-    }
-
-    const modifiedType = this.typeMapperService.applyTypeOptions(
-      type,
-      typeOptions,
-    );
-
-    return {
-      [joinColumnName]: {
-        type: modifiedType,
-        description: fieldMetadata.description,
-      },
-    };
-  }
 
   public generateSimpleRelationFieldCreateOrUpdateInputType({
     fieldMetadata,
