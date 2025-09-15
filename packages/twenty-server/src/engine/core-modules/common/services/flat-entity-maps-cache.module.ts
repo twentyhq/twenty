@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 
-import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
-import { ViewCacheModule } from 'src/engine/core-modules/view/cache/services/view-cache.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
+import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
+import { FlatEntityMapsCacheService } from './flat-entity-maps-cache.service';
 
 @Module({
-  imports: [ViewCacheModule, WorkspaceMetadataCacheModule],
+  imports: [DiscoveryModule],
+  providers: [
+    FlatEntityMapsCacheService,
+    WorkspaceFlatMapCacheRegistryService,
+  ],
   exports: [FlatEntityMapsCacheService],
-  providers: [FlatEntityMapsCacheService],
 })
 export class FlatEntityMapsCacheModule {}

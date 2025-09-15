@@ -13,7 +13,7 @@ import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decor
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
-@WorkspaceFlatMapCache('view')
+@WorkspaceFlatMapCache('flatViewMaps')
 export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheService<FlatViewMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
