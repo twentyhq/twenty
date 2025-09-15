@@ -21,6 +21,7 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 
 // Helpers to build test objects with only needed fields
 const buildWorkspace = (id: string): Workspace =>
@@ -146,6 +147,7 @@ describe('BillingSubscriptionService - switching methods', () => {
 
   let stripeSubscriptionService: StripeSubscriptionService;
   let billingProductService: BillingProductService;
+  let stripeSubscriptionScheduleService: StripeSubscriptionScheduleService;
 
   beforeEach(async () => {
     jest.useFakeTimers();
@@ -164,6 +166,7 @@ describe('BillingSubscriptionService - switching methods', () => {
             cancelSubscription: jest.fn(),
             collectLastInvoice: jest.fn(),
             setYearlyThresholds: jest.fn(),
+            getBillingThresholdsByInterval: jest.fn(),
           },
         },
         {
@@ -187,6 +190,14 @@ describe('BillingSubscriptionService - switching methods', () => {
           useValue: { updateSubscriptionItem: jest.fn() },
         },
         {
+          provide: StripeSubscriptionScheduleService,
+          useValue: {
+            getSubscriptionWithSchedule: jest.fn(),
+            findOrCreateSubscriptionSchedule: jest.fn(),
+            updateSchedule: jest.fn(),
+          },
+        },
+        {
           provide: getRepositoryToken(BillingEntitlement),
           useValue: {},
         },
@@ -200,7 +211,7 @@ describe('BillingSubscriptionService - switching methods', () => {
         },
         {
           provide: getRepositoryToken(BillingPrice),
-          useValue: { findOneByOrFail: jest.fn() },
+          useValue: { findOneByOrFail: jest.fn(), findOneOrFail: jest.fn() },
         },
         {
           provide: getRepositoryToken(BillingSubscriptionItem),
@@ -215,6 +226,9 @@ describe('BillingSubscriptionService - switching methods', () => {
     stripeSubscriptionService = module.get(StripeSubscriptionService);
 
     billingProductService = module.get(BillingProductService);
+    stripeSubscriptionScheduleService = module.get(
+      StripeSubscriptionScheduleService,
+    );
 
     billingSubscriptionRepository = module.get(
       getRepositoryToken(BillingSubscription),
@@ -222,43 +236,15 @@ describe('BillingSubscriptionService - switching methods', () => {
     billingPriceRepository = module.get(getRepositoryToken(BillingPrice));
   });
 
-  describe('switchToYearlyInterval', () => {
-    it('throws when already on yearly interval', async () => {
+  describe('toggleInterval', () => {
+    it('switches from Month to Year: calls setYearlyThresholds and updates items', async () => {
       const workspace = buildWorkspace('ws-1');
       const licensedItem = buildSubscriptionItem(
         BillingProductKey.BASE_PRODUCT,
         BillingUsageType.LICENSED,
         'prod_seats',
         'price_month_licensed',
-      );
-      const meteredItem = buildSubscriptionItem(
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-        BillingUsageType.METERED,
-        'prod_workflow',
-        'price_month_metered',
-      );
-      const sub = buildSubscription(
-        SubscriptionInterval.Year,
-        [licensedItem, meteredItem],
-        { plan: BillingPlanKey.PRO },
-      );
-
-      (billingSubscriptionRepository.find as jest.Mock).mockResolvedValue([
-        sub,
-      ]);
-
-      await expect(service.switchToYearlyInterval(sub)).rejects.toMatchObject({
-        code: BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
-      });
-    });
-
-    it('updates subscription items with yearly prices when switching from monthly', async () => {
-      const workspace = buildWorkspace('ws-1');
-      const licensedItem = buildSubscriptionItem(
-        BillingProductKey.BASE_PRODUCT,
-        BillingUsageType.LICENSED,
-        'prod_seats',
-        'price_month_licensed',
+        { quantity: 5 },
       );
       const meteredItem = buildSubscriptionItem(
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
@@ -276,64 +262,345 @@ describe('BillingSubscriptionService - switching methods', () => {
         sub,
       ]);
 
-      // Return tiers for the current metered monthly price (e.g., up_to = 100 per month)
-      (billingPriceRepository.findOneByOrFail as jest.Mock).mockResolvedValue({
-        id: meteredItem.stripePriceId,
-        tiers: [
-          { up_to: 100 }, // monthly cap
-          { up_to: null },
-        ],
+      // Current metered monthly up_to
+      (billingPriceRepository.findOneOrFail as jest.Mock).mockResolvedValue({
+        interval: SubscriptionInterval.Month,
+        tiers: [{ up_to: 100 }, { up_to: null }],
+        billingProduct: {
+          metadata: { priceUsageBased: BillingUsageType.METERED },
+        },
       });
 
-      // Candidate yearly prices: metered with various caps and one licensed yearly
+      // Yearly candidates
       const yearlyLicensed = buildLicensedYearlyPrice(
         'prod_seats',
         'price_year_licensed',
       );
-      const yearlyMeteredBelow = buildMeteredYearlyPrice(
-        'prod_workflow',
-        'price_year_metered_1000',
-        1000,
-      ); // 100*12=1200; pick below 1200
-      const yearlyMeteredTooHigh = buildMeteredYearlyPrice(
-        'prod_workflow',
-        'price_year_metered_2000',
-        2000,
-      );
-      const yearlyMeteredLower = buildMeteredYearlyPrice(
+      const yearlyMeteredA = buildMeteredYearlyPrice(
         'prod_workflow',
         'price_year_metered_600',
         600,
       );
+      const yearlyMeteredB = buildMeteredYearlyPrice(
+        'prod_workflow',
+        'price_year_metered_1000',
+        1000,
+      ); // choose 1000 (highest under 1200)
 
       (billingProductService.getProductPrices as jest.Mock).mockResolvedValue([
         yearlyLicensed,
-        yearlyMeteredTooHigh, // should be ignored (>= current yearly cap)
-        yearlyMeteredBelow,
-        yearlyMeteredLower, // lower but should pick highest below cap => 1000
+        yearlyMeteredA,
+        yearlyMeteredB,
       ]);
 
-      await service.switchToYearlyInterval(sub);
+      await service.changeInterval(workspace);
 
+      expect(
+        stripeSubscriptionService.setYearlyThresholds,
+      ).toHaveBeenCalledWith(sub.stripeSubscriptionId);
       expect(
         stripeSubscriptionService.updateSubscriptionItems,
       ).toHaveBeenCalledTimes(1);
+
       const [calledSubId, items] = (
         stripeSubscriptionService.updateSubscriptionItems as jest.Mock
       ).mock.calls[0];
 
       expect(calledSubId).toBe(sub.stripeSubscriptionId);
 
-      // Ensure both items got mapped to their yearly counterparts
+      // Updated items
       const licensedUpdated = (items as BillingSubscriptionItem[]).find(
         (i) => i.stripeProductId === 'prod_seats',
       );
+
       const meteredUpdated = (items as BillingSubscriptionItem[]).find(
         (i) => i.stripeProductId === 'prod_workflow',
       );
 
       expect(licensedUpdated?.stripePriceId).toBe('price_year_licensed');
-      expect(meteredUpdated?.stripePriceId).toBe('price_year_metered_1000'); // highest below 1200
+
+      expect(meteredUpdated?.stripePriceId).toBe('price_year_metered_1000');
+    });
+
+    it('switches from Year to Month: updates schedule phases correctly', async () => {
+      const workspace = buildWorkspace('ws-1');
+      const licensedItem = buildSubscriptionItem(
+        BillingProductKey.BASE_PRODUCT,
+        BillingUsageType.LICENSED,
+        'prod_seats',
+        'price_year_licensed',
+        { quantity: 3 },
+      );
+      const meteredItem = buildSubscriptionItem(
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+        BillingUsageType.METERED,
+        'prod_workflow',
+        'price_year_metered',
+      );
+      const sub = buildSubscription(
+        SubscriptionInterval.Year,
+        [licensedItem, meteredItem],
+        { plan: BillingPlanKey.PRO },
+      );
+
+      (billingSubscriptionRepository.find as jest.Mock).mockResolvedValue([
+        sub,
+      ]);
+
+      // Current metered yearly up_to 1200 => monthly referenceCap = 100
+      (billingPriceRepository.findOneOrFail as jest.Mock).mockResolvedValue({
+        interval: SubscriptionInterval.Year,
+        tiers: [{ up_to: 1200 }, { up_to: null }],
+        billingProduct: {
+          metadata: { priceUsageBased: BillingUsageType.METERED },
+        },
+      });
+
+      // Monthly candidates: choose highest <= 100
+      const monthlyLicensed: BillingPrice = {
+        ...(buildLicensedYearlyPrice(
+          'prod_seats',
+          'price_month_licensed',
+        ) as any),
+        interval: SubscriptionInterval.Month,
+        stripePriceId: 'price_month_licensed',
+        metadata: { priceUsageBased: BillingUsageType.LICENSED },
+      } as any;
+      const monthlyMetered50: BillingPrice = {
+        ...(buildMeteredYearlyPrice(
+          'prod_workflow',
+          'price_month_metered_50',
+          50,
+        ) as any),
+        interval: SubscriptionInterval.Month,
+        metadata: { priceUsageBased: BillingUsageType.METERED },
+      } as any;
+      const monthlyMetered100: BillingPrice = {
+        ...(buildMeteredYearlyPrice(
+          'prod_workflow',
+          'price_month_metered_100',
+          100,
+        ) as any),
+        interval: SubscriptionInterval.Month,
+        metadata: { priceUsageBased: BillingUsageType.METERED },
+      } as any;
+
+      (billingProductService.getProductPrices as jest.Mock).mockResolvedValue([
+        monthlyLicensed,
+        monthlyMetered50,
+        monthlyMetered100,
+      ]);
+
+      // Schedule mocks
+      (
+        stripeSubscriptionScheduleService.getSubscriptionWithSchedule as jest.Mock
+      ).mockResolvedValue({
+        id: sub.stripeSubscriptionId,
+        current_period_end: 1700000000,
+      });
+      (
+        stripeSubscriptionScheduleService.findOrCreateSubscriptionSchedule as jest.Mock
+      ).mockResolvedValue({
+        id: 'schedule_1',
+        phases: [
+          {
+            start_date: 1600000000,
+            end_date: 1650000000,
+            items: [
+              { price: 'old_licensed', quantity: 2 },
+              { price: { id: 'old_metered' } },
+            ],
+          },
+        ],
+      });
+
+      (
+        stripeSubscriptionService.getBillingThresholdsByInterval as jest.Mock
+      ).mockReturnValue({
+        amount_gte: 1000,
+        reset_billing_cycle_anchor: false,
+      });
+
+      await service.changeInterval(workspace);
+
+      expect(
+        stripeSubscriptionScheduleService.updateSchedule,
+      ).toHaveBeenCalledTimes(1);
+
+      const [scheduleId, payload] = (
+        stripeSubscriptionScheduleService.updateSchedule as jest.Mock
+      ).mock.calls[0];
+
+      expect(scheduleId).toBe('schedule_1');
+
+      const phases = (payload as any).phases;
+
+      expect(phases).toHaveLength(2);
+
+      const currentPhase = phases[0];
+
+      expect(currentPhase).toEqual({
+        start_date: 1600000000,
+        end_date: 1650000000,
+        items: [
+          { price: 'old_licensed', quantity: 2 },
+          { price: 'old_metered' },
+        ],
+      });
+
+      const nextPhase = phases[1];
+
+      expect(nextPhase.items).toEqual([
+        { price: 'price_month_licensed', quantity: 3 },
+        { price: 'price_month_metered_100' },
+      ]);
+      expect(nextPhase.start_date).toBe(1650000000);
+      expect(nextPhase.proration_behavior).toBe('none');
+      expect(nextPhase.billing_thresholds).toEqual({
+        amount_gte: 1000,
+        reset_billing_cycle_anchor: false,
+      });
+    });
+  });
+
+  describe('switchPlan', () => {
+    it('switches from PRO to ENTERPRISE: updates schedule phases correctly', async () => {
+      const workspace = buildWorkspace('ws-1');
+      const licensedItem = buildSubscriptionItem(
+        BillingProductKey.BASE_PRODUCT,
+        BillingUsageType.LICENSED,
+        'prod_seats',
+        'price_month_licensed',
+        { quantity: 4 },
+      );
+      const meteredItem = buildSubscriptionItem(
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+        BillingUsageType.METERED,
+        'prod_workflow',
+        'price_month_metered',
+      );
+      const sub = buildSubscription(
+        SubscriptionInterval.Month,
+        [licensedItem, meteredItem],
+        { plan: BillingPlanKey.PRO },
+      );
+
+      (billingSubscriptionRepository.find as jest.Mock).mockResolvedValue([
+        sub,
+      ]);
+
+      // Current metered monthly up_to 100
+      (billingPriceRepository.findOneOrFail as jest.Mock).mockResolvedValue({
+        interval: SubscriptionInterval.Month,
+        tiers: [{ up_to: 100 }, { up_to: null }],
+        billingProduct: {
+          metadata: { priceUsageBased: BillingUsageType.METERED },
+        },
+      });
+
+      // ENTERPRISE plan candidates at same interval (Month)
+      const entLicensed: BillingPrice = {
+        ...(buildLicensedYearlyPrice(
+          'prod_seats',
+          'price_ent_licensed',
+        ) as any),
+        interval: SubscriptionInterval.Month,
+        stripePriceId: 'price_ent_licensed',
+        metadata: { priceUsageBased: BillingUsageType.LICENSED },
+        billingProduct: buildBillingProduct(
+          BillingProductKey.BASE_PRODUCT,
+          BillingUsageType.LICENSED,
+        ) as any,
+      } as any;
+
+      const entMetered: BillingPrice = {
+        ...(buildMeteredYearlyPrice(
+          'prod_workflow',
+          'price_ent_metered_100',
+          100,
+        ) as any),
+        interval: SubscriptionInterval.Month,
+        metadata: { priceUsageBased: BillingUsageType.METERED },
+        billingProduct: buildBillingProduct(
+          BillingProductKey.WORKFLOW_NODE_EXECUTION,
+          BillingUsageType.METERED,
+        ) as any,
+      } as any;
+
+      (billingProductService.getProductPrices as jest.Mock).mockResolvedValue([
+        entLicensed,
+        entMetered,
+      ]);
+
+      // Schedule mocks
+      (
+        stripeSubscriptionScheduleService.getSubscriptionWithSchedule as jest.Mock
+      ).mockResolvedValue({
+        id: sub.stripeSubscriptionId,
+        current_period_end: 1800000000,
+      });
+      (
+        stripeSubscriptionScheduleService.findOrCreateSubscriptionSchedule as jest.Mock
+      ).mockResolvedValue({
+        id: 'schedule_2',
+        phases: [
+          {
+            start_date: 1700000000,
+            end_date: 1750000000,
+            items: [
+              { price: 'old_licensed', quantity: 1 },
+              { price: { id: 'old_metered' } },
+            ],
+          },
+        ],
+      });
+
+      (
+        stripeSubscriptionService.getBillingThresholdsByInterval as jest.Mock
+      ).mockReturnValue({
+        amount_gte: 2000,
+        reset_billing_cycle_anchor: false,
+      });
+
+      await service.changePlan(workspace);
+
+      expect(
+        stripeSubscriptionScheduleService.updateSchedule,
+      ).toHaveBeenCalledTimes(1);
+
+      const [scheduleId, payload] = (
+        stripeSubscriptionScheduleService.updateSchedule as jest.Mock
+      ).mock.calls[0];
+
+      expect(scheduleId).toBe('schedule_2');
+
+      const phases = (payload as any).phases;
+
+      expect(phases).toHaveLength(2);
+
+      const currentPhase = phases[0];
+
+      expect(currentPhase).toEqual({
+        start_date: 1700000000,
+        end_date: 1750000000,
+        items: [
+          { price: 'old_licensed', quantity: 1 },
+          { price: 'old_metered' },
+        ],
+      });
+
+      const nextPhase = phases[1];
+
+      expect(nextPhase.items).toEqual([
+        { price: 'price_ent_licensed', quantity: 4 },
+        { price: 'price_ent_metered_100' },
+      ]);
+      expect(nextPhase.start_date).toBe(1750000000);
+      expect(nextPhase.proration_behavior).toBe('none');
+      expect(nextPhase.billing_thresholds).toEqual({
+        amount_gte: 2000,
+        reset_billing_cycle_anchor: false,
+      });
     });
   });
 
@@ -362,9 +629,7 @@ describe('BillingSubscriptionService - switching methods', () => {
         sub,
       ]);
 
-      await expect(
-        service.switchToEnterprisePlan(workspace),
-      ).rejects.toMatchObject({
+      await expect(service.changePlan(workspace)).rejects.toMatchObject({
         code: BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE,
       });
     });
@@ -412,7 +677,7 @@ describe('BillingSubscriptionService - switching methods', () => {
         yearlyMetered,
       ]);
 
-      await service.switchToEnterprisePlan(workspace);
+      await service.changePlan(workspace);
 
       expect(
         stripeSubscriptionService.updateSubscriptionItems,

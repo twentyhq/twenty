@@ -139,10 +139,19 @@ export class BillingResolver {
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
-  async toggleSubscriptionInterval(@AuthWorkspace() workspace: Workspace) {
-    await this.billingSubscriptionService.toggleInterval(workspace);
+  async switchSubscriptionInterval(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.changeInterval(workspace);
 
-    return { success: true };
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
   }
 
   @Mutation(() => BillingUpdateOutput)
@@ -150,10 +159,59 @@ export class BillingResolver {
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
-  async switchToEnterprisePlan(@AuthWorkspace() workspace: Workspace) {
-    await this.billingSubscriptionService.switchToEnterprisePlan(workspace);
+  async switchBillingPlan(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.changePlan(workspace);
 
-    return { success: true };
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
+  async cancelSwitchBillingPlan(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.cancelSwitchPlan(workspace);
+
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
+  async cancelSwitchBillingInterval(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.cancelSwitchInterval(workspace);
+
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
   }
 
   @Mutation(() => BillingUpdateOutput)
@@ -170,7 +228,16 @@ export class BillingResolver {
       priceId,
     );
 
-    return { success: true };
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
   }
 
   @Query(() => [BillingPlanOutput])

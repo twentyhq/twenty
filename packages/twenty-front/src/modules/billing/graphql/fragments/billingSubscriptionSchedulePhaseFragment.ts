@@ -3,9 +3,8 @@ import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT } from './billingSubs
 
 export const BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT = gql`
   fragment BillingSubscriptionSchedulePhaseFragment on BillingSubscriptionSchedulePhase {
-    startDate
-    endDate
-    trialEnd
+    start_date
+    end_date
     items {
       ...BillingSubscriptionSchedulePhaseItemFragment
     }

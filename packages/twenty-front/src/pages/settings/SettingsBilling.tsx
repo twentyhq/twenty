@@ -6,15 +6,14 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsBillingContent } from '@/billing/components/SettingsBillingContent';
-import { useListPlansQuery } from '~/generated-metadata/graphql';
-import Skeleton from 'react-loading-skeleton';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { data: plans } = useListPlansQuery();
+  const { isPlansLoaded } = useBillingPlan();
 
   return (
     <SubMenuTopBarContainer
@@ -27,7 +26,7 @@ export const SettingsBilling = () => {
         { children: <Trans>Billing</Trans> },
       ]}
     >
-      {!currentWorkspace || !plans ? <Skeleton /> : <SettingsBillingContent />}
+      {currentWorkspace && isPlansLoaded ? <SettingsBillingContent /> : <></>}
     </SubMenuTopBarContainer>
   );
 };

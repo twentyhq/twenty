@@ -4,7 +4,7 @@ import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 export const useFormatPrices = () => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } = useBillingPlan();
 
-  const formatMonthlyPrices = () => {
+  const formatPrices = () => {
     const enterpriseYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(
       BillingPlanKey.ENTERPRISE,
       SubscriptionInterval.Year,
@@ -38,6 +38,6 @@ export const useFormatPrices = () => {
   };
 
   return {
-    formatMonthlyPrices: formatMonthlyPrices,
+    formatPrices,
   };
 };

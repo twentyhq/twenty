@@ -374,10 +374,9 @@ export type BillingSubscriptionItemDto = {
 
 export type BillingSubscriptionSchedulePhase = {
   __typename?: 'BillingSubscriptionSchedulePhase';
-  endDate: Scalars['Float'];
+  end_date: Scalars['Float'];
   items: Array<BillingSubscriptionSchedulePhaseItem>;
-  startDate: Scalars['Float'];
-  trialEnd?: Maybe<Scalars['Float']>;
+  start_date: Scalars['Float'];
 };
 
 export type BillingSubscriptionSchedulePhaseItem = {
@@ -394,8 +393,10 @@ export type BillingTrialPeriodDto = {
 
 export type BillingUpdateOutput = {
   __typename?: 'BillingUpdateOutput';
-  /** Boolean that confirms query was successful */
-  success: Scalars['Boolean'];
+  /** All billing subscriptions */
+  billingSubscriptions: Array<BillingSubscription>;
+  /** Current billing subscription */
+  currentBillingSubscription: BillingSubscription;
 };
 
 export enum BillingUsageType {
@@ -1371,6 +1372,8 @@ export type Mutation = {
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
+  cancelSwitchBillingInterval: BillingUpdateOutput;
+  cancelSwitchBillingPlan: BillingUpdateOutput;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
@@ -1475,8 +1478,8 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
-  switchToEnterprisePlan: BillingUpdateOutput;
-  toggleSubscriptionInterval: BillingUpdateOutput;
+  switchBillingPlan: BillingUpdateOutput;
+  switchSubscriptionInterval: BillingUpdateOutput;
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;

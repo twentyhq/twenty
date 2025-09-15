@@ -15,6 +15,7 @@ import {
   SubscriptionStatus,
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
+import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
@@ -28,6 +29,9 @@ export const SettingsBillingContent = () => {
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+
+  const { isGetMeteredProductsUsageQueryLoaded } =
+    useGetWorkflowNodeExecutionUsage();
 
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
@@ -61,9 +65,16 @@ export const SettingsBillingContent = () => {
             }
           />
         )}
-      {hasNotCanceledCurrentSubscription && currentWorkspace && (
-        <SettingsBillingCreditsSection currentWorkspace={currentWorkspace} />
-      )}
+      {hasNotCanceledCurrentSubscription &&
+        currentWorkspace &&
+        currentWorkspace.currentBillingSubscription &&
+        isGetMeteredProductsUsageQueryLoaded && (
+          <SettingsBillingCreditsSection
+            currentBillingSubscription={
+              currentWorkspace.currentBillingSubscription
+            }
+          />
+        )}
       <Section>
         <H2Title
           title={t`Manage billing information`}

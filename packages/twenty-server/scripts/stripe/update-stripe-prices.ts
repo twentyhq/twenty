@@ -23,67 +23,67 @@ const prices: Array<{
   pricePer1MAbove: number;
 }> = [
   // Monthly
-  { interval: 'month', usd: 0, credits: 5000000, pricePer1MAbove: 8.0 },
+  { interval: 'month', usd: 0, credits: 5_000_000, pricePer1MAbove: 8.0 },
   {
     interval: 'month',
     usd: 29,
-    credits: 10000000,
+    credits: 10_000_000,
     pricePer1MAbove: 4.35,
   },
   {
     interval: 'month',
     usd: 99,
-    credits: 50000000,
+    credits: 50_000_000,
     pricePer1MAbove: 2.97,
   },
   {
     interval: 'month',
     usd: 199,
-    credits: 110000000,
+    credits: 110_000_000,
     pricePer1MAbove: 2.71,
   },
   {
     interval: 'month',
     usd: 399,
-    credits: 240000000,
+    credits: 240_000_000,
     pricePer1MAbove: 2.49,
   },
   {
     interval: 'month',
     usd: 999,
-    credits: 700000000,
+    credits: 700_000_000,
     pricePer1MAbove: 1.43,
   },
   // Yearly
-  { interval: 'year', usd: 0, credits: 50000000, pricePer1MAbove: 7.6 },
+  { interval: 'year', usd: 0, credits: 50_000_000, pricePer1MAbove: 7.6 },
   {
     interval: 'year',
     usd: 290,
-    credits: 130000000,
+    credits: 130_000_000,
     pricePer1MAbove: 3.35,
   },
   {
     interval: 'year',
     usd: 990,
-    credits: 540000000,
+    credits: 540_000_000,
     pricePer1MAbove: 2.75,
   },
   {
     interval: 'year',
     usd: 1990,
-    credits: 1200000000,
+    credits: 1_200_000_000,
     pricePer1MAbove: 2.49,
   },
   {
     interval: 'year',
     usd: 3990,
-    credits: 2600000000,
+    credits: 2_600_000_000,
     pricePer1MAbove: 2.3,
   },
   {
     interval: 'year',
     usd: 9990,
-    credits: 7500000000,
+    credits: 7_500_000_000,
     pricePer1MAbove: 1.33,
   },
 ] as const;
@@ -110,7 +110,7 @@ const makeIdemKey = (price: (typeof prices)[0], meter: Stripe.Billing.Meter) =>
         price.pricePer1MAbove,
         productId,
         meter.id,
-      ].join('_'),
+      ].join('='),
     )
     .digest('hex')
     .slice(0, 32);
@@ -187,8 +187,8 @@ const main = async () => {
     for (const price of data) {
       if (price.nickname && !createdNicknames.includes(price.nickname)) {
         if (price.active) {
-          // await stripe.prices.update(price.id, { active: false });
-          // console.log(`Archived: ${price.id} (${price.nickname})`);
+          await stripe.prices.update(price.id, { active: false });
+          console.log(`Archived: ${price.id} (${price.nickname})`);
         }
       }
     }

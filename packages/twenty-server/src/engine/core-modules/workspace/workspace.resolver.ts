@@ -13,13 +13,11 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -97,8 +95,6 @@ export class WorkspaceResolver {
     private readonly roleService: RoleService,
     private readonly agentService: AgentService,
     private readonly viewService: ViewService,
-    @InjectRepository(BillingSubscription)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -207,9 +203,9 @@ export class WorkspaceResolver {
     }
 
     try {
-      return this.billingSubscriptionRepository.find({
-        where: { workspaceId: workspace.id },
-      });
+      return this.billingSubscriptionService.getBillingSubscriptions(
+        workspace.id,
+      );
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }

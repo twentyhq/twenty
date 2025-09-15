@@ -56,4 +56,10 @@ export class StripeSubscriptionScheduleService {
       from_subscription: subscriptionId,
     });
   }
+
+  async releaseSchedule(scheduleId: string) {
+    if (!this.stripe) throw new Error('Billing is disabled');
+
+    return this.stripe.subscriptionSchedules.release(scheduleId);
+  }
 }

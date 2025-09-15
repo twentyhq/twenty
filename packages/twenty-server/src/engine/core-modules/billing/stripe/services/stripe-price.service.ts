@@ -34,6 +34,7 @@ export class StripePriceService {
     const prices = await this.stripe.prices.list({
       product: productId,
       type: 'recurring',
+      limit: 100,
       expand: ['data.currency_options', 'data.tiers'],
     });
 

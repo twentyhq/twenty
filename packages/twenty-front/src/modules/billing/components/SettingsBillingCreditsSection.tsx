@@ -13,11 +13,8 @@ import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import {
-  getIntervalLabel,
-  isMonthlyPlan,
-} from '@/billing/utils/subscriptionFlags';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -26,22 +23,28 @@ const StyledLineSeparator = styled.div`
 `;
 
 export const SettingsBillingCreditsSection = ({
-  currentWorkspace,
+  currentBillingSubscription,
 }: {
-  currentWorkspace: CurrentWorkspace;
+  currentBillingSubscription: NonNullable<
+    CurrentWorkspace['currentBillingSubscription']
+  >;
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { getCurrentMeteredPricesByInterval } = useBillingPlan();
+  const { getCurrentMeteredPricesByInterval, isMonthlyPlan } = useBillingPlan();
+
+  const { getIntervalLabel } = useBillingWording(currentBillingSubscription);
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
+  const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
+
   const { usedCredits, grantedCredits, unitPriceCents } =
-    useGetWorkflowNodeExecutionUsage();
+    getWorkflowNodeExecutionUsage();
 
   const progressBarValue = (usedCredits / grantedCredits) * 100;
 
-  const intervalLabel = getIntervalLabel(isMonthlyPlan(currentWorkspace));
+  const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
   const extraCreditsUsed = Math.max(0, usedCredits - grantedCredits);
 
@@ -50,7 +53,7 @@ export const SettingsBillingCreditsSection = ({
   const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
 
   const meteredBillingPrices = getCurrentMeteredPricesByInterval(
-    currentWorkspace.currentBillingSubscription?.interval,
+    currentBillingSubscription.interval,
   );
 
   return (
@@ -63,7 +66,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits, { abbreviate: true })}/${formatAmount(grantedCredits)}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true })}`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -79,10 +82,12 @@ export const SettingsBillingCreditsSection = ({
               value={`${formatAmount(extraCreditsUsed)}`}
             />
           )}
-          <SettingsBillingLabelValueItem
-            label={t`Cost per 1k Extra Credits`}
-            value={`$${formatNumber(costPer1kExtraCredits, 2)}`}
-          />
+          {!isTrialing && (
+            <SettingsBillingLabelValueItem
+              label={t`Cost per 1k Extra Credits`}
+              value={`$${formatNumber(costPer1kExtraCredits, { abbreviate: true, decimals: 6 })}`}
+            />
+          )}
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Cost`}

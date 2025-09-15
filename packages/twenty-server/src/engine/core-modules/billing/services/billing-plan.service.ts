@@ -16,6 +16,7 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { findOrThrow } from 'src/utils/find-or-throw.util';
 
 @Injectable()
 export class BillingPlanService {
@@ -91,6 +92,25 @@ export class BillingPlanService {
         meteredProducts,
         licensedProducts,
       };
+    });
+  }
+
+  async getPlanByPriceId(stripePriceId: string) {
+    const plans = await this.listPlans();
+
+    return findOrThrow(plans, (plan) => {
+      return (
+        plan.meteredProducts.some((product) =>
+          product.billingPrices.some(
+            (price) => price.stripePriceId === stripePriceId,
+          ),
+        ) ||
+        plan.licensedProducts.some((product) =>
+          product.billingPrices.some(
+            (price) => price.stripePriceId === stripePriceId,
+          ),
+        )
+      );
     });
   }
 

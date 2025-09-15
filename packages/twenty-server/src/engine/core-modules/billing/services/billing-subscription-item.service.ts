@@ -99,11 +99,6 @@ export class BillingSubscriptionItemService {
       )
     ) {
       return this.schedulePriceMeteredUpdate(subscriptionItem, newMeteredPrice);
-
-      // throw new BillingException(
-      //   'Cannot update price of subscription item because the new tier is lower than the current tier.',
-      //   BillingExceptionCode.BILLING_PRICE_UPDATE_REQUIRES_INCREASE,
-      // );
     }
 
     await this.stripeSubscriptionService.updateSubscriptionItems(
@@ -143,7 +138,7 @@ export class BillingSubscriptionItemService {
     };
   }
 
-  private async generateUpdatedPhase(
+  private async getPayloadToUpdateExistingPhase(
     existingItemsPhases: Array<Stripe.SubscriptionSchedule.Phase>,
     newPrice: BillingPrice,
     subscription: SubscriptionWithSchedule,
@@ -167,12 +162,12 @@ export class BillingSubscriptionItemService {
     );
 
     const targetMeteredPrice =
-      await this.billingSubscriptionService.findMeteredMatchingPrice(
-        pricesPerPlanResult.meteredProductsPrices,
-        newPrice.stripePriceId,
-        subscriptionItem.stripeProductId,
-        SubscriptionInterval.Month,
-        SubscriptionInterval.Year,
+      await this.billingSubscriptionService.findMeteredMatchingPriceForIntervalSwitching(
+        {
+          billingPricesPerPlanAndIntervalArray:
+            pricesPerPlanResult.meteredProductsPrices,
+          meteredPriceId: newPrice.stripePriceId,
+        },
       );
 
     const nextPhaseLicenseItem = findOrThrow(
@@ -221,7 +216,7 @@ export class BillingSubscriptionItemService {
             subscription,
             subscriptionItem,
           )
-        : await this.generateUpdatedPhase(
+        : await this.getPayloadToUpdateExistingPhase(
             subscription.schedule.phases,
             newPrice,
             subscription,
@@ -318,7 +313,7 @@ export class BillingSubscriptionItemService {
     switch (item.billingProduct.metadata.productKey) {
       case BillingProductKey.WORKFLOW_NODE_EXECUTION:
         return (
-          item.metadata.trialPeriodFreeWorkflowCredits ||
+          // item.metadata.trialPeriodFreeWorkflowCredits ||
           this.twentyConfigService.get(
             'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
           )

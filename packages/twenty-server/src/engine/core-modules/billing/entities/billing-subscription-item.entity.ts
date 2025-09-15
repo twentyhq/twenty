@@ -77,11 +77,3 @@ export class BillingSubscriptionItem {
   @Column({ type: 'boolean', default: false })
   hasReachedCurrentPeriodCap: boolean;
 }
-
-export class LicensedBillingSubscriptionItem extends BillingSubscriptionItem {
-  quantity: number;
-}
-
-export class MeteredBillingSubscriptionItem extends BillingSubscriptionItem {
-  quantity: null;
-}

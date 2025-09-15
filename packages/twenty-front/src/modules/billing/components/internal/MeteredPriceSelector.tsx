@@ -8,7 +8,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
 import { SET_METERED_SUBSCRIPTION_PRICE } from '@/billing/graphql/mutations/setMeteredSubscriptionPrice';
-import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
@@ -19,6 +18,7 @@ import {
   type BillingPriceTiers,
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -43,6 +43,8 @@ export const MeteredPriceSelector = ({
   isTrialing?: boolean;
 }) => {
   const { getCurrentMeteredBillingPrice } = useBillingPlan();
+
+  const { getIntervalLabel } = useBillingWording();
 
   const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
     getCurrentMeteredBillingPrice(),

@@ -10,9 +10,8 @@ export function transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPh
   schedule: Stripe.SubscriptionSchedule,
 ): Array<BillingSubscriptionSchedulePhase> {
   return schedule.phases.map((phase) => ({
-    startDate: phase.start_date,
-    endDate: phase.end_date,
-    trialEnd: phase.trial_end,
+    start_date: phase.start_date,
+    end_date: phase.end_date,
     items: phase.items.map((item) => ({
       price: typeof item.price === 'string' ? item.price : item.price.id,
       ...(isDefined(item.quantity) ? { quantity: item.quantity } : {}),

@@ -27,10 +27,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
-import { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
-import { MeterBillingPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -266,24 +264,24 @@ export class BillingPortalWorkspaceService {
 
   private getDefaultMeteredProductPrice(
     billingPricesPerPlan: BillingGetPricesPerPlanResult,
-  ): MeterBillingPrice {
+  ): BillingMeterPrice {
     const defaultMeteredProductPrice =
       billingPricesPerPlan.meteredProductsPrices.reduce(
         (result, billingPrice) => {
           if (!result) {
-            return billingPrice as MeterBillingPrice;
+            return billingPrice as BillingMeterPrice;
           }
           const tiers = billingPrice.tiers;
 
           if (billingValidator.isMeteredTiersSchema(tiers)) {
             if (tiers[0].flat_amount < result.tiers[0].flat_amount) {
-              return billingPrice as MeterBillingPrice;
+              return billingPrice as BillingMeterPrice;
             }
           }
 
           return result;
         },
-        null as (BillingPrice & { tiers: MeterBillingPriceTiers }) | null,
+        null as BillingMeterPrice | null,
       );
 
     if (!isDefined(defaultMeteredProductPrice)) {

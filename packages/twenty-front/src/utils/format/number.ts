@@ -54,7 +54,7 @@ export const formatNumber = (
   }
 
   return value.toLocaleString(options.locale, {
-    minimumFractionDigits: options.decimals,
+    minimumFractionDigits: 0,
     maximumFractionDigits: options.decimals,
   });
 };

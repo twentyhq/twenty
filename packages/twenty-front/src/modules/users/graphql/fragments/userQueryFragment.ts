@@ -9,9 +9,9 @@ import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
-import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseItemFragment';
-import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseFragment';
 import { gql } from '@apollo/client';
+import { CURRENT_BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/currentBillingSubscriptionFragement';
+import { BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/billingSubscriptionsFragment';
 
 export const USER_QUERY_FRAGMENT = gql`
   fragment UserQueryFragment on User {
@@ -68,38 +68,10 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       metadataVersion
       currentBillingSubscription {
-        id
-        status
-        interval
-        metadata
-        currentPeriodEnd
-        phases {
-          ...BillingSubscriptionSchedulePhaseFragment
-        }
-        billingSubscriptionItems {
-          id
-          hasReachedCurrentPeriodCap
-          quantity
-          stripePriceId
-          billingProduct {
-            name
-            description
-            images
-            metadata {
-              productKey
-              planKey
-              priceUsageBased
-            }
-          }
-        }
+        ...CurrentBillingSubscriptionFragment
       }
       billingSubscriptions {
-        id
-        status
-        metadata
-        phases {
-          ...BillingSubscriptionSchedulePhaseFragment
-        }
+        ...BillingSubscriptionFragment
       }
       workspaceMembersCount
       defaultRole {
@@ -128,6 +100,6 @@ export const USER_QUERY_FRAGMENT = gql`
   ${VIEW_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
-  ${BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT}
-  ${BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT}
+  ${CURRENT_BILLING_SUBSCRIPTION_FRAGMENT}
+  ${BILLING_SUBSCRIPTION_FRAGMENT}
 `;

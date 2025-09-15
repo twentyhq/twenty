@@ -102,13 +102,12 @@ export class BillingPrice {
   })
   usageType: BillingUsageType;
 
-  @Field(() => SubscriptionInterval, { nullable: true })
+  @Field(() => SubscriptionInterval)
   @Column({
     type: 'enum',
     enum: Object.values(SubscriptionInterval),
-    nullable: true,
   })
-  interval: SubscriptionInterval | null;
+  interval: SubscriptionInterval;
 
   @ManyToOne(
     () => BillingProduct,

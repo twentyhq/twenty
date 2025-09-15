@@ -1,9 +1,14 @@
 import { gql } from '@apollo/client';
 
-export const TOGGLE_SUBSCRIPTION_INTERVAL = gql`
-  mutation ToggleSubscriptionInterval {
-    toggleSubscriptionInterval {
-      success
+export const SWITCH_SUBSCRIPTION_INTERVAL = gql`
+  mutation SwitchSubscriptionInterval {
+    switchSubscriptionInterval {
+      currentBillingSubscription {
+        ...CurrentBillingSubscriptionFragment
+      }
+      billingSubscriptions {
+        ...BillingSubscriptionFragment
+      }
     }
   }
 `;

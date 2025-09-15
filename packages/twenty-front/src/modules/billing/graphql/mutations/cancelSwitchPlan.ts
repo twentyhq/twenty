@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const SET_METERED_SUBSCRIPTION_PRICE = gql`
-  mutation SetMeteredSubscriptionPrice($priceId: String!) {
-    setMeteredSubscriptionPrice(priceId: $priceId) {
+export const CANCEL_SWITCH_BILLING_PLAN = gql`
+  mutation CancelSwitchBillingPlan {
+    cancelSwitchBillingPlan {
       currentBillingSubscription {
         ...CurrentBillingSubscriptionFragment
       }

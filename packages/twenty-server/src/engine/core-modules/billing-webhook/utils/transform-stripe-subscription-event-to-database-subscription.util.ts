@@ -6,9 +6,7 @@ import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/bil
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import {
-  transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase
-} from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
+import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
 
 export const transformStripeSubscriptionEventToDatabaseSubscription = (
   workspaceId: string,
@@ -20,9 +18,11 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
     stripeSubscriptionId: subscription.id,
     status: getSubscriptionStatus(subscription.status),
     interval: subscription.items.data[0].plan.interval as SubscriptionInterval,
-    phases: transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase(
-      subscription.schedule,
-    ),
+    phases: subscription.schedule
+      ? transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase(
+          subscription.schedule,
+        )
+      : [],
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
     currency: subscription.currency.toUpperCase(),
     currentPeriodEnd: getDateFromTimestamp(subscription.current_period_end),

@@ -1,12 +1,3 @@
-// migrate-metered-copy-total-meters.ts
-// Usage :
-//   STRIPE_API_KEY=sk_*** tsx migrate-metered-copy-total-meters.ts
-// Options :
-//   PRODUCT_ID=prod_***   -> limite au produit
-//   DRY_RUN=1             -> log uniquement
-//   PRICE_LIMIT=100       -> nb max de prices (pas de pagination)
-//   SLEEP_MS=100          -> pause entre appels
-
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string, {
@@ -15,11 +6,20 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY as string, {
 
 const PRODUCT_ID = process.env.PRODUCT_ID!;
 const DRY_RUN = !!process.env.DRY_RUN;
-const PRICE_LIMIT = parseInt(process.env.PRICE_LIMIT ?? '100', 10);
 const SLEEP_MS = parseInt(process.env.SLEEP_MS ?? '50', 10);
 
-const TIER_SRC = 10000;
-const TIER_DST = 5000000;
+const tiers = [
+  // Monthly
+  [10_000, 5_000_000],
+  [50_000, 10_000_000],
+  [100_000, 50_000_000],
+  [120_000, 110_000_000],
+
+  // Yearly
+  [120_000, 50_000_000],
+  [600_000, 130_000_000],
+  [1_200_000, 540_000_000],
+] as Array<[number, number]>;
 
 if (!process.env.STRIPE_API_KEY || !process.env.PRODUCT_ID) {
   console.error('STRIPE_API_KEY manquant ou PRODUCT_ID manquant');
@@ -30,13 +30,14 @@ type PriceMap = Map<string, { sourcePriceId: string; targetPriceId: string }>;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function loadPriceMapping(): Promise<PriceMap> {
-  // Une page unique, pas de pagination côté prices
+async function loadPriceMapping([TIER_SRC, TIER_DST]: [
+  number,
+  number,
+]): Promise<PriceMap> {
   const { data: prices } = await stripe.prices.list({
-    active: true,
     type: 'recurring',
-    limit: PRICE_LIMIT,
     product: PRODUCT_ID,
+    limit: 100,
     expand: ['data.tiers', 'data.recurring'],
   });
 
@@ -68,7 +69,6 @@ async function loadPriceMapping(): Promise<PriceMap> {
   return mapByProduct;
 }
 
-// Meters summary (nouveau système). Typage souple via any pour compat Stripe SDK.
 async function getCurrentPeriodTotalUsageMeters(params: {
   meterId: string;
   customerId: string;
@@ -97,11 +97,11 @@ function toCustomerId(
   return cust.id as string;
 }
 
-async function main() {
-  const priceMap = await loadPriceMapping();
+async function main(tier: [number, number]) {
+  const priceMap = await loadPriceMapping(tier);
 
   if (priceMap.size === 0) {
-    console.log('Aucun mapping price 10k -> 5M trouvé');
+    console.log(`Aucun mapping price ${tier[0]} -> ${tier[1]} trouvé`);
     process.exit(0);
   }
 
@@ -109,7 +109,6 @@ async function main() {
   let modified = 0;
   let copiedTotal = 0;
 
-  // @TODO check with felix
   for (const status of [
     'active',
     'trialing',
@@ -147,7 +146,6 @@ async function main() {
 
         const mapping = priceMap.get(item.price.product as string)!;
 
-        // Lire l’usage total courant sur la période via Meters
         const total = await getCurrentPeriodTotalUsageMeters({
           meterId,
           customerId,
@@ -155,17 +153,6 @@ async function main() {
           end: nowTs,
         });
 
-        // Supprimer l’ancien item en effaçant l’usage (évite la ligne "final usage")
-        if (DRY_RUN) {
-          console.log(
-            `[DRY_RUN] DELETE ${item.id}?clear_usage=true (total_usage=${total})`,
-          );
-        } else {
-          await stripe.subscriptionItems.del(item.id, { clear_usage: true });
-        }
-        await sleep(SLEEP_MS);
-
-        // Créer le nouvel item sur le price cible
         let newItemId: string;
 
         if (DRY_RUN) {
@@ -177,18 +164,17 @@ async function main() {
           const created = await stripe.subscriptionItems.create({
             subscription: sub.id,
             price: mapping.targetPriceId,
-            quantity: item.quantity ?? 1,
+            ...(item.quantity ? { quantity: item.quantity } : {}),
           });
 
           newItemId = created.id;
         }
         await sleep(SLEEP_MS);
 
-        // Poster un seul usage record égal au total agrégé (timestamp=now)
         if (total > 0) {
           if (DRY_RUN) {
             console.log(
-              `[DRY_RUN] USAGE new_si=${newItemId} quantity=${total * 1000}}`,
+              `[DRY_RUN] USAGE new_si=${newItemId} usage=${total * 1000}}`,
             );
             copiedTotal += total;
           } else {
@@ -202,21 +188,31 @@ async function main() {
           await sleep(SLEEP_MS);
         }
 
+        if (DRY_RUN) {
+          console.log(
+            `[DRY_RUN] DELETE ${item.id}?clear_usage=true (total_usage=${total})`,
+          );
+        } else {
+          await stripe.subscriptionItems.del(item.id, { clear_usage: true });
+        }
+        await sleep(SLEEP_MS);
+
         modified++;
+        console.log('\n');
       }
 
-      console.log('\n');
       if (!subs.has_more) break;
       starting_after = subs.data[subs.data.length - 1].id;
     }
   }
-
   console.log(
-    `Terminé. Subscriptions examinées: ${examined}. Modifiées: ${modified}. Total usage recopié: ${copiedTotal}`,
+    `Terminé [${tier[0]} -> ${tier[1]}]. Subscriptions examinées: ${examined}. Modifiées: ${modified}.`,
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+for (const tier of tiers) {
+  main(tier).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

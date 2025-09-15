@@ -1,11 +1,11 @@
 import {
-  type SubscriptionInterval,
+  SubscriptionInterval,
   useListPlansQuery,
 } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { findOrThrow } from '~/utils/array/findOrThrow';
 import {
-  type BillingPlanKey,
+  BillingPlanKey,
   type BillingPriceLicensedDto,
   type BillingPriceMeteredDto,
   BillingProductKey,
@@ -28,6 +28,10 @@ export const useBillingPlan = () => {
     return currentWorkspace;
   };
 
+  const isPlansLoaded = () => {
+    return isDefined(plans?.listPlans);
+  };
+
   const listPlans = () => {
     if (!plans) {
       throw new Error('plans is undefined');
@@ -43,10 +47,11 @@ export const useBillingPlan = () => {
   };
 
   const getPlanByPlanKey = (planKey: BillingPlanKey) => {
-    if (!plans) {
-      throw new Error('plans is undefined');
-    }
-    return findOrThrow(listPlans(), (plan) => plan.planKey === planKey);
+    return findOrThrow(
+      listPlans(),
+      (plan) => plan.planKey === planKey,
+      new Error(`Plan ${planKey} not found`),
+    );
   };
 
   const getBaseProductByPlanKey = (planKey: BillingPlanKey) => {
@@ -54,6 +59,7 @@ export const useBillingPlan = () => {
       getPlanByPlanKey(planKey).licensedProducts,
       (product) =>
         product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+      new Error(`Base product not found`),
     );
   };
 
@@ -70,6 +76,7 @@ export const useBillingPlan = () => {
     return findOrThrow(
       baseProduct.prices,
       (price) => price.recurringInterval === interval,
+      new Error(`Base licensed price not found`),
     );
   };
 
@@ -132,6 +139,11 @@ export const useBillingPlan = () => {
     throw new Error('Price not found');
   };
 
+  const getOppositPlan = () => {
+    return getCurrentPlan().planKey === BillingPlanKey.ENTERPRISE
+      ? BillingPlanKey.PRO
+      : BillingPlanKey.ENTERPRISE;
+  };
   const getCurrentPlan = () => {
     if (!plans) {
       throw new Error('plans is undefined');
@@ -142,6 +154,7 @@ export const useBillingPlan = () => {
       (plan) =>
         plan.planKey ===
         getCurrentWorkspace().currentBillingSubscription?.metadata?.['plan'],
+      new Error(`Current plan not found`),
     );
   };
 
@@ -154,12 +167,29 @@ export const useBillingPlan = () => {
       throw new Error('billingSubscriptionItems is undefined');
     }
 
+    if (billingSubscriptionItems.length !== 2) {
+      throw new Error(
+        'billingSubscriptionItems is empty. It should contain two items: one for the base product and one for the workflow node execution product.',
+      );
+    }
+
     return findOrThrow(
       billingSubscriptionItems,
       (billingSubscriptionItem) =>
         billingSubscriptionItem.billingProduct.metadata?.['productKey'] ===
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      new Error(`Metered billing subscription items not found`),
     );
+  };
+
+  const getAllBillingPrices = () => {
+    return listPlans()
+      .map(({ licensedProducts, meteredProducts }) => {
+        return [...licensedProducts, ...meteredProducts].map(
+          ({ prices }) => prices,
+        );
+      })
+      .flat(2) as Array<BillingPriceLicensedDto | BillingPriceMeteredDto>;
   };
 
   const getCurrentMeteredBillingPrice = () => {
@@ -216,13 +246,32 @@ export const useBillingPlan = () => {
     );
   };
 
+  const isMonthlyPlan =
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Month;
+
+  const isYearlyPlan =
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Year;
+
+  const isProPlan =
+    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
+    BillingPlanKey.PRO;
+
+  const isEnterprisePlan =
+    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
+    BillingPlanKey.ENTERPRISE;
+
   return {
     // Plan
     getPlanByPriceId: getPlanByPriceId,
     getPlanByPlanKey: getPlanByPlanKey,
     getCurrentPlan: getCurrentPlan,
+    isPlansLoaded: isPlansLoaded(),
+    getOppositPlan: getOppositPlan,
     // Price
     getPriceAndBillingUsageByPriceId: getPriceAndBillingUsageByPriceId,
+    getAllBillingPrices: getAllBillingPrices,
     // License Price
     getBaseLicensedPriceByPlanKeyAndInterval:
       getBaseLicensedPriceByPlanKeyAndInterval,
@@ -235,5 +284,10 @@ export const useBillingPlan = () => {
     // Product
     listProdcuts: listProdcuts,
     getBaseProductByPlanKey: getBaseProductByPlanKey,
+    // Current Workspace Flags
+    isMonthlyPlan,
+    isYearlyPlan,
+    isProPlan,
+    isEnterprisePlan,
   };
 };

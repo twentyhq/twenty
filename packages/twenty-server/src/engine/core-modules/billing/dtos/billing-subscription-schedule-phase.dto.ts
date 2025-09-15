@@ -12,13 +12,10 @@ export class BillingSubscriptionSchedulePhaseItem {
 @ObjectType()
 export class BillingSubscriptionSchedulePhase {
   @Field(() => Number)
-  startDate: number;
+  start_date: number;
 
   @Field(() => Number)
-  endDate: number;
-
-  @Field(() => Number, { nullable: true })
-  trialEnd: number | null;
+  end_date: number;
 
   @Field(() => [BillingSubscriptionSchedulePhaseItem])
   items: Array<BillingSubscriptionSchedulePhaseItem>;
