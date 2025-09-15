@@ -129,7 +129,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     }
 
     const validationResult =
-      this.flatViewFieldValidatorService.validateFlatViewFieldDeletion({
+      this.flatViewFieldValidatorService.validateFlatViewFieldUpdate({
         dependencyOptimisticFlatEntityMaps,
         flatViewFieldToValidate: toFlatViewField,
         optimisticFlatViewFieldMaps,

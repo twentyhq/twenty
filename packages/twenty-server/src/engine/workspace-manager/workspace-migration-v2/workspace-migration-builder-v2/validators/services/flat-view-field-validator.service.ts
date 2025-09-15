@@ -19,25 +19,12 @@ type ViewFieldValidationArgs = {
 export class FlatViewFieldValidatorService {
   constructor() {}
 
+  // Should implement strict checking on field compared field and their integrity passing the update array would be the best
   public validateFlatViewFieldUpdate({
-    dependencyOptimisticFlatEntityMaps: {
-      flatViewMaps: optimisticFlatViewMaps,
-    },
     flatViewFieldToValidate: updatedFlatViewField,
     optimisticFlatViewFieldMaps,
   }: ViewFieldValidationArgs): FailedFlatEntityValidation<FlatViewField> {
     const errors = [];
-
-    const optimisticFlatView =
-      optimisticFlatViewMaps.byId[updatedFlatViewField.viewId];
-
-    if (!isDefined(optimisticFlatView)) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View field to update related view not found`,
-        userFriendlyMessage: t`View field to update related view not found`,
-      });
-    }
 
     const existingFlatViewField =
       optimisticFlatViewFieldMaps.byId[updatedFlatViewField.id];

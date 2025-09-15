@@ -54,6 +54,7 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
 
   const successfulTestCases: EachTestingContext<TestContext>[] = [
     {
+      only: true,
       title: 'visible field with position and size',
       context: {
         viewFieldInput: (testSetup) => ({
