@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewCalendarLayout } from 'src/engine/core-modules/view/enums/view-calendar-layout.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
@@ -40,4 +41,10 @@ export class UpdateViewInput {
 
   @Field({ nullable: true })
   anyFieldFilterValue?: string;
+
+  @Field(() => ViewCalendarLayout, { nullable: true })
+  calendarLayout?: ViewCalendarLayout;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  calendarFieldMetadataId?: string;
 }
