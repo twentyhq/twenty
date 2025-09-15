@@ -4,8 +4,10 @@ import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
   display: flex;
-  height: 24px;
   flex-direction: column;
+  border: 0.5px solid ${({ theme }) => theme.border.color.light};
+  border-radius: 4px;
+  overflow: hidden;
 `;
 
 export const RecordCalendarMonthBody = () => {
