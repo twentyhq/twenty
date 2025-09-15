@@ -32,12 +32,10 @@ export const useBarChartData = ({
   hoveredBar,
   layout,
 }: UseBarChartDataProps) => {
-  const seriesConfigMap = useMemo(() => {
-    const map = new Map<string, BarChartSeries>();
-    series?.forEach((s) => map.set(s.key, s));
-    return map;
-  }, [series]);
-
+  const seriesConfigMap = useMemo(
+    () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
+    [series],
+  );
   const barConfigs = useMemo((): BarChartConfig[] => {
     return data.flatMap((dataPoint, dataIndex) => {
       const indexValue = dataPoint[indexBy];

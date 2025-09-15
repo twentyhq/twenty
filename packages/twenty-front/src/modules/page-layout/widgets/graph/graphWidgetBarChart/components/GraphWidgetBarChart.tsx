@@ -1,14 +1,15 @@
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { BarChartEndLines } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartEndLines';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
+import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getBarChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisBottomConfig';
 import { getBarChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisLeftConfig';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
-import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -97,6 +98,8 @@ export const GraphWidgetBarChart = ({
       indexBy,
     });
 
+  const chartTheme = useBarChartTheme();
+
   const { barConfigs, enrichedKeys, defs } = useBarChartData({
     data,
     indexBy,
@@ -110,7 +113,7 @@ export const GraphWidgetBarChart = ({
     layout,
   });
 
-  const { renderTooltip: createTooltip } = useBarChartTooltip({
+  const { renderTooltip: getTooltipData } = useBarChartTooltip({
     hoveredBar,
     enrichedKeys,
     data,
@@ -132,8 +135,8 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   );
 
-  const renderTooltip = (datum: Parameters<typeof createTooltip>[0]) => {
-    const tooltipData = createTooltip(datum);
+  const renderTooltip = (datum: Parameters<typeof getTooltipData>[0]) => {
+    const tooltipData = getTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
 
     return (
@@ -201,46 +204,7 @@ export const GraphWidgetBarChart = ({
             }
           }}
           onMouseLeave={() => setHoveredBar(null)}
-          theme={{
-            axis: {
-              domain: {
-                line: {
-                  stroke: theme.border.color.light,
-                  strokeWidth: 1,
-                },
-              },
-              ticks: {
-                line: {
-                  stroke: theme.border.color.light,
-                  strokeWidth: 1,
-                },
-                text: {
-                  fill: theme.font.color.secondary,
-                  fontSize: 11,
-                },
-              },
-              legend: {
-                text: {
-                  fill: theme.font.color.light,
-                  fontSize: 12,
-                  fontWeight: theme.font.weight.medium,
-                },
-              },
-            },
-            grid: {
-              line: {
-                stroke: theme.border.color.light,
-                strokeWidth: 1,
-                strokeDasharray: '4 4',
-              },
-            },
-            labels: {
-              text: {
-                fontSize: 11,
-                fontWeight: theme.font.weight.medium,
-              },
-            },
-          }}
+          theme={chartTheme}
         />
       </StyledChartContainer>
       <GraphWidgetLegend

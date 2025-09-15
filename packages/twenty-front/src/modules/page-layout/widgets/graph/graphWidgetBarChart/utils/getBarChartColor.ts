@@ -1,5 +1,6 @@
 import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 import { type ThemeType } from 'twenty-ui/theme';
 
 export const getBarChartColor = (
@@ -10,7 +11,7 @@ export const getBarChartColor = (
   const bar = barConfigs.find(
     (b) => b.key === datum.id && b.indexValue === datum.indexValue,
   );
-  if (!bar) {
+  if (!isDefined(bar)) {
     return theme.border.color.light;
   }
   return `url(#${bar.gradientId})`;

@@ -12,12 +12,11 @@ export const calculateBarChartEndLineCoordinates = (
       y1: bar.y,
       y2: bar.y,
     };
-  } else {
-    return {
-      x1: bar.x + bar.width,
-      x2: bar.x + bar.width,
-      y1: bar.y,
-      y2: bar.y + bar.height,
-    };
   }
+  return {
+    x1: bar.x + bar.width,
+    x2: bar.x + bar.width,
+    y1: bar.y,
+    y2: bar.y + bar.height,
+  };
 };
