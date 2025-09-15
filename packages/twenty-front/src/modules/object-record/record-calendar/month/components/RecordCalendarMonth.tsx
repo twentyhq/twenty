@@ -2,6 +2,8 @@ import { RecordCalendarMonthBody } from '@/object-record/record-calendar/month/c
 import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeader';
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
+import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -11,7 +13,9 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonth = () => {
-  const currentDay = new Date();
+  const recordCalendarSelectedDate = useRecoilComponentValue(
+    recordCalendarSelectedDateComponentState,
+  );
 
   const {
     firstDayOfMonth,
@@ -21,7 +25,7 @@ export const RecordCalendarMonth = () => {
     weekDayLabels,
     weekFirstDays,
     weekStartsOnDayIndex,
-  } = useRecordCalendarMonthDaysRange(currentDay);
+  } = useRecordCalendarMonthDaysRange(recordCalendarSelectedDate);
 
   return (
     <RecordCalendarMonthContextProvider

@@ -1,6 +1,8 @@
 import { RecordCalendarMonthBodyCard } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyCard';
+import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -44,12 +46,17 @@ type RecordCalendarMonthBodyDayProps = {
 export const RecordCalendarMonthBodyDay = ({
   day,
 }: RecordCalendarMonthBodyDayProps) => {
+
+  const recordCalendarSelectedDate = useRecoilComponentValue(
+    recordCalendarSelectedDateComponentState,
+  );
+
   const recordIds = useRecoilComponentFamilyValue(
     calendarDayRecordIdsComponentFamilySelector,
     day.toDateString(),
   );
 
-  const isOtherMonth = day.getMonth() !== new Date().getMonth();
+  const isOtherMonth = day.getMonth() !== recordCalendarSelectedDate.getMonth();
 
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
