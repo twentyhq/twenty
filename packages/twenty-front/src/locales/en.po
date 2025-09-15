@@ -581,7 +581,7 @@ msgid "Agent not found"
 msgstr "Agent not found"
 
 #. js-lingui-id: jJT5pC
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 msgid "Agent Roles"
 msgstr "Agent Roles"
 
@@ -776,7 +776,7 @@ msgid "API Key copied to clipboard"
 msgstr "API Key copied to clipboard"
 
 #. js-lingui-id: K84VsN
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 msgid "API Key Roles"
 msgstr "API Key Roles"
 
@@ -898,6 +898,22 @@ msgstr "Ask AI"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {roleTargetName}?"
 msgstr "Assign {roleTargetName}?"
+
+#. js-lingui-id: gJL5Xx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Assign roles to specify each agent's access permissions"
+msgstr "Assign roles to specify each agent's access permissions"
+
+#. js-lingui-id: j95x1l
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Assign roles to specify each API key's access permissions"
+msgstr "Assign roles to specify each API key's access permissions"
+
+#. js-lingui-id: rfYmIr
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Assign roles to specify each member's access permissions"
+msgstr "Assign roles to specify each member's access permissions"
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -4085,16 +4101,6 @@ msgstr "Manage favorite"
 msgid "Manage Members"
 msgstr "Manage Members"
 
-#. js-lingui-id: GzInS6
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Manage roles and permissions for team members and API keys"
-msgstr "Manage roles and permissions for team members and API keys"
-
-#. js-lingui-id: wMlk+o
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Manage roles and permissions for team members, agents, and API keys"
-msgstr "Manage roles and permissions for team members, agents, and API keys"
-
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage security policies"
@@ -5584,6 +5590,11 @@ msgstr "Search ''{commandMenuSearch}'' with..."
 msgid "Search a field..."
 msgstr "Search a field..."
 
+#. js-lingui-id: WXvlVa
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Search a role..."
+msgstr "Search a role..."
+
 #. js-lingui-id: xdl79x
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
@@ -6928,7 +6939,7 @@ msgid "User is not logged in"
 msgstr "User is not logged in"
 
 #. js-lingui-id: LVecP9
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 msgid "User Roles"
 msgstr "User Roles"
 
