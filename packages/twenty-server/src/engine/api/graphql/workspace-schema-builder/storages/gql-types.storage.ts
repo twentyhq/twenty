@@ -28,11 +28,11 @@ export class GqlTypesStorage {
     return this.gqlTypes.get(key);
   }
 
-  getAllGqlTypes(): (
-    | GraphQLEnumType
-    | GraphQLInputObjectType
-    | GraphQLObjectType
-  )[] {
-    return Array.from(this.gqlTypes.values());
+  getAllGqlTypesExcept(
+    keysToExclude: string[],
+  ): (GraphQLEnumType | GraphQLInputObjectType | GraphQLObjectType)[] {
+    return Array.from(this.gqlTypes.entries())
+      .filter(([key]) => !keysToExclude.includes(key))
+      .map(([, value]) => value);
   }
 }

@@ -20,6 +20,7 @@ import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-sch
 import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { RelationFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/relation-field-metadata-gql-object-type.generator';
+import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/orphaned-types.generator';
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/root-type.generator';
@@ -50,4 +51,5 @@ export const workspaceSchemaBuilderTypeGenerators = [
   RootTypeGenerator,
   QueryTypeGenerator,
   MutationTypeGenerator,
+  OrphanedTypesGenerator,
 ];

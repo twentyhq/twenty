@@ -12,6 +12,8 @@ import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspa
 import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/edge-gql-object-type.generator';
 import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
+import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
+import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { objectContainsMorphRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-morph-relation-field.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -32,6 +34,8 @@ export class GqlTypeGenerator {
     private readonly connectionGqlObjectTypeGenerator: ConnectionGqlObjectTypeGenerator,
     private readonly objectMetadataWithRelationsGqlObjectTypeGenerator: ObjectMetadataWithRelationsGqlObjectTypeGenerator,
     private readonly relationConnectGqlInputTypeGenerator: RelationConnectGqlInputTypeGenerator,
+    private readonly queryTypeGenerator: QueryTypeGenerator,
+    private readonly mutationTypeGenerator: MutationTypeGenerator,
   ) {}
 
   buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
@@ -39,6 +43,8 @@ export class GqlTypeGenerator {
 
     this.buildAndStoreCompositeFieldMetadataGqlTypes(compositeTypeCollection);
     this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
+    this.queryTypeGenerator.buildAndStore(objectMetadataCollection);
+    this.mutationTypeGenerator.buildAndStore(objectMetadataCollection);
   }
 
   private buildAndStoreCompositeFieldMetadataGqlTypes(

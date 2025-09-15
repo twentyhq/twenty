@@ -28,11 +28,11 @@ export class RootTypeGenerator {
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
   ) {}
 
-  generate(
+  buildAndStore(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
     objectTypeName: GqlOperation,
-  ): GraphQLObjectType {
+  ) {
     if (workspaceResolverMethodNames.length === 0) {
       this.logger.error(
         `No resolver methods were found for ${objectTypeName.toString()}`,
@@ -47,13 +47,16 @@ export class RootTypeGenerator {
       );
     }
 
-    return new GraphQLObjectType({
-      name: objectTypeName.toString(),
-      fields: this.generateFields(
-        objectMetadataCollection,
-        workspaceResolverMethodNames,
-      ),
-    });
+    this.gqlTypesStorage.addGqlType(
+      objectTypeName,
+      new GraphQLObjectType({
+        name: objectTypeName.toString(),
+        fields: this.generateFields(
+          objectMetadataCollection,
+          workspaceResolverMethodNames,
+        ),
+      }),
+    );
   }
 
   private generateFields(
