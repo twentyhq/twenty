@@ -2,20 +2,25 @@ import styled from '@emotion/styled';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{
+  shouldDisplayBorderBottom: boolean;
+}>`
   align-items: center;
   display: flex;
   height: 32px;
@@ -23,18 +28,20 @@ const StyledContainer = styled.div`
   min-width: 24px;
   padding-right: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+    shouldDisplayBorderBottom
+      ? `1px solid ${theme.border.color.light}`
+      : 'none'};
 `;
 
-const StyledColumnHeaderCell = styled.div<{
-  isFirstRowActiveOrFocused: boolean;
-}>`
+const StyledColumnHeaderCell = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
 
   min-width: 32px;
   box-sizing: border-box;
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  cursor: pointer;
+
   max-height: 32px;
 `;
 
@@ -84,17 +91,35 @@ export const RecordTableHeaderCheckboxColumn = () => {
     0,
   );
 
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
   return (
     <StyledColumnHeaderCell
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
       className={cx(
         'header-cell',
         RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
       )}
     >
-      <StyledContainer data-select-disable>
+      <StyledContainer
+        shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+        data-select-disable
+      >
         <Checkbox
           hoverable
           checked={checked}

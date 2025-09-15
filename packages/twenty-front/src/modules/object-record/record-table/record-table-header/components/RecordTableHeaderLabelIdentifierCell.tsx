@@ -7,11 +7,15 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableHeaderLabelIdentifierCellPlusButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
 import { useState } from 'react';
 import { findByProperty } from 'twenty-shared/utils';
@@ -21,6 +25,8 @@ const StyledColumnHeadContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   overflow: hidden;
+
+  cursor: pointer;
 
   & > :first-of-type {
     flex: 1;
@@ -49,11 +55,27 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
     findByProperty('fieldMetadataItemId', labelIdentifierFieldMetadataItem?.id),
   );
 
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+
   if (!recordField) {
     return <></>;
   }
-
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
   return (
     <RecordTableHeaderCellContainer
@@ -61,7 +83,7 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
       key={recordField.fieldMetadataItemId}
       onMouseEnter={() => setIconIsVisible(true)}
       onMouseLeave={() => setIconIsVisible(false)}
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown
