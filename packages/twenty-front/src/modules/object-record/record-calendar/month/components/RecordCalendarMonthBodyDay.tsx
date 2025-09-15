@@ -1,3 +1,5 @@
+import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -12,5 +14,14 @@ type RecordCalendarMonthBodyDayProps = {
 export const RecordCalendarMonthBodyDay = ({
   day,
 }: RecordCalendarMonthBodyDayProps) => {
-  return <StyledContainer>{day.getDate()}</StyledContainer>;
+  const recordIds = useRecoilComponentFamilyValue(
+    calendarDayRecordIdsComponentFamilySelector,
+    day.toDateString(),
+  );
+
+  return (
+    <StyledContainer>
+      {day.getDate()}: {recordIds.length}
+    </StyledContainer>
+  );
 };

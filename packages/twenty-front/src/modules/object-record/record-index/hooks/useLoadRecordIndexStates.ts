@@ -5,6 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
@@ -37,6 +38,10 @@ export const useLoadRecordIndexStates = () => {
   );
   const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
     recordIndexKanbanFieldMetadataIdState,
+  );
+
+  const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilState(
+    recordIndexCalendarFieldMetadataIdState,
   );
   const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
     recordIndexKanbanAggregateOperationState,
@@ -181,6 +186,9 @@ export const useLoadRecordIndexStates = () => {
         setRecordIndexOpenRecordIn(view.openRecordIn);
         setRecordIndexViewKanbanFieldMetadataIdState(
           view.viewGroups?.[0]?.fieldMetadataId,
+        );
+        setRecordIndexCalendarFieldMetadataIdState(
+          view.calendarFieldMetadataId ?? null,
         );
         const kanbanAggregateOperationFieldMetadataType =
           objectMetadataItem.fields?.find(
