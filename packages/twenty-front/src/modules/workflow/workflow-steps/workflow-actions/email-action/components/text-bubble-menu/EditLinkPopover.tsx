@@ -7,6 +7,7 @@ import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPencil } from 'twenty-ui/display';
 
 type EditLinkPopoverProps = {
@@ -30,7 +31,7 @@ export const EditLinkPopover = ({
   ) => {
     event.preventDefault();
 
-    if (!value) {
+    if (!isDefined(value)) {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
     } else {
       editor

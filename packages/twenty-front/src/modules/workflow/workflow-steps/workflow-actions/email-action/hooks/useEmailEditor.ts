@@ -20,10 +20,19 @@ type UseEmailEditorProps = {
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
   onUpdate: (editor: Editor) => void;
+  onFocus?: (editor: Editor) => void;
+  onBlur?: (editor: Editor) => void;
 };
 
 export const useEmailEditor = (
-  { placeholder, readonly, defaultValue, onUpdate }: UseEmailEditorProps,
+  {
+    placeholder,
+    readonly,
+    defaultValue,
+    onUpdate,
+    onFocus,
+    onBlur,
+  }: UseEmailEditorProps,
   dependencies?: DependencyList,
 ) => {
   const editor = useEditor(
@@ -57,6 +66,12 @@ export const useEmailEditor = (
       editable: !readonly,
       onUpdate: ({ editor }) => {
         onUpdate(editor);
+      },
+      onFocus: ({ editor }) => {
+        onFocus?.(editor);
+      },
+      onBlur: ({ editor }) => {
+        onBlur?.(editor);
       },
       editorProps: {
         scrollThreshold: 60,

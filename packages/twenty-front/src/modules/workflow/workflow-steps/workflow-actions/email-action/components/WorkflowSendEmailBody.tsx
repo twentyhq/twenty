@@ -7,6 +7,9 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -20,7 +23,7 @@ import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/
 import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
@@ -91,10 +94,13 @@ export const WorkflowSendEmailBody = ({
   readonly,
   VariablePicker,
 }: WorkflowSendEmailBodyProps) => {
+  const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const fullScreenOverlayRef = useRef<HTMLDivElement>(null);
 
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
@@ -102,7 +108,6 @@ export const WorkflowSendEmailBody = ({
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
 
-  const instanceId = useId();
   const editor = useEmailEditor(
     {
       placeholder: placeholder ?? 'Enter email',
@@ -111,6 +116,21 @@ export const WorkflowSendEmailBody = ({
       onUpdate: (editor) => {
         const jsonContent = editor.getJSON();
         onChange(JSON.stringify(jsonContent));
+      },
+      onFocus: () => {
+        pushFocusItemToFocusStack({
+          focusId: instanceId,
+          component: {
+            type: FocusComponentType.FORM_FIELD_INPUT,
+            instanceId: instanceId,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
+        });
+      },
+      onBlur: () => {
+        removeFocusItemFromFocusStackById({ focusId: instanceId });
       },
     },
     [isFullScreen],
@@ -151,7 +171,6 @@ export const WorkflowSendEmailBody = ({
   const fullScreenOverlay = isFullScreen
     ? createPortal(
         <StyledFullScreenOverlay
-          ref={fullScreenOverlayRef}
           data-globally-prevent-click-outside="true"
           tabIndex={-1}
         >

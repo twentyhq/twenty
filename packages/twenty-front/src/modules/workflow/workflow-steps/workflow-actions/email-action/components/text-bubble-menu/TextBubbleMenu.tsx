@@ -53,9 +53,7 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
     },
   ];
 
-  const handleShouldShow = () => {
-    return isTextSelected({ editor });
-  };
+  const handleShouldShow = () => isTextSelected({ editor });
 
   return (
     <BubbleMenu
