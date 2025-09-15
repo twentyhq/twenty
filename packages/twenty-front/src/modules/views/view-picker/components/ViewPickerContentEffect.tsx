@@ -32,8 +32,10 @@ export const ViewPickerContentEffect = () => {
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
     useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
 
-  const [viewPickerCalendarFieldMetadataId, setViewPickerCalendarFieldMetadataId] =
-    useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  const [
+    viewPickerCalendarFieldMetadataId,
+    setViewPickerCalendarFieldMetadataId,
+  ] = useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
 
   const [viewPickerType, setViewPickerType] = useRecoilComponentState(
     viewPickerTypeComponentState,
@@ -112,7 +114,8 @@ export const ViewPickerContentEffect = () => {
       viewPickerCalendarFieldMetadataId === ''
     ) {
       setViewPickerCalendarFieldMetadataId(
-        isDefined(referenceView.calendarFieldMetadataId) && referenceView.calendarFieldMetadataId !== ''
+        isDefined(referenceView.calendarFieldMetadataId) &&
+          referenceView.calendarFieldMetadataId !== ''
           ? referenceView.calendarFieldMetadataId
           : availableFieldsForCalendar[0].id,
       );

@@ -16,8 +16,9 @@ export const RecordCalendarTopBar = () => {
     RecordCalendarComponentInstanceContext,
   );
 
-
-  const recordCalendarLayout = useRecoilValue(recordIndexCalendarLayoutState);
+  const recordIndexCalendarLayout = useRecoilValue(
+    recordIndexCalendarLayoutState,
+  );
 
   return (
     <StyledContainer>
@@ -39,7 +40,7 @@ export const RecordCalendarTopBar = () => {
           },
         ]}
         disabled
-        value={recordCalendarLayout}
+        value={recordIndexCalendarLayout}
         onChange={() => {}}
       />
     </StyledContainer>
