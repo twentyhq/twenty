@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { OptimisticallyApplyActionOnAllFlatEntityMapsArgs, WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
-
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -42,14 +44,15 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       (createFieldAction) => createFieldAction.flatFieldMetadata,
     );
 
-    const updatedFlatObjectMetadataMaps = addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-      flatObjectMetadata: {
-        ...flatObjectMetadataWithoutFields,
-        flatIndexMetadatas: [],
-        flatFieldMetadatas,
-      },
-      flatObjectMetadataMaps,
-    });
+    const updatedFlatObjectMetadataMaps =
+      addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadata: {
+          ...flatObjectMetadataWithoutFields,
+          flatIndexMetadatas: [],
+          flatFieldMetadatas,
+        },
+        flatObjectMetadataMaps,
+      });
 
     return {
       ...allFlatEntityMaps,

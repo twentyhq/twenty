@@ -4,10 +4,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
-import { OptimisticallyApplyActionOnAllFlatEntityMapsArgs, WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -31,17 +33,17 @@ import { FlatFieldMetadataPropertyUpdate } from 'src/engine/workspace-manager/wo
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
 import {
-    WorkspaceMigrationRunnerException,
-    WorkspaceMigrationRunnerExceptionCode,
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
-    collectEnumOperationsForField,
-    EnumOperation,
-    executeBatchEnumOperations,
+  collectEnumOperationsForField,
+  EnumOperation,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
 
 type UpdateFieldPropertyUpdateHandlerArgs<
@@ -72,11 +74,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
     const { fieldMetadataId, objectMetadataId } = action;
 
-    const existingFlatFieldMetadata = findFlatFieldMetadataInFlatObjectMetadataMaps({
-      fieldMetadataId,
-      objectMetadataId,
-      flatObjectMetadataMaps,
-    });
+    const existingFlatFieldMetadata =
+      findFlatFieldMetadataInFlatObjectMetadataMaps({
+        fieldMetadataId,
+        objectMetadataId,
+        flatObjectMetadataMaps,
+      });
 
     if (!isDefined(existingFlatFieldMetadata)) {
       throw new WorkspaceMigrationRunnerException(
@@ -90,10 +93,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
     };
 
-    const updatedFlatObjectMetadataMaps = replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-      flatFieldMetadata: updatedFlatFieldMetadata,
-      flatObjectMetadataMaps,
-    });
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+        flatFieldMetadata: updatedFlatFieldMetadata,
+        flatObjectMetadataMaps,
+      });
 
     if (!isDefined(updatedFlatObjectMetadataMaps)) {
       throw new WorkspaceMigrationRunnerException(
@@ -128,8 +132,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps: {flatObjectMetadataMaps}, workspaceId } =
-      context;
+    const {
+      action,
+      queryRunner,
+      allFlatEntityMaps: { flatObjectMetadataMaps },
+      workspaceId,
+    } = context;
     const { objectMetadataId, fieldMetadataId, updates } = action;
 
     const flatObjectMetadataWithFlatFieldMaps =

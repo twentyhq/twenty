@@ -31,6 +31,7 @@ export class WorkspaceMigrationRunnerV2Service {
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
       });
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
@@ -46,6 +47,7 @@ export class WorkspaceMigrationRunnerV2Service {
               workspaceId,
             },
           );
+
         allFlatEntityMaps = newOptimisticCache;
       }
 

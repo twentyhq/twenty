@@ -1,8 +1,8 @@
 import { SetMetadata } from '@nestjs/common';
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import {
-  WorkspaceMigrationActionV2,
+  type WorkspaceMigrationActionV2,
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
