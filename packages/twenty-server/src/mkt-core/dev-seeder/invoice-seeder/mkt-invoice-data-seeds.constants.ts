@@ -1,4 +1,3 @@
-
 type MktInvoiceDataSeed = {
   id: string;
   name: string;

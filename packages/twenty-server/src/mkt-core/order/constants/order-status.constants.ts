@@ -31,7 +31,7 @@ export const ORDER_STATUS_OPTIONS = [
     label: 'Draft',
     color: 'gray' as TagColor,
     position: 0,
-  },  
+  },
   {
     value: ORDER_STATUS.CONFIRMED,
     label: 'Confirmed',
@@ -73,7 +73,7 @@ export const ORDER_STATUS_OPTIONS = [
     label: 'Cancelled',
     color: 'orange' as TagColor,
     position: 7,
-  }
+  },
 ];
 
 export enum SINVOICE_STATUS {

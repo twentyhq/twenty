@@ -1,14 +1,17 @@
-import { UpdateOneResolverArgs } from "src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface";
-import { ORDER_ACTION,ORDER_STATUS } from "../constants/order-status.constants";
-import { MktOrderWorkspaceEntity } from "../objects/mkt-order.workspace-entity";
+import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+
+import {
+  ORDER_ACTION,
+  ORDER_STATUS,
+} from '../constants/order-status.constants';
+import { MktOrderWorkspaceEntity } from '../objects/mkt-order.workspace-entity';
 
 export class OrderPayloadService {
-  constructor(
-  ) {}
+  constructor() {}
 
   async getNewPayload(
     payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
-    action: ORDER_ACTION | null
+    action: ORDER_ACTION | null,
   ): Promise<UpdateOneResolverArgs<Partial<MktOrderWorkspaceEntity>>> {
     const input = payload.data;
 
@@ -18,7 +21,7 @@ export class OrderPayloadService {
         ...payload,
         data: {
           status: ORDER_STATUS.DRAFT,
-          trialLicense: false
+          trialLicense: false,
         },
       };
     }
@@ -30,7 +33,7 @@ export class OrderPayloadService {
         data: {
           ...payload.data,
           status: ORDER_STATUS.CONFIRMED,
-          trialLicense: false
+          trialLicense: false,
         },
       };
     }
@@ -42,7 +45,7 @@ export class OrderPayloadService {
         data: {
           ...payload.data,
           status: ORDER_STATUS.CONFIRMED,
-          trialLicense: true
+          trialLicense: true,
         },
       };
     }
@@ -53,7 +56,7 @@ export class OrderPayloadService {
         ...payload,
         data: {
           ...payload.data,
-          trialLicense: false
+          trialLicense: false,
         },
       };
     }
@@ -80,11 +83,11 @@ export class OrderPayloadService {
 
     //PAID
     if (action === ORDER_ACTION.PAID) {
-        return {
-          ...payload,
-          data: {
-            status: ORDER_STATUS.PAID,
-          },
+      return {
+        ...payload,
+        data: {
+          status: ORDER_STATUS.PAID,
+        },
       };
     }
 
