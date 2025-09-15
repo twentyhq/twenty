@@ -11,6 +11,7 @@ import type {
   ToolEvent,
   ToolResultEvent,
 } from '@/ai/types/streamTypes';
+import { extractErrorMessage } from '@/ai/utils/extractErrorMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 
 const StyledContainer = styled.div`
@@ -138,7 +139,7 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
           <StyledContentContainer>
             {isStandardizedFormat ? (
               <>
-                {hasError && <div>{toolOutput.error}</div>}
+                {hasError && <div>{extractErrorMessage(toolOutput.error)}</div>}
                 {hasResult && (
                   <div>
                     <StyledPre>
