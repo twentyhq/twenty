@@ -47,7 +47,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-
 export const GraphWidgetBarChart = ({
   data,
   indexBy,
