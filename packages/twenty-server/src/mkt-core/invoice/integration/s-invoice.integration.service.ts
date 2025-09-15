@@ -218,16 +218,27 @@ export class SInvoiceIntegrationService {
         headers,
       });
 
-      const response = res.data || {};
+      const response: CreateInvoiceResponse = res.data ?? ({} as CreateInvoiceResponse);
+      const result = (response.result ?? {}) as {
+        supplierTaxCode?: string;
+        invoiceNo?: string;
+        transactionID?: string;
+        reservationCode?: string;
+        codeOfTax?: string;
+      };
 
       sInvoiceUpdate = {
-        errorCode: response?.errorCode,
-        description: response?.description,
-        supplierTaxCode: response?.result?.supplierTaxCode,
-        invoiceNo: response?.result?.invoiceNo,
-        transactionID: response?.result?.transactionID,
-        reservationCode: response?.result?.reservationCode,
-        codeOfTax: response?.result?.codeOfTax,
+        errorCode:
+          response?.errorCode != null ? String(response.errorCode) : undefined,
+        description:
+          typeof response?.description === 'string'
+            ? response.description
+            : undefined,
+        supplierTaxCode: result?.supplierTaxCode,
+        invoiceNo: result?.invoiceNo,
+        transactionID: result?.transactionID,
+        reservationCode: result?.reservationCode,
+        codeOfTax: result?.codeOfTax,
         errorMessage: null,
         errorData: null,
         orderSInvoiceStatus: ORDER_SINVOICE_STATUS.SUCCESS,
@@ -236,17 +247,19 @@ export class SInvoiceIntegrationService {
         `[S-INVOICE] Response: ${JSON.stringify(sInvoiceUpdate)}`,
       );
     } catch (error: unknown) {
-      const err = error as { response?: { data?: unknown }; message?: string };
-      const errMsg = err?.response?.data || err?.message;
+      type ErrorShape = { code?: string | number; message?: string; description?: string; data?: unknown };
+      const err = error as { response?: { data?: ErrorShape }; message?: string };
+      const errMsg: ErrorShape = err?.response?.data || { message: err?.message };
 
       this.logger.error(
         `Create S-Invoice failed for order ${orderId}: ${JSON.stringify(errMsg)}`,
       );
 
       sInvoiceUpdate = {
-        errorCode: errMsg?.code,
+        errorCode: errMsg?.code != null ? String(errMsg.code) : undefined,
         errorMessage: errMsg?.message,
-        errorData: errMsg?.data,
+        errorData:
+          errMsg?.data != null ? JSON.stringify(errMsg.data) : undefined,
         orderSInvoiceStatus: ORDER_SINVOICE_STATUS.FAILED,
       };
       this.logger.log(
@@ -414,8 +427,9 @@ export class SInvoiceIntegrationService {
 
       return result;
     } catch (error: unknown) {
-      const err = error as { response?: { data?: unknown }; message?: string };
-      const errMsg = err?.response?.data || err?.message;
+      type ErrorShape2 = { errorCode?: number; description?: string; message?: string };
+      const err = error as { response?: { data?: ErrorShape2 }; message?: string };
+      const errMsg: ErrorShape2 = err?.response?.data || { message: err?.message };
 
       this.logger.error(
         `[S-INVOICE SERVICE] Failed to get invoice file for invoiceNo ${invoiceNo}: ${JSON.stringify(errMsg)}`,
