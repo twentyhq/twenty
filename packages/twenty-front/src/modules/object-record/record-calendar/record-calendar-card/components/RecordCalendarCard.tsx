@@ -4,6 +4,7 @@ import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-c
 import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardHeader';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -12,6 +13,7 @@ const StyledContainer = styled.div`
 
 const StyledRecordCard = styled(RecordCard)`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
+  width: calc(100% - 2px);
 `;
 
 type RecordCalendarCardProps = {
@@ -19,6 +21,12 @@ type RecordCalendarCardProps = {
 };
 
 export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+
+  const handleCardClick = () => {
+    openRecordFromIndexView({ recordId });
+  };
+
   return (
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{
@@ -26,7 +34,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
       }}
     >
       <StyledContainer>
-        <StyledRecordCard>
+        <StyledRecordCard onClick={handleCardClick}>
           <RecordCalendarCardHeader recordId={recordId} />
           <RecordCalendarCardBody
             recordId={recordId}
