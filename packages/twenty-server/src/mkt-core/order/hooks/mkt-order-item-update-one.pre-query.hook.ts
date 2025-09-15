@@ -204,7 +204,7 @@ export class MktOrderItemUpdateOnePreQueryHook
     workspaceId: string,
     mktVariant?: MktVariantWorkspaceEntity | null,
   ): Promise<MktVariantWorkspaceEntity | null> {
-    const { mktVariantId, id: orderItemId } = input;
+    const { mktVariantId, id: _orderItemId } = input;
 
     if (mktVariantId) {
       const variantRepository =

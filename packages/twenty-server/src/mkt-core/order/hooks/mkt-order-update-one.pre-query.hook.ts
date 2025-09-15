@@ -1,4 +1,4 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject,Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -518,7 +518,7 @@ export class MktOrderUpdateOnePreQueryHook
     currentOrder: MktOrderWorkspaceEntity | null,
     action: ORDER_ACTION | null,
   ): Promise<void> {
-    const input = payload.data;
+    const _input = payload.data;
 
     if (action !== ORDER_ACTION.TRIAL) {
       return;
@@ -538,7 +538,7 @@ export class MktOrderUpdateOnePreQueryHook
     currentOrder: MktOrderWorkspaceEntity | null,
     action: ORDER_ACTION | null,
   ): Promise<void> {
-    const input = payload.data;
+    const _input = payload.data;
 
     if (action !== ORDER_ACTION.PAID) {
       return;
