@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
 
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
+import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
+import { cx } from '@linaria/core';
 import { IconPlus } from 'twenty-ui/display';
 
 const StyledPlusIconHeaderCell = styled.div<{
@@ -66,7 +68,10 @@ export const RecordTableHeaderAddColumnButton = () => {
   return (
     <StyledPlusIconHeaderCell
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
-      className="header-cell"
+      className={cx(
+        'header-cell',
+        RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME,
+      )}
     >
       <StyledDropdownContainer>
         <Dropdown

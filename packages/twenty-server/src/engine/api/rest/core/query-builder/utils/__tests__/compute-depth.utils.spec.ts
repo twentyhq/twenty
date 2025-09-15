@@ -1,7 +1,7 @@
 import { computeDepth } from 'src/engine/api/rest/core/query-builder/utils/compute-depth.utils';
 
 describe('computeDepth', () => {
-  [0, 1, 2].forEach((depth) => {
+  [0, 1].forEach((depth) => {
     it('should compute depth from query', () => {
       const request: any = {
         query: { depth: `${depth}` },

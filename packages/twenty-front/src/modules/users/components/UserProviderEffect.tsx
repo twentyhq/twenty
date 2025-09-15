@@ -118,9 +118,9 @@ export const UserProviderEffect = () => {
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
         ...queryData.currentUser.currentUserWorkspace,
-        objectPermissions:
+        objectsPermissions:
           (queryData.currentUser.currentUserWorkspace
-            .objectPermissions as Array<
+            .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });

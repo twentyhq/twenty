@@ -5,6 +5,7 @@ import {
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
   type workflowDeleteRecordActionSchema,
+  type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
   type workflowFindRecordsActionSchema,
   type workflowFormActionSchema,
@@ -47,6 +48,7 @@ export type WorkflowIteratorAction = z.infer<
   typeof workflowIteratorActionSchema
 >;
 export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
+export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
 export type WorkflowAction =
   | WorkflowCodeAction
@@ -59,7 +61,8 @@ export type WorkflowAction =
   | WorkflowFormAction
   | WorkflowHttpRequestAction
   | WorkflowAiAgentAction
-  | WorkflowIteratorAction;
+  | WorkflowIteratorAction
+  | WorkflowEmptyAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;

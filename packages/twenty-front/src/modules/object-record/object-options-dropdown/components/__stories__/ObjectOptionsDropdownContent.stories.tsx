@@ -98,6 +98,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
             objectNameSingular: 'company',
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            viewBarInstanceId: instanceId,
             fieldDefinitionByFieldMetadataItemId,
             fieldMetadataItemByFieldMetadataItemId,
             labelIdentifierFieldMetadataItem,

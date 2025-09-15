@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 import {
@@ -51,7 +52,10 @@ export class GraphqlQueryOrderFieldParser {
 
             Object.assign(acc, compositeOrder);
           } else {
-            acc[`"${objectNameSingular}"."${key}"`] =
+            const orderByCasting =
+              this.getOptionalOrderByCasting(fieldMetadata);
+
+            acc[`"${objectNameSingular}"."${key}"${orderByCasting}`] =
               this.convertOrderByToFindOptionsOrder(
                 value as OrderByDirection,
                 isForwardPagination,
@@ -63,6 +67,19 @@ export class GraphqlQueryOrderFieldParser {
       },
       {} as Record<string, string>,
     );
+  }
+
+  private getOptionalOrderByCasting(
+    fieldMetadata: Pick<FieldMetadataEntity, 'type'>,
+  ): string {
+    if (
+      fieldMetadata.type === FieldMetadataType.SELECT ||
+      fieldMetadata.type === FieldMetadataType.MULTI_SELECT
+    ) {
+      return '::text';
+    }
+
+    return '';
   }
 
   private parseCompositeFieldForOrder(

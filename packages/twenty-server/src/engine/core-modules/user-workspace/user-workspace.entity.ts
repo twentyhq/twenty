@@ -102,14 +102,11 @@ export class UserWorkspace {
   @Field(() => [PermissionFlagType], { nullable: true })
   permissionFlags?: PermissionFlagType[];
 
-  @Field(() => [PermissionsOnAllObjectRecords], {
-    nullable: true,
-    deprecationReason: 'Use objectPermissions instead',
-  })
-  objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
-
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];
+
+  @Field(() => [ObjectPermissionDTO], { nullable: true })
+  objectsPermissions?: ObjectPermissionDTO[];
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDto], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDto[];

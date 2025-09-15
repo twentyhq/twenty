@@ -13,6 +13,7 @@ import { InformationBannerWrapper } from '@/information-banner/components/Inform
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
+import { RecordIndexCalendarContainer } from '@/object-record/record-index/components/RecordIndexCalendarContainer';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -66,10 +67,7 @@ export const RecordIndexContainer = () => {
         <RecordIndexFiltersToContextStoreEffect />
         {recordIndexViewType === ViewType.Table && (
           <>
-            <RecordIndexTableContainer
-              recordTableId={recordIndexId}
-              viewBarId={recordIndexId}
-            />
+            <RecordIndexTableContainer recordTableId={recordIndexId} />
             <RecordIndexTableContainerEffect />
           </>
         )}
@@ -85,6 +83,14 @@ export const RecordIndexContainer = () => {
               recordBoardId={recordIndexId}
             />
             <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
+          </StyledContainerWithPadding>
+        )}
+        {recordIndexViewType === ViewType.Calendar && (
+          <StyledContainerWithPadding>
+            <RecordIndexCalendarContainer
+              recordCalendarInstanceId={recordIndexId}
+              viewBarInstanceId={recordIndexId}
+            />
           </StyledContainerWithPadding>
         )}
       </StyledContainer>

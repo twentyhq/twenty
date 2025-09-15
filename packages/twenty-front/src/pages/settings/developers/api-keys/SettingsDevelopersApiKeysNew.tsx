@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { addDays } from 'date-fns';
 import { useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -72,9 +72,10 @@ export const SettingsDevelopersApiKeysNew = () => {
   );
 
   const handleSave = async () => {
-    const expiresAt = DateTime.now()
-      .plus({ days: formValues.expirationDate ?? 30 })
-      .toString();
+    const expiresAt = addDays(
+      new Date(),
+      formValues.expirationDate ?? 30,
+    ).toISOString();
 
     const roleIdToUse = formValues.roleId;
 

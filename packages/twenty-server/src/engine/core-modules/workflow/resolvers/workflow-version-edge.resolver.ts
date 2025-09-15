@@ -36,13 +36,19 @@ export class WorkflowVersionEdgeResolver {
   async createWorkflowVersionEdge(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
-    { source, target, workflowVersionId }: CreateWorkflowVersionEdgeInput,
+    {
+      source,
+      target,
+      workflowVersionId,
+      sourceConnectionOptions,
+    }: CreateWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
     return this.workflowVersionEdgeWorkspaceService.createWorkflowVersionEdge({
       source,
       target,
       workflowVersionId,
       workspaceId,
+      sourceConnectionOptions,
     });
   }
 

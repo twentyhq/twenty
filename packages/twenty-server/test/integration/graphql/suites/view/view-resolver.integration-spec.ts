@@ -237,7 +237,6 @@ describe('View Resolver', () => {
         name: 'Updated View',
         type: ViewType.KANBAN,
         isCompact: true,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const operation = updateViewOperationFactory({
