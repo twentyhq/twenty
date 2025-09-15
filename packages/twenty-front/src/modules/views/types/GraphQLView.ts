@@ -32,4 +32,5 @@ export type GraphQLView = {
   icon: string;
   anyFieldFilterValue?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
+  calendarFieldMetadataId?: string | null;
 };
