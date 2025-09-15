@@ -24,6 +24,9 @@ export type LinkChipProps = Omit<
 const StyledLink = styled(Link)`
   display: inline-flex;
   text-decoration: none;
+  max-width: calc(100% - 2 * var(--chip-horizontal-padding));
+  min-width: 0;
+  flex-grow: 1;
 `;
 
 export const LinkChip = ({
