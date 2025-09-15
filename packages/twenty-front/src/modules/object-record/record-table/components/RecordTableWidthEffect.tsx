@@ -1,21 +1,23 @@
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RecordTableResizeEffect = () => {
+export const RecordTableWidthEffect = () => {
   const setRecordTableWidth = useSetRecoilComponentState(
     recordTableWidthComponentState,
   );
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
     const tableWidth = scrollWrapperHTMLElement?.clientWidth ?? 0;
 
-    setRecordTableWidth(tableWidth);
+    if (tableWidth > 0) {
+      setRecordTableWidth(tableWidth);
+    }
 
     const tableResizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {

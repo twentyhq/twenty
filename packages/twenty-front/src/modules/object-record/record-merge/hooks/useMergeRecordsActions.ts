@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
@@ -7,6 +7,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -27,12 +28,15 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
+  const setMergeInProgress = useSetRecoilState(isMergeInProgressState);
+
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { closeCommandMenu } = useCommandMenu();
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
+    setMergeInProgress(true);
     try {
       const mergedRecord = await mergeManyRecords({
         recordIds: selectedRecords.map((record) => record.id),
@@ -62,6 +66,8 @@ export const useMergeRecordsActions = ({
             ? error.message
             : 'Failed to merge records. Please try again.',
       });
+    } finally {
+      setMergeInProgress(false);
     }
   };
 

@@ -54,6 +54,12 @@ export const ObjectOptionsDropdownCustomView = ({
     recordGroupFieldMetadataComponentState,
   );
 
+  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.calendarFieldMetadataId,
+      )
+    : undefined;
+
   const isDefaultView = currentView?.key === ViewKey.Index;
 
   const { visibleBoardFields } = useObjectOptionsForBoard({
@@ -82,8 +88,11 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const selectableItemIdArray = [
     'Layout',
-    'Fields',
-    'Group',
+    ...(customViewData?.type !== ViewType.Calendar ? ['Fields'] : []),
+    ...(customViewData?.type === ViewType.Calendar
+      ? ['CalendarDateField']
+      : []),
+    ...(customViewData?.type !== ViewType.Calendar ? ['Group'] : []),
     'Copy link to view',
     'Delete view',
   ];
@@ -125,47 +134,73 @@ export const ObjectOptionsDropdownCustomView = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <SelectableListItem
-            itemId="Fields"
-            onEnter={() => onContentChange('fields')}
-          >
-            <MenuItem
-              focused={selectedItemId === 'Fields'}
-              onClick={() => onContentChange('fields')}
-              LeftIcon={IconListDetails}
-              text={t`Fields`}
-              contextualText={`${visibleBoardFields.length} shown`}
-              hasSubMenu
-            />
-          </SelectableListItem>
-          <div id="group-by-menu-item">
+          {customViewData?.type !== ViewType.Calendar && (
             <SelectableListItem
-              itemId="Group"
-              onEnter={() =>
-                isDefined(recordGroupFieldMetadata)
-                  ? onContentChange('recordGroups')
-                  : onContentChange('recordGroupFields')
-              }
+              itemId="Fields"
+              onEnter={() => onContentChange('fields')}
             >
               <MenuItem
-                focused={selectedItemId === 'Group'}
-                onClick={() =>
+                focused={selectedItemId === 'Fields'}
+                onClick={() => onContentChange('fields')}
+                LeftIcon={IconListDetails}
+                text={t`Fields`}
+                contextualText={`${visibleBoardFields.length} shown`}
+                hasSubMenu
+              />
+            </SelectableListItem>
+          )}
+          {customViewData?.type === ViewType.Calendar && (
+            <div id="calendar-date-field-picker-menu-item">
+              <SelectableListItem
+                itemId="CalendarDateField"
+                onEnter={() => onContentChange('calendarFields')}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'CalendarDateField'}
+                  onClick={() => onContentChange('calendarFields')}
+                  LeftIcon={IconLayoutList}
+                  text={t`Date field`}
+                  contextualText={
+                    isDefaultView
+                      ? t`Not available on Default View`
+                      : calendarFieldMetadata?.label
+                  }
+                  hasSubMenu
+                  disabled={isDefaultView}
+                />
+              </SelectableListItem>
+            </div>
+          )}
+          {customViewData?.type !== ViewType.Calendar && (
+            <div id="group-by-menu-item">
+              <SelectableListItem
+                itemId="Group"
+                onEnter={() =>
                   isDefined(recordGroupFieldMetadata)
                     ? onContentChange('recordGroups')
                     : onContentChange('recordGroupFields')
                 }
-                LeftIcon={IconLayoutList}
-                text={t`Group`}
-                contextualText={
-                  isDefaultView
-                    ? t`Not available on Default View`
-                    : recordGroupFieldMetadata?.label
-                }
-                hasSubMenu
-                disabled={isDefaultView}
-              />
-            </SelectableListItem>
-          </div>
+              >
+                <MenuItem
+                  focused={selectedItemId === 'Group'}
+                  onClick={() =>
+                    isDefined(recordGroupFieldMetadata)
+                      ? onContentChange('recordGroups')
+                      : onContentChange('recordGroupFields')
+                  }
+                  LeftIcon={IconLayoutList}
+                  text={t`Group`}
+                  contextualText={
+                    isDefaultView
+                      ? t`Not available on Default View`
+                      : recordGroupFieldMetadata?.label
+                  }
+                  hasSubMenu
+                  disabled={isDefaultView}
+                />
+              </SelectableListItem>
+            </div>
+          )}
           {isDefaultView && (
             <AppTooltip
               anchorSelect={`#group-by-menu-item`}

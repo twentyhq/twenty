@@ -4,7 +4,15 @@ import { ViewType as CoreViewType } from '~/generated/graphql';
 export const convertCoreViewTypeToViewType = (
   coreViewType: CoreViewType,
 ): ViewType => {
-  return coreViewType === CoreViewType.KANBAN
-    ? ViewType.Kanban
-    : ViewType.Table;
+  const coreViewTypeToViewTypeMapping = {
+    [CoreViewType.KANBAN]: ViewType.Kanban,
+    [CoreViewType.TABLE]: ViewType.Table,
+    [CoreViewType.CALENDAR]: ViewType.Calendar,
+  };
+
+  return (
+    coreViewTypeToViewTypeMapping[
+      coreViewType as keyof typeof coreViewTypeToViewTypeMapping
+    ] ?? ViewType.Table
+  );
 };

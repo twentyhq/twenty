@@ -6,6 +6,16 @@ describe('parseJson', () => {
     expect(result).toBeNull();
   });
 
+  it('if value is undefined', () => {
+    const result = parseJson(undefined);
+    expect(result).toBeNull();
+  });
+
+  it('if value is empty string null', () => {
+    const result = parseJson('');
+    expect(result).toBeNull();
+  });
+
   it('if value is number', () => {
     const result = parseJson(123);
     expect(result).toBe(123);

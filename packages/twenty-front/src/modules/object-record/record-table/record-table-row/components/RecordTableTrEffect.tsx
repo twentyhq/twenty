@@ -1,5 +1,5 @@
 import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useEffect } from 'react';
 
@@ -8,7 +8,7 @@ type RecordTableTrEffectProps = {
 };
 
 export const RecordTableTrEffect = ({ recordId }: RecordTableTrEffectProps) => {
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const setIsRowVisible = useSetRecoilComponentFamilyState(
     isRowVisibleComponentFamilyState,

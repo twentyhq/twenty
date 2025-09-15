@@ -4,4 +4,5 @@ export class WorkflowVersionEdgeException extends CustomException<WorkflowVersio
 
 export enum WorkflowVersionEdgeExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
+  INVALID_REQUEST = 'INVALID_REQUEST',
 }
