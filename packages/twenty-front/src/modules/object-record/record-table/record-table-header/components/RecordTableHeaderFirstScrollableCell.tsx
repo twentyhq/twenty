@@ -7,6 +7,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
@@ -50,15 +51,35 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const zIndex =
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const zIndexWithGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
-      ? TABLE_Z_INDEX.scrolledBothVerticallyAndHorizontally
+      ? TABLE_Z_INDEX.withGroups.scrolledBothVerticallyAndHorizontally
           .firstScrollableHeaderCell
       : isRecordTableScrolledHorizontally
-        ? TABLE_Z_INDEX.scrolledHorizontallyOnly.firstScrollableHeaderCell
+        ? TABLE_Z_INDEX.withGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
         : isRecordTableScrolledVertically
-          ? TABLE_Z_INDEX.scrolledVerticallyOnly.firstScrollableHeaderCell
-          : TABLE_Z_INDEX.noScrollAtAll.firstScrollableHeaderCell;
+          ? TABLE_Z_INDEX.withGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndexWithoutGroups =
+    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
+      ? TABLE_Z_INDEX.withoutGroups.scrolledBothVerticallyAndHorizontally
+          .firstScrollableHeaderCell
+      : isRecordTableScrolledHorizontally
+        ? TABLE_Z_INDEX.withoutGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
+        : isRecordTableScrolledVertically
+          ? TABLE_Z_INDEX.withoutGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withoutGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
   if (!recordField) {
     return <></>;
