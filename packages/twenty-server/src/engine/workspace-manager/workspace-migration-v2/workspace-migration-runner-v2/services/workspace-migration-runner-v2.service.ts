@@ -4,12 +4,11 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
+import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/registry/workspace-migration-runner-action-handler-registry.service';
-import { applyWorkspaceMigrationActionOnFlatObjectMetadataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-action-on-flat-object-metadata-maps';
 
 @Injectable()
 export class WorkspaceMigrationRunnerV2Service {
@@ -25,10 +24,10 @@ export class WorkspaceMigrationRunnerV2Service {
   run = async ({
     actions,
     workspaceId,
-  }: WorkspaceMigrationV2): Promise<FlatObjectMetadataMaps> => {
+  }: WorkspaceMigrationV2): Promise<AllFlatEntityMaps> => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    const allFlatEntityMaps =
+    let allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
       });
@@ -37,22 +36,17 @@ export class WorkspaceMigrationRunnerV2Service {
 
     try {
       for (const action of actions) {
-        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
-          action.type,
-          {
-            action,
-            allFlatEntityMaps,
-            queryRunner,
-            workspaceId,
-          },
-        );
-
-        optimisticFlatObjectMetadataMaps =
-          applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
-            action,
-            allFlatEntityMaps,
-            workspaceId,
-          });
+        const newOptimisticCache =
+          await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+            action.type,
+            {
+              action,
+              allFlatEntityMaps,
+              queryRunner,
+              workspaceId,
+            },
+          );
+        allFlatEntityMaps = newOptimisticCache;
       }
 
       await queryRunner.commitTransaction();
@@ -67,7 +61,7 @@ export class WorkspaceMigrationRunnerV2Service {
         },
       );
 
-      return optimisticFlatObjectMetadataMaps;
+      return allFlatEntityMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         try {

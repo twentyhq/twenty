@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { isDefined } from 'twenty-shared/utils';
+
+import { OptimisticallyApplyActionOnAllFlatEntityMapsArgs, WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { WorkspaceMigrationRunnerException, WorkspaceMigrationRunnerExceptionCode } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -14,9 +21,9 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
-  collectEnumOperationsForObject,
-  EnumOperation,
-  executeBatchEnumOperations,
+    collectEnumOperationsForObject,
+    EnumOperation,
+    executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
 
 @Injectable()
@@ -27,6 +34,41 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
+  }
+
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateObjectAction>): AllFlatEntityMaps {
+    const { flatObjectMetadataMaps } = allFlatEntityMaps;
+    const { objectMetadataId } = action;
+
+    const existingFlatObjectMetadata = findFlatObjectMetadataInFlatObjectMetadataMaps({
+      objectMetadataId,
+      flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(existingFlatObjectMetadata)) {
+      throw new WorkspaceMigrationRunnerException(
+        `Workspace migration failed: Object metadata not found in cache`,
+        WorkspaceMigrationRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    const updatedFlatObjectMetadata = {
+      ...existingFlatObjectMetadata,
+      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+    };
+
+    const updatedFlatObjectMetadataMaps = replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadata: updatedFlatObjectMetadata,
+      flatObjectMetadataMaps,
+    });
+
+    return {
+      ...allFlatEntityMaps,
+      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+    };
   }
 
   async executeForMetadata(

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { OptimisticallyApplyActionOnAllFlatEntityMapsArgs, WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -12,9 +15,9 @@ import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
-  collectEnumOperationsForObject,
-  EnumOperation,
-  executeBatchEnumOperations,
+    collectEnumOperationsForObject,
+    EnumOperation,
+    executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
 
 @Injectable()
@@ -25,6 +28,24 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
+  }
+
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteObjectAction>): AllFlatEntityMaps {
+    const { flatObjectMetadataMaps } = allFlatEntityMaps;
+    const { objectMetadataId } = action;
+
+    const updatedFlatObjectMetadataMaps = deleteObjectFromFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps,
+      objectMetadataId,
+    });
+
+    return {
+      ...allFlatEntityMaps,
+      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+    };
   }
 
   async executeForMetadata(
