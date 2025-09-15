@@ -5,6 +5,7 @@ import {
   type CoreViewFilter,
   type CoreViewFilterGroup,
   type CoreViewGroup,
+  type ViewCalendarLayout,
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewType,
@@ -30,6 +31,8 @@ export type CoreViewWithRelations = {
   viewSorts: CoreViewSortEssential[];
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
+  calendarFieldMetadataId?: string | null;
+  calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;
   openRecordIn: ViewOpenRecordIn;
