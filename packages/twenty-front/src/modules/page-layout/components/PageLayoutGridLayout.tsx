@@ -78,6 +78,14 @@ export const PageLayoutGridLayout = ({
 
   return (
     <StyledGridContainer ref={gridContainerRef}>
+      {isPageLayoutInEditMode && (
+        <>
+          <PageLayoutGridOverlay />
+          <PageLayoutGridLayoutDragSelector
+            gridContainerRef={gridContainerRef}
+          />
+        </>
+      )}
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
@@ -98,14 +106,6 @@ export const PageLayoutGridLayout = ({
         }
       >
         {children}
-        {isPageLayoutInEditMode && (
-          <>
-            <PageLayoutGridOverlay />
-            <PageLayoutGridLayoutDragSelector
-              gridContainerRef={gridContainerRef}
-            />
-          </>
-        )}
       </ResponsiveGridLayout>
     </StyledGridContainer>
   );
