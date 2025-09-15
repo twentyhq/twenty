@@ -11,8 +11,9 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   width: calc(100% / 7);
   flex-direction: column;
   min-height: 122px;
-  padding: ${({ theme }) => theme.spacing(0.5)};
+  padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.primary};
+  min-width: 0;
 
   &:not(:last-child) {
     border-right: 0.5px solid ${({ theme }) => theme.border.color.light};

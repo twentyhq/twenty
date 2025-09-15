@@ -1,3 +1,4 @@
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
@@ -5,7 +6,11 @@ import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-cal
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -22,7 +27,23 @@ export const RecordCalendarCardBody = ({
   recordId,
   isRecordReadOnly,
 }: RecordCalendarCardBodyProps) => {
-  const { objectPermissions } = useRecordCalendarContextOrThrow();
+  const { objectPermissions, objectMetadataItem } =
+    useRecordCalendarContextOrThrow();
+
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
+  const useUpdateOneRecordHook: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
 
   const {
     labelIdentifierFieldMetadataItem,
@@ -70,7 +91,7 @@ export const RecordCalendarCardBody = ({
                   },
                 }),
                 fieldDefinition: correspondingFieldDefinition,
-                useUpdateRecord: () => [() => undefined, { loading: false }],
+                useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,
                 triggerEvent: 'CLICK',
                 anchorId: `${RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
