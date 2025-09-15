@@ -1,7 +1,10 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { Select } from '@/ui/input/components/Select';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { ViewCalendarLayout } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -13,6 +16,10 @@ export const RecordCalendarTopBar = () => {
     RecordCalendarComponentInstanceContext,
   );
 
+  const recordIndexCalendarLayout = useRecoilValue(
+    recordIndexCalendarLayoutState,
+  );
+
   return (
     <StyledContainer>
       <Select
@@ -21,10 +28,19 @@ export const RecordCalendarTopBar = () => {
         options={[
           {
             label: 'Month',
-            value: 'MONTH',
+            value: ViewCalendarLayout.MONTH,
+          },
+          {
+            label: 'Week',
+            value: ViewCalendarLayout.WEEK,
+          },
+          {
+            label: 'Timeline',
+            value: ViewCalendarLayout.DAY,
           },
         ]}
-        value={''}
+        disabled
+        value={recordIndexCalendarLayout}
         onChange={() => {}}
       />
     </StyledContainer>
