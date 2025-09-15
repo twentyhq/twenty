@@ -1,5 +1,5 @@
 import { RecordCalendarMonthHeaderDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeaderDay';
-import { useRecordCalendarMonthWeekDays } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthWeekDays';
+import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -9,11 +9,11 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonthHeader = () => {
-  const { labels } = useRecordCalendarMonthWeekDays();
+  const { weekDayLabels } = useRecordCalendarMonthContextOrThrow();
 
   return (
     <StyledContainer>
-      {labels.map((label, index) => (
+      {weekDayLabels.map((label, index) => (
         <RecordCalendarMonthHeaderDay key={`label-${index}`} label={label} />
       ))}
     </StyledContainer>

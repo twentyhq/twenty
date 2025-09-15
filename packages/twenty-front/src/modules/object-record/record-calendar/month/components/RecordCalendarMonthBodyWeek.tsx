@@ -1,22 +1,27 @@
 import { RecordCalendarMonthBodyDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyDay';
+import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
 import { eachDayOfInterval, endOfWeek } from 'date-fns';
 
 const StyledContainer = styled.div`
   display: flex;
-  height: 24px;
+  min-height: 122px;
 `;
 
-type RecordCalendarMonthBodyRowProps = {
+type RecordCalendarMonthBodyWeekProps = {
   startDayOfWeek: Date;
 };
 
-export const RecordCalendarMonthBodyRow = ({
+export const RecordCalendarMonthBodyWeek = ({
   startDayOfWeek,
-}: RecordCalendarMonthBodyRowProps) => {
+}: RecordCalendarMonthBodyWeekProps) => {
+  const { weekStartsOnDayIndex } = useRecordCalendarMonthContextOrThrow();
+
   const daysOfWeek = eachDayOfInterval({
     start: startDayOfWeek,
-    end: endOfWeek(startDayOfWeek),
+    end: endOfWeek(startDayOfWeek, {
+      weekStartsOn: weekStartsOnDayIndex,
+    }),
   });
 
   return (

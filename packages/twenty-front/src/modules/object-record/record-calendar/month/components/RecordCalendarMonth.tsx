@@ -1,7 +1,7 @@
 import { RecordCalendarMonthBody } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBody';
 import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeader';
-import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
+import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -11,14 +11,34 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonth = () => {
-  const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
-    RecordCalendarComponentInstanceContext,
-  );
+  const currentDay = new Date();
+
+  const {
+    firstDayOfMonth,
+    lastDayOfMonth,
+    firstDayOfFirstWeek,
+    lastDayOfLastWeek,
+    weekDayLabels,
+    weekFirstDays,
+    weekStartsOnDayIndex,
+  } = useRecordCalendarMonthDaysRange(currentDay);
 
   return (
-    <StyledContainer>
-      <RecordCalendarMonthHeader />
-      <RecordCalendarMonthBody />
-    </StyledContainer>
+    <RecordCalendarMonthContextProvider
+      value={{
+        firstDayOfMonth,
+        lastDayOfMonth,
+        firstDayOfFirstWeek,
+        lastDayOfLastWeek,
+        weekDayLabels,
+        weekFirstDays,
+        weekStartsOnDayIndex,
+      }}
+    >
+      <StyledContainer>
+        <RecordCalendarMonthHeader />
+        <RecordCalendarMonthBody />
+      </StyledContainer>
+    </RecordCalendarMonthContextProvider>
   );
 };

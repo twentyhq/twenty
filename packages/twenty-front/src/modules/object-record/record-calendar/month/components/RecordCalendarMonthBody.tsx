@@ -1,6 +1,6 @@
-import { RecordCalendarMonthBodyRow } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyRow';
+import { RecordCalendarMonthBodyWeek } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyWeek';
+import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
-import { eachWeekOfInterval, endOfMonth, startOfMonth } from 'date-fns';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -9,19 +9,14 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonthBody = () => {
-  const firstDayOfMonth = startOfMonth(new Date());
-
-  const weeks = eachWeekOfInterval({
-    start: firstDayOfMonth,
-    end: endOfMonth(firstDayOfMonth),
-  });
+  const { weekFirstDays } = useRecordCalendarMonthContextOrThrow();
 
   return (
     <StyledContainer>
-      {weeks.map((week, index) => (
-        <RecordCalendarMonthBodyRow
-          key={`week-${index}`}
-          startDayOfWeek={week}
+      {weekFirstDays.map((weekFirstDay) => (
+        <RecordCalendarMonthBodyWeek
+          key={`week-${weekFirstDay.toDateString()}`}
+          startDayOfWeek={weekFirstDay}
         />
       ))}
     </StyledContainer>

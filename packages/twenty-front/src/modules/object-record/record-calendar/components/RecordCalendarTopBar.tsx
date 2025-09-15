@@ -17,6 +17,7 @@ export const RecordCalendarTopBar = () => {
     <StyledContainer>
       <Select
         dropdownId={`record-calendar-top-bar-layout-select-${recordCalendarId}`}
+        selectSizeVariant="small"
         options={[
           {
             label: 'Month',
