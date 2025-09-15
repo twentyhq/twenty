@@ -1,87 +1,79 @@
 import { TagColor } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum ORDER_STATUS {
-  ON_HOLD = 'ON_HOLD', // đơn hàng mới tạo, chờ xử lý
+  DRAFT = 'DRAFT', // đơn hàng mới tạo, chờ xử lý
+  CONFIRMED = 'CONFIRMED', // đã xác nhận
+  TRIAL = 'TRIAL', // đang ở trong giai đoạn trial
   PAID = 'PAID', // đã thanh toán thành công
-  FAILED = 'FAILED', // thanh toán thất bại
-  CANCELLED = 'CANCELLED', // bị huỷ (người mua/người bán)
-  FULFILLED = 'FULFILLED', // đã giao/hoàn thành phần giao dịch hàng hóa/dịch vụ
-  EXPIRED = 'EXPIRED', // hết hạn (ví dụ: đơn chưa thanh toán trong thời gian cho phép)
   PROCESSING = 'PROCESSING', // đang xử lý (chuẩn bị giao/đang vận chuyển)
   COMPLETED = 'COMPLETED', // kết thúc toàn bộ lifecycle (cả thanh toán + giao hàng + hậu kỳ)
-  REFUNDED = 'REFUNDED', // đã hoàn tiền
-  DISPUTED = 'DISPUTED', // đã xảy ra tranh chấp
-  OTHER = 'OTHER', // tình huống ngoại lệ, fallback
-  TRIAL = 'TRIAL', // đang ở trong giai đoạn trial
+  LOCKED = 'LOCKED', // đã bị khóa (người mua/người bán)
+  CANCELLED = 'CANCELLED', // bị huỷ (người mua/người bán)
+}
+export enum ORDER_ACTION {
+  DRAFT = 'DRAFT',
+  CONFIRMED = 'CONFIRMED',
+  TRIAL = 'TRIAL',
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  LOCKED = 'LOCKED',
+  CANCELLED = 'CANCELLED',
+  LICENSE = 'LICENSE',
+  SINVOICE = 'SINVOICE',
+  TRIAL_TO_CONFIRMED = 'TRIAL_TO_CONFIRMED',
+  FREE = 'FREE',
 }
 
 export const ORDER_STATUS_OPTIONS = [
   {
-    value: ORDER_STATUS.ON_HOLD,
-    label: 'On Hold',
+    value: ORDER_STATUS.DRAFT,
+    label: 'Draft',
     color: 'gray' as TagColor,
     position: 0,
-  },
+  },  
   {
-    value: ORDER_STATUS.PAID,
-    label: 'Paid',
-    color: 'green' as TagColor,
+    value: ORDER_STATUS.CONFIRMED,
+    label: 'Confirmed',
+    color: 'blue' as TagColor,
     position: 1,
-  },
-  {
-    value: ORDER_STATUS.FAILED,
-    label: 'Failed',
-    color: 'red' as TagColor,
-    position: 2,
-  },
-  {
-    value: ORDER_STATUS.CANCELLED,
-    label: 'Cancelled',
-    color: 'orange' as TagColor,
-    position: 3,
-  },
-  {
-    value: ORDER_STATUS.FULFILLED,
-    label: 'Fulfilled',
-    color: 'blue' as TagColor,
-    position: 4,
-  },
-  {
-    value: ORDER_STATUS.EXPIRED,
-    label: 'Expired',
-    color: 'red' as TagColor,
-    position: 5,
-  },
-  {
-    value: ORDER_STATUS.PROCESSING,
-    label: 'Processing',
-    color: 'blue' as TagColor,
-    position: 6,
-  },
-  {
-    value: ORDER_STATUS.COMPLETED,
-    label: 'Completed',
-    color: 'green' as TagColor,
-    position: 7,
-  },
-  {
-    value: ORDER_STATUS.REFUNDED,
-    label: 'Refunded',
-    color: 'purple' as TagColor,
-    position: 8,
-  },
-  {
-    value: ORDER_STATUS.OTHER,
-    label: 'Other',
-    color: 'gray' as TagColor,
-    position: 9,
   },
   {
     value: ORDER_STATUS.TRIAL,
     label: 'Trial',
     color: 'yellow' as TagColor,
-    position: 9,
+    position: 2,
   },
+  {
+    value: ORDER_STATUS.PAID,
+    label: 'Paid',
+    color: 'green' as TagColor,
+    position: 3,
+  },
+  {
+    value: ORDER_STATUS.PROCESSING,
+    label: 'Processing',
+    color: 'blue' as TagColor,
+    position: 4,
+  },
+  {
+    value: ORDER_STATUS.COMPLETED,
+    label: 'Completed',
+    color: 'green' as TagColor,
+    position: 5,
+  },
+  {
+    value: ORDER_STATUS.LOCKED,
+    label: 'Locked',
+    color: 'red' as TagColor,
+    position: 6,
+  },
+  {
+    value: ORDER_STATUS.CANCELLED,
+    label: 'Cancelled',
+    color: 'orange' as TagColor,
+    position: 7,
+  }
 ];
 
 export enum SINVOICE_STATUS {

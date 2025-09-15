@@ -103,7 +103,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconProgressCheck',
   })
   @WorkspaceIsNullable()
-  status?: ORDER_STATUS;
+  status: ORDER_STATUS;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.totalAmount,
