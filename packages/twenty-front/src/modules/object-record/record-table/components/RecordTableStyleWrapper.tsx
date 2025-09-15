@@ -113,27 +113,6 @@ const StyledTable = styled.div<{
     }
   }
 
-  div.footer-cell:nth-of-type(n + 3) {
-    z-index: ${TABLE_Z_INDEX.footer.default};
-
-    position: sticky;
-    bottom: 0;
-  }
-
-  div.footer-cell:nth-of-type(1) {
-    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-    left: 0px;
-    bottom: 0;
-    position: sticky;
-  }
-
-  div.footer-cell:nth-of-type(2) {
-    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-    left: 48px;
-    bottom: 0;
-    position: sticky;
-  }
-
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
