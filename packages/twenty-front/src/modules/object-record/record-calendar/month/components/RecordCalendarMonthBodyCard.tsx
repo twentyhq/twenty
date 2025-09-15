@@ -1,7 +1,6 @@
-import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RecordCalendarCardBody } from '@/object-record/record-calendar/card/components/RecordCalendarCardBody';
+import { RecordCalendarCardHeader } from '@/object-record/record-calendar/card/components/RecordCalendarCardHeader';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
-import { RecordCardHeader } from '@/object-record/record-card/components/RecordCardHeader';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -19,23 +18,11 @@ type RecordCalendarMonthBodyCardProps = {
 export const RecordCalendarMonthBodyCard = ({
   recordId,
 }: RecordCalendarMonthBodyCardProps) => {
-  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-
   return (
     <StyledContainer>
       <StyledRecordCard>
-        <RecordCardHeader
-          objectMetadataItem={objectMetadataItem}
-          recordId={recordId}
-          onTitleClick={() => {}}
-          onCompactIconClick={() => {}}
-          onCheckboxChange={() => {}}
-          isCompactView={true}
-          isCurrentCardSelected={false}
-          isCompactViewToggleable={false}
-          isIconHidden={true}
-          recordIndexOpenRecordIn={ViewOpenRecordInType.SIDE_PANEL}
-        />
+        <RecordCalendarCardHeader recordId={recordId} />
+        <RecordCalendarCardBody recordId={recordId} isRecordReadOnly={false} />
       </StyledRecordCard>
     </StyledContainer>
   );

@@ -4,25 +4,45 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { RecordCardHeader } from '@/object-record/record-card/components/RecordCardHeader';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
+import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type Dispatch, type SetStateAction, useContext } from 'react';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { ChipVariant } from 'twenty-ui/components';
+import { IconEye, IconEyeOff } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
-type RecordBoardCardHeaderProps = {
-  isCardExpanded?: boolean;
-  setIsCardExpanded?: Dispatch<SetStateAction<boolean>>;
-};
+const StyledCompactIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
 
-export const RecordBoardCardHeader = ({
-  isCardExpanded,
-  setIsCardExpanded,
-}: RecordBoardCardHeaderProps) => {
+const StyledCheckboxContainer = styled.div`
+  margin-left: auto;
+`;
+
+const StyledRecordChipContainer = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  overflow: hidden;
+`;
+
+export const RecordBoardCardHeader = () => {
   const { recordId } = useContext(RecordBoardCardContext);
 
   const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
@@ -30,8 +50,12 @@ export const RecordBoardCardHeader = ({
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const showCompactView = useRecoilComponentValue(
+  const isCompactModeActive = useRecoilComponentValue(
     isRecordBoardCompactModeActiveComponentState,
+  );
+
+  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+    recordBoardCardIsExpandedComponentState,
   );
 
   const { checkIfLastUnselectAndCloseDropdown } =
@@ -47,26 +71,59 @@ export const RecordBoardCardHeader = ({
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
+  const record = useRecoilValue(recordStoreFamilyState(recordId));
+
+  const triggerEvent =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+      ? 'CLICK'
+      : 'MOUSE_DOWN';
+
   return (
-    <RecordCardHeader
-      isCompactView={showCompactView}
-      onTitleClick={() => {
-        activateBoardCard({ rowIndex, columnIndex });
-        unfocusBoardCard();
-        openRecordFromIndexView({ recordId });
-      }}
-      onCompactIconClick={() => {
-        setIsCardExpanded?.((prev) => !prev);
-      }}
-      onCheckboxChange={() => {
-        setIsCurrentCardSelected(!isCurrentCardSelected);
-        checkIfLastUnselectAndCloseDropdown();
-      }}
-      objectMetadataItem={objectMetadataItem}
-      recordId={recordId}
-      isCurrentCardSelected={isCurrentCardSelected}
-      recordIndexOpenRecordIn={recordIndexOpenRecordIn}
-      isCardExpanded={isCardExpanded}
-    />
+    <RecordCardHeaderContainer isCompact={isCompactModeActive}>
+      <StyledRecordChipContainer>
+        <StopPropagationContainer>
+          {isDefined(record) && (
+            <RecordChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={record}
+              variant={ChipVariant.Transparent}
+              onClick={() => {
+                activateBoardCard({ rowIndex, columnIndex });
+                unfocusBoardCard();
+                openRecordFromIndexView({ recordId });
+              }}
+              triggerEvent={triggerEvent}
+            />
+          )}
+        </StopPropagationContainer>
+      </StyledRecordChipContainer>
+
+      {isCompactModeActive && (
+        <StyledCompactIconContainer className="compact-icon-container">
+          <StopPropagationContainer>
+            <LightIconButton
+              Icon={isCardExpanded ? IconEyeOff : IconEye}
+              accent="tertiary"
+              onClick={() => {
+                setIsCardExpanded(!isCardExpanded);
+              }}
+            />
+          </StopPropagationContainer>
+        </StyledCompactIconContainer>
+      )}
+      <StyledCheckboxContainer className="checkbox-container">
+        <StopPropagationContainer>
+          <Checkbox
+            hoverable
+            checked={isCurrentCardSelected}
+            onChange={(value) => {
+              setIsCurrentCardSelected(value.target.checked);
+              checkIfLastUnselectAndCloseDropdown();
+            }}
+            variant={CheckboxVariant.Secondary}
+          />
+        </StopPropagationContainer>
+      </StyledCheckboxContainer>
+    </RecordCardHeaderContainer>
   );
 };
