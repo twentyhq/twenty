@@ -69,9 +69,13 @@ describe('calculatePieChartAngles', () => {
     expect(slice3.middleAngle).toBe(324);
     expect(slice3.newCumulativeAngle).toBe(360);
   });
-  it('should handle negative percentages as zero', () => {
+  it('should handle negative percentages', () => {
     const result = calculatePieChartAngles(-10, 0);
-    expect(result.sliceAngle).toBeLessThanOrEqual(0);
+    expect(result).toEqual({
+      sliceAngle: -36,
+      middleAngle: -18,
+      newCumulativeAngle: -36,
+    });
   });
   it('should handle percentages over 100', () => {
     const result = calculatePieChartAngles(150, 0);
