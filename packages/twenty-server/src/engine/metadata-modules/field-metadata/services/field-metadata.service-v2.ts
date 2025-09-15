@@ -77,18 +77,17 @@ export class FieldMetadataServiceV2 {
         existingFlatObjectMetadataMaps,
       });
 
-    const flatObjectMetadataMapsWithImpactedObject =
-      getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [
-          ...new Set(
-            flatFieldMetadatasToDelete.map(
-              (flatFieldMetadataToDelete) =>
-                flatFieldMetadataToDelete.objectMetadataId,
-            ),
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: [
+        ...new Set(
+          flatFieldMetadatasToDelete.map(
+            (flatFieldMetadataToDelete) =>
+              flatFieldMetadataToDelete.objectMetadataId,
           ),
-        ],
-      });
+        ),
+      ],
+    });
 
     const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete.reduce(
       (flatObjectMetadataMaps, flatFieldMetadataToDelete) =>
@@ -97,7 +96,7 @@ export class FieldMetadataServiceV2 {
           flatObjectMetadataMaps,
           objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
         }),
-      flatObjectMetadataMapsWithImpactedObject,
+      fromFlatObjectMetadataMaps,
     );
 
     const validateAndBuildResult =
@@ -107,8 +106,12 @@ export class FieldMetadataServiceV2 {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: true,
           },
-          fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
+            },
+          },
           workspaceId,
         },
       );
@@ -177,8 +180,12 @@ export class FieldMetadataServiceV2 {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
+            },
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,
@@ -266,8 +273,12 @@ export class FieldMetadataServiceV2 {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              from: fromFlatObjectMetadataMaps,
+              to: toFlatObjectMetadataMaps,
+            },
+          },
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: false,

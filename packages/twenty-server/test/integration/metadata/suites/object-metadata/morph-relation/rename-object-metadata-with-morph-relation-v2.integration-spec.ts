@@ -1,11 +1,11 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -37,7 +37,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: aId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'opportunityForRenameSecond',
         namePlural: 'opportunitiesForRenameSecond',
@@ -52,7 +52,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: bId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'personForRenameSecond',
         namePlural: 'peopleForRenameSecond',
@@ -67,7 +67,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: cId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'companyForRenameSecond',
         namePlural: 'companiesForRenameSecond',
