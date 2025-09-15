@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 
+import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { WORKSPACE_FLAT_MAP_CACHE_KEY } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';

@@ -3,5 +3,5 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 export const EMPTY_FLAT_OBJECT_METADATA_MAPS = {
   byId: {},
   idByNameSingular: {},
-  idByUniversalIdentifier: {}
+  idByUniversalIdentifier: {},
 } as const satisfies FlatObjectMetadataMaps;
