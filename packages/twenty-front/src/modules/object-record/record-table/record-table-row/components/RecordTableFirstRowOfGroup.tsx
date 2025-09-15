@@ -26,6 +26,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
       children,
       recordId,
       isNextRowActiveOrFocused,
+      focusIndex,
       isDragging = false,
       isRowFocusActive,
       isFocused,
