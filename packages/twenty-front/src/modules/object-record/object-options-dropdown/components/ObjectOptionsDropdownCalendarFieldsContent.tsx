@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -11,6 +12,7 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -27,6 +29,9 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const { navigateToDateFieldSettings } = useGetAvailableFieldsForCalendar();
 
+  const setRecordIndexCalendarFieldMetadataId = useSetRecoilState(
+    recordIndexCalendarFieldMetadataIdState,
+  );
   const availableFieldsForCalendar = objectMetadataItem.fields.filter(
     (field) =>
       field.type === FieldMetadataType.DATE ||
@@ -46,6 +51,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const handleCalendarFieldChange = async (
     fieldMetadataItem: FieldMetadataItem,
   ) => {
+    setRecordIndexCalendarFieldMetadataId(fieldMetadataItem.id);
     await updateCurrentView({
       calendarFieldMetadataId: fieldMetadataItem.id,
     });
