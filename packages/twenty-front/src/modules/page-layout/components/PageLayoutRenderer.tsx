@@ -86,10 +86,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
           <PageLayoutGridLayout layouts={layouts}>
             {activeTabWidgets?.map((widget) => (
               <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer
-                  widget={widget as Widget}
-                  displayDragHandle={isPageLayoutInEditMode}
-                />
+                <WidgetRenderer widget={widget as Widget} />
               </div>
             ))}
           </PageLayoutGridLayout>

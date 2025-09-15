@@ -16,16 +16,6 @@ const meta: Meta<typeof WidgetRenderer> = {
       control: 'object',
       description: 'Widget',
     },
-    displayDragHandle: {
-      control: 'boolean',
-      description: 'Display drag handle',
-    },
-    onRemove: {
-      action: 'onRemove',
-    },
-    onEdit: {
-      action: 'onEdit',
-    },
   },
 };
 
@@ -55,16 +45,10 @@ export const WithNumberChart: Story = {
         trendPercentage: 12.5,
       },
     },
-    displayDragHandle: true,
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -97,12 +81,7 @@ export const WithGaugeChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -163,12 +142,7 @@ export const WithPieChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -206,12 +180,7 @@ export const SmallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -251,12 +220,7 @@ export const MediumWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '400px', height: '250px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -298,12 +262,7 @@ export const LargeWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '600px', height: '400px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -341,12 +300,7 @@ export const WideWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '800px', height: '200px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -386,12 +340,7 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        displayDragHandle={args.displayDragHandle}
-        onRemove={args.onRemove}
-        onEdit={args.onEdit}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
