@@ -6,7 +6,6 @@ import { type Repository } from 'typeorm';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 
 import { DomainManagerService } from './domain-manager.service';
 
@@ -87,12 +86,6 @@ describe('DomainManagerService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
-          },
-        },
-        {
-          provide: AuditService,
-          useValue: {
-            createContext: jest.fn(),
           },
         },
       ],

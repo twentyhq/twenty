@@ -15,7 +15,7 @@ import { CheckPublicDomainsValidRecordsCronJob } from 'src/engine/core-modules/p
     NestjsQueryTypeOrmModule.forFeature([PublicDomain, Workspace]),
     DnsManagerModule,
   ],
-  exports: [CheckPublicDomainsValidRecordsCronCommand],
+  exports: [CheckPublicDomainsValidRecordsCronCommand, PublicDomainService],
   providers: [
     PublicDomainService,
     PublicDomainResolver,

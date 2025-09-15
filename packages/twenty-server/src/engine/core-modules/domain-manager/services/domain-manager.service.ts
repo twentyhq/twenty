@@ -12,8 +12,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 
 @Injectable()
 export class DomainManagerService {
@@ -23,7 +21,6 @@ export class DomainManagerService {
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly auditService: AuditService,
   ) {}
 
   getFrontUrl() {
@@ -269,46 +266,5 @@ export class DomainManagerService {
           : undefined,
       subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
-  }
-
-  async handleCustomDomainActivation({
-    customDomain,
-    isCustomDomainWorking,
-  }: {
-    customDomain: string;
-    isCustomDomainWorking: boolean;
-  }) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      customDomain,
-    });
-
-    if (!workspace) return;
-
-    const analytics = this.auditService.createContext({
-      workspaceId: workspace.id,
-    });
-
-    const workspaceUpdated: Partial<Workspace> = {
-      customDomain: workspace.customDomain,
-    };
-
-    if (!isCustomDomainWorking) {
-      workspaceUpdated.customDomain = null;
-    }
-
-    workspaceUpdated.isCustomDomainEnabled = isCustomDomainWorking;
-
-    if (
-      workspaceUpdated.isCustomDomainEnabled !==
-        workspace.isCustomDomainEnabled ||
-      workspaceUpdated.customDomain !== workspace.customDomain
-    ) {
-      await this.workspaceRepository.save({
-        ...workspace,
-        ...workspaceUpdated,
-      });
-
-      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
-    }
   }
 }
