@@ -54,7 +54,8 @@ export const AIChatAssistantMessageRenderer = ({
   streamData: string;
 }) => {
   const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
-  const isStreaming = Boolean(agentStreamingMessage);
+  const isStreaming =
+    Boolean(agentStreamingMessage) && streamData === agentStreamingMessage;
 
   const steps = parseStream(streamData);
   const theme = useTheme();
