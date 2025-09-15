@@ -35,6 +35,7 @@ export const MultiSelectFieldInput = () => {
       onCancel={handleCancel}
       onOptionSelected={handleOptionSelected}
       values={draftValue}
+      fieldName={fieldDefinition.metadata.fieldName}
     />
   );
 };

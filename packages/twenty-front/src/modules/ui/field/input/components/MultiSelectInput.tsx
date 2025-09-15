@@ -7,6 +7,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
+import { ObjectOptionsDropdownCreateNewOption } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCreateNewOption';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -14,10 +16,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { type PermissionFlagType } from '~/generated/graphql';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -28,6 +30,7 @@ type MultiSelectInputProps = {
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
+  fieldName?: string;
 };
 
 export const MultiSelectInput = ({
@@ -38,9 +41,8 @@ export const MultiSelectInput = ({
   onCancel,
   onOptionSelected,
   dropdownWidth,
+  fieldName = '',
 }: MultiSelectInputProps) => {
-  const { t } = useLingui();
-
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
@@ -49,6 +51,7 @@ export const MultiSelectInput = ({
     selectedItemIdComponentState,
     selectableListComponentInstanceId,
   );
+
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +75,10 @@ export const MultiSelectInput = ({
       );
     }
   };
+
+  const isHasPermissionFlag = useHasPermissionFlag(
+    'DATA_MODEL' as PermissionFlagType,
+  );
 
   useHotkeysOnFocusedElement({
     keys: Key.Escape,
@@ -125,7 +132,11 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <MenuItem disabled text={t`No option found`} accent="placeholder" />
+            <ObjectOptionsDropdownCreateNewOption
+              name={searchFilter}
+              fieldName={fieldName}
+              isHasPermissionFlag={isHasPermissionFlag}
+            />
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (

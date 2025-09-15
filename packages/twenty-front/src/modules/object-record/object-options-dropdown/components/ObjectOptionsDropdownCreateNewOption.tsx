@@ -12,7 +12,7 @@ const AddStyleContainer = {
   gap: '8px',
 };
 
-export const ObjectFilterDropdownCreateNewOption = ({
+export const ObjectOptionsDropdownCreateNewOption = ({
   name,
   isHasPermissionFlag,
   fieldName,
@@ -41,7 +41,7 @@ export const ObjectFilterDropdownCreateNewOption = ({
     <>
       {isHasPermissionFlag ? (
         <>
-          <MenuItem text={t`No results`} />
+          <MenuItem text={t`No option found`} accent="placeholder" disabled />
           <DropdownMenuSeparator />
           <MenuItem
             text={
@@ -54,7 +54,7 @@ export const ObjectFilterDropdownCreateNewOption = ({
           />
         </>
       ) : (
-        <MenuItem text="No results" />
+        <MenuItem text={t`No option found`} accent="placeholder" disabled />
       )}
     </>
   );

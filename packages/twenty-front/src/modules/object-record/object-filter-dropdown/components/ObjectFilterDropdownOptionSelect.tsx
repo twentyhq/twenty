@@ -8,23 +8,21 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
-import { ObjectFilterDropdownCreateNewOption } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCreateNewOption';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { type PermissionFlagType } from '~/generated/graphql';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 export const EMPTY_FILTER_VALUE = '';
 
@@ -55,10 +53,6 @@ export const ObjectFilterDropdownOptionSelect = ({
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
-
-  const isHasPermissionFlag = useHasPermissionFlag(
-    'DATA_MODEL' as PermissionFlagType,
-  );
 
   const selectedOptions = useMemo(
     () =>
@@ -163,11 +157,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (
-          <ObjectFilterDropdownCreateNewOption
-            name={objectFilterDropdownSearchInput}
-            isHasPermissionFlag={isHasPermissionFlag}
-            fieldName={fieldMetadataItemUsedInDropdown?.name || ''}
-          />
+          <MenuItem text={t`No results`} />
         ) : (
           optionsInDropdown?.map((option) => (
             <MenuItemMultiSelect
