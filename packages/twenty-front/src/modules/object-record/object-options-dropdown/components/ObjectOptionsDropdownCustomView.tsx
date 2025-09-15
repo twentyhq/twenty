@@ -89,6 +89,9 @@ export const ObjectOptionsDropdownCustomView = ({
   const selectableItemIdArray = [
     'Layout',
     ...(customViewData?.type !== ViewType.Calendar ? ['Fields'] : []),
+    ...(customViewData?.type === ViewType.Calendar
+      ? ['CalendarDateField']
+      : []),
     ...(customViewData?.type !== ViewType.Calendar ? ['Group'] : []),
     'Copy link to view',
     'Delete view',
@@ -150,15 +153,11 @@ export const ObjectOptionsDropdownCustomView = ({
             <div id="calendar-date-field-picker-menu-item">
               <SelectableListItem
                 itemId="CalendarDateField"
-                onEnter={() =>
-                  onContentChange('calendarFields')
-                }
+                onEnter={() => onContentChange('calendarFields')}
               >
                 <MenuItem
                   focused={selectedItemId === 'CalendarDateField'}
-                  onClick={() =>
-                    onContentChange('calendarFields')
-                  }
+                  onClick={() => onContentChange('calendarFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Date field`}
                   contextualText={
