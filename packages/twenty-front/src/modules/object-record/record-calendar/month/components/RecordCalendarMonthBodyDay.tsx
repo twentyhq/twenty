@@ -11,7 +11,7 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   width: calc(100% / 7);
   flex-direction: column;
   min-height: 122px;
-  padding: ${({ theme }) => theme.spacing(0.5)};
+  padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.primary};
 
   &:not(:last-child) {
@@ -26,11 +26,24 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
     `}
 `;
 
-const StyledDayHeader = styled.div`
+const StyledDayHeader = styled.div<{ isToday: boolean }>`
   display: flex;
   text-align: right;
-  justify-content: flex-end;
-  padding: 7px 5px;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  width: 20px;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+
+  ${({ isToday, theme }) =>
+    isToday &&
+    css`
+      border-radius: 4px;
+      background: ${theme.color.red};
+      color: ${theme.font.color.inverted};
+      font-weight: ${theme.font.weight.medium};
+    `}
 `;
 
 const StyledCardsContainer = styled.div`
@@ -54,11 +67,13 @@ export const RecordCalendarMonthBodyDay = ({
     day.toDateString(),
   );
 
+  const isToday = day.toDateString() === new Date().toDateString();
+
   const isOtherMonth = day.getMonth() !== recordCalendarSelectedDate.getMonth();
 
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
-      <StyledDayHeader>{day.getDate()}</StyledDayHeader>
+      <StyledDayHeader isToday={isToday}>{day.getDate()}</StyledDayHeader>
       <StyledCardsContainer>
         {recordIds.slice(0, 5).map((recordId) => (
           <RecordCalendarCard key={recordId} recordId={recordId} />
