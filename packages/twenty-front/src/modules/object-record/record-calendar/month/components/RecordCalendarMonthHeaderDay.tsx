@@ -5,13 +5,13 @@ type RecordCalendarMonthHeaderDayProps = {
 };
 
 const StyledLabel = styled.div`
-  display: flex;
-  width: calc(100% / 7);
-  height: 24px;
-  padding: ${({ theme }) => theme.spacing(0.5)};
   color: ${({ theme }) => theme.font.color.light};
-  justify-content: flex-end;
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
+  height: 24px;
+  justify-content: flex-end;
+  padding: ${({ theme }) => theme.spacing(0.5)};
+  width: calc(100% / 7);
 `;
 
 export const RecordCalendarMonthHeaderDay = ({

@@ -13,7 +13,7 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   min-height: 122px;
   padding: ${({ theme }) => theme.spacing(0.5)};
   background: ${({ theme }) => theme.background.primary};
-  
+
   &:not(:last-child) {
     border-right: 0.5px solid ${({ theme }) => theme.border.color.light};
   }
@@ -24,7 +24,6 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
       background: ${theme.background.secondary};
       color: ${theme.font.color.light};
     `}
-
 `;
 
 const StyledDayHeader = styled.div`
@@ -46,7 +45,6 @@ type RecordCalendarMonthBodyDayProps = {
 export const RecordCalendarMonthBodyDay = ({
   day,
 }: RecordCalendarMonthBodyDayProps) => {
-
   const recordCalendarSelectedDate = useRecoilComponentValue(
     recordCalendarSelectedDateComponentState,
   );
