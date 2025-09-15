@@ -5,7 +5,6 @@ import { eachDayOfInterval, endOfWeek } from 'date-fns';
 
 const StyledContainer = styled.div`
   display: flex;
-  min-height: 122px;
 `;
 
 type RecordCalendarMonthBodyWeekProps = {
