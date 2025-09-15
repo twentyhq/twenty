@@ -48,7 +48,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<DeleteFieldAction>,
   ) {
-    const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
+    const { action, queryRunner, allFlatEntityMaps: {flatObjectMetadataMaps}, workspaceId } =
       context;
     const { objectMetadataId, fieldMetadataId } = action;
 

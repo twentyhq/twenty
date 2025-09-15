@@ -44,7 +44,7 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
+    const { action, queryRunner, allFlatEntityMaps: {flatObjectMetadataMaps}, workspaceId } =
       context;
     const { objectMetadataId } = action;
 

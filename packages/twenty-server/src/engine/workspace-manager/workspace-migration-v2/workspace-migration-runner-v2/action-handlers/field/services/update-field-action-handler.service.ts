@@ -81,7 +81,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
+    const { action, queryRunner, allFlatEntityMaps: {flatObjectMetadataMaps}, workspaceId } =
       context;
     const { objectMetadataId, fieldMetadataId, updates } = action;
 

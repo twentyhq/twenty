@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
 export type WorkspaceMigrationActionRunnerArgs<
@@ -8,6 +8,6 @@ export type WorkspaceMigrationActionRunnerArgs<
 > = {
   queryRunner: QueryRunner;
   action: T;
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+  allFlatEntityMaps: AllFlatEntityMaps;
   workspaceId: string;
 };
