@@ -6,7 +6,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 export type ViewFieldTestSetup = {
   testViewId: string;
@@ -25,7 +25,7 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
     data: {
       createOneObject: { id: objectMetadataId },
     },
-  } = await forceCreateOneObjectMetadata({
+  } = await createOneObjectMetadata({
     expectToFail: false,
     input: {
       nameSingular: 'myFieldTestObjectV2',
