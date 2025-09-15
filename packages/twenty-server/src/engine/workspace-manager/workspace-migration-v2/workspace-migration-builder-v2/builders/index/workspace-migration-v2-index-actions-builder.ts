@@ -24,16 +24,19 @@ export const buildWorkspaceMigrationIndexActions = ({
   } of objectMetadataDeletedCreatedUpdatedIndex) {
     const updatedDeleteAndCreateIndexActions =
       updatedIndexMetadata.flatMap<WorkspaceMigrationIndexActionV2>(
-        ({ to, from }) => {
-          const updates = compareTwoFlatIndexMetadata({ from, to });
+        ({ to: toFlatIndexMetadata, from: fromFlatIndexMetadata }) => {
+          const updates = compareTwoFlatIndexMetadata({
+            fromFlatIndexMetadata,
+            toFlatIndexMetadata,
+          });
 
           if (updates.length === 0) {
             return [];
           }
 
           return [
-            getWorkspaceMigrationV2DeleteIndexAction(from),
-            getWorkspaceMigrationV2CreateIndexAction(to),
+            getWorkspaceMigrationV2DeleteIndexAction(fromFlatIndexMetadata),
+            getWorkspaceMigrationV2CreateIndexAction(toFlatIndexMetadata),
           ];
         },
       );

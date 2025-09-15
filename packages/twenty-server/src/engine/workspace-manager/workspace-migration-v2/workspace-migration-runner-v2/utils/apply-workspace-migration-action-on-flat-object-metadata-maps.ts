@@ -132,6 +132,7 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
         objectMetadataId: action.objectMetadataId,
       });
     }
+    // TODO
     case 'create_index':
     case 'delete_index':
     case 'create_view':
@@ -140,7 +141,12 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
     case 'create_view_field':
     case 'update_view_field':
     case 'delete_view_field':
+    case 'update_index':
+    case 'create_index_field':
+    case 'delete_index_field':
+    case 'update_index_field':
       return flatObjectMetadataMaps;
+    ///
     default: {
       assertUnreachable(
         action,
