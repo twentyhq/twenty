@@ -77,36 +77,40 @@ export const PageLayoutGridLayout = ({
   );
 
   return (
-    <StyledGridContainer ref={gridContainerRef}>
-      {isPageLayoutInEditMode && (
-        <>
-          <PageLayoutGridOverlay />
-          <PageLayoutGridLayoutDragSelector
-            gridContainerRef={gridContainerRef}
-          />
-        </>
-      )}
-      <ResponsiveGridLayout
-        className="layout"
-        layouts={layouts}
-        breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
-        cols={PAGE_LAYOUT_CONFIG.columns}
-        rowHeight={55}
-        maxCols={12}
-        containerPadding={[0, 0]}
-        margin={[8, 8]}
-        isDraggable={isPageLayoutInEditMode}
-        isResizable={isPageLayoutInEditMode}
-        draggableHandle=".drag-handle"
-        compactType="vertical"
-        preventCollision={false}
-        onLayoutChange={handleLayoutChange}
-        onBreakpointChange={(newBreakpoint) =>
-          setPageLayoutCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
-        }
-      >
-        {children}
-      </ResponsiveGridLayout>
-    </StyledGridContainer>
+    <>
+      <StyledGridContainer ref={gridContainerRef}>
+        {isPageLayoutInEditMode && (
+          <>
+            <PageLayoutGridOverlay />
+            <PageLayoutGridLayoutDragSelector
+              gridContainerRef={gridContainerRef}
+            />
+          </>
+        )}
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={layouts}
+          breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
+          cols={PAGE_LAYOUT_CONFIG.columns}
+          rowHeight={55}
+          maxCols={12}
+          containerPadding={[0, 0]}
+          margin={[8, 8]}
+          isDraggable={isPageLayoutInEditMode}
+          isResizable={isPageLayoutInEditMode}
+          draggableHandle=".drag-handle"
+          compactType="vertical"
+          preventCollision={false}
+          onLayoutChange={handleLayoutChange}
+          onBreakpointChange={(newBreakpoint) =>
+            setPageLayoutCurrentBreakpoint(
+              newBreakpoint as PageLayoutBreakpoint,
+            )
+          }
+        >
+          {children}
+        </ResponsiveGridLayout>
+      </StyledGridContainer>
+    </>
   );
 };

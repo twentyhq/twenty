@@ -8,6 +8,7 @@ export const pageLayoutDraftComponentState =
   createComponentState<DraftPageLayout>({
     key: 'pageLayoutDraftComponentState',
     defaultValue: {
+      id: '',
       name: '',
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,

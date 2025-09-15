@@ -52,6 +52,7 @@ export const PageLayoutInitializationEffect = ({
           if (!isDeeplyEqual(layout, currentPersisted)) {
             set(pageLayoutPersistedComponentCallbackState, layout);
             set(pageLayoutDraftComponentCallbackState, {
+              id: layout.id,
               name: layout.name,
               type: layout.type,
               objectMetadataId: layout.objectMetadataId,
@@ -91,6 +92,7 @@ export const PageLayoutInitializationEffect = ({
           };
 
           set(pageLayoutDraftComponentCallbackState, {
+            id: '',
             name: '',
             type: PageLayoutType.DASHBOARD,
             objectMetadataId: null,

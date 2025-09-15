@@ -118,8 +118,6 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         );
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        console.log('updatedLayouts', updatedLayouts);
-
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
           tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),

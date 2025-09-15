@@ -14,10 +14,11 @@ import styled from '@emotion/styled';
 
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
-import { useMemo } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 const StyledTabList = styled(TabList)`
@@ -34,24 +35,32 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
     pageLayout.id,
   );
 
-  const activeTabId = useRecoilComponentValue(
-    activeTabIdComponentState,
-    getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+  const pageLayoutDraft = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayout.id,
   );
-
-  const activeTabWidgets = pageLayout.tabs.find(
-    (tab) => tab.id === activeTabId,
-  )?.widgets;
-
-  const layouts = useMemo(() => {
-    if (!activeTabId) return EMPTY_LAYOUT;
-    return pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
-  }, [activeTabId, pageLayoutCurrentLayouts]);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
     pageLayout.id,
   );
+
+  const currentPageLayout = isPageLayoutInEditMode
+    ? pageLayoutDraft
+    : pageLayout;
+
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+  );
+
+  const activeTabWidgets = currentPageLayout.tabs.find(
+    (tab) => tab.id === activeTabId,
+  )?.widgets;
+
+  const layouts = isDefined(activeTabId)
+    ? pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
+    : EMPTY_LAYOUT;
 
   return (
     <>
