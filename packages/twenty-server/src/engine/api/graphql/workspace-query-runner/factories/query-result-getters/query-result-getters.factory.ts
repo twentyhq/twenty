@@ -17,7 +17,6 @@ import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspa
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -28,9 +27,7 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 // Right now the factory will override any change made on relations by the handlers
 @Injectable()
 export class QueryResultGettersFactory {
-  private readonly logger = new Logger(
-    CompositeInputTypeDefinitionFactory.name,
-  );
+  private readonly logger = new Logger(QueryResultGettersFactory.name);
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
   constructor(private readonly fileService: FileService) {
