@@ -2,8 +2,10 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
@@ -14,6 +16,8 @@ export const ViewPickerCreateButton = () => {
   const { t } = useLingui();
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
+  const { availableFieldsForCalendar, navigateToDateFieldSettings } =
+    useGetAvailableFieldsForCalendar();
 
   const { viewPickerMode } = useViewPickerMode();
   const viewPickerType = useRecoilComponentValue(viewPickerTypeComponentState);
@@ -22,6 +26,9 @@ export const ViewPickerCreateButton = () => {
   );
   const viewPickerKanbanFieldMetadataId = useRecoilComponentValue(
     viewPickerKanbanFieldMetadataIdComponentState,
+  );
+  const viewPickerCalendarFieldMetadataId = useRecoilComponentValue(
+    viewPickerCalendarFieldMetadataIdComponentState,
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
@@ -64,7 +71,23 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Table ||
+    viewPickerType === ViewType.Calendar &&
+    availableFieldsForCalendar.length === 0
+  ) {
+    return (
+      <Button
+        title={t`Go to Settings`}
+        onClick={navigateToDateFieldSettings}
+        size="small"
+        accent="blue"
+        fullWidth
+        justify="center"
+      />
+    );
+  }
+
+  if (
+    viewPickerType !== ViewType.Kanban ||
     viewPickerKanbanFieldMetadataId !== ''
   ) {
     return (
@@ -78,7 +101,9 @@ export const ViewPickerCreateButton = () => {
         disabled={
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.Kanban &&
-            viewPickerKanbanFieldMetadataId === '')
+            viewPickerKanbanFieldMetadataId === '') ||
+          (viewPickerType === ViewType.Calendar &&
+            viewPickerCalendarFieldMetadataId === '')
         }
       />
     );

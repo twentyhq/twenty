@@ -4,7 +4,7 @@ export const formatToHumanReadableMonth = (
   date: Date | string,
   timeZone: string,
 ) => {
-  const parsedJSDate = parseDate(date).toJSDate();
+  const parsedJSDate = parseDate(date);
 
   return new Intl.DateTimeFormat(undefined, {
     month: 'short',
@@ -16,7 +16,7 @@ export const formatToHumanReadableDay = (
   date: Date | string,
   timeZone: string,
 ) => {
-  const parsedJSDate = parseDate(date).toJSDate();
+  const parsedJSDate = parseDate(date);
 
   return new Intl.DateTimeFormat(undefined, {
     day: 'numeric',
@@ -28,7 +28,7 @@ export const formatToHumanReadableTime = (
   date: Date | string,
   timeZone: string,
 ) => {
-  const parsedJSDate = parseDate(date).toJSDate();
+  const parsedJSDate = parseDate(date);
 
   return new Intl.DateTimeFormat(undefined, {
     hour: 'numeric',

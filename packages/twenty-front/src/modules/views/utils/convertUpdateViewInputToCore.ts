@@ -3,38 +3,45 @@ import { convertViewKeyToCore } from '@/views/utils/convertViewKeyToCore';
 import { convertViewOpenRecordInToCore } from '@/views/utils/convertViewOpenRecordInToCore';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { isDefined } from 'twenty-shared/utils';
-import { type UpdateViewInput } from '~/generated-metadata/graphql';
+import { type UpdateViewInput } from '~/generated/graphql';
 
 export const convertUpdateViewInputToCore = (
   view: Partial<GraphQLView & { __typename?: string }>,
 ): UpdateViewInput => {
-  const {
-    key,
-    openRecordIn,
-    type,
-    viewFields: _viewFields,
-    viewFilters: _viewFilters,
-    viewFilterGroups: _viewFilterGroups,
-    viewGroups: _viewGroups,
-    viewSorts: _viewSorts,
-    kanbanFieldMetadataId: _kanbanFieldMetadataId,
-    id: _id,
-    __typename: _typename,
-    ...rest
-  } = view;
-
-  const convertedKey = isDefined(key) ? convertViewKeyToCore(key) : undefined;
-  const convertedOpenRecordIn = isDefined(openRecordIn)
-    ? convertViewOpenRecordInToCore(openRecordIn)
+  const convertedKey = isDefined(view.key)
+    ? convertViewKeyToCore(view.key)
     : undefined;
-  const convertedType = isDefined(type)
-    ? convertViewTypeToCore(type)
+  const convertedOpenRecordIn = isDefined(view.openRecordIn)
+    ? convertViewOpenRecordInToCore(view.openRecordIn)
+    : undefined;
+  const convertedType = isDefined(view.type)
+    ? convertViewTypeToCore(view.type)
     : undefined;
 
   return {
-    ...rest,
+    id: view.id,
+    ...(view.name && { name: view.name }),
+    ...(view.icon && { icon: view.icon }),
+    ...(view.position && { position: view.position }),
+    ...(view.isCompact && { isCompact: view.isCompact }),
+    ...(view.kanbanAggregateOperation && {
+      kanbanAggregateOperation: view.kanbanAggregateOperation,
+    }),
+    ...(view.kanbanAggregateOperationFieldMetadataId && {
+      kanbanAggregateOperationFieldMetadataId:
+        view.kanbanAggregateOperationFieldMetadataId,
+    }),
+    ...(view.anyFieldFilterValue && {
+      anyFieldFilterValue: view.anyFieldFilterValue,
+    }),
     ...(convertedKey && { key: convertedKey }),
     ...(convertedOpenRecordIn && { openRecordIn: convertedOpenRecordIn }),
     ...(convertedType && { type: convertedType }),
+    ...(isDefined(view.calendarLayout) && {
+      calendarLayout: view.calendarLayout,
+    }),
+    ...(isDefined(view.calendarFieldMetadataId) && {
+      calendarFieldMetadataId: view.calendarFieldMetadataId,
+    }),
   };
 };

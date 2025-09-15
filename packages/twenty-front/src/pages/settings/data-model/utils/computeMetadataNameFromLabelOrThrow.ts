@@ -1,7 +1,7 @@
 import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
 
-export const computeMetadataNameFromLabel = (label: string): string => {
+export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
   const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
 
   if (prefixedLabel === '') {
