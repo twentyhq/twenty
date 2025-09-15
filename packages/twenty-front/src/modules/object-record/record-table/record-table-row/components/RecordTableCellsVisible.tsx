@@ -6,6 +6,7 @@ import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
@@ -23,10 +24,16 @@ export const RecordTableCellsVisible = () => {
 
   const isFirstRow = rowIndex === 0;
 
+  const firstRecordField = visibleRecordFields[0];
+
+  if (!isDefined(firstRecordField)) {
+    return null;
+  }
+
   return (
     <>
       <RecordTableCellWrapper
-        recordField={visibleRecordFields[0]}
+        recordField={firstRecordField}
         recordFieldIndex={0}
       >
         {isFirstRow ? (

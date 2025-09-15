@@ -8,6 +8,7 @@ import { RecordTableCellHoveredPortalContent } from '@/object-record/record-tabl
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellHoveredPortal = () => {
   const hoverPosition = useRecoilComponentValue(
@@ -26,7 +27,7 @@ export const RecordTableCellHoveredPortal = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  if (!hoverPosition) {
+  if (!isDefined(hoverPosition)) {
     return null;
   }
 
