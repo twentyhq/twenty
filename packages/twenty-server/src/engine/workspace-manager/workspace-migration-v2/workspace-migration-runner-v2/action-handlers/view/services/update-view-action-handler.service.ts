@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { UpdateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -33,14 +28,10 @@ export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     const { flatViewMaps } = allFlatEntityMaps;
     const { viewId } = action;
 
-    const existingView = flatViewMaps.byId[viewId];
-
-    if (!isDefined(existingView)) {
-      throw new WorkspaceMigrationRunnerException(
-        `Workspace migration failed: View not found in cache`,
-        WorkspaceMigrationRunnerExceptionCode.FLAT_ENTITY_NOT_FOUND,
-      );
-    }
+    const existingView = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
 
     const updatedView = {
       ...existingView,

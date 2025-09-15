@@ -3,6 +3,10 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -73,7 +77,10 @@ export class WorkspaceMigrationRunnerV2Service {
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }
-      throw error;
+      throw new WorkspaceQueryRunnerException(
+        error.message,
+        WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }

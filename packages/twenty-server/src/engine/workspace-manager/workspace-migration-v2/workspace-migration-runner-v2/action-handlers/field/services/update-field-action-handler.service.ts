@@ -99,13 +99,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         flatObjectMetadataMaps,
       });
 
-    if (!isDefined(updatedFlatObjectMetadataMaps)) {
-      throw new WorkspaceMigrationRunnerException(
-        `Workspace migration failed: dispatchAndReplaceFlatFieldMetadataInFlatObjectMetadataMaps failed`,
-        WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
-      );
-    }
-
     return {
       ...allFlatEntityMaps,
       flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
