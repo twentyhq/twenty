@@ -177,9 +177,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
 
     await deleteEdge({
       source,
-      sourceHandle: sourceHandleId,
       target,
-      targetHandle: targetHandleId,
     });
   };
 

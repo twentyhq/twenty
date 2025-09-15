@@ -1,7 +1,13 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
 import { useDeleteWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionEdge';
 import { useState } from 'react';
+
+type DeleteEdgeParams = {
+  source: string;
+  target: string;
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
+};
 
 export const useDeleteEdge = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +20,8 @@ export const useDeleteEdge = () => {
   const deleteEdge = async ({
     source,
     target,
-  }: WorkflowDiagramEdgeDescriptor) => {
+    sourceConnectionOptions,
+  }: DeleteEdgeParams) => {
     if (isLoading) {
       return;
     }
@@ -29,6 +36,7 @@ export const useDeleteEdge = () => {
           workflowVersionId,
           source,
           target,
+          sourceConnectionOptions: sourceConnectionOptions,
         })
       )?.data?.deleteWorkflowVersionEdge;
 

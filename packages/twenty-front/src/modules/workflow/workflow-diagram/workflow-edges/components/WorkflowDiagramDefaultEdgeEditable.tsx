@@ -11,6 +11,7 @@ import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-di
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
@@ -89,21 +90,41 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   };
 
   const handleNodeButtonClick = () => {
+    const isIteratorLoopEdge =
+      sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
+
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
+      connectionOptions: isIteratorLoopEdge
+        ? {
+            connectedStepType: 'ITERATOR',
+            settings: {
+              isConnectedToLoop: true,
+            },
+          }
+        : undefined,
     });
   };
 
   const handleDeleteBranch = async (event: MouseEvent) => {
     event.stopPropagation();
 
+    const isIteratorLoopEdge =
+      sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
+
     await deleteEdge({
       source,
-      sourceHandle: sourceHandleId,
       target,
-      targetHandle: targetHandleId,
+      sourceConnectionOptions: isIteratorLoopEdge
+        ? {
+            connectedStepType: 'ITERATOR',
+            settings: {
+              isConnectedToLoop: true,
+            },
+          }
+        : undefined,
     });
   };
 

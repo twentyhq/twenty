@@ -72,8 +72,6 @@ export const WorkflowDiagramCanvasEditable = () => {
     await deleteEdge({
       source: edge.source,
       target: edge.target,
-      sourceHandle: edge.sourceHandle,
-      targetHandle: edge.targetHandle,
     });
   };
 

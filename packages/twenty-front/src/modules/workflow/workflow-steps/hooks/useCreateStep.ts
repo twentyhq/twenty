@@ -3,6 +3,7 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import { type WorkflowStepType } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,11 +26,13 @@ export const useCreateStep = () => {
     parentStepId,
     nextStepId,
     position,
+    connectionOptions,
   }: {
     newStepType: WorkflowStepType;
     parentStepId: string | undefined;
     nextStepId: string | undefined;
     position?: { x: number; y: number };
+    connectionOptions?: WorkflowStepConnectionOptions;
   }) => {
     if (isLoading === true) {
       return;
@@ -47,6 +50,7 @@ export const useCreateStep = () => {
           parentStepId,
           nextStepId,
           position,
+          parentStepConnectionOptions: connectionOptions,
         })
       )?.data?.createWorkflowVersionStep;
 
