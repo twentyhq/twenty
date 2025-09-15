@@ -3,11 +3,12 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { WidgetType } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
   parameters: {
     layout: 'centered',
   },
@@ -394,6 +395,92 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
+      <WidgetRenderer
+        widget={args.widget}
+        displayDragHandle={args.displayDragHandle}
+        onRemove={args.onRemove}
+        onEdit={args.onEdit}
+      />
+    </div>
+  ),
+};
+
+export const RestrictedAccess: Story = {
+  args: {
+    widget: {
+      title: 'Sales Revenue',
+      type: WidgetType.GRAPH,
+      configuration: {
+        graphType: GraphType.NUMBER,
+      },
+      gridPosition: {
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      id: 'widget-restricted',
+      pageLayoutTabId: 'tab-overview',
+      hasAccess: false,
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      data: undefined,
+    },
+    displayDragHandle: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Widget with restricted access - shows lock icon and "Not shared" message instead of content. Edit button is disabled but remove button remains functional.',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '300px', height: '150px' }}>
+      <WidgetRenderer
+        widget={args.widget}
+        displayDragHandle={args.displayDragHandle}
+        onRemove={args.onRemove}
+        onEdit={args.onEdit}
+      />
+    </div>
+  ),
+};
+
+export const RestrictedAccessLargeWidget: Story = {
+  args: {
+    widget: {
+      title: 'Team Performance Dashboard',
+      type: WidgetType.GRAPH,
+      configuration: {
+        graphType: GraphType.BAR,
+      },
+      gridPosition: {
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 6,
+      },
+      id: 'widget-restricted-large',
+      pageLayoutTabId: 'tab-overview',
+      hasAccess: false,
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      data: undefined,
+    },
+    displayDragHandle: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Large widget with restricted access - demonstrates how the no access content scales within larger widget containers.',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '600px', height: '400px' }}>
       <WidgetRenderer
         widget={args.widget}
         displayDragHandle={args.displayDragHandle}
