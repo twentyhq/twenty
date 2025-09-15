@@ -52,7 +52,7 @@ export class FlatEntityMapsCacheService {
           workspaceId,
         });
 
-        // @ts-expect-error Expected error due to generic looping
+        // @ts-expect-error todo prastoin once refactored flat object metadata cache
         allFlatEntityMaps[flatEntityName] = result;
       } catch (error) {
         this.logger.error(
