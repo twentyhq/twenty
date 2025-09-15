@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { type PageLayoutTabWithData } from '../types/pageLayoutTypes';
-import { createEmptyTabLayout } from '../utils/createEmptyTabLayout';
+import { getEmptyTabLayout } from '../utils/getEmptyTabLayout';
 
 export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -52,7 +52,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         }));
 
         set(pageLayoutCurrentLayoutsState, (prev) =>
-          createEmptyTabLayout(prev, newTabId),
+          getEmptyTabLayout(prev, newTabId),
         );
 
         return newTabId;

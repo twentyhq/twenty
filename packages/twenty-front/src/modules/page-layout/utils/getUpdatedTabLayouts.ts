@@ -1,6 +1,6 @@
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 
-export const createUpdatedTabLayouts = (
+export const getUpdatedTabLayouts = (
   allTabLayouts: TabLayouts,
   activeTabId: string,
   newLayout: { i: string; x: number; y: number; w: number; h: number },

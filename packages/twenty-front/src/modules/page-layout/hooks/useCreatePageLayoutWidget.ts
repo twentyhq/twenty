@@ -5,7 +5,6 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
-import { createUpdatedTabLayouts } from '@/page-layout/utils/createUpdatedTabLayouts';
 import {
   getDefaultWidgetData,
   getWidgetSize,
@@ -13,6 +12,7 @@ import {
 } from '@/page-layout/utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -111,7 +111,7 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           h: position.h,
         };
 
-        const updatedLayouts = createUpdatedTabLayouts(
+        const updatedLayouts = getUpdatedTabLayouts(
           allTabLayouts,
           activeTabId,
           newLayout,
