@@ -206,7 +206,7 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating view field',
+        'Multiple validation errors occurred while deleting view field',
       );
     }
 

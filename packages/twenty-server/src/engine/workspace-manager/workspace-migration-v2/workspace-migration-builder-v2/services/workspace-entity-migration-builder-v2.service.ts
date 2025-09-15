@@ -130,10 +130,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       updated: [],
     };
 
-    for (const flatViewFieldToCreate of created) {
+    for (const flatEntityToCreate of created) {
       const validationResult = await this.validateFlatEntityCreation({
         dependencyOptimisticFlatEntityMaps,
-        flatEntityToValidate: flatViewFieldToCreate,
+        flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
       });
 
@@ -143,19 +143,19 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       }
 
       optimisticFlatEntityMaps = addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: flatViewFieldToCreate,
+        flatEntity: flatEntityToCreate,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
       validateAndBuildResult.created.push(validationResult.action);
     }
 
-    for (const flatViewFieldToDelete of buildOptions.inferDeletionFromMissingEntities
+    for (const flatEntityToDelete of buildOptions.inferDeletionFromMissingEntities
       ? deleted
       : []) {
       const validationResult = await this.validateFlatEntityDeletion({
         dependencyOptimisticFlatEntityMaps,
-        flatEntityToValidate: flatViewFieldToDelete,
+        flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
       });
 
@@ -165,7 +165,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       }
 
       optimisticFlatEntityMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-        entityToDeleteId: flatViewFieldToDelete.id,
+        entityToDeleteId: flatEntityToDelete.id,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
@@ -223,7 +223,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
   ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
-  // Create util type
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
   ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined>;

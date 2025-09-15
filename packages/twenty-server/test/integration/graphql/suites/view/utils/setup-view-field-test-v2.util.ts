@@ -1,10 +1,10 @@
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
@@ -70,12 +70,12 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
 };
 
 export const cleanupViewFieldTestV2 = async (
-  testObjectMetadataId: string,
+  objectMetadataId: string,
 ): Promise<void> => {
   try {
     await updateOneObjectMetadata({
       input: {
-        idToUpdate: testObjectMetadataId,
+        idToUpdate: objectMetadataId,
         updatePayload: {
           isActive: false,
         },
@@ -83,7 +83,7 @@ export const cleanupViewFieldTestV2 = async (
     });
     await deleteOneObjectMetadata({
       expectToFail: false,
-      input: { idToDelete: testObjectMetadataId },
+      input: { idToDelete: objectMetadataId },
     });
   } finally {
     await updateFeatureFlag({

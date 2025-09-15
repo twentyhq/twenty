@@ -1,10 +1,10 @@
-import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { faker } from '@faker-js/faker';
 
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 
@@ -36,7 +36,7 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
         context: (testSetup) => ({
           input: {
             viewId: testSetup.testViewId,
-            fieldMetadataId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+            fieldMetadataId: faker.string.uuid(),
           },
         }),
       },
@@ -44,7 +44,7 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
         title: 'non-existent view metadata',
         context: (testSetup) => ({
           input: {
-            viewId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+            viewId: faker.string.uuid(),
             fieldMetadataId: testSetup.testFieldMetadataId,
           },
         }),

@@ -4,7 +4,6 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 
 export type AllFlatEntityMaps = {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
-  //   flatFieldMetadataMaps: FlatObjectMetadataMaps;
   flatViewMaps: FlatViewMaps;
   flatViewFieldMaps: FlatViewFieldMaps;
 };

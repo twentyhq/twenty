@@ -101,12 +101,12 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     | FlatEntityValidationReturnType<WorkspaceMigrationViewActionV2, FlatView>
     | undefined
   > {
-    const viewFieldUpdatedProperties = compareTwoFlatView({
+    const viewUpdatedProperties = compareTwoFlatView({
       fromFlatView,
       toFlatView,
     });
 
-    if (viewFieldUpdatedProperties.length === 0) {
+    if (viewUpdatedProperties.length === 0) {
       return undefined;
     }
 
@@ -124,15 +124,15 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const updateViewFieldAction: UpdateViewAction = {
+    const updateViewAction: UpdateViewAction = {
       type: 'update_view',
       viewId: toFlatView.id,
-      updates: viewFieldUpdatedProperties,
+      updates: viewUpdatedProperties,
     };
 
     return {
       status: 'success',
-      action: updateViewFieldAction,
+      action: updateViewAction,
     };
   }
 }

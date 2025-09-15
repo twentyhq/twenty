@@ -97,7 +97,7 @@ export class FlatViewValidatorService {
     if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View with same is already exists`,
+        message: t`View with same id is already exists`,
         userFriendlyMessage: t`View already exists`,
       });
     }

@@ -75,7 +75,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       viewField: [],
     };
 
-    const opstimisticAllFlatEntityMaps = this.setupOptimisticCache({
+    const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
       fromToAllFlatEntityMaps,
       dependencyAllFlatEntityMaps,
     });
@@ -94,7 +94,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           buildOptions,
         });
 
-      opstimisticAllFlatEntityMaps.flatObjectMetadataMaps =
+      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
         objectResult.optimisticFlatObjectMetadataMaps;
 
       if (objectResult.status === 'fail') {
@@ -111,7 +111,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           {
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
-                opstimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
             },
             from: fromFlatViewMaps,
             to: toFlatViewMaps,
@@ -119,7 +119,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      opstimisticAllFlatEntityMaps.flatViewMaps =
+      optimisticAllFlatEntityMaps.flatViewMaps =
         viewResult.optimisticFlatEntityMaps;
 
       if (viewResult.status === 'fail') {
@@ -140,13 +140,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
-                opstimisticAllFlatEntityMaps.flatObjectMetadataMaps,
-              flatViewMaps: opstimisticAllFlatEntityMaps.flatViewMaps,
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
             },
           },
         );
 
-      opstimisticAllFlatEntityMaps.flatViewFieldMaps =
+      optimisticAllFlatEntityMaps.flatViewFieldMaps =
         viewFieldResult.optimisticFlatEntityMaps;
 
       if (viewFieldResult.status === 'fail') {
