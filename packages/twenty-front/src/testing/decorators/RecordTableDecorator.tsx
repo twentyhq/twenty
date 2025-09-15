@@ -145,6 +145,7 @@ const InternalTableContextProviders = ({
         objectMetadataItem: objectMetadataItem,
         objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
+        viewBarInstanceId: 'viewBarInstanceId',
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,

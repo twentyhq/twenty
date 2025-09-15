@@ -17,7 +17,6 @@ import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFiel
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { type ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
 import { convertViewOpenRecordInToCore } from '@/views/utils/convertViewOpenRecordInToCore';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
@@ -28,6 +27,7 @@ import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import {
   type CreateCoreViewFieldMutationVariables,
   useCreateCoreViewMutation,
@@ -112,6 +112,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         set(isPersistingViewFieldsState, true);
 
+        const viewType = type ?? sourceView.type;
+
         const result = await createCoreViewMutation({
           variables: {
             input: {
@@ -126,12 +128,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 shouldCopyFiltersAndSortsAndAggregate
                   ? sourceView.kanbanAggregateOperationFieldMetadataId
                   : undefined,
-              type: convertViewTypeToCore(type ?? sourceView.type),
+              type: convertViewTypeToCore(viewType),
               objectMetadataId: sourceView.objectMetadataId,
               openRecordIn: convertViewOpenRecordInToCore(
                 sourceView.openRecordIn,
               ),
               anyFieldFilterValue: anyFieldFilterValue,
+              calendarLayout:
+                viewType === ViewType.Calendar
+                  ? ViewCalendarLayout.MONTH
+                  : undefined,
             },
           },
         });
@@ -206,14 +212,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           });
 
           const viewSortsToCreate = currentRecordSorts
-            .map(mapRecordSortToViewSort)
-            .map(
-              (viewSort) =>
-                ({
-                  ...viewSort,
-                  id: v4(),
-                }) satisfies ViewSort,
-            );
+            .map((recordSort) => mapRecordSortToViewSort(recordSort, newViewId))
+            .map((viewSort) => ({
+              ...viewSort,
+              id: v4(),
+            }));
 
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, {
             id: newViewId,

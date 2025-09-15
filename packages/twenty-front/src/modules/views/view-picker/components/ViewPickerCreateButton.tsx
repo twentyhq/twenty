@@ -64,7 +64,7 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Table ||
+    viewPickerType !== ViewType.Kanban ||
     viewPickerKanbanFieldMetadataId !== ''
   ) {
     return (
