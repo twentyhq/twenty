@@ -6,20 +6,21 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { type FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { generateFlatViewMaps } from 'src/engine/core-modules/view/flat-view/utils/generate-flat-view-maps.util';
+import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
+import { fromViewFieldEntityToFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
-@WorkspaceFlatMapCache('flatViewMaps')
-export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheService<FlatViewMaps> {
+@WorkspaceFlatMapCache('flatViewFieldMaps')
+export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceFlatMapCacheService<FlatViewFieldMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
     @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    private readonly viewFieldRepository: Repository<ViewFieldEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -28,20 +29,28 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<FlatViewMaps> {
-    const views = await this.viewRepository.find({
+  }): Promise<FlatViewFieldMaps> {
+    const existingViewFields = await this.viewFieldRepository.find({
       where: {
         workspaceId,
       },
       withDeleted: true,
-      relations: ['viewFields'],
-      select: {
-        viewFields: {
-          id: true,
-        },
-      },
     });
 
-    return generateFlatViewMaps(views);
+    const flatViewFieldMaps: FlatViewFieldMaps = {
+      byId: {},
+      idByUniversalIdentifier: {},
+    };
+
+    for (const viewFieldEntity of existingViewFields) {
+      const flatViewField = fromViewFieldEntityToFlatViewField(viewFieldEntity);
+
+      flatViewFieldMaps.byId[flatViewField.id] = flatViewField;
+      flatViewFieldMaps.idByUniversalIdentifier[
+        flatViewField.universalIdentifier
+      ] = flatViewField.id;
+    }
+
+    return flatViewFieldMaps;
   }
 }

@@ -116,7 +116,7 @@ export abstract class WorkspaceFlatMapCacheService<
       this.constructor,
     );
 
-    if (!cacheKey) {
+    if (!isDefined(cacheKey)) {
       throw new WorkspaceFlatMapCacheException(
         `${this.constructor.name} must be decorated with @WorkspaceFlatMapCache('cacheKey')`,
         WorkspaceFlatMapCacheExceptionCode.MISSING_DECORATOR,
