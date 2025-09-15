@@ -964,7 +964,7 @@ msgid "End Date"
 msgstr "Data di fine"
 
 #. js-lingui-id: EzGlkq
-#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr ""
 
