@@ -60,6 +60,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordGroupFieldMetadataComponentState,
   );
 
+  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.calendarFieldMetadataId,
+      )
+    : undefined;
+
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForKanban, navigateToSelectSettings } =
     useGetAvailableFieldsForKanban();
@@ -106,6 +112,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(!isDefaultView && hasCalendarViewEnabled ? [ViewType.Calendar] : []),
     ViewOpenRecordInType.SIDE_PANEL,
     ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
+    ...(currentView?.type === ViewType.Calendar ? ['CalendarDateField'] : []),
   ];
 
   const selectedItemId = useRecoilComponentValue(
@@ -270,6 +277,21 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   />
                 </SelectableListItem>
               </>
+            )}
+            {currentView?.type === ViewType.Calendar && (
+              <SelectableListItem
+                itemId="CalendarDateField"
+                onEnter={() => onContentChange('calendarFields')}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'CalendarDateField'}
+                  onClick={() => onContentChange('calendarFields')}
+                  LeftIcon={IconLayoutList}
+                  text={t`Date field`}
+                  contextualText={calendarFieldMetadata?.label}
+                  hasSubMenu
+                />
+              </SelectableListItem>
             )}
           </DropdownMenuItemsContainer>
         </SelectableList>

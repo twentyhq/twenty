@@ -6,4 +6,5 @@ export type ObjectOptionsContentId =
   | 'recordGroups'
   | 'hiddenRecordGroups'
   | 'recordGroupFields'
-  | 'recordGroupSort';
+  | 'recordGroupSort'
+  | 'calendarFields';
