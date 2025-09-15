@@ -23,6 +23,7 @@ export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
 
   const isDirty = pageLayoutPersisted
     ? !isDeeplyEqual(pageLayoutDraft, {
+        id: pageLayoutPersisted.id,
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,

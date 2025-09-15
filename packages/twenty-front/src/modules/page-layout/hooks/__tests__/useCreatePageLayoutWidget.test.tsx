@@ -9,8 +9,8 @@ import { useSetRecoilState } from 'recoil';
 import { PageLayoutType } from '~/generated/graphql';
 import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
 import {
-  PageLayoutTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
 jest.mock('uuid', () => ({
@@ -61,6 +61,7 @@ describe('useCreatePageLayoutWidget', () => {
 
     act(() => {
       result.current.setPageLayoutDraft({
+        id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
@@ -137,6 +138,7 @@ describe('useCreatePageLayoutWidget', () => {
 
     act(() => {
       result.current.setPageLayoutDraft({
+        id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,

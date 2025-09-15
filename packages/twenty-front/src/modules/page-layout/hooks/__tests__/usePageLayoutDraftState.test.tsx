@@ -1,11 +1,11 @@
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { act, renderHook } from '@testing-library/react';
 import { PageLayoutType } from '~/generated/graphql';
-import {
-  PageLayoutTestWrapper,
-  PAGE_LAYOUT_TEST_INSTANCE_ID,
-} from './PageLayoutTestWrapper';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';
+import {
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
+} from './PageLayoutTestWrapper';
 
 describe('usePageLayoutDraftState', () => {
   it('should detect dirty state when draft differs from persisted', () => {
@@ -30,6 +30,7 @@ describe('usePageLayoutDraftState', () => {
 
     act(() => {
       result.current.setPageLayoutDraft({
+        id: 'test-layout',
         name: '   ',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
@@ -51,6 +52,7 @@ describe('usePageLayoutDraftState', () => {
 
     act(() => {
       result.current.setPageLayoutDraft({
+        id: 'test-layout',
         name: 'Updated Name',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
@@ -73,6 +75,7 @@ describe('usePageLayoutDraftState', () => {
 
     act(() => {
       result.current.setPageLayoutDraft({
+        id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: null,
