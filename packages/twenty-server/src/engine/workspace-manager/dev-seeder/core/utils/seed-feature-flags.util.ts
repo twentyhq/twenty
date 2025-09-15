@@ -56,11 +56,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -74,6 +69,11 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
         workspaceId: workspaceId,
         value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
       },
     ])
     .execute();

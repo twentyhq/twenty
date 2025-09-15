@@ -68,10 +68,6 @@ export const mockCurrentWorkspace: Workspace = {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
-    {
-      key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-      value: true,
-    },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -130,7 +126,7 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+    objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
@@ -154,7 +150,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectPermissions: generatedMockObjectMetadataItems
+    objectsPermissions: generatedMockObjectMetadataItems
       .filter(
         (objectMetadata) =>
           objectMetadata.nameSingular !== 'task' &&

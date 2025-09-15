@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { type StringKeyOf } from 'type-fest';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;

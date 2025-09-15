@@ -7,8 +7,8 @@ import styled from '@emotion/styled';
 import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  type CustomDomainRecord,
-  type CustomDomainValidRecords,
+  type DomainRecord,
+  type DomainValidRecords,
 } from '~/generated/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { capitalize } from 'twenty-shared/utils';
@@ -49,7 +49,7 @@ const StyledButton = styled(Button)`
 export const SettingsCustomDomainRecords = ({
   records,
 }: {
-  records: CustomDomainValidRecords['records'];
+  records: DomainValidRecords['records'];
 }) => {
   const { customDomainRecords } = useRecoilValue(customDomainRecordsState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -67,7 +67,7 @@ export const SettingsCustomDomainRecords = ({
   ];
 
   const defaultValues: { status: string; color: ThemeColor } =
-    currentWorkspace?.customDomain === customDomainRecords?.customDomain
+    currentWorkspace?.customDomain === customDomainRecords?.domain
       ? {
           status: 'success',
           color: 'green',
@@ -78,7 +78,7 @@ export const SettingsCustomDomainRecords = ({
         };
 
   const rows = rowsDefinitions.map<
-    { name: string; status: string; color: ThemeColor } & CustomDomainRecord
+    { name: string; status: string; color: ThemeColor } & DomainRecord
   >((row) => {
     const record = records.find(
       ({ validationType }) => validationType === row.validationType,

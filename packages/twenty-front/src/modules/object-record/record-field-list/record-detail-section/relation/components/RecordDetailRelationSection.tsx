@@ -19,10 +19,10 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -81,7 +81,7 @@ export const RecordDetailRelationSection = ({
   );
 
   const indexViewId = useRecoilValue(
-    prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: relationObjectMetadataItem.id,
     }),
   );

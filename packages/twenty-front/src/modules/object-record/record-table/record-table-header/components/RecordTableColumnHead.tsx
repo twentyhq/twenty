@@ -1,12 +1,9 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
-
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -61,10 +58,6 @@ export const RecordTableColumnHead = ({
     }),
   );
 
-  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
-    isRecordTableScrolledHorizontallyComponentState,
-  );
-
   const { getIcon } = useIcons();
   const Icon = getIcon(
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
@@ -76,10 +69,10 @@ export const RecordTableColumnHead = ({
     }),
   );
 
+  // TODO: fix previous behavior with isRecordTableScrolledHorizontally
+
   return (
-    <StyledTitle
-      hideTitle={isLabelIdentifier && isRecordTableScrolledHorizontally}
-    >
+    <StyledTitle hideTitle={isLabelIdentifier}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

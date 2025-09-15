@@ -60,7 +60,7 @@ export const WorkflowVersionVisualizerEffect = ({
 
     const nextWorkflowDiagram = getWorkflowVersionDiagram({
       workflowVersion,
-      isEditable: false,
+      workflowContext: 'workflow-version',
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);

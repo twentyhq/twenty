@@ -41,6 +41,7 @@ import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-hand
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -114,6 +115,9 @@ export class Workspace {
     (approvedAccessDomain) => approvedAccessDomain.workspace,
   )
   approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
+
+  @OneToMany(() => PublicDomain, (publicDomain) => publicDomain.workspace)
+  publicDomains: Relation<PublicDomain[]>;
 
   @Field({ nullable: true })
   workspaceMembersCount: number;

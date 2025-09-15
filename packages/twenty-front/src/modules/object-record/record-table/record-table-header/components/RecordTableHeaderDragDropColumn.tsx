@@ -1,3 +1,5 @@
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
+import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme';
@@ -18,7 +20,10 @@ export const RecordTableHeaderDragDropColumn = () => {
 
   return (
     <StyledDragDropHeaderCell
-      className="header-cell"
+      className={cx(
+        'header-cell',
+        RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME,
+      )}
       backgroundColor={theme.background.primary}
     />
   );

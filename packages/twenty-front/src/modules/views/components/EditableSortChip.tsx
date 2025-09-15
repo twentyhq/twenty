@@ -4,6 +4,7 @@ import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsert
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
+import { ViewSortDirection } from '~/generated/graphql';
 
 type EditableSortChipProps = {
   recordSort: RecordSort;
@@ -25,9 +26,11 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   const handleClick = () => {
     const newSort: RecordSort = {
       ...recordSort,
-      direction: recordSort.direction === 'asc' ? 'desc' : 'asc',
+      direction:
+        recordSort.direction === ViewSortDirection.ASC
+          ? ViewSortDirection.DESC
+          : ViewSortDirection.ASC,
     };
-
     upsertRecordSort(newSort);
   };
 
@@ -36,7 +39,11 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       key={recordSort.fieldMetadataId}
       testId={recordSort.fieldMetadataId}
       labelValue={fieldMetadataItem.label}
-      Icon={recordSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
+      Icon={
+        recordSort.direction === ViewSortDirection.DESC
+          ? IconArrowDown
+          : IconArrowUp
+      }
       onRemove={handleRemoveClick}
       onClick={handleClick}
       type="sort"

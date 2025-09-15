@@ -5,6 +5,7 @@ export const agentEntityRelationProperties = [
   'chatThreads',
   'outgoingHandoffs',
   'incomingHandoffs',
+  'application',
 ] as const;
 
 export type AgentEntityRelationProperties =

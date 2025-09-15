@@ -3,6 +3,7 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,15 +20,19 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
+  IconCalendar,
+  IconCalendarWeek,
   IconCopy,
   IconLayoutList,
   IconListDetails,
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ViewCalendarLayout } from '~/generated/graphql';
 
 interface ObjectOptionsDropdownCustomViewProps {
   onBackToDefault?: () => void;
@@ -54,7 +59,17 @@ export const ObjectOptionsDropdownCustomView = ({
     recordGroupFieldMetadataComponentState,
   );
 
+  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.calendarFieldMetadataId,
+      )
+    : undefined;
+
   const isDefaultView = currentView?.key === ViewKey.Index;
+
+  const recordIndexCalendarLayout = useRecoilValue(
+    recordIndexCalendarLayoutState,
+  );
 
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -83,7 +98,10 @@ export const ObjectOptionsDropdownCustomView = ({
   const selectableItemIdArray = [
     'Layout',
     'Fields',
-    'Group',
+    ...(customViewData?.type === ViewType.Calendar
+      ? ['CalendarDateField', 'CalendarView']
+      : []),
+    ...(customViewData?.type !== ViewType.Calendar ? ['Group'] : []),
     'Copy link to view',
     'Delete view',
   ];
@@ -125,6 +143,48 @@ export const ObjectOptionsDropdownCustomView = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
+          {customViewData?.type === ViewType.Calendar && (
+            <>
+              <div id="calendar-date-field-picker-menu-item">
+                <SelectableListItem
+                  itemId="CalendarDateField"
+                  onEnter={() => onContentChange('calendarFields')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'CalendarDateField'}
+                    onClick={() => onContentChange('calendarFields')}
+                    LeftIcon={IconCalendar}
+                    text={t`Date field`}
+                    contextualText={
+                      isDefaultView
+                        ? t`Not available on Default View`
+                        : calendarFieldMetadata?.label
+                    }
+                    hasSubMenu
+                    disabled={isDefaultView}
+                  />
+                </SelectableListItem>
+              </div>
+              <SelectableListItem
+                itemId="CalendarView"
+                onEnter={() => onContentChange('calendarView')}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'CalendarView'}
+                  onClick={() => onContentChange('calendarView')}
+                  LeftIcon={IconCalendarWeek}
+                  text={t`Calendar view`}
+                  contextualText={
+                    recordIndexCalendarLayout === ViewCalendarLayout.MONTH
+                      ? t`Month`
+                      : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
+                        ? t`Week`
+                        : t`Day`
+                  }
+                />
+              </SelectableListItem>
+            </>
+          )}
           <SelectableListItem
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
@@ -138,34 +198,36 @@ export const ObjectOptionsDropdownCustomView = ({
               hasSubMenu
             />
           </SelectableListItem>
-          <div id="group-by-menu-item">
-            <SelectableListItem
-              itemId="Group"
-              onEnter={() =>
-                isDefined(recordGroupFieldMetadata)
-                  ? onContentChange('recordGroups')
-                  : onContentChange('recordGroupFields')
-              }
-            >
-              <MenuItem
-                focused={selectedItemId === 'Group'}
-                onClick={() =>
+          {customViewData?.type !== ViewType.Calendar && (
+            <div id="group-by-menu-item">
+              <SelectableListItem
+                itemId="Group"
+                onEnter={() =>
                   isDefined(recordGroupFieldMetadata)
                     ? onContentChange('recordGroups')
                     : onContentChange('recordGroupFields')
                 }
-                LeftIcon={IconLayoutList}
-                text={t`Group`}
-                contextualText={
-                  isDefaultView
-                    ? t`Not available on Default View`
-                    : recordGroupFieldMetadata?.label
-                }
-                hasSubMenu
-                disabled={isDefaultView}
-              />
-            </SelectableListItem>
-          </div>
+              >
+                <MenuItem
+                  focused={selectedItemId === 'Group'}
+                  onClick={() =>
+                    isDefined(recordGroupFieldMetadata)
+                      ? onContentChange('recordGroups')
+                      : onContentChange('recordGroupFields')
+                  }
+                  LeftIcon={IconLayoutList}
+                  text={t`Group`}
+                  contextualText={
+                    isDefaultView
+                      ? t`Not available on Default View`
+                      : recordGroupFieldMetadata?.label
+                  }
+                  hasSubMenu
+                  disabled={isDefaultView}
+                />
+              </SelectableListItem>
+            </div>
+          )}
           {isDefaultView && (
             <AppTooltip
               anchorSelect={`#group-by-menu-item`}

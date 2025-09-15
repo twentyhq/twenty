@@ -2,6 +2,7 @@ import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/co
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
@@ -12,10 +13,13 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { Position } from '@xyflow/react';
 import { useState } from 'react';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 
@@ -56,6 +60,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   onDelete: () => void;
   onClick?: () => void;
 }) => {
+  const { i18n } = useLingui();
+
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -89,6 +95,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         isConnectable={isConnectable(id)}
       >
         <WorkflowDiagramHandleTarget isConnectable={isConnectable(id)} />
+
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -123,19 +130,62 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           onMouseLeave={handleMouseLeave}
           onClick={handleAddStepButtonContainerClick}
         >
-          <WorkflowDiagramCreateStepElement data={data} />
+          <WorkflowDiagramCreateStepElement
+            data={data}
+            Label={
+              isDefined(data.defaultHandleOptions?.label) ? (
+                <WorkflowDiagramEdgeLabel
+                  label={i18n._(data.defaultHandleOptions.label)}
+                />
+              ) : undefined
+            }
+          />
         </StyledAddStepButtonContainer>
       )}
 
       <WorkflowDiagramHandleSource
+        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
+        type="source"
+        position={Position.Bottom}
         selected={
-          isSourceSelected(id) ||
+          isSourceSelected({
+            nodeId: id,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+          }) ||
           selected ||
           isSourceConnected(id) ||
           (isConnectable(id) && isHovered)
         }
-        hovered={isSourceHovered(id) || isHovered}
+        hovered={
+          isSourceHovered({
+            nodeId: id,
+            sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+          }) || isHovered
+        }
       />
+
+      {isDefined(data.rightHandleOptions) && (
+        <WorkflowDiagramHandleSource
+          id={data.rightHandleOptions.id}
+          type="source"
+          position={Position.Right}
+          selected={
+            isSourceSelected({
+              nodeId: id,
+              sourceHandle: data.rightHandleOptions.id,
+            }) ||
+            selected ||
+            isSourceConnected(id) ||
+            (isConnectable(id) && isHovered)
+          }
+          hovered={
+            isSourceHovered({
+              nodeId: id,
+              sourceHandle: data.rightHandleOptions.id,
+            }) || isHovered
+          }
+        />
+      )}
     </>
   );
 };

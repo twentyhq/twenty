@@ -18,6 +18,7 @@ export { FieldMetadataType } from './FieldMetadataType';
 export type { FromTo } from './FromToType';
 export type { IsExactly } from './IsExactly';
 export type { NonNullableRequired } from './NonNullableRequired';
+export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectPermissionsDeprecated } from './ObjectPermissionsDeprecated';

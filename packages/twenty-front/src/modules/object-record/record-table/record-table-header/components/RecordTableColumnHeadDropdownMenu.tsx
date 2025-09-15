@@ -98,9 +98,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
     moveTableColumn('right', recordField.fieldMetadataItemId);
   };
 
-  const handleColumnVisibility = () => {
+  const handleColumnVisibility = async () => {
     closeDropdownAndToggleScroll();
-    changeRecordFieldVisibility({
+    await changeRecordFieldVisibility({
       fieldMetadataId: recordField.fieldMetadataItemId,
       isVisible: false,
     });
@@ -170,7 +170,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
         {canHide && (
           <MenuItem
             LeftIcon={IconEyeOff}
-            onClick={handleColumnVisibility}
+            onClick={async () => await handleColumnVisibility()}
             text={t`Hide`}
           />
         )}

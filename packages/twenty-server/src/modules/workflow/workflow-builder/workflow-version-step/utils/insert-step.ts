@@ -1,62 +1,50 @@
+import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
+import {
+  type WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const insertStep = ({
   existingSteps,
   existingTrigger,
   insertedStep,
-  parentStepId,
   nextStepId,
+  parentStepId,
+  parentStepConnectionOptions,
 }: {
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
-  parentStepId?: string;
   nextStepId?: string;
+  parentStepId?: string;
+  parentStepConnectionOptions?: WorkflowStepConnectionOptions;
 }): {
   updatedSteps: WorkflowAction[];
   updatedInsertedStep: WorkflowAction;
   updatedTrigger: WorkflowTrigger | null;
 } => {
-  let updatedTrigger = existingTrigger;
-
-  let updatedExistingSteps = existingSteps;
-
-  if (parentStepId === TRIGGER_STEP_ID) {
-    if (!existingTrigger) {
-      throw new Error('Cannot insert step from undefined trigger');
-    }
-
-    updatedTrigger = {
-      ...existingTrigger,
-      nextStepIds: [
-        ...new Set([
-          ...(existingTrigger.nextStepIds?.filter((id) => id !== nextStepId) ||
-            []),
-          insertedStep.id,
-        ]),
-      ],
-    };
-  } else {
-    updatedExistingSteps = existingSteps.map((existingStep) => {
-      if (existingStep.id === parentStepId) {
-        return {
-          ...existingStep,
-          nextStepIds: [
-            ...new Set([
-              ...(existingStep.nextStepIds?.filter((id) => id !== nextStepId) ||
-                []),
-              insertedStep.id,
-            ]),
-          ],
-        };
-      }
-
-      return existingStep;
-    });
-  }
+  let { updatedSteps, updatedTrigger } = isDefined(parentStepId)
+    ? updateParentStep({
+        trigger: existingTrigger,
+        steps: existingSteps,
+        parentStepId,
+        insertedStepId: insertedStep.id,
+        nextStepId,
+        parentStepConnectionOptions,
+      })
+    : {
+        updatedSteps: existingSteps,
+        updatedTrigger: existingTrigger,
+      };
 
   const updatedInsertedStep = {
     ...insertedStep,
@@ -64,8 +52,165 @@ export const insertStep = ({
   };
 
   return {
-    updatedSteps: [...updatedExistingSteps, updatedInsertedStep],
+    updatedSteps: [...updatedSteps, updatedInsertedStep],
     updatedTrigger,
     updatedInsertedStep,
+  };
+};
+
+const updateParentStep = ({
+  steps,
+  trigger,
+  parentStepId,
+  insertedStepId,
+  nextStepId,
+  parentStepConnectionOptions,
+}: {
+  steps: WorkflowAction[];
+  trigger: WorkflowTrigger | null;
+  parentStepId: string;
+  insertedStepId: string;
+  nextStepId?: string;
+  parentStepConnectionOptions?: WorkflowStepConnectionOptions;
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+} => {
+  if (isDefined(parentStepConnectionOptions)) {
+    return updateStepsWithOptions({
+      steps,
+      parentStepId,
+      insertedStepId,
+      parentStepConnectionOptions,
+      trigger,
+    });
+  } else {
+    return updateParentStepNextStepIds({
+      steps,
+      trigger,
+      parentStepId,
+      insertedStepId,
+      nextStepId,
+    });
+  }
+};
+
+const updateParentStepNextStepIds = ({
+  steps,
+  trigger,
+  parentStepId,
+  insertedStepId,
+  nextStepId,
+}: {
+  steps: WorkflowAction[];
+  trigger: WorkflowTrigger | null;
+  parentStepId: string;
+  insertedStepId: string;
+  nextStepId?: string;
+}): {
+  updatedSteps: WorkflowAction[];
+  updatedTrigger: WorkflowTrigger | null;
+} => {
+  let updatedTrigger = trigger;
+
+  let updatedSteps = steps;
+
+  if (parentStepId === TRIGGER_STEP_ID) {
+    if (!trigger) {
+      throw new WorkflowVersionStepException(
+        'Cannot insert step from undefined trigger',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    updatedTrigger = {
+      ...trigger,
+      nextStepIds: [
+        ...new Set([
+          ...(trigger.nextStepIds?.filter((id) => id !== nextStepId) || []),
+          insertedStepId,
+        ]),
+      ],
+    };
+  } else {
+    updatedSteps = steps.map((step) => {
+      if (step.id === parentStepId) {
+        return {
+          ...step,
+          nextStepIds: [
+            ...new Set([
+              ...(step.nextStepIds?.filter((id) => id !== nextStepId) || []),
+              insertedStepId,
+            ]),
+          ],
+        };
+      }
+
+      return step;
+    });
+  }
+
+  return {
+    updatedSteps,
+    updatedTrigger,
+  };
+};
+
+const updateStepsWithOptions = ({
+  parentStepId,
+  insertedStepId,
+  steps,
+  parentStepConnectionOptions,
+  trigger,
+}: {
+  parentStepId: string;
+  insertedStepId: string;
+  steps: WorkflowAction[];
+  parentStepConnectionOptions: WorkflowStepConnectionOptions;
+  trigger: WorkflowTrigger | null;
+}) => {
+  let updatedSteps = steps;
+
+  switch (parentStepConnectionOptions.connectedStepType) {
+    case WorkflowActionType.ITERATOR:
+      if (!parentStepConnectionOptions.settings.isConnectedToLoop) {
+        break;
+      }
+
+      updatedSteps = steps.map((step) => {
+        if (step.id === parentStepId) {
+          if (step.type !== WorkflowActionType.ITERATOR) {
+            throw new WorkflowVersionStepException(
+              `Step ${step.id} is not an iterator`,
+              WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+            );
+          }
+
+          return {
+            ...step,
+            settings: {
+              ...step.settings,
+              input: {
+                ...step.settings.input,
+                initialLoopStepIds: [
+                  ...(step.settings.input.initialLoopStepIds || []),
+                  insertedStepId,
+                ],
+              },
+            } satisfies WorkflowIteratorActionSettings,
+          };
+        }
+
+        return step;
+      });
+
+      break;
+    default:
+      break;
+  }
+
+  return {
+    updatedSteps,
+    updatedTrigger: trigger,
   };
 };

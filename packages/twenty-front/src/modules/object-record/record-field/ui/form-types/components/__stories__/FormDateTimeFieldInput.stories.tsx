@@ -11,7 +11,6 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
-import { DateTime } from 'luxon';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
@@ -257,23 +256,23 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
         );
       }),
       waitFor(() => {
-        const expectedDate = DateTime.fromJSDate(MIN_DATE)
-          .toLocal()
-          .set({
-            day: MIN_DATE.getUTCDate(),
-            month: MIN_DATE.getUTCMonth() + 1,
-            year: MIN_DATE.getUTCFullYear(),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          });
+        const expectedDate = new Date(
+          MIN_DATE.getUTCFullYear(),
+          MIN_DATE.getUTCMonth(),
+          MIN_DATE.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        );
 
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,
           name: (accessibleName) => {
             // The name looks like "Choose Sunday, December 31st, 1899"
-            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+            return accessibleName.includes(
+              expectedDate.getFullYear().toString(),
+            );
           },
         });
         expect(selectedDay).toBeVisible();
@@ -315,23 +314,23 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
         );
       }),
       waitFor(() => {
-        const expectedDate = DateTime.fromJSDate(MAX_DATE)
-          .toLocal()
-          .set({
-            day: MAX_DATE.getUTCDate(),
-            month: MAX_DATE.getUTCMonth() + 1,
-            year: MAX_DATE.getUTCFullYear(),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          });
+        const expectedDate = new Date(
+          MAX_DATE.getUTCFullYear(),
+          MAX_DATE.getUTCMonth(),
+          MAX_DATE.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        );
 
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,
           name: (accessibleName) => {
             // The name looks like "Choose Thursday, December 30th, 2100"
-            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+            return accessibleName.includes(
+              expectedDate.getFullYear().toString(),
+            );
           },
         });
         expect(selectedDay).toBeVisible();
@@ -366,13 +365,7 @@ export const SwitchesToStandaloneVariable: Story = {
     const variableTag = await canvas.findByText('Creation date');
     expect(variableTag).toBeVisible();
 
-    const removeVariableButton = canvasElement.querySelector(
-      'button .tabler-icon-x',
-    );
-
-    if (!removeVariableButton) {
-      throw new Error('Remove variable button not found');
-    }
+    const removeVariableButton = canvas.getByLabelText('Remove variable');
 
     await Promise.all([
       userEvent.click(removeVariableButton),
@@ -393,8 +386,12 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
     onChange: fn(),
   },
   play: async ({ canvasElement, args }) => {
+    if (!args.defaultValue) {
+      throw new Error('This test requires a defaultValue');
+    }
+
     const defaultValueAsDisplayString = parseDateToString({
-      date: new Date(args.defaultValue!),
+      date: new Date(args.defaultValue),
       isDateTimeInput: true,
       userTimezone: undefined,
     });

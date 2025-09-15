@@ -202,8 +202,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconHistoryToggle,
       accent: 'default',
       isPinned: true,
-      shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
-        !isSoftDeleteFilterActive,
+      shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+        !hasAnySoftDeleteFilterOnView,
       availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
       component: (
         <ActionLink

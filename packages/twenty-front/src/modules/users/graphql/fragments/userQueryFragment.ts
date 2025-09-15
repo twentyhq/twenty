@@ -32,8 +32,7 @@ export const USER_QUERY_FRAGMENT = gql`
     }
     currentUserWorkspace {
       permissionFlags
-      objectRecordsPermissions
-      objectPermissions {
+      objectsPermissions {
         ...ObjectPermissionFragment
       }
       twoFactorAuthenticationMethodSummary {

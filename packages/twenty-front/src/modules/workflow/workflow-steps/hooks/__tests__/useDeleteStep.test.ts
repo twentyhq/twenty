@@ -6,11 +6,14 @@ const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockDeleteStepsOutputSchema = jest.fn();
 const mockCloseCommandMenu = jest.fn();
 
-jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
-  useDeleteWorkflowVersionStep: () => ({
-    deleteWorkflowVersionStep: mockDeleteWorkflowVersionStep,
+jest.mock(
+  '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep',
+  () => ({
+    useDeleteWorkflowVersionStep: () => ({
+      deleteWorkflowVersionStep: mockDeleteWorkflowVersionStep,
+    }),
   }),
-}));
+);
 
 jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({

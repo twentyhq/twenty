@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json",
+  "title": "Twenty Agent Manifest",
+  "description": "Schema for Twenty AI agent configuration files",
+  "type": "object",
+  "required": ["standardId", "name", "label", "prompt"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for validation and IDE support"
+    },
+    "standardId": {
+      "type": "string",
+      "description": "Unique identifier for the agent (UUID format recommended)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Internal name for the agent (camelCase, used in code)",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable display name for the agent",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what the agent does",
+      "maxLength": 500
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon for the agent (emoji or icon name)",
+      "maxLength": 50
+    },
+    "prompt": {
+      "type": "string",
+      "description": "System prompt that defines the agent's behavior and personality",
+      "minLength": 10,
+      "maxLength": 10000
+    },
+    "modelId": {
+      "type": "string",
+      "description": "AI model to use for this agent",
+      "default": "auto",
+      "enum": ["auto", "gpt-4", "gpt-4-turbo", "gpt-3.5-turbo", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+    },
+    "responseFormat": {
+      "type": "object",
+      "description": "Format specification for agent responses",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Response format type",
+          "enum": ["text", "json"]
+        },
+        "schema": {
+          "type": "object",
+          "description": "JSON schema for structured responses (required when type is 'json')",
+          "additionalProperties": true
+        }
+      },
+      "if": {
+        "properties": {
+          "type": { "const": "json" }
+        }
+      },
+      "then": {
+        "required": ["schema"]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "standardId": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "customerSupportAgent",
+      "label": "Customer Support Assistant",
+      "description": "Helps customers with their inquiries and issues",
+      "icon": "🎧",
+      "prompt": "You are a helpful customer support agent. Always be polite, professional, and solution-oriented.",
+      "modelId": "auto",
+      "responseFormat": {
+        "type": "text"
+      }
+    }
+  ]
+}

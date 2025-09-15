@@ -1,0 +1,22 @@
+{
+  "standardId": "com.yourcompany.your-app-name",
+  "label": "Your App Name",
+  "description": "A brief description of what your application does",
+  "version": "1.0.0",
+  "icon": "⭐",
+  
+  "agents": [
+    {
+      "standardId": "com.yourcompany.your-app-name.assistant",
+      "name": "assistant",
+      "label": "App Assistant",
+      "description": "AI assistant for your application",
+      "icon": "🤖",
+      "prompt": "You are a helpful assistant for [Your App Name]. Help users with:\n\n1. Understanding app features\n2. Navigating the interface\n3. Completing common tasks\n4. Troubleshooting issues\n5. Providing guidance and tips\n\nBe helpful, clear, and focused on the user's needs.",
+      "modelId": "gpt-4",
+      "responseFormat": {
+        "type": "text"
+      }
+    }
+  ]
+}
