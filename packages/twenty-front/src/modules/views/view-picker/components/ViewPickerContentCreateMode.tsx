@@ -20,13 +20,16 @@ import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPicke
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
+import { VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerCalendarFieldDropdownId';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
+import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -39,7 +42,7 @@ import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledNoKanbanFieldAvailableContainer = styled.div`
+const StyledFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   margin: ${({ theme }) => theme.spacing(1, 2)};
@@ -76,6 +79,11 @@ export const ViewPickerContentCreateMode = () => {
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
     useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
 
+  const [
+    viewPickerCalendarFieldMetadataId,
+    setViewPickerCalendarFieldMetadataId,
+  ] = useRecoilComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+
   const [viewPickerType, setViewPickerType] = useRecoilComponentState(
     viewPickerTypeComponentState,
   );
@@ -84,6 +92,7 @@ export const ViewPickerContentCreateMode = () => {
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
+  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
   const featureFlags = useFeatureFlagsMap();
 
   const hasCalendarViewEnabled =
@@ -117,6 +126,7 @@ export const ViewPickerContentCreateMode = () => {
       createViewFromCurrentState,
       viewPickerType,
       availableFieldsForKanban,
+      availableFieldsForCalendar,
     ],
   });
 
@@ -207,10 +217,40 @@ export const ViewPickerContentCreateMode = () => {
               />
             </ViewPickerSelectContainer>
             {availableFieldsForKanban.length === 0 && (
-              <StyledNoKanbanFieldAvailableContainer>
+              <StyledFieldAvailableContainer>
                 Set up a Select field on {objectMetadataItem.labelPlural} to
                 create a Kanban
-              </StyledNoKanbanFieldAvailableContainer>
+              </StyledFieldAvailableContainer>
+            )}
+          </>
+        )}
+        {viewPickerType === ViewType.Calendar && (
+          <>
+            <ViewPickerSelectContainer>
+              <Select
+                label={t`Date field`}
+                fullWidth
+                value={viewPickerCalendarFieldMetadataId}
+                onChange={(value) => {
+                  setViewPickerIsDirty(true);
+                  setViewPickerCalendarFieldMetadataId(value);
+                }}
+                options={
+                  availableFieldsForCalendar.length > 0
+                    ? availableFieldsForCalendar.map((field) => ({
+                        value: field.id,
+                        label: field.label,
+                      }))
+                    : [{ value: '', label: t`No Date field` }]
+                }
+                dropdownId={VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID}
+              />
+            </ViewPickerSelectContainer>
+            {availableFieldsForCalendar.length === 0 && (
+              <StyledFieldAvailableContainer>
+                Set up a Date field on {objectMetadataItem.labelPlural} to
+                create a Calendar
+              </StyledFieldAvailableContainer>
             )}
           </>
         )}

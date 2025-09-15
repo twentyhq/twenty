@@ -60,6 +60,9 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   kanbanAggregateOperationFieldMetadataId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  calendarFieldMetadataId?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 

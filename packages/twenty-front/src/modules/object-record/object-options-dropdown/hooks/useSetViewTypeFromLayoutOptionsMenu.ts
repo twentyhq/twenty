@@ -12,6 +12,7 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
+import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
@@ -28,6 +29,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
+
+  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
   const createViewGroupAssociatedWithKanbanField = useCallback(
     async (randomFieldForKanban: string, currentViewId: string) => {
@@ -149,6 +152,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             return await updateCurrentView(updateCurrentViewParams);
           }
           case ViewType.Calendar: {
+            if (availableFieldsForCalendar.length === 0) {
+              throw new Error('No date fields for calendar');
+            }
+
+            const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
               ...existingCoreViews.filter(
@@ -158,6 +167,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 ...currentCoreView,
                 type: convertViewTypeToCore(viewType),
                 calendarLayout: ViewCalendarLayout.MONTH,
+                calendarFieldMetadataId,
               },
             ]);
 
@@ -166,6 +176,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 viewTypeIconMapping(viewType).displayName;
             }
             updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
+            updateCurrentViewParams.calendarFieldMetadataId =
+              calendarFieldMetadataId;
             return await updateCurrentView(updateCurrentViewParams);
           }
           default: {
@@ -180,6 +192,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       setRecordIndexViewType,
       createViewGroupAssociatedWithKanbanField,
       loadRecordIndexStates,
+      availableFieldsForCalendar,
     ],
   );
 

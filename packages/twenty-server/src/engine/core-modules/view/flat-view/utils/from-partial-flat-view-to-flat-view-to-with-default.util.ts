@@ -33,5 +33,6 @@ export const fromPartialFlatViewToFlatViewWithDefault = (
     universalIdentifier: partialFlatView.universalIdentifier ?? viewId,
     viewFieldIds: partialFlatView.viewFieldIds ?? [],
     calendarLayout: partialFlatView.calendarLayout ?? null,
+    calendarFieldMetadataId: partialFlatView.calendarFieldMetadataId ?? null,
   };
 };
