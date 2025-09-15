@@ -17,6 +17,7 @@ import { RecordBoardCardHeader } from '@/object-record/record-board/record-board
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
+import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -30,66 +31,6 @@ import { useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
-
-const StyledBoardCard = styled.div<{
-  isDragging?: boolean;
-  isSecondaryDragged?: boolean;
-  isPrimaryMultiDrag?: boolean;
-}>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
-  cursor: pointer;
-
-  ${({ isSecondaryDragged }) =>
-    isSecondaryDragged &&
-    `
-    opacity: 0.3;
-  `}
-
-  &[data-selected='true'] {
-    background-color: ${({ theme }) => theme.accent.quaternary};
-  }
-
-  &[data-focused='true'] {
-    background-color: ${({ theme }) => theme.background.tertiary};
-  }
-
-  &[data-active='true'] {
-    background-color: ${({ theme }) => theme.accent.quaternary};
-    border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-  }
-
-  &:hover {
-    border: 1px solid ${({ theme }) => theme.border.color.strong};
-
-    &[data-active='true'] {
-      border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
-    }
-  }
-
-  .checkbox-container {
-    transition: all ease-in-out 160ms;
-    opacity: 0;
-  }
-
-  &[data-selected='true'] .checkbox-container {
-    opacity: 1;
-  }
-
-  &:hover .checkbox-container {
-    opacity: 1;
-  }
-
-  .compact-icon-container {
-    transition: all ease-in-out 160ms;
-    opacity: 0;
-  }
-  &:hover .compact-icon-container {
-    opacity: 1;
-  }
-`;
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
@@ -243,7 +184,7 @@ export const RecordBoardCard = () => {
                 />
               ))}
 
-            <StyledBoardCard
+            <RecordCard
               ref={cardRef}
               data-selected={isCurrentCardSelected}
               data-focused={isCurrentCardFocused}
@@ -263,7 +204,7 @@ export const RecordBoardCard = () => {
               >
                 <RecordBoardCardBody />
               </AnimatedEaseInOut>
-            </StyledBoardCard>
+            </RecordCard>
           </StyledCardContainer>
           <RecordBoardCardCellHoveredPortal />
           <RecordBoardCardCellEditModePortal />
