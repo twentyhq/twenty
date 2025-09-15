@@ -3184,23 +3184,35 @@ msgstr "Versions"
 msgid "View"
 msgstr "View"
 
+#. js-lingui-id: HhN1Bv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View already exists"
+msgstr "View already exists"
+
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "View Field"
+
+#. js-lingui-id: pTvQqf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field already exists"
+msgstr "View field already exists"
 
 #. js-lingui-id: Xm6R6B
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "View field already exists."
 
-#. js-lingui-id: ZRfCZM
+#. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata already exists"
+msgstr "View field metadata already exists"
+
+#. js-lingui-id: Yvf7WL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-msgid "View field not found"
-msgstr "View field not found"
+msgid "View field metadata with id {flatViewFieldId} already exists"
+msgstr "View field metadata with id {flatViewFieldId} already exists"
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3223,7 +3235,15 @@ msgstr "View Field size"
 msgid "View Field target field"
 msgstr "View Field target field"
 
+#. js-lingui-id: gYT3e0
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to delete has not been soft deleted"
+msgstr "View field to delete has not been soft deleted"
+
 #. js-lingui-id: XJlyZS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
 msgstr "View field to delete not found"
@@ -3234,6 +3254,8 @@ msgid "View field to destroy not found"
 msgstr "View field to destroy not found"
 
 #. js-lingui-id: Fpy/K1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
 msgstr "View field to update not found"
@@ -3242,6 +3264,11 @@ msgstr "View field to update not found"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "View Field visibility"
+
+#. js-lingui-id: 89Wiy+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field with same fieldmetadataId and viewId already exists"
+msgstr "View field with same fieldmetadataId and viewId already exists"
 
 #. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3359,10 +3386,6 @@ msgstr "View name"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
 msgstr "View not found"
 
@@ -3413,10 +3436,21 @@ msgstr "View Sorts"
 msgid "View target object"
 msgstr "View target object"
 
+#. js-lingui-id: eF5yH4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View to delete has not been soft deleted"
+msgstr "View to delete has not been soft deleted"
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "View type"
+
+#. js-lingui-id: ZgRtC4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View with same id is already exists"
+msgstr "View with same id is already exists"
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
