@@ -8,8 +8,10 @@ import { RecordTableRowDraggableContextProvider } from '@/object-record/record-t
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { RecordTableTrEffect } from '@/object-record/record-table/record-table-row/components/RecordTableTrEffect';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-type RecordTableDraggableTrProps = {
+type RecordTableDraggableTrFirstRowOfGroupProps = {
   className?: string;
   recordId: string;
   draggableIndex: number;
@@ -19,7 +21,7 @@ type RecordTableDraggableTrProps = {
   children: ReactNode;
 };
 
-export const RecordTableDraggableTr = ({
+export const RecordTableDraggableTrFirstRowOfGroup = ({
   className,
   recordId,
   draggableIndex,
@@ -27,7 +29,7 @@ export const RecordTableDraggableTr = ({
   isDragDisabled,
   onClick,
   children,
-}: RecordTableDraggableTrProps) => {
+}: RecordTableDraggableTrFirstRowOfGroupProps) => {
   const theme = useTheme();
   const { recordTableId } = useRecordTableContextOrThrow();
   const multiDragState = useRecordDragState('table', recordTableId);
@@ -36,6 +38,10 @@ export const RecordTableDraggableTr = ({
     multiDragState?.isDragging &&
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
+
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
 
   return (
     <Draggable
@@ -68,7 +74,8 @@ export const RecordTableDraggableTr = ({
             data-virtualized-id={recordId}
             data-selectable-id={recordId}
             onClick={onClick}
-            isFirstRowOfGroup={false}
+            isFirstRowOfGroup={true}
+            isScrolledVertically={isScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{
