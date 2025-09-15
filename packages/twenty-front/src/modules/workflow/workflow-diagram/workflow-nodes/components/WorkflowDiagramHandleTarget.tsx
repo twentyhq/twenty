@@ -1,3 +1,4 @@
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 
@@ -27,6 +28,7 @@ export const WorkflowDiagramHandleTarget = ({
 }: WorkflowDiagramHandleTargetProps) => {
   return (
     <StyledHandle
+      id={WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID}
       type="target"
       position={Position.Top}
       isConnectableEnd={isConnectable}

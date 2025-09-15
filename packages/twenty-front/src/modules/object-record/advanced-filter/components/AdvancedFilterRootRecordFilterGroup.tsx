@@ -10,7 +10,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { id } from 'date-fns/locale';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -37,7 +36,9 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
   }
 
   return (
-    <ScrollWrapper componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}>
+    <ScrollWrapper
+      componentInstanceId={`scroll-wrapper-dropdown-menu-${rootRecordFilterGroup.id}`}
+    >
       <DropdownContent widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}>
         <StyledContainer>
           {childRecordFiltersAndRecordFilterGroups.map(

@@ -126,7 +126,7 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+    objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
@@ -150,7 +150,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectPermissions: generatedMockObjectMetadataItems
+    objectsPermissions: generatedMockObjectMetadataItems
       .filter(
         (objectMetadata) =>
           objectMetadata.nameSingular !== 'task' &&

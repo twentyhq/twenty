@@ -2,10 +2,9 @@ import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/get
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
-import History from '@tiptap/extension-history';
 import Paragraph from '@tiptap/extension-paragraph';
-import { default as Placeholder } from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
+import { Placeholder, UndoRedo } from '@tiptap/extensions';
 import { type Editor, useEditor } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,7 +39,7 @@ export const useTextVariableEditor = ({
             }),
           ]
         : []),
-      History,
+      UndoRedo,
     ],
     content: isDefined(defaultValue)
       ? getInitialEditorContent(defaultValue)

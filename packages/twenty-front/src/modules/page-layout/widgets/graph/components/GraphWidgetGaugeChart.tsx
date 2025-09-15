@@ -15,6 +15,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
+import { GraphWidgetChartContainer } from './GraphWidgetChartContainer';
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
@@ -41,20 +42,6 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: center;
   width: 100%;
-`;
-
-const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
-  flex: 1;
-  position: relative;
-  width: 100%;
-
-  ${({ $isClickable }) =>
-    $isClickable &&
-    `
-    svg g path[fill^="url(#"] {
-      cursor: pointer;
-    }
-  `}
 `;
 
 const StyledH1Title = styled(H1Title)`
@@ -177,7 +164,10 @@ export const GraphWidgetGaugeChart = ({
 
   return (
     <StyledContainer>
-      <StyledChartContainer $isClickable={isDefined(to)}>
+      <GraphWidgetChartContainer
+        $isClickable={isDefined(to)}
+        $cursorSelector='svg g path[fill^="url(#"]'
+      >
         <ResponsiveRadialBar
           data={chartData}
           startAngle={-90}
@@ -209,7 +199,7 @@ export const GraphWidgetGaugeChart = ({
             fontColor={H1TitleFontColor.Primary}
           />
         )}
-      </StyledChartContainer>
+      </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend}
         items={[

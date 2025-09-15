@@ -1,14 +1,18 @@
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import {
   differenceInCalendarDays,
+  differenceInDays,
+  differenceInYears,
+  format,
   formatDistance,
   formatDistanceToNow,
+  isToday,
+  isValid,
+  parseISO,
   type Locale,
 } from 'date-fns';
-import { DateTime } from 'luxon';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CustomError } from '@/error-handler/CustomError';
@@ -16,14 +20,10 @@ import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
 import { logError } from './logError';
 
-const getLuxonLocale = () => {
-  return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE;
-};
+export const parseDate = (dateToParse: Date | string | number): Date => {
+  if (dateToParse === 'now') return new Date();
 
-export const parseDate = (dateToParse: Date | string | number) => {
-  if (dateToParse === 'now') return DateTime.fromJSDate(new Date());
-
-  let formattedDate: DateTime | null = null;
+  let formattedDate: Date | null = null;
 
   if (!dateToParse) {
     throw new CustomError(
@@ -31,11 +31,11 @@ export const parseDate = (dateToParse: Date | string | number) => {
       'INVALID_DATE_FORMAT',
     );
   } else if (isString(dateToParse)) {
-    formattedDate = DateTime.fromISO(dateToParse);
+    formattedDate = parseISO(dateToParse);
   } else if (isDate(dateToParse)) {
-    formattedDate = DateTime.fromJSDate(dateToParse);
+    formattedDate = dateToParse;
   } else if (isNumber(dateToParse)) {
-    formattedDate = DateTime.fromMillis(dateToParse);
+    formattedDate = new Date(dateToParse);
   }
 
   if (!formattedDate) {
@@ -45,26 +45,23 @@ export const parseDate = (dateToParse: Date | string | number) => {
     );
   }
 
-  if (!formattedDate.isValid) {
+  if (!isValid(formattedDate)) {
     throw new CustomError(
       `Invalid date passed to formatPastDate: "${dateToParse}"`,
       'INVALID_DATE_FORMAT',
     );
   }
 
-  return formattedDate.setLocale(getLuxonLocale());
+  return formattedDate;
 };
-
-const isSameDay = (a: DateTime, b: DateTime): boolean =>
-  a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year');
 
 export const formatDate = (
   dateToFormat: Date | string | number,
-  format: string,
+  formatString: string,
 ) => {
   try {
     const parsedDate = parseDate(dateToFormat);
-    return parsedDate.toFormat(format);
+    return format(parsedDate, formatString);
   } catch (error) {
     logError(error);
     return '';
@@ -74,17 +71,19 @@ export const formatDate = (
 export const beautifyExactDateTime = (
   dateToBeautify: Date | string | number,
 ) => {
-  const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
-  const dateFormat = isToday ? 'T' : 'DD · T';
+  const parsedDate = parseDate(dateToBeautify);
+  const isTodayDate = isToday(parsedDate);
+  const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm';
   return formatDate(dateToBeautify, dateFormat);
 };
 
 export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
-  const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
-  if (isToday) {
+  const parsedDate = parseDate(dateToBeautify);
+  const isTodayDate = isToday(parsedDate);
+  if (isTodayDate) {
     return t`Today`;
   }
-  return formatDate(dateToBeautify, 'DD');
+  return formatDate(dateToBeautify, 'MMM d, yyyy');
 };
 
 export const beautifyPastDateRelativeToNow = (
@@ -95,7 +94,7 @@ export const beautifyPastDateRelativeToNow = (
     const parsedDate = parseDate(pastDate);
     const now = new Date();
     const diffInSeconds = Math.abs(
-      (now.getTime() - parsedDate.toJSDate().getTime()) / 1000,
+      (now.getTime() - parsedDate.getTime()) / 1000,
     );
 
     // For very recent times (less than 30 seconds), show "now"
@@ -103,7 +102,7 @@ export const beautifyPastDateRelativeToNow = (
       return t`now`;
     }
 
-    return formatDistanceToNow(parsedDate.toJSDate(), {
+    return formatDistanceToNow(parsedDate, {
       addSuffix: true,
       locale,
       includeSeconds: true,
@@ -118,12 +117,7 @@ export const hasDatePassed = (date: Date | string | number) => {
   try {
     const parsedDate = parseDate(date);
 
-    return (
-      differenceInCalendarDays(
-        DateTime.local().toJSDate(),
-        parsedDate.toJSDate(),
-      ) >= 1
-    );
+    return differenceInCalendarDays(new Date(), parsedDate) >= 1;
   } catch (error) {
     logError(error);
     return false;
@@ -144,13 +138,16 @@ export const beautifyDateDiff = (
   }
 
   // Manual implementation for complex cases or when locale is not available
-  const dateDiff = DateTime.fromISO(date).diff(
-    dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),
-    ['years', 'days'],
-  );
+  const fromDate = parseISO(date);
+  const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date();
 
-  const years = Math.floor(dateDiff.years);
-  const days = Math.floor(dateDiff.days);
+  const years = differenceInYears(fromDate, toDate);
+  // Calculate remaining days after accounting for full years
+  const startDateForDayCalculation = new Date(toDate);
+  startDateForDayCalculation.setFullYear(
+    startDateForDayCalculation.getFullYear() + years,
+  );
+  const days = differenceInDays(fromDate, startDateForDayCalculation);
 
   let result = '';
 
@@ -179,7 +176,7 @@ export const beautifyDateDiff = (
 };
 
 export const formatToHumanReadableDate = (date: Date | string) => {
-  const parsedJSDate = parseDate(date).toJSDate();
+  const parsedJSDate = parseDate(date);
 
   return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
