@@ -1987,6 +1987,11 @@ msgstr "Date"
 msgid "Date and time"
 msgstr "Date and time"
 
+#. js-lingui-id: QIIAIQ
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Date field"
+msgstr "Date field"
+
 #. js-lingui-id: Lhd0oQ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -4573,6 +4578,11 @@ msgstr "No data containing errors"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
 msgstr "No data found"
+
+#. js-lingui-id: 5K0pqs
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "No Date field"
+msgstr "No Date field"
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
