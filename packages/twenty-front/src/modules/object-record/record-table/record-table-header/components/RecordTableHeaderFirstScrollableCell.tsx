@@ -9,6 +9,7 @@ import { RecordTableHeaderCellContainer } from '@/object-record/record-table/rec
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
@@ -41,7 +42,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     ),
   )[0] as RecordField | undefined;
 
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
   const isRecordTableScrolledVertically = useRecoilComponentValue(
     isRecordTableScrolledVerticallyComponentState,
@@ -81,6 +87,13 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+
   if (!recordField) {
     return <></>;
   }
@@ -89,7 +102,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
       key={recordField.fieldMetadataItemId}
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={zIndex}
     >
       <RecordTableColumnHeadWithDropdown
