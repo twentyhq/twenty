@@ -6,11 +6,11 @@ import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget'
 import { lazy, Suspense } from 'react';
 
 const GraphWidgetBarChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetBarChart').then(
-    (module) => ({
-      default: module.GraphWidgetBarChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
+  ).then((module) => ({
+    default: module.GraphWidgetBarChart,
+  })),
 );
 
 const GraphWidgetLineChart = lazy(() =>
