@@ -3,9 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { StoredEnumGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
-
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import {
   type FieldMetadataComplexOption,
@@ -18,40 +16,32 @@ import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class EnumFieldTypeGenerator {
-  private readonly logger = new Logger(EnumFieldTypeGenerator.name);
+export class EnumFieldMetadataGqlEnumTypeGenerator {
+  private readonly logger = new Logger(
+    EnumFieldMetadataGqlEnumTypeGenerator.name,
+  );
 
-  public generate(
-    objectMetadata: ObjectMetadataEntity,
-    options: WorkspaceBuildSchemaOptions,
-  ): StoredEnumGqlType[] {
-    const enumTypeDefinitions: StoredEnumGqlType[] = [];
+  constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
+  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
     for (const fieldMetadata of objectMetadata.fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 
-      enumTypeDefinitions.push({
-        key: computeEnumFieldGqlTypeKey(
+      this.gqlTypesStorage.addGqlType(
+        computeEnumFieldGqlTypeKey(
           objectMetadata.nameSingular,
           fieldMetadata.name,
         ),
-        type: this.generateEnum(
-          objectMetadata.nameSingular,
-          fieldMetadata,
-          options,
-        ),
-      });
+        this.generateEnum(objectMetadata.nameSingular, fieldMetadata),
+      );
     }
-
-    return enumTypeDefinitions;
   }
 
   private generateEnum(
     objectName: string,
     fieldMetadata: FieldMetadataEntity,
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
@@ -66,7 +56,6 @@ export class EnumFieldTypeGenerator {
         `Enum options are not defined for ${fieldMetadata.name}`,
         {
           fieldMetadata,
-          options,
         },
       );
 

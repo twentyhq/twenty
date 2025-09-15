@@ -10,9 +10,8 @@ import {
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { getUniqueConstraintsFields } from 'twenty-shared/utils';
 
-import { StoredInputType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
-
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,17 +20,18 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class RelationConnectInputTypeGenerator {
-  constructor(private readonly typeMapperService: TypeMapperService) {}
+export class RelationConnectGqlInputTypeGenerator {
+  constructor(
+    private readonly typeMapperService: TypeMapperService,
+    private readonly gqlTypesStorage: GqlTypesStorage,
+  ) {}
 
-  public generate(objectMetadata: ObjectMetadataEntity): StoredInputType {
-    const fields = this.generateRelationConnectInputType(objectMetadata);
+  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+    const relationConnectGqlInputType =
+      this.generateRelationConnectInputType(objectMetadata);
     const key = computeRelationConnectInputTypeKey(objectMetadata.id);
 
-    return {
-      key,
-      type: fields,
-    };
+    this.gqlTypesStorage.addGqlType(key, relationConnectGqlInputType);
   }
 
   private generateRelationConnectInputType(
@@ -113,8 +113,7 @@ export class RelationConnectInputTypeGenerator {
         } else {
           const scalarType = this.typeMapperService.mapToScalarType(
             field.type,
-            field.settings ?? undefined,
-            field.name === 'id',
+            { settings: field.settings, isIdField: field.name === 'id' },
           );
 
           fields[field.name] = {

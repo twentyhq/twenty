@@ -1,35 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType, isInputObjectType } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
-
-import { StoredObjectType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/aggregation-type.generator';
 import { PageInfoType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/object';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class ConnectionObjectTypeGenerator {
-  private readonly logger = new Logger(ConnectionObjectTypeGenerator.name);
+export class ConnectionGqlObjectTypeGenerator {
+  private readonly logger = new Logger(ConnectionGqlObjectTypeGenerator.name);
 
   constructor(
     private readonly aggregationObjectTypeGenerator: AggregationObjectTypeGenerator,
     private readonly typeMapperService: TypeMapperService,
-    private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  public generate(
-    objectMetadata: ObjectMetadataEntity,
-    options: WorkspaceBuildSchemaOptions,
-  ): StoredObjectType {
+  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
     const kind = ObjectTypeDefinitionKind.Connection;
 
     const key = computeObjectMetadataObjectTypeKey(
@@ -37,19 +31,18 @@ export class ConnectionObjectTypeGenerator {
       kind,
     );
 
-    return {
+    this.gqlTypesStorage.addGqlType(
       key,
-      type: new GraphQLObjectType({
+      new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        fields: () => this.generateFields(objectMetadata, options),
+        fields: () => this.generateFields(objectMetadata),
       }),
-    };
+    );
   }
 
   private generateFields(
     objectMetadata: ObjectMetadataEntity,
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLOutputTypeFieldConfigMap {
     const fields: GraphQLOutputTypeFieldConfigMap = {};
 
@@ -58,19 +51,18 @@ export class ConnectionObjectTypeGenerator {
 
     Object.assign(fields, aggregatedFields);
 
-    const edgeType = this.typeDefinitionsStorage.getObjectTypeByKey(
+    const edgeType = this.gqlTypesStorage.getGqlTypeByKey(
       computeObjectMetadataObjectTypeKey(
         objectMetadata.nameSingular,
         ObjectTypeDefinitionKind.Edge,
       ),
     );
 
-    if (!isDefined(edgeType)) {
+    if (!isDefined(edgeType) || isInputObjectType(edgeType)) {
       this.logger.error(
         `Edge type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
         {
           objectMetadata,
-          options,
         },
       );
 
@@ -80,7 +72,7 @@ export class ConnectionObjectTypeGenerator {
     }
 
     fields.edges = {
-      type: this.typeMapperService.mapToGqlType(edgeType, {
+      type: this.typeMapperService.applyTypeOptions(edgeType, {
         isArray: true,
         arrayDepth: 1,
         nullable: false,
@@ -88,7 +80,7 @@ export class ConnectionObjectTypeGenerator {
     };
 
     fields.pageInfo = {
-      type: this.typeMapperService.mapToGqlType(PageInfoType, {
+      type: this.typeMapperService.applyTypeOptions(PageInfoType, {
         nullable: false,
       }),
     };

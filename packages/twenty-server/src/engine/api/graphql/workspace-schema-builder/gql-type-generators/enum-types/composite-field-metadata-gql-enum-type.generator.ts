@@ -3,13 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { StoredEnumGqlType } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/stored-gql-type.interface';
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import {
   type CompositeProperty,
   type CompositeType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import {
   type FieldMetadataComplexOption,
@@ -19,36 +18,32 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class CompositeFieldEnumTypeGenerator {
-  private readonly logger = new Logger(CompositeFieldEnumTypeGenerator.name);
+export class CompositeFieldMetadataGqlEnumTypeGenerator {
+  private readonly logger = new Logger(
+    CompositeFieldMetadataGqlEnumTypeGenerator.name,
+  );
 
-  public create(
-    compositeType: CompositeType,
-    options: WorkspaceBuildSchemaOptions,
-  ): StoredEnumGqlType[] {
-    const enumTypeDefinitions: StoredEnumGqlType[] = [];
+  constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
+  public buildAndStore(compositeType: CompositeType) {
     for (const compositeProperty of compositeType.properties) {
       if (!isEnumFieldMetadataType(compositeProperty.type)) {
         continue;
       }
 
-      enumTypeDefinitions.push({
-        key: computeCompositeFieldEnumTypeKey(
+      this.gqlTypesStorage.addGqlType(
+        computeCompositeFieldEnumTypeKey(
           compositeType.type,
           compositeProperty.name,
         ),
-        type: this.generateEnum(compositeType.type, compositeProperty, options),
-      });
+        this.generate(compositeType.type, compositeProperty),
+      );
     }
-
-    return enumTypeDefinitions;
   }
 
-  private generateEnum(
+  private generate(
     compositeType: FieldMetadataType,
     compositeProperty: CompositeProperty,
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
@@ -61,7 +56,6 @@ export class CompositeFieldEnumTypeGenerator {
         `Enum options are not defined for ${compositeProperty.name}`,
         {
           compositeProperty,
-          options,
         },
       );
 

@@ -5,12 +5,10 @@ import { GraphQLSchema } from 'graphql';
 import { type WorkspaceResolverBuilderMethods } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/gql-type.generator';
-import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/mutation-type.generator';
-import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/orphaned-types.generator';
-import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/query-type.generator';
+import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-types/mutation-type.generator';
+import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/root-types/query-type.generator';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-
-import { type WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-options.interface';
 
 @Injectable()
 export class WorkspaceGraphQLSchemaGenerator {
@@ -18,30 +16,24 @@ export class WorkspaceGraphQLSchemaGenerator {
     private readonly gqlTypeGenerator: GqlTypeGenerator,
     private readonly queryTypeGenerator: QueryTypeGenerator,
     private readonly mutationTypeGenerator: MutationTypeGenerator,
-    private readonly orphanedTypesGenerator: OrphanedTypesGenerator,
+    private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
   async generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
-    options: WorkspaceBuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
-    // Generate type definitions
-    await this.gqlTypeGenerator.generate(objectMetadataCollection, options);
+    await this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
 
     // Generate schema
     const schema = new GraphQLSchema({
-      query: this.queryTypeGenerator.generate(
-        objectMetadataCollection,
-        [...workspaceResolverBuilderMethods.queries],
-        options,
-      ),
-      mutation: this.mutationTypeGenerator.generate(
-        objectMetadataCollection,
-        [...workspaceResolverBuilderMethods.mutations],
-        options,
-      ),
-      types: this.orphanedTypesGenerator.generate(),
+      query: this.queryTypeGenerator.generate(objectMetadataCollection, [
+        ...workspaceResolverBuilderMethods.queries,
+      ]),
+      mutation: this.mutationTypeGenerator.generate(objectMetadataCollection, [
+        ...workspaceResolverBuilderMethods.mutations,
+      ]),
+      types: this.gqlTypesStorage.getAllGqlTypes(),
     });
 
     return schema;

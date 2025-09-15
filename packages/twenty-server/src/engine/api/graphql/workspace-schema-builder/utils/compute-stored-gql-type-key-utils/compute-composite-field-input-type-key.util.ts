@@ -4,10 +4,10 @@ import { type GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspac
 import { pascalCase } from 'src/utils/pascal-case';
 
 export const computeCompositeFieldInputTypeKey = (
-  subFieldType: FieldMetadataType,
+  fieldType: FieldMetadataType,
   kind: GqlInputTypeDefinitionKind,
 ): string => {
-  const name = pascalCase(subFieldType.toString().toLowerCase());
+  const name = pascalCase(fieldType.toString().toLowerCase());
 
   return `${pascalCase(name)}${kind.toString()}Input`;
 };

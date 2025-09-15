@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLObjectType, isObjectType } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/gql-type-generators/args-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLRootTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
@@ -22,7 +22,7 @@ export class RootTypeGenerator {
   private readonly logger = new Logger(RootTypeGenerator.name);
 
   constructor(
-    private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly gqlTypesStorage: GqlTypesStorage,
     private readonly typeMapperService: TypeMapperService,
     private readonly argsTypeGenerator: ArgsTypeGenerator,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
@@ -32,7 +32,6 @@ export class RootTypeGenerator {
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
     objectTypeName: GqlOperation,
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLObjectType {
     if (workspaceResolverMethodNames.length === 0) {
       this.logger.error(
@@ -40,7 +39,6 @@ export class RootTypeGenerator {
         {
           workspaceResolverMethodNames,
           objectTypeName,
-          options,
         },
       );
 
@@ -54,7 +52,6 @@ export class RootTypeGenerator {
       fields: this.generateFields(
         objectMetadataCollection,
         workspaceResolverMethodNames,
-        options,
       ),
     });
   }
@@ -62,7 +59,6 @@ export class RootTypeGenerator {
   private generateFields(
     objectMetadataCollection: ObjectMetadataEntity[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
-    options: WorkspaceBuildSchemaOptions,
   ): GraphQLRootTypeFieldConfigMap {
     const fieldConfigMap: GraphQLRootTypeFieldConfigMap = {};
 
@@ -80,24 +76,19 @@ export class RootTypeGenerator {
             objectMetadata.nameSingular,
             this.getObjectTypeDefinitionKindByMethodName(methodName),
           );
-          const objectType =
-            this.typeDefinitionsStorage.getObjectTypeByKey(key);
+          const objectType = this.gqlTypesStorage.getGqlTypeByKey(key);
 
-          const argsType = this.argsTypeGenerator.generate(
-            {
-              args,
-              objectMetadataSingularName: objectMetadata.nameSingular,
-            },
-            options,
-          );
+          const argsType = this.argsTypeGenerator.generate({
+            args,
+            objectMetadataSingularName: objectMetadata.nameSingular,
+          });
 
-          if (!objectType) {
+          if (!isDefined(objectType) || !isObjectType(objectType)) {
             this.logger.error(
               `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
               {
                 objectMetadata,
                 methodName,
-                options,
               },
             );
 
@@ -115,9 +106,12 @@ export class RootTypeGenerator {
             'destroyMany',
           ];
 
-          const outputType = this.typeMapperService.mapToGqlType(objectType, {
-            isArray: allowedMethodNames.includes(methodName),
-          });
+          const outputType = this.typeMapperService.applyTypeOptions(
+            objectType,
+            {
+              isArray: allowedMethodNames.includes(methodName),
+            },
+          );
 
           fieldConfigMap[name] = {
             type: outputType,
