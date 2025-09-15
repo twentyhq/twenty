@@ -135,6 +135,7 @@ export {
   IconColorSwatch,
   IconComment,
   IconCopy,
+  IconCopyPlus,
   IconCreativeCommonsSa,
   IconCreditCard,
   IconCsv,
