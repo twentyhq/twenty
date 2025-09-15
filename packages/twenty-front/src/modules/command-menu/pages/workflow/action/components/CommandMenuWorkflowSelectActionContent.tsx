@@ -4,10 +4,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import {
-  type WorkflowActionType,
-  type WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
@@ -26,16 +23,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-export const CommandMenuWorkflowSelectActionContent = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
+export const CommandMenuWorkflowSelectActionContent = () => {
   const { getIcon } = useIcons();
 
-  const { createStep } = useCreateStep({
-    workflow,
-  });
+  const { createStep } = useCreateStep();
 
   const { closeRightClickMenu } = useCloseRightClickMenu();
 

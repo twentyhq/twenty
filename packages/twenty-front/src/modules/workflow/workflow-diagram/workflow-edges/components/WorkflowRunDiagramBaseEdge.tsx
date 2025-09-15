@@ -1,9 +1,9 @@
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, type EdgeProps } from '@xyflow/react';
+import { BaseEdge } from '@xyflow/react';
 
 type WorkflowRunDiagramBaseEdgeProps = Pick<
-  EdgeProps<WorkflowDiagramEdge>,
+  WorkflowDiagramEdgeComponentProps,
   'markerStart' | 'markerEnd'
 > & {
   path: string;

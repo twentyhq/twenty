@@ -6,6 +6,7 @@ import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { DashboardRenderer } from '@/dashboards/components/DashboardRenderer';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
@@ -211,5 +212,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         </WorkflowRunVisualizerComponentInstanceContext.Provider>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
+  },
+
+  [CardType.DashboardCard]: ({ targetableObject }) => {
+    return <DashboardRenderer recordId={targetableObject.id} />;
   },
 };

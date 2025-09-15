@@ -1,8 +1,9 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (
-  flatFieldMetadata: FlatFieldMetadata,
+  flatFieldMetadata: FlatFieldMetadata | FlatRelationTargetFieldMetadata,
 ): FieldMetadataDTO => {
   const {
     createdAt,
@@ -13,11 +14,35 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isNullable,
     isUnique,
     settings,
-    ...rest
+    id,
+    label,
+    name,
+    objectMetadataId,
+    type,
+    workspaceId,
+    defaultValue,
+    isActive,
+    isCustom,
+    isLabelSyncedWithName,
+    isSystem,
+    isUIReadOnly,
+    options,
   } = flatFieldMetadata;
 
   return {
-    ...rest,
+    id,
+    label,
+    name,
+    objectMetadataId,
+    type,
+    workspaceId,
+    defaultValue,
+    isActive,
+    isCustom,
+    isLabelSyncedWithName,
+    isSystem,
+    isUIReadOnly,
+    options,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     description: description ?? undefined,

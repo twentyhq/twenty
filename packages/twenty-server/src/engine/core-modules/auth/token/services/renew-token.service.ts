@@ -14,6 +14,7 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class RenewTokenService {
@@ -57,6 +58,10 @@ export class RenewTokenService {
     const targetedTokenType =
       targetedTokenTypeFromPayload ?? JwtTokenTypeEnum.ACCESS;
 
+    // Support legacy tokens where authProvider might be undefined
+    // TODO: remove in November 2025
+    const resolvedAuthProvider = authProvider ?? AuthProviderEnum.Password;
+
     const accessToken =
       isDefined(authProvider) &&
       targetedTokenType === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
@@ -69,13 +74,13 @@ export class RenewTokenService {
         : await this.accessTokenService.generateAccessToken({
             userId: user.id,
             workspaceId,
-            authProvider,
+            authProvider: resolvedAuthProvider,
           });
 
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: user.id,
       workspaceId,
-      authProvider,
+      authProvider: resolvedAuthProvider,
       targetedTokenType,
     });
 

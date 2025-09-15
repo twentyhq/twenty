@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
@@ -10,6 +12,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -17,21 +20,22 @@ const StyledContainer = styled.div`
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 24px;
+  min-width: 24px;
   padding-right: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-const StyledColumnHeaderCell = styled.th<{
+const StyledColumnHeaderCell = styled.div<{
   isFirstRowActiveOrFocused: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
-    isFirstRowActiveOrFocused
-      ? 'none'
-      : `1px solid ${theme.border.color.light}`};
-  width: 28px;
+
+  min-width: 32px;
   box-sizing: border-box;
+
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  max-height: 32px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
@@ -85,6 +89,10 @@ export const RecordTableHeaderCheckboxColumn = () => {
   return (
     <StyledColumnHeaderCell
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      className={cx(
+        'header-cell',
+        RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
+      )}
     >
       <StyledContainer data-select-disable>
         <Checkbox

@@ -6,7 +6,7 @@ import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { GRAY_SCALE } from 'twenty-ui/theme';
 
@@ -30,7 +30,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     isFetchingMoreRecordsFamilyState(recordTableId),
   );
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValue(
     hasRecordTableFetchedAllRecordsComponentState,
@@ -56,13 +56,14 @@ export const RecordTableBodyFetchMoreLoader = () => {
   if (!showLoadingMoreRow) {
     return <></>;
   }
+  // TODO: fix here styling
 
   return (
-    <tr ref={tbodyRef}>
-      <td colSpan={7}>
+    <div ref={tbodyRef}>
+      <div>
         <StyledText>Loading more...</StyledText>
-      </td>
-      <td colSpan={7} />
-    </tr>
+      </div>
+      <div />
+    </div>
   );
 };

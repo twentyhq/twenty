@@ -32,11 +32,18 @@ export const useViewFieldAggregateOperation = () => {
     }
     await updateViewFieldRecords([
       {
-        ...currentViewField,
-        aggregateOperation:
-          convertExtendedAggregateOperationToAggregateOperation(
-            aggregateOperation,
-          ),
+        input: {
+          id: currentViewField.id,
+          update: {
+            isVisible: currentViewField.isVisible,
+            position: currentViewField.position,
+            size: currentViewField.size,
+            aggregateOperation:
+              convertExtendedAggregateOperationToAggregateOperation(
+                aggregateOperation,
+              ),
+          },
+        },
       },
     ]);
 

@@ -29,5 +29,5 @@ export class CreatePageLayoutInput {
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  objectMetadataId?: string;
+  objectMetadataId?: string | null;
 }

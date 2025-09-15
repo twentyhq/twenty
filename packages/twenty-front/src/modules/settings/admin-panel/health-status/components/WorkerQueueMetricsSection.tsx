@@ -1,15 +1,21 @@
+import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
   type AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,
 } from '~/generated-metadata/graphql';
-import { WorkerMetricsGraph } from './WorkerMetricsGraph';
+
+const WorkerMetricsGraph = lazy(() =>
+  import('./WorkerMetricsGraph').then((module) => ({
+    default: module.WorkerMetricsGraph,
+  })),
+);
 
 type WorkerQueueMetricsSectionProps = {
   queue: AdminPanelWorkerQueueHealth;
@@ -50,11 +56,13 @@ export const WorkerQueueMetricsSection = ({
           />
         </StyledControlsContainer>
       </Section>
-      <WorkerMetricsGraph
-        queueName={queue.queueName}
-        timeRange={timeRange}
-        onTimeRangeChange={setTimeRange}
-      />
+      <Suspense fallback={<ChartSkeletonLoader />}>
+        <WorkerMetricsGraph
+          queueName={queue.queueName}
+          timeRange={timeRange}
+          onTimeRangeChange={setTimeRange}
+        />
+      </Suspense>
     </StyledContainer>
   );
 };

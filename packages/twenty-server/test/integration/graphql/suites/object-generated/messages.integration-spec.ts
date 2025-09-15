@@ -2,6 +2,7 @@ import { MESSAGE_GQL_FIELDS } from 'test/integration/constants/message-gql-field
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 
@@ -22,7 +23,7 @@ describe('messagesResolver (e2e)', () => {
 
     const edges = data.edges;
 
-    expect(edges.length).toEqual(60);
+    expect(edges.length).toEqual(QUERY_MAX_RECORDS);
 
     const message1 = edges[0].node;
 

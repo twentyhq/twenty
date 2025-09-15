@@ -19,12 +19,19 @@ const StyledVerticalLineContainer = styled.div`
   width: 56px;
 `;
 
+const StyledLabelContainer = styled.div`
+  position: absolute;
+  top: 14px;
+`;
+
 type WorkflowDiagramCreateStepElementProps = {
   data: WorkflowDiagramStepNodeData;
+  Label?: React.ReactNode;
 };
 
 export const WorkflowDiagramCreateStepElement = ({
   data,
+  Label,
 }: WorkflowDiagramCreateStepElementProps) => {
   const { startNodeCreation } = useStartNodeCreation();
 
@@ -44,6 +51,9 @@ export const WorkflowDiagramCreateStepElement = ({
       <StyledVerticalLineContainer>
         <WorkflowDiagramConnector />
       </StyledVerticalLineContainer>
+
+      {Label && <StyledLabelContainer>{Label}</StyledLabelContainer>}
+
       <IconButton
         Icon={IconPlus}
         size="small"

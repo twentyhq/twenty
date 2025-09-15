@@ -1,12 +1,12 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   Avatar,
@@ -15,7 +15,7 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
 const StyledAssignedText = styled.div`

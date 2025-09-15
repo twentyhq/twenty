@@ -13,6 +13,7 @@ import { PageLayoutResolver } from 'src/engine/core-modules/page-layout/resolver
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/
       PageLayoutTabEntity,
       PageLayoutWidgetEntity,
     ]),
+    TwentyORMModule,
   ],
   controllers: [
     PageLayoutController,

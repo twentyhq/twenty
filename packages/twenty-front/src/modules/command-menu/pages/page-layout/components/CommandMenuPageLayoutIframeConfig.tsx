@@ -1,10 +1,11 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { useCreatePageLayoutIframeWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutIframeWidget';
-import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageLayoutWidgetUpdate';
-import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
-import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
+import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
 import styled from '@emotion/styled';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isValidUrl } from 'twenty-shared/utils';
@@ -33,18 +34,20 @@ const StyledButtonContainer = styled.div`
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
   const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget();
-  const { handleUpdateWidget } = usePageLayoutWidgetUpdate();
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilState(pageLayoutEditingWidgetIdState);
-  const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
+  const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
 
-  const editingWidget = pageLayoutWidgets.find(
+  const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+  const editingWidget = allWidgets.find(
     (w) => w.id === pageLayoutEditingWidgetId,
   );
   const isEditMode = !!editingWidget;
 
   const [title, setTitle] = useState(editingWidget?.title || '');
-  const [url, setUrl] = useState(editingWidget?.configuration?.url || '');
+  const configUrl = editingWidget?.configuration?.url;
+  const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
@@ -74,7 +77,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
     }
 
     if (isEditMode && pageLayoutEditingWidgetId !== null) {
-      handleUpdateWidget(pageLayoutEditingWidgetId, {
+      updatePageLayoutWidget(pageLayoutEditingWidgetId, {
         title: title.trim(),
         configuration: {
           ...editingWidget?.configuration,

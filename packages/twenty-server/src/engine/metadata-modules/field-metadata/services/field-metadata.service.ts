@@ -31,7 +31,7 @@ import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-type-relation-or-morph-relation.util';
+import { areFieldMetadatasOfType } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-of-type.util';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { buildUpdatableStandardFieldInput } from 'src/engine/metadata-modules/field-metadata/utils/build-updatable-standard-field-input.util';
 import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
@@ -39,7 +39,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -74,9 +74,9 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 type GenerateMigrationArgs = {
-  fieldMetadata: FieldMetadataEntity<
-    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-  >;
+  fieldMetadata:
+    | FieldMetadataEntity<FieldMetadataType.RELATION>
+    | FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
   workspaceId: string;
   queryRunner: QueryRunner;
 };
@@ -116,7 +116,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createOne({
-        fieldMetadataInput,
+        createFieldInput: fieldMetadataInput,
         workspaceId: fieldMetadataInput.workspaceId,
       });
     }
@@ -472,66 +472,33 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
-        const isRelationTargetMorphRelation = isFieldMetadataTypeMorphRelation(
-          fieldMetadata.relationTargetFieldMetadata,
+
+        fieldMetadataIdsToDelete.push(
+          fieldMetadata.id,
+          fieldMetadata.relationTargetFieldMetadataId,
         );
 
-        if (isRelationTargetMorphRelation) {
-          const morphRelationsWithSameName =
-            await this.getMorphRelationsWithSameName({
-              fieldMetadataName: fieldMetadata.relationTargetFieldMetadata.name,
-              objectMetadataId:
-                fieldMetadata.relationTargetFieldMetadata.objectMetadataId,
-              workspaceId,
-              fieldMetadataRepository,
-            });
+        await fieldMetadataRepository.delete({
+          id: In(fieldMetadataIdsToDelete),
+        });
 
-          morphRelationsWithSameName.forEach((morphRelation) => {
-            fieldMetadataIdsToDelete.push(
-              morphRelation.id,
-              morphRelation.relationTargetFieldMetadataId,
-            );
-          });
-
-          await fieldMetadataRepository.delete({
-            id: In(fieldMetadataIdsToDelete),
-          });
-
-          for (const morphRelation of morphRelationsWithSameName) {
-            await this.generateDeleteRelationMigration({
-              fieldMetadata: morphRelation,
-              workspaceId,
-              queryRunner,
-            });
-          }
-        } else {
-          fieldMetadataIdsToDelete.push(
-            fieldMetadata.id,
-            fieldMetadata.relationTargetFieldMetadataId,
-          );
-
-          await fieldMetadataRepository.delete({
-            id: In(fieldMetadataIdsToDelete),
-          });
-
-          await this.generateDeleteRelationMigration({
-            fieldMetadata,
-            workspaceId,
-            queryRunner,
-          });
-        }
+        await this.generateDeleteRelationMigration({
+          fieldMetadata,
+          workspaceId,
+          queryRunner,
+        });
       } else if (isFieldMetadataTypeMorphRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
 
-        const morphRelationsWithSameName =
-          await this.getMorphRelationsWithSameName({
-            fieldMetadataName: fieldMetadata.name,
+        const allMophFieldMetadatas =
+          await this.getAllMorphFieldMetadatasByMorphId({
+            morphId: fieldMetadata.morphId,
             objectMetadataId: fieldMetadata.objectMetadataId,
             workspaceId,
             fieldMetadataRepository,
           });
 
-        morphRelationsWithSameName.forEach((morphRelation) => {
+        allMophFieldMetadatas.forEach((morphRelation) => {
           fieldMetadataIdsToDelete.push(
             morphRelation.id,
             morphRelation.relationTargetFieldMetadataId,
@@ -542,7 +509,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           id: In(fieldMetadataIdsToDelete),
         });
 
-        for (const morphRelation of morphRelationsWithSameName) {
+        for (const morphRelation of allMophFieldMetadatas) {
           await this.generateDeleteRelationMigration({
             fieldMetadata: morphRelation,
             workspaceId,
@@ -675,7 +642,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createMany({
-        fieldMetadataInputs,
+        createFieldInputs: fieldMetadataInputs,
         workspaceId,
       });
     }
@@ -1036,7 +1003,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-            joinColumnName: computeRelationFieldJoinColumnName({
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
               name: fieldMetadataForCreate.name,
             }),
           },
@@ -1072,24 +1039,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     );
   }
 
-  private async getMorphRelationsWithSameName({
-    fieldMetadataName,
+  private async getAllMorphFieldMetadatasByMorphId({
+    morphId,
     objectMetadataId,
     workspaceId,
     fieldMetadataRepository,
   }: {
-    fieldMetadataName: string;
+    morphId: string;
     objectMetadataId: string;
     workspaceId: string;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
-  }): Promise<
-    FieldMetadataEntity<
-      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >[]
-  > {
+  }): Promise<FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>[]> {
     const fieldMetadatas = await fieldMetadataRepository.find({
       where: {
-        name: fieldMetadataName,
+        morphId,
         objectMetadataId,
         workspaceId,
       },
@@ -1100,9 +1063,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       ],
     });
 
-    if (!areFieldMetadatasTypeRelationOrMorphRelation(fieldMetadatas)) {
+    if (
+      !areFieldMetadatasOfType(fieldMetadatas, FieldMetadataType.MORPH_RELATION)
+    ) {
       throw new FieldMetadataException(
-        'At least one field metadata is not a relation or morph relation',
+        `Encountered a non morph relation morphId related flat field metadata type`,
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

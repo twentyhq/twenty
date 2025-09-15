@@ -28,10 +28,12 @@ export const RecordTableEmptyStateSoftDelete = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
+  const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
 
   const handleButtonClick = async () => {
-    const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
+    const deletedFilter = currentRecordFilters.find(
+      isRecordFilterAboutSoftDelete,
+    );
 
     if (!isDefined(deletedFilter)) {
       throw new Error('Deleted filter not found');

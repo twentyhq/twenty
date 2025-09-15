@@ -31,8 +31,6 @@ import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import {
@@ -96,8 +94,6 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
-  protected readonly featureFlagService: FeatureFlagService;
-  @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
 
   protected abstract handle(
@@ -142,20 +138,10 @@ export abstract class RestApiBaseHandler {
     let shouldBypassPermissionChecks = false;
 
     if (isDefined(apiKey)) {
-      const isApiKeyRolesEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-          workspace.id,
-        );
-
-      if (!isApiKeyRolesEnabled) {
-        shouldBypassPermissionChecks = true;
-      } else {
-        roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
-          apiKey.id,
-          workspace.id,
-        );
-      }
+      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKey.id,
+        workspace.id,
+      );
     }
 
     if (isDefined(userWorkspaceId)) {

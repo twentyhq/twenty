@@ -1,12 +1,11 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
-import {
-  GraphSubType,
-  WidgetType,
-} from '@/settings/page-layout/mocks/mockWidgets';
+import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
+import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
+
 import {
   IconChartBar,
+  IconChartLine,
   IconChartPie,
   IconGauge,
   IconNumber,
@@ -30,33 +29,38 @@ const StyledSectionTitle = styled.div`
 
 const graphTypeOptions = [
   {
-    type: GraphSubType.BAR,
+    type: GraphType.BAR,
     icon: IconChartBar,
     title: 'Bar Chart',
   },
   {
-    type: GraphSubType.PIE,
+    type: GraphType.PIE,
     icon: IconChartPie,
     title: 'Pie Chart',
   },
   {
-    type: GraphSubType.GAUGE,
+    type: GraphType.GAUGE,
     icon: IconGauge,
     title: 'Gauge',
   },
   {
-    type: GraphSubType.NUMBER,
+    type: GraphType.NUMBER,
     icon: IconNumber,
     title: 'Number',
+  },
+  {
+    type: GraphType.LINE,
+    icon: IconChartLine,
+    title: 'Line Chart',
   },
 ];
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { handleCreateWidget } = usePageLayoutWidgetCreate();
+  const { createPageLayoutWidget } = useCreatePageLayoutWidget();
 
-  const handleSelectGraphType = (graphType: GraphSubType) => {
-    handleCreateWidget(WidgetType.GRAPH, graphType);
+  const handleSelectGraphType = (graphType: GraphType) => {
+    createPageLayoutWidget(WidgetType.GRAPH, graphType);
     closeCommandMenu();
   };
 

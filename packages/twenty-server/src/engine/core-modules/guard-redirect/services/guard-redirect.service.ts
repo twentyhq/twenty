@@ -1,6 +1,7 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { AppPath } from 'twenty-shared/types';
 
 import {
   AuthException,
@@ -28,7 +29,7 @@ export class GuardRedirectService {
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
-    pathname = '/verify',
+    pathname = AppPath.Verify,
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
@@ -46,17 +47,17 @@ export class GuardRedirectService {
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const subdomainAndCustomDomainFromReferer = request.headers.referer
-      ? this.domainManagerService.getSubdomainAndCustomDomainFromUrl(
+    const subdomainAndDomainFromReferer = request.headers.referer
+      ? this.domainManagerService.getSubdomainAndDomainFromUrl(
           request.headers.referer,
         )
       : null;
 
-    return subdomainAndCustomDomainFromReferer &&
-      subdomainAndCustomDomainFromReferer.subdomain
+    return subdomainAndDomainFromReferer &&
+      subdomainAndDomainFromReferer.subdomain
       ? {
-          subdomain: subdomainAndCustomDomainFromReferer.subdomain,
-          customDomain: subdomainAndCustomDomainFromReferer.customDomain,
+          subdomain: subdomainAndDomainFromReferer.subdomain,
+          customDomain: subdomainAndDomainFromReferer.domain,
         }
       : {
           subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),

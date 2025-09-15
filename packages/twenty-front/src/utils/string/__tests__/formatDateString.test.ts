@@ -1,7 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { enUS } from 'date-fns/locale';
-import { DateTime } from 'luxon';
+import { subDays } from 'date-fns';
 import { formatDateString } from '~/utils/string/formatDateString';
 
 describe('formatDateString', () => {
@@ -31,7 +31,7 @@ describe('formatDateString', () => {
   });
 
   it('should format date as relative when displayFormat is set to RELATIVE', () => {
-    const mockDate = DateTime.now().minus({ days: 2 }).toISO();
+    const mockDate = subDays(new Date(), 2).toISOString();
     const mockRelativeDate = '2 days ago';
 
     const result = formatDateString({

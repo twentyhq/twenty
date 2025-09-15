@@ -23,23 +23,23 @@ export class MyService {
 
   async doSomething() {
     // Create an analytics context
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId: 'workspace-id',
       userId: 'user-id',
     });
 
     // Track a workspace event
-    analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+    auditService.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     
     // Track an object event
-    analytics.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+    auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
       recordId: 'record-id',
       objectMetadataId: 'object-metadata-id',
       // other properties
     });
     
     // Track a pageview
-    analytics.createPageviewEvent('page-name', {
+    auditService.createPageviewEvent('page-name', {
       href: '/path',
       locale: 'en-US',
       // other properties

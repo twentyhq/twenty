@@ -13,15 +13,15 @@ type useObjectPermissionsReturnType = {
 
 export const useObjectPermissions = (): useObjectPermissionsReturnType => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-  const objectPermissions = currentUserWorkspace?.objectPermissions;
+  const objectsPermissions = currentUserWorkspace?.objectsPermissions;
 
-  if (!isDefined(objectPermissions)) {
+  if (!isDefined(objectsPermissions)) {
     return {
       objectPermissionsByObjectMetadataId: {},
     };
   }
 
-  const objectPermissionsByObjectMetadataId = objectPermissions?.reduce(
+  const objectPermissionsByObjectMetadataId = objectsPermissions?.reduce(
     (
       acc: Record<string, ObjectPermissions & { objectMetadataId: string }>,
       objectPermission,

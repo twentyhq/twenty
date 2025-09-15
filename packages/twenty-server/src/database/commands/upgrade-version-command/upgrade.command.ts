@@ -23,7 +23,6 @@ import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/u
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
-import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
 import { AddPositionsToWorkflowVersionsAndWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
 import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-migrate-views-to-core.command';
@@ -69,7 +68,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addEnqueuedStatusToWorkflowRunV2Command: AddEnqueuedStatusToWorkflowRunV2Command,
 
     // 1.3 Commands
-    protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
     protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
 
@@ -132,14 +130,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.addNextStepIdsToWorkflowVersionTriggers,
         this.addEnqueuedStatusToWorkflowRunV2Command,
       ],
-      afterSyncMetadata: [this.assignRolesToExistingApiKeysCommand],
+      afterSyncMetadata: [],
     };
 
     const commands_130: VersionCommands = {
       beforeSyncMetadata: [
         this.addNextStepIdsToWorkflowVersionTriggers, // We add that command again because nextStepIds where not added on freshly created triggers. It will be done in 1.3
         this.addNextStepIdsToWorkflowRunsTrigger,
-        this.assignRolesToExistingApiKeysCommand,
         this.updateTimestampColumnTypeInWorkspaceSchemaCommand,
       ],
       afterSyncMetadata: [],

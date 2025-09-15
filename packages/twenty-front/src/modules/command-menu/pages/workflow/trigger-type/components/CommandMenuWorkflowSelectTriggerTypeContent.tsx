@@ -12,12 +12,10 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -35,10 +33,6 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
-
   const handleTriggerTypeClick = ({
     type,
     defaultLabel,
@@ -54,7 +48,6 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           defaultLabel,
           type,
           activeNonSystemObjectMetadataItems,
-          steps: !isWorkflowBranchEnabled ? workflow.currentVersion.steps : [],
         }),
       );
 

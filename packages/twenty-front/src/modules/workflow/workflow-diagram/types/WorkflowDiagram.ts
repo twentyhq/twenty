@@ -3,13 +3,28 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
-import { type Edge, type Node } from '@xyflow/react';
+import { type MessageDescriptor } from '@lingui/core';
+import {
+  type Connection,
+  type Edge,
+  type Node,
+  type Position,
+} from '@xyflow/react';
 import { type StepStatus } from 'twenty-shared/workflow';
 
 export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
-export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData>;
+export type WorkflowDiagramEdge = Edge<WorkflowDiagramEdgeData> & {
+  sourceHandle: string;
+  targetHandle: string;
+};
+
+export type WorkflowConnection = Connection & {
+  sourceHandle: string;
+  targetHandle: string;
+};
 
 export type WorkflowRunDiagramNode = Node<WorkflowRunDiagramNodeData>;
 
@@ -23,6 +38,14 @@ export type WorkflowDiagram = {
   edges: Array<WorkflowDiagramEdge>;
 };
 
+export type WorkflowDiagramNodeRightHandleOptions = {
+  id: string;
+};
+
+export type WorkflowDiagramNodeDefaultHandleOptions = {
+  label?: MessageDescriptor;
+};
+
 export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
@@ -32,6 +55,8 @@ export type WorkflowDiagramStepNodeData =
       runStatus?: WorkflowRunStepStatus;
       hasNextStepIds: boolean;
       stepId: string;
+      defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
+      rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
       position: {
         x: number;
         y: number;
@@ -44,6 +69,8 @@ export type WorkflowDiagramStepNodeData =
       runStatus?: WorkflowRunStepStatus;
       hasNextStepIds: boolean;
       stepId: string;
+      defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
+      rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
       position: {
         x: number;
         y: number;
@@ -67,12 +94,18 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData
+  | WorkflowDiagramIteratorEmptyActionNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
   'runStatus'
 > & { runStatus: WorkflowRunStepStatus };
+
+export type WorkflowDiagramEdgeLabelOptions = {
+  position: Position;
+  label: MessageDescriptor;
+};
 
 export type WorkflowDiagramFilterEdgeData = {
   edgeType: 'filter';
@@ -81,18 +114,23 @@ export type WorkflowDiagramFilterEdgeData = {
   name: string;
   runStatus?: WorkflowRunStepStatus;
   edgeExecutionStatus?: StepStatus;
+  labelOptions?: WorkflowDiagramEdgeLabelOptions;
 };
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
   edgeExecutionStatus?: StepStatus;
+  labelOptions?: WorkflowDiagramEdgeLabelOptions;
 };
 
 export type WorkflowDiagramEdgeData =
   | WorkflowDiagramFilterEdgeData
   | WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
+export type WorkflowDiagramNodeType =
+  | 'default'
+  | 'empty-trigger'
+  | 'iterator-empty-action';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'

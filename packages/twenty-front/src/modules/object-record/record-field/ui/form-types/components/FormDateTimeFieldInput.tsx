@@ -114,7 +114,9 @@ export const FormDateTimeFieldInput = ({
   );
 
   const draftValueAsDate =
-    isDefined(draftValue.value) && isNonEmptyString(draftValue.value)
+    isDefined(draftValue.value) &&
+    isNonEmptyString(draftValue.value) &&
+    draftValue.type === 'static'
       ? new Date(draftValue.value)
       : null;
 
