@@ -1,7 +1,8 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
+import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -10,6 +11,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -36,9 +38,17 @@ export const RecordCalendarCardBody = ({
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
+  const setRecordCalendarCardHoverPosition = useSetRecoilComponentState(
+    recordCalendarCardHoverPositionComponentState,
+  );
+
+  const handleMouseEnter = (index: number) => {
+    setRecordCalendarCardHoverPosition(index);
+  };
+
   return (
     <RecordCardBodyContainer>
-      {visibleRecordFieldsExceptLabelIdentifier.map((recordField) => {
+      {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
@@ -63,8 +73,8 @@ export const RecordCalendarCardBody = ({
                 useUpdateRecord: () => [() => undefined, { loading: false }],
                 isDisplayModeFixHeight: true,
                 triggerEvent: 'CLICK',
-                anchorId: `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
-                onMouseEnter: () => {},
+                anchorId: `${RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
+                onMouseEnter: () => handleMouseEnter(index),
               }}
             >
               <RecordFieldComponentInstanceContext.Provider
@@ -72,12 +82,12 @@ export const RecordCalendarCardBody = ({
                   instanceId: getRecordFieldInputInstanceId({
                     recordId,
                     fieldName: correspondingFieldDefinition.metadata.fieldName,
-                    prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+                    prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
                   }),
                 }}
               >
                 <RecordInlineCell
-                  instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
+                  instanceIdPrefix={RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}
                 />
               </RecordFieldComponentInstanceContext.Provider>
             </FieldContext.Provider>

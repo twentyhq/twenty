@@ -1,4 +1,4 @@
-import { RecordCalendarMonthBodyCard } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyCard';
+import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import styled from '@emotion/styled';
@@ -39,7 +39,7 @@ export const RecordCalendarMonthBodyDay = ({
       <StyledDayHeader>{day.getDate()}</StyledDayHeader>
       <StyledCardsContainer>
         {recordIds.slice(0, 5).map((recordId) => (
-          <RecordCalendarMonthBodyCard key={recordId} recordId={recordId} />
+          <RecordCalendarCard key={recordId} recordId={recordId} />
         ))}
       </StyledCardsContainer>
     </StyledContainer>
