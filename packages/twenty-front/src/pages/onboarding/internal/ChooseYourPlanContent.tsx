@@ -8,7 +8,6 @@ import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -23,6 +22,7 @@ import {
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { type Billing } from '~/generated/graphql';
+import { AppPath } from 'twenty-shared/types';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;

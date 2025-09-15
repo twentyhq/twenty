@@ -2,11 +2,11 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsBillingContent } from '@/billing/components/SettingsBillingContent';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
