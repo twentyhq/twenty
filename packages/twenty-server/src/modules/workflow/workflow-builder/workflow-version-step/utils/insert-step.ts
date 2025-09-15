@@ -173,7 +173,7 @@ const updateStepsWithOptions = ({
 
   switch (parentStepConnectionOptions.connectedStepType) {
     case WorkflowActionType.ITERATOR:
-      if (!parentStepConnectionOptions.settings.shouldInsertToLoop) {
+      if (!parentStepConnectionOptions.settings.isConnectedToLoop) {
         break;
       }
 

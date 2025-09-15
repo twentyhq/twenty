@@ -73,6 +73,7 @@ export const RecordIndexContainerGater = () => {
         value={{
           objectPermissionsByObjectMetadataId,
           recordIndexId,
+          viewBarInstanceId: recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,
           objectMetadataItem,

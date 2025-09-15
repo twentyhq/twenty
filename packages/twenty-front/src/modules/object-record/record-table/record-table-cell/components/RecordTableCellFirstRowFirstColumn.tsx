@@ -1,8 +1,11 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { StyledCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
@@ -30,13 +33,32 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
+  const hoverPosition = useRecoilComponentValue(
+    recordTableHoverPositionComponentState,
+  );
+
+  const isHoveredPortalOnThisCell =
+    hoverPosition?.column === 0 && hoverPosition.row === 0;
+
   const [isRecordTableScrolledVertically] = useRecoilComponentState(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const zIndex = isRecordTableScrolledVertically
-    ? TABLE_Z_INDEX.firstCellWithVerticalScroll
-    : TABLE_Z_INDEX.firstCellWithoutVerticalScroll;
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const zIndexWithoutGroups =
+    !isRecordTableScrolledVertically && isHoveredPortalOnThisCell
+      ? TABLE_Z_INDEX.withoutGroupsCell0_0.cell0_0HoveredWithoutScroll
+      : TABLE_Z_INDEX.withoutGroupsCell0_0.cell0_0Normal;
+
+  const zIndexWithGroups =
+    !isRecordTableScrolledVertically && isHoveredPortalOnThisCell
+      ? TABLE_Z_INDEX.withGroupsCell0_0.cell0_0HoveredWithoutScroll
+      : TABLE_Z_INDEX.withGroupsCell0_0.cell0_0Normal;
+
+  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary
