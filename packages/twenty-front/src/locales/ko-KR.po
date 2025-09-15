@@ -1992,6 +1992,11 @@ msgstr "날짜"
 msgid "Date and time"
 msgstr "날짜 및 시간"
 
+#. js-lingui-id: QIIAIQ
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "Date field"
+msgstr ""
+
 #. js-lingui-id: Lhd0oQ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -4578,6 +4583,11 @@ msgstr "오류가 포함된 데이터가 없습니다"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
 msgstr "데이터를 찾을 수 없음"
+
+#. js-lingui-id: 5K0pqs
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "No Date field"
+msgstr ""
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
