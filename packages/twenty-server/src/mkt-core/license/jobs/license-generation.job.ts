@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

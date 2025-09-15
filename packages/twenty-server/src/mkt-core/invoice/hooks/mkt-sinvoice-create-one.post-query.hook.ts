@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 

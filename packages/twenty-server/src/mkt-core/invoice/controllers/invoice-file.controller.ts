@@ -16,7 +16,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Request,Response } from 'express';
+import { Request, Response } from 'express';
 
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';

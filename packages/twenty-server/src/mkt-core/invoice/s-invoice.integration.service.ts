@@ -1,8 +1,8 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { randomUUID } from 'crypto';
 
-import axios,{ AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

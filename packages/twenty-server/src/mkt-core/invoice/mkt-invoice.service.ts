@@ -29,7 +29,7 @@ type sInvoiceType = {
 };
 
 @Injectable()
-export class MktInvoiceService {  
+export class MktInvoiceService {
   private readonly logger = new Logger(MktInvoiceService.name);
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -102,7 +102,7 @@ export class MktInvoiceService {
 
       return orderItemNames;
     } catch (error) {
-      console.error(`MktInvoiceService: Error getting orderItem names:`, error);
+      this.logger.error(`MktInvoiceService: Error getting orderItem names:`, error as Error);
 
       return null;
     }

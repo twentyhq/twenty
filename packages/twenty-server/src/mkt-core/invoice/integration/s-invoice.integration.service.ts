@@ -92,7 +92,7 @@ export class SInvoiceIntegrationService {
         invoiceType: sInvoice.invoiceType || '1',
         templateCode: sInvoice.templateCode || '1/770',
         invoiceSeries: sInvoice.invoiceSeries || 'K24GAM',
-        currencyCode: (sInvoice.currencyCode as any) || 'VND',
+        currencyCode: (sInvoice.currencyCode as string) || 'VND',
         exchangeRate: sInvoice.exchangeRate
           ? parseFloat(sInvoice.exchangeRate)
           : 1,
@@ -218,7 +218,8 @@ export class SInvoiceIntegrationService {
         headers,
       });
 
-      const response: CreateInvoiceResponse = res.data ?? ({} as CreateInvoiceResponse);
+      const response: CreateInvoiceResponse =
+        res.data ?? ({} as CreateInvoiceResponse);
       const result = (response.result ?? {}) as {
         supplierTaxCode?: string;
         invoiceNo?: string;
@@ -247,9 +248,19 @@ export class SInvoiceIntegrationService {
         `[S-INVOICE] Response: ${JSON.stringify(sInvoiceUpdate)}`,
       );
     } catch (error: unknown) {
-      type ErrorShape = { code?: string | number; message?: string; description?: string; data?: unknown };
-      const err = error as { response?: { data?: ErrorShape }; message?: string };
-      const errMsg: ErrorShape = err?.response?.data || { message: err?.message };
+      type ErrorShape = {
+        code?: string | number;
+        message?: string;
+        description?: string;
+        data?: unknown;
+      };
+      const err = error as {
+        response?: { data?: ErrorShape };
+        message?: string;
+      };
+      const errMsg: ErrorShape = err?.response?.data || {
+        message: err?.message,
+      };
 
       this.logger.error(
         `Create S-Invoice failed for order ${orderId}: ${JSON.stringify(errMsg)}`,
@@ -427,9 +438,18 @@ export class SInvoiceIntegrationService {
 
       return result;
     } catch (error: unknown) {
-      type ErrorShape2 = { errorCode?: number; description?: string; message?: string };
-      const err = error as { response?: { data?: ErrorShape2 }; message?: string };
-      const errMsg: ErrorShape2 = err?.response?.data || { message: err?.message };
+      type ErrorShape2 = {
+        errorCode?: number;
+        description?: string;
+        message?: string;
+      };
+      const err = error as {
+        response?: { data?: ErrorShape2 };
+        message?: string;
+      };
+      const errMsg: ErrorShape2 = err?.response?.data || {
+        message: err?.message,
+      };
 
       this.logger.error(
         `[S-INVOICE SERVICE] Failed to get invoice file for invoiceNo ${invoiceNo}: ${JSON.stringify(errMsg)}`,

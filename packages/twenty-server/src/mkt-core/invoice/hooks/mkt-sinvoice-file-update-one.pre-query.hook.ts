@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { createHmac } from 'crypto';
 import * as fs from 'fs';
