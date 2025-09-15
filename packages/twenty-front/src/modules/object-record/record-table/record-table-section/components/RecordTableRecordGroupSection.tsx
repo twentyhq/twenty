@@ -8,7 +8,12 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
+import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableDragAndDropPlaceholderCell';
+import { RecordTableLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableLastDynamicFillingCell';
 import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
@@ -25,21 +30,17 @@ import { Tag } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
 
-const StyledDragDropHeaderPlaceholder = styled.div`
-  min-width: 16px;
-  width: 16px;
-  position: sticky;
-  left: 0;
-`;
-
 const StyledTrContainer = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
+
+  div:not(:first-of-type) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledChevronContainer = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: none;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
@@ -50,16 +51,19 @@ const StyledChevronContainer = styled.div`
 
   position: sticky;
   left: 16px;
+
+  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
   display: block;
   margin: auto;
+
+  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 const StyledRecordGroupSection = styled.div<{ width: number }>`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: none;
   display: flex;
   flex-direction: row;
@@ -70,24 +74,26 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
 
   position: sticky;
   left: 48px;
+
+  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 const StyledTag = styled(Tag)`
   flex-shrink: 0;
 `;
 
-const StyledPlusButtonPlaceholderCell = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: 32px;
-  min-width: 32px;
-  width: 32px;
-`;
-
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   min-width: ${({ widthOfFields }) => widthOfFields}px;
   width: ${({ widthOfFields }) => widthOfFields}px;
+
+  z-index: ${TABLE_Z_INDEX.groupSection.normalCell};
+`;
+
+const StyledRecordTableDragAndDropPlaceholderCell = styled(
+  RecordTableDragAndDropPlaceholderCell,
+)`
+  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 export const RecordTableRecordGroupSection = () => {
@@ -153,7 +159,7 @@ export const RecordTableRecordGroupSection = () => {
 
   return (
     <StyledTrContainer onClick={handleDropdownToggle}>
-      <StyledDragDropHeaderPlaceholder />
+      <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledChevronContainer>
         <StyledAnimatedLightIconButton
           Icon={IconChevronDown}
@@ -190,7 +196,8 @@ export const RecordTableRecordGroupSection = () => {
         <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />
-      <StyledPlusButtonPlaceholderCell />
+      <RecordTableAddButtonPlaceholderCell />
+      <RecordTableLastDynamicFillingCell />
     </StyledTrContainer>
   );
 };

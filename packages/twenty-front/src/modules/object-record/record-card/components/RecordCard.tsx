@@ -10,6 +10,7 @@ const StyledBoardCard = styled.div<{
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
+  width: 100%;
 
   ${({ isSecondaryDragged }) =>
     isSecondaryDragged &&

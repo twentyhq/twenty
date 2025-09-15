@@ -1,7 +1,8 @@
+import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordCardHeader } from '@/object-record/record-card/components/RecordCardHeader';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -18,11 +19,24 @@ type RecordCalendarMonthBodyCardProps = {
 export const RecordCalendarMonthBodyCard = ({
   recordId,
 }: RecordCalendarMonthBodyCardProps) => {
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
   return (
     <StyledContainer>
-      <StyledRecordCard>{record?.id}</StyledRecordCard>
+      <StyledRecordCard>
+        <RecordCardHeader
+          objectMetadataItem={objectMetadataItem}
+          recordId={recordId}
+          onTitleClick={() => {}}
+          onCompactIconClick={() => {}}
+          onCheckboxChange={() => {}}
+          isCompactView={true}
+          isCurrentCardSelected={false}
+          isCompactViewToggleable={false}
+          isIconHidden={true}
+          recordIndexOpenRecordIn={ViewOpenRecordInType.SIDE_PANEL}
+        />
+      </StyledRecordCard>
     </StyledContainer>
   );
 };
