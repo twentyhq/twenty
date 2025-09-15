@@ -1,15 +1,24 @@
 export const unaccentText = (text: string): string => {
   if (!text) return text;
   const specialChars: Record<string, string> = {
-    'æ': 'ae', 'Æ': 'AE',
-    'œ': 'oe', 'Œ': 'OE',
-    'ø': 'o', 'Ø': 'O',
-    'đ': 'd', 'Đ': 'D',
-    'ħ': 'h', 'Ħ': 'H',
-    'ı': 'i', 'ł': 'l', 'Ł': 'L',
-    'ŋ': 'n', 'Ŋ': 'N',
-    'ß': 'ss',
-    'þ': 'th', 'Þ': 'TH',
+    æ: 'ae',
+    Æ: 'AE',
+    œ: 'oe',
+    Œ: 'OE',
+    ø: 'o',
+    Ø: 'O',
+    đ: 'd',
+    Đ: 'D',
+    ħ: 'h',
+    Ħ: 'H',
+    ı: 'i',
+    ł: 'l',
+    Ł: 'L',
+    ŋ: 'n',
+    Ŋ: 'N',
+    ß: 'ss',
+    þ: 'th',
+    Þ: 'TH',
   };
 
   let result = text;

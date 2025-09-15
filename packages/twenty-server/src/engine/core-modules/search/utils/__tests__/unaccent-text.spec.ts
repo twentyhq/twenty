@@ -15,9 +15,15 @@ describe('unaccentText', () => {
   });
 
   it('should handle mixed accented and non-accented text', () => {
-    expect(unaccentText('José García works at Café')).toBe('Jose Garcia works at Cafe');
-    expect(unaccentText('François & Müller Company')).toBe('Francois & Muller Company');
-    expect(unaccentText('123 Zürich Street, naïve café')).toBe('123 Zurich Street, naive cafe');
+    expect(unaccentText('José García works at Café')).toBe(
+      'Jose Garcia works at Cafe',
+    );
+    expect(unaccentText('François & Müller Company')).toBe(
+      'Francois & Muller Company',
+    );
+    expect(unaccentText('123 Zürich Street, naïve café')).toBe(
+      '123 Zurich Street, naive cafe',
+    );
   });
 
   it('should preserve non-accented text unchanged', () => {
