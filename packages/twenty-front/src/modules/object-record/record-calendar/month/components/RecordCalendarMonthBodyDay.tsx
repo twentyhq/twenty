@@ -5,6 +5,7 @@ import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-st
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isSameDay, isSameMonth } from 'date-fns';
 
 const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   display: flex;
@@ -27,11 +28,24 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
     `}
 `;
 
-const StyledDayHeader = styled.div`
+const StyledDayHeader = styled.div<{ isToday: boolean }>`
   display: flex;
   text-align: right;
-  justify-content: flex-end;
-  padding: 7px 5px;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  width: 20px;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+
+  ${({ isToday, theme }) =>
+    isToday &&
+    css`
+      border-radius: 4px;
+      background: ${theme.color.red};
+      color: ${theme.font.color.inverted};
+      font-weight: ${theme.font.weight.medium};
+    `}
 `;
 
 const StyledCardsContainer = styled.div`
@@ -55,11 +69,13 @@ export const RecordCalendarMonthBodyDay = ({
     day.toDateString(),
   );
 
-  const isOtherMonth = day.getMonth() !== recordCalendarSelectedDate.getMonth();
+  const isToday = isSameDay(day, new Date());
+
+  const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
 
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
-      <StyledDayHeader>{day.getDate()}</StyledDayHeader>
+      <StyledDayHeader isToday={isToday}>{day.getDate()}</StyledDayHeader>
       <StyledCardsContainer>
         {recordIds.slice(0, 5).map((recordId) => (
           <RecordCalendarCard key={recordId} recordId={recordId} />
