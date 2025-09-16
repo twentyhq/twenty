@@ -1056,7 +1056,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Grok integration',
+    description: 'API key for xAI integration',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
