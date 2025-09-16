@@ -78,9 +78,11 @@ export const PageLayoutGridLayout = ({
 
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
-  const layouts = isDefined(activeTabId)
-    ? pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
-    : EMPTY_LAYOUT;
+  if (!isDefined(activeTabId)) {
+    return null;
+  }
+
+  const layouts = pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
 
   return (
     <>
