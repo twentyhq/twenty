@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Equal, Repository } from 'typeorm';
 
 import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
@@ -11,18 +11,13 @@ import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/util
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { DeleteViewInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view.input';
+import { DestroyViewInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view.exception';
-import { VIEW_ENTITY_RELATION_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/view-entity-relation-properties.constant';
-import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { fromPartialFlatViewToFlatViewWithDefault } from 'src/engine/core-modules/view/flat-view/utils/from-partial-flat-view-to-flat-view-to-with-default.util';
+import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
+import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
+import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
+import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -42,33 +37,18 @@ export class ViewV2Service {
     createViewInput: CreateViewInput;
     workspaceId: string;
   }): Promise<ViewEntity> {
-
-    if (!isDefined(workspaceId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        ViewExceptionCode.INVALID_VIEW_DATA,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-          ),
-        },
-      );
-    }
-
     const { flatObjectMetadataMaps, flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
         flatEntities: ['flatObjectMetadataMaps', 'flatViewMaps'],
       });
 
-    const flatViewFromCreateInput = fromPartialFlatViewToFlatViewWithDefault({
-      ...createViewInput,
+    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
+      createViewInput,
       workspaceId,
     });
 
-    const toFlatViewMaps: FlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
+    const toFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: flatViewFromCreateInput,
       flatEntityMaps: existingFlatViewMaps,
     });
@@ -122,28 +102,9 @@ export class ViewV2Service {
         flatEntities: ['flatViewMaps'],
       });
 
-    const existingView = existingFlatViewMaps.byId[updateViewInput.id];
-
-    if (!isDefined(existingView)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          updateViewInput.id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const existingViewToUpdate = removePropertiesFromRecord(
-      {
-        ...existingView,
-        ...updateViewInput,
-      },
-      VIEW_ENTITY_RELATION_PROPERTIES,
-    );
-
-    const flatViewFromUpdateInput = fromPartialFlatViewToFlatViewWithDefault({
-      ...existingViewToUpdate,
+    const flatViewFromUpdateInput = fromUpdateViewInputToFlatViewToUpdateOrThrow({
+      updateViewInput,
+      flatViewMaps: existingFlatViewMaps,
     });
 
     const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
@@ -201,27 +162,19 @@ export class ViewV2Service {
         flatEntities: ['flatViewMaps'],
       });
 
-    const existingViewToDelete = existingFlatViewMaps.byId[deleteViewInput.id];
-
-    if (!isDefined(existingViewToDelete)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          deleteViewInput.id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
+    const flatViewFromDeleteInput = fromDeleteViewInputToFlatViewOrThrow({
+      deleteViewInput,
+      flatViewMaps: existingFlatViewMaps,
+    });
 
     const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingViewToDelete.id],
+      flatEntityIds: [flatViewFromDeleteInput.id],
       flatEntityMaps: existingFlatViewMaps,
     });
-    const toFlatViewMaps: FlatViewMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityMaps: fromFlatViewMaps,
-        entityToDeleteId: existingViewToDelete.id,
-      });
+    const toFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+      flatEntity: flatViewFromDeleteInput,
+      flatEntityMaps: fromFlatViewMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -244,6 +197,60 @@ export class ViewV2Service {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view',
+      );
+    }
+
+    return true;
+  }
+
+  async destroyOne({
+    destroyViewInput,
+    workspaceId,
+  }: {
+    destroyViewInput: DestroyViewInput;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const { flatViewMaps: existingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatViewMaps'],
+      });
+
+    const flatViewFromDestroyInput = fromDestroyViewInputToFlatViewOrThrow({
+      destroyViewInput,
+      flatViewMaps: existingFlatViewMaps,
+    });
+
+    const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
+      flatEntityIds: [flatViewFromDestroyInput.id],
+      flatEntityMaps: existingFlatViewMaps,
+    });
+    const toFlatViewMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
+      flatEntityMaps: fromFlatViewMaps,
+      entityToDeleteId: flatViewFromDestroyInput.id,
+    });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromToAllFlatEntityMaps: {
+            flatViewMaps: {
+              from: fromFlatViewMaps,
+              to: toFlatViewMaps,
+            },
+          },
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingEntities: true,
+          },
+          workspaceId,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while destroying view',
       );
     }
 
