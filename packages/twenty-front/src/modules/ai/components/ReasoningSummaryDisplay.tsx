@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
-import { Shimmer } from '@/ai/components/ShimmerEffect';
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';
 
 const StyledContainer = styled.div`
@@ -79,12 +79,12 @@ export const ReasoningSummaryDisplay = ({
     <StyledContainer>
       {isThinking && (
         <>
-          <Shimmer>
+          <ShimmeringText>
             <StyledIconContainer>
               <IconBrain size={theme.icon.size.sm} />
               <StyledThinkingText>{t`Thinking...`}</StyledThinkingText>
             </StyledIconContainer>
-          </Shimmer>
+          </ShimmeringText>
           <StyledReasoningContainer>
             <StyledReasoningText>{content}</StyledReasoningText>
           </StyledReasoningContainer>

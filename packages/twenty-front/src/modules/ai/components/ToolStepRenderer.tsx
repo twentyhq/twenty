@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
-import { Shimmer } from '@/ai/components/ShimmerEffect';
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import type {
   ToolCallEvent,
   ToolEvent,
@@ -97,11 +97,11 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
-          <Shimmer>
+          <ShimmeringText>
             <StyledDisplayMessage>
               {toolCall.args.loadingMessage}
             </StyledDisplayMessage>
-          </Shimmer>
+          </ShimmeringText>
         </StyledLoadingContainer>
       </StyledContainer>
     );
