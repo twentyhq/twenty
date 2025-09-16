@@ -1,4 +1,4 @@
-import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPages';
+import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { IconAppWindow, IconChartPie, IconFrame } from 'twenty-ui/display';
