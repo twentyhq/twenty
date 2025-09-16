@@ -7,7 +7,7 @@ import { AI_MODELS, ModelProvider } from './ai-models.const';
 
 describe('AI_MODELS', () => {
   it('should contain all expected models', () => {
-    expect(AI_MODELS).toHaveLength(11);
+    expect(AI_MODELS).toHaveLength(9);
     expect(AI_MODELS.map((model) => model.modelId)).toEqual([
       'gpt-4o',
       'gpt-4o-mini',
