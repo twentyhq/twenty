@@ -87,7 +87,7 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys, defs } = useBarChartData({
+  const { barConfigs, enrichedKeys, enrichedKeysMap, defs } = useBarChartData({
     data,
     indexBy,
     keys,
@@ -138,7 +138,7 @@ export const GraphWidgetBarChart = ({
     return (
       <BarChartEndLines
         bars={props.bars}
-        enrichedKeys={enrichedKeys}
+        enrichedKeysMap={enrichedKeysMap}
         layout={layout}
       />
     );
