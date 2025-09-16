@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isObjectType } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInputFieldConfigMap,
+  isObjectType,
+} from 'graphql';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -142,6 +146,26 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     return {
       [joinColumnName]: {
         type: modifiedType,
+        description: fieldMetadata.description,
+      },
+    };
+  }
+
+  public generateSimpleRelationFieldGroupByInputType(
+    fieldMetadata: FieldMetadataEntity<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
+  ): GraphQLInputFieldConfigMap {
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+      return {};
+
+    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+
+    const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+
+    return {
+      [joinColumnName]: {
+        type,
         description: fieldMetadata.description,
       },
     };

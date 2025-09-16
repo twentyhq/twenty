@@ -3,4 +3,5 @@ export enum GqlInputTypeDefinitionKind {
   Update = 'Update',
   Filter = 'Filter',
   OrderBy = 'OrderBy',
+  GroupBy = 'GroupBy',
 }
