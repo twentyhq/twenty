@@ -14,11 +14,8 @@ export class AgentChatMessageDTO {
   @Field()
   role: 'user' | 'assistant';
 
-  @Field()
-  content: string;
-
   @Field({ nullable: true })
-  streamData: string;
+  rawContent: string;
 
   @Field(() => [FileDTO])
   files: FileDTO[];

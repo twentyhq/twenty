@@ -68,21 +68,18 @@ export class AgentChatService {
   async addMessage({
     threadId,
     role,
-    content,
+    rawContent,
     fileIds,
-    streamData,
   }: {
     threadId: string;
     role: AgentChatMessageRole;
-    content: string;
+    rawContent: string | null;
     fileIds?: string[];
-    streamData?: string | null;
   }) {
     const message = this.messageRepository.create({
       threadId,
       role,
-      content,
-      streamData,
+      rawContent,
     });
 
     const savedMessage = await this.messageRepository.save(message);
@@ -95,7 +92,7 @@ export class AgentChatService {
       }
     }
 
-    this.generateTitleIfNeeded(threadId, content);
+    this.generateTitleIfNeeded(threadId, rawContent);
 
     return savedMessage;
   }
@@ -124,14 +121,14 @@ export class AgentChatService {
 
   private async generateTitleIfNeeded(
     threadId: string,
-    messageContent: string,
+    messageContent: string | null,
   ) {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
       select: ['id', 'title'],
     });
 
-    if (!thread || thread.title) {
+    if (!thread || thread.title || !messageContent) {
       return;
     }
 

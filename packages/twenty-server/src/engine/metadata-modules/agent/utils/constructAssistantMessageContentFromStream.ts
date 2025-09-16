@@ -7,9 +7,9 @@ type ReasoningPart = {
 };
 
 export const constructAssistantMessageContentFromStream = (
-  streamData: string,
+  rawContent: string,
 ) => {
-  const lines = streamData.trim().split('\n');
+  const lines = rawContent.trim().split('\n');
 
   const output: Array<TextPart | ReasoningPart> = [];
   let reasoningText = '';

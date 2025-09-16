@@ -263,17 +263,17 @@ export class AgentExecutionService {
     messages: AgentChatMessageEntity[],
   ): CoreMessage[] {
     return messages
-      .map(({ role, streamData, content }): CoreMessage => {
+      .map(({ role, rawContent }): CoreMessage => {
         if (role === AgentChatMessageRole.USER) {
           return {
             role: 'user',
-            content,
+            content: rawContent ?? '',
           };
         }
 
         return {
           role: 'assistant',
-          content: constructAssistantMessageContentFromStream(streamData ?? ''),
+          content: constructAssistantMessageContentFromStream(rawContent ?? ''),
         };
       })
       .filter((message) => message.content.length > 0);
