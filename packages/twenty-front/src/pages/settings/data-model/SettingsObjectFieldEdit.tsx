@@ -3,7 +3,7 @@ import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -26,7 +26,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from "react-router-dom";
 import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -63,9 +62,11 @@ export const SettingsObjectFieldEdit = () => {
 
   const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
     null,
-  ); 
+  );
 
-  const [memorizedUrl, setNavigationMemorizedUrl] = useRecoilState(navigationMemorizedUrlState);
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
@@ -145,15 +146,17 @@ export const SettingsObjectFieldEdit = () => {
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
-        if (formValues.type === FieldMetadataType.MULTI_SELECT && memorizedUrl.length > 0){
-          navigate(memorizedUrl , { replace: true })
-          setNavigationMemorizedUrl("")
-        }
-        else {
+        if (
+          formValues.type === FieldMetadataType.MULTI_SELECT &&
+          navigationMemorizedUrl.length > 0
+        ) {
+          navigate(navigationMemorizedUrl, { replace: true });
+          setNavigationMemorizedUrl('');
+        } else {
           navigateSettings(SettingsPath.ObjectDetail, {
-          objectNamePlural,
-        });
-      }
+            objectNamePlural,
+          });
+        }
       }
     } catch (error) {
       enqueueErrorSnackBar({
