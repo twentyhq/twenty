@@ -1,6 +1,7 @@
 import { RecordCalendarMonthBodyWeek } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyWeek';
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
+import { format } from 'date-fns';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -17,7 +18,7 @@ export const RecordCalendarMonthBody = () => {
     <StyledContainer>
       {weekFirstDays.map((weekFirstDay) => (
         <RecordCalendarMonthBodyWeek
-          key={`week-${weekFirstDay.toDateString()}`}
+          key={`week-${format(weekFirstDay, 'yyyy-MM-dd')}`}
           startDayOfWeek={weekFirstDay}
         />
       ))}
