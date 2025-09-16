@@ -24,6 +24,6 @@ export class LimitInputFactory {
       );
     }
 
-    return limit > QUERY_MAX_RECORDS ? QUERY_MAX_RECORDS : limit;
+    return Math.min(limit, QUERY_MAX_RECORDS);
   }
 }
