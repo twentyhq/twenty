@@ -4,7 +4,7 @@ import { RecordCalendarMonthContextProvider } from '@/object-record/record-calen
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { useRecordCalendarDragOperations } from '@/object-record/record-drag/calendar/hooks/useRecordCalendarDragOperations';
+import { useHandleDragOneCalendarCard } from '@/object-record/record-drag/calendar/hooks/useRecordCalendarDragOperations';
 import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
 import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -31,7 +31,7 @@ export const RecordCalendarMonth = () => {
     recordCalendarSelectedDateComponentState,
   );
 
-  const { processDragOperation } = useRecordCalendarDragOperations();
+  const { processDragOperation } = useHandleDragOneCalendarCard();
   const { startDrag } = useStartRecordDrag('calendar', recordCalendarId);
   const { endDrag } = useEndRecordDrag('calendar', recordCalendarId);
 

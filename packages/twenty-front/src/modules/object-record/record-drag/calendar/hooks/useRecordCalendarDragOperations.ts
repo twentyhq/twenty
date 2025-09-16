@@ -21,7 +21,7 @@ import {
 } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordCalendarDragOperations = () => {
+export const useHandleDragOneCalendarCard = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const { currentView } = useGetCurrentViewOnly();
   const { updateOneRecord } = useUpdateOneRecord({

@@ -79,7 +79,7 @@ export const RecordCalendarMonthBodyDay = ({
   );
 
   const dayKey = format(day, 'yyyy-MM-dd');
-  
+
   const recordIds = useRecoilComponentFamilyValue(
     calendarDayRecordIdsComponentFamilySelector,
     dayKey,

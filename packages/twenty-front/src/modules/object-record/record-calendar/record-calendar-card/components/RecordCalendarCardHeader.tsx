@@ -3,11 +3,9 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -38,22 +36,17 @@ export const RecordCalendarCardHeader = ({
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
   const dragState = useRecordDragState('calendar', viewBarInstanceId);
 
   const handleChipClick = () => {
-    // Don't open record if drag is in progress
     if (dragState.isDragging) {
       return;
     }
     openRecordFromIndexView({ recordId });
   };
-
-  // Use CLICK trigger for drag compatibility instead of default MOUSE_DOWN
-  const triggerEvent = 'CLICK';
 
   if (!isDefined(record)) {
     return null;
@@ -69,7 +62,7 @@ export const RecordCalendarCardHeader = ({
             variant={ChipVariant.Transparent}
             isIconHidden={true}
             onClick={handleChipClick}
-            triggerEvent={triggerEvent}
+            triggerEvent={'CLICK'}
           />
         </StopPropagationContainer>
       </StyledRecordChipContainer>
