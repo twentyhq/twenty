@@ -44,7 +44,14 @@ import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getOppositePlan } from 'src/engine/core-modules/billing/utils/get-opposite-plan';
-import { getSubscriptionStatus } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import {
+  getSubscriptionStatus,
+  transformStripeSubscriptionEventToDatabaseSubscription,
+} from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
+import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -66,6 +73,8 @@ export class BillingSubscriptionService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionPhaseService: BillingSubscriptionPhaseService,
+    @InjectRepository(BillingCustomer)
+    private readonly billingCustomerRepository: Repository<BillingSubscription>,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -920,9 +929,37 @@ export class BillingSubscriptionService {
       ? [current]
       : [current, next];
 
-    await this.stripeSubscriptionScheduleService.updateSchedule(scheduleId, {
-      phases: phasesToSend,
+    const updatedSchedule =
+      await this.stripeSubscriptionScheduleService.updateSchedule(scheduleId, {
+        phases: phasesToSend,
+      });
+
+    await this.dispatchSchedulePhasesToDatabase(updatedSchedule);
+  }
+
+  private async dispatchSchedulePhasesToDatabase(
+    updatedSchedule: Stripe.SubscriptionSchedule,
+  ) {
+    const stripeSubscriptionId =
+      typeof updatedSchedule.subscription === 'string'
+        ? updatedSchedule.subscription
+        : updatedSchedule.subscription?.id;
+
+    validator.assertIsDefined(stripeSubscriptionId);
+
+    const existingSub = await this.billingSubscriptionRepository.findOneOrFail({
+      where: { stripeSubscriptionId },
     });
+
+    const updatedSubscription =
+      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+        stripeSubscriptionId,
+      );
+
+    await this.syncSubscriptionToDatabase(
+      existingSub.workspaceId,
+      updatedSubscription,
+    );
   }
 
   private async upgradePlanNow(
@@ -945,26 +982,92 @@ export class BillingSubscriptionService {
     const licensed = this.getCurrentLicensedBillingSubscriptionItemOrThrow(sub);
     const metered = this.getCurrentMeteredBillingSubscriptionItemOrThrow(sub);
 
-    await this.stripeSubscriptionService.updateSubscription(
-      stripeSubscriptionId,
+    const updatedSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        stripeSubscriptionId,
+        {
+          items: [
+            {
+              id: licensed.stripeSubscriptionItemId,
+              price: prices.licensedPriceId,
+              quantity: prices.seats,
+            },
+            {
+              id: metered.stripeSubscriptionItemId,
+              price: prices.meteredPriceId,
+            },
+          ],
+          proration_behavior: 'create_prorations',
+          ...(prices.planMeta
+            ? { metadata: { ...(sub?.metadata || {}), plan: prices.planMeta } }
+            : {}),
+        },
+      );
+
+    await this.syncSubscriptionToDatabase(sub.workspaceId, updatedSubscription);
+  }
+
+  async syncSubscriptionToDatabase(
+    workspaceId: string,
+    subscription: Stripe.Subscription | SubscriptionWithSchedule,
+  ) {
+    await this.billingCustomerRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, {
+        object: subscription,
+      }),
       {
-        items: [
-          {
-            id: licensed.stripeSubscriptionItemId,
-            price: prices.licensedPriceId,
-            quantity: prices.seats,
-          },
-          {
-            id: metered.stripeSubscriptionItemId,
-            price: prices.meteredPriceId,
-          },
-        ],
-        proration_behavior: 'create_prorations',
-        ...(prices.planMeta
-          ? { metadata: { ...(sub?.metadata || {}), plan: prices.planMeta } }
-          : {}),
+        conflictPaths: ['workspaceId'],
+        skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    await this.billingSubscriptionRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        workspaceId,
+        typeof subscription.schedule === 'string'
+          ? await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+              subscription.id,
+            )
+          : (subscription as SubscriptionWithSchedule),
+      ),
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    const billingSubscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    const createdBillingSubscription = billingSubscriptions.find(
+      (sub) => sub.stripeSubscriptionId === subscription.id,
+    );
+
+    if (!createdBillingSubscription) {
+      throw new BillingException(
+        'Billing subscription not found after creation',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+    await this.billingSubscriptionItemRepository.upsert(
+      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+        createdBillingSubscription.id,
+        {
+          object: subscription,
+        },
+      ),
+      {
+        conflictPaths: ['stripeSubscriptionItemId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    this.logger.log(
+      `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
+    );
+
+    return createdBillingSubscription;
   }
 
   private async upgradeIntervalNowWithReanchor(
@@ -986,27 +1089,30 @@ export class BillingSubscriptionService {
     const licensed = this.getCurrentLicensedBillingSubscriptionItemOrThrow(sub);
     const metered = this.getCurrentMeteredBillingSubscriptionItemOrThrow(sub);
 
-    await this.stripeSubscriptionService.updateSubscription(
-      stripeSubscriptionId,
-      {
-        items: [
-          {
-            id: licensed.stripeSubscriptionItemId,
-            price: prices.licensedPriceId,
-            quantity: prices.seats,
-          },
-          {
-            id: metered.stripeSubscriptionItemId,
-            price: prices.meteredPriceId,
-          },
-        ],
-        billing_cycle_anchor: 'now',
-        proration_behavior: 'create_prorations',
-        billing_thresholds: await this.getBillingThresholdsByPriceId(
-          prices.licensedPriceId,
-        ),
-      },
-    );
+    const updatedSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        stripeSubscriptionId,
+        {
+          items: [
+            {
+              id: licensed.stripeSubscriptionItemId,
+              price: prices.licensedPriceId,
+              quantity: prices.seats,
+            },
+            {
+              id: metered.stripeSubscriptionItemId,
+              price: prices.meteredPriceId,
+            },
+          ],
+          billing_cycle_anchor: 'now',
+          proration_behavior: 'create_prorations',
+          billing_thresholds: await this.getBillingThresholdsByPriceId(
+            prices.licensedPriceId,
+          ),
+        },
+      );
+
+    await this.syncSubscriptionToDatabase(sub.workspaceId, updatedSubscription);
   }
 
   private async downgradePlanDeferred(

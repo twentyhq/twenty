@@ -8,9 +8,6 @@ import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
-import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
-import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -113,7 +110,15 @@ export class BillingPortalWorkspaceService {
           !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
-    await this.syncSubscriptionToDatabase(workspace.id, subscription);
+    const createdBillingSubscription =
+      await this.billingSubscriptionService.syncSubscriptionToDatabase(
+        workspace.id,
+        subscription,
+      );
+
+    await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
+      createdBillingSubscription.id,
+    );
 
     return successUrl;
   }
@@ -158,69 +163,6 @@ export class BillingPortalWorkspaceService {
       customer,
       stripeSubscriptionLineItems,
     };
-  }
-
-  private async syncSubscriptionToDatabase(
-    workspaceId: string,
-    subscription: Stripe.Subscription,
-  ) {
-    await this.billingCustomerRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, {
-        object: subscription,
-      }),
-      {
-        conflictPaths: ['workspaceId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
-    await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscription(
-        workspaceId,
-        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-          subscription.id,
-        ),
-      ),
-      {
-        conflictPaths: ['stripeSubscriptionId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
-    const billingSubscriptions = await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
-
-    const createdBillingSubscription = billingSubscriptions.find(
-      (sub) => sub.stripeSubscriptionId === subscription.id,
-    );
-
-    if (!createdBillingSubscription) {
-      throw new BillingException(
-        'Billing subscription not found after creation',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
-    await this.billingSubscriptionItemRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        createdBillingSubscription.id,
-        {
-          object: subscription,
-        },
-      ),
-      {
-        conflictPaths: ['stripeSubscriptionItemId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
-    await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
-      createdBillingSubscription.id,
-    );
-
-    this.logger.log(
-      `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
-    );
   }
 
   async computeBillingPortalSessionURLOrThrow(
