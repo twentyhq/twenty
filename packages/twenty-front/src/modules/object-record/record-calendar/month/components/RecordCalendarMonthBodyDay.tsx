@@ -38,6 +38,7 @@ const StyledDayHeader = styled.div<{ isToday: boolean }>`
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
   font-size: ${({ theme }) => theme.font.size.sm};
 
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
   ${({ isToday, theme }) =>
     isToday &&
     css`
@@ -51,6 +52,7 @@ const StyledDayHeader = styled.div<{ isToday: boolean }>`
 const StyledCardsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 type RecordCalendarMonthBodyDayProps = {

@@ -5,7 +5,6 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -26,8 +25,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
@@ -82,9 +81,9 @@ export const RecordBoardCard = () => {
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
 
-  const isCompactModeActive = useRecoilComponentValue(
-    isRecordBoardCompactModeActiveComponentState,
-  );
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
   const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
     recordBoardCardIsExpandedComponentState,

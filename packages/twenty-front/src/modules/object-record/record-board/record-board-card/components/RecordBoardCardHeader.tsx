@@ -2,7 +2,6 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -15,7 +14,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -50,9 +49,9 @@ export const RecordBoardCardHeader = () => {
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const isCompactModeActive = useRecoilComponentValue(
-    isRecordBoardCompactModeActiveComponentState,
-  );
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
   const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
     recordBoardCardIsExpandedComponentState,
