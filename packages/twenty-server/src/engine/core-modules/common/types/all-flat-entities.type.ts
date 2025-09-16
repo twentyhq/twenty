@@ -1,10 +1,4 @@
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type AllFlatEntitiesByMetadataEngineName } from 'src/engine/core-modules/common/types/all-flat-entities-by-metadata-engine-name.type';
 
-export type AllFlatEntitiesByMetadataEngineName = {
-  //   flatFieldMetadata: FlatFieldMetadata;
-  objectMetadata: FlatObjectMetadata;
-  view: FlatView;
-  viewField: FlatViewField;
-};
+export type AllFlatEntities =
+  AllFlatEntitiesByMetadataEngineName[keyof AllFlatEntitiesByMetadataEngineName];
