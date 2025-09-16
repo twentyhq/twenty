@@ -6,9 +6,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { format, isSameDay, isSameMonth } from 'date-fns';
+import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 
-const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
+const StyledContainer = styled.div<{ isOtherMonth: boolean, isDayOfWeekend: boolean }>`
   display: flex;
   width: calc(100% / 7);
   flex-direction: column;
@@ -27,6 +27,12 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
     css`
       background: ${theme.background.secondary};
       color: ${theme.font.color.light};
+    `}
+
+  ${({ isDayOfWeekend, theme }) =>
+    isDayOfWeekend &&
+    css`
+      background: ${theme.background.secondary};
     `}
 `;
 
@@ -105,8 +111,10 @@ export const RecordCalendarMonthBodyDay = ({
 
   const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
 
+  const isDayOfWeekend = isWeekend(day);
+
   return (
-    <StyledContainer isOtherMonth={isOtherMonth}>
+    <StyledContainer isOtherMonth={isOtherMonth} isDayOfWeekend={isDayOfWeekend}>
       <StyledDayHeader>
         <StyledDayHeaderDayContainer>
           <StyledDayHeaderDay isToday={isToday}>{day.getDate()}</StyledDayHeaderDay>
