@@ -7,11 +7,10 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationEffectProps = {
-  pageLayout?: PageLayoutWithData;
+  pageLayout: PageLayoutWithData;
 };
 
 export const PageLayoutInitializationEffect = ({
@@ -20,12 +19,19 @@ export const PageLayoutInitializationEffect = ({
   const [isInitialized, setIsInitialized] = useState(false);
 
   const pageLayoutPersistedComponentCallbackState =
-    useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
+    useRecoilComponentCallbackState(
+      pageLayoutPersistedComponentState,
+      pageLayout.id,
+    );
   const pageLayoutDraftComponentCallbackState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
+    pageLayout.id,
   );
   const pageLayoutCurrentLayoutsComponentCallbackState =
-    useRecoilComponentCallbackState(pageLayoutCurrentLayoutsComponentState);
+    useRecoilComponentCallbackState(
+      pageLayoutCurrentLayoutsComponentState,
+      pageLayout.id,
+    );
 
   const initializePageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -74,7 +80,7 @@ export const PageLayoutInitializationEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized && isDefined(pageLayout)) {
+    if (!isInitialized) {
       initializePageLayout(pageLayout);
       setIsInitialized(true);
     }

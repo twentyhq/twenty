@@ -9,6 +9,11 @@ import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayo
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -53,13 +58,7 @@ const ResponsiveGridLayout = WidthProvider(
   Responsive,
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
-type PageLayoutGridLayoutProps = {
-  children: React.ReactNode;
-};
-
-export const PageLayoutGridLayout = ({
-  children,
-}: PageLayoutGridLayoutProps) => {
+export const PageLayoutGridLayout = () => {
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
@@ -76,13 +75,32 @@ export const PageLayoutGridLayout = ({
     pageLayoutCurrentLayoutsComponentState,
   );
 
+  const pageLayoutPersisted = useRecoilComponentValue(
+    pageLayoutPersistedComponentState,
+  );
+
+  const pageLayoutDraft = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+  );
+
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
   if (!isDefined(activeTabId)) {
     return null;
   }
 
+  const currentPageLayout = isPageLayoutInEditMode
+    ? pageLayoutDraft
+    : pageLayoutPersisted;
+
+  const activeTabWidgets = currentPageLayout?.tabs.find(
+    (tab) => tab.id === activeTabId,
+  )?.widgets;
+
   const layouts = pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
+
+  const isLayoutEmpty =
+    !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
   return (
     <>
@@ -116,7 +134,17 @@ export const PageLayoutGridLayout = ({
             )
           }
         >
-          {children}
+          {isLayoutEmpty ? (
+            <div key="empty-placeholder" data-select-disable="true">
+              <WidgetPlaceholder onClick={() => {}} />
+            </div>
+          ) : (
+            activeTabWidgets?.map((widget) => (
+              <div key={widget.id} data-select-disable="true">
+                <WidgetRenderer widget={widget as Widget} />
+              </div>
+            ))
+          )}
         </ResponsiveGridLayout>
       </StyledGridContainer>
     </>

@@ -8,7 +8,6 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { type PageLayoutWidgetWithData } from '../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
 export const usePageLayoutHandleLayoutChange = (
@@ -59,7 +58,9 @@ export const usePageLayoutHandleLayoutChange = (
         const currentTab = pageLayoutDraft.tabs.find(
           (tab) => tab.id === activeTabId,
         );
+
         if (!currentTab) return;
+
         const updatedWidgets = convertLayoutsToWidgets(
           currentTab.widgets,
           allLayouts,
@@ -70,7 +71,7 @@ export const usePageLayoutHandleLayoutChange = (
             ...prev,
             tabs: prev.tabs.map((tab) => {
               if (tab.id === activeTabId) {
-                const tabWidgets: PageLayoutWidgetWithData[] = updatedWidgets
+                const tabWidgets = updatedWidgets
                   .filter((w) => w.pageLayoutTabId === activeTabId)
                   .map((widget) => ({
                     id: widget.id,

@@ -6,7 +6,6 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import styled from '@emotion/styled';
 
-import { PageLayoutGridContent } from '@/page-layout/components/PageLayoutGridContent';
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import 'react-grid-layout/css/styles.css';
@@ -25,6 +24,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   return (
     <>
       <PageLayoutContextStoreEffect pageLayoutId={pageLayout.id} />
+      <PageLayoutInitializationEffect pageLayout={pageLayout} />
       <PageLayoutComponentInstanceContext.Provider
         value={{
           instanceId: pageLayout.id,
@@ -35,7 +35,6 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
             instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
           }}
         >
-          <PageLayoutInitializationEffect pageLayout={pageLayout} />
           <StyledTabList
             tabs={pageLayout.tabs}
             behaveAsLinks={false}
@@ -43,9 +42,7 @@ export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
               pageLayout.id,
             )}
           />
-          <PageLayoutGridLayout>
-            <PageLayoutGridContent pageLayout={pageLayout} />
-          </PageLayoutGridLayout>
+          <PageLayoutGridLayout />
         </TabListComponentInstanceContext.Provider>
       </PageLayoutComponentInstanceContext.Provider>
     </>
