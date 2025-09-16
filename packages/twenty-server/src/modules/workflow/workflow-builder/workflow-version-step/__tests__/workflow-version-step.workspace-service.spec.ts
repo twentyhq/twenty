@@ -1,17 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import {
   type WorkflowAction,
@@ -111,26 +106,27 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         {
           provide: WorkflowSchemaWorkspaceService,
           useValue: {
-            computeStepOutputSchema: jest.fn(),
-          },
-        },
-        { provide: ServerlessFunctionService, useValue: {} },
-        {
-          provide: getRepositoryToken(AgentEntity),
-          useValue: {
-            findOne: jest.fn(),
+            enrichOutputSchema: jest
+              .fn()
+              .mockImplementation((args) => args.step),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity),
+          provide: WorkflowVersionStepOperationsWorkspaceService,
           useValue: {
-            findOne: jest.fn(),
+            runStepCreationSideEffectsAndBuildStep: jest
+              .fn()
+              .mockImplementation(({ type }) => ({
+                id: 'new-step-id',
+                type,
+                settings: {},
+                nextStepIds: [],
+              })),
+            runWorkflowVersionStepDeletionSideEffects: jest.fn(),
           },
         },
         { provide: WorkflowRunWorkspaceService, useValue: {} },
         { provide: WorkflowRunnerWorkspaceService, useValue: {} },
-        { provide: WorkflowCommonWorkspaceService, useValue: {} },
-        { provide: ScopedWorkspaceContextFactory, useValue: {} },
       ],
     }).compile();
 
