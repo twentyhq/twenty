@@ -81,7 +81,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
         const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
 
         this.logger.error(message, {
-          type,
+          compositeType,
         });
         throw new Error(message);
       }
