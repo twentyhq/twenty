@@ -1,20 +1,21 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAppWindow } from 'twenty-ui/display';
 import { pageLayoutDraggedAreaComponentState } from '../../states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../../utils/calculateGridBoundsFromSelectedCells';
 import { useEndPageLayoutDragSelection } from '../useEndPageLayoutDragSelection';
 import {
-  PageLayoutTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-jest.mock('@/command-menu/hooks/useNavigateCommandMenu');
+jest.mock(
+  '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu',
+);
 jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
 
 const createInitializeState =
@@ -39,12 +40,12 @@ const createInitializeState =
   };
 
 describe('useEndPageLayoutDragSelection', () => {
-  const mockNavigateCommandMenu = jest.fn();
+  const mockNavigatePageLayoutCommandMenu = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useNavigateCommandMenu as jest.Mock).mockReturnValue({
-      navigateCommandMenu: mockNavigateCommandMenu,
+    (useNavigatePageLayoutCommandMenu as jest.Mock).mockReturnValue({
+      navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
     });
   });
 
@@ -99,11 +100,8 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.draggedArea).toEqual(mockBounds);
     expect(result.current.selectedCells.size).toBe(0);
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.PageLayoutWidgetTypeSelect,
-      pageTitle: 'Add Widget',
-      pageIcon: IconAppWindow,
-      resetNavigationStack: true,
+    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
+      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
     });
   });
 
@@ -140,7 +138,7 @@ describe('useEndPageLayoutDragSelection', () => {
     });
 
     expect(calculateGridBoundsFromSelectedCells).not.toHaveBeenCalled();
-    expect(mockNavigateCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
     expect(result.current.selectedCells.size).toBe(0);
   });
@@ -183,9 +181,9 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
       'invalid-cell',
     ]);
-    expect(mockNavigateCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
-    expect(result.current.selectedCells.size).toBe(1);
+    expect(result.current.selectedCells.size).toBe(0);
   });
 
   it('should return a function', () => {
@@ -232,7 +230,7 @@ describe('useEndPageLayoutDragSelection', () => {
       result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
-    expect(mockNavigateCommandMenu).toHaveBeenCalled();
+    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalled();
   });
 
   it('should clear selected cells after successful navigation', () => {
