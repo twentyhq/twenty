@@ -11,7 +11,7 @@ import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-di
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
-import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
@@ -61,9 +61,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     nextStepId: target,
   });
 
-  const isIteratorLoopEdge =
-    sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
-
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
   );
@@ -97,14 +94,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
-      connectionOptions: isIteratorLoopEdge
-        ? {
-            connectedStepType: 'ITERATOR',
-            settings: {
-              isConnectedToLoop: true,
-            },
-          }
-        : undefined,
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
     });
   };
 
@@ -114,14 +106,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     await deleteEdge({
       source,
       target,
-      sourceConnectionOptions: isIteratorLoopEdge
-        ? {
-            connectedStepType: 'ITERATOR',
-            settings: {
-              isConnectedToLoop: true,
-            },
-          }
-        : undefined,
+      sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
     });
   };
 
