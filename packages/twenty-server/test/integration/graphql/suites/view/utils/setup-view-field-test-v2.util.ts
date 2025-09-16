@@ -1,10 +1,10 @@
-import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
@@ -57,13 +57,21 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
     `,
   });
 
-  const view = await createTestViewWithGraphQL({
-    name: 'Test View for Fields',
-    objectMetadataId,
+  const {
+    data: {
+      createCoreView: { id: testViewId },
+    },
+  } = await createOneCoreView({
+    input: {
+      icon: 'icon123',
+      objectMetadataId,
+      name: 'TestViewForFields',
+    },
+    expectToFail: false,
   });
 
   return {
-    testViewId: view.id,
+    testViewId,
     testObjectMetadataId: objectMetadataId,
     testFieldMetadataId: fieldMetadataId,
   };

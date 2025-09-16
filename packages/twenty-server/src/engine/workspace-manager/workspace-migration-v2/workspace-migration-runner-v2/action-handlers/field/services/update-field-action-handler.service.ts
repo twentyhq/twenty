@@ -4,8 +4,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -17,7 +21,9 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { findFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps.util';
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
+import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
@@ -61,6 +67,43 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     super();
   }
 
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateFieldAction>): Partial<AllFlatEntityMaps> {
+    const { flatObjectMetadataMaps } = allFlatEntityMaps;
+    const { fieldMetadataId, objectMetadataId } = action;
+
+    const existingFlatFieldMetadata =
+      findFlatFieldMetadataInFlatObjectMetadataMaps({
+        fieldMetadataId,
+        objectMetadataId,
+        flatObjectMetadataMaps,
+      });
+
+    if (!isDefined(existingFlatFieldMetadata)) {
+      throw new WorkspaceMigrationRunnerException(
+        `Workspace migration failed: Field metadata not found in cache`,
+        WorkspaceMigrationRunnerExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
+    }
+
+    const updatedFlatFieldMetadata = {
+      ...existingFlatFieldMetadata,
+      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+    };
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+        flatFieldMetadata: updatedFlatFieldMetadata,
+        flatObjectMetadataMaps,
+      });
+
+    return {
+      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+    };
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
@@ -81,8 +124,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
-      context;
+    const {
+      action,
+      queryRunner,
+      allFlatEntityMaps: { flatObjectMetadataMaps },
+      workspaceId,
+    } = context;
     const { objectMetadataId, fieldMetadataId, updates } = action;
 
     const flatObjectMetadataWithFlatFieldMaps =
