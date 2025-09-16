@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import {
-    extractAndSanitizeObjectStringFields,
-    isDefined,
+  extractAndSanitizeObjectStringFields,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { type DeleteViewInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view.input';
 import {
-    ViewException,
-    ViewExceptionCode,
+  ViewException,
+  ViewExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { type FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';

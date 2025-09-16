@@ -1,10 +1,10 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
-import { v4 } from 'uuid';
 
 export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,

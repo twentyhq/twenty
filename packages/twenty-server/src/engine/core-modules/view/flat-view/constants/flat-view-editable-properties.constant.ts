@@ -1,4 +1,4 @@
-import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { type FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
 export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'name',

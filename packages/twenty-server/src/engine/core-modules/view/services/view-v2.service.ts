@@ -102,10 +102,11 @@ export class ViewV2Service {
         flatEntities: ['flatViewMaps'],
       });
 
-    const flatViewFromUpdateInput = fromUpdateViewInputToFlatViewToUpdateOrThrow({
-      updateViewInput,
-      flatViewMaps: existingFlatViewMaps,
-    });
+    const flatViewFromUpdateInput =
+      fromUpdateViewInputToFlatViewToUpdateOrThrow({
+        updateViewInput,
+        flatViewMaps: existingFlatViewMaps,
+      });
 
     const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
       flatEntityIds: [flatViewFromUpdateInput.id],
