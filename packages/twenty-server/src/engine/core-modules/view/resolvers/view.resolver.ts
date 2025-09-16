@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-    Args,
-    Context,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -157,7 +157,7 @@ export class ViewResolver {
 
     if (isWorkspaceMigrationV2Enabled) {
       return await this.viewV2Service.updateOne({
-        updateViewInput: { id, ...input },
+        updateViewInput: input,
         workspaceId: workspace.id,
       });
     }

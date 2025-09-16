@@ -1,8 +1,15 @@
-import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 
 export const FLAT_VIEW_EDITABLE_PROPERTIES = [
-  'isVisible',
-  'size',
+  'name',
+  'type',
+  'icon',
   'position',
-  'aggregateOperation',
-] as const satisfies (keyof FlatViewField)[];
+  'isCompact',
+  'openRecordIn',
+  'kanbanAggregateOperation',
+  'kanbanAggregateOperationFieldMetadataId',
+  'anyFieldFilterValue',
+  'calendarLayout',
+  'calendarFieldMetadataId',
+] as const satisfies (keyof FlatView)[];
