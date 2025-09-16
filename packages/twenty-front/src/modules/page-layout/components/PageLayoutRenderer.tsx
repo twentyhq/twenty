@@ -6,25 +6,26 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { type PageLayoutWithData } from '../types/pageLayoutTypes';
 
 type PageLayoutRendererProps = {
-  pageLayout: PageLayoutWithData;
+  pageLayoutId: string;
 };
 
-export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
+export const PageLayoutRenderer = ({
+  pageLayoutId,
+}: PageLayoutRendererProps) => {
   return (
     <PageLayoutComponentInstanceContext.Provider
       value={{
-        instanceId: pageLayout.id,
+        instanceId: pageLayoutId,
       }}
     >
       <TabListComponentInstanceContext.Provider
         value={{
-          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
+          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayoutId),
         }}
       >
-        <PageLayoutInitializationQueryEffect pageLayout={pageLayout} />
+        <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
         <PageLayoutRendererContent />
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>

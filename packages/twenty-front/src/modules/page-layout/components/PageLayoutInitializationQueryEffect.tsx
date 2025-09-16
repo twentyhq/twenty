@@ -1,3 +1,4 @@
+import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -5,24 +6,36 @@ import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
-  pageLayout: PageLayoutWithData;
+  pageLayoutId: string;
 };
 
 export const PageLayoutInitializationQueryEffect = ({
-  pageLayout,
+  pageLayoutId,
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
+    variables: {
+      id: pageLayoutId,
+    },
+  });
+
+  const pageLayout: PageLayoutWithData | undefined = data?.getPageLayout;
+
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
+
   const pageLayoutDraftComponentCallbackState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
   );
+
   const pageLayoutCurrentLayoutsComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutCurrentLayoutsComponentState);
 
@@ -73,7 +86,7 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (!isInitialized && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
       setIsInitialized(true);
     }

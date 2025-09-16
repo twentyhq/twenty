@@ -190,7 +190,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
     layout: 'fullscreen',
   },
   args: {
-    pageLayout: mixedGraphsPageLayout,
+    pageLayoutId: mixedGraphsPageLayout.id,
   },
 };
 
