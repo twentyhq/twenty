@@ -74,7 +74,7 @@ export const PageLayoutGridOverlay = () => {
 
   return (
     <StyledGridOverlay
-      isDragSelecting={isPageLayoutCurrentBreakpointMobile}
+      isDragSelecting={!isPageLayoutCurrentBreakpointMobile}
       breakpoint={pageLayoutCurrentBreakpoint}
     >
       {Array.from(
