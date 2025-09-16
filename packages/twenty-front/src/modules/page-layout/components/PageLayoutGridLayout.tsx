@@ -1,5 +1,6 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
+import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
@@ -7,6 +8,8 @@ import {
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -14,9 +17,9 @@ import { useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
-  type Layouts,
   type ResponsiveProps,
 } from 'react-grid-layout';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -51,25 +54,33 @@ const ResponsiveGridLayout = WidthProvider(
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
 type PageLayoutGridLayoutProps = {
-  layouts: Layouts;
   children: React.ReactNode;
 };
 
 export const PageLayoutGridLayout = ({
-  layouts,
   children,
 }: PageLayoutGridLayoutProps) => {
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
 
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
+
+  const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
+
+  const pageLayoutCurrentLayouts = useRecoilComponentValue(
+    pageLayoutCurrentLayoutsComponentState,
+  );
+
+  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+
+  const layouts = isDefined(activeTabId)
+    ? pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT
+    : EMPTY_LAYOUT;
 
   return (
     <>

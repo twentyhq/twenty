@@ -5,6 +5,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { normalizePageLayoutData } from '@/page-layout/utils/normalizePageLayoutData';
 import { useQuery } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 
 type DashboardRendererProps = {
   recordId: string;
@@ -26,7 +27,7 @@ export const DashboardRenderer = ({ recordId }: DashboardRendererProps) => {
 
   const pageLayout = data?.getPageLayout;
 
-  if (!pageLayout) {
+  if (!isDefined(pageLayout)) {
     return null;
   }
 

@@ -32,20 +32,24 @@ export const useCreatePageLayoutIframeWidget = (
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
+
   const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
+
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
+
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (title: string, url: string) => {
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
+
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
@@ -95,6 +99,7 @@ export const useCreatePageLayoutIframeWidget = (
           activeTabId,
           newLayout,
         );
+
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
         set(pageLayoutDraftState, (prev) => ({
