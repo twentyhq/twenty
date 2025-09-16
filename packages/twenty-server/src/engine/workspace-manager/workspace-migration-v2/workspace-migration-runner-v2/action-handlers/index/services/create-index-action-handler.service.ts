@@ -63,7 +63,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
           id,
           indexMetadataId,
           order,
-          universalIdentifier,
           updatedAt,
         }) => ({
           createdAt,
@@ -71,7 +70,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
           id,
           indexMetadataId,
           order,
-          universalIdentifier,
           updatedAt,
         }),
       ),
