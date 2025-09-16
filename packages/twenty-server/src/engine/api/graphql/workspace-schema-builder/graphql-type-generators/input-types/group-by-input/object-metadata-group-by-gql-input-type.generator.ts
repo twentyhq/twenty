@@ -67,33 +67,41 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   }
 
   private generateField(fieldMetadata: FieldMetadataEntity) {
-    let type: GraphQLInputObjectType | typeof GraphQLBoolean | undefined;
+    if (isCompositeFieldMetadataType(fieldMetadata.type))
+      return this.generateCompositeFieldGroupByInputType(fieldMetadata);
 
-    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      const key = computeCompositeFieldInputTypeKey(
-        fieldMetadata.type,
-        GqlInputTypeDefinitionKind.GroupBy,
-      );
-
-      const compositeType = this.gqlTypesStorage.getGqlTypeByKey(key);
-
-      if (!isDefined(compositeType) || !isInputObjectType(compositeType)) {
-        const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
-
-        this.logger.error(message, {
-          compositeType,
-        });
-        throw new Error(message);
-      }
-
-      type = compositeType;
-    } else {
-      type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
-    }
+    const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
 
     return {
       [fieldMetadata.name]: {
         type,
+        description: fieldMetadata.description,
+      },
+    };
+  }
+
+  private generateCompositeFieldGroupByInputType(
+    fieldMetadata: FieldMetadataEntity,
+  ) {
+    const key = computeCompositeFieldInputTypeKey(
+      fieldMetadata.type,
+      GqlInputTypeDefinitionKind.GroupBy,
+    );
+
+    const compositeType = this.gqlTypesStorage.getGqlTypeByKey(key);
+
+    if (!isDefined(compositeType) || !isInputObjectType(compositeType)) {
+      const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
+
+      this.logger.error(message, {
+        fieldMetadata,
+      });
+      throw new Error(message);
+    }
+
+    return {
+      [fieldMetadata.name]: {
+        type: compositeType,
         description: fieldMetadata.description,
       },
     };
