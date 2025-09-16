@@ -10,6 +10,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
@@ -23,11 +24,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
   constructor(
     private readonly workspaceMigrationBuilderV2Service: WorkspaceMigrationBuilderV2Service,
+    private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
   ) {}
 
-  // This does not handle dependency maps correctly
   private setupOptimisticCache({
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
@@ -80,8 +81,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
       fromToAllFlatEntityMaps,
       dependencyAllFlatEntityMaps,
     });
-    const { flatObjectMetadataMaps, flatViewFieldMaps, flatViewMaps } =
-      fromToAllFlatEntityMaps;
+    const {
+      flatObjectMetadataMaps,
+      flatViewFieldMaps,
+      flatViewMaps,
+      flatIndexMaps,
+    } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
       const { from: fromFlatObjectMetadataMaps, to: toFlatObjectMetadataMaps } =
@@ -102,6 +107,31 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
       } else {
         allActions.push(...objectResult.workspaceMigration.actions);
+      }
+    }
+
+    if (isDefined(flatIndexMaps)) {
+      const { from: fromFlatIndexMaps, to: toFlatIndexMaps } = flatIndexMaps;
+      const viewFieldResult =
+        await this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatIndexMaps,
+            to: toFlatIndexMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatObjectMetadataMaps:
+                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatIndexMaps =
+        viewFieldResult.optimisticFlatEntityMaps;
+
+      if (viewFieldResult.status === 'fail') {
+        orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
+      } else {
+        allActions.push(...viewFieldResult.actions);
       }
     }
 
