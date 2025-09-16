@@ -4,4 +4,6 @@ export const ALL_FLAT_ENTITY_MAPS_PROPERTIES = [
   'flatObjectMetadataMaps',
   'flatViewFieldMaps',
   'flatViewMaps',
+  'flatIndexMaps',
+  'flatIndexFieldMaps',
 ] as const satisfies (keyof AllFlatEntityMaps)[];
