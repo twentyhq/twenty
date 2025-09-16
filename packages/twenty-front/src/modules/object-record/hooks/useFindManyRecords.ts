@@ -92,7 +92,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         filter: withSoftDeleteFilter,
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
-        limit: limit,
+        limit,
       },
       fetchPolicy: fetchPolicy,
       onCompleted: handleFindManyRecordsCompleted,
