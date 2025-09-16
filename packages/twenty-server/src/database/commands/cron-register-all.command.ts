@@ -17,6 +17,7 @@ import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workfl
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
+import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -36,6 +37,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly cleanupOrphanedFilesCronCommand: CleanupOrphanedFilesCronCommand,
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
+    private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
@@ -81,6 +83,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CheckCustomDomainValidRecords',
         command: this.checkCustomDomainValidRecordsCronCommand,
+      },
+      {
+        name: 'CheckPublicDomainsValidRecords',
+        command: this.checkPublicDomainsValidRecordsCronCommand,
       },
       {
         name: 'WorkflowCronTrigger',

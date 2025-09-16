@@ -16,6 +16,7 @@ import { RecordBoardCardBody } from '@/object-record/record-board/record-board-c
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
+import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -24,10 +25,11 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -84,7 +86,10 @@ export const RecordBoardCard = () => {
     isRecordBoardCompactModeActiveComponentState,
   );
 
-  const [isCardExpanded, setIsCardExpanded] = useState(false);
+  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+    recordBoardCardIsExpandedComponentState,
+    `record-board-card-${recordId}`,
+  );
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
     useRecoilComponentFamilyState(
@@ -194,10 +199,7 @@ export const RecordBoardCard = () => {
               isPrimaryMultiDrag={isPrimaryMultiDrag}
               isSecondaryDragged={isSecondaryDragged}
             >
-              <RecordBoardCardHeader
-                isCardExpanded={isCardExpanded}
-                setIsCardExpanded={setIsCardExpanded}
-              />
+              <RecordBoardCardHeader />
               <AnimatedEaseInOut
                 isOpen={isCardExpanded || !isCompactModeActive}
                 initial={false}

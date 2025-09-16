@@ -14,11 +14,11 @@ const GraphWidgetBarChart = lazy(() =>
 );
 
 const GraphWidgetLineChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetLineChart').then(
-    (module) => ({
-      default: module.GraphWidgetLineChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
+  ).then((module) => ({
+    default: module.GraphWidgetLineChart,
+  })),
 );
 
 const GraphWidgetPieChart = lazy(() =>

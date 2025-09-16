@@ -38,6 +38,7 @@ export const RecordTableBodyLoading = () => {
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
+              isFirstRowOfGroup={rowIndex === 0}
             >
               <RecordTableCellGrip />
               <RecordTableCellCheckbox />

@@ -169,7 +169,6 @@ const InternalTableContextProviders = ({
       >
         <RecordTableBodyContextProvider
           value={{
-            onCellMouseEnter: () => {},
             onCloseTableCell: () => {},
             onOpenTableCell: () => {},
             onActionMenuDropdownOpened: () => {},

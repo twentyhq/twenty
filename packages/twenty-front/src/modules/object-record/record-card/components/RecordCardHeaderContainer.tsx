@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-const StyledBoardCardHeader = styled.div<{
-  showCompactView: boolean;
+export const StyledBoardCardHeaderContainer = styled.div<{
+  isCompact: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -9,8 +9,7 @@ const StyledBoardCardHeader = styled.div<{
   justify-content: space-between;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 24px;
-  padding-bottom: ${({ theme, showCompactView }) =>
-    theme.spacing(showCompactView ? 2 : 1)};
+  padding-bottom: ${({ theme, isCompact }) => theme.spacing(isCompact ? 2 : 1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
@@ -23,4 +22,4 @@ const StyledBoardCardHeader = styled.div<{
   }
 `;
 
-export { StyledBoardCardHeader as RecordBoardCardHeaderContainer };
+export { StyledBoardCardHeaderContainer as RecordCardHeaderContainer };
