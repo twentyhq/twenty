@@ -1,5 +1,9 @@
-import { Test,TestingModule } from '@nestjs/testing';
-import { ORDER_ACTION,ORDER_STATUS } from '../constants/order-status.constants';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import {
+  ORDER_ACTION,
+  ORDER_STATUS,
+} from '../constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from '../objects/mkt-order.workspace-entity';
 import { OrderPayloadService } from '../services/order.payload.service';
 
@@ -26,6 +30,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
     });
 
@@ -40,6 +45,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.PAID;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.PAID);
     });
 
@@ -54,6 +60,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.PROCESSING;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.PROCESSING);
     });
 
@@ -68,6 +75,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.COMPLETED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.COMPLETED);
     });
 
@@ -82,6 +90,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.TRIAL;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.TRIAL);
     });
 
@@ -96,6 +105,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.TRIAL_TO_CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
       expect(result.data?.trialLicense).toBe(true);
     });
@@ -106,14 +116,15 @@ describe('OrderPayloadService - Logic Tests', () => {
         trialLicense: false,
       };
       const payload = {
-        data: { 
+        data: {
           status: ORDER_STATUS.PAID,
-          licenseStatus: 'GETTING'
+          licenseStatus: 'GETTING',
         },
       } as any;
       const action = ORDER_ACTION.LICENSE;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.licenseStatus).toBe('GETTING');
       expect(result.data?.status).toBeUndefined();
     });
@@ -124,14 +135,15 @@ describe('OrderPayloadService - Logic Tests', () => {
         trialLicense: false,
       };
       const payload = {
-        data: { 
+        data: {
           status: ORDER_STATUS.PAID,
-          sInvoiceStatus: 'SEND'
+          sInvoiceStatus: 'SEND',
         },
       } as any;
       const action = ORDER_ACTION.SINVOICE;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.sInvoiceStatus).toBe('SEND');
       expect(result.data?.status).toBeUndefined();
     });
@@ -147,6 +159,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = null;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result).toEqual(payload);
     });
   });
@@ -162,9 +175,9 @@ describe('OrderPayloadService - Logic Tests', () => {
       } as any;
       const action = ORDER_ACTION.CONFIRMED;
 
-      await expect(service.getNewPayload(payload, action, currentOrder)).rejects.toThrow(
-        'Invalid action CONFIRMED for PaidState'
-      );
+      await expect(
+        service.getNewPayload(payload, action, currentOrder),
+      ).rejects.toThrow('Invalid action CONFIRMED for PaidState');
     });
 
     it('11. should throw error for invalid actions in final states', async () => {
@@ -177,9 +190,9 @@ describe('OrderPayloadService - Logic Tests', () => {
       } as any;
       const action = ORDER_ACTION.PAID;
 
-      await expect(service.getNewPayload(payload, action, currentOrder)).rejects.toThrow(
-        'No actions available for CompletedState'
-      );
+      await expect(
+        service.getNewPayload(payload, action, currentOrder),
+      ).rejects.toThrow('No actions available for CompletedState');
     });
 
     it('16. should return payload with LOCKED status for PROCESSING → LOCKED action', async () => {
@@ -193,6 +206,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.LOCKED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.LOCKED);
     });
 
@@ -207,6 +221,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CANCELLED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CANCELLED);
     });
 
@@ -221,6 +236,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CANCELLED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CANCELLED);
     });
 
@@ -235,6 +251,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CANCELLED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CANCELLED);
     });
 
@@ -249,6 +266,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.PROCESSING;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.PROCESSING);
     });
 
@@ -263,6 +281,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
     });
   });
@@ -279,6 +298,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = null;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result).toEqual(payload);
     });
 
@@ -290,6 +310,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
     });
 
@@ -304,6 +325,7 @@ describe('OrderPayloadService - Logic Tests', () => {
       const action = ORDER_ACTION.CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
     });
 
@@ -313,14 +335,15 @@ describe('OrderPayloadService - Logic Tests', () => {
         trialLicense: false,
       };
       const payload = {
-        data: { 
+        data: {
           status: ORDER_STATUS.CONFIRMED,
-          name: 'Test Order'
+          name: 'Test Order',
         },
       } as any;
       const action = ORDER_ACTION.CONFIRMED;
 
       const result = await service.getNewPayload(payload, action, currentOrder);
+
       expect(result.data?.status).toBe(ORDER_STATUS.CONFIRMED);
       expect(result.data?.name).toBe('Test Order');
     });

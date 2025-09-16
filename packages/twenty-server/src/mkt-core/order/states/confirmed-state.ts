@@ -23,9 +23,12 @@ export class ConfirmedState extends OrderState {
     input: OrderStateInput,
   ): boolean {
     // Confirmed can convert to Draft, Trial, Paid, Cancelled
-    return [ORDER_STATUS.DRAFT, ORDER_STATUS.TRIAL, ORDER_STATUS.PAID, ORDER_STATUS.CANCELLED].includes(
-      newStatus,
-    );
+    return [
+      ORDER_STATUS.DRAFT,
+      ORDER_STATUS.TRIAL,
+      ORDER_STATUS.PAID,
+      ORDER_STATUS.CANCELLED,
+    ].includes(newStatus);
   }
 
   getAction(

@@ -25,7 +25,9 @@ export class PaidState extends OrderState {
     input: OrderStateInput,
   ): boolean {
     // Paid can convert to Processing, Cancelled
-    return [ORDER_STATUS.PROCESSING, ORDER_STATUS.CANCELLED].includes(newStatus);
+    return [ORDER_STATUS.PROCESSING, ORDER_STATUS.CANCELLED].includes(
+      newStatus,
+    );
   }
 
   getAction(
