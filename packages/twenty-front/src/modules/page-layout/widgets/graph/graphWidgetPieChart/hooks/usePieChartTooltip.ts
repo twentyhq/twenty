@@ -27,16 +27,16 @@ export const usePieChartTooltip = ({
     if (!isDefined(item)) return null;
 
     const dataItem = data.find((d) => d.id === datum.id);
-    const formattedValue = formatGraphValue(
-      displayType === 'percentage' ? item.percentage / 100 : item.value,
-      formatOptions,
-    );
-    const formattedWithPercentage = `${formattedValue} (${item.percentage.toFixed(1)}%)`;
+
+    const formattedValue =
+      displayType === 'percentage'
+        ? formatGraphValue(item.percentage / 100, formatOptions)
+        : `${formatGraphValue(item.value, formatOptions)} (${item.percentage.toFixed(1)}%)`;
 
     return {
       tooltipItem: {
         label: item.label || item.id,
-        formattedValue: formattedWithPercentage,
+        formattedValue,
         dotColor: item.colorScheme.solid,
       },
       showClickHint: isDefined(dataItem?.to),

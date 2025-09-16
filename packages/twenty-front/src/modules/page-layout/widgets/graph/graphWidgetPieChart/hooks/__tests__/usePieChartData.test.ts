@@ -5,6 +5,10 @@ import { renderHook } from '@testing-library/react';
 import { usePieChartData } from '../usePieChartData';
 
 describe('usePieChartData', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   const mockColorRegistry: GraphColorRegistry = {
     red: {
       name: 'red',
