@@ -3,7 +3,7 @@ export enum ModelProvider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   OPENAI_COMPATIBLE = 'open_ai_compatible',
-  GROK = 'grok',
+  XAI = 'xai',
 }
 
 export type ModelId =
@@ -75,35 +75,35 @@ export const AI_MODELS: AIModelConfig[] = [
   {
     modelId: 'grok-1',
     label: 'Grok-1',
-    provider: ModelProvider.GROK,
+    provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.1,
     outputCostPer1kTokensInCents: 0.5,
   },
   {
     modelId: 'grok-1.5',
     label: 'Grok-1.5',
-    provider: ModelProvider.GROK,
+    provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.15,
     outputCostPer1kTokensInCents: 0.75,
   },
   {
     modelId: 'grok-2',
     label: 'Grok-2',
-    provider: ModelProvider.GROK,
+    provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.2,
     outputCostPer1kTokensInCents: 1.0,
   },
   {
     modelId: 'grok-3',
     label: 'Grok-3',
-    provider: ModelProvider.GROK,
+    provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
   },
   {
     modelId: 'grok-4',
     label: 'Grok-4',
-    provider: ModelProvider.GROK,
+    provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.5,
     outputCostPer1kTokensInCents: 2.5,
   },
