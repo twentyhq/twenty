@@ -1,6 +1,5 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
@@ -16,12 +15,15 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
+import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
+import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -40,22 +42,24 @@ import { FeatureFlagKey, ViewCalendarLayout } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
+
+  const { objectMetadataItem, resetContent, onContentChange, dropdownId } =
+    useObjectOptionsDropdown();
+
   const { currentView } = useGetCurrentViewOnly();
+  const { updateCurrentView } = useUpdateCurrentView();
 
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    resetContent,
-    onContentChange,
-    dropdownId,
-  } = useObjectOptionsDropdown();
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const { isCompactModeActive, setAndPersistIsCompactModeActive } =
-    useObjectOptionsForBoard({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      recordBoardId: recordIndexId,
-      viewBarId: recordIndexId,
-    });
+  const setAndPersistIsCompactModeActive = useCallback(
+    (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
+      if (!view) return;
+      updateCurrentView({
+        isCompact: isCompactModeActive,
+      });
+    },
+    [updateCurrentView],
+  );
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
   const recordIndexCalendarLayout = useRecoilValue(

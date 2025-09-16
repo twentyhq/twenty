@@ -1,4 +1,3 @@
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellEditModePortal';
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
@@ -6,8 +5,7 @@ import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
@@ -26,12 +24,9 @@ type RecordCalendarCardProps = {
 export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+  const { currentView } = useGetCurrentViewOnly();
 
-  const [isCompactModeActive] = useRecoilComponentState(
-    isRecordBoardCompactModeActiveComponentState,
-    recordIndexId,
-  );
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
   const handleCardClick = () => {
     openRecordFromIndexView({ recordId });
