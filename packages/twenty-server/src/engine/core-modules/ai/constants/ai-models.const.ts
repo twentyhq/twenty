@@ -73,18 +73,18 @@ export const AI_MODELS: AIModelConfig[] = [
     outputCostPer1kTokensInCents: 0.4,
   },
   {
-    modelId: 'grok-2',
-    label: 'Grok-2',
-    provider: ModelProvider.XAI,
-    inputCostPer1kTokensInCents: 0.2,
-    outputCostPer1kTokensInCents: 1.0,
-  },
-  {
     modelId: 'grok-3',
     label: 'Grok-3',
     provider: ModelProvider.XAI,
     inputCostPer1kTokensInCents: 0.3,
     outputCostPer1kTokensInCents: 1.5,
+  },
+  {
+    modelId: 'grok-3-mini',
+    label: 'Grok-3 Mini',
+    provider: ModelProvider.XAI,
+    inputCostPer1kTokensInCents: 0.03,
+    outputCostPer1kTokensInCents: 0.05,
   },
   {
     modelId: 'grok-4',
