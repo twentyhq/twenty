@@ -35,8 +35,8 @@ export class CompletedState extends OrderState {
   }
 
   getPayload(
-    payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
-    action: ORDER_ACTION,
+    _payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
+    _action: ORDER_ACTION,
   ): UpdateOneResolverArgs<Partial<MktOrderWorkspaceEntity>> {
     throw new Error(`No actions available for CompletedState`);
   }
@@ -65,8 +65,8 @@ export class LockedState extends OrderState {
   }
 
   getPayload(
-    payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
-    action: ORDER_ACTION,
+    _payload: UpdateOneResolverArgs<MktOrderWorkspaceEntity>,
+    _action: ORDER_ACTION,
   ): UpdateOneResolverArgs<Partial<MktOrderWorkspaceEntity>> {
     throw new Error(`No actions available for LockedState`);
   }
