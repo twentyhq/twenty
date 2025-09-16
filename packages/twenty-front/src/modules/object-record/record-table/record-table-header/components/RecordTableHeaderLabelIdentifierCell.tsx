@@ -21,16 +21,12 @@ import { useState } from 'react';
 import { findByProperty } from 'twenty-shared/utils';
 
 const StyledColumnHeadContainer = styled.div`
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
   overflow: hidden;
-
-  cursor: pointer;
-
-  & > :first-of-type {
-    flex: 1;
-  }
 `;
 
 export const RecordTableHeaderLabelIdentifierCell = () => {
