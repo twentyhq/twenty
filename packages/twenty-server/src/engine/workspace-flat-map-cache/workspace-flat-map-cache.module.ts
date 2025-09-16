@@ -9,6 +9,7 @@ import { WorkspaceFlatViewMapCacheService } from 'src/engine/core-modules/view/f
 import { WorkspaceFlatObjectMetadataMapCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-flat-object-metadata-map-cache.service';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
 
 @Module({
@@ -16,6 +17,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
     DiscoveryModule,
     WorkspaceMetadataCacheModule,
     WorkspaceMetadataVersionModule,
+    WorkspacePermissionsCacheModule,
     TypeOrmModule.forFeature([ViewEntity, ViewFieldEntity]),
   ],
   providers: [
