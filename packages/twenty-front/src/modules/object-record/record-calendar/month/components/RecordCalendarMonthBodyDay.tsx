@@ -16,6 +16,7 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.primary};
   min-width: 0;
+  color: ${({ theme }) => theme.font.color.primary};
 
   &:not(:last-child) {
     border-right: 0.5px solid ${({ theme }) => theme.border.color.light};
@@ -29,22 +30,37 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
     `}
 `;
 
-const StyledDayHeader = styled.div<{ isToday: boolean }>`
+const StyledDayHeader = styled.div`
   display: flex;
-  text-align: right;
   justify-content: center;
   align-items: center;
-  margin-left: auto;
-  width: 20px;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-
+  flex-direction: column;
   margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+  margin-left: auto;
+
+  width: 24px;
+  height: 24px;
+`;
+
+const StyledDayHeaderDayContainer = styled.div`
+  display: flex;
+  margin-left: auto;
+  padding: ${({ theme }) => theme.spacing(0.5, 0.5)};
+`;
+
+const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
+  font-size: ${({ theme }) => theme.font.size.sm};
+  line-height: 140%;
+  display: flex;
+  width: 20px;
+  justify-content: center;
+  align-items: center;
+  
   ${({ isToday, theme }) =>
     isToday &&
     css`
       border-radius: 4px;
-      background: ${theme.color.red};
+      background: ${theme.color.blue};
       color: ${theme.font.color.inverted};
       font-weight: ${theme.font.weight.medium};
     `}
@@ -91,7 +107,11 @@ export const RecordCalendarMonthBodyDay = ({
 
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
-      <StyledDayHeader isToday={isToday}>{day.getDate()}</StyledDayHeader>
+      <StyledDayHeader>
+        <StyledDayHeaderDayContainer>
+          <StyledDayHeaderDay isToday={isToday}>{day.getDate()}</StyledDayHeaderDay>
+        </StyledDayHeaderDayContainer>
+      </StyledDayHeader>
       <Droppable droppableId={dayKey}>
         {(droppableProvided, droppableSnapshot) => (
           <StyledCardsContainer
