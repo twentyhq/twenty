@@ -1,13 +1,15 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
-import { pageLayoutEditingWidgetIdState } from '@/page-layout/states/pageLayoutEditingWidgetIdState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isValidUrl } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
@@ -33,21 +35,37 @@ const StyledButtonContainer = styled.div`
 
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget();
-  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
+
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const { createPageLayoutIframeWidget } =
+    useCreatePageLayoutIframeWidget(pageLayoutId);
+
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
-    useRecoilState(pageLayoutEditingWidgetIdState);
-  const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+    useRecoilComponentState(
+      pageLayoutEditingWidgetIdComponentState,
+      pageLayoutId,
+    );
+  const pageLayoutDraft = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
   const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+
   const editingWidget = allWidgets.find(
     (w) => w.id === pageLayoutEditingWidgetId,
   );
   const isEditMode = !!editingWidget;
 
   const [title, setTitle] = useState(editingWidget?.title || '');
+
   const configUrl = editingWidget?.configuration?.url;
+
   const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
+
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
@@ -84,6 +102,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
           url: url.trim(),
         },
       });
+
       setPageLayoutEditingWidgetId(null);
     } else {
       createPageLayoutIframeWidget(title.trim(), url.trim());

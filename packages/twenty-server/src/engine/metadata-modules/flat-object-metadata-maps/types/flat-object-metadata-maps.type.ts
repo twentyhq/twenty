@@ -3,4 +3,5 @@ import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-mo
 export type FlatObjectMetadataMaps = {
   byId: Partial<Record<string, FlatObjectMetadataWithFlatFieldMaps>>;
   idByNameSingular: Partial<Record<string, string>>;
+  idByUniversalIdentifier: Record<string, string>;
 };

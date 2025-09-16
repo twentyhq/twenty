@@ -12,6 +12,8 @@ import {
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
@@ -26,6 +28,7 @@ import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/vi
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
+import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,6 +50,8 @@ export class ViewResolver {
     private readonly viewSortService: ViewSortService,
     private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly viewV2Service: ViewV2Service,
   ) {}
 
   @ResolveField(() => String)
@@ -123,6 +128,19 @@ export class ViewResolver {
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewV2Service.createOne({
+        createViewInput: input,
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.viewService.create({
       ...input,
       workspaceId: workspace.id,
@@ -135,6 +153,19 @@ export class ViewResolver {
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewV2Service.updateOne({
+        updateViewInput: input,
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.viewService.update(id, workspace.id, input);
   }
 
@@ -143,6 +174,21 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const deletedView = await this.viewV2Service.deleteOne({
+        deleteViewInput: { id },
+        workspaceId: workspace.id,
+      });
+
+      return isDefined(deletedView);
+    }
+
     const deletedView = await this.viewService.delete(id, workspace.id);
 
     return isDefined(deletedView);
@@ -153,6 +199,21 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const deletedView = await this.viewV2Service.destroyOne({
+        destroyViewInput: { id },
+        workspaceId: workspace.id,
+      });
+
+      return isDefined(deletedView);
+    }
+
     const deletedView = await this.viewService.destroy(id, workspace.id);
 
     return isDefined(deletedView);

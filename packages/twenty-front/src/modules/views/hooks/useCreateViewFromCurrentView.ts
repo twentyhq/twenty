@@ -159,8 +159,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         await createViewFieldRecords(
           sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
-            ({ __typename, ...viewField }) => ({
-              input: { ...viewField, viewId: newViewId },
+            ({ __typename, id: _id, ...viewField }) => ({
+              input: { ...viewField, id: v4(), viewId: newViewId },
             }),
           ),
         );

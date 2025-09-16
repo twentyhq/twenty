@@ -65,19 +65,12 @@ export const SendApprovedAccessDomainValidation = ({
         <br />
       </MainText>
       <HighlightedContainer>
-        <object
-          data={workspaceLogo ?? DEFAULT_WORKSPACE_LOGO}
+        <Img
+          src={workspaceLogo ?? DEFAULT_WORKSPACE_LOGO}
           width={40}
           height={40}
-          aria-label="Workspace logo"
-        >
-          <Img
-            src={DEFAULT_WORKSPACE_LOGO}
-            width={40}
-            height={40}
-            alt="Workspace logo"
-          />
-        </object>
+          alt={workspace.name ?? 'Workspace logo'}
+        />
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>

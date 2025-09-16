@@ -9,14 +9,14 @@ import { isCodeOutputSchema } from './isCodeOutputSchema';
 import { isDatabaseEventTriggerOutputSchema } from './isDatabaseEventTriggerOutputSchema';
 import { isFindRecordsOutputSchema } from './isFindRecordsOutputSchema';
 import { isFormOutputSchema } from './isFormOutputSchema';
-import { isRecordActionOutputSchema } from './isRecordActionOutputSchema';
+import { isRecordStepOutputSchema } from './isRecordStepOutputSchema';
 
 export const isOpenStepOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
   schema: OutputSchemaV2,
 ): schema is OpenStepOutputSchema => {
   return (
-    !isRecordActionOutputSchema(stepType, schema) &&
+    !isRecordStepOutputSchema(stepType, schema) &&
     !isDatabaseEventTriggerOutputSchema(stepType, schema) &&
     !isFindRecordsOutputSchema(stepType, schema) &&
     !isFormOutputSchema(stepType, schema) &&
