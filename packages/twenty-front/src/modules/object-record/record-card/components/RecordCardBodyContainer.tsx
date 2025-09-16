@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledBoardCardBody = styled.div`
+const StyledCardBodyContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};
@@ -18,4 +18,4 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
-export { StyledBoardCardBody as RecordBoardCardBodyContainer };
+export { StyledCardBodyContainer as RecordCardBodyContainer };

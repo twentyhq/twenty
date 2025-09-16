@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
@@ -9,7 +10,8 @@ import { findByProperty, isDefined } from 'twenty-shared/utils';
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;
-  isFirstCell?: boolean;
+  isFirstCell: boolean;
+  isTableWithGroups: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -26,17 +28,9 @@ const StyledColumnFooterCell = styled.div<{
     &:hover {
       background: ${theme.background.secondary};
     };
-    &:active {
-      background: ${theme.background.tertiary};
-    };
     `;
   }};
-  height: 32px;
-
-  position: sticky;
-  left: 48px;
-  bottom: 0;
-  z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   user-select: none;
   overflow: auto;
@@ -45,6 +39,14 @@ const StyledColumnFooterCell = styled.div<{
   *::-webkit-scrollbar {
     display: none;
   }
+
+  position: sticky;
+  bottom: 0;
+
+  ${({ isFirstCell, isTableWithGroups }) =>
+    isFirstCell
+      ? `left: 48px; z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn};`
+      : `z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.default : TABLE_Z_INDEX.footer.tableWithoutGroups.default};`}
 `;
 
 const StyledColumnFootContainer = styled.div`
@@ -70,6 +72,8 @@ export const RecordTableAggregateFooterCell = ({
     findByProperty('fieldMetadataItemId', fieldMetadataId),
   );
 
+  const isTableWithGroups = isDefined(currentRecordGroupId);
+
   if (!isDefined(recordField)) {
     return null;
   }
@@ -77,10 +81,9 @@ export const RecordTableAggregateFooterCell = ({
   return (
     <StyledColumnFooterCell
       columnWidth={recordField.size + 1}
-      // TODO: fix colspan
-      // colSpan={isFirstCell ? 2 : undefined}
       isFirstCell={isFirstCell}
-      className={isFirstCell ? '' : 'footer-cell'}
+      className={'footer-cell'}
+      isTableWithGroups={isTableWithGroups}
     >
       <StyledColumnFootContainer>
         <RecordTableColumnFooterWithDropdown
