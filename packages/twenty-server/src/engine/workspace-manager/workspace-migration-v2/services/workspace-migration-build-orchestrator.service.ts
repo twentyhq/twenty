@@ -165,9 +165,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
       };
     }
 
+    const relatedFlatEntityMapsKeys = Object.keys(
+      fromToAllFlatEntityMaps,
+    ) as (keyof AllFlatEntityMaps)[];
+
     return {
       status: 'success',
       workspaceMigration: {
+        relatedFlatEntityMapsKeys,
         actions: allActions,
         workspaceId,
       },

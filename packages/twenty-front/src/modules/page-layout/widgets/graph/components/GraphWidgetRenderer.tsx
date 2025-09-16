@@ -22,11 +22,11 @@ const GraphWidgetLineChart = lazy(() =>
 );
 
 const GraphWidgetPieChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetPieChart').then(
-    (module) => ({
-      default: module.GraphWidgetPieChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
+  ).then((module) => ({
+    default: module.GraphWidgetPieChart,
+  })),
 );
 
 const GraphWidgetGaugeChart = lazy(() =>

@@ -7,6 +7,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
@@ -20,7 +21,10 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     WorkflowCommonModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity, AgentEntity]),
   ],
-  providers: [WorkflowVersionStepWorkspaceService],
+  providers: [
+    WorkflowVersionStepWorkspaceService,
+    WorkflowVersionStepOperationsWorkspaceService,
+  ],
   exports: [WorkflowVersionStepWorkspaceService],
 })
 export class WorkflowVersionStepModule {}

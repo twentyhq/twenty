@@ -2,8 +2,8 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import styled from '@emotion/styled';
 
 const StyledHeaderCell = styled.div<{
-  isFirstRowActiveOrFocused: boolean;
   zIndex?: number;
+  shouldDisplayBorderBottom: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
@@ -17,7 +17,10 @@ const StyledHeaderCell = styled.div<{
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+    shouldDisplayBorderBottom
+      ? `1px solid ${theme.border.color.light}`
+      : 'none'};
 
   user-select: none;
   ${({ theme }) => {
@@ -30,6 +33,8 @@ const StyledHeaderCell = styled.div<{
     };
     `;
   }};
+
+  cursor: pointer;
 
   z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;

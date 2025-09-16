@@ -72,6 +72,11 @@ export const useBarChartData = ({
     };
   });
 
+  const enrichedKeysMap = useMemo(
+    () => new Map(enrichedKeys.map((item) => [item.key, item])),
+    [enrichedKeys],
+  );
+
   const defs = barConfigs.map((bar) => {
     const isHovered =
       hoveredBar?.key === bar.key && hoveredBar?.indexValue === bar.indexValue;
@@ -88,6 +93,7 @@ export const useBarChartData = ({
     seriesConfigMap,
     barConfigs,
     enrichedKeys,
+    enrichedKeysMap,
     defs,
   };
 };

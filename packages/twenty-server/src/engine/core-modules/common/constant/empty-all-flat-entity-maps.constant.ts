@@ -3,7 +3,7 @@ import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all
 
 export const EMPTY_ALL_FLAT_ENTITY_MAPS = {
   flatObjectMetadataMaps: {
-    byId: {},
+    ...EMPTY_FLAT_ENTITY_MAPS,
     idByNameSingular: {},
   },
   flatViewFieldMaps: EMPTY_FLAT_ENTITY_MAPS,
