@@ -16,6 +16,10 @@ import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -68,28 +72,40 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const groupByFields = [];
 
-    for (const groupByFieldName of Object.keys(groupByFieldNames)) {
-      const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[groupByFieldName];
-      const fieldMetadata =
-        objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+    for (const fieldNames of groupByFieldNames) {
+      if (Object.keys(fieldNames).length > 1) {
+        throw new GraphqlQueryRunnerException(
+          'You cannot provide multiple fields in one GroupByInput, split them into multiple GroupByInput',
+          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        );
+      }
+      for (const fieldName of Object.keys(fieldNames)) {
+        const fieldMetadataId =
+          objectMetadataItemWithFieldMaps.fieldIdByName[fieldName];
+        const fieldMetadata =
+          objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
-      if (groupByFieldNames[groupByFieldName] === true) {
-        groupByFields.push({
-          fieldMetadata,
-          subFieldName: undefined,
-        });
-        continue;
-      } else if (typeof groupByFieldNames[groupByFieldName] === 'object') {
-        for (const subFieldName of Object.keys(
-          groupByFieldNames[groupByFieldName],
-        )) {
-          if (groupByFieldNames[groupByFieldName][subFieldName] === true) {
-            groupByFields.push({
-              fieldMetadata,
-              subFieldName,
-            });
-            continue;
+        if (fieldNames[fieldName] === true) {
+          groupByFields.push({
+            fieldMetadata,
+            subFieldName: undefined,
+          });
+          continue;
+        } else if (typeof fieldNames[fieldName] === 'object') {
+          if (Object.keys(fieldNames[fieldName]).length > 1) {
+            throw new GraphqlQueryRunnerException(
+              'You cannot provide multiple subfields in one GroupByInput, split them into multiple GroupByInput',
+              GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            );
+          }
+          for (const subFieldName of Object.keys(fieldNames[fieldName])) {
+            if (fieldNames[fieldName][subFieldName] === true) {
+              groupByFields.push({
+                fieldMetadata,
+                subFieldName,
+              });
+              continue;
+            }
           }
         }
       }

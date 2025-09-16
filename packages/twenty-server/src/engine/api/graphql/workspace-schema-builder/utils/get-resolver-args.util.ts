@@ -166,6 +166,7 @@ export const getResolverArgs = (
         groupBy: {
           kind: GqlInputTypeDefinitionKind.GroupBy,
           isNullable: false,
+          isArray: true,
         },
         filter: {
           kind: GqlInputTypeDefinitionKind.Filter,

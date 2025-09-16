@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLObjectType, GraphQLString, isObjectType } from 'graphql';
+import { GraphQLObjectType, isObjectType } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
@@ -68,9 +69,7 @@ export class GroupByConnectionGqlObjectTypeGenerator {
     Object.assign(fields, connection.toConfig().fields);
 
     fields.groupByDimensionValues = {
-      type: this.typeMapperService.applyTypeOptions(GraphQLString, {
-        isArray: true,
-        arrayDepth: 1,
+      type: this.typeMapperService.applyTypeOptions(GraphQLJSON, {
         nullable: false,
       }),
     };
