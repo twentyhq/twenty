@@ -55,7 +55,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
   async executeActionHandler<T extends WorkspaceMigrationActionV2>(
     actionType: WorkspaceMigrationActionTypeV2,
     context: WorkspaceMigrationActionRunnerArgs<T>,
-  ): Promise<AllFlatEntityMaps> {
+  ): Promise<Partial<AllFlatEntityMaps>> {
     const handler = this.actionHandlers.get(actionType);
 
     if (!handler) {

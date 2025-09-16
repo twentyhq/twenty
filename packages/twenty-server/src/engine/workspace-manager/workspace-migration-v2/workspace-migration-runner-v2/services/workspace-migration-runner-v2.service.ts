@@ -39,9 +39,10 @@ export class WorkspaceMigrationRunnerV2Service {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
     try {
       for (const action of actions) {
-        const newOptimisticCache =
+        const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             action.type,
             {
@@ -51,21 +52,37 @@ export class WorkspaceMigrationRunnerV2Service {
               workspaceId,
             },
           );
+        const optimisticallyUpdatedFlatEntityMapsKeys = Object.keys(
+          partialOptimisticCache,
+        ) as (keyof AllFlatEntityMaps)[];
 
-        allFlatEntityMaps = newOptimisticCache;
+        flatEntityMapsToInvalidate = [
+          ...new Set([
+            ...optimisticallyUpdatedFlatEntityMapsKeys,
+            ...flatEntityMapsToInvalidate,
+          ]),
+        ];
+
+        allFlatEntityMaps = {
+          ...allFlatEntityMaps,
+          ...partialOptimisticCache,
+        };
       }
 
       await queryRunner.commitTransaction();
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-      );
+        flatEntities: flatEntityMapsToInvalidate,
+      });
 
+      // Should this be done all the time ?
       await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
         {
           workspaceId,
         },
       );
+      ///
 
       return allFlatEntityMaps;
     } catch (error) {
