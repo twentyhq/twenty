@@ -1,11 +1,12 @@
-import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
+import { RecordCalendarCardDraggableContainer } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDraggableContainer';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isSameDay, isSameMonth } from 'date-fns';
+import { Droppable } from '@hello-pangea/dnd';
+import { format, isSameDay, isSameMonth } from 'date-fns';
 
 const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   display: flex;
@@ -49,10 +50,21 @@ const StyledDayHeader = styled.div<{ isToday: boolean }>`
     `}
 `;
 
-const StyledCardsContainer = styled.div`
+const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};
+  flex: 1;
+  min-height: 60px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  transition: background-color 0.1s ease;
+
+  ${({ isDraggedOver, theme }) =>
+    isDraggedOver &&
+    css`
+      background: ${theme.background.transparent.lighter};
+      border: 1px dashed ${theme.border.color.medium};
+    `}
 `;
 
 type RecordCalendarMonthBodyDayProps = {
@@ -66,9 +78,11 @@ export const RecordCalendarMonthBodyDay = ({
     recordCalendarSelectedDateComponentState,
   );
 
+  const dayKey = format(day, 'yyyy-MM-dd');
+  
   const recordIds = useRecoilComponentFamilyValue(
     calendarDayRecordIdsComponentFamilySelector,
-    day.toDateString(),
+    dayKey,
   );
 
   const isToday = isSameDay(day, new Date());
@@ -78,11 +92,25 @@ export const RecordCalendarMonthBodyDay = ({
   return (
     <StyledContainer isOtherMonth={isOtherMonth}>
       <StyledDayHeader isToday={isToday}>{day.getDate()}</StyledDayHeader>
-      <StyledCardsContainer>
-        {recordIds.slice(0, 5).map((recordId) => (
-          <RecordCalendarCard key={recordId} recordId={recordId} />
-        ))}
-      </StyledCardsContainer>
+      <Droppable droppableId={dayKey}>
+        {(droppableProvided, droppableSnapshot) => (
+          <StyledCardsContainer
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...droppableProvided.droppableProps}
+            ref={droppableProvided.innerRef}
+            isDraggedOver={droppableSnapshot.isDraggingOver}
+          >
+            {recordIds.slice(0, 5).map((recordId, index) => (
+              <RecordCalendarCardDraggableContainer
+                key={recordId}
+                recordId={recordId}
+                index={index}
+              />
+            ))}
+            {droppableProvided.placeholder}
+          </StyledCardsContainer>
+        )}
+      </Droppable>
     </StyledContainer>
   );
 };
