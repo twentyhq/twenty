@@ -32,6 +32,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
   exports: [
     WorkspaceMigrationBuilderV2Service,
     WorkspaceMigrationV2ViewActionsBuilderService,
+    WorkspaceMigrationV2IndexActionsBuilderService,
     FlatViewValidatorService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
     FlatViewFieldValidatorService,

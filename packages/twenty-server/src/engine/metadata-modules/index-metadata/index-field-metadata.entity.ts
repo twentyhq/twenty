@@ -10,14 +10,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Entity('indexFieldMetadata')
 export class IndexFieldMetadataEntity
-  extends SyncableEntity
   implements Required<IndexFieldMetadataEntity>
 {
   @PrimaryGeneratedColumn('uuid')
