@@ -3,6 +3,7 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -30,12 +31,16 @@ export const RecordCalendarCardHeader = ({
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isCompactModeActive = currentView?.isCompact ?? false;
+
   if (!isDefined(record)) {
     return null;
   }
 
   return (
-    <RecordCardHeaderContainer isCompact={true}>
+    <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
           <RecordChip
