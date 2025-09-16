@@ -99,7 +99,7 @@ export class AiModelRegistryService {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         provider: ModelProvider.XAI,
-        model: xai(modelConfig.modelId) as unknown as LanguageModel,
+        model: xai(modelConfig.modelId),
       });
     });
   }
