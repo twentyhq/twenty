@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, Repository } from 'typeorm';
 
 import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { DeleteViewInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view.input';
 import { DestroyViewInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
@@ -24,8 +23,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewV2Service {
   constructor(
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
   ) {}
@@ -36,7 +33,7 @@ export class ViewV2Service {
   }: {
     createViewInput: CreateViewInput;
     workspaceId: string;
-  }): Promise<ViewEntity> {
+  }): Promise<FlatView> {
     const { flatObjectMetadataMaps, flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -80,13 +77,16 @@ export class ViewV2Service {
       );
     }
 
-    const [createdView] = await this.viewRepository.find({
-      where: {
-        id: flatViewFromCreateInput.id,
-      },
-    });
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatViewMaps'],
+      });
 
-    return createdView;
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewFromCreateInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
   }
 
   async updateOne({
@@ -95,7 +95,7 @@ export class ViewV2Service {
   }: {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
-  }): Promise<ViewEntity> {
+  }): Promise<FlatView> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -140,13 +140,16 @@ export class ViewV2Service {
       );
     }
 
-    const [updatedView] = await this.viewRepository.find({
-      where: {
-        id: Equal(updateViewInput.id),
-      },
-    });
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatViewMaps'],
+      });
 
-    return updatedView;
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: updateViewInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
   }
 
   async deleteOne({
@@ -155,7 +158,7 @@ export class ViewV2Service {
   }: {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<FlatView> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -200,7 +203,16 @@ export class ViewV2Service {
       );
     }
 
-    return true;
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatViewMaps'],
+      });
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: deleteViewInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
   }
 
   async destroyOne({
@@ -209,7 +221,7 @@ export class ViewV2Service {
   }: {
     destroyViewInput: DestroyViewInput;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<FlatView> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -254,6 +266,15 @@ export class ViewV2Service {
       );
     }
 
-    return true;
+    const { flatViewMaps: recomputedExistingFlatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
+        workspaceId,
+        flatEntities: ['flatViewMaps'],
+      });
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: destroyViewInput.id,
+      flatEntityMaps: recomputedExistingFlatViewMaps,
+    });
   }
 }
