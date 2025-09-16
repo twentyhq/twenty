@@ -20,6 +20,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,7 +36,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
-import { ViewCalendarLayout } from '~/generated/graphql';
+import { FeatureFlagKey, ViewCalendarLayout } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
@@ -106,10 +107,14 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const isDefaultView = currentView?.key === 'INDEX';
   const nbsp = '\u00A0';
 
+  const featureFlags = useFeatureFlagsMap();
+  const hasCalendarViewEnabled =
+    featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
+
   const selectableItemIdArray = [
     ViewType.Table,
     ...(isDefaultView ? [] : [ViewType.Kanban]),
-    ...(!isDefaultView ? [ViewType.Calendar] : []),
+    ...(!isDefaultView && hasCalendarViewEnabled ? [ViewType.Calendar] : []),
     ViewOpenRecordInType.SIDE_PANEL,
     ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
     ...(currentView?.type === ViewType.Calendar
@@ -160,7 +165,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 }}
               />
             </SelectableListItem>
-            {
+            {hasCalendarViewEnabled && (
               <SelectableListItem
                 itemId={ViewType.Calendar}
                 onEnter={() => {
@@ -175,7 +180,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   onClick={handleSelectCalendarViewType}
                 />
               </SelectableListItem>
-            }
+            )}
             <SelectableListItem
               itemId={ViewType.Kanban}
               onEnter={() => {

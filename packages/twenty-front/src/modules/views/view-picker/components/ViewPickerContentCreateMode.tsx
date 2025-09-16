@@ -36,9 +36,11 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -91,10 +93,14 @@ export const ViewPickerContentCreateMode = () => {
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const featureFlags = useFeatureFlagsMap();
+
+  const hasCalendarViewEnabled =
+    featureFlags[FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED];
 
   const viewPickerTypeOptions = VIEW_PICKER_TYPE_SELECT_OPTIONS.filter(
     (option) => {
-      return option.value !== ViewType.Calendar;
+      return option.value !== ViewType.Calendar || hasCalendarViewEnabled;
     },
   );
 
