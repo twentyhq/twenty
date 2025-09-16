@@ -12,7 +12,7 @@ import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create
 import { DeleteViewInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view.input';
 import { DestroyViewInput } from 'src/engine/core-modules/view/dtos/inputs/destroy-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
-import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
@@ -33,7 +33,7 @@ export class ViewV2Service {
   }: {
     createViewInput: CreateViewInput;
     workspaceId: string;
-  }): Promise<FlatView> {
+  }): Promise<ViewDTO> {
     const { flatObjectMetadataMaps, flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -95,7 +95,7 @@ export class ViewV2Service {
   }: {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
-  }): Promise<FlatView> {
+  }): Promise<ViewDTO> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -158,7 +158,7 @@ export class ViewV2Service {
   }: {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
-  }): Promise<FlatView> {
+  }): Promise<ViewDTO> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
@@ -221,7 +221,7 @@ export class ViewV2Service {
   }: {
     destroyViewInput: DestroyViewInput;
     workspaceId: string;
-  }): Promise<FlatView> {
+  }): Promise<ViewDTO> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
