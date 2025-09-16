@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutSelectedCellsComponentState } from '../../states/pageLayoutSelectedCellsComponentState';
 import { useStartPageLayoutDragSelection } from '../useStartPageLayoutDragSelection';
 import {
-  PageLayoutTestWrapper,
   PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
 const createInitializeState =

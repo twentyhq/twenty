@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { usePageLayoutIdFromContextStoreTargettedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargettedRecord';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -36,7 +36,7 @@ const StyledButtonContainer = styled.div`
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
 
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargettedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);

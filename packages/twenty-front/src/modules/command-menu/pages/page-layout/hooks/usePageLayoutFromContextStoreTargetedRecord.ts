@@ -3,7 +3,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 
-export const usePageLayoutIdFromContextStoreTargettedRecord = () => {
+export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
   const targetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );

@@ -1,5 +1,5 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
-import { usePageLayoutIdFromContextStoreTargettedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargettedRecord';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
@@ -51,7 +51,7 @@ const widgetTypeOptions = [
 ];
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargettedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const setPageLayoutDraggedArea = useSetRecoilComponentState(
     pageLayoutDraggedAreaComponentState,
