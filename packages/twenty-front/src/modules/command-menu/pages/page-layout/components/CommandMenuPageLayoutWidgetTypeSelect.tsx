@@ -1,10 +1,8 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -54,17 +52,8 @@ const widgetTypeOptions = [
 ];
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
-  const commandMenuPageInstanceId = useComponentInstanceStateContext(
-    CommandMenuPageComponentInstanceContext,
-  )?.instanceId;
-
-  if (!commandMenuPageInstanceId) {
-    throw new Error('Command menu page instance id is not defined');
-  }
-
   const pageLayoutId = useRecoilComponentValue(
     contextStorePageLayoutIdComponentState,
-    commandMenuPageInstanceId,
   );
 
   if (!pageLayoutId) {

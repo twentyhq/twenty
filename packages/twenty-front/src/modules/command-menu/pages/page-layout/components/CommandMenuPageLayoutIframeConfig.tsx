@@ -1,12 +1,10 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
@@ -38,17 +36,8 @@ const StyledButtonContainer = styled.div`
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPageInstanceId = useComponentInstanceStateContext(
-    CommandMenuPageComponentInstanceContext,
-  )?.instanceId;
-
-  if (!commandMenuPageInstanceId) {
-    throw new Error('Command menu page instance id is not defined');
-  }
-
   const pageLayoutId = useRecoilComponentValue(
     contextStorePageLayoutIdComponentState,
-    commandMenuPageInstanceId,
   );
 
   if (!pageLayoutId) {
