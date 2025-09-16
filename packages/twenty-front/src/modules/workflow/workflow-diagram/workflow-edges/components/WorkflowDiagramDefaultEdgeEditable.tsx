@@ -61,6 +61,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     nextStepId: target,
   });
 
+  const isIteratorLoopEdge =
+    sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
+
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
   );
@@ -90,9 +93,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   };
 
   const handleNodeButtonClick = () => {
-    const isIteratorLoopEdge =
-      sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
-
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
@@ -110,9 +110,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const handleDeleteBranch = async (event: MouseEvent) => {
     event.stopPropagation();
-
-    const isIteratorLoopEdge =
-      sourceHandleId === WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID;
 
     await deleteEdge({
       source,
