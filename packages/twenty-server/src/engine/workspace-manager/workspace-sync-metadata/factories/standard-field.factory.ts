@@ -157,6 +157,7 @@ export class StandardFieldFactory {
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
+        virtualField: workspaceFieldMetadataArgs.virtualField ?? null,
         relationTargetFieldMetadata: null,
         relationTargetFieldMetadataId: null,
         relationTargetObjectMetadata: null,
@@ -209,6 +210,7 @@ export class StandardFieldFactory {
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadata: null,
       relationTargetObjectMetadataId: null,
+      virtualField: null,
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
       standardOverrides: null,
       morphId: null,

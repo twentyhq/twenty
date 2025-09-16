@@ -6,6 +6,7 @@ import { FavoriteFolderModule } from 'src/modules/favorite-folder/favorite-folde
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { ViewModule } from 'src/modules/view/view.module';
+import { VirtualFieldsModule } from 'src/modules/virtual-fields/virtual-fields.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkflowModule,
     FavoriteFolderModule,
     FavoriteModule,
+    VirtualFieldsModule,
   ],
   providers: [],
   exports: [],

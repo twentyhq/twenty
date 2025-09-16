@@ -6,6 +6,7 @@ import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-me
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type VirtualField } from 'src/modules/virtual-fields/types/VirtualField';
 
 export interface WorkspaceFieldMetadataArgs {
   /**
@@ -110,6 +111,11 @@ export interface WorkspaceFieldMetadataArgs {
    * Is active field.
    */
   readonly asExpression?: string;
+
+  /**
+   * Virtual field definition for computed fields.
+   */
+  readonly virtualField?: VirtualField;
 
   readonly isLabelSyncedWithName: boolean;
 }

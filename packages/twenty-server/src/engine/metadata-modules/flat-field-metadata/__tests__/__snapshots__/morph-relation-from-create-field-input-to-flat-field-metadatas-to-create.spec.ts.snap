@@ -151,6 +151,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "type": "MORPH_RELATION",
           "universalIdentifier": Any<String>,
           "updatedAt": Any<ClockDate>,
+          "virtualField": null,
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
@@ -209,6 +210,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
+        "virtualField": null,
         "workspaceId": Any<String>,
       },
       "flatRelationTargetObjectMetadata": {
@@ -265,6 +267,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "type": "MORPH_RELATION",
       "universalIdentifier": Any<String>,
       "updatedAt": Any<ClockDate>,
+      "virtualField": null,
       "workspaceId": Any<String>,
     },
     {
@@ -330,6 +333,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
+        "virtualField": null,
         "workspaceId": Any<String>,
       },
       "flatRelationTargetObjectMetadata": {
@@ -388,6 +392,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "type": "RELATION",
       "universalIdentifier": Any<String>,
       "updatedAt": Any<ClockDate>,
+      "virtualField": null,
       "workspaceId": Any<String>,
     },
     {
@@ -457,6 +462,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "type": "MORPH_RELATION",
           "universalIdentifier": Any<String>,
           "updatedAt": Any<ClockDate>,
+          "virtualField": null,
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
@@ -515,6 +521,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
+        "virtualField": null,
         "workspaceId": Any<String>,
       },
       "flatRelationTargetObjectMetadata": {
@@ -571,6 +578,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "type": "MORPH_RELATION",
       "universalIdentifier": Any<String>,
       "updatedAt": Any<ClockDate>,
+      "virtualField": null,
       "workspaceId": Any<String>,
     },
     {
@@ -636,6 +644,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "updatedAt": Any<ClockDate>,
+        "virtualField": null,
         "workspaceId": Any<String>,
       },
       "flatRelationTargetObjectMetadata": {
@@ -694,6 +703,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       "type": "RELATION",
       "universalIdentifier": Any<String>,
       "updatedAt": Any<ClockDate>,
+      "virtualField": null,
       "workspaceId": Any<String>,
     },
   ],
