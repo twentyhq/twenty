@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -15,6 +19,12 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update_index',
 ) {
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateIndexAction>): Partial<AllFlatEntityMaps> {
+    return allFlatEntityMaps;
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
   ): Promise<void> {
@@ -35,8 +45,13 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
   ): Promise<void> {
-    const { action, flatObjectMetadataMaps, queryRunner, workspaceId } =
-      context;
+    const {
+      action,
+      allFlatEntityMaps: { flatObjectMetadataMaps },
+      queryRunner,
+      workspaceId,
+    } = context;
+
     // TODO find in cache
     const fromFlatIndexMetadata = {
       id: action.flatIndexMetadataId,

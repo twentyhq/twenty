@@ -8,7 +8,6 @@ import {
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { In } from 'typeorm';
 
-
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -45,8 +44,12 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
   ): Promise<void> {
-    const { action, flatObjectMetadataMaps, queryRunner, workspaceId } =
-      context;
+    const {
+      action,
+      allFlatEntityMaps: { flatObjectMetadataMaps },
+      queryRunner,
+      workspaceId,
+    } = context;
 
     // TODO find in cache
     const flatIndexMetadataToDelete = {

@@ -8,8 +8,9 @@ type IndexFieldMetadataEntityRelationProperties =
     MetadataEntitiesRelationTarget
   >;
 
-export type FlatIndexFieldMetadata = Partial<
-  Omit<IndexFieldMetadataEntity, IndexFieldMetadataEntityRelationProperties>
+export type FlatIndexFieldMetadata = Omit<
+  IndexFieldMetadataEntity,
+  IndexFieldMetadataEntityRelationProperties
 > & {
   universalIdentifier: string;
 };

@@ -73,6 +73,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       objectMetadata: [],
       view: [],
       viewField: [],
+      index: [],
+      indexField: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({

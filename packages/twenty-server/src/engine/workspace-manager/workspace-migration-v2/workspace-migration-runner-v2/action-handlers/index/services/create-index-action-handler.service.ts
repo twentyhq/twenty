@@ -41,8 +41,8 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<CreateIndexAction>,
   ): Promise<void> {
     const {
+      allFlatEntityMaps: { flatObjectMetadataMaps },
       action: { flatIndexMetadata },
-      flatObjectMetadataMaps,
       queryRunner,
       workspaceId,
     } = context;
