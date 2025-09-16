@@ -46,6 +46,7 @@ import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
+import { removeAccentsAndCase } from '~/utils/removeAccentsAndCase';
 
 export const WORKSPACE_MEMBER_DELETION_MODAL_ID =
   'workspace-member-deletion-modal';
@@ -192,10 +193,10 @@ export const SettingsWorkspaceMembers = () => {
   const filteredWorkspaceMembers = !searchFilter
     ? workspaceMembers
     : workspaceMembers.filter((member) => {
-        const searchTerm = searchFilter.toLowerCase();
-        const firstName = member.name.firstName?.toLowerCase() || '';
-        const lastName = member.name.lastName?.toLowerCase() || '';
-        const email = member.userEmail?.toLowerCase() || '';
+        const searchTerm = removeAccentsAndCase(searchFilter);
+        const firstName = removeAccentsAndCase(member.name.firstName) || '';
+        const lastName = removeAccentsAndCase(member.name.lastName) || '';
+        const email = removeAccentsAndCase(member.userEmail) || '';
 
         return (
           firstName.includes(searchTerm) ||
