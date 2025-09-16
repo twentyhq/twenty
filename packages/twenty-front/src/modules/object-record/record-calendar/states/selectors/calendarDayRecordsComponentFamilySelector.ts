@@ -4,7 +4,7 @@ import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
-import { isSameDay } from 'date-fns';
+import { isSameDay, parse } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 export const calendarDayRecordIdsComponentFamilySelector =
@@ -54,7 +54,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return false;
           }
 
-          const dayDate = new Date(dayAsString);
+          const dayDate = parse(dayAsString, 'yyyy-MM-dd', new Date());
           const recordDateObj = new Date(recordDate);
 
           return isSameDay(recordDateObj, dayDate);
