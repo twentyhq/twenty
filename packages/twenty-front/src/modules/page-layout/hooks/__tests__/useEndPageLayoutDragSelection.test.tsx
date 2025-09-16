@@ -14,7 +14,7 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu',
+  '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
 );
 jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
 
