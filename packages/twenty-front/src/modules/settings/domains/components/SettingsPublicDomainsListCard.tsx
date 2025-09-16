@@ -17,33 +17,34 @@ export const SettingsPublicDomainsListCard = () => {
 
   const publicDomains = data?.findManyPublicDomains;
 
+  if (loading || !publicDomains) {
+    return null;
+  }
+
   return (
-    !loading &&
-    publicDomains && (
-      <SettingsListCard
-        items={publicDomains}
-        getItemLabel={({ domain }) => domain}
-        getItemDescription={({ createdAt }) => createdAt}
-        RowIcon={IconAt}
-        onRowClick={(publicDomain: PublicDomain) => {
-          setSelectedPublicDomain(publicDomain);
-          navigate(SettingsPath.PublicDomain);
-        }}
-        RowRightComponent={({ item: publicDomain }) => (
-          <>
-            {!publicDomain.isValidated && (
-              <Status color="orange" text="Pending" />
-            )}
-            <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
-          </>
-        )}
-        hasFooter
-        footerButtonLabel="Add Public Domain"
-        onFooterButtonClick={() => {
-          setSelectedPublicDomain(undefined);
-          navigate(SettingsPath.PublicDomain);
-        }}
-      />
-    )
+    <SettingsListCard
+      items={publicDomains}
+      getItemLabel={({ domain }) => domain}
+      getItemDescription={({ createdAt }) => createdAt}
+      RowIcon={IconAt}
+      onRowClick={(publicDomain: PublicDomain) => {
+        setSelectedPublicDomain(publicDomain);
+        navigate(SettingsPath.PublicDomain);
+      }}
+      RowRightComponent={({ item: publicDomain }) => (
+        <>
+          {!publicDomain.isValidated && (
+            <Status color="orange" text="Pending" />
+          )}
+          <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
+        </>
+      )}
+      hasFooter
+      footerButtonLabel="Add Public Domain"
+      onFooterButtonClick={() => {
+        setSelectedPublicDomain(undefined);
+        navigate(SettingsPath.PublicDomain);
+      }}
+    />
   );
 };

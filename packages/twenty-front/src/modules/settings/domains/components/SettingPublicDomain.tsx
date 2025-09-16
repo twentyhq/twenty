@@ -98,7 +98,7 @@ export const SettingPublicDomain = () => {
     .regex(
       /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
       {
-        message: t`Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com).`,
+        message: t`Invalid public domain. Please include at least one subdomain (e.g., sub.example.com).`,
       },
     )
     .regex(

@@ -55,7 +55,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
-              text="Delete"
+              text={t`Delete`}
               onClick={async () => {
                 await handleDeletePublicDomain();
                 closeDropdown(dropdownId);
