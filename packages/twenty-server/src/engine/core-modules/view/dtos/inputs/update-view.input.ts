@@ -44,4 +44,7 @@ export class UpdateViewInput {
 
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout?: ViewCalendarLayout;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  calendarFieldMetadataId?: string;
 }

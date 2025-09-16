@@ -242,7 +242,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           );
         });
 
-        it('should add target to initialLoopStepIds when shouldInsertToLoop is true', async () => {
+        it('should add target to initialLoopStepIds when isConnectedToLoop is true', async () => {
           const result = await service.createWorkflowVersionEdge({
             source: 'iterator-step',
             target: 'step-3',
@@ -251,7 +251,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
             sourceConnectionOptions: {
               connectedStepType: WorkflowActionType.ITERATOR,
               settings: {
-                shouldInsertToLoop: true,
+                isConnectedToLoop: true,
               },
             },
           });
@@ -291,7 +291,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
             sourceConnectionOptions: {
               connectedStepType: WorkflowActionType.ITERATOR,
               settings: {
-                shouldInsertToLoop: true,
+                isConnectedToLoop: true,
               },
             },
           });
@@ -321,7 +321,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
               sourceConnectionOptions: {
                 connectedStepType: WorkflowActionType.ITERATOR,
                 settings: {
-                  shouldInsertToLoop: true,
+                  isConnectedToLoop: true,
                 },
               },
             });
@@ -331,7 +331,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           );
         });
 
-        it('should create normal edge when shouldInsertToLoop is false', async () => {
+        it('should create normal edge when isConnectedToLoop is false', async () => {
           const result = await service.createWorkflowVersionEdge({
             source: 'iterator-step',
             target: 'step-3',
@@ -340,7 +340,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
             sourceConnectionOptions: {
               connectedStepType: WorkflowActionType.ITERATOR,
               settings: {
-                shouldInsertToLoop: false,
+                isConnectedToLoop: false,
               },
             },
           });
@@ -587,6 +587,163 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         await expect(call).rejects.toThrow(
           `Source step 'not-existing-step' not found in workflowVersion '${mockWorkflowVersionId}'`,
         );
+      });
+    });
+
+    describe('with sourceConnectionOptions', () => {
+      describe('with iterator step', () => {
+        const mockIteratorStep = {
+          id: 'iterator-step',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              initialLoopStepIds: ['step-2', 'step-3'],
+            },
+          },
+          nextStepIds: ['step-1'],
+        } as WorkflowAction;
+
+        const mockStepsWithIterator = [mockIteratorStep, ...mockSteps];
+
+        const mockWorkflowVersionWithIterator = {
+          ...mockWorkflowVersion,
+          steps: mockStepsWithIterator,
+        };
+
+        beforeEach(() => {
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+            mockWorkflowVersionWithIterator,
+          );
+        });
+
+        it('should throw if source step is not an iterator when connectedStepType is ITERATOR', async () => {
+          const call = async () =>
+            await service.deleteWorkflowVersionEdge({
+              source: 'step-1',
+              target: 'step-2',
+              workflowVersionId: mockWorkflowVersionId,
+              workspaceId: mockWorkspaceId,
+              sourceConnectionOptions: {
+                connectedStepType: WorkflowActionType.ITERATOR,
+                settings: {
+                  isConnectedToLoop: true,
+                },
+              },
+            });
+
+          await expect(call).rejects.toThrow(
+            `Source step 'step-1' is not an iterator`,
+          );
+        });
+
+        it('should remove target from initialLoopStepIds when isConnectedToLoop is true', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-2',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                settings: expect.objectContaining({
+                  input: expect.objectContaining({
+                    initialLoopStepIds: ['step-3'],
+                  }),
+                }),
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': ['step-1'],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
+        });
+
+        it('should not update if target is not in initialLoopStepIds when isConnectedToLoop is true', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).not.toHaveBeenCalled();
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': ['step-1'],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
+        });
+
+        it('should remove target from nextStepIds when isConnectedToLoop is false', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: false,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                nextStepIds: [],
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': [],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
+        });
       });
     });
 

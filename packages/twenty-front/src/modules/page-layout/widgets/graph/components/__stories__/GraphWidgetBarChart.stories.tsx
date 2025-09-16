@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetBarChart } from '../GraphWidgetBarChart';
+import { GraphWidgetBarChart } from '../../graphWidgetBarChart/components/GraphWidgetBarChart';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetBarChart',

@@ -80,11 +80,17 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           name,
           icon,
           kanbanFieldMetadataId,
+          calendarFieldMetadataId,
           type,
         }: Partial<
           Pick<
             GraphQLView,
-            'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
+            | 'id'
+            | 'name'
+            | 'icon'
+            | 'kanbanFieldMetadataId'
+            | 'calendarFieldMetadataId'
+            | 'type'
           >
         >,
         shouldCopyFiltersAndSortsAndAggregate?: boolean,
@@ -138,6 +144,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 viewType === ViewType.Calendar
                   ? ViewCalendarLayout.MONTH
                   : undefined,
+              calendarFieldMetadataId:
+                viewType === ViewType.Calendar
+                  ? calendarFieldMetadataId
+                  : undefined,
             },
           },
         });
@@ -149,8 +159,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         await createViewFieldRecords(
           sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
-            ({ __typename, ...viewField }) => ({
-              input: { ...viewField, viewId: newViewId },
+            ({ __typename, id: _id, ...viewField }) => ({
+              input: { ...viewField, id: v4(), viewId: newViewId },
             }),
           ),
         );
