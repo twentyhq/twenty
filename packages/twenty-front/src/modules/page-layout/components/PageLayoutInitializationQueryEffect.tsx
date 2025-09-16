@@ -9,29 +9,22 @@ import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type PageLayoutInitializationEffectProps = {
+type PageLayoutInitializationQueryEffectProps = {
   pageLayout: PageLayoutWithData;
 };
 
-export const PageLayoutInitializationEffect = ({
+export const PageLayoutInitializationQueryEffect = ({
   pageLayout,
-}: PageLayoutInitializationEffectProps) => {
+}: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const pageLayoutPersistedComponentCallbackState =
-    useRecoilComponentCallbackState(
-      pageLayoutPersistedComponentState,
-      pageLayout.id,
-    );
+    useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
   const pageLayoutDraftComponentCallbackState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
-    pageLayout.id,
   );
   const pageLayoutCurrentLayoutsComponentCallbackState =
-    useRecoilComponentCallbackState(
-      pageLayoutCurrentLayoutsComponentState,
-      pageLayout.id,
-    );
+    useRecoilComponentCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const initializePageLayout = useRecoilCallback(
     ({ set, snapshot }) =>

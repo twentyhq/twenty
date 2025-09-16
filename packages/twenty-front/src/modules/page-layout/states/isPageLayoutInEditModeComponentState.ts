@@ -5,6 +5,6 @@ import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutCompone
 export const isPageLayoutInEditModeComponentState =
   createComponentState<boolean>({
     key: 'isPageLayoutInEditModeComponentState',
-    defaultValue: true,
+    defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,
   });

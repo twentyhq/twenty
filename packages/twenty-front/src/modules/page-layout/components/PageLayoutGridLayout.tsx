@@ -7,12 +7,11 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
@@ -77,27 +76,13 @@ export const PageLayoutGridLayout = () => {
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const pageLayoutPersisted = useRecoilComponentValue(
-    pageLayoutPersistedComponentState,
-  );
-
-  const pageLayoutDraft = useRecoilComponentValue(
-    pageLayoutDraftComponentState,
-  );
-
   const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  if (!isDefined(activeTabId)) {
-    return null;
-  }
+  const { currentPageLayout } = useCurrentPageLayout();
 
-  const currentPageLayout = isPageLayoutInEditMode
-    ? pageLayoutDraft
-    : pageLayoutPersisted;
-
-  if (!isDefined(currentPageLayout)) {
+  if (!isDefined(activeTabId) || !isDefined(currentPageLayout)) {
     return null;
   }
 

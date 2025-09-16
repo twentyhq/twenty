@@ -1,19 +1,12 @@
-import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
+import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
 
+import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import styled from '@emotion/styled';
-
-import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { type PageLayoutWithData } from '../types/pageLayoutTypes';
-
-const StyledTabList = styled(TabList)`
-  padding-left: ${({ theme }) => theme.spacing(2)};
-`;
 
 type PageLayoutRendererProps = {
   pageLayout: PageLayoutWithData;
@@ -21,28 +14,19 @@ type PageLayoutRendererProps = {
 
 export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   return (
-    <>
-      <PageLayoutInitializationEffect pageLayout={pageLayout} />
-      <PageLayoutComponentInstanceContext.Provider
+    <PageLayoutComponentInstanceContext.Provider
+      value={{
+        instanceId: pageLayout.id,
+      }}
+    >
+      <TabListComponentInstanceContext.Provider
         value={{
-          instanceId: pageLayout.id,
+          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
         }}
       >
-        <TabListComponentInstanceContext.Provider
-          value={{
-            instanceId: getTabListInstanceIdFromPageLayoutId(pageLayout.id),
-          }}
-        >
-          <StyledTabList
-            tabs={pageLayout.tabs}
-            behaveAsLinks={false}
-            componentInstanceId={getTabListInstanceIdFromPageLayoutId(
-              pageLayout.id,
-            )}
-          />
-          <PageLayoutGridLayout />
-        </TabListComponentInstanceContext.Provider>
-      </PageLayoutComponentInstanceContext.Provider>
-    </>
+        <PageLayoutInitializationQueryEffect pageLayout={pageLayout} />
+        <PageLayoutRendererContent />
+      </TabListComponentInstanceContext.Provider>
+    </PageLayoutComponentInstanceContext.Provider>
   );
 };
