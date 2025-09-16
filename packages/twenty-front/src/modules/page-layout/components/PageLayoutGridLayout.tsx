@@ -149,7 +149,6 @@ export const PageLayoutGridLayout = () => {
               <WidgetPlaceholder
                 onClick={() => {
                   navigatePageLayoutCommandMenu({
-                    pageLayoutId: currentPageLayout.id,
                     commandMenuPage:
                       CommandMenuPages.PageLayoutWidgetTypeSelect,
                   });

@@ -1,8 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
+import { usePageLayoutIdFromContextStoreTargettedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargettedRecord';
 import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 import {
@@ -60,13 +59,7 @@ const graphTypeOptions = [
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const { closeCommandMenu } = useCommandMenu();
 
-  const pageLayoutId = useRecoilComponentValue(
-    contextStorePageLayoutIdComponentState,
-  );
-
-  if (!pageLayoutId) {
-    throw new Error('Page layout id is not defined');
-  }
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargettedRecord();
 
   const { createPageLayoutWidget } = useCreatePageLayoutWidget(pageLayoutId);
 

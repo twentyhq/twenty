@@ -44,7 +44,6 @@ export const useEndPageLayoutDragSelection = (
             set(pageLayoutDraggedAreaState, draggedBounds);
 
             navigatePageLayoutCommandMenu({
-              pageLayoutId,
               commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
             });
           }
@@ -55,7 +54,6 @@ export const useEndPageLayoutDragSelection = (
     [
       navigatePageLayoutCommandMenu,
       pageLayoutDraggedAreaState,
-      pageLayoutId,
       pageLayoutSelectedCellsState,
     ],
   );

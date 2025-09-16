@@ -1,9 +1,8 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useOpenPageLayoutCommandMenu';
+import { usePageLayoutIdFromContextStoreTargettedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargettedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
@@ -52,13 +51,7 @@ const widgetTypeOptions = [
 ];
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
-  const pageLayoutId = useRecoilComponentValue(
-    contextStorePageLayoutIdComponentState,
-  );
-
-  if (!pageLayoutId) {
-    throw new Error('Page layout id is not defined');
-  }
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargettedRecord();
 
   const setPageLayoutDraggedArea = useSetRecoilComponentState(
     pageLayoutDraggedAreaComponentState,
@@ -71,7 +64,6 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     switch (widgetType) {
       case WidgetType.GRAPH: {
         navigatePageLayoutCommandMenu({
-          pageLayoutId,
           commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
         });
 
@@ -79,7 +71,6 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       }
       case WidgetType.IFRAME: {
         navigatePageLayoutCommandMenu({
-          pageLayoutId,
           commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
         });
 

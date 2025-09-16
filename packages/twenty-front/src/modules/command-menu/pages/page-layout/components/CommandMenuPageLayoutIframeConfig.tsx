@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { contextStorePageLayoutIdComponentState } from '@/context-store/states/contextStorePageLayoutIdComponentState';
+import { usePageLayoutIdFromContextStoreTargettedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargettedRecord';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -36,13 +36,7 @@ const StyledButtonContainer = styled.div`
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
 
-  const pageLayoutId = useRecoilComponentValue(
-    contextStorePageLayoutIdComponentState,
-  );
-
-  if (!pageLayoutId) {
-    throw new Error('Page layout id is not defined');
-  }
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargettedRecord();
 
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);

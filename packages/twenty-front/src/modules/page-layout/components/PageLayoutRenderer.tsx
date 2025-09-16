@@ -1,4 +1,3 @@
-import { PageLayoutContextStoreEffect } from '@/page-layout/components/PageLayoutContextStoreEffect';
 import { PageLayoutInitializationEffect } from '@/page-layout/components/PageLayoutInitializationEffect';
 
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -23,7 +22,6 @@ type PageLayoutRendererProps = {
 export const PageLayoutRenderer = ({ pageLayout }: PageLayoutRendererProps) => {
   return (
     <>
-      <PageLayoutContextStoreEffect pageLayoutId={pageLayout.id} />
       <PageLayoutInitializationEffect pageLayout={pageLayout} />
       <PageLayoutComponentInstanceContext.Provider
         value={{

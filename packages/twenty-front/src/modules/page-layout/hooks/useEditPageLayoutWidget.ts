@@ -34,13 +34,12 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.IFRAME) {
         navigatePageLayoutCommandMenu({
-          pageLayoutId,
           commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
           pageTitle: 'Edit iFrame',
         });
       }
     },
-    [setPageLayoutEditingWidgetId, navigatePageLayoutCommandMenu, pageLayoutId],
+    [setPageLayoutEditingWidgetId, navigatePageLayoutCommandMenu],
   );
 
   return {
