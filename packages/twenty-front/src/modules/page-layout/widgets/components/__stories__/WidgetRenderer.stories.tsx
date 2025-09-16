@@ -1,3 +1,4 @@
+import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -7,7 +8,12 @@ import { WidgetType } from '~/generated/graphql';
 const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story, context) => (
+      <PageLayoutTestWrapper>{Story(context)}</PageLayoutTestWrapper>
+    ),
+    ComponentDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
