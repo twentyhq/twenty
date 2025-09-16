@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -31,7 +31,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ObjectMetadataServiceV2 {
   constructor(
-    private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -44,10 +44,12 @@ export class ObjectMetadataServiceV2 {
     updateObjectInput: UpdateOneObjectInput;
   }): Promise<ObjectMetadataDTO> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const {
       flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
@@ -106,10 +108,12 @@ export class ObjectMetadataServiceV2 {
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const updatedFlatObjectMetadata =
       recomputedFlatObjectMetadataMaps.byId[
@@ -142,10 +146,12 @@ export class ObjectMetadataServiceV2 {
     workspaceId: string;
   }): Promise<ObjectMetadataDTO> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const { flatFieldMetadatasToDelete, flatObjectMetadataToDelete } =
       fromDeleteObjectInputToFlatFieldMetadatasToDelete({
@@ -223,10 +229,12 @@ export class ObjectMetadataServiceV2 {
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const { flatObjectMetadataToCreate, relationTargetFlatFieldMetadatas } =
       fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
@@ -303,10 +311,12 @@ export class ObjectMetadataServiceV2 {
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatObjectMetadataMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const createdFlatObjectMetadata =
       recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id];

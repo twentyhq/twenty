@@ -12,14 +12,16 @@ import {
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
 
 @Injectable()
-export class FlatEntityMapsCacheService {
-  private readonly logger = new Logger(FlatEntityMapsCacheService.name);
+export class WorkspaceManyOrAllFlatEntityMapsCacheService {
+  private readonly logger = new Logger(
+    WorkspaceManyOrAllFlatEntityMapsCacheService.name,
+  );
 
   constructor(
     private readonly cacheRegistry: WorkspaceFlatMapCacheRegistryService,
   ) {}
 
-  public async getOrRecomputeAllFlatEntityMaps<
+  public async getOrRecomputeManyOrAllFlatEntityMaps<
     T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
   >({
     flatEntities,

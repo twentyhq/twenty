@@ -7,7 +7,7 @@ import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/registry/workspace-migration-runner-action-handler-registry.service';
@@ -15,7 +15,7 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 @Injectable()
 export class WorkspaceMigrationRunnerV2Service {
   constructor(
-    private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
@@ -24,13 +24,17 @@ export class WorkspaceMigrationRunnerV2Service {
   run = async ({
     actions,
     workspaceId,
+    relatedFlatEntityMapsKeys,
   }: WorkspaceMigrationV2): Promise<AllFlatEntityMaps> => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: relatedFlatEntityMapsKeys,
+        },
+      );
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

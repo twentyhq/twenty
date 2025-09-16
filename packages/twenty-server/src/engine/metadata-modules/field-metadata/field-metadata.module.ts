@@ -9,7 +9,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { FlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -31,12 +31,12 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -67,7 +67,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
         WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
-        FlatEntityMapsCacheModule,
+        WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

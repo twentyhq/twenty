@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -24,7 +24,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class ViewFieldV2Service {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async createOne({
@@ -38,14 +38,16 @@ export class ViewFieldV2Service {
       flatObjectMetadataMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-      workspaceId,
-      flatEntities: [
-        'flatObjectMetadataMaps',
-        'flatViewFieldMaps',
-        'flatViewMaps',
-      ],
-    });
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatEntities: [
+          'flatObjectMetadataMaps',
+          'flatViewFieldMaps',
+          'flatViewMaps',
+        ],
+      },
+    );
 
     const flatViewFieldToCreate =
       fromCreateViewFieldInputToFlatViewFieldToCreate({
@@ -87,10 +89,12 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatViewFieldMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps'],
+        },
+      );
 
     return findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToCreate.id,
@@ -106,10 +110,12 @@ export class ViewFieldV2Service {
     updateViewFieldInput: UpdateViewFieldInput;
   }): Promise<ViewFieldDTO> {
     const { flatViewFieldMaps: existingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatViewFieldMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
@@ -151,10 +157,12 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatViewFieldMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps'],
+        },
+      );
 
     return findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: optimisticallyUpdatedFlatView.id,
@@ -170,10 +178,12 @@ export class ViewFieldV2Service {
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
     const { flatViewFieldMaps: existingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatViewFieldMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewWithDeletedAt =
       fromDeleteViewFieldInputToFlatViewFieldOrThrow({
@@ -211,10 +221,12 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-        workspaceId,
-        flatEntities: ['flatViewFieldMaps'],
-      });
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps'],
+        },
+      );
 
     return findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: optimisticallyUpdatedFlatViewWithDeletedAt.id,
@@ -232,10 +244,13 @@ export class ViewFieldV2Service {
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
-      workspaceId,
-      flatEntities: ['flatViewFieldMaps', 'flatViewMaps'],
-    });
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatViewFieldMaps', 'flatViewMaps'],
+        },
+      );
 
     const existingViewFieldToDelete =
       fromDestroyViewFieldInputToFlatViewFieldOrThrow({
