@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-    WorkspaceMigrationRunnerActionHandler,
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -14,7 +14,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   'create_index',
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps(
-    args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateIndexAction>,
+    _args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateIndexAction>,
   ): Partial<AllFlatEntityMaps> {
     return {};
   }

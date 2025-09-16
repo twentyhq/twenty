@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-    WorkspaceMigrationRunnerActionHandler,
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -17,9 +17,9 @@ import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
-    collectEnumOperationsForObject,
-    EnumOperation,
-    executeBatchEnumOperations,
+  collectEnumOperationsForObject,
+  EnumOperation,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
 
 @Injectable()

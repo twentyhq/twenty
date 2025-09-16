@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import {
-    OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-    WorkspaceMigrationRunnerActionHandler,
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -19,9 +19,9 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 import {
-    collectEnumOperationsForField,
-    EnumOperation,
-    executeBatchEnumOperations,
+  collectEnumOperationsForField,
+  EnumOperation,
+  executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
 
 @Injectable()

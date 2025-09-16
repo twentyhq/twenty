@@ -14,7 +14,9 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 
 @Injectable()
-export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler('update_view') {
+export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
+  'update_view',
+) {
   constructor() {
     super();
   }
