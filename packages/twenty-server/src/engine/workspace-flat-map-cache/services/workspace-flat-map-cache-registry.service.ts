@@ -46,11 +46,4 @@ export class WorkspaceFlatMapCacheRegistryService implements OnModuleInit {
   ): WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>> | undefined {
     return this.cacheServiceMap.get(flatEntityName);
   }
-
-  getAllCacheServices(): Map<
-    keyof AllFlatEntityMaps,
-    WorkspaceFlatMapCacheService<FlatEntityMaps<AllFlatEntities>>
-  > {
-    return new Map(this.cacheServiceMap);
-  }
 }

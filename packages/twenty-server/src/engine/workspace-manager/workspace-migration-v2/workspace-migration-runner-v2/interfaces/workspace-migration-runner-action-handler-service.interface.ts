@@ -10,35 +10,40 @@ import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/work
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 export interface WorkspaceMigrationRunnerActionHandlerService<
-  T extends WorkspaceMigrationActionTypeV2,
+  TActionType extends WorkspaceMigrationActionTypeV2,
 > {
   execute(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>>;
 }
 
 export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
-  T extends WorkspaceMigrationActionV2,
-> = Pick<WorkspaceMigrationActionRunnerArgs<T>, 'allFlatEntityMaps' | 'action'>;
+  TActionType extends WorkspaceMigrationActionV2,
+> = Pick<
+  WorkspaceMigrationActionRunnerArgs<TActionType>,
+  'allFlatEntityMaps' | 'action'
+>;
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
-  T extends WorkspaceMigrationActionTypeV2,
-> implements WorkspaceMigrationRunnerActionHandlerService<T>
+  TActionType extends WorkspaceMigrationActionTypeV2,
+> implements WorkspaceMigrationRunnerActionHandlerService<TActionType>
 {
   abstract executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<void>;
 
   abstract executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<void>;
 
   abstract optimisticallyApplyActionOnAllFlatEntityMaps(
-    args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<ExtractAction<T>>,
+    args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
+      ExtractAction<TActionType>
+    >,
   ): Partial<AllFlatEntityMaps>;
 
   async execute(
-    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>> {
     await Promise.all([
       this.executeForMetadata(context),
@@ -53,9 +58,11 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 }
 
 export function WorkspaceMigrationRunnerActionHandler<
-  T extends WorkspaceMigrationActionTypeV2,
->(actionType: T): typeof BaseWorkspaceMigrationRunnerActionHandlerService<T> {
-  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<T> {}
+  TActionType extends WorkspaceMigrationActionTypeV2,
+>(
+  actionType: TActionType,
+): typeof BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<TActionType> {}
 
   SetMetadata(
     WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
