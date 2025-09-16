@@ -71,9 +71,9 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
+        key: FeatureFlagKey.IS_GROUP_BY_ENABLED,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();

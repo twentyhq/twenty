@@ -12,6 +12,14 @@ export type ObjectRecordFilter = Partial<{
   [Property in keyof ObjectRecord]: any;
 }>;
 
+export type ObjectRecordGroupBy = Partial<{
+  [Property in keyof ObjectRecord]:
+    | boolean
+    | {
+        [key: string]: boolean;
+      };
+}>;
+
 export enum OrderByDirection {
   AscNullsFirst = 'AscNullsFirst',
   AscNullsLast = 'AscNullsLast',
