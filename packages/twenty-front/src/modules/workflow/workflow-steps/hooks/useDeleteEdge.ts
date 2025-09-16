@@ -36,7 +36,7 @@ export const useDeleteEdge = () => {
           workflowVersionId,
           source,
           target,
-          sourceConnectionOptions: sourceConnectionOptions,
+          sourceConnectionOptions,
         })
       )?.data?.deleteWorkflowVersionEdge;
 
