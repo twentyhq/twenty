@@ -13,7 +13,6 @@ import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleOff } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
 type FormSelectFieldInputProps = {
@@ -92,11 +91,18 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
-  const emptyOption = {
-    label: `No ${label}`,
+  const defaultEmptyOption = {
+    label: `No ${label ?? 'value'}`,
     value: '',
-    Icon: IconCircleOff,
   };
+
+  const existingEmptyOption = options.find(
+    (option) => !isDefined(option.value) || option.value === '',
+  );
+
+  const optionsWithEmptyOption = isDefined(existingEmptyOption)
+    ? options
+    : [defaultEmptyOption, ...options];
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -132,10 +138,10 @@ export const FormSelectFieldInput = ({
         {draftValue.type === 'static' ? (
           <Select
             dropdownId={`${instanceId}-select-display`}
-            options={options}
+            options={optionsWithEmptyOption}
             value={selectedOption?.value}
             onChange={onSelect}
-            emptyOption={emptyOption}
+            emptyOption={existingEmptyOption ?? defaultEmptyOption}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
