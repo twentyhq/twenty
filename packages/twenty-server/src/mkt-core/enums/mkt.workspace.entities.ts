@@ -37,12 +37,14 @@ import { MktProductWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-prod
 import { MktValueWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-value.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant-attribute.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/product/objects/mkt-variant.workspace-entity';
+// MktUserWorkspaceEntity removed - using Person entity instead
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Customer
   MktCustomerWorkspaceEntity,
   MktTagWorkspaceEntity,
   MktCustomerTagWorkspaceEntity,
+  // User Management - using Person entity instead
   // Product
   MktProductWorkspaceEntity,
   MktAttributeWorkspaceEntity,

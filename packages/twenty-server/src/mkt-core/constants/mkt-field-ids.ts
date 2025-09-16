@@ -225,6 +225,32 @@ export const MKT_COMBO_VARIANT_FIELD_IDS = {
   searchVector: '89dd1f65-ac8e-4561-af0e-2cdd10987866',
 };
 
+export const MKT_USER_FIELD_IDS = {
+  firstName: 'e1fb85e8-bb6a-4f3d-9644-1b496dc4d193',
+  lastName: '9255547d-e6bb-48d0-8504-d7624b0fc831',
+  isEmailVerified: '474f3682-35ef-46ad-a634-f5585eecc850',
+  email: '0769fd73-8f45-4a32-b5b4-209400c072f1',
+  canImpersonate: 'b40a7768-cf54-4dec-9d8e-3e9c21d3364f',
+
+  // Thêm các trường vừa sửa/đồng bộ với entity
+  passwordHash: 'b2e1e7a1-2e3c-4b7a-9c1d-7e2f8e4a1b2c',
+  createdAt: 'a1b2c3d4-e5f6-7890-abcd-1234567890ef',
+  updatedAt: 'b3c4d5e6-f7a8-9012-bcde-2345678901fa',
+  deletedAt: 'c5d6e7f8-a9b0-1234-cdef-3456789012ab',
+  defaultAvatarUrl: 'd7e8f9a0-b1c2-3456-def0-4567890123bc',
+  locale: 'e9f0a1b2-c3d4-5678-f012-5678901234cd',
+  canAccessFullAdm: 'f1a2b3c4-d5e6-7890-0123-6789012345de',
+  disabled: 'a3b4c5d6-e7f8-9012-1234-7890123456ef',
+
+  canAdmin: '18b4a882-4941-4eb7-a938-d00436f9e8a7',
+  language: 'c26ab7d6-0c00-4fac-8022-f7d1a797cc50',
+  avatarUrl: '872e8b9b-65b3-4805-983f-71c4218e4b88',
+  status: '3b08d96d-9d6f-4809-bcf3-368386d96d01',
+
+  searchVector: 'f0e92f95-084f-4530-8511-632007b07515',
+  createdBy: '60f61f82-7c33-419f-93f8-5eeb4d43b30c',
+};
+
 export const MKT_ORDER_FIELD_IDS = {
   //fields
   name: 'a5faa4d8-e788-465f-811b-a311d07c0aa2',

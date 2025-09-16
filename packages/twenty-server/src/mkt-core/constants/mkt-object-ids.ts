@@ -56,4 +56,6 @@ export const MKT_OBJECT_IDS = {
   mktCustomer: '2c720af2-4412-4317-8a48-0acdaf66bc90',
   mktTag: '6d18dfa8-60f7-4057-8b3c-c0a5d7e7c35f',
   mktCustomerTag: '854cfe1c-9c77-4b71-8248-b5818037a474',
+  //user
+  mktUser: '3f9d2c8e-6a41-4c3d-9b71-12a8f53e7b29',
 };

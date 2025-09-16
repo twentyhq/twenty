@@ -20,7 +20,9 @@ import { Request, Response } from 'express';
 
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+@UseGuards(UserAuthGuard, WorkspaceAuthGuard)
 @Controller('api/files/invoice-files')
 export class InvoiceFileController {
   @UseGuards(PublicEndpointGuard)
