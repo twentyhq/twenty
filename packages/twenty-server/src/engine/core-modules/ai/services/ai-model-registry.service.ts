@@ -41,10 +41,10 @@ export class AiModelRegistryService {
       this.registerAnthropicModels();
     }
 
-    const grokApiKey = this.twentyConfigService.get('XAI_API_KEY');
+    const xaiApiKey = this.twentyConfigService.get('XAI_API_KEY');
 
-    if (grokApiKey) {
-      this.registerGrokModels();
+    if (xaiApiKey) {
+      this.registerXaiModels();
     }
 
     const openaiCompatibleBaseUrl = this.twentyConfigService.get(
@@ -90,12 +90,12 @@ export class AiModelRegistryService {
     });
   }
 
-  private registerGrokModels(): void {
-    const grokModels = AI_MODELS.filter(
+  private registerXaiModels(): void {
+    const xaiModels = AI_MODELS.filter(
       (model) => model.provider === ModelProvider.XAI,
     );
 
-    grokModels.forEach((modelConfig) => {
+    xaiModels.forEach((modelConfig) => {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         provider: ModelProvider.XAI,
