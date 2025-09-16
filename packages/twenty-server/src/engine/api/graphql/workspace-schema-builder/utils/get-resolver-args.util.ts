@@ -28,10 +28,6 @@ export const getResolverArgs = (
           type: GraphQLString,
           isNullable: true,
         },
-        limit: {
-          type: GraphQLInt,
-          isNullable: true,
-        },
         filter: {
           kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: true,
