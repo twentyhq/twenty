@@ -3,6 +3,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 export const FLAT_INDEX_METADATA_PROPERTIES_TO_COMPARE = [
   'indexType',
   'indexWhereClause',
+  'flatIndexFieldMetadatas',
   'isUnique',
   'name',
 ] as const satisfies (keyof FlatIndexMetadata)[];

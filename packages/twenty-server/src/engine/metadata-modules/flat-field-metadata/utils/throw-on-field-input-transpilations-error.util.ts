@@ -24,6 +24,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
       throw new WorkspaceMigrationBuilderExceptionV2(
         {
           report: {
+            index: [],
             view: [],
             viewField: [],
             objectMetadata: [

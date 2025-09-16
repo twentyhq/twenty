@@ -9,9 +9,11 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidObjectMetadatas: 0,
       invalidViews: 0,
       invalidViewFields: 0,
+      invalidIndexs: 0,
       totalErrors: 0,
     },
     errors: {
+      index: [],
       objectMetadata: [],
       view: [],
       viewField: [],

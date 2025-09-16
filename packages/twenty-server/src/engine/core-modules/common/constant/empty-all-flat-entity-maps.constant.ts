@@ -6,7 +6,6 @@ export const EMPTY_ALL_FLAT_ENTITY_MAPS = {
     ...EMPTY_FLAT_ENTITY_MAPS,
     idByNameSingular: {},
   },
-  flatIndexFieldMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatIndexMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatViewFieldMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatViewMaps: EMPTY_FLAT_ENTITY_MAPS,

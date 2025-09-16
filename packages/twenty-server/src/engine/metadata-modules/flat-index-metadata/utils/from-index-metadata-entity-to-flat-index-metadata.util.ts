@@ -17,8 +17,12 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
     universalIdentifier:
       indexMetadataEntityWithoutRelations.universalIdentifier ??
       indexMetadataEntityWithoutRelations.id,
-    flatIndexFieldMetadataIds: indexMetadataEntity.indexFieldMetadatas.map(
-      (indexFieldMetadata) => indexFieldMetadata.id,
+    flatIndexFieldMetadatas: indexMetadataEntity.indexFieldMetadatas.map(
+      (indexFieldMetadata) =>
+        removePropertiesFromRecord(indexFieldMetadata, [
+          'indexMetadata',
+          'fieldMetadata',
+        ]),
     ),
   };
 };
