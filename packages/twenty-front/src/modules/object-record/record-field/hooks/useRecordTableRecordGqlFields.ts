@@ -10,7 +10,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordTableRecordGqlFields = ({
+export const useRecordFieldGqlFields = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;

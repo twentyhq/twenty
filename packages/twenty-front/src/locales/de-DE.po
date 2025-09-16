@@ -2431,6 +2431,11 @@ msgstr "Beispieldatei herunterladen."
 msgid "Drop file here..."
 msgstr "Datei hier ablegen..."
 
+#. js-lingui-id: qaE1sk
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Duplicate node"
+msgstr ""
+
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"

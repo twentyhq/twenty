@@ -92,10 +92,10 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
-  const emptyOption = {
-    label: `No ${label}`,
+  const defaultEmptyOption = {
+    label: `No ${label ?? 'value'}`,
     value: '',
-    Icon: IconCircleOff,
+    icon: IconCircleOff,
   };
 
   const handleUnlinkVariable = () => {
@@ -135,7 +135,7 @@ export const FormSelectFieldInput = ({
             options={options}
             value={selectedOption?.value}
             onChange={onSelect}
-            emptyOption={emptyOption}
+            emptyOption={defaultEmptyOption}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput

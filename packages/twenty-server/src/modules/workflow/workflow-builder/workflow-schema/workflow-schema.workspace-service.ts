@@ -91,6 +91,40 @@ export class WorkflowSchemaWorkspaceService {
     }
   }
 
+  async enrichOutputSchema({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    // We don't enrich on the fly for code and HTTP request workflow actions.
+    // For code actions, OutputSchema is computed and updated when testing the serverless function.
+    // For HTTP requests and AI agent, OutputSchema is determined by the example response input
+    if (
+      [
+        WorkflowActionType.CODE,
+        WorkflowActionType.HTTP_REQUEST,
+        WorkflowActionType.AI_AGENT,
+      ].includes(step.type)
+    ) {
+      return step;
+    }
+
+    const result = { ...step };
+    const outputSchema = await this.computeStepOutputSchema({
+      step,
+      workspaceId,
+    });
+
+    result.settings = {
+      ...result.settings,
+      outputSchema: outputSchema || {},
+    };
+
+    return result;
+  }
+
   private async computeDatabaseEventTriggerOutputSchema({
     eventName,
     workspaceId,

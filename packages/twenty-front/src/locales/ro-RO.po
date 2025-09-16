@@ -2431,6 +2431,11 @@ msgstr "Descarcă fișierul de mostră."
 msgid "Drop file here..."
 msgstr "Trageți fișierul aici..."
 
+#. js-lingui-id: qaE1sk
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Duplicate node"
+msgstr ""
+
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Dutch"
