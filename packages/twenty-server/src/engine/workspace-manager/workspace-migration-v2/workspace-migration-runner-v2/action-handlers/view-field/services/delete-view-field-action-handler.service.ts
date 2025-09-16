@@ -22,7 +22,7 @@ export class DeleteViewFieldActionHandlerService extends WorkspaceMigrationRunne
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewFieldAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewFieldAction>): Partial<AllFlatEntityMaps> {
     const { flatViewFieldMaps } = allFlatEntityMaps;
     const { viewFieldId } = action;
 
@@ -32,7 +32,6 @@ export class DeleteViewFieldActionHandlerService extends WorkspaceMigrationRunne
     });
 
     return {
-      ...allFlatEntityMaps,
       flatViewFieldMaps: updatedFlatViewFieldMaps,
     };
   }

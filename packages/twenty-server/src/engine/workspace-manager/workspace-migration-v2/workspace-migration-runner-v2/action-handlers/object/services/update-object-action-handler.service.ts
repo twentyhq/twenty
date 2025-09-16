@@ -38,7 +38,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateObjectAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateObjectAction>): Partial<AllFlatEntityMaps> {
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
     const { objectMetadataId } = action;
 
@@ -60,7 +60,6 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       });
 
     return {
-      ...allFlatEntityMaps,
       flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
     };
   }

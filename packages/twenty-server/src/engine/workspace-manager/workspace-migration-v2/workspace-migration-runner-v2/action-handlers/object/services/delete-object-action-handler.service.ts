@@ -35,7 +35,7 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteObjectAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteObjectAction>): Partial<AllFlatEntityMaps> {
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
     const { objectMetadataId } = action;
 
@@ -46,7 +46,6 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       });
 
     return {
-      ...allFlatEntityMaps,
       flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
     };
   }

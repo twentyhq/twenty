@@ -70,7 +70,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateFieldAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateFieldAction>): Partial<AllFlatEntityMaps> {
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
     const { fieldMetadataId, objectMetadataId } = action;
 
@@ -100,7 +100,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       });
 
     return {
-      ...allFlatEntityMaps,
       flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
     };
   }

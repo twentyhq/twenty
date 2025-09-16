@@ -15,8 +15,8 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   optimisticallyApplyActionOnAllFlatEntityMaps(
     args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteIndexAction>,
-  ): AllFlatEntityMaps {
-    return args.allFlatEntityMaps;
+  ): Partial<AllFlatEntityMaps> {
+    return {};
   }
 
   async executeForMetadata(

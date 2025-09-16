@@ -8,7 +8,7 @@ import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
+import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/view-field-related-flat-entity-maps.type';
 
 type ViewFieldValidationArgs = {
   flatViewFieldToValidate: FlatViewField;

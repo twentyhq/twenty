@@ -22,7 +22,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateViewAction>): Partial<AllFlatEntityMaps> {
     const { flatViewMaps } = allFlatEntityMaps;
     const { view } = action;
 
@@ -32,7 +32,6 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     });
 
     return {
-      ...allFlatEntityMaps,
       flatViewMaps: updatedFlatViewMaps,
     };
   }

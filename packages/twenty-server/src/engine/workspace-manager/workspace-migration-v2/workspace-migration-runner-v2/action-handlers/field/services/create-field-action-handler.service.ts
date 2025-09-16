@@ -33,7 +33,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateFieldAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateFieldAction>): Partial<AllFlatEntityMaps> {
     const { flatObjectMetadataMaps } = allFlatEntityMaps;
     const updatedFlatObjectMetadataMaps =
       addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
@@ -42,7 +42,6 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       });
 
     return {
-      ...allFlatEntityMaps,
       flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
     };
   }

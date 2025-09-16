@@ -22,7 +22,7 @@ export class DeleteViewActionHandlerService extends WorkspaceMigrationRunnerActi
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewAction>): AllFlatEntityMaps {
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteViewAction>): Partial<AllFlatEntityMaps> {
     const { flatViewMaps } = allFlatEntityMaps;
     const { viewId } = action;
 
@@ -32,7 +32,6 @@ export class DeleteViewActionHandlerService extends WorkspaceMigrationRunnerActi
     });
 
     return {
-      ...allFlatEntityMaps,
       flatViewMaps: updatedFlatViewMaps,
     };
   }

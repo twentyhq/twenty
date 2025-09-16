@@ -14,7 +14,7 @@ export interface WorkspaceMigrationRunnerActionHandlerService<
 > {
   execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
-  ): Promise<AllFlatEntityMaps>;
+  ): Promise<Partial<AllFlatEntityMaps>>;
 }
 
 export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
@@ -35,11 +35,11 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   abstract optimisticallyApplyActionOnAllFlatEntityMaps(
     args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<ExtractAction<T>>,
-  ): AllFlatEntityMaps;
+  ): Partial<AllFlatEntityMaps>;
 
   async execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<T>>,
-  ): Promise<AllFlatEntityMaps> {
+  ): Promise<Partial<AllFlatEntityMaps>> {
     await Promise.all([
       this.executeForMetadata(context),
       this.executeForWorkspaceSchema(context),
