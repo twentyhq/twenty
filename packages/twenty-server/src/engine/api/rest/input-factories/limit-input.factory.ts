@@ -1,10 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
+import {
+  QUERY_DEFAULT_LIMIT_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+
 import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 
 @Injectable()
 export class LimitInputFactory {
-  create(request: RequestContext, defaultLimit = 60): number {
+  create(
+    request: RequestContext,
+    defaultLimit = QUERY_DEFAULT_LIMIT_RECORDS,
+  ): number {
     if (!request.query?.limit) {
       return defaultLimit;
     }
@@ -16,6 +24,6 @@ export class LimitInputFactory {
       );
     }
 
-    return limit;
+    return limit > QUERY_MAX_RECORDS ? QUERY_MAX_RECORDS : limit;
   }
 }
