@@ -14,6 +14,10 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MKT_ORGANIZATION_LEVEL_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  AccessLimitations,
+  DefaultPermissions,
+} from 'src/mkt-core/mkt-organization-level/types';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktOrganizationLevel,
@@ -68,7 +72,7 @@ export class MktOrganizationLevelWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.hierarchyLevel,
     type: FieldMetadataType.NUMBER,
     label: msg`Hierarchy Level`,
-    description: msg`Numeric hierarchy level (1 = highest)`,
+    description: msg`Numeric hierarchy level (1 = highest, max = 8)`,
     icon: 'IconStairs',
   })
   hierarchyLevel: number;
@@ -85,23 +89,23 @@ export class MktOrganizationLevelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.defaultPermissions,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.RAW_JSON,
     label: msg`Default Permissions`,
     description: msg`Default permissions for this level`,
     icon: 'IconLock',
   })
   @WorkspaceIsNullable()
-  defaultPermissions?: string;
+  defaultPermissions?: DefaultPermissions;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.accessLimitations,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.RAW_JSON,
     label: msg`Access Limitations`,
     description: msg`Access limitations for this level`,
     icon: 'IconShieldCheck',
   })
   @WorkspaceIsNullable()
-  accessLimitations?: string;
+  accessLimitations?: AccessLimitations;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.displayOrder,
