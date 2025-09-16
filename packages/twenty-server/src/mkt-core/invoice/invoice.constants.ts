@@ -130,11 +130,11 @@ export type GetInvoiceFileRequest = {
 };
 
 export enum SINVOICE_FILE_STATUS {
-  GETTING = 'GETTING',
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  ERROR = 'ERROR',
+  GETTING = 'GETTING', // Hệ thống đang lấy / tải file hóa đơn từ nguồn ngoài
+  PENDING = 'PENDING', // File đã được yêu cầu nhưng đang chờ xử lý (chưa bắt đầu tải hoặc xử lý)
+  SUCCESS = 'SUCCESS', // File đã được lấy thành công, sẵn sàng sử dụng
+  FAILED = 'FAILED', // Quá trình lấy file thất bại (nguyên nhân có thể do kết nối, không tìm thấy file, v.v.)
+  ERROR = 'ERROR', // Lỗi hệ thống hoặc ngoại lệ không mong muốn trong quá trình xử lý file
 }
 
 export const SINVOICE_FILE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
