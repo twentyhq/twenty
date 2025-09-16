@@ -92,13 +92,13 @@ export class AiModelRegistryService {
 
   private registerGrokModels(): void {
     const grokModels = AI_MODELS.filter(
-      (model) => model.provider === ModelProvider.GROK,
+      (model) => model.provider === ModelProvider.XAI,
     );
 
     grokModels.forEach((modelConfig) => {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
-        provider: ModelProvider.GROK,
+        provider: ModelProvider.XAI,
         model: xai(modelConfig.modelId) as unknown as LanguageModel,
       });
     });
@@ -227,7 +227,7 @@ export class AiModelRegistryService {
       case ModelProvider.ANTHROPIC:
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
-      case ModelProvider.GROK:
+      case ModelProvider.XAI:
         apiKey = this.twentyConfigService.get('XAI_API_KEY');
         break;
       case ModelProvider.OPENAI_COMPATIBLE:
