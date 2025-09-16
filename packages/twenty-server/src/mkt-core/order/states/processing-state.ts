@@ -19,8 +19,8 @@ export class ProcessingState extends OrderState {
 
   canTransitionTo(
     newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Processing can convert to Completed, Locked, Cancelled, Confirmed (trial to confirmed)
     return [

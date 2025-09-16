@@ -3,9 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ORDER_ACTION,
   ORDER_STATUS,
-} from '../constants/order-status.constants';
-import { MktOrderWorkspaceEntity } from '../objects/mkt-order.workspace-entity';
-import { OrderPayloadService } from '../services/order.payload.service';
+} from 'src/mkt-core/order/constants/order-status.constants';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/objects/mkt-order.workspace-entity';
+import { OrderPayloadService } from 'src/mkt-core/order/services/order.payload.service';
 
 describe('OrderPayloadService - Logic Tests', () => {
   let service: OrderPayloadService;

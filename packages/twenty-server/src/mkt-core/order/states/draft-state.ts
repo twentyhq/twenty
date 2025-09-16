@@ -19,8 +19,8 @@ export class DraftState extends OrderState {
 
   canTransitionTo(
     newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Draft can convert to Confirmed
     if (newStatus === ORDER_STATUS.CONFIRMED) {
@@ -36,7 +36,7 @@ export class DraftState extends OrderState {
   }
 
   getAction(
-    context: OrderStateContext,
+    _context: OrderStateContext,
     input: OrderStateInput,
   ): ORDER_ACTION | null {
     // FREE action when there is no change
