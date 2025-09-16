@@ -6,6 +6,7 @@ import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout
 import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
+import { checkWidgetsPermissions } from 'src/engine/core-modules/page-layout/utils/check-widget-permission.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -44,7 +45,8 @@ export class PageLayoutWidgetResolver {
     if (!userRole) {
       return widgets.map((widget) => ({
         ...widget,
-        hasAccess: false,
+        configuration: null,
+        canReadWidget: false,
       }));
     }
 
@@ -55,21 +57,7 @@ export class PageLayoutWidgetResolver {
 
     const userObjectPermissions = rolesPermissions[userRole.id] ?? {};
 
-    return widgets.map((widget) => {
-      let hasAccess = true;
-
-      if (widget.objectMetadataId) {
-        const objectPermission = userObjectPermissions[widget.objectMetadataId];
-
-        hasAccess = objectPermission?.canRead === true;
-      }
-
-      return {
-        ...widget,
-        configuration: hasAccess ? widget.configuration : null,
-        hasAccess,
-      };
-    });
+    return checkWidgetsPermissions(widgets, userObjectPermissions);
   }
 
   @Query(() => PageLayoutWidgetDTO)

@@ -26,7 +26,7 @@ export const WidgetRenderer = ({
   onEdit,
   onRemove,
 }: WidgetRendererProps) => {
-  const showRestrictedContent = widget.hasAccess === false;
+  const showRestrictedContent = widget.canReadWidget === false;
 
   return (
     <WidgetContainer>

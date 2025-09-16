@@ -13,7 +13,7 @@ describe('addWidgetToTab', () => {
     type: WidgetType.GRAPH,
     gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
     objectMetadataId: null,
-    hasAccess: true,
+    canReadWidget: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
     deletedAt: null,

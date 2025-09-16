@@ -10,7 +10,7 @@ describe('convertLayoutsToWidgets', () => {
       title: 'Widget 1',
       type: WidgetType.GRAPH,
       objectMetadataId: null,
-      hasAccess: true,
+      canReadWidget: true,
       gridPosition: {
         row: 0,
         column: 0,
@@ -31,7 +31,7 @@ describe('convertLayoutsToWidgets', () => {
       title: 'Widget 2',
       type: WidgetType.GRAPH,
       objectMetadataId: null,
-      hasAccess: true,
+      canReadWidget: true,
       gridPosition: {
         row: 0,
         column: 2,

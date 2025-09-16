@@ -13,6 +13,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       rowSpan
     }
     configuration
-    hasAccess
+    canReadWidget
   }
 `;

@@ -47,10 +47,10 @@ export class PageLayoutWidgetDTO {
   configuration: Record<string, unknown> | null;
 
   @Field(() => Boolean, {
-    description: 'Whether the user has access to view this widget content',
+    description: 'Whether the user can read this widget content',
     defaultValue: true,
   })
-  hasAccess?: boolean;
+  canReadWidget?: boolean;
 
   @Field()
   createdAt: Date;

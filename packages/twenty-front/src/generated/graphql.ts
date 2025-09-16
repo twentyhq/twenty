@@ -2484,12 +2484,12 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
+  /** Whether the user can read this widget content */
+  canReadWidget: Scalars['Boolean'];
   configuration?: Maybe<Scalars['JSON']>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
-  /** Whether the user has access to view this widget content */
-  hasAccess: Scalars['Boolean'];
   id: Scalars['UUID'];
   objectMetadataId?: Maybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];

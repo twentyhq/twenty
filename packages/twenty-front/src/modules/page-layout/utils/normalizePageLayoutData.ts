@@ -11,7 +11,7 @@ export const normalizePageLayoutData = (
       widgets: (tab.widgets || []).map((widget) => ({
         ...widget,
         data: undefined,
-        hasAccess: widget.hasAccess,
+        canReadWidget: widget.canReadWidget,
       })),
     })),
   };

@@ -55,7 +55,7 @@ export const useCreatePageLayoutIframeWidget = () => {
           },
           data: {},
           objectMetadataId: null,
-          hasAccess: true,
+          canReadWidget: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
