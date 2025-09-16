@@ -121,17 +121,31 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       return undefined;
     }
 
-    const validationResult =
-      this.flatIndexValidatorService.validateFlatIndexUpdate({
+    const deletionValidationResult =
+      this.flatIndexValidatorService.validateFlatIndexDeletion({
+        dependencyOptimisticFlatEntityMaps,
+        flatIndexToValidate: fromFlatIndex,
+        optimisticFlatIndexMaps,
+      });
+
+    if (deletionValidationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...deletionValidationResult,
+      };
+    }
+
+    const creationValidationResult =
+      this.flatIndexValidatorService.validateFlatIndexCreation({
         dependencyOptimisticFlatEntityMaps,
         flatIndexToValidate: toFlatIndex,
         optimisticFlatIndexMaps,
       });
 
-    if (validationResult.errors.length > 0) {
+    if (creationValidationResult.errors.length > 0) {
       return {
         status: 'fail',
-        ...validationResult,
+        ...creationValidationResult,
       };
     }
 

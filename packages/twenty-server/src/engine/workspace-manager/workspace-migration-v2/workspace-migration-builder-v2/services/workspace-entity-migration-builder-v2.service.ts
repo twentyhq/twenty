@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
