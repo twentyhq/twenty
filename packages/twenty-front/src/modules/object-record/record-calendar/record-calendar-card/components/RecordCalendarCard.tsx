@@ -5,14 +5,15 @@ import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
 `;
 
 const StyledRecordCard = styled(RecordCard)`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
   width: calc(100% - 2px);
 `;
 
@@ -22,6 +23,10 @@ type RecordCalendarCardProps = {
 
 export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
   const handleCardClick = () => {
     openRecordFromIndexView({ recordId });
@@ -36,10 +41,12 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
       <StyledContainer>
         <StyledRecordCard onClick={handleCardClick}>
           <RecordCalendarCardHeader recordId={recordId} />
-          <RecordCalendarCardBody
-            recordId={recordId}
-            isRecordReadOnly={false}
-          />
+          <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
+            <RecordCalendarCardBody
+              recordId={recordId}
+              isRecordReadOnly={false}
+            />
+          </AnimatedEaseInOut>
         </StyledRecordCard>
         <RecordCalendarCardCellHoveredPortal recordId={recordId} />
         <RecordCalendarCardCellEditModePortal recordId={recordId} />

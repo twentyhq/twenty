@@ -23,7 +23,7 @@ export const convertUpdateViewInputToCore = (
     ...(view.name && { name: view.name }),
     ...(view.icon && { icon: view.icon }),
     ...(view.position && { position: view.position }),
-    ...(view.isCompact && { isCompact: view.isCompact }),
+    ...(isDefined(view.isCompact) && { isCompact: view.isCompact }),
     ...(view.kanbanAggregateOperation && {
       kanbanAggregateOperation: view.kanbanAggregateOperation,
     }),
