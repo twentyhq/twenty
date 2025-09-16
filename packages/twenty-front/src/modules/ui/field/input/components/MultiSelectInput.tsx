@@ -31,6 +31,7 @@ type MultiSelectInputProps = {
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
   fieldName?: string;
+  ShowDropdownCreateNewOption?: boolean;
 };
 
 export const MultiSelectInput = ({
@@ -42,6 +43,7 @@ export const MultiSelectInput = ({
   onOptionSelected,
   dropdownWidth,
   fieldName = '',
+  ShowDropdownCreateNewOption = false,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -136,6 +138,7 @@ export const MultiSelectInput = ({
               name={searchFilter}
               fieldName={fieldName}
               isHasPermissionFlag={isHasPermissionFlag}
+              ShowDropdownCreateNewOption={ShowDropdownCreateNewOption}
             />
           ) : (
             filteredOptionsInDropDown.map((option) => {

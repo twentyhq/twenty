@@ -36,6 +36,7 @@ export const MultiSelectFieldInput = () => {
       onOptionSelected={handleOptionSelected}
       values={draftValue}
       fieldName={fieldDefinition.metadata.fieldName}
+      ShowDropdownCreateNewOption={true}
     />
   );
 };

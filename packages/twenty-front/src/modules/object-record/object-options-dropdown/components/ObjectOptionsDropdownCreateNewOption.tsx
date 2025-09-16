@@ -16,14 +16,21 @@ export const ObjectOptionsDropdownCreateNewOption = ({
   name,
   isHasPermissionFlag,
   fieldName,
+  ShowDropdownCreateNewOption = false,
 }: {
   name: string;
   isHasPermissionFlag: boolean;
   fieldName: string;
+  ShowDropdownCreateNewOption?: boolean;
 }) => {
   const navigateSettings = useNavigateSettings();
 
   const { objectNamePlural = '' } = useParams();
+
+  const ShowAddtOption =
+    name.trim().length > 0 &&
+    isHasPermissionFlag &&
+    ShowDropdownCreateNewOption;
 
   const handleRedirect = () => {
     navigateSettings(
@@ -39,7 +46,7 @@ export const ObjectOptionsDropdownCreateNewOption = ({
 
   return (
     <>
-      {isHasPermissionFlag ? (
+      {ShowAddtOption ? (
         <>
           <MenuItem text={t`No option found`} accent="placeholder" disabled />
           <DropdownMenuSeparator />
