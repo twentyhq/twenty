@@ -8,7 +8,7 @@ export const fromWorkspaceMigrationUpdateActionToPartialEntity = <
     | UpdateFieldAction
     | UpdateObjectAction
     | UpdateViewAction
-    | UpdateViewFieldAction
+    | UpdateViewFieldAction,
 >(
   action: T,
 ) => {

@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
