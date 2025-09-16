@@ -1,11 +1,11 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
+import { parseJson } from 'twenty-shared/utils';
 
 import { FLAT_INDEX_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-index-metadata/constants/flat-index-metadata-properties-to-compare.constant';
 import { type FlatIndexMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-properties-to-compare.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { parseJson } from 'twenty-shared/utils';
 
 export const compareTwoFlatIndexMetadata = ({
   fromFlatIndexMetadata,
@@ -44,7 +44,7 @@ export const compareTwoFlatIndexMetadata = ({
               property,
             };
           }
-          
+
           return {
             from: oldValue,
             to: value,

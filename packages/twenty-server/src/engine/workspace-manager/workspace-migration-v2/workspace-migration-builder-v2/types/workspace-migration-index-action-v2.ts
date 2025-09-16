@@ -12,7 +12,7 @@ export type DeleteIndexAction = {
 
 export type WorkspaceMigrationIndexActionV2 =
   | CreateIndexAction
-  | DeleteIndexAction
+  | DeleteIndexAction;
 
 export type WorkspaceMigrationIndexActionTypeV2 =
   WorkspaceMigrationIndexActionV2['type'];

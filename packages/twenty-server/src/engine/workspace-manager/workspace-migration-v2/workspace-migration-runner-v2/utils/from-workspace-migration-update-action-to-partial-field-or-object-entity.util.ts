@@ -10,7 +10,7 @@ export const fromWorkspaceMigrationUpdateActionToPartialEntity = <
     | UpdateObjectAction
     | UpdateViewAction
     | UpdateViewFieldAction
-    | UpdateIndexAction
+    | UpdateIndexAction,
 >(
   action: T,
 ) => {
