@@ -28,7 +28,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledGridContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.primary};
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
