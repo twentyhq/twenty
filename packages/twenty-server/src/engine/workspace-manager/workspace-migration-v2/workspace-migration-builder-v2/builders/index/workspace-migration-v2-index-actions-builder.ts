@@ -135,15 +135,12 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       };
     }
 
-    const updateIndexAction: UpdateIndexAction = {
-      type: 'update_view',
-      viewId: toFlatIndex.id,
-      updates: viewUpdatedProperties,
-    };
-
     return {
       status: 'success',
-      action: updateIndexAction,
+      action: [
+        getWorkspaceMigrationV2DeleteIndexAction(fromFlatIndex),
+        getWorkspaceMigrationV2CreateIndexAction(toFlatIndex),
+      ],
     };
   }
 }

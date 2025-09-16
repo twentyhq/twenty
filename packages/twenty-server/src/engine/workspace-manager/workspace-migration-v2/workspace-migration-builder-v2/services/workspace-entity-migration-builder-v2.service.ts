@@ -87,7 +87,7 @@ export type FlatEntityValidationReturnType<
 > =
   | {
       status: 'success';
-      action: TActions;
+      action: TActions | TActions[];
     }
   | ({
       status: 'fail';
@@ -148,7 +148,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.created.push(validationResult.action);
+      validateAndBuildResult.created.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     for (const flatEntityToDelete of buildOptions.inferDeletionFromMissingEntities
@@ -170,7 +174,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.deleted.push(validationResult.action);
+      validateAndBuildResult.created.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     for (const flatEntityUpdate of updated) {
@@ -194,7 +202,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.updated.push(validationResult.action);
+      validateAndBuildResult.created.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     if (validateAndBuildResult.failed.length > 0) {
