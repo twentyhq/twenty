@@ -20,8 +20,8 @@ export class TrialState extends OrderState {
 
   canTransitionTo(
     newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Trial có thể chuyển sang Confirmed, Processing
     return [ORDER_STATUS.CONFIRMED, ORDER_STATUS.PROCESSING].includes(
@@ -30,7 +30,7 @@ export class TrialState extends OrderState {
   }
 
   getAction(
-    context: OrderStateContext,
+    _context: OrderStateContext,
     input: OrderStateInput,
   ): ORDER_ACTION | null {
     // Trial -> Confirmed

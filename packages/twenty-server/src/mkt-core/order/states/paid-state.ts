@@ -21,8 +21,8 @@ export class PaidState extends OrderState {
 
   canTransitionTo(
     newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Paid can convert to Processing, Cancelled
     return [ORDER_STATUS.PROCESSING, ORDER_STATUS.CANCELLED].includes(
@@ -31,7 +31,7 @@ export class PaidState extends OrderState {
   }
 
   getAction(
-    context: OrderStateContext,
+    _context: OrderStateContext,
     input: OrderStateInput,
   ): ORDER_ACTION | null {
     // Paid -> Processing

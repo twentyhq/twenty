@@ -18,17 +18,17 @@ export class CompletedState extends OrderState {
   }
 
   canTransitionTo(
-    newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _newStatus: ORDER_STATUS,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Completed is the final state, cannot transition to any other state
     return false;
   }
 
   getAction(
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): ORDER_ACTION | null {
     // Completed has no action
     return null;
@@ -48,17 +48,17 @@ export class LockedState extends OrderState {
   }
 
   canTransitionTo(
-    newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _newStatus: ORDER_STATUS,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Locked is the final state, cannot transition to any other state
     return false;
   }
 
   getAction(
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): ORDER_ACTION | null {
     // Locked has no action
     return null;
@@ -78,17 +78,17 @@ export class CancelledState extends OrderState {
   }
 
   canTransitionTo(
-    newStatus: ORDER_STATUS,
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _newStatus: ORDER_STATUS,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): boolean {
     // Cancelled is the final state, cannot transition to any other state
     return false;
   }
 
   getAction(
-    context: OrderStateContext,
-    input: OrderStateInput,
+    _context: OrderStateContext,
+    _input: OrderStateInput,
   ): ORDER_ACTION | null {
     // Cancelled has no action
     return null;
