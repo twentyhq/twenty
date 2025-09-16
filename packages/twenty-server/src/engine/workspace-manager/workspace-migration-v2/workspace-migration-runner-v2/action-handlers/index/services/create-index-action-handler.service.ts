@@ -56,7 +56,25 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
     await indexMetadataRepository.save({
       createdAt,
-      indexFieldMetadatas: [], // TODO
+      indexFieldMetadatas: flatIndexFieldMetadatas.map(
+        ({
+          createdAt,
+          fieldMetadataId,
+          id,
+          indexMetadataId,
+          order,
+          universalIdentifier,
+          updatedAt,
+        }) => ({
+          createdAt,
+          fieldMetadataId,
+          id,
+          indexMetadataId,
+          order,
+          universalIdentifier,
+          updatedAt,
+        }),
+      ),
       id,
       indexType,
       indexWhereClause,
