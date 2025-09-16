@@ -410,11 +410,6 @@ msgstr "Afegeix Transferència"
 msgid "Add inputs to your form"
 msgstr "Afegeix elements d'entrada al teu formulari"
 
-#. js-lingui-id: rejvy6
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Add layout"
-msgstr "Afegeix disseny"
-
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -495,7 +490,7 @@ msgid "Add view"
 msgstr "Afegeix vista"
 
 #. js-lingui-id: iRpDWj
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Afegeix giny"
 
@@ -1466,6 +1461,11 @@ msgstr "Configureu com es mostren les dates a tota l'aplicació"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "Configura com hauríem de mostrar els teus esdeveniments al teu calendari"
+
+#. js-lingui-id: EZzl/g
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Configure iFrame"
+msgstr ""
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2509,6 +2509,11 @@ msgstr "Edita valors dels camps"
 msgid "Edit Fields"
 msgstr "Edita camps"
 
+#. js-lingui-id: WXPnsc
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+msgid "Edit iFrame"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2850,11 +2855,6 @@ msgstr "Excloure els correus electrònics no professionals"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Exclou les persones i dominis següents de la meva sincronització del correu electrònic. Les converses internes no s'importaran"
-
-#. js-lingui-id: uwM4yU
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Existing layouts"
-msgstr "Dissenys existents"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -4008,11 +4008,6 @@ msgstr "Iniciar"
 msgid "Layout"
 msgstr "Disseny"
 
-#. js-lingui-id: A/oBX5
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-msgid "Layout Name"
-msgstr "Nom del disseny"
-
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need calendar sync."
@@ -4342,7 +4337,6 @@ msgstr "ha de ser una matriu de correus electrònics vàlids"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5007,14 +5001,6 @@ msgstr "Camp de sortida {fieldNumber}"
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Override Draft"
 msgstr "Sobreescriu Esborrany"
-
-#. js-lingui-id: lXe6vt
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Page Layouts"
-msgstr "Dissenys de pàgina"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5904,6 +5890,11 @@ msgstr "Selecciona columna..."
 msgid "Select file"
 msgstr "Selecciona fitxer"
 
+#. js-lingui-id: i568hB
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Select Graph Type"
+msgstr ""
+
 #. js-lingui-id: llc/hA
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Group"
@@ -6016,7 +6007,6 @@ msgid "Setting up your database..."
 msgstr "Configurant la teva base de dades..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6468,11 +6458,6 @@ msgstr "Configuració del sistema - Diumenge"
 msgid "Table"
 msgstr "Taula"
 
-#. js-lingui-id: 38Or+7
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Tabs"
-msgstr ""
-
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -6834,7 +6819,6 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Configuració de l'autenticació de dos factors completada amb èxit!"
 
 #. js-lingui-id: +zy2Nq
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7224,11 +7208,6 @@ msgstr "Quan caducarà la clau de l'API."
 msgid "When the key will be disabled"
 msgstr "Quan serà desactivada la clau"
 
-#. js-lingui-id: tL6W2K
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Widgets"
-msgstr "Ginys"
-
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -7242,7 +7221,6 @@ msgstr "Fluxos de treball"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx

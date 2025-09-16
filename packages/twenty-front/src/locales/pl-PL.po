@@ -410,11 +410,6 @@ msgstr "Dodaj przekazanie"
 msgid "Add inputs to your form"
 msgstr "Dodaj pola do formularza"
 
-#. js-lingui-id: rejvy6
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Add layout"
-msgstr "Dodaj układ"
-
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -495,7 +490,7 @@ msgid "Add view"
 msgstr "Dodaj widok"
 
 #. js-lingui-id: iRpDWj
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Dodaj widget"
 
@@ -1466,6 +1461,11 @@ msgstr "Skonfiguruj sposób wyświetlania dat w aplikacji"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "Skonfiguruj sposób wyświetlania twoich wydarzeń w kalendarzu"
+
+#. js-lingui-id: EZzl/g
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Configure iFrame"
+msgstr ""
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2509,6 +2509,11 @@ msgstr "Edytuj wartości pól"
 msgid "Edit Fields"
 msgstr "Edytuj pola"
 
+#. js-lingui-id: WXPnsc
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+msgid "Edit iFrame"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2850,11 +2855,6 @@ msgstr "Wyklucz nieprofesjonalne emaile"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Wyklucz następujące osoby i domeny z synchronizacji mojej poczty. Rozmowy wewnętrzne nie będą importowane"
-
-#. js-lingui-id: uwM4yU
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Existing layouts"
-msgstr "Istniejące układy"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -4008,11 +4008,6 @@ msgstr "Uruchom"
 msgid "Layout"
 msgstr "Układ"
 
-#. js-lingui-id: A/oBX5
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-msgid "Layout Name"
-msgstr "Nazwa układu"
-
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need calendar sync."
@@ -4342,7 +4337,6 @@ msgstr "musi być tablicą prawidłowych adresów e-mail"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5007,14 +5001,6 @@ msgstr "Pole Wyjściowe {fieldNumber}"
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Override Draft"
 msgstr "Nadpisz roboczy"
-
-#. js-lingui-id: lXe6vt
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Page Layouts"
-msgstr "Układy strony"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5904,6 +5890,11 @@ msgstr "Wybierz kolumnę..."
 msgid "Select file"
 msgstr "Wybierz plik"
 
+#. js-lingui-id: i568hB
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Select Graph Type"
+msgstr ""
+
 #. js-lingui-id: llc/hA
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Group"
@@ -6016,7 +6007,6 @@ msgid "Setting up your database..."
 msgstr "Ustawianie twojej bazy danych..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6468,11 +6458,6 @@ msgstr "Ustawienia systemowe - Niedziela"
 msgid "Table"
 msgstr "Tabela"
 
-#. js-lingui-id: 38Or+7
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Tabs"
-msgstr ""
-
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -6834,7 +6819,6 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Konfiguracja uwierzytelniania dwuskładnikowego zakończona pomyślnie!"
 
 #. js-lingui-id: +zy2Nq
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7224,11 +7208,6 @@ msgstr "Data wygaśnięcia klucza API."
 msgid "When the key will be disabled"
 msgstr "Data wyłączenia klucza"
 
-#. js-lingui-id: tL6W2K
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Widgets"
-msgstr "Widgety"
-
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -7242,7 +7221,6 @@ msgstr "Przepływy pracy"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx

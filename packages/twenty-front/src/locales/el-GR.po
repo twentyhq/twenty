@@ -410,11 +410,6 @@ msgstr "Προσθήκη Χειρισμού"
 msgid "Add inputs to your form"
 msgstr "Προσθέστε εισόδους στη φόρμα σας"
 
-#. js-lingui-id: rejvy6
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Add layout"
-msgstr "Προσθήκη διάταξης"
-
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -495,7 +490,7 @@ msgid "Add view"
 msgstr "Προσθήκη προβολής"
 
 #. js-lingui-id: iRpDWj
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Προσθήκη widget"
 
@@ -1466,6 +1461,11 @@ msgstr "Ρυθμίστε πώς εμφανίζονται οι ημερομηνί
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "Διαμόρφωση του τρόπου εμφάνισης των γεγονότων στο ημερολόγιό σας"
+
+#. js-lingui-id: EZzl/g
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Configure iFrame"
+msgstr ""
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2509,6 +2509,11 @@ msgstr "Επεξεργασία τιμών πεδίων"
 msgid "Edit Fields"
 msgstr "Επεξεργασία πεδίων"
 
+#. js-lingui-id: WXPnsc
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+msgid "Edit iFrame"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2850,11 +2855,6 @@ msgstr "Εξαίρεση μη επαγγελματικών emails"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Εξαιρέστε τα παρακάτω άτομα και τομείς από τον συγχρονισμό ηλεκτρονικού ταχυδρομείου μου. Εσωτερικές συζητήσεις δεν θα εισαχθούν"
-
-#. js-lingui-id: uwM4yU
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Existing layouts"
-msgstr "Υπάρχουσες διατάξεις"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -4008,11 +4008,6 @@ msgstr "Έναρξη"
 msgid "Layout"
 msgstr "Διάταξη"
 
-#. js-lingui-id: A/oBX5
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-msgid "Layout Name"
-msgstr "Όνομα διάταξης"
-
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need calendar sync."
@@ -4342,7 +4337,6 @@ msgstr "πρέπει να είναι μια σειρά έγκυρων emails"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5007,14 +5001,6 @@ msgstr "Πεδίο Εξόδου {fieldNumber}"
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Override Draft"
 msgstr "Αντικατάσταση Προχείρου"
-
-#. js-lingui-id: lXe6vt
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Page Layouts"
-msgstr "Διατάξεις Σελίδας"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5904,6 +5890,11 @@ msgstr "Επιλέξτε στήλη..."
 msgid "Select file"
 msgstr "Επιλέξτε αρχείο"
 
+#. js-lingui-id: i568hB
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Select Graph Type"
+msgstr ""
+
 #. js-lingui-id: llc/hA
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Group"
@@ -6016,7 +6007,6 @@ msgid "Setting up your database..."
 msgstr "Ρύθμιση της βάσης δεδομένων σας..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6470,11 +6460,6 @@ msgstr "Ρυθμίσεις συστήματος - Κυριακή"
 msgid "Table"
 msgstr "Πίνακας"
 
-#. js-lingui-id: 38Or+7
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Tabs"
-msgstr ""
-
 #. js-lingui-id: orMfFk
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -6836,7 +6821,6 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Η εγκατάσταση δύο παραγοντικής ταυτοποίησης ολοκληρώθηκε με επιτυχία!"
 
 #. js-lingui-id: +zy2Nq
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -7226,11 +7210,6 @@ msgstr "Πότε θα λήξει το κλειδί API."
 msgid "When the key will be disabled"
 msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
 
-#. js-lingui-id: tL6W2K
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
-msgid "Widgets"
-msgstr "Γραφικά Στοιχεία"
-
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -7244,7 +7223,6 @@ msgstr "Ροές Εργασίας"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
