@@ -114,6 +114,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const { isValid, isSubmitting } = formConfig.formState;
   const canSave = isValid && !isSubmitting;
 
+
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {

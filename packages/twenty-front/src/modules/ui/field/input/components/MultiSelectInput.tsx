@@ -7,7 +7,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
-import { ObjectOptionsDropdownCreateNewOption } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCreateNewOption';
+
+import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -42,8 +43,8 @@ export const MultiSelectInput = ({
   onCancel,
   onOptionSelected,
   dropdownWidth,
-  fieldName = '',
-  ShowDropdownCreateNewOption = false,
+  fieldName,
+  ShowDropdownCreateNewOption,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -78,7 +79,7 @@ export const MultiSelectInput = ({
     }
   };
 
-  const isHasPermissionFlag = useHasPermissionFlag(
+  const hasCreateOptionPermission = useHasPermissionFlag(
     'DATA_MODEL' as PermissionFlagType,
   );
 
@@ -134,10 +135,10 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <ObjectOptionsDropdownCreateNewOption
+            <AddSelectOptionMenuItem
               name={searchFilter}
               fieldName={fieldName}
-              isHasPermissionFlag={isHasPermissionFlag}
+              hasCreateOptionPermission={hasCreateOptionPermission}
               ShowDropdownCreateNewOption={ShowDropdownCreateNewOption}
             />
           ) : (

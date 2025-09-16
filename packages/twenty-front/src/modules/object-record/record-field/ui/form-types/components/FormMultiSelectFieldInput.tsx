@@ -34,6 +34,7 @@ type FormMultiSelectFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   testId?: string;
+
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`

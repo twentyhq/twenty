@@ -6,39 +6,28 @@ import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const AddStyleContainer = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-};
-
-export const ObjectOptionsDropdownCreateNewOption = ({
+export const AddSelectOptionMenuItem = ({
   name,
-  isHasPermissionFlag,
+  hasCreateOptionPermission,
   fieldName,
-  ShowDropdownCreateNewOption = false,
+  ShowDropdownCreateNewOption,
 }: {
   name: string;
-  isHasPermissionFlag: boolean;
-  fieldName: string;
+  hasCreateOptionPermission: boolean;
+  fieldName?: string;
   ShowDropdownCreateNewOption?: boolean;
 }) => {
   const navigateSettings = useNavigateSettings();
-
   const { objectNamePlural = '' } = useParams();
 
-  const ShowAddtOption =
-    name.trim().length > 0 &&
-    isHasPermissionFlag &&
-    ShowDropdownCreateNewOption;
+  const ShowAddtOption = name.trim().length > 0 && hasCreateOptionPermission && ShowDropdownCreateNewOption;
 
   const handleRedirect = () => {
+    if (!fieldName || !objectNamePlural) return;
+    
     navigateSettings(
       SettingsPath.ObjectFieldEdit,
-      {
-        objectNamePlural,
-        fieldName,
-      },
+      { objectNamePlural, fieldName },
       undefined,
       { state: { CreateNewOption: name } },
     );
@@ -51,12 +40,8 @@ export const ObjectOptionsDropdownCreateNewOption = ({
           <MenuItem text={t`No option found`} accent="placeholder" disabled />
           <DropdownMenuSeparator />
           <MenuItem
-            text={
-              <div style={AddStyleContainer}>
-                <IconPlus size={14} />
-                Add "{name}" to options
-              </div>
-            }
+            text={`Add "${name}" to options`}
+            LeftIcon={IconPlus}
             onClick={handleRedirect}
           />
         </>
