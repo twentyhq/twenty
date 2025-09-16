@@ -8,7 +8,8 @@ import {
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { In } from 'typeorm';
 
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type DeleteIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
@@ -19,10 +20,16 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'delete_index',
 ) {
-  optimisticallyApplyActionOnAllFlatEntityMaps(
-    _args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteIndexAction>,
-  ): Partial<AllFlatEntityMaps> {
-    return {};
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps: { flatIndexMaps },
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<DeleteIndexAction>): Partial<AllFlatEntityMaps> {
+    return {
+      flatIndexMaps: deleteFlatEntityFromFlatEntityMapsOrThrow({
+        entityToDeleteId: action.flatIndexMetadataId,
+        flatEntityMaps: flatIndexMaps,
+      }),
+    };
   }
 
   async executeForMetadata(
@@ -46,15 +53,17 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   ): Promise<void> {
     const {
       action,
-      allFlatEntityMaps: { flatObjectMetadataMaps },
+      allFlatEntityMaps: { flatObjectMetadataMaps, flatIndexMaps },
       queryRunner,
       workspaceId,
     } = context;
 
-    // TODO find in cache
-    const flatIndexMetadataToDelete = {
-      id: action.flatIndexMetadataId,
-    } as FlatIndexMetadata;
+    const flatIndexMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: action.flatIndexMetadataId,
+        flatEntityMaps: flatIndexMaps,
+      },
+    );
 
     const flatObjectMetadata =
       findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
