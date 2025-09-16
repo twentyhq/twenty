@@ -1,15 +1,15 @@
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
+import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import { type ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
 
 import {
   cleanupViewFieldTestV2,
@@ -58,6 +58,7 @@ describe('View Field Resolver - Successful Create Operations - v2', () => {
 
   const successfulTestCases: EachTestingContext<TestContext>[] = [
     {
+      only: true,
       title: 'visible field with position and size',
       context: {
         viewFieldInput: (testSetup) => ({

@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Equal, Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { FlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
+import { DeleteViewInput } from 'src/engine/core-modules/view/dtos/inputs/delete-view.input';
+import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
@@ -33,8 +35,13 @@ export class ViewV2Service {
     private readonly flatEntityMapsCacheService: FlatEntityMapsCacheService,
   ) {}
 
-  async createOne(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
-    const { workspaceId } = viewData;
+  async createOne({
+    createViewInput,
+    workspaceId,
+  }: {
+    createViewInput: CreateViewInput;
+    workspaceId: string;
+  }): Promise<ViewEntity> {
 
     if (!isDefined(workspaceId)) {
       throw new ViewException(
@@ -57,8 +64,8 @@ export class ViewV2Service {
       });
 
     const flatViewFromCreateInput = fromPartialFlatViewToFlatViewWithDefault({
-      ...viewData,
-      universalIdentifier: viewData.universalIdentifier ?? v4(),
+      ...createViewInput,
+      workspaceId,
     });
 
     const toFlatViewMaps: FlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
@@ -102,24 +109,26 @@ export class ViewV2Service {
     return createdView;
   }
 
-  async updateOne(
-    id: string,
-    workspaceId: string,
-    updateData: Partial<ViewEntity>,
-  ): Promise<ViewEntity> {
+  async updateOne({
+    updateViewInput,
+    workspaceId,
+  }: {
+    updateViewInput: UpdateViewInput;
+    workspaceId: string;
+  }): Promise<ViewEntity> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
         flatEntities: ['flatViewMaps'],
       });
 
-    const existingView = existingFlatViewMaps.byId[id];
+    const existingView = existingFlatViewMaps.byId[updateViewInput.id];
 
     if (!isDefined(existingView)) {
       throw new ViewException(
         generateViewExceptionMessage(
           ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
+          updateViewInput.id,
         ),
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
@@ -128,14 +137,13 @@ export class ViewV2Service {
     const existingViewToUpdate = removePropertiesFromRecord(
       {
         ...existingView,
-        ...updateData,
+        ...updateViewInput,
       },
       VIEW_ENTITY_RELATION_PROPERTIES,
     );
 
     const flatViewFromUpdateInput = fromPartialFlatViewToFlatViewWithDefault({
       ...existingViewToUpdate,
-      universalIdentifier: existingViewToUpdate.universalIdentifier ?? '',
     });
 
     const fromFlatViewMaps = getSubFlatEntityMapsOrThrow({
@@ -173,27 +181,33 @@ export class ViewV2Service {
 
     const [updatedView] = await this.viewRepository.find({
       where: {
-        id: Equal(id),
+        id: Equal(updateViewInput.id),
       },
     });
 
     return updatedView;
   }
 
-  async deleteOne(id: string, workspaceId: string): Promise<boolean> {
+  async deleteOne({
+    deleteViewInput,
+    workspaceId,
+  }: {
+    deleteViewInput: DeleteViewInput;
+    workspaceId: string;
+  }): Promise<boolean> {
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeAllFlatEntityMaps({
         workspaceId,
         flatEntities: ['flatViewMaps'],
       });
 
-    const existingViewToDelete = existingFlatViewMaps.byId[id];
+    const existingViewToDelete = existingFlatViewMaps.byId[deleteViewInput.id];
 
     if (!isDefined(existingViewToDelete)) {
       throw new ViewException(
         generateViewExceptionMessage(
           ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
+          deleteViewInput.id,
         ),
         ViewExceptionCode.VIEW_NOT_FOUND,
       );
