@@ -56,8 +56,6 @@
         "claude-3-opus",
         "claude-3-sonnet",
         "claude-3-haiku",
-        "grok-1",
-        "grok-1.5",
         "grok-2",
         "grok-3",
         "grok-4"
