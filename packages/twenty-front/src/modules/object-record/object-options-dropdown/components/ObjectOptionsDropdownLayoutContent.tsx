@@ -116,10 +116,11 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(isDefaultView ? [] : [ViewType.Kanban]),
     ...(!isDefaultView && hasCalendarViewEnabled ? [ViewType.Calendar] : []),
     ViewOpenRecordInType.SIDE_PANEL,
-    ...(currentView?.type === ViewType.Kanban ? ['Group', 'Compact view'] : []),
+    ...(currentView?.type === ViewType.Kanban ? ['Group'] : []),
     ...(currentView?.type === ViewType.Calendar
       ? ['CalendarView', 'CalendarDateField']
       : []),
+    ...(currentView?.type !== ViewType.Table ? ['Compact view'] : []),
   ];
 
   const selectedItemId = useRecoilComponentValue(
@@ -273,53 +274,52 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               />
             </SelectableListItem>
             {currentView?.type === ViewType.Kanban && (
-              <>
-                <SelectableListItem
-                  itemId="Group"
-                  onEnter={() => {
+              <SelectableListItem
+                itemId="Group"
+                onEnter={() => {
+                  isDefined(recordGroupFieldMetadata)
+                    ? onContentChange('recordGroups')
+                    : onContentChange('recordGroupFields');
+                }}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'Group'}
+                  onClick={() =>
                     isDefined(recordGroupFieldMetadata)
                       ? onContentChange('recordGroups')
-                      : onContentChange('recordGroupFields');
-                  }}
-                >
-                  <MenuItem
-                    focused={selectedItemId === 'Group'}
-                    onClick={() =>
-                      isDefined(recordGroupFieldMetadata)
-                        ? onContentChange('recordGroups')
-                        : onContentChange('recordGroupFields')
-                    }
-                    LeftIcon={IconLayoutList}
-                    text={t`Group`}
-                    contextualText={recordGroupFieldMetadata?.label}
-                    hasSubMenu
-                  />
-                </SelectableListItem>
-
-                <SelectableListItem
-                  itemId="Compact view"
-                  onEnter={() => {
+                      : onContentChange('recordGroupFields')
+                  }
+                  LeftIcon={IconLayoutList}
+                  text={t`Group`}
+                  contextualText={recordGroupFieldMetadata?.label}
+                  hasSubMenu
+                />
+              </SelectableListItem>
+            )}
+            {currentView?.type !== ViewType.Table && (
+              <SelectableListItem
+                itemId="Compact view"
+                onEnter={() => {
+                  setAndPersistIsCompactModeActive(
+                    !isCompactModeActive,
+                    currentView,
+                  );
+                }}
+              >
+                <MenuItemToggle
+                  focused={selectedItemId === 'Compact view'}
+                  LeftIcon={IconBaselineDensitySmall}
+                  onToggleChange={() =>
                     setAndPersistIsCompactModeActive(
                       !isCompactModeActive,
                       currentView,
-                    );
-                  }}
-                >
-                  <MenuItemToggle
-                    focused={selectedItemId === 'Compact view'}
-                    LeftIcon={IconBaselineDensitySmall}
-                    onToggleChange={() =>
-                      setAndPersistIsCompactModeActive(
-                        !isCompactModeActive,
-                        currentView,
-                      )
-                    }
-                    toggled={isCompactModeActive}
-                    text={t`Compact view`}
-                    toggleSize="small"
-                  />
-                </SelectableListItem>
-              </>
+                    )
+                  }
+                  toggled={isCompactModeActive}
+                  text={t`Compact view`}
+                  toggleSize="small"
+                />
+              </SelectableListItem>
             )}
           </DropdownMenuItemsContainer>
         </SelectableList>

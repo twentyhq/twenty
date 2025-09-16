@@ -1,8 +1,11 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -30,12 +33,19 @@ export const RecordCalendarCardHeader = ({
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const [isCompactModeActive] = useRecoilComponentState(
+    isRecordBoardCompactModeActiveComponentState,
+    recordIndexId,
+  );
+
   if (!isDefined(record)) {
     return null;
   }
 
   return (
-    <RecordCardHeaderContainer isCompact={true}>
+    <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
           <RecordChip
