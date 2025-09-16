@@ -115,9 +115,20 @@ export class MktOrderUpdateOnePreQueryHook
     //this.logger.log(`Validating updatedAt for order ${orderId}`);
     //await this.validateUpdatedAtOrThrow(input, currentOrder);
 
+    // Validate action - throw error if null (invalid state transition)
+    if (!action) {
+      const currentStatus = currentOrder?.status || 'null';
+      const targetStatus = input?.status || 'null';
+
+      throw new Error(
+        `Invalid state transition: Cannot transition from ${currentStatus} to ${targetStatus}. This transition is not allowed by business rules.`,
+      );
+    }
+
     const newPayload = await this.orderPayloadService.getNewPayload(
       payload,
       action,
+      currentOrder,
     );
 
     return {
