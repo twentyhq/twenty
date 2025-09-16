@@ -46,7 +46,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     >
   > {
     const validationResult =
-      await this.flatIndexValidatorService.validateFlatIndexCreation({
+      this.flatIndexValidatorService.validateFlatIndexCreation({
         dependencyOptimisticFlatEntityMaps,
         flatIndexToValidate,
         optimisticFlatIndexMaps,
