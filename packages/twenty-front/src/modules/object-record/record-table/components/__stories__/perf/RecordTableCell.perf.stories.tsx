@@ -174,7 +174,6 @@ const meta: Meta = {
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
-                    onCellMouseEnter: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider

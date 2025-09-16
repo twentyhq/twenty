@@ -17,6 +17,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
+import { GraphWidgetChartContainer } from './GraphWidgetChartContainer';
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
@@ -39,20 +40,6 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: center;
   width: 100%;
-`;
-
-const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
-  flex: 1;
-  position: relative;
-  width: 100%;
-
-  ${({ $isClickable }) =>
-    $isClickable &&
-    `
-    svg g path[fill^="url(#"] {
-      cursor: pointer;
-    }
-  `}
 `;
 
 export const GraphWidgetPieChart = ({
@@ -198,7 +185,10 @@ export const GraphWidgetPieChart = ({
 
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer $isClickable={hasClickableItems}>
+      <GraphWidgetChartContainer
+        $isClickable={hasClickableItems}
+        $cursorSelector='svg g path[fill^="url(#"]'
+      >
         <ResponsivePie
           data={data}
           innerRadius={0.8}
@@ -214,7 +204,7 @@ export const GraphWidgetPieChart = ({
           fill={fill}
           layers={['arcs', renderSliceEndLines]}
         />
-      </StyledChartContainer>
+      </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend}
         items={enrichedData.map((item) => ({

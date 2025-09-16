@@ -27,6 +27,10 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledNavigationButton = styled(Button)`
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledLeftSection = styled.div`
   display: flex;
   align-items: center;
@@ -37,6 +41,7 @@ const StyledNavigationSection = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-end;
 `;
 
 export const RecordCalendarTopBar = () => {
@@ -119,6 +124,8 @@ export const RecordCalendarTopBar = () => {
                 isDateTimeInput={false}
                 onChange={handleDateChange}
                 onClose={handleDateChange}
+                onEnter={handleDateChange}
+                onEscape={handleDateChange}
                 clearable={false}
                 hideHeaderInput
               />
@@ -129,7 +136,7 @@ export const RecordCalendarTopBar = () => {
       </StyledLeftSection>
 
       <StyledNavigationSection>
-        <Button
+        <StyledNavigationButton
           size="small"
           variant="tertiary"
           Icon={IconChevronLeft}
@@ -141,7 +148,7 @@ export const RecordCalendarTopBar = () => {
           title="Today"
           onClick={handleTodayClick}
         />
-        <Button
+        <StyledNavigationButton
           size="small"
           variant="tertiary"
           Icon={IconChevronRight}
