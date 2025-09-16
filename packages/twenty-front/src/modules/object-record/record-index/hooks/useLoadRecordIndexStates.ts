@@ -7,7 +7,6 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -29,9 +28,6 @@ export const useLoadRecordIndexStates = () => {
   const setContextStoreTargetedRecordsRuleComponentState =
     useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
 
-  const setRecordIndexIsCompactModeActive = useSetRecoilState(
-    recordIndexIsCompactModeActiveState,
-  );
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
   const setRecordIndexOpenRecordIn = useSetRecoilState(
     recordIndexOpenRecordInState,
@@ -204,7 +200,6 @@ export const useLoadRecordIndexStates = () => {
             : view.kanbanAggregateOperation,
           fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
         });
-        setRecordIndexIsCompactModeActive(view.isCompact);
       },
     [
       onViewFieldsChange,
@@ -215,7 +210,6 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexViewKanbanFieldMetadataIdState,
       setRecordIndexCalendarFieldMetadataIdState,
       setRecordIndexViewKanbanAggregateOperationState,
-      setRecordIndexIsCompactModeActive,
     ],
   );
 

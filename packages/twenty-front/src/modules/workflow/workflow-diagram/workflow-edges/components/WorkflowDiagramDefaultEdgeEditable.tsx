@@ -11,6 +11,7 @@ import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-di
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
@@ -93,6 +94,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
     });
   };
 
@@ -101,9 +105,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
     await deleteEdge({
       source,
-      sourceHandle: sourceHandleId,
       target,
-      targetHandle: targetHandleId,
+      sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
     });
   };
 

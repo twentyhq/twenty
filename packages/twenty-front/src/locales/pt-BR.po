@@ -305,7 +305,6 @@ msgstr "URL ACS copiado para a área de transferência"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
 msgid "Action"
 msgstr "Ação"
 
@@ -366,11 +365,6 @@ msgstr "Adicionar um Trigger"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Adicionar conta"
-
-#. js-lingui-id: 27lqO4
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable.tsx
-msgid "Add an Action"
-msgstr ""
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -4106,7 +4100,6 @@ msgid "Look up users to impersonate them."
 msgstr "Procure usuários para personificá-los."
 
 #. js-lingui-id: tL2lBI
-#: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
 msgstr ""
