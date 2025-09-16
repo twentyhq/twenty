@@ -23,8 +23,11 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
@@ -43,6 +46,7 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
+  const navigate = useNavigate();
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -59,7 +63,9 @@ export const SettingsObjectFieldEdit = () => {
 
   const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
     null,
-  );
+  ); 
+
+  const [memorizedUrl, setNavigationMemorizedUrl] = useRecoilState(navigationMemorizedUrlState);
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
@@ -106,7 +112,6 @@ export const SettingsObjectFieldEdit = () => {
   ) => {
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
-
     try {
       if (
         formValues.type === FieldMetadataType.RELATION &&
@@ -140,10 +145,15 @@ export const SettingsObjectFieldEdit = () => {
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
-
-        navigateSettings(SettingsPath.ObjectDetail, {
+        if (formValues.type === FieldMetadataType.MULTI_SELECT && memorizedUrl.length > 0){
+          navigate(memorizedUrl , { replace: true })
+          setNavigationMemorizedUrl("")
+        }
+        else {
+          navigateSettings(SettingsPath.ObjectDetail, {
           objectNamePlural,
         });
+      }
       }
     } catch (error) {
       enqueueErrorSnackBar({
