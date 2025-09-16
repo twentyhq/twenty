@@ -57,7 +57,9 @@ export const CommandMenuPageLayoutIframeConfig = () => {
 
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);
+
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
       pageLayoutEditingWidgetIdComponentState,
@@ -69,14 +71,18 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   );
 
   const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+
   const editingWidget = allWidgets.find(
     (w) => w.id === pageLayoutEditingWidgetId,
   );
   const isEditMode = !!editingWidget;
 
   const [title, setTitle] = useState(editingWidget?.title || '');
+
   const configUrl = editingWidget?.configuration?.url;
+
   const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
+
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
@@ -113,6 +119,7 @@ export const CommandMenuPageLayoutIframeConfig = () => {
           url: url.trim(),
         },
       });
+
       setPageLayoutEditingWidgetId(null);
     } else {
       createPageLayoutIframeWidget(title.trim(), url.trim());
