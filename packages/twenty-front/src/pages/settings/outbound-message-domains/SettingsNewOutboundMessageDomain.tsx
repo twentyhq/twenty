@@ -26,11 +26,6 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-type FormValues = {
-  domain: string;
-  driver: OutboundMessageDomainDriver;
-};
-
 type FieldErrors = Partial<
   Record<keyof SettingsOutboundMessageDomainFormValues, string>
 >;
@@ -39,10 +34,11 @@ export const SettingsNewOutboundMessageDomain = () => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [formValues, setFormValues] = useState<FormValues>({
-    driver: OutboundMessageDomainDriver.AWS_SES,
-    domain: '',
-  });
+  const [formValues, setFormValues] =
+    useState<SettingsOutboundMessageDomainFormValues>({
+      driver: OutboundMessageDomainDriver.AWS_SES,
+      domain: '',
+    });
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +51,7 @@ export const SettingsNewOutboundMessageDomain = () => {
     const result =
       settingsOutboundMessageDomainFormSchema.safeParse(formValues);
 
-    return result.success;
+    if (!result.success) {
       setFieldErrors(result.error?.flatten().fieldErrors as FieldErrors);
       return false;
     }
@@ -65,7 +61,7 @@ export const SettingsNewOutboundMessageDomain = () => {
   };
 
   const handleFieldChange = (
-    field: keyof FormValues,
+    field: keyof SettingsOutboundMessageDomainFormValues,
     value: string | OutboundMessageDomainDriver,
   ) => {
     setFormValues((prev) => ({
