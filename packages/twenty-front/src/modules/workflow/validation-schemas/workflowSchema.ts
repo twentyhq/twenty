@@ -151,6 +151,33 @@ export const workflowFilterActionSettingsSchema =
     }),
   });
 
+export const workflowIteratorActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      items: z
+        .union([
+          z.array(
+            z.union([
+              z.string(),
+              z.number(),
+              z.boolean(),
+              z.null(),
+              z.record(z.any()),
+              z.any(),
+            ]),
+          ),
+          z.string(),
+        ])
+        .optional(),
+      initialLoopStepIds: z.array(z.string()).optional(),
+    }),
+  });
+
+export const workflowEmptyActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({}),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -206,6 +233,16 @@ export const workflowAiAgentActionSchema = baseWorkflowActionSchema.extend({
 export const workflowFilterActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('FILTER'),
   settings: workflowFilterActionSettingsSchema,
+});
+
+export const workflowIteratorActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('ITERATOR'),
+  settings: workflowIteratorActionSettingsSchema,
+});
+
+export const workflowEmptyActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('EMPTY'),
+  settings: workflowEmptyActionSettingsSchema,
 });
 
 // Combined action schema
