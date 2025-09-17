@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledShimmerEffect = styled.div`
+const StyledShimmeringText = styled.div`
   background: ${({ theme }) => theme.font.color.light}
     linear-gradient(
       90deg,
@@ -26,13 +26,16 @@ const StyledShimmerEffect = styled.div`
   }
 `;
 
-type ShimmerProps = {
+export const ShimmeringText = ({
+  children,
+  className,
+}: {
   children: React.ReactNode;
   className?: string;
-};
-
-export const Shimmer = ({ children, className }: ShimmerProps) => {
+}) => {
   return (
-    <StyledShimmerEffect className={className}>{children}</StyledShimmerEffect>
+    <StyledShimmeringText className={className}>
+      {children}
+    </StyledShimmeringText>
   );
 };

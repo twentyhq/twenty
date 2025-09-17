@@ -68,12 +68,11 @@ export type Agent = {
 
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
-  content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
+  rawContent?: Maybe<Scalars['String']>;
   role: Scalars['String'];
-  streamData?: Maybe<Scalars['String']>;
   threadId: Scalars['UUID'];
 };
 

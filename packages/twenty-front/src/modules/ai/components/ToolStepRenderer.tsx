@@ -5,12 +5,13 @@ import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
-import { Shimmer } from '@/ai/components/ShimmerEffect';
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import type {
   ToolCallEvent,
   ToolEvent,
   ToolResultEvent,
 } from '@/ai/types/streamTypes';
+import { extractErrorMessage } from '@/ai/utils/extractErrorMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 
 const StyledContainer = styled.div`
@@ -96,11 +97,11 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
-          <Shimmer>
+          <ShimmeringText>
             <StyledDisplayMessage>
               {toolCall.args.loadingMessage}
             </StyledDisplayMessage>
-          </Shimmer>
+          </ShimmeringText>
         </StyledLoadingContainer>
       </StyledContainer>
     );
@@ -138,7 +139,7 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
           <StyledContentContainer>
             {isStandardizedFormat ? (
               <>
-                {hasError && <div>{toolOutput.error}</div>}
+                {hasError && <div>{extractErrorMessage(toolOutput.error)}</div>}
                 {hasResult && (
                   <div>
                     <StyledPre>

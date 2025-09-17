@@ -172,10 +172,10 @@ export const AIChatMessage = ({
           >
             {message.role === AgentChatMessageRole.ASSISTANT ? (
               <AIChatAssistantMessageRenderer
-                streamData={message.streamData || agentStreamingMessage}
+                streamData={message.rawContent || agentStreamingMessage}
               />
             ) : (
-              message.content
+              message.rawContent
             )}
           </StyledMessageText>
           {message.files.length > 0 && (
@@ -185,7 +185,7 @@ export const AIChatMessage = ({
               ))}
             </StyledFilesContainer>
           )}
-          {message.content && (
+          {message.rawContent && (
             <StyledMessageFooter className="message-footer">
               <span>
                 {beautifyPastDateRelativeToNow(
@@ -193,7 +193,7 @@ export const AIChatMessage = ({
                   localeCatalog,
                 )}
               </span>
-              <LightCopyIconButton copyText={message.content} />
+              <LightCopyIconButton copyText={message.rawContent} />
             </StyledMessageFooter>
           )}
         </StyledMessageContainer>

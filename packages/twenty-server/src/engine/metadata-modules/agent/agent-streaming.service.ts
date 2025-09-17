@@ -46,7 +46,6 @@ export class AgentStreamingService {
     res,
   }: StreamAgentChatOptions) {
     let rawStreamString = '';
-    let aiResponse = '';
 
     try {
       const thread = await this.threadRepository.findOne({
@@ -79,10 +78,6 @@ export class AgentStreamingService {
 
       for await (const chunk of fullStream) {
         rawStreamString += JSON.stringify(chunk) + '\n';
-
-        if (chunk.type === 'text-delta') {
-          aiResponse += chunk.text;
-        }
 
         this.sendStreamEvent(
           res,
@@ -123,15 +118,14 @@ export class AgentStreamingService {
     await this.agentChatService.addMessage({
       threadId,
       role: AgentChatMessageRole.USER,
-      content: userMessage,
+      rawContent: userMessage,
       fileIds,
     });
 
     await this.agentChatService.addMessage({
       threadId,
       role: AgentChatMessageRole.ASSISTANT,
-      content: aiResponse,
-      streamData: rawStreamString.trim() || null,
+      rawContent: rawStreamString.trim() || null,
     });
 
     res.end();

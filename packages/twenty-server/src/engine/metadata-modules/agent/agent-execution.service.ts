@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Readable } from 'stream';
-
 import {
+  CoreMessage,
   type CoreUserMessage,
   type FilePart,
   type ImagePart,
@@ -238,7 +237,7 @@ export class AgentExecutionService {
       filename,
       file.workspaceId,
     );
-    const fileBuffer = await streamToBuffer(fileStream as Readable);
+    const fileBuffer = await streamToBuffer(fileStream);
 
     if (file.type.startsWith('image')) {
       return {
@@ -246,33 +245,31 @@ export class AgentExecutionService {
         image: fileBuffer,
         mediaType: file.type,
       };
-    } else {
-      return {
-        type: 'file',
-        data: fileBuffer,
-        mediaType: file.type,
-      };
     }
+
+    return {
+      type: 'file',
+      data: fileBuffer,
+      mediaType: file.type,
+    };
   }
 
   private mapMessagesToCoreMessages(
     messages: AgentChatMessageEntity[],
   ): ModelMessage[] {
     return messages
-      .map(({ role, streamData, content }) => {
+      .map(({ role, rawContent }): CoreMessage => {
         if (role === AgentChatMessageRole.USER) {
           return {
-            role: 'user' as const,
-            content,
-          };
-        } else {
-          return {
-            role: 'assistant' as const,
-            content: constructAssistantMessageContentFromStream(
-              streamData ?? '',
-            ),
+            role: 'user',
+            content: rawContent ?? '',
           };
         }
+
+        return {
+          role: 'assistant',
+          content: constructAssistantMessageContentFromStream(rawContent ?? ''),
+        };
       })
       .filter((message) => message.content.length > 0);
   }

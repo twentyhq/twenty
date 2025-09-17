@@ -48,23 +48,48 @@ const StyledToolCallContainer = styled.div`
   }
 `;
 
+const LoadingDotsIcon = () => {
+  const theme = useTheme();
+
+  return (
+    <StyledDotsIconContainer>
+      <StyledDotsIcon size={theme.icon.size.xl} />
+    </StyledDotsIconContainer>
+  );
+};
+
 export const AIChatAssistantMessageRenderer = ({
   streamData,
 }: {
   streamData: string;
 }) => {
   const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
-  const isStreaming = Boolean(agentStreamingMessage);
+  const isStreaming =
+    Boolean(agentStreamingMessage) && streamData === agentStreamingMessage;
+
+  if (!streamData) {
+    return <LoadingDotsIcon />;
+  }
+
+  const isPlainString =
+    !streamData.includes('\n') ||
+    !streamData.split('\n').some((line) => {
+      try {
+        JSON.parse(line);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+  if (isPlainString) {
+    return <LazyMarkdownRenderer text={streamData} />;
+  }
 
   const steps = parseStream(streamData);
-  const theme = useTheme();
 
-  if (!streamData || !steps.length) {
-    return (
-      <StyledDotsIconContainer>
-        <StyledDotsIcon size={theme.icon.size.xl} />
-      </StyledDotsIconContainer>
-    );
+  if (!steps.length) {
+    return <LoadingDotsIcon />;
   }
 
   const renderStep = (step: ParsedStep, index: number) => {
