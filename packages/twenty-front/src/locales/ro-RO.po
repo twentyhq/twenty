@@ -3152,6 +3152,11 @@ msgstr "Finalizează"
 msgid "Finish flow with errors"
 msgstr "Finalizează fluxul cu erori"
 
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr ""
+
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -6630,6 +6635,11 @@ msgstr "Există încă unele rânduri care conțin erori. Rândurile cu erori vo
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "A apărut o eroare în timpul actualizării parolei."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr ""
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
