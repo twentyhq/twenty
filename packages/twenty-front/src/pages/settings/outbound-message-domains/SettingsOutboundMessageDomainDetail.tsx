@@ -46,8 +46,7 @@ export const SettingsOutboundMessageDomainDetail = () => {
           href: getSettingsPath(SettingsPath.Domains),
         },
         {
-          children: <Trans>Outbound Message Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Domains),
+          href: getSettingsPath(SettingsPath.OutboundMessageDomains),
         },
         { children: outboundMessageDomain.domain },
       ]}
