@@ -13,8 +13,8 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
   const { errors, summary } =
     fromWorkspaceMigrationBuilderExceptionToValidationResponseError(error);
 
-  const invalidObjects = summary.invalidObjects;
-  const invalidFields = summary.invalidFields;
+  const invalidObjects = summary.invalidObjectMetadatas;
+  const invalidFields = summary.invalidViewFields;
 
   throw new BaseGraphQLError(error.message, ErrorCode.BAD_USER_INPUT, {
     code: 'METADATA_VALIDATION_ERROR',

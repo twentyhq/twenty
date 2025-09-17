@@ -3,6 +3,7 @@ export enum ModelProvider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   OPENAI_COMPATIBLE = 'open_ai_compatible',
+  XAI = 'xai',
 }
 
 export type ModelId =
@@ -13,6 +14,9 @@ export type ModelId =
   | 'claude-opus-4-20250514'
   | 'claude-sonnet-4-20250514'
   | 'claude-3-5-haiku-20241022'
+  | 'grok-3'
+  | 'grok-3-mini'
+  | 'grok-4'
   | string; // Allow custom model names
 
 export interface AIModelConfig {
@@ -65,5 +69,26 @@ export const AI_MODELS: AIModelConfig[] = [
     provider: ModelProvider.ANTHROPIC,
     inputCostPer1kTokensInCents: 0.08,
     outputCostPer1kTokensInCents: 0.4,
+  },
+  {
+    modelId: 'grok-3',
+    label: 'Grok-3',
+    provider: ModelProvider.XAI,
+    inputCostPer1kTokensInCents: 0.3,
+    outputCostPer1kTokensInCents: 1.5,
+  },
+  {
+    modelId: 'grok-3-mini',
+    label: 'Grok-3 Mini',
+    provider: ModelProvider.XAI,
+    inputCostPer1kTokensInCents: 0.03,
+    outputCostPer1kTokensInCents: 0.05,
+  },
+  {
+    modelId: 'grok-4',
+    label: 'Grok-4',
+    provider: ModelProvider.XAI,
+    inputCostPer1kTokensInCents: 0.5,
+    outputCostPer1kTokensInCents: 2.5,
   },
 ];

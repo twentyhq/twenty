@@ -6,14 +6,10 @@ import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuP
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledCommandMenuContent = styled.div`
@@ -24,8 +20,6 @@ const StyledCommandMenuContent = styled.div`
 export const CommandMenuRouter = () => {
   const commandMenuPage = useRecoilValue(commandMenuPageState);
   const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
-  const location = useLocation();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const commandMenuPageComponent = isDefined(commandMenuPage) ? (
     COMMAND_MENU_PAGES_CONFIG.get(commandMenuPage)
@@ -34,13 +28,6 @@ export const CommandMenuRouter = () => {
   );
 
   const theme = useTheme();
-
-  const isSettingsPage = location.pathname.includes(SettingsPath.PageLayout);
-  const objectMetadataItemOverride = isSettingsPage
-    ? objectMetadataItems.find(
-        (item) => item.nameSingular === CoreObjectNameSingular.Dashboard,
-      )
-    : undefined;
 
   return (
     <CommandMenuContainer>
@@ -64,7 +51,6 @@ export const CommandMenuRouter = () => {
             isInRightDrawer={true}
             displayType="listItem"
             actionMenuType="command-menu"
-            objectMetadataItemOverride={objectMetadataItemOverride}
           >
             {commandMenuPageComponent}
           </ActionMenuContextProvider>
