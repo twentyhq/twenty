@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
-  GraphQLInputType,
   isEnumType,
   isInputObjectType,
   isObjectType,
@@ -12,7 +11,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import {
+  TypeMapperService,
+  TypeOptions,
+} from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
@@ -20,6 +22,7 @@ import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-sch
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { createGqlEnumFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/create-gql-enum-filter-type.util';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -67,7 +70,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
 
       const typeOptions = computeFieldInputTypeOptions(
         fieldMetadata,
-        GqlInputTypeDefinitionKind.Update,
+        GqlInputTypeDefinitionKind.Filter,
       );
 
       let generatedFields;
@@ -80,69 +83,22 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
               typeOptions,
             },
           );
+      } else if (isEnumFieldMetadataType(fieldMetadata.type)) {
+        generatedFields = this.generateEnumFieldFilterInputType(
+          objectMetadata,
+          fieldMetadata,
+          typeOptions,
+        );
+      } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        generatedFields = this.generateCompositeFieldFilterInputType(
+          fieldMetadata,
+          typeOptions,
+        );
       } else {
-        let type: GraphQLInputType | undefined;
-
-        if (isEnumFieldMetadataType(fieldMetadata.type)) {
-          const key = computeEnumFieldGqlTypeKey(
-            objectMetadata.nameSingular,
-            fieldMetadata.name,
-          );
-
-          const enumType = this.gqlTypesStorage.getGqlTypeByKey(key);
-
-          if (!isDefined(enumType) || !isEnumType(enumType)) {
-            const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
-
-            this.logger.error(message, {
-              type,
-              typeOptions,
-            });
-            throw new Error(message);
-          }
-
-          type = createGqlEnumFilterType(enumType);
-        } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-          const key = computeCompositeFieldInputTypeKey(
-            fieldMetadata.type,
-            GqlInputTypeDefinitionKind.Filter,
-          );
-
-          const compositeType = this.gqlTypesStorage.getGqlTypeByKey(key);
-
-          if (!isDefined(compositeType) || !isInputObjectType(compositeType)) {
-            const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
-
-            this.logger.error(message, {
-              type,
-              typeOptions,
-            });
-            throw new Error(message);
-          }
-
-          type = compositeType;
-        } else {
-          type = this.typeMapperService.mapToFilterType(
-            fieldMetadata.type,
-            typeOptions,
-          );
-
-          if (!isDefined(type) || isObjectType(type)) {
-            const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
-
-            this.logger.error(message, {
-              type,
-              typeOptions,
-            });
-            throw new Error(message);
-          }
-        }
-        generatedFields = {
-          [fieldMetadata.name]: {
-            type,
-            description: fieldMetadata.description,
-          },
-        };
+        generatedFields = this.generateAtomicFieldFilterInputType(
+          fieldMetadata,
+          typeOptions,
+        );
       }
       Object.assign(allGeneratedFields, generatedFields);
     }
@@ -159,6 +115,94 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
         type: this.typeMapperService.applyTypeOptions(inputType, {
           nullable: true,
         }),
+      },
+    };
+  }
+
+  private generateEnumFieldFilterInputType(
+    objectMetadata: ObjectMetadataEntity,
+    fieldMetadata: FieldMetadataEntity,
+    typeOptions: TypeOptions,
+  ) {
+    const key = computeEnumFieldGqlTypeKey(
+      objectMetadata.nameSingular,
+      fieldMetadata.name,
+    );
+
+    const enumType = this.gqlTypesStorage.getGqlTypeByKey(key);
+
+    if (!isDefined(enumType) || !isEnumType(enumType)) {
+      const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
+
+      this.logger.error(message, {
+        fieldMetadata,
+        typeOptions,
+      });
+      throw new Error(message);
+    }
+
+    const type = createGqlEnumFilterType(enumType);
+
+    return {
+      [fieldMetadata.name]: {
+        type,
+        description: fieldMetadata.description,
+      },
+    };
+  }
+
+  private generateCompositeFieldFilterInputType(
+    fieldMetadata: FieldMetadataEntity,
+    typeOptions: TypeOptions,
+  ) {
+    const key = computeCompositeFieldInputTypeKey(
+      fieldMetadata.type,
+      GqlInputTypeDefinitionKind.Filter,
+    );
+
+    const compositeType = this.gqlTypesStorage.getGqlTypeByKey(key);
+
+    if (!isDefined(compositeType) || !isInputObjectType(compositeType)) {
+      const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
+
+      this.logger.error(message, {
+        fieldMetadata,
+        typeOptions,
+      });
+      throw new Error(message);
+    }
+
+    return {
+      [fieldMetadata.name]: {
+        type: compositeType,
+        description: fieldMetadata.description,
+      },
+    };
+  }
+
+  private generateAtomicFieldFilterInputType(
+    fieldMetadata: FieldMetadataEntity,
+    typeOptions: TypeOptions,
+  ) {
+    const type = this.typeMapperService.mapToFilterType(
+      fieldMetadata.type,
+      typeOptions,
+    );
+
+    if (!isDefined(type) || isObjectType(type)) {
+      const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;
+
+      this.logger.error(message, {
+        fieldMetadata,
+        typeOptions,
+      });
+      throw new Error(message);
+    }
+
+    return {
+      [fieldMetadata.name]: {
+        type,
+        description: fieldMetadata.description,
       },
     };
   }
