@@ -1,3 +1,4 @@
+import { ResizableImage } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/ResizableImage';
 import { getInitialEmailEditorContent } from '@/workflow/workflow-variables/utils/getInitialEmailEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Bold } from '@tiptap/extension-bold';
@@ -59,6 +60,7 @@ export const useEmailEditor = (
         Link.configure({
           openOnClick: false,
         }),
+        ResizableImage,
       ],
       content: isDefined(defaultValue)
         ? getInitialEmailEditorContent(defaultValue)
