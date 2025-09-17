@@ -14,7 +14,6 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 
 @Injectable()
 export class BillingService {
@@ -23,7 +22,6 @@ export class BillingService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingProductService: BillingProductService,
-    private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
     @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
@@ -67,18 +65,6 @@ export class BillingService {
       await this.hasWorkspaceAnySubscription(workspaceId);
 
     return !hasAnySubscription;
-  }
-
-  async setMeteredSubscriptionPrice(workspaceId: string, priceId: string) {
-    const subscription =
-      await this.billingSubscriptionService.getCurrentActiveBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
-
-    await this.billingSubscriptionItemService.setMeteredSubscriptionPrice(
-      subscription.id,
-      priceId,
-    );
   }
 
   async canBillMeteredProduct(

@@ -35,6 +35,7 @@ import {
   SubscriptionInterval,
   useCancelSwitchBillingIntervalMutation,
   useCancelSwitchBillingPlanMutation,
+  useCancelSwitchMeteredPriceMutation,
   useSwitchBillingPlanMutation,
   useSwitchSubscriptionIntervalMutation,
 } from '~/generated-metadata/graphql';
@@ -65,6 +66,9 @@ const CANCEL_SWITCH_BILLING_PLAN_MODAL_ID = 'cancel-switch-billing-plan-modal';
 
 const CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID =
   'cancel-switch-billing-interval-modal';
+
+const CANCEL_SWITCH_METERED_PRICE_MODAL_ID =
+  'cancel-switch-metered-price-modal';
 
 const StyledSwitchButtonContainer = styled.div`
   align-items: center;
@@ -102,7 +106,7 @@ export const SettingsBillingSubscriptionInfo = ({
     hasNextBillingPhase,
     getNextInterval,
     getNextPlan,
-    nextPrepaidCredits,
+    getNextMeteredPrice,
     getNextBillingSeats,
   } = useNextBillingPhase();
 
@@ -128,6 +132,8 @@ export const SettingsBillingSubscriptionInfo = ({
     useCancelSwitchBillingIntervalMutation();
 
   const [cancelSwitchBillingPlan] = useCancelSwitchBillingPlanMutation();
+
+  const [cancelSwitchMeteredPrice] = useCancelSwitchMeteredPriceMutation();
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
@@ -273,6 +279,33 @@ export const SettingsBillingSubscriptionInfo = ({
     }
   };
 
+  const cancelMeteredSwitching = async () => {
+    try {
+      const { data } = await cancelSwitchMeteredPrice();
+
+      if (
+        isDefined(data?.cancelSwitchMeteredPrice?.currentBillingSubscription)
+      ) {
+        const newCurrentWorkspace = {
+          ...currentWorkspace,
+          currentBillingSubscription:
+            data.cancelSwitchMeteredPrice.currentBillingSubscription,
+          billingSubscriptions:
+            data.cancelSwitchMeteredPrice.billingSubscriptions,
+        };
+        setCurrentWorkspace(newCurrentWorkspace);
+      }
+
+      enqueueSuccessSnackBar({
+        message: t`Metered tier switching has been cancelled.`,
+      });
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error while cancelling metered tier switching.`,
+      });
+    }
+  };
+
   return (
     <Section>
       <H2Title title={t`Subscription`} description={t`About my subscription`} />
@@ -334,9 +367,17 @@ export const SettingsBillingSubscriptionInfo = ({
         <SubscriptionInfoRowContainer
           label={t`Credits by period`}
           Icon={IconCoins}
-          currentValue={formatNumber(currentMeterPrice.tiers[0].upTo)}
+          currentValue={formatNumber(currentMeterPrice.tiers[0].upTo, {
+            abbreviate: true,
+            decimals: 2,
+          })}
           nextValue={
-            hasNextBillingPhase ? formatNumber(nextPrepaidCredits()) : undefined
+            hasNextBillingPhase
+              ? formatNumber(getNextMeteredPrice().tiers[0].upTo, {
+                  abbreviate: true,
+                  decimals: 2,
+                })
+              : undefined
           }
         />
       </SubscriptionInfoContainer>
@@ -350,16 +391,6 @@ export const SettingsBillingSubscriptionInfo = ({
             disabled={isEndTrialPeriodLoading}
           />
         )}
-        {hasNextBillingPhase &&
-          getCurrentPlan().planKey !== getNextPlan().planKey && (
-            <Button
-              Icon={IconArrowUp}
-              title={t`Cancel plan switching`}
-              variant="secondary"
-              onClick={() => openModal(CANCEL_SWITCH_BILLING_PLAN_MODAL_ID)}
-              disabled={!canSwitchSubscription}
-            />
-          )}
         {hasNextBillingPhase &&
           getCurrentMeteredBillingPrice().recurringInterval !==
             getNextInterval() && (
@@ -423,6 +454,27 @@ export const SettingsBillingSubscriptionInfo = ({
               disabled={!canSwitchSubscription}
             />
           )}
+        {hasNextBillingPhase &&
+          getCurrentPlan().planKey !== getNextPlan().planKey && (
+            <Button
+              Icon={IconArrowUp}
+              title={t`Cancel plan switching`}
+              variant="secondary"
+              onClick={() => openModal(CANCEL_SWITCH_BILLING_PLAN_MODAL_ID)}
+              disabled={!canSwitchSubscription}
+            />
+          )}
+        {hasNextBillingPhase &&
+          getCurrentMeteredBillingPrice().tiers[0].upTo !==
+            getNextMeteredPrice().tiers[0].upTo && (
+            <Button
+              Icon={IconArrowUp}
+              title={t`Cancel metered tier switching`}
+              variant="secondary"
+              onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
+              disabled={!canSwitchSubscription}
+            />
+          )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID}
@@ -437,6 +489,14 @@ export const SettingsBillingSubscriptionInfo = ({
         title={t`Change to Monthly?`}
         subtitle={confirmationModalSwitchToMonthlyMessage()}
         onConfirmClick={switchInterval}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
+      />
+      <ConfirmationModal
+        modalId={CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID}
+        title={t`Cancel interval switching?`}
+        subtitle={confirmationModalCancelIntervalSwitchingMessage()}
+        onConfirmClick={cancelIntervalSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
       />
@@ -465,14 +525,6 @@ export const SettingsBillingSubscriptionInfo = ({
         confirmButtonAccent="blue"
       />
       <ConfirmationModal
-        modalId={CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID}
-        title={t`Cancel interval switching?`}
-        subtitle={confirmationModalCancelIntervalSwitchingMessage()}
-        onConfirmClick={cancelIntervalSwitching}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-      />
-      <ConfirmationModal
         modalId={END_TRIAL_PERIOD_MODAL_ID}
         title={t`Start Your Subscription`}
         subtitle={t`We will activate your paid plan. Do you want to proceed?`}
@@ -480,6 +532,14 @@ export const SettingsBillingSubscriptionInfo = ({
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isEndTrialPeriodLoading}
+      />
+      <ConfirmationModal
+        modalId={CANCEL_SWITCH_METERED_PRICE_MODAL_ID}
+        title={t`Cancel metered tier switching?`}
+        subtitle={t`You have scheduled a metered tier change. Do you want to cancel it?`}
+        onConfirmClick={cancelMeteredSwitching}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
       />
     </Section>
   );

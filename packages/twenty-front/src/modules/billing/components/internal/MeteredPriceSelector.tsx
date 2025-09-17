@@ -1,13 +1,11 @@
-import { useMutation } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-import { SET_METERED_SUBSCRIPTION_PRICE } from '@/billing/graphql/mutations/setMeteredSubscriptionPrice';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
@@ -19,6 +17,10 @@ import {
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
 import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { useRecoilState } from 'recoil';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -44,6 +46,10 @@ export const MeteredPriceSelector = ({
 }) => {
   const { getCurrentMeteredBillingPrice } = useBillingPlan();
 
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
+
   const { getIntervalLabel } = useBillingWording();
 
   const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
@@ -54,44 +60,34 @@ export const MeteredPriceSelector = ({
     const price = formatNumber(meteredBillingPrice.tiers[0].flatAmount / 100);
 
     return {
-      label: `${formatNumber(meteredBillingPrice.tiers[0].upTo, { abbreviate: true })} Credits - $${price}`,
+      label: `${formatNumber(meteredBillingPrice.tiers[0].upTo, { abbreviate: true, decimals: 2 })} Credits - $${price}`,
       value: meteredBillingPrice.stripePriceId,
     };
   };
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
-    SET_METERED_SUBSCRIPTION_PRICE,
-  );
+  const [setMeteredSubscriptionPrice, { loading: isUpdating }] =
+    useSetMeteredSubscriptionPriceMutation();
 
-  const options = useMemo(
-    () =>
-      [...meteredBillingPrices]
-        .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)
-        .map(toOption),
-    [meteredBillingPrices],
-  );
+  const options = [...meteredBillingPrices]
+    .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)
+    .map(toOption);
 
   const { openModal } = useModal();
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
     undefined,
   );
 
-  const selectedPrice = useMemo(
-    () =>
-      selectedPriceId
-        ? meteredBillingPrices.find(
-            ({ stripePriceId }) => stripePriceId === selectedPriceId,
-          )
-        : undefined,
-    [selectedPriceId, meteredBillingPrices],
-  );
+  const selectedPrice = selectedPriceId
+    ? meteredBillingPrices.find(
+        ({ stripePriceId }) => stripePriceId === selectedPriceId,
+      )
+    : undefined;
 
-  const isChanged = Boolean(
+  const isChanged =
     selectedPriceId &&
-      selectedPriceId !== currentMeteredBillingPrice?.stripePriceId,
-  );
+    selectedPriceId !== currentMeteredBillingPrice?.stripePriceId;
 
   const isUpgrade = useMemo(() => {
     if (!isChanged || !selectedPrice || !currentMeteredBillingPrice)
@@ -100,13 +96,13 @@ export const MeteredPriceSelector = ({
       (selectedPrice.tiers as BillingPriceTiers)[0].flatAmount >
       (currentMeteredBillingPrice.tiers as BillingPriceTiers)[0].flatAmount
     );
-  }, [isChanged, selectedPrice, currentMeteredBillingPrice]);
+  }, [currentMeteredBillingPrice, isChanged, selectedPrice]);
 
   const handleChange = (priceId: string) => {
     setSelectedPriceId(priceId);
   };
 
-  const confirmModalId = 'metered-price-change-confirmation-modal';
+  const confirmModalId = 'METERED_PRICE_CHANGE_CONFIRMATION_MODAL';
 
   const handleOpenConfirm = () => {
     if (!isChanged || !selectedPrice) return;
@@ -118,12 +114,27 @@ export const MeteredPriceSelector = ({
       SubscriptionInterval.Month,
   );
 
-  const handleConfirmClick = useCallback(async () => {
+  const handleConfirmClick = async () => {
     if (!selectedPrice) return;
     try {
-      await setMeteredSubscriptionPrice({
+      const { data } = await setMeteredSubscriptionPrice({
         variables: { priceId: selectedPrice.stripePriceId },
       });
+      if (
+        isDefined(
+          data?.setMeteredSubscriptionPrice.currentBillingSubscription,
+        ) &&
+        isDefined(currentWorkspace)
+      ) {
+        const newCurrentWorkspace = {
+          ...currentWorkspace,
+          currentBillingSubscription:
+            data.setMeteredSubscriptionPrice.currentBillingSubscription,
+          billingSubscriptions:
+            data?.setMeteredSubscriptionPrice.billingSubscriptions,
+        };
+        setCurrentWorkspace(newCurrentWorkspace);
+      }
       enqueueSuccessSnackBar({ message: t`Price updated.` });
       setCurrentMeteredBillingPrice(
         findOrThrow(
@@ -135,13 +146,7 @@ export const MeteredPriceSelector = ({
     } catch {
       enqueueErrorSnackBar({ message: t`Failed to update price.` });
     }
-  }, [
-    selectedPrice,
-    setMeteredSubscriptionPrice,
-    enqueueSuccessSnackBar,
-    enqueueErrorSnackBar,
-    meteredBillingPrices,
-  ]);
+  };
 
   return (
     <>
@@ -151,7 +156,7 @@ export const MeteredPriceSelector = ({
       />
       <StyledRow>
         <StyledSelect
-          dropdownId="settings-billing-metered-price"
+          dropdownId="settings_billing-metered-price"
           options={options}
           value={selectedPriceId ?? currentMeteredBillingPrice.stripePriceId}
           onChange={handleChange}

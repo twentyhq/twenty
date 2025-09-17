@@ -1453,6 +1453,7 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   cancelSwitchBillingInterval: BillingUpdateOutput;
   cancelSwitchBillingPlan: BillingUpdateOutput;
+  cancelSwitchMeteredPrice: BillingUpdateOutput;
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -4471,6 +4472,11 @@ export type CancelSwitchBillingIntervalMutationVariables = Exact<{ [key: string]
 
 
 export type CancelSwitchBillingIntervalMutation = { __typename?: 'Mutation', cancelSwitchBillingInterval: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+
+export type CancelSwitchMeteredPriceMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CancelSwitchMeteredPriceMutation = { __typename?: 'Mutation', cancelSwitchMeteredPrice: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type CancelSwitchBillingPlanMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -7590,6 +7596,44 @@ export function useCancelSwitchBillingIntervalMutation(baseOptions?: Apollo.Muta
 export type CancelSwitchBillingIntervalMutationHookResult = ReturnType<typeof useCancelSwitchBillingIntervalMutation>;
 export type CancelSwitchBillingIntervalMutationResult = Apollo.MutationResult<CancelSwitchBillingIntervalMutation>;
 export type CancelSwitchBillingIntervalMutationOptions = Apollo.BaseMutationOptions<CancelSwitchBillingIntervalMutation, CancelSwitchBillingIntervalMutationVariables>;
+export const CancelSwitchMeteredPriceDocument = gql`
+    mutation CancelSwitchMeteredPrice {
+  cancelSwitchMeteredPrice {
+    currentBillingSubscription {
+      ...CurrentBillingSubscriptionFragment
+    }
+    billingSubscriptions {
+      ...BillingSubscriptionFragment
+    }
+  }
+}
+    ${CurrentBillingSubscriptionFragmentFragmentDoc}
+${BillingSubscriptionFragmentFragmentDoc}`;
+export type CancelSwitchMeteredPriceMutationFn = Apollo.MutationFunction<CancelSwitchMeteredPriceMutation, CancelSwitchMeteredPriceMutationVariables>;
+
+/**
+ * __useCancelSwitchMeteredPriceMutation__
+ *
+ * To run a mutation, you first call `useCancelSwitchMeteredPriceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelSwitchMeteredPriceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelSwitchMeteredPriceMutation, { data, loading, error }] = useCancelSwitchMeteredPriceMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCancelSwitchMeteredPriceMutation(baseOptions?: Apollo.MutationHookOptions<CancelSwitchMeteredPriceMutation, CancelSwitchMeteredPriceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CancelSwitchMeteredPriceMutation, CancelSwitchMeteredPriceMutationVariables>(CancelSwitchMeteredPriceDocument, options);
+      }
+export type CancelSwitchMeteredPriceMutationHookResult = ReturnType<typeof useCancelSwitchMeteredPriceMutation>;
+export type CancelSwitchMeteredPriceMutationResult = Apollo.MutationResult<CancelSwitchMeteredPriceMutation>;
+export type CancelSwitchMeteredPriceMutationOptions = Apollo.BaseMutationOptions<CancelSwitchMeteredPriceMutation, CancelSwitchMeteredPriceMutationVariables>;
 export const CancelSwitchBillingPlanDocument = gql`
     mutation CancelSwitchBillingPlan {
   cancelSwitchBillingPlan {

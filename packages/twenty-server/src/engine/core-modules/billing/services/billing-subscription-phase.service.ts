@@ -1,13 +1,20 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import Stripe from 'stripe';
 
 import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/billing-phase.utils';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { validator } from 'src/utils/assert-is-defined';
 
 @Injectable()
 export class BillingSubscriptionPhaseService {
@@ -48,6 +55,98 @@ export class BillingSubscriptionPhaseService {
       licensedPrice,
       quantity,
       interval: meteredPrice.interval,
+    };
+  }
+
+  toSnapshot(
+    phase: Stripe.SubscriptionSchedule.Phase,
+  ): Stripe.SubscriptionScheduleUpdateParams.Phase {
+    return {
+      start_date: phase.start_date,
+      end_date: phase.end_date ?? undefined,
+      items: (phase.items || []).map((it) => ({
+        price: normalizePriceRef(it.price) as string,
+        quantity: it.quantity ?? undefined,
+      })),
+      ...(phase.billing_thresholds
+        ? { billing_thresholds: phase.billing_thresholds }
+        : {}),
+      proration_behavior: 'none',
+    } as Stripe.SubscriptionScheduleUpdateParams.Phase;
+  }
+
+  buildSnapshot(
+    base: Stripe.SubscriptionScheduleUpdateParams.Phase,
+    licensedPriceId: string,
+    seats: number,
+    meteredPriceId: string,
+    billing_thresholds?: Stripe.SubscriptionScheduleUpdateParams.Phase.BillingThresholds,
+  ): Stripe.SubscriptionScheduleUpdateParams.Phase {
+    return {
+      start_date: base.start_date,
+      end_date: base.end_date,
+      proration_behavior: base.proration_behavior ?? 'none',
+      items: [
+        { price: licensedPriceId, quantity: seats },
+        { price: meteredPriceId },
+      ],
+      ...(billing_thresholds ? { billing_thresholds } : {}),
+    };
+  }
+
+  getLicensedPriceIdFromSnapshot(
+    phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
+  ): string {
+    const licensedItem = findOrThrow(phase.items!, (i) => i.quantity != null);
+
+    validator.assertIsDefined(licensedItem.price);
+
+    return licensedItem.price;
+  }
+
+  async isSamePhaseSignature(
+    a: Stripe.SubscriptionScheduleUpdateParams.Phase,
+    b: Stripe.SubscriptionScheduleUpdateParams.Phase,
+  ): Promise<boolean> {
+    try {
+      const sigA = await this.getPhaseSignatureFromSnapshot(a);
+      const sigB = await this.getPhaseSignatureFromSnapshot(b);
+
+      return (
+        sigA.planKey === sigB.planKey &&
+        sigA.interval === sigB.interval &&
+        sigA.meteredPriceId === sigB.meteredPriceId
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  private async getPhaseSignatureFromSnapshot(
+    phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
+  ): Promise<{
+    planKey: BillingPlanKey;
+    interval: SubscriptionInterval;
+    meteredPriceId: string;
+  }> {
+    const metered = findOrThrow(phase.items!, (i) => i.quantity == null);
+    const meteredPriceId = metered.price;
+
+    validator.assertIsDefined(meteredPriceId);
+
+    const meteredPrice = await this.billingPriceRepository.findOneOrFail({
+      where: {
+        stripePriceId: meteredPriceId,
+      },
+      relations: ['billingProduct'],
+    });
+
+    const plan = await this.billingPlanService.getPlanByPriceId(meteredPriceId);
+
+    return {
+      planKey: plan.planKey,
+      interval: meteredPrice.interval,
+      meteredPriceId,
     };
   }
 }

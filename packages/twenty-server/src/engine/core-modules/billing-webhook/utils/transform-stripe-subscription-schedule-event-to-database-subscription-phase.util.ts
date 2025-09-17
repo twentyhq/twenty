@@ -9,7 +9,7 @@ import { type BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/b
 export function transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase(
   schedule: Stripe.SubscriptionSchedule,
 ): Array<BillingSubscriptionSchedulePhase> {
-  return schedule.phases.map((phase) => ({
+  return schedule.phases.slice(-2).map((phase) => ({
     start_date: phase.start_date,
     end_date: phase.end_date,
     items: phase.items.map((item) => ({

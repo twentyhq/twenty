@@ -35,11 +35,10 @@ export class StripeSubscriptionService {
       query: `metadata['workspaceId']:'${workspaceId}'`,
       limit: 1,
     });
-    const stripeCustomerId = subscription.data[0].customer
-      ? String(subscription.data[0].customer)
-      : undefined;
 
-    return stripeCustomerId;
+    return subscription.data[0].customer
+      ? subscription.data[0].customer
+      : undefined;
   }
 
   async collectLastInvoice(stripeSubscriptionId: string) {

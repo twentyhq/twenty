@@ -223,8 +223,8 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args() { priceId }: BillingUpdateSubscriptionItemPriceInput,
   ) {
-    await this.billingService.setMeteredSubscriptionPrice(
-      workspace.id,
+    await this.billingSubscriptionService.changeMeteredPrice(
+      workspace,
       priceId,
     );
 
@@ -268,6 +268,26 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
     return await this.billingUsageService.getMeteredProductsUsage(workspace);
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
+  async cancelSwitchMeteredPrice(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.cancelSwitchMeteredPrice(workspace);
+
+    return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

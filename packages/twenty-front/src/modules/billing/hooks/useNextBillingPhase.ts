@@ -59,10 +59,6 @@ export const useNextBillingPhase = () => {
     return nextLicensedPrice.recurringInterval;
   };
 
-  const nextPrepaidCredits = () => {
-    return getNextMeteredPrice().tiers[0].upTo;
-  };
-
   const getNextBillingSeats = () => {
     const { nextLicensedPrice } = splitPhaseItemsInPrices();
     return findOrThrow(
@@ -77,7 +73,7 @@ export const useNextBillingPhase = () => {
     splitPhaseItemsInPrices,
     getNextPlan,
     getNextInterval,
-    nextPrepaidCredits,
+    getNextMeteredPrice,
     getNextBillingSeats,
   };
 };
