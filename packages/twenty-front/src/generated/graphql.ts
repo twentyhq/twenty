@@ -2487,7 +2487,6 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  /** Whether the user can read this widget content */
   canReadWidget: Scalars['Boolean'];
   configuration?: Maybe<Scalars['JSON']>;
   createdAt: Scalars['DateTime'];

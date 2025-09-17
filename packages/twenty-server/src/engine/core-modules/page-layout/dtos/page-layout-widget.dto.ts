@@ -46,11 +46,8 @@ export class PageLayoutWidgetDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   configuration: Record<string, unknown> | null;
 
-  @Field(() => Boolean, {
-    description: 'Whether the user can read this widget content',
-    defaultValue: true,
-  })
-  canReadWidget?: boolean;
+  @Field({ nullable: false })
+  canReadWidget: boolean;
 
   @Field()
   createdAt: Date;
