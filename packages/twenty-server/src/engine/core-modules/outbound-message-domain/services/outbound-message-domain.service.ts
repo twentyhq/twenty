@@ -162,24 +162,4 @@ export class OutboundMessageDomainService {
       throw error;
     }
   }
-
-  async getVerificationToken(
-    workspace: Workspace,
-    outboundMessageDomainId: string,
-  ): Promise<string> {
-    const outboundMessageDomain = await this.getOutboundMessageDomain(
-      workspace,
-      outboundMessageDomainId,
-    );
-
-    if (!outboundMessageDomain) {
-      throw new Error('Outbound message domain not found');
-    }
-
-    const driver = this.outboundMessageDomainDriverFactory.getCurrentDriver();
-
-    return await driver.getDomainVerificationRecords(
-      outboundMessageDomain.domain,
-    );
-  }
 }

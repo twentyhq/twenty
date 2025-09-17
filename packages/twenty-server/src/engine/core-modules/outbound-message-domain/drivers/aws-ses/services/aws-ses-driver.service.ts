@@ -98,36 +98,6 @@ export class AwsSesDriver implements OutboundMessageDomainDriverInterface {
     }
   }
 
-  async getDomainVerificationRecords(domainName: string): Promise<string> {
-    try {
-      this.logger.log(`Getting verification records for domain: ${domainName}`);
-
-      const sesClient = this.awsSesClientProvider.getSESClient();
-
-      const getIdentityCommand = new GetEmailIdentityCommand({
-        EmailIdentity: domainName,
-      });
-
-      const response = await sesClient.send(getIdentityCommand);
-      const dkimTokens = response.DkimAttributes?.Tokens;
-
-      if (!dkimTokens || dkimTokens.length === 0) {
-        throw new Error('No DKIM tokens found for domain');
-      }
-
-      return dkimTokens[0];
-    } catch (error) {
-      this.logger.error(
-        `Failed to get verification records for ${domainName}: ${error}`,
-      );
-      this.awsSesHandleErrorService.handleAwsSesError(
-        error,
-        'getDomainVerificationRecords',
-      );
-      throw error;
-    }
-  }
-
   private generateTenantName(workspaceId: string): string {
     return `twenty-workspace-${workspaceId}`;
   }

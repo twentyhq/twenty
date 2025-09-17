@@ -5,5 +5,4 @@ export interface OutboundMessageDomainDriverInterface {
   getDomainStatus(
     domain: OutboundMessageDomain,
   ): Promise<OutboundMessageDomain>;
-  getDomainVerificationRecords(domain: string): Promise<string>;
 }
