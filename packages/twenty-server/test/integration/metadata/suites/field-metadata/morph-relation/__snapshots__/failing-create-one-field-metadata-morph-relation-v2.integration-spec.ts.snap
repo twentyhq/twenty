@@ -5,6 +5,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -44,6 +45,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -61,6 +63,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -84,6 +87,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -101,6 +105,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -119,6 +124,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -136,6 +142,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -154,6 +161,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -171,6 +179,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -200,6 +209,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -217,6 +227,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -240,6 +251,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -257,6 +269,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -280,6 +293,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -297,6 +311,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -326,6 +341,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -343,6 +359,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -369,6 +386,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -386,6 +404,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -412,6 +431,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -429,6 +449,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -454,6 +475,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -471,6 +493,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -489,6 +512,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -506,6 +530,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -524,6 +549,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -541,6 +567,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -559,6 +586,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -576,6 +604,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -597,6 +626,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -614,6 +644,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -633,6 +664,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
@@ -650,6 +682,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "index": [],
       "objectMetadata": [
         {
           "errors": [
@@ -668,6 +701,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidIndexs": 0,
       "invalidObjectMetadatas": 0,
       "invalidViewFields": 0,
       "invalidViews": 0,
