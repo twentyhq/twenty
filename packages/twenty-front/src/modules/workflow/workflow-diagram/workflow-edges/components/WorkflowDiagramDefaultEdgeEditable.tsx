@@ -9,9 +9,10 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
+import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
-import { EdgeLabelRenderer, getBezierPath } from '@xyflow/react';
+import { EdgeLabelRenderer } from '@xyflow/react';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconTrash } from 'twenty-ui/display';
@@ -22,8 +23,10 @@ type WorkflowDiagramDefaultEdgeEditableProps =
 export const WorkflowDiagramDefaultEdgeEditable = ({
   source,
   sourceHandleId,
+  sourcePosition,
   target,
   targetHandleId,
+  targetPosition,
   sourceX,
   sourceY,
   targetX,
@@ -36,11 +39,18 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const { isEdgeHovered } = useEdgeState();
 
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const {
+    segments,
+    labelPosition: [labelX, labelY],
+  } = getEdgePath({
     sourceX,
     sourceY,
+    sourcePosition,
     targetX,
     targetY,
+    targetPosition,
+    markerStart,
+    markerEnd,
   });
 
   const { deleteEdge } = useDeleteEdge();
@@ -77,15 +87,18 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   return (
     <>
-      <WorkflowDiagramBaseEdge
-        source={source}
-        sourceHandleId={sourceHandleId}
-        target={target}
-        targetHandleId={targetHandleId}
-        path={edgePath}
-        markerStart={markerStart}
-        markerEnd={markerEnd}
-      />
+      {segments.map((segment) => (
+        <WorkflowDiagramBaseEdge
+          key={segment.path}
+          source={source}
+          sourceHandleId={sourceHandleId}
+          target={target}
+          targetHandleId={targetHandleId}
+          path={segment.path}
+          markerStart={segment.markerStart}
+          markerEnd={segment.markerEnd}
+        />
+      ))}
 
       <EdgeLabelRenderer>
         {isDefined(data?.labelOptions) && (
