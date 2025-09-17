@@ -6,7 +6,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
-export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
+export const useSetDashboardEditMode = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -21,7 +21,7 @@ export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
     forceRegisteredActionsMapComponentState,
   );
 
-  const setIsDashboardInEditMode = useRecoilCallback(
+  const setDashboardEditMode = useRecoilCallback(
     ({ set }) =>
       (value: boolean) => {
         set(isPageLayoutInEditModeState, value);
@@ -37,5 +37,5 @@ export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
     [forceRegisteredActionsMapState, isPageLayoutInEditModeState],
   );
 
-  return { setIsDashboardInEditMode };
+  return { setDashboardEditMode };
 };

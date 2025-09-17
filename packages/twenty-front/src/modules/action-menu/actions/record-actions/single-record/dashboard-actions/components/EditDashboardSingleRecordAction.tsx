@@ -1,6 +1,6 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
+import { useSetDashboardEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
 
@@ -11,11 +11,10 @@ export const EditDashboardSingleRecordAction = () => {
 
   const pageLayoutId = selectedRecord?.pageLayoutId;
 
-  const { setIsDashboardInEditMode } =
-    useSetIsDashboardInEditMode(pageLayoutId);
+  const { setDashboardEditMode } = useSetDashboardEditMode(pageLayoutId);
 
   const handleClick = () => {
-    setIsDashboardInEditMode(true);
+    setDashboardEditMode(true);
   };
 
   return <Action onClick={handleClick} />;
