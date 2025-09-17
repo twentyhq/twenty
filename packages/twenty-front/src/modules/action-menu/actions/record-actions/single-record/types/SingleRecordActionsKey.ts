@@ -9,5 +9,4 @@ export enum SingleRecordActionKeys {
   EXPORT_FROM_RECORD_INDEX = 'export-from-record-index-single-record',
   EXPORT_FROM_RECORD_SHOW = 'export-from-record-show-single-record',
   RESTORE = 'restore-single-record',
-  EDIT_DASHBOARD = 'edit-dashboard-single-record',
 }

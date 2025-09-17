@@ -1,4 +1,5 @@
-import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/EditDashboardSingleRecordAction';
+import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
+import { DashboardSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/types/DashboardSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
@@ -10,8 +11,8 @@ import { IconPencil } from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
-    [SingleRecordActionKeys.EDIT_DASHBOARD]: {
-      key: SingleRecordActionKeys.EDIT_DASHBOARD,
+    [DashboardSingleRecordActionKeys.EDIT_DASHBOARD]: {
+      key: DashboardSingleRecordActionKeys.EDIT_DASHBOARD,
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
@@ -28,7 +29,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
   },
   actionKeys: [
-    SingleRecordActionKeys.EDIT_DASHBOARD,
     SingleRecordActionKeys.ADD_TO_FAVORITES,
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.DELETE,

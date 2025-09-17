@@ -14,7 +14,8 @@ import { useIcons } from 'twenty-ui/display';
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
 ) => {
-  const { objectMetadataItem } = shouldBeRegisteredParams;
+  const { objectMetadataItem, forceRegisteredActionsMap } =
+    shouldBeRegisteredParams;
 
   const { getIcon } = useIcons();
 
@@ -67,6 +68,14 @@ export const useRegisteredActions = (
       ) {
         return false;
       }
+      const forcedShouldBeRegistered = forceRegisteredActionsMap.get(
+        action.key,
+      );
+
+      if (isDefined(forcedShouldBeRegistered)) {
+        return forcedShouldBeRegistered;
+      }
+
       return action.shouldBeRegistered(shouldBeRegisteredParams);
     })
     .sort((a, b) => a.position - b.position);
