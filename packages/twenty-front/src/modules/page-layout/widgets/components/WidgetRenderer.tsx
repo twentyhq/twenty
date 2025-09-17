@@ -26,7 +26,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
-    widget.id,
   );
 
   return (

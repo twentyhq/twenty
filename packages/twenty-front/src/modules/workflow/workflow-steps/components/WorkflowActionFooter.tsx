@@ -1,3 +1,5 @@
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,7 +10,7 @@ import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateSt
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { IconCopyPlus } from 'twenty-ui/display';
+import { IconCopyPlus, IconPencil } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -25,6 +27,8 @@ export const WorkflowActionFooter = ({
   const theme = useTheme();
   const { duplicateStep } = useDuplicateStep();
   const { closeDropdown } = useCloseDropdown();
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
+  const { openWorkflowEditStepTypeInCommandMenu } = useWorkflowCommandMenu();
 
   const OptionsDropdown = () => {
     return (
@@ -46,8 +50,16 @@ export const WorkflowActionFooter = ({
               <SelectableList
                 selectableListInstanceId={dropdownId}
                 focusId={dropdownId}
-                selectableItemIdArray={['duplicate']}
+                selectableItemIdArray={['change-node-type', 'duplicate']}
               >
+                <MenuItem
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    openWorkflowEditStepTypeInCommandMenu(workflowId);
+                  }}
+                  text={t`Change node type`}
+                  LeftIcon={IconPencil}
+                />
                 <MenuItem
                   onClick={() => {
                     closeDropdown(dropdownId);

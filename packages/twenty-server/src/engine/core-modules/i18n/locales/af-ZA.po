@@ -2734,7 +2734,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Statusse kan nie handmatig gestel word nie."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Stap is nie 'n vorm nie"
 
