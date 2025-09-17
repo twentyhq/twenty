@@ -6,19 +6,17 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortalContexts = ({
+  position,
   children,
 }: {
+  position: TableCellPosition;
   children: React.ReactNode;
 }) => {
-  const hoverPosition = useRecoilComponentValue(
-    recordTableHoverPositionComponentState,
-  );
-
   const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
   );
@@ -29,16 +27,20 @@ export const RecordTableCellPortalContexts = ({
     visibleRecordFieldsComponentSelector,
   );
 
-  const recordId = isDefined(hoverPosition)
-    ? allRecordIds.at(hoverPosition.row)
-    : null;
+  const recordId = allRecordIds.at(position.row);
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: recordId ?? '',
     objectMetadataId: objectMetadataItem.id,
   });
 
-  if (!hoverPosition || !isDefined(recordId)) {
+  if (!isDefined(recordId)) {
+    return null;
+  }
+
+  const recordField = visibleRecordFields[position.column];
+
+  if (!isDefined(recordField)) {
     return null;
   }
 
@@ -46,7 +48,7 @@ export const RecordTableCellPortalContexts = ({
     <RecordTableRowContextProvider
       value={{
         recordId,
-        rowIndex: hoverPosition.row,
+        rowIndex: position.row,
         isSelected: false,
         inView: true,
         pathToShowPage:
@@ -59,13 +61,11 @@ export const RecordTableCellPortalContexts = ({
     >
       <RecordTableCellContext.Provider
         value={{
-          recordField: visibleRecordFields[hoverPosition.column],
-          cellPosition: hoverPosition,
+          recordField,
+          cellPosition: position,
         }}
       >
-        <RecordTableCellFieldContextWrapper
-          recordField={visibleRecordFields[hoverPosition.column]}
-        >
+        <RecordTableCellFieldContextWrapper recordField={recordField}>
           {children}
         </RecordTableCellFieldContextWrapper>
       </RecordTableCellContext.Provider>

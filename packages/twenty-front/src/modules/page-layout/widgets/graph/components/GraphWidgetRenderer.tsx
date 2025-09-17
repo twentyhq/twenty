@@ -6,27 +6,27 @@ import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget'
 import { lazy, Suspense } from 'react';
 
 const GraphWidgetBarChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetBarChart').then(
-    (module) => ({
-      default: module.GraphWidgetBarChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
+  ).then((module) => ({
+    default: module.GraphWidgetBarChart,
+  })),
 );
 
 const GraphWidgetLineChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetLineChart').then(
-    (module) => ({
-      default: module.GraphWidgetLineChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
+  ).then((module) => ({
+    default: module.GraphWidgetLineChart,
+  })),
 );
 
 const GraphWidgetPieChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetPieChart').then(
-    (module) => ({
-      default: module.GraphWidgetPieChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
+  ).then((module) => ({
+    default: module.GraphWidgetPieChart,
+  })),
 );
 
 const GraphWidgetGaugeChart = lazy(() =>

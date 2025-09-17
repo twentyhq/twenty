@@ -3,7 +3,7 @@ import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export const getResolverArgs = (
@@ -33,11 +33,11 @@ export const getResolverArgs = (
           isNullable: true,
         },
         filter: {
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: true,
         },
         orderBy: {
-          kind: InputTypeDefinitionKind.OrderBy,
+          kind: GqlInputTypeDefinitionKind.OrderBy,
           isNullable: true,
           isArray: true,
         },
@@ -46,14 +46,14 @@ export const getResolverArgs = (
     case 'deleteMany':
       return {
         filter: {
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: false,
         },
       };
     case 'createMany':
       return {
         data: {
-          kind: InputTypeDefinitionKind.Create,
+          kind: GqlInputTypeDefinitionKind.Create,
           isNullable: false,
           isArray: true,
         },
@@ -66,7 +66,7 @@ export const getResolverArgs = (
     case 'createOne':
       return {
         data: {
-          kind: InputTypeDefinitionKind.Create,
+          kind: GqlInputTypeDefinitionKind.Create,
           isNullable: false,
         },
         upsert: {
@@ -82,7 +82,7 @@ export const getResolverArgs = (
           isNullable: false,
         },
         data: {
-          kind: InputTypeDefinitionKind.Update,
+          kind: GqlInputTypeDefinitionKind.Update,
           isNullable: false,
         },
       };
@@ -94,7 +94,7 @@ export const getResolverArgs = (
           isArray: true,
         },
         data: {
-          kind: InputTypeDefinitionKind.Create,
+          kind: GqlInputTypeDefinitionKind.Create,
           isNullable: true,
           isArray: true,
         },
@@ -116,18 +116,18 @@ export const getResolverArgs = (
     case 'updateMany':
       return {
         data: {
-          kind: InputTypeDefinitionKind.Update,
+          kind: GqlInputTypeDefinitionKind.Update,
           isNullable: false,
         },
         filter: {
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: false,
         },
       };
     case 'restoreMany':
       return {
         filter: {
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: false,
         },
       };
@@ -141,7 +141,7 @@ export const getResolverArgs = (
     case 'destroyMany':
       return {
         filter: {
-          kind: InputTypeDefinitionKind.Filter,
+          kind: GqlInputTypeDefinitionKind.Filter,
           isNullable: false,
         },
       };

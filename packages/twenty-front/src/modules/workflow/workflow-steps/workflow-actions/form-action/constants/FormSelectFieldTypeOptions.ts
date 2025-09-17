@@ -5,6 +5,7 @@ import {
   IllustrationIconCalendarEvent,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
+  IllustrationIconTag,
   IllustrationIconText,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -30,5 +31,10 @@ export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>
       label: getDefaultFormFieldSettings('RECORD').label,
       value: 'RECORD',
       Icon: IllustrationIconOneToMany,
+    },
+    {
+      label: 'Select',
+      value: FieldMetadataType.SELECT,
+      Icon: IllustrationIconTag,
     },
   ];

@@ -7,7 +7,9 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
@@ -40,7 +42,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     ),
   )[0] as RecordField | undefined;
 
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
   const isRecordTableScrolledVertically = useRecoilComponentValue(
     isRecordTableScrolledVerticallyComponentState,
@@ -50,15 +57,42 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const zIndex =
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const zIndexWithGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
-      ? TABLE_Z_INDEX.scrolledBothVerticallyAndHorizontally
+      ? TABLE_Z_INDEX.withGroups.scrolledBothVerticallyAndHorizontally
           .firstScrollableHeaderCell
       : isRecordTableScrolledHorizontally
-        ? TABLE_Z_INDEX.scrolledHorizontallyOnly.firstScrollableHeaderCell
+        ? TABLE_Z_INDEX.withGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
         : isRecordTableScrolledVertically
-          ? TABLE_Z_INDEX.scrolledVerticallyOnly.firstScrollableHeaderCell
-          : TABLE_Z_INDEX.noScrollAtAll.firstScrollableHeaderCell;
+          ? TABLE_Z_INDEX.withGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndexWithoutGroups =
+    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
+      ? TABLE_Z_INDEX.withoutGroups.scrolledBothVerticallyAndHorizontally
+          .firstScrollableHeaderCell
+      : isRecordTableScrolledHorizontally
+        ? TABLE_Z_INDEX.withoutGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
+        : isRecordTableScrolledVertically
+          ? TABLE_Z_INDEX.withoutGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withoutGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
+
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
   if (!recordField) {
     return <></>;
@@ -68,7 +102,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
       key={recordField.fieldMetadataItemId}
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={zIndex}
     >
       <RecordTableColumnHeadWithDropdown
