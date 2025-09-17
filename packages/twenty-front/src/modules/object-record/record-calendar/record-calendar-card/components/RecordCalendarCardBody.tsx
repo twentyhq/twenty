@@ -17,6 +17,11 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import styled from '@emotion/styled';
+
+const StyledRecordCardBodyContainer = styled(RecordCardBodyContainer)`
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -68,7 +73,7 @@ export const RecordCalendarCardBody = ({
   };
 
   return (
-    <RecordCardBodyContainer>
+    <StyledRecordCardBodyContainer>
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -115,6 +120,6 @@ export const RecordCalendarCardBody = ({
           </StopPropagationContainer>
         );
       })}
-    </RecordCardBodyContainer>
+    </StyledRecordCardBodyContainer>
   );
 };

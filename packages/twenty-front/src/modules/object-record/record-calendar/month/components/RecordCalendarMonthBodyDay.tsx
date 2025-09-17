@@ -6,9 +6,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { format, isSameDay, isSameMonth } from 'date-fns';
+import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 
-const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
+const StyledContainer = styled.div<{
+  isOtherMonth: boolean;
+  isDayOfWeekend: boolean;
+}>`
   display: flex;
   width: calc(100% / 7);
   flex-direction: column;
@@ -16,6 +19,7 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.background.primary};
   min-width: 0;
+  color: ${({ theme }) => theme.font.color.primary};
 
   &:not(:last-child) {
     border-right: 0.5px solid ${({ theme }) => theme.border.color.light};
@@ -27,24 +31,45 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean }>`
       background: ${theme.background.secondary};
       color: ${theme.font.color.light};
     `}
+
+  ${({ isDayOfWeekend, theme }) =>
+    isDayOfWeekend &&
+    css`
+      background: ${theme.background.secondary};
+    `}
 `;
 
-const StyledDayHeader = styled.div<{ isToday: boolean }>`
-  display: flex;
-  text-align: right;
-  justify-content: center;
+const StyledDayHeader = styled.div`
   align-items: center;
-  margin-left: auto;
-  width: 20px;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.sm};
-
+  display: flex;
+  flex-direction: column;
+  height: 24px;
+  justify-content: center;
   margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+
+  margin-left: auto;
+  width: 24px;
+`;
+
+const StyledDayHeaderDayContainer = styled.div`
+  display: flex;
+  margin-left: auto;
+  padding: ${({ theme }) => theme.spacing(0.5, 0.5)};
+`;
+
+const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
+  align-items: center;
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: center;
+  line-height: 140%;
+  width: 20px;
+
   ${({ isToday, theme }) =>
     isToday &&
     css`
       border-radius: 4px;
-      background: ${theme.color.red};
+      background: ${theme.color.blue};
       color: ${theme.font.color.inverted};
       font-weight: ${theme.font.weight.medium};
     `}
@@ -89,9 +114,20 @@ export const RecordCalendarMonthBodyDay = ({
 
   const isOtherMonth = !isSameMonth(day, recordCalendarSelectedDate);
 
+  const isDayOfWeekend = isWeekend(day);
+
   return (
-    <StyledContainer isOtherMonth={isOtherMonth}>
-      <StyledDayHeader isToday={isToday}>{day.getDate()}</StyledDayHeader>
+    <StyledContainer
+      isOtherMonth={isOtherMonth}
+      isDayOfWeekend={isDayOfWeekend}
+    >
+      <StyledDayHeader>
+        <StyledDayHeaderDayContainer>
+          <StyledDayHeaderDay isToday={isToday}>
+            {day.getDate()}
+          </StyledDayHeaderDay>
+        </StyledDayHeaderDayContainer>
+      </StyledDayHeader>
       <Droppable droppableId={dayKey}>
         {(droppableProvided, droppableSnapshot) => (
           <StyledCardsContainer

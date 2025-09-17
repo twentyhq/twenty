@@ -21,6 +21,7 @@ const StyledTable = styled.div<{
   isDragging?: boolean;
   visibleRecordFields: RecordField[];
   lastColumnWidth: number;
+  hasRecordGroups: boolean;
 }>`
   & > * {
     pointer-events: ${({ isDragging }) =>
@@ -37,7 +38,10 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(n + 5) {
-    z-index: ${TABLE_Z_INDEX.headerColumnsNormal};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsNormal
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsNormal};
   }
 
   div.header-cell:nth-of-type(1) {
@@ -45,7 +49,10 @@ const StyledTable = styled.div<{
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(2) {
@@ -54,7 +61,10 @@ const StyledTable = styled.div<{
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(3) {
@@ -63,7 +73,10 @@ const StyledTable = styled.div<{
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
 
     // &::after {
     //   content: '';
@@ -86,13 +99,19 @@ const StyledTable = styled.div<{
   div.table-cell:nth-of-type(1) {
     position: sticky;
     left: 0px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.table-cell:nth-of-type(2) {
     position: sticky;
     left: 16px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.table-cell-0-0 {
@@ -103,7 +122,10 @@ const StyledTable = styled.div<{
   div.table-cell:nth-of-type(3) {
     position: sticky;
     left: 48px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
