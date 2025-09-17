@@ -3,7 +3,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { type ObjectLiteral, type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -138,7 +138,7 @@ function mkScheduleWithEditable(phases: {
 }
 
 // Mocks factory
-function repoMock<T>() {
+function repoMock<T extends ObjectLiteral>() {
   return {
     find: jest.fn(),
     findOne: jest.fn(),
