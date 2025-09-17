@@ -7,9 +7,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
-
 import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -17,10 +15,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemMultiSelectTag } from 'twenty-ui/navigation';
-import { type PermissionFlagType } from '~/generated/graphql';
+import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -31,8 +29,7 @@ type MultiSelectInputProps = {
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
-  fieldName?: string;
-  ShowDropdownCreateNewOption?: boolean;
+  onAddSelectOption?: (optionName: string) => void;
 };
 
 export const MultiSelectInput = ({
@@ -43,8 +40,7 @@ export const MultiSelectInput = ({
   onCancel,
   onOptionSelected,
   dropdownWidth,
-  fieldName,
-  ShowDropdownCreateNewOption,
+  onAddSelectOption,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -78,10 +74,6 @@ export const MultiSelectInput = ({
       );
     }
   };
-
-  const hasCreateOptionPermission = useHasPermissionFlag(
-    'DATA_MODEL' as PermissionFlagType,
-  );
 
   useHotkeysOnFocusedElement({
     keys: Key.Escape,
@@ -135,12 +127,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <AddSelectOptionMenuItem
-              name={searchFilter}
-              fieldName={fieldName}
-              hasCreateOptionPermission={hasCreateOptionPermission}
-              ShowDropdownCreateNewOption={ShowDropdownCreateNewOption}
-            />
+            <MenuItem text={t`No options found`} />
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -167,6 +154,19 @@ export const MultiSelectInput = ({
             })
           )}
         </DropdownMenuItemsContainer>
+        {onAddSelectOption &&
+          searchFilter &&
+          filteredOptionsInDropDown.length === 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer scrollable={false}>
+                <AddSelectOptionMenuItem
+                  name={searchFilter}
+                  onAddSelectOption={onAddSelectOption}
+                />
+              </DropdownMenuItemsContainer>
+            </>
+          )}
       </DropdownContent>
     </SelectableList>
   );

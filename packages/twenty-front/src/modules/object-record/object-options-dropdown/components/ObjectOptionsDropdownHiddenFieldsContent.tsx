@@ -52,7 +52,9 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
       <UndecoratedLink
         to={settingsUrl}
         onClick={() => {
-          setNavigationMemorizedUrl(location.pathname + location.search);
+          setNavigationMemorizedUrl({
+            url: location.pathname + location.search,
+          });
           closeDropdown();
         }}
       >

@@ -87,7 +87,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
             objectNamePlural: objectMetadataItem.namePlural,
           })}
           onClick={() => {
-            setNavigationMemorizedUrl(location.pathname + location.search);
+            setNavigationMemorizedUrl({
+              url: location.pathname + location.search,
+            });
           }}
         >
           <MenuItem LeftIcon={IconSettings} text={t`Customize fields`} />

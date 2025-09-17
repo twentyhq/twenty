@@ -92,7 +92,9 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
       <UndecoratedLink
         to={viewGroupSettingsUrl}
         onClick={() => {
-          setNavigationMemorizedUrl(location.pathname + location.search);
+          setNavigationMemorizedUrl({
+            url: location.pathname + location.search,
+          });
           closeDropdown();
         }}
       >

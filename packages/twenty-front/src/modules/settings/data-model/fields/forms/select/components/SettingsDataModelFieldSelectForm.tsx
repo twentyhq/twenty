@@ -207,12 +207,12 @@ export const SettingsDataModelFieldSelectForm = ({
   };
 
   const mergedInitialOptions = useMemo(() => {
-    const newOptionValue = location.state?.CreateNewOption;
+    const newOptionValue = location.state?.createNewOption;
     if (!newOptionValue) return initialOptions;
 
     const newOption = generateNewSelectOption(initialOptions, newOptionValue);
     return [...initialOptions, newOption];
-  }, [initialOptions, location.state?.CreateNewOption]);
+  }, [initialOptions, location.state?.createNewOption]);
 
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');

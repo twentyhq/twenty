@@ -126,9 +126,9 @@ export const SettingsObjectFieldItemTableRow = ({
     // TODO: Add optimistic rendering for core views
     const deletedViewIds: string[] = [];
 
-    const [baseUrl, queryParams] = navigationMemorizedUrl.includes('?')
-      ? navigationMemorizedUrl.split('?')
-      : [navigationMemorizedUrl, ''];
+    const [baseUrl, queryParams] = navigationMemorizedUrl.url.includes('?')
+      ? navigationMemorizedUrl.url.split('?')
+      : [navigationMemorizedUrl.url, ''];
 
     const params = new URLSearchParams(queryParams);
     const currentViewId = params.get('view');
@@ -138,7 +138,7 @@ export const SettingsObjectFieldItemTableRow = ({
       const updatedUrl = params.toString()
         ? `${baseUrl}?${params.toString()}`
         : baseUrl;
-      setNavigationMemorizedUrl(updatedUrl);
+      setNavigationMemorizedUrl({ url: updatedUrl });
     }
   };
 

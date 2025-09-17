@@ -1,3 +1,4 @@
+import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -12,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type TagColor } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -23,6 +24,7 @@ interface SelectInputProps {
   onClear?: () => void;
   clearLabel?: string;
   focusId: string;
+  onAddSelectOption?: (optionName: string) => void;
 }
 
 export const SelectInput = ({
@@ -33,6 +35,7 @@ export const SelectInput = ({
   onCancel,
   defaultOption,
   onFilterChange,
+  onAddSelectOption,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -142,6 +145,17 @@ export const SelectInput = ({
           );
         })}
       </DropdownMenuItemsContainer>
+      {onAddSelectOption && searchFilter && optionsToSelect.length === 0 && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
+            <AddSelectOptionMenuItem
+              name={searchFilter}
+              onAddSelectOption={onAddSelectOption}
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </DropdownContent>
   );
 };

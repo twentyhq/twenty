@@ -66,7 +66,7 @@ export const NavigationDrawerBackButton = ({
   return (
     <StyledContainer>
       <UndecoratedLink
-        to={navigationMemorizedUrl}
+        to={navigationMemorizedUrl.url}
         replace
         onClick={() =>
           setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized)
