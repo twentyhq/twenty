@@ -95,7 +95,7 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}
-              text="Delete"
+              text={t`Delete`}
               onClick={() => {
                 handleDeleteOutboundMessageDomain();
                 closeDropdown(dropdownId);
