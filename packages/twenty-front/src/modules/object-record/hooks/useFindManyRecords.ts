@@ -16,6 +16,7 @@ import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindMan
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -31,13 +32,13 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
-  limit,
   skip,
   recordGqlFields,
   fetchPolicy,
   onError,
   onCompleted,
   cursorFilter,
+  limit = QUERY_DEFAULT_LIMIT_RECORDS,
   withSoftDeleted = false,
 }: UseFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
