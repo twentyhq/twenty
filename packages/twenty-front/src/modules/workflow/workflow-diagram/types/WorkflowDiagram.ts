@@ -3,7 +3,6 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { type MessageDescriptor } from '@lingui/core';
 import {
@@ -94,8 +93,7 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData
-  | WorkflowDiagramIteratorEmptyActionNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
@@ -127,10 +125,7 @@ export type WorkflowDiagramEdgeData =
   | WorkflowDiagramFilterEdgeData
   | WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType =
-  | 'default'
-  | 'empty-trigger'
-  | 'iterator-empty-action';
+export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'

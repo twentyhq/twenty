@@ -41,6 +41,8 @@ export const convertCoreViewToView = (
     kanbanAggregateOperation: coreView.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       coreView.kanbanAggregateOperationFieldMetadataId ?? null,
+    calendarFieldMetadataId: coreView.calendarFieldMetadataId ?? null,
+    calendarLayout: coreView.calendarLayout ?? null,
     position: coreView.position,
     icon: coreView.icon,
     openRecordIn: convertedOpenRecordIn,

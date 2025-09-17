@@ -1,6 +1,5 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
@@ -57,10 +56,6 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     triggerActionMenuDropdown(event, recordId);
   };
 
-  const { handleContainerMouseEnter } = useHandleContainerMouseEnter({
-    recordTableId,
-  });
-
   return (
     <RecordTableBodyContextProvider
       value={{
@@ -69,7 +64,6 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onCloseTableCell: handleCloseTableCell,
         onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
-        onCellMouseEnter: handleContainerMouseEnter,
       }}
     >
       {children}

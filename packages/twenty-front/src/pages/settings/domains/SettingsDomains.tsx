@@ -2,9 +2,11 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -26,6 +28,10 @@ const StyledSection = styled(Section)`
 
 export const SettingsDomains = () => {
   const { t } = useLingui();
+  const featureFlags = useFeatureFlagsMap();
+
+  const isPublicDomainEnabled =
+    featureFlags[FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED];
 
   const isOutboundMessageDomainsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
@@ -65,6 +71,15 @@ export const SettingsDomains = () => {
                 description={t`Configure and verify domains for sending outbound emails from this workspace.`}
               />
               <SettingsOutboundMessageDomains />
+            </StyledSection>
+          )}
+          {isPublicDomainEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Public Domains`}
+                description={t`Provision a complete and secure hosting environment on these domains.`}
+              />
+              <SettingsPublicDomainsListCard />
             </StyledSection>
           )}
         </StyledMainContent>

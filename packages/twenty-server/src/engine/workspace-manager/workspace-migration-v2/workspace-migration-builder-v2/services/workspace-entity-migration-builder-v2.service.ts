@@ -1,102 +1,242 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
-import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import {
+  type DeletedCreatedUpdatedMatrix,
+  deletedCreatedUpdatedMatrixDispatcher,
+} from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { type WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
-import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 
-export type SuccessfulEntityMigrationBuildResult<TFlatEntityMaps> = {
+export type SuccessfulEntityMigrationBuildResult<
+  TActions extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
+> = {
   status: 'success';
-  workspaceMigration: WorkspaceMigrationV2;
-  optimisticFlatEntityMaps: TFlatEntityMaps;
+  actions: TActions[];
+  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
 
-export type FailedEntityMigrationBuildResult<TFailedValidation> = {
+export type FailedEntityMigrationBuildResult<TFlatEntity extends FlatEntity> = {
   status: 'fail';
-  errors: TFailedValidation[];
+  errors: FailedFlatEntityValidation<TFlatEntity>[];
+  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
+
+export type ValidateAndBuildArgs<
+  T extends FlatEntity,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = {
+  buildOptions: WorkspaceMigrationV2BuilderOptions;
+  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
+} & FromTo<FlatEntityMaps<T>>;
+
+export type ValidateAndBuildReturnType<
+  TActions extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
+> =
+  | SuccessfulEntityMigrationBuildResult<TActions, TFlatEntity>
+  | FailedEntityMigrationBuildResult<TFlatEntity>;
+
+export type ValidateAndBuildActionsArgs<
+  T extends FlatEntity,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = ValidateAndBuildArgs<T, TRelatedFlatEntityMaps> &
+  DeletedCreatedUpdatedMatrix<T>;
+
+export type ValidateAndBuilActionsReturnType<
+  TFlatEntity extends FlatEntity,
+  TActions extends WorkspaceMigrationActionV2,
+> = {
+  failed: FailedFlatEntityValidation<TFlatEntity>[];
+  created: TActions[];
+  deleted: TActions[];
+  updated: TActions[];
+};
+
+export type FlatEntityValidationArgs<
+  TFlatEntity extends FlatEntity,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = {
+  flatEntityToValidate: TFlatEntity;
+  optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
+};
+
+export type FlatEntityUpdateValidationArgs<
+  TFlatEntity extends FlatEntity,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+> = Omit<
+  FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  'flatEntityToValidate'
+> & {
+  flatEntityUpdate: FromTo<TFlatEntity>;
+};
+
+export type FlatEntityValidationReturnType<
+  TActions extends WorkspaceMigrationActionV2,
+  TFlatEntity extends FlatEntity,
+> =
+  | {
+      status: 'success';
+      action: TActions | TActions[];
+    }
+  | ({
+      status: 'fail';
+    } & FailedFlatEntityValidation<TFlatEntity>);
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
-  TFlatEntityMaps extends FlatEntityMaps<TFlatEntity>,
-  TFlatEntity extends FlatEntity,
-  TFailedValidation,
-  TActionType extends WorkspaceMigrationActionV2,
-  TBuildArgs extends { workspaceId: string } & FromTo<TFlatEntityMaps, string>,
+  TFlatEntity extends AllFlatEntities,
+  TActions extends WorkspaceMigrationActionV2,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > {
-  public async validateAndBuild(
-    args: TBuildArgs,
-  ): Promise<
-    | SuccessfulEntityMigrationBuildResult<TFlatEntityMaps>
-    | FailedEntityMigrationBuildResult<TFailedValidation>
+  public async validateAndBuild({
+    buildOptions,
+    dependencyOptimisticFlatEntityMaps,
+    from: fromFlatEntityMaps,
+    to: toFlatEntityMaps,
+  }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
+    ValidateAndBuildReturnType<TActions, TFlatEntity>
   > {
-    const { from: fromEntityMaps, to: toEntityMaps } =
-      this.extractFromToEntityMaps(args);
-
-    const fromEntities = Object.values(fromEntityMaps.byId).filter(isDefined);
-    const toEntities = Object.values(toEntityMaps.byId).filter(isDefined);
+    const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
+      isDefined,
+    );
+    const toFlatEntities = Object.values(toFlatEntityMaps.byId).filter(
+      isDefined,
+    );
 
     const { created, deleted, updated } = deletedCreatedUpdatedMatrixDispatcher(
       {
-        from: fromEntities,
-        to: toEntities,
+        from: fromFlatEntities,
+        to: toFlatEntities,
       },
     );
+    let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
 
-    const result = await this.validateAndBuildActions({
-      ...args,
-      created,
-      updated,
-      deleted,
-    });
+    const validateAndBuildResult: ValidateAndBuilActionsReturnType<
+      TFlatEntity,
+      TActions
+    > = {
+      failed: [],
+      created: [],
+      deleted: [],
+      updated: [],
+    };
 
-    if (result.failed.length > 0) {
+    for (const flatEntityToCreate of created) {
+      const validationResult = await this.validateFlatEntityCreation({
+        dependencyOptimisticFlatEntityMaps,
+        flatEntityToValidate: flatEntityToCreate,
+        optimisticFlatEntityMaps,
+      });
+
+      if (validationResult.status === 'fail') {
+        validateAndBuildResult.failed.push(validationResult);
+        continue;
+      }
+
+      optimisticFlatEntityMaps = addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatEntityToCreate,
+        flatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      validateAndBuildResult.created.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
+    }
+
+    for (const flatEntityToDelete of buildOptions.inferDeletionFromMissingEntities
+      ? deleted
+      : []) {
+      const validationResult = await this.validateFlatEntityDeletion({
+        dependencyOptimisticFlatEntityMaps,
+        flatEntityToValidate: flatEntityToDelete,
+        optimisticFlatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      if (validationResult.status === 'fail') {
+        validateAndBuildResult.failed.push(validationResult);
+        continue;
+      }
+
+      optimisticFlatEntityMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
+        entityToDeleteId: flatEntityToDelete.id,
+        flatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      validateAndBuildResult.deleted.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
+    }
+
+    for (const flatEntityUpdate of updated) {
+      const validationResult = await this.validateFlatEntityUpdate({
+        dependencyOptimisticFlatEntityMaps,
+        flatEntityUpdate,
+        optimisticFlatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      if (validationResult === undefined) {
+        continue;
+      }
+
+      if (validationResult.status === 'fail') {
+        validateAndBuildResult.failed.push(validationResult);
+        continue;
+      }
+
+      optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: flatEntityUpdate.to,
+        flatEntityMaps: optimisticFlatEntityMaps,
+      });
+
+      validateAndBuildResult.updated.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
+    }
+
+    if (validateAndBuildResult.failed.length > 0) {
       return {
         status: 'fail',
-        errors: result.failed,
+        errors: validateAndBuildResult.failed,
+        optimisticFlatEntityMaps,
       };
     }
 
     return {
       status: 'success',
-      workspaceMigration: {
-        workspaceId: args.workspaceId,
-        actions: [...result.deleted, ...result.created, ...result.updated],
-      },
-      optimisticFlatEntityMaps: result.optimisticMaps,
+      actions: [
+        ...validateAndBuildResult.deleted,
+        ...validateAndBuildResult.created,
+        ...validateAndBuildResult.updated,
+      ],
+      optimisticFlatEntityMaps,
     };
   }
 
-  // TODO: Refactor, this is too hacky
-  private extractFromToEntityMaps(args: TBuildArgs): {
-    from: TFlatEntityMaps;
-    to: TFlatEntityMaps;
-  } {
-    const fromKey = Object.keys(args).find((key) =>
-      key.startsWith('from'),
-    ) as keyof TBuildArgs;
-    const toKey = Object.keys(args).find((key) =>
-      key.startsWith('to'),
-    ) as keyof TBuildArgs;
+  protected abstract validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
-    return {
-      from: args[fromKey] as TFlatEntityMaps,
-      to: args[toKey] as TFlatEntityMaps,
-    };
-  }
+  protected abstract validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
 
-  protected abstract validateAndBuildActions(
-    args: TBuildArgs & {
-      created: TFlatEntity[];
-      updated: { from: TFlatEntity; to: TFlatEntity }[];
-      deleted: TFlatEntity[];
-    },
-  ): Promise<{
-    failed: TFailedValidation[];
-    created: TActionType[];
-    deleted: TActionType[];
-    updated: TActionType[];
-    optimisticMaps: TFlatEntityMaps;
-  }>;
+  protected abstract validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
+  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined>;
 }

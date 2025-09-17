@@ -7,12 +7,11 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
-import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
 import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Position } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -78,56 +77,14 @@ export const generateNodesAndEdgesForIteratorNode = ({
       ? [step.settings.input.initialLoopStepIds]
       : [];
 
-  if (isNonEmptyArray(initialLoopStepIds)) {
-    for (const initialLoopStepId of initialLoopStepIds) {
-      updatedEdges.push({
-        ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-        type: edgeTypeBetweenTwoNodes,
-        id: v4(),
-        source: step.id,
-        sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
-        target: initialLoopStepId,
-        ...(edgeTypeBetweenTwoNodes.includes('editable')
-          ? { deletable: true, selectable: true }
-          : {}),
-        targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
-        data: {
-          ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION.data,
-          labelOptions: {
-            position: Position.Right,
-            label: msg`loop`,
-          },
-        },
-      });
-    }
-  } else {
-    const emptyNodeId = `${step.id}-empty-loop`;
-
-    updatedNodes.push({
-      id: emptyNodeId,
-      type: 'iterator-empty-action',
-      data: {
-        nodeType: 'iterator-empty-action',
-        parentIteratorStepId: step.id,
-        position: {
-          x: iteratorNode.position.x + 175,
-          y: iteratorNode.position.y + 75,
-        },
-      } satisfies WorkflowDiagramIteratorEmptyActionNodeData,
-      position: {
-        x: iteratorNode.position.x + 175,
-        y: iteratorNode.position.y + 75,
-      },
-      draggable: false,
-    });
-
+  for (const initialLoopStepId of initialLoopStepIds) {
     updatedEdges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       type: edgeTypeBetweenTwoNodes,
       id: v4(),
       source: step.id,
       sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
-      target: emptyNodeId,
+      target: initialLoopStepId,
       ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
@@ -139,19 +96,6 @@ export const generateNodesAndEdgesForIteratorNode = ({
           label: msg`loop`,
         },
       },
-    });
-
-    updatedEdges.push({
-      ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-      type: edgeTypeBetweenTwoNodes,
-      id: v4(),
-      source: emptyNodeId,
-      sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
-      target: step.id,
-      ...(edgeTypeBetweenTwoNodes.includes('editable')
-        ? { deletable: true, selectable: true }
-        : {}),
-      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
     });
   }
 

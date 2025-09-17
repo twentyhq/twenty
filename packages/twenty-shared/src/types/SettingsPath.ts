@@ -23,6 +23,7 @@ export enum SettingsPath {
   Workspace = 'general',
   Domains = 'domains',
   Domain = 'domains/domain',
+  PublicDomain = 'domains/public-domain',
   NewApprovedAccessDomain = 'domains/approved-access-domain/new',
   NewOutboundMessageDomain = 'domains/outbound-message-domains/new',
   OutboundMessageDomainDetail = 'domains/outbound-message-domains/:domainId',
@@ -56,7 +57,4 @@ export enum SettingsPath {
   RoleDetail = 'roles/:roleId',
   RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
   RoleAddObjectLevel = 'roles/:roleId/add-object-permission',
-  PageLayout = 'page-layout',
-  PageLayoutNew = 'page-layout/new',
-  PageLayoutEdit = 'page-layout/:id',
 }

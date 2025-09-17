@@ -3,7 +3,7 @@ import { type WorkflowActionType } from 'src/modules/workflow/workflow-executor/
 type WorkflowIteratorStepConnectionOptions = {
   connectedStepType: WorkflowActionType.ITERATOR;
   settings: {
-    shouldInsertToLoop: boolean;
+    isConnectedToLoop: boolean;
   };
 };
 

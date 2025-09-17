@@ -17,6 +17,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
+import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
@@ -84,6 +85,7 @@ import { FileModule } from './file/file.module';
     ApprovedAccessDomainModule,
     OutboundMessageDomainModule,
     PublicDomainModule,
+    CloudflareModule,
     DnsManagerModule,
     PostgresCredentialsModule,
     WorkflowApiModule,
