@@ -30,9 +30,7 @@ export class QueryTypeGenerator {
     return this.rootTypeGenerator.buildAndStore(
       objectMetadataCollection,
       [...workspaceResolverBuilderMethodNames.queries].filter(
-        (methodName) =>
-          methodName !== 'groupBy' ||
-          (methodName === 'groupBy' && isGroupByEnabled),
+        (methodName) => methodName !== 'groupBy' || isGroupByEnabled,
       ),
       GqlOperation.Query,
     );
