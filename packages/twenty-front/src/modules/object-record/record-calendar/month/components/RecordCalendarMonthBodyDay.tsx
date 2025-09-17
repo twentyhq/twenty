@@ -8,7 +8,10 @@ import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 
-const StyledContainer = styled.div<{ isOtherMonth: boolean, isDayOfWeekend: boolean }>`
+const StyledContainer = styled.div<{
+  isOtherMonth: boolean;
+  isDayOfWeekend: boolean;
+}>`
   display: flex;
   width: calc(100% / 7);
   flex-direction: column;
@@ -37,15 +40,15 @@ const StyledContainer = styled.div<{ isOtherMonth: boolean, isDayOfWeekend: bool
 `;
 
 const StyledDayHeader = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
   flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
-  margin-left: auto;
-
-  width: 24px;
   height: 24px;
+  justify-content: center;
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+
+  margin-left: auto;
+  width: 24px;
 `;
 
 const StyledDayHeaderDayContainer = styled.div`
@@ -55,13 +58,13 @@ const StyledDayHeaderDayContainer = styled.div`
 `;
 
 const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  line-height: 140%;
-  display: flex;
-  width: 20px;
-  justify-content: center;
   align-items: center;
-  
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  justify-content: center;
+  line-height: 140%;
+  width: 20px;
+
   ${({ isToday, theme }) =>
     isToday &&
     css`
@@ -114,10 +117,15 @@ export const RecordCalendarMonthBodyDay = ({
   const isDayOfWeekend = isWeekend(day);
 
   return (
-    <StyledContainer isOtherMonth={isOtherMonth} isDayOfWeekend={isDayOfWeekend}>
+    <StyledContainer
+      isOtherMonth={isOtherMonth}
+      isDayOfWeekend={isDayOfWeekend}
+    >
       <StyledDayHeader>
         <StyledDayHeaderDayContainer>
-          <StyledDayHeaderDay isToday={isToday}>{day.getDate()}</StyledDayHeaderDay>
+          <StyledDayHeaderDay isToday={isToday}>
+            {day.getDate()}
+          </StyledDayHeaderDay>
         </StyledDayHeaderDayContainer>
       </StyledDayHeader>
       <Droppable droppableId={dayKey}>
