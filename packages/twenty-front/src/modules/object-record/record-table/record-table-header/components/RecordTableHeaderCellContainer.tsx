@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 const StyledHeaderCell = styled.div<{
   zIndex?: number;
   shouldDisplayBorderBottom: boolean;
+  isResizing: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
@@ -23,7 +24,11 @@ const StyledHeaderCell = styled.div<{
       : 'none'};
 
   user-select: none;
-  ${({ theme }) => {
+  ${({ theme, isResizing }) => {
+    if (isResizing) {
+      return '';
+    }
+
     return `
     &:hover {
       background: ${theme.background.secondary};
@@ -34,7 +39,7 @@ const StyledHeaderCell = styled.div<{
     `;
   }};
 
-  cursor: pointer;
+  cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
 
   z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;
