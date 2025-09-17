@@ -1,4 +1,6 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -12,10 +14,10 @@ export const AddSelectOptionMenuItem = ({
   onAddSelectOption,
 }: AddSelectOptionMenuItemProps) => {
   const trimmedName = name.trim();
-  const showAddOption = trimmedName.length > 0 && !!onAddSelectOption;
+  const showAddOption = isNonEmptyString(trimmedName) && !!onAddSelectOption;
 
   const handleClick = () => {
-    if (!!onAddSelectOption && trimmedName.length > 0) {
+    if (isDefined(onAddSelectOption)) {
       onAddSelectOption(trimmedName);
     }
   };
