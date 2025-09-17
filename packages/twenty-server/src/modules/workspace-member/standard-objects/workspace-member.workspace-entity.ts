@@ -25,8 +25,8 @@ import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manage
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  type FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    type FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -55,7 +55,8 @@ export enum WorkspaceMemberNumberFormatEnum {
   SYSTEM = 'SYSTEM',
   COMMAS_AND_DOT = 'COMMAS_AND_DOT',
   SPACES_AND_COMMA = 'SPACES_AND_COMMA',
-  SPACES_AND_DOT = 'SPACES_AND_DOT',
+  DOTS_AND_COMMA = 'DOTS_AND_COMMA',
+  APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
 }
 
 registerEnumType(WorkspaceMemberNumberFormatEnum, {
@@ -415,10 +416,16 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'green',
       },
       {
-        value: WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT,
-        label: 'Spaces and dot (1 234.56)',
+        value: WorkspaceMemberNumberFormatEnum.DOTS_AND_COMMA,
+        label: 'Dots and comma (1.234,56)',
         position: 3,
         color: 'orange',
+      },
+      {
+        value: WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT,
+        label: 'Apostrophe and dot (1\'234.56)',
+        position: 4,
+        color: 'purple',
       },
     ],
     defaultValue: `'${WorkspaceMemberNumberFormatEnum.SYSTEM}'`,

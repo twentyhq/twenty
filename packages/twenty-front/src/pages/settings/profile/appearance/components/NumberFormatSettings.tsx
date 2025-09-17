@@ -1,17 +1,17 @@
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
-import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { logError } from '~/utils/logError';
-import { useRecoilState } from 'recoil';
-import { Select } from '@/ui/input/components/Select';
-import { useLingui } from '@lingui/react/macro';
-import { formatNumberLocalized } from '~/utils/format/number';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
 import {
   getNumberFormatFromWorkspaceNumberFormat,
   getWorkspaceNumberFormatFromNumberFormat,
 } from '@/localization/utils/getNumberFormatFromWorkspaceNumberFormat';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
+import { formatNumberLocalized } from '~/utils/format/number';
+import { logError } from '~/utils/logError';
 
 export const NumberFormatSettings = () => {
   const { t } = useLingui();
@@ -90,8 +90,12 @@ export const NumberFormatSettings = () => {
           value: NumberFormat.SPACES_AND_COMMA,
         },
         {
-          label: t`Spaces and dot (1 234.56)`,
-          value: NumberFormat.SPACES_AND_DOT,
+          label: t`Dots and comma (1.234,56)`,
+          value: NumberFormat.DOTS_AND_COMMA,
+        },
+        {
+          label: t`Apostrophe and dot (1'234.56)`,
+          value: NumberFormat.APOSTROPHE_AND_DOT,
         },
       ]}
       onChange={handleNumberFormatChange}

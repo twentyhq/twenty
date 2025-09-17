@@ -4089,9 +4089,10 @@ export enum WorkspaceMemberDateFormatEnum {
 
 /** Number format for displaying numbers */
 export enum WorkspaceMemberNumberFormatEnum {
+  APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
   COMMAS_AND_DOT = 'COMMAS_AND_DOT',
+  DOTS_AND_COMMA = 'DOTS_AND_COMMA',
   SPACES_AND_COMMA = 'SPACES_AND_COMMA',
-  SPACES_AND_DOT = 'SPACES_AND_DOT',
   SYSTEM = 'SYSTEM'
 }
 

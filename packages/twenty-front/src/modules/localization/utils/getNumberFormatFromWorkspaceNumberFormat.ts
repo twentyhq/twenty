@@ -11,8 +11,10 @@ export const getNumberFormatFromWorkspaceNumberFormat = (
       return NumberFormat.COMMAS_AND_DOT;
     case WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA:
       return NumberFormat.SPACES_AND_COMMA;
-    case WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT:
-      return NumberFormat.SPACES_AND_DOT;
+    case WorkspaceMemberNumberFormatEnum.DOTS_AND_COMMA:
+      return NumberFormat.DOTS_AND_COMMA;
+    case WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT:
+      return NumberFormat.APOSTROPHE_AND_DOT;
     default:
       return NumberFormat.COMMAS_AND_DOT;
   }
@@ -28,8 +30,10 @@ export const getWorkspaceNumberFormatFromNumberFormat = (
       return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
     case NumberFormat.SPACES_AND_COMMA:
       return WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA;
-    case NumberFormat.SPACES_AND_DOT:
-      return WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT;
+    case NumberFormat.DOTS_AND_COMMA:
+      return WorkspaceMemberNumberFormatEnum.DOTS_AND_COMMA;
+    case NumberFormat.APOSTROPHE_AND_DOT:
+      return WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT;
     default:
       return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
   }
