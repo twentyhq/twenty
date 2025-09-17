@@ -80,7 +80,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       order: { createdAt: 'DESC' },
     });
 
-    await objectMetadataRepository.save({
+    await objectMetadataRepository.insert({
       ...flatObjectMetadataWithoutFields,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',

@@ -90,6 +90,24 @@ export class FlatIndexValidatorService {
       });
     }
 
+    const allExistingFlatIndex = Object.values(
+      optimisticFlatIndexMaps.byId,
+    ).filter(isDefined);
+
+    const existingFlatIndexOnName = allExistingFlatIndex.some(
+      (flatIndexMetadata) =>
+        flatIndexMetadata.name.toLocaleUpperCase() ===
+        flatIndexToValidate.name.toLocaleUpperCase(),
+    );
+
+    if (isDefined(existingFlatIndexOnName)) {
+      validationResult.errors.push({
+        code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
+        message: t`Index with same name already exists`,
+        userFriendlyMessage: t`Index with same name already exists`,
+      });
+    }
+
     if (flatIndexToValidate.flatIndexFieldMetadatas.length === 0) {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
@@ -97,10 +115,6 @@ export class FlatIndexValidatorService {
         userFriendlyMessage: t`An index must contain at least one field`,
       });
     } else {
-      const allExistingFlatIndex = Object.values(
-        optimisticFlatIndexMaps.byId,
-      ).filter(isDefined);
-
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
         const relatedFlatField =
           findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
