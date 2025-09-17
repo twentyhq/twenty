@@ -242,6 +242,7 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatIndexMaps: existingFlatIndexMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -249,19 +250,23 @@ export class ObjectMetadataServiceV2 {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatViewFieldMaps',
+          'flatIndexMaps',
         ],
       },
     );
 
-    const { flatObjectMetadataToCreate, relationTargetFlatFieldMetadatas } =
-      fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-        createObjectInput,
-        workspaceId,
-        existingFlatObjectMetadataMaps,
-      });
+    const {
+      flatObjectMetadataToCreate,
+      relationTargetFlatFieldMetadataToCreate,
+      flatIndexMetadataToCreate,
+    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+      createObjectInput,
+      workspaceId,
+      existingFlatObjectMetadataMaps,
+    });
 
     const existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
-      relationTargetFlatFieldMetadatas.reduce(
+      relationTargetFlatFieldMetadataToCreate.reduce(
         (flatObjectMetadataMaps, flatFieldMetadata) =>
           addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
             flatFieldMetadata,
@@ -272,7 +277,7 @@ export class ObjectMetadataServiceV2 {
 
     const flatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
       getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow({
-        flatFieldMetadatas: relationTargetFlatFieldMetadatas,
+        flatFieldMetadatas: relationTargetFlatFieldMetadataToCreate,
         flatObjectMetadataMaps:
           existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas,
       });
@@ -286,7 +291,7 @@ export class ObjectMetadataServiceV2 {
 
     const impactedObjectMetadataIds = [
       ...new Set(
-        relationTargetFlatFieldMetadatas.map(
+        relationTargetFlatFieldMetadataToCreate.map(
           ({ objectMetadataId }) => objectMetadataId,
         ),
       ),
@@ -329,6 +334,15 @@ export class ObjectMetadataServiceV2 {
       existingFlatViewFieldMaps,
     );
 
+    const toFlatIndexMaps = flatIndexMetadataToCreate.reduce(
+      (flatIndexMaps, flatIndexMetadata) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatIndexMetadata,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -344,6 +358,10 @@ export class ObjectMetadataServiceV2 {
             flatViewFieldMaps: {
               from: existingFlatViewFieldMaps,
               to: toFlatViewFieldMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
