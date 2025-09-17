@@ -2,7 +2,7 @@ import {
   workflowActionSchema,
   workflowTriggerSchema,
 } from 'twenty-shared/workflow';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
