@@ -6,7 +6,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ApolloError, useMutation } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconShield, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -14,6 +13,7 @@ import {
   type GetOutboundMessageDomainsQuery,
   OutboundMessageDomainStatus,
   useDeleteOutboundMessageDomainMutation,
+  useGetOutboundMessageDomainsQuery,
 } from '~/generated-metadata/graphql';
 
 type SettingsOutboundMessageDomainRowDropdownMenuProps = {
@@ -29,6 +29,9 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
+  const { refetch: refetchOutboundMessageDomains } =
+    useGetOutboundMessageDomainsQuery();
+
   const [deleteOutboundMessageDomainMutation] =
     useDeleteOutboundMessageDomainMutation();
 
@@ -37,19 +40,23 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
   );
 
   const handleDeleteOutboundMessageDomain = async () => {
-    const result = await deleteOutboundMessageDomainMutation({
-      variables: {
-        input: {
-          id: outboundMessageDomain.id,
+    try {
+      await deleteOutboundMessageDomainMutation({
+        variables: {
+          input: {
+            id: outboundMessageDomain.id,
+          },
         },
-      },
-    });
-    if (isDefined(result.errors)) {
+      });
+
+      enqueueSuccessSnackBar({
+        message: t`Outbound message domain deleted successfully`,
+      });
+
+      await refetchOutboundMessageDomains();
+    } catch (error) {
       enqueueErrorSnackBar({
-        message: t`Could not delete outbound message domain`,
-        options: {
-          duration: 2000,
-        },
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
       });
     }
   };
