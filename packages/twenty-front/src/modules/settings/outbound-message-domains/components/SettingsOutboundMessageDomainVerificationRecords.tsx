@@ -2,7 +2,6 @@ import { SettingsOutboundMessageDomainVerificationRecordsTableHeader } from '@/s
 import { SettingsOutboundMessageDomainVerificationRecordsTableRow } from '@/settings/outbound-message-domains/components/SettingsOutboundMessageDomainVerificationRecordsTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { type VerificationRecord } from '~/generated-metadata/graphql';
@@ -21,9 +20,8 @@ type SettingsOutboundMessageDomainVerificationRecordsProps = {
 export const SettingsOutboundMessageDomainVerificationRecords = ({
   verificationRecords,
   description,
+  title,
 }: SettingsOutboundMessageDomainVerificationRecordsProps) => {
-  const { t } = useLingui();
-
   if (!verificationRecords || verificationRecords.length === 0) {
     return null;
   }
