@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { randomUUID } from 'crypto';
 
 import { type Request } from 'express';
@@ -163,7 +164,9 @@ describe('AccessTokenService', () => {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       } as Workspace;
-      const mockUserWorkspace = { id: impersonatedUserWorkspaceId } as UserWorkspace;
+      const mockUserWorkspace = {
+        id: impersonatedUserWorkspaceId,
+      } as UserWorkspace;
       const mockWorkspaceMember = { id: randomUUID() };
       const mockToken = 'mock-token';
 
