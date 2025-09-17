@@ -3,8 +3,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v3';
 
 import {
-    type CreateManyResolverArgs,
-    type UpdateOneResolverArgs,
+  type CreateManyResolverArgs,
+  type UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
