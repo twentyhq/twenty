@@ -161,9 +161,13 @@ msgstr "1. Type"
 msgid "10,000 workflow node executions"
 msgstr "10,000 workflow node executions"
 
+#. js-lingui-id: bM5lnW
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "12h - {hour12Label}"
+msgstr "12h - {hour12Label}"
+
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
 
@@ -188,9 +192,13 @@ msgstr "2. Set {objectLabelPlural} permissions"
 msgid "20,000 workflow node executions"
 msgstr "20,000 workflow node executions"
 
+#. js-lingui-id: mwTnop
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "24h - {hour24Label}"
+msgstr "24h - {hour24Label}"
+
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
@@ -450,6 +458,11 @@ msgstr "Add or remove users"
 msgid "Add Output Field"
 msgstr "Add Output Field"
 
+#. js-lingui-id: wTsnV9
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
+msgid "Add Public Domain"
+msgstr "Add Public Domain"
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -590,7 +603,7 @@ msgstr "Agents used to route queries to specialized agents"
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "AI"
 
@@ -827,6 +840,11 @@ msgstr "APIs"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
 msgstr "APIs & Webhooks"
+
+#. js-lingui-id: BnUHmx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Apostrophe and dot - {apostropheAndDotExample}"
+msgstr "Apostrophe and dot - {apostropheAndDotExample}"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1213,6 +1231,11 @@ msgstr "Change Color"
 msgid "Change email"
 msgstr "Change email"
 
+#. js-lingui-id: Vf6hT6
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Change node type"
+msgstr "Change node type"
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -1274,6 +1297,11 @@ msgstr "Chinese — Traditional"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Choose a Workspace"
+
+#. js-lingui-id: ub6oFI
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose additional formatting preferences"
+msgstr "Choose additional formatting preferences"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1402,6 +1430,11 @@ msgstr "Columns not matched:"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Command Icon"
 msgstr "Command Icon"
+
+#. js-lingui-id: A9u+7N
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Commas and dot - {commasAndDotExample}"
+msgstr "Commas and dot - {commasAndDotExample}"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1639,7 +1672,7 @@ msgstr "Copy this key as it will not be visible again"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Core"
 
@@ -1946,7 +1979,7 @@ msgid "Dark"
 msgstr "Dark"
 
 #. js-lingui-id: HKH+W+
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
 msgstr "Data"
 
@@ -2137,6 +2170,7 @@ msgstr "delete"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -2182,6 +2216,11 @@ msgstr "Delete API key"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr "Delete branch"
+
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr "Delete dashboard"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2388,6 +2427,7 @@ msgstr "Domain"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Domains"
 
@@ -2410,6 +2450,11 @@ msgstr "Don’t create contacts from/to Gmail, Outlook emails"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Don’t sync emails from team@ support@ noreply@..."
+
+#. js-lingui-id: bd+DPX
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Dots and comma - {dotsAndCommaExample}"
+msgstr "Dots and comma - {dotsAndCommaExample}"
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -2464,6 +2509,7 @@ msgstr "Earliest date"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Edit"
 
@@ -2492,6 +2538,11 @@ msgstr "Edit Connection"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Edit CRM data structure and fields"
+
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr "Edit Dashboard"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -2947,6 +2998,11 @@ msgstr "Export"
 msgid "Export CSV"
 msgstr "Export CSV"
 
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr "Export dashboard"
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -3139,6 +3195,11 @@ msgstr "Finish"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
 msgstr "Finish flow with errors"
+
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr "Finished thinking"
 
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3456,7 +3517,7 @@ msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Human Input"
 
@@ -3659,16 +3720,6 @@ msgstr "Invalid API key"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Invalid auth provider"
-
-#. js-lingui-id: P3qQyo
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-
-#. js-lingui-id: u3hwhx
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -4382,6 +4433,11 @@ msgstr "Name of your workspace"
 msgid "Navbar"
 msgstr "Navbar"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr "Navigate to next dashboard"
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4396,6 +4452,11 @@ msgstr "Navigate to next version"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Navigate to next workflow"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr "Navigate to previous dashboard"
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4829,6 +4890,11 @@ msgstr "now"
 msgid "Number"
 msgstr "Number"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Number format"
+msgstr "Number format"
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
@@ -4971,6 +5037,11 @@ msgstr "Organization"
 msgid "Other"
 msgstr "Other"
 
+#. js-lingui-id: vPKFXl
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Other formats"
+msgstr "Other formats"
+
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -4978,7 +5049,7 @@ msgid "Other workspaces"
 msgstr "Other workspaces"
 
 #. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Others"
 msgstr "Others"
 
@@ -5059,6 +5130,11 @@ msgstr "Percent not empty"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Percentage"
+
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr "Permanently destroy dashboard"
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5238,10 +5314,42 @@ msgstr "Profile - Settings"
 msgid "Provide your OIDC provider details"
 msgstr "Provide your OIDC provider details"
 
+#. js-lingui-id: AULPv1
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Provision a complete and secure hosting environment on these domains."
+msgstr "Provision a complete and secure hosting environment on these domains."
+
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Pseudo-English"
+
+#. js-lingui-id: knP82t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain"
+msgstr "Public domain"
+
+#. js-lingui-id: +fsX3t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public Domain"
+msgstr "Public Domain"
+
+#. js-lingui-id: Rjk8Vl
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain created successfully"
+msgstr "Public domain created successfully"
+
+#. js-lingui-id: za+Mr9
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain successfully deleted"
+msgstr "Public domain successfully deleted"
+
+#. js-lingui-id: g55kfn
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Public Domains"
+msgstr "Public Domains"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
@@ -5347,6 +5455,7 @@ msgstr "Releases"
 
 #. js-lingui-id: HpK/8d
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Reload"
 msgstr "Reload"
 
@@ -5487,6 +5596,11 @@ msgstr "Restart Import"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Restore"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr "Restore dashboard"
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5859,6 +5973,12 @@ msgstr "Select a role"
 msgid "Select a target agent"
 msgstr "Select a target agent"
 
+#. js-lingui-id: YcJS1T
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
+msgid "Select action"
+msgstr "Select action"
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -5990,6 +6110,11 @@ msgstr "Set global workspace preferences"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Set the name of your custom domain and configure your DNS records."
+
+#. js-lingui-id: d+3DrP
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Set the name of your public domain and configure your DNS records."
+msgstr "Set the name of your public domain and configure your DNS records."
 
 #. js-lingui-id: tn41zE
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -6195,6 +6320,11 @@ msgstr "Sort"
 msgid "Source"
 msgstr "Source"
 
+#. js-lingui-id: IEtmGM
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Spaces and comma - {spacesAndCommaExample}"
+msgstr "Spaces and comma - {spacesAndCommaExample}"
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -6262,16 +6392,6 @@ msgstr "Subdomain"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Subdomain already taken"
-
-#. js-lingui-id: OlC/tU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Subdomain can not be longer than 30 characters"
-
-#. js-lingui-id: ZETwlU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Subdomain can not be shorter than 3 characters"
 
 #. js-lingui-id: DTG2nE
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -6425,6 +6545,11 @@ msgstr "System settings"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "System settings - {systemDateFormatLabel}"
+
+#. js-lingui-id: uKM6SP
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "System Settings - {systemNumberFormatLabel}"
+msgstr "System Settings - {systemNumberFormatLabel}"
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6600,6 +6725,11 @@ msgstr "There are still some rows that contain errors. Rows with errors will be 
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "There was an error while updating password."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr "Thinking..."
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6931,11 +7061,6 @@ msgstr "Use as draft"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 
-#. js-lingui-id: oTTQsc
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Use letter, number and dash only. Start and finish with a letter or a number"
-
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -6999,6 +7124,8 @@ msgstr "Validate Data"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Value"
 
@@ -7239,6 +7366,7 @@ msgstr "Workflows"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"

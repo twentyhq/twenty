@@ -1,12 +1,27 @@
 export const TABLE_Z_INDEX = {
   base: 1,
   cell: {
-    default: 3,
-    sticky: 12,
-    editMode: 30,
+    withoutGroups: {
+      default: 3,
+      sticky: 12,
+      editMode: 30,
+    },
+    withGroups: {
+      default: 3,
+      sticky: 12,
+      editMode: 30,
+    },
   },
-  headerColumnsSticky: 14,
-  headerColumnsNormal: 10,
+  headerColumns: {
+    withoutGroups: {
+      headerColumnsSticky: 14,
+      headerColumnsNormal: 10,
+    },
+    withGroups: {
+      headerColumnsSticky: 21,
+      headerColumnsNormal: 20,
+    },
+  },
   withoutGroupsCell0_0: {
     cell0_0HoveredWithoutScroll: 15,
     cell0_0Normal: 12,
@@ -17,28 +32,28 @@ export const TABLE_Z_INDEX = {
   },
   withGroups: {
     noScrollAtAll: {
-      hoverPortalCellOnFirstScrollableColumn: 17,
-      hoverPortalCellOnNormalColumn: 17,
-      hoverPortalCellOnLabelIdentifierColumn: 17,
-      firstScrollableHeaderCell: 10,
+      hoverPortalCellOnFirstScrollableColumn: 16,
+      hoverPortalCellOnNormalColumn: 14,
+      hoverPortalCellOnLabelIdentifierColumn: 14,
+      firstScrollableHeaderCell: 19,
     },
     scrolledBothVerticallyAndHorizontally: {
       hoverPortalCellOnNormalColumn: 9,
       hoverPortalCellOnFirstScrollableColumn: 9,
       hoverPortalCellOnLabelIdentifierColumn: 9,
-      firstScrollableHeaderCell: 10,
+      firstScrollableHeaderCell: 19,
     },
     scrolledHorizontallyOnly: {
       hoverPortalCellOnLabelIdentifierColumn: 9,
       hoverPortalCellOnNormalColumn: 9,
       hoverPortalCellOnFirstScrollableColumn: 9,
-      firstScrollableHeaderCell: 10,
+      firstScrollableHeaderCell: 19,
     },
     scrolledVerticallyOnly: {
       hoverPortalCellOnNormalColumn: 9,
-      hoverPortalCellOnFirstScrollableColumn: 13,
+      hoverPortalCellOnFirstScrollableColumn: 16,
       hoverPortalCellOnLabelIdentifierColumn: 9,
-      firstScrollableHeaderCell: 14,
+      firstScrollableHeaderCell: 19,
     },
   },
   withoutGroups: {
@@ -70,8 +85,8 @@ export const TABLE_Z_INDEX = {
   columnGrip: 30,
   footer: {
     tableWithGroups: {
-      default: 4,
-      stickyColumn: 5,
+      default: 17,
+      stickyColumn: 18,
     },
     tableWithoutGroups: {
       default: 18,

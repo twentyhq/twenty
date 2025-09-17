@@ -1004,12 +1004,14 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
+  IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -2587,6 +2589,7 @@ export type Query = {
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
+  findManyPublicDomains: Array<PublicDomain>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;
@@ -3896,6 +3899,7 @@ export type WorkspaceMember = {
   id: Scalars['UUID'];
   locale?: Maybe<Scalars['String']>;
   name: FullName;
+  numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
@@ -3909,6 +3913,15 @@ export enum WorkspaceMemberDateFormatEnum {
   MONTH_FIRST = 'MONTH_FIRST',
   SYSTEM = 'SYSTEM',
   YEAR_FIRST = 'YEAR_FIRST'
+}
+
+/** Number format for displaying numbers */
+export enum WorkspaceMemberNumberFormatEnum {
+  APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
+  COMMAS_AND_DOT = 'COMMAS_AND_DOT',
+  DOTS_AND_COMMA = 'DOTS_AND_COMMA',
+  SPACES_AND_COMMA = 'SPACES_AND_COMMA',
+  SYSTEM = 'SYSTEM'
 }
 
 /** Time time as Military, Standard or system as default */

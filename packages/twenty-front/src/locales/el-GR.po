@@ -166,9 +166,13 @@ msgstr "1. Τύπος"
 msgid "10,000 workflow node executions"
 msgstr "10.000 εκτελέσεις κόμβου ροής εργασιών"
 
+#. js-lingui-id: bM5lnW
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "12h - {hour12Label}"
+msgstr ""
+
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12ω ({hour12Label})"
 
@@ -193,9 +197,13 @@ msgstr "2. Ορίστε δικαιώματα {objectLabelPlural}"
 msgid "20,000 workflow node executions"
 msgstr "20.000 εκτελέσεις κόμβου ροής εργασιών"
 
+#. js-lingui-id: mwTnop
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "24h - {hour24Label}"
+msgstr ""
+
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24ω ({hour24Label})"
 
@@ -455,6 +463,11 @@ msgstr "Προσθήκη ή αφαίρεση χρηστών"
 msgid "Add Output Field"
 msgstr "Προσθήκη Πεδίου Εξόδου"
 
+#. js-lingui-id: wTsnV9
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
+msgid "Add Public Domain"
+msgstr ""
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -595,7 +608,7 @@ msgstr "Πράκτορες που χρησιμοποιούνται για την
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "AI"
 
@@ -832,6 +845,11 @@ msgstr "API"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
 msgstr "API & Webhooks"
+
+#. js-lingui-id: BnUHmx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Apostrophe and dot - {apostropheAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1218,6 +1236,11 @@ msgstr "Αλλαγή Χρώματος"
 msgid "Change email"
 msgstr "Αλλαγή email"
 
+#. js-lingui-id: Vf6hT6
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Change node type"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -1279,6 +1302,11 @@ msgstr "Κινέζικα — Παραδοσιακά"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Επιλέξτε έναν Χώρο Εργασίας"
+
+#. js-lingui-id: ub6oFI
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose additional formatting preferences"
+msgstr ""
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1407,6 +1435,11 @@ msgstr "Μη αντιστοιχισμένες στήλες:"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Command Icon"
 msgstr "Εικονίδιο εντολής"
+
+#. js-lingui-id: A9u+7N
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Commas and dot - {commasAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1644,7 +1677,7 @@ msgstr "Αντιγράψτε αυτό το κλειδί γιατί δεν θα �
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Πυρήνας"
 
@@ -1951,7 +1984,7 @@ msgid "Dark"
 msgstr "Σκοτεινό"
 
 #. js-lingui-id: HKH+W+
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
 msgstr "Δεδομένα"
 
@@ -2142,6 +2175,7 @@ msgstr "διαγραφή"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -2187,6 +2221,11 @@ msgstr "Διαγραφή κλειδιού API"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr "Διαγραφή κλάδου"
+
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr ""
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2393,6 +2432,7 @@ msgstr "Τομέας"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Τομείς"
 
@@ -2415,6 +2455,11 @@ msgstr "Μην δημιουργείτε επαφές από/προς τα email 
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Μην συγχρονίζετε email από team@ support@ noreply@..."
+
+#. js-lingui-id: bd+DPX
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Dots and comma - {dotsAndCommaExample}"
+msgstr ""
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -2469,6 +2514,7 @@ msgstr "Νωρίτερη ημερομηνία"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -2497,6 +2543,11 @@ msgstr "Επεξεργασία Σύνδεσης"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Επεξεργασία δομής δεδομένων CRM και πεδίων"
+
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr ""
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -2952,6 +3003,11 @@ msgstr "Εξαγωγή"
 msgid "Export CSV"
 msgstr "Εξαγωγή CSV"
 
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr ""
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -3144,6 +3200,11 @@ msgstr "Ολοκλήρωση"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
 msgstr "Ολοκλήρωση ροής με λάθη"
+
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr ""
 
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3461,7 +3522,7 @@ msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Ανθρώπινη Εισαγωγή"
 
@@ -3664,16 +3725,6 @@ msgstr "Μη έγκυρο κλειδί API"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Μη έγκυρος πάροχος εξουσιοδότησης"
-
-#. js-lingui-id: P3qQyo
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr "Μη έγκυρο προσαρμοσμένο domain. Παρακαλώ περιλάβετε τουλάχιστον ένα υποτομέα (π.χ., sub.example.com)."
-
-#. js-lingui-id: u3hwhx
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Άκυρος τομέας. Οι τομείς πρέπει να είναι μικρότεροι από 256 χαρακτήρες σε μήκος, δεν μπορούν να είναι διευθύνσεις IP, δεν μπορούν να περιέχουν κενά, δεν μπορούν να περιέχουν ειδικούς χαρακτήρες όπως _~`!@#$%^*()=+{}[]|\\;:'\",<>/? και δεν μπορούν να αρχίζουν ή να τελειώνουν με τον χαρακτήρα '-'."
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -4387,6 +4438,11 @@ msgstr "Όνομα του χώρου εργασίας σας"
 msgid "Navbar"
 msgstr "Μπάρα πλοήγησης"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4401,6 +4457,11 @@ msgstr "Μετάβαση στην επόμενη έκδοση"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Μετάβαση στον επόμενο workflow"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr ""
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4834,6 +4895,11 @@ msgstr "τώρα"
 msgid "Number"
 msgstr "Αριθμός"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
@@ -4976,6 +5042,11 @@ msgstr "Οργανωτικός"
 msgid "Other"
 msgstr "Άλλο"
 
+#. js-lingui-id: vPKFXl
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Other formats"
+msgstr ""
+
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -4983,7 +5054,7 @@ msgid "Other workspaces"
 msgstr "Άλλοι χώροι εργασίας"
 
 #. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Others"
 msgstr "Άλλα"
 
@@ -5064,6 +5135,11 @@ msgstr "Ποσοστό μη άδειο"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Ποσοστό"
+
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr ""
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5243,10 +5319,42 @@ msgstr "Προφίλ - Ρυθμίσεις"
 msgid "Provide your OIDC provider details"
 msgstr "Παρέχετε τις λεπτομέρειες του παρόχου OIDC σας"
 
+#. js-lingui-id: AULPv1
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Provision a complete and secure hosting environment on these domains."
+msgstr ""
+
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Ψευδο-Αγγλικά"
+
+#. js-lingui-id: knP82t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain"
+msgstr ""
+
+#. js-lingui-id: +fsX3t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public Domain"
+msgstr ""
+
+#. js-lingui-id: Rjk8Vl
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain created successfully"
+msgstr ""
+
+#. js-lingui-id: za+Mr9
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain successfully deleted"
+msgstr ""
+
+#. js-lingui-id: g55kfn
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Public Domains"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
@@ -5352,6 +5460,7 @@ msgstr "Ενημερώσεις"
 
 #. js-lingui-id: HpK/8d
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Reload"
 msgstr "Ανανέωση"
 
@@ -5492,6 +5601,11 @@ msgstr "Επανεκκίνηση εισαγωγής"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Επαναφορά"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5864,6 +5978,12 @@ msgstr "Επιλογή ρόλου"
 msgid "Select a target agent"
 msgstr "Επιλέξτε έναν στόχο πράκτορα"
 
+#. js-lingui-id: YcJS1T
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
+msgid "Select action"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -5995,6 +6115,11 @@ msgstr "Ορισμός προτιμήσεων καθολικού χώρου ερ
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Ορίστε το όνομα του προσαρμοσμένου τομέα σας και διαμορφώστε τα αρχεία DNS σας."
+
+#. js-lingui-id: d+3DrP
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Set the name of your public domain and configure your DNS records."
+msgstr ""
 
 #. js-lingui-id: tn41zE
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -6202,6 +6327,11 @@ msgstr "Ταξινόμηση"
 msgid "Source"
 msgstr "Πηγή"
 
+#. js-lingui-id: IEtmGM
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Spaces and comma - {spacesAndCommaExample}"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -6269,16 +6399,6 @@ msgstr "Υποτομέας"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Ο υποτομέας έχει ήδη ληφθεί"
-
-#. js-lingui-id: OlC/tU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Ο υποτομέας δεν μπορεί να είναι μεγαλύτερος από 30 χαρακτήρες"
-
-#. js-lingui-id: ZETwlU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Ο υποτομέας δεν μπορεί να είναι μικρότερος από 3 χαρακτήρες"
 
 #. js-lingui-id: DTG2nE
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -6432,6 +6552,11 @@ msgstr "Ρυθμίσεις Συστήματος"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Ρυθμίσεις συστήματος - {systemDateFormatLabel}"
+
+#. js-lingui-id: uKM6SP
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "System Settings - {systemNumberFormatLabel}"
+msgstr ""
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6607,6 +6732,11 @@ msgstr "Υπάρχουν ακόμα γραμμές που περιέχουν λ�
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Παρουσιάστηκε σφάλμα κατά την ενημέρωση του κωδικού πρόσβασης."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr ""
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6938,11 +7068,6 @@ msgstr "Χρήση ως πρόχειρο"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Χρησιμοποιήστε εφαρμογές ταυτοποίησης και επεκτάσεις περιηγητή, όπως 1Password, Authy, Microsoft Authenticator, για να δημιουργήσετε μονοχρόνιους κωδικούς πρόσβασης"
 
-#. js-lingui-id: oTTQsc
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Χρησιμοποιήστε γράμμα, αριθμό και παύλα μόνο. Αρχίστε και τελειώστε με ένα γράμμα ή ένα αριθμό"
-
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -7006,6 +7131,8 @@ msgstr "Επικύρωση δεδομένων"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Αξία"
 
@@ -7246,6 +7373,7 @@ msgstr "Ροές Εργασίας"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"

@@ -5,6 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated/graphql';
+import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -428,6 +429,10 @@ export const SettingsRoutes = ({
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
       </Route>
       <Route
         element={

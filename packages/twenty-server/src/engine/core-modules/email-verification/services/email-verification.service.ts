@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -24,6 +23,7 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
@@ -37,6 +37,7 @@ export class EmailVerificationService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userService: UserService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async sendVerificationEmail(
@@ -84,13 +85,16 @@ export class EmailVerificationService {
       plainText: true,
     });
 
-    i18n.activate(locale);
+    const emailVerificationMsg = msg`Welcome to Twenty: Please Confirm Your Email`;
+    const i18n = this.i18nService.getI18nInstance(locale);
+    const subject = i18n._(emailVerificationMsg);
+
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: t`Welcome to Twenty: Please Confirm Your Email`,
+      subject,
       text,
       html,
     });

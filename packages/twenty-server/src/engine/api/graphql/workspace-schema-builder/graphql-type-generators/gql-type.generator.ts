@@ -10,6 +10,7 @@ import { RelationConnectGqlInputTypeGenerator } from 'src/engine/api/graphql/wor
 import { CompositeFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/composite-field-metadata-gql-object-type.generator';
 import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/connection-gql-object-type.generator';
 import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/edge-gql-object-type.generator';
+import { GroupByConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/group-by-connection-gql-object-type.generator';
 import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
@@ -32,18 +33,25 @@ export class GqlTypeGenerator {
     private readonly compositeFieldMetadataGqlInputTypeGenerator: CompositeFieldMetadataGqlInputTypeGenerator,
     private readonly edgeGqlObjectTypeGenerator: EdgeGqlObjectTypeGenerator,
     private readonly connectionGqlObjectTypeGenerator: ConnectionGqlObjectTypeGenerator,
+    private readonly groupByConnectionGqlObjectTypeGenerator: GroupByConnectionGqlObjectTypeGenerator,
     private readonly objectMetadataWithRelationsGqlObjectTypeGenerator: ObjectMetadataWithRelationsGqlObjectTypeGenerator,
     private readonly relationConnectGqlInputTypeGenerator: RelationConnectGqlInputTypeGenerator,
     private readonly queryTypeGenerator: QueryTypeGenerator,
     private readonly mutationTypeGenerator: MutationTypeGenerator,
   ) {}
 
-  buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
+  async buildAndStore(
+    objectMetadataCollection: ObjectMetadataEntity[],
+    workspaceId: string,
+  ) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.buildAndStoreCompositeFieldMetadataGqlTypes(compositeTypeCollection);
     this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
-    this.queryTypeGenerator.buildAndStore(objectMetadataCollection);
+    await this.queryTypeGenerator.buildAndStore(
+      objectMetadataCollection,
+      workspaceId,
+    );
     this.mutationTypeGenerator.buildAndStore(objectMetadataCollection);
   }
 
@@ -77,6 +85,9 @@ export class GqlTypeGenerator {
       this.objectMetadataGqlObjectTypeGenerator.buildAndStore(objectMetadata);
       this.edgeGqlObjectTypeGenerator.buildAndStore(objectMetadata);
       this.connectionGqlObjectTypeGenerator.buildAndStore(objectMetadata);
+      this.groupByConnectionGqlObjectTypeGenerator.buildAndStore(
+        objectMetadata,
+      );
       this.relationConnectGqlInputTypeGenerator.buildAndStore(objectMetadata);
       this.objectMetadataGqlInputTypeGenerator.buildAndStore(objectMetadata);
 

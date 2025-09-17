@@ -166,9 +166,13 @@ msgstr "1. Typ"
 msgid "10,000 workflow node executions"
 msgstr "10 000 spuštění uzlu pracovního postupu"
 
+#. js-lingui-id: bM5lnW
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "12h - {hour12Label}"
+msgstr ""
+
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
 
@@ -193,9 +197,13 @@ msgstr "2. Nastavte oprávnění pro {objectLabelPlural}"
 msgid "20,000 workflow node executions"
 msgstr "20 000 spuštění uzlu pracovního postupu"
 
+#. js-lingui-id: mwTnop
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "24h - {hour24Label}"
+msgstr ""
+
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
@@ -455,6 +463,11 @@ msgstr "Přidat nebo odebrat uživatele"
 msgid "Add Output Field"
 msgstr "Přidat výstupní pole"
 
+#. js-lingui-id: wTsnV9
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
+msgid "Add Public Domain"
+msgstr ""
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -595,7 +608,7 @@ msgstr "Agenti použité k nasměrování dotazů na specializované agenty"
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "AI"
 
@@ -832,6 +845,11 @@ msgstr "API"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
 msgstr "API & Webhooks"
+
+#. js-lingui-id: BnUHmx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Apostrophe and dot - {apostropheAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1218,6 +1236,11 @@ msgstr "Změnit barvu"
 msgid "Change email"
 msgstr "Změnit email"
 
+#. js-lingui-id: Vf6hT6
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Change node type"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -1279,6 +1302,11 @@ msgstr "Čínština — tradiční"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Vyberte si pracovní prostor"
+
+#. js-lingui-id: ub6oFI
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose additional formatting preferences"
+msgstr ""
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1407,6 +1435,11 @@ msgstr "Sloupce nejsou shodné:"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Command Icon"
 msgstr "Ikona příkazu"
+
+#. js-lingui-id: A9u+7N
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Commas and dot - {commasAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1644,7 +1677,7 @@ msgstr "Zkopírujte tento klíč, nebude již znovu viditelný"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Jádro"
 
@@ -1951,7 +1984,7 @@ msgid "Dark"
 msgstr "Tmavý"
 
 #. js-lingui-id: HKH+W+
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
 msgstr "Data"
 
@@ -2142,6 +2175,7 @@ msgstr "smazat"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -2187,6 +2221,11 @@ msgstr "Smazat API klíč"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr "Smazat větev"
+
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr ""
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2393,6 +2432,7 @@ msgstr "Doména"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Domény"
 
@@ -2415,6 +2455,11 @@ msgstr "Nevytvářet kontakty z/do Gmailu, Outlook e-mailů"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Nesynchronizovat e-maily z team@ support@ noreply@..."
+
+#. js-lingui-id: bd+DPX
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Dots and comma - {dotsAndCommaExample}"
+msgstr ""
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -2469,6 +2514,7 @@ msgstr "Nejstarší datum"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Upravit"
 
@@ -2497,6 +2543,11 @@ msgstr "Upravit připojení"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Upravit strukturu dat CRM a pole"
+
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr ""
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -2952,6 +3003,11 @@ msgstr "Exportovat"
 msgid "Export CSV"
 msgstr "Exportovat CSV"
 
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr ""
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -3144,6 +3200,11 @@ msgstr "Dokončit"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
 msgstr "Dokončit tok s chybami"
+
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr ""
 
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3461,7 +3522,7 @@ msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Lidský vstup"
 
@@ -3664,16 +3725,6 @@ msgstr "Neplatný API klíč"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Neplatný poskytovatel ověřování"
-
-#. js-lingui-id: P3qQyo
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr "Neplatná vlastní doména. Uveďte prosím alespoň jednu subdoménu (např. sub.example.com)."
-
-#. js-lingui-id: u3hwhx
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Neplatná doména. Domény musí být kratší než 256 znaků, nesmí být IP adresy, nesmí obsahovat žádné speciální znaky jako _~`!@#$%^*()=+{}[]|\\;:'\",<>/? a nesmí začínat ani končit znakem '-'."
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -4387,6 +4438,11 @@ msgstr "Název vašeho pracovního prostoru"
 msgid "Navbar"
 msgstr "Navigační lišta"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4401,6 +4457,11 @@ msgstr "Přejít na další verzi"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Přejít na další workflow"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr ""
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4834,6 +4895,11 @@ msgstr "nyní"
 msgid "Number"
 msgstr "Číslo"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
@@ -4976,6 +5042,11 @@ msgstr "Organizace"
 msgid "Other"
 msgstr "Ostatní"
 
+#. js-lingui-id: vPKFXl
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Other formats"
+msgstr ""
+
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -4983,7 +5054,7 @@ msgid "Other workspaces"
 msgstr "Jiné pracovní prostory"
 
 #. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Others"
 msgstr "Jiní"
 
@@ -5064,6 +5135,11 @@ msgstr "Procento neprázdné"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Procento"
+
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr ""
 
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5243,10 +5319,42 @@ msgstr "Profil - Nastavení"
 msgid "Provide your OIDC provider details"
 msgstr "Uveďte údaje o vašem poskytovateli OIDC"
 
+#. js-lingui-id: AULPv1
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Provision a complete and secure hosting environment on these domains."
+msgstr ""
+
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Pseudo-Angličtina"
+
+#. js-lingui-id: knP82t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain"
+msgstr ""
+
+#. js-lingui-id: +fsX3t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public Domain"
+msgstr ""
+
+#. js-lingui-id: Rjk8Vl
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain created successfully"
+msgstr ""
+
+#. js-lingui-id: za+Mr9
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain successfully deleted"
+msgstr ""
+
+#. js-lingui-id: g55kfn
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Public Domains"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
@@ -5352,6 +5460,7 @@ msgstr "Verze"
 
 #. js-lingui-id: HpK/8d
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Reload"
 msgstr "Načíst znovu"
 
@@ -5492,6 +5601,11 @@ msgstr "Restartovat Import"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Obnovit"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5864,6 +5978,12 @@ msgstr "Vybrat roli"
 msgid "Select a target agent"
 msgstr "Vyberte cílového agenta"
 
+#. js-lingui-id: YcJS1T
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
+msgid "Select action"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -5995,6 +6115,11 @@ msgstr "Nastavit globální preference pracovního prostoru"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Nastavte název vaší vlastní domény a nakonfigurujte záznamy DNS."
+
+#. js-lingui-id: d+3DrP
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Set the name of your public domain and configure your DNS records."
+msgstr ""
 
 #. js-lingui-id: tn41zE
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
@@ -6200,6 +6325,11 @@ msgstr "Seřadit"
 msgid "Source"
 msgstr "Zdroj"
 
+#. js-lingui-id: IEtmGM
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Spaces and comma - {spacesAndCommaExample}"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -6267,16 +6397,6 @@ msgstr "Subdoména"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Subdoména je již zabraná"
-
-#. js-lingui-id: OlC/tU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Subdoména nemůže být delší než 30 znaků"
-
-#. js-lingui-id: ZETwlU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Subdoména nemůže být kratší než 3 znaky"
 
 #. js-lingui-id: DTG2nE
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -6430,6 +6550,11 @@ msgstr "Systémová nastavení"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Systémová nastavení - {systemDateFormatLabel}"
+
+#. js-lingui-id: uKM6SP
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "System Settings - {systemNumberFormatLabel}"
+msgstr ""
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6605,6 +6730,11 @@ msgstr "Stále existují některé řádky, které obsahují chyby. Řádky s ch
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Během aktualizace hesla došlo k chybě."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr ""
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6936,11 +7066,6 @@ msgstr "Použít jako koncept"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Používejte autentizační aplikace a rozšíření prohlížeče jako 1Password, Authy, Microsoft Authenticator pro generování jednorázových hesel"
 
-#. js-lingui-id: oTTQsc
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Používejte pouze písmena, číslice a pomlčku. Začínejte a končete písmenem nebo číslicí"
-
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -7004,6 +7129,8 @@ msgstr "Ověřit data"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Hodnota"
 
@@ -7244,6 +7371,7 @@ msgstr "Pracovní postupy"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"

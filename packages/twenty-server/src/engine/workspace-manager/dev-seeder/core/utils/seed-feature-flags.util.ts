@@ -75,6 +75,16 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_GROUP_BY_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };

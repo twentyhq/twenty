@@ -100,19 +100,20 @@ export class RootTypeGenerator {
             );
           }
 
-          const allowedMethodNames = [
+          const isMethodReturningArrayObjectType = [
             'updateMany',
             'deleteMany',
             'createMany',
             'findDuplicates',
             'restoreMany',
             'destroyMany',
+            'groupBy',
           ];
 
           const outputType = this.typeMapperService.applyTypeOptions(
             objectType,
             {
-              isArray: allowedMethodNames.includes(methodName),
+              isArray: isMethodReturningArrayObjectType.includes(methodName),
             },
           );
 
@@ -135,6 +136,8 @@ export class RootTypeGenerator {
       case 'findMany':
       case 'findDuplicates':
         return ObjectTypeDefinitionKind.Connection;
+      case 'groupBy':
+        return ObjectTypeDefinitionKind.GroupByConnection;
       default:
         return ObjectTypeDefinitionKind.Plain;
     }

@@ -5,7 +5,9 @@ import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/co
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
+import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -87,6 +89,8 @@ export const RecordTableHeaderAddColumnButton = () => {
   const shouldDisplayBorderBottom =
     hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+
   return (
     <StyledPlusIconHeaderCell
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
@@ -95,6 +99,10 @@ export const RecordTableHeaderAddColumnButton = () => {
         RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME,
       )}
     >
+      <RecordTableHeaderResizeHandler
+        recordFieldIndex={visibleRecordFields.length}
+        position="left"
+      />
       <StyledDropdownContainer>
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
