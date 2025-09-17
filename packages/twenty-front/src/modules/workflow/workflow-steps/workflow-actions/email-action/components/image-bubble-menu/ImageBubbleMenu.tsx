@@ -1,13 +1,12 @@
 import { BubbleMenuIconButton } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/BubbleMenuIconButton';
 import { StyledBubbleMenuContainer } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TextBubbleMenu';
-import { isTextSelected } from '@/workflow/workflow-steps/workflow-actions/email-action/utils/isTextSelected';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconPoint,
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
   IconTrash,
 } from 'twenty-ui/display';
 
@@ -31,7 +30,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
 
   const alignmentActions = [
     {
-      Icon: IconArrowLeft,
+      Icon: IconAlignLeft,
       onClick: () =>
         editor
           .chain()
@@ -41,7 +40,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       isActive: state.align === 'left',
     },
     {
-      Icon: IconPoint,
+      Icon: IconAlignCenter,
       onClick: () =>
         editor
           .chain()
@@ -51,7 +50,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       isActive: state.align === 'center',
     },
     {
-      Icon: IconArrowRight,
+      Icon: IconAlignRight,
       onClick: () =>
         editor
           .chain()
@@ -63,10 +62,6 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
   ];
 
   const handleShouldShow = () => {
-    if (isTextSelected({ editor })) {
-      return false;
-    }
-
     return editor.isActive('image');
   };
 
@@ -75,6 +70,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       pluginKey="image-bubble-menu"
       editor={editor}
       shouldShow={handleShouldShow}
+      updateDelay={0}
     >
       <StyledBubbleMenuContainer>
         {alignmentActions.map(({ Icon, onClick, isActive }, index) => (

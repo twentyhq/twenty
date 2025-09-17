@@ -186,7 +186,6 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
       onMouseEnter={handleWrapperMouseEnter}
       onMouseLeave={handleWrapperMouseLeave}
       align={align}
-      draggable={true}
     >
       <StyledImageWrapper
         ref={imageWrapperRef}

@@ -66,6 +66,7 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       pluginKey="text-bubble-menu"
       editor={editor}
       shouldShow={handleShouldShow}
+      updateDelay={0}
     >
       <StyledBubbleMenuContainer>
         <TurnIntoBlockDropdown editor={editor} />

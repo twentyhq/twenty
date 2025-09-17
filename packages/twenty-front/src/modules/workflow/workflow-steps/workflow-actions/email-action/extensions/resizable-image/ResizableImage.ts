@@ -6,8 +6,6 @@ import {
 import { ReactNodeViewRenderer } from '@tiptap/react';
 
 export const ResizableImage = TiptapImage.extend<ImageOptions>({
-  selectable: true,
-
   addAttributes() {
     return {
       ...this.parent?.(),

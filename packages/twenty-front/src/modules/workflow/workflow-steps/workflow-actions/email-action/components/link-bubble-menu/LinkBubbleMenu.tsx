@@ -43,6 +43,7 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
       pluginKey="link-bubble-menu"
       editor={editor}
       shouldShow={handleShouldShow}
+      updateDelay={0}
     >
       <StyledBubbleMenuContainer>
         <EditLinkPopover defaultValue={state.linkHref} editor={editor} />

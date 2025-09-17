@@ -83,9 +83,9 @@ export const WorkflowEmailEditor = ({
   return (
     <StyledEditorContainer readonly={readonly}>
       <EditorContent className="editor-content" editor={editor} />
+      <ImageBubbleMenu editor={editor} />
       <TextBubbleMenu editor={editor} />
       <LinkBubbleMenu editor={editor} />
-      <ImageBubbleMenu editor={editor} />
     </StyledEditorContainer>
   );
 };
