@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing';
 
+import { jsonSchema } from 'ai';
+
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
@@ -33,7 +35,7 @@ describe('ToolAdapterService', () => {
   }));
   const unflaggedTool: Tool = {
     description: 'HTTP Request tool',
-    inputSchema: { type: 'object', properties: {} },
+    inputSchema: jsonSchema({ type: 'object', properties: {} }),
     execute: unflaggedToolExecute,
   };
 
@@ -44,7 +46,7 @@ describe('ToolAdapterService', () => {
   }));
   const flaggedTool: Tool = {
     description: 'Send Email tool',
-    inputSchema: { type: 'object', properties: {} },
+    inputSchema: jsonSchema({ type: 'object', properties: {} }),
     execute: flaggedToolExecute,
     flag: PermissionFlagType.SEND_EMAIL_TOOL,
   };
