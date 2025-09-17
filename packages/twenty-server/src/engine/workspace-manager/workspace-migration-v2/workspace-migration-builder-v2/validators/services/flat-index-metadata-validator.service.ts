@@ -46,7 +46,6 @@ export class FlatIndexValidatorService {
     return validationResult;
   }
 
-  // Can a constraint not have any field index ?
   public validateFlatIndexCreation({
     flatIndexToValidate,
     optimisticFlatIndexMaps,
