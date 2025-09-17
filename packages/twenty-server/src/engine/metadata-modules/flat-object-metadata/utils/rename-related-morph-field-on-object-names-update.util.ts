@@ -37,6 +37,7 @@ type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
 > & {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
+// We should recompute each index here too
 export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   fromFlatObjectMetadata,
   existingFlatObjectMetadataMaps,

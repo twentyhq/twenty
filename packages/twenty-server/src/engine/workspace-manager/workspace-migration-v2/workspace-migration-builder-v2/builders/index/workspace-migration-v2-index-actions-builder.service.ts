@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { compareTwoFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/compare-two-flat-index-metadata.util';
 import {
@@ -139,7 +140,10 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       this.flatIndexValidatorService.validateFlatIndexCreation({
         dependencyOptimisticFlatEntityMaps,
         flatIndexToValidate: toFlatIndex,
-        optimisticFlatIndexMaps,
+        optimisticFlatIndexMaps: deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: fromFlatIndex.id,
+          flatEntityMaps: optimisticFlatIndexMaps
+        }),
       });
 
     if (creationValidationResult.errors.length > 0) {
