@@ -9,13 +9,13 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconMail, Status } from 'twenty-ui/display';
 import { useGetOutboundMessageDomainsQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { getOutboundMessageDomainStatusColor } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusColor';
-import { getOutboundMessageDomainStatusText } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusText';
+import { getColorByOutboundMessageDomainStatus } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusColor';
+import { getTextByOutboundMessageDomainStatus } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusText';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledLink = styled(Link)`
@@ -59,10 +59,10 @@ export const SettingsOutboundMessageDomains = () => {
         RowRightComponent={({ item: outboundMessageDomain }) => (
           <>
             <Status
-              color={getOutboundMessageDomainStatusColor(
+              color={getColorByOutboundMessageDomainStatus(
                 outboundMessageDomain.status,
               )}
-              text={getOutboundMessageDomainStatusText(
+              text={getTextByOutboundMessageDomainStatus(
                 outboundMessageDomain.status,
               )}
             />

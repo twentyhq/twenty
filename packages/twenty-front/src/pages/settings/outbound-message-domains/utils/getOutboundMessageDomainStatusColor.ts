@@ -1,6 +1,6 @@
 import { OutboundMessageDomainStatus } from '~/generated/graphql';
 
-export const getOutboundMessageDomainStatusColor = (
+export const getColorByOutboundMessageDomainStatus = (
   status: OutboundMessageDomainStatus,
 ) => {
   switch (status) {

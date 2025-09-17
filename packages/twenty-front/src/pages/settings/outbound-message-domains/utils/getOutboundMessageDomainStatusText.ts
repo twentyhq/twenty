@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { OutboundMessageDomainStatus } from '~/generated/graphql';
 
-export const getOutboundMessageDomainStatusText = (
+export const getTextByOutboundMessageDomainStatus = (
   status: OutboundMessageDomainStatus,
 ) => {
   switch (status) {
