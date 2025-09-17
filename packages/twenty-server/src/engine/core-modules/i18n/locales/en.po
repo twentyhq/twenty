@@ -2208,6 +2208,11 @@ msgstr "NoteTarget opportunity"
 msgid "NoteTarget person"
 msgstr "NoteTarget person"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr "Number format"
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -3208,6 +3213,11 @@ msgstr "User was not created with email/password"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "User's preferred date format"
+
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr "User's preferred number format"
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
