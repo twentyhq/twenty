@@ -23,6 +23,7 @@ export enum SettingsPath {
   Workspace = 'general',
   Domains = 'domains',
   Domain = 'domains/domain',
+  PublicDomain = 'domains/public-domain',
   NewApprovedAccessDomain = 'domains/approved-access-domain/new',
   Releases = 'releases',
   AI = 'ai',
