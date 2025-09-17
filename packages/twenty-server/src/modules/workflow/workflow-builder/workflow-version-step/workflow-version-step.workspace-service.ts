@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
@@ -13,24 +12,21 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -65,25 +61,11 @@ export class WorkflowVersionStepWorkspaceService {
         workspaceId,
       });
 
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workflowVersionId,
         workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+      });
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
@@ -99,6 +81,13 @@ export class WorkflowVersionStepWorkspaceService {
       nextStepId,
       parentStepConnectionOptions,
     });
+
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
 
     await workflowVersionRepository.update(workflowVersion.id, {
       trigger: updatedTrigger,
@@ -121,25 +110,11 @@ export class WorkflowVersionStepWorkspaceService {
     workflowVersionId: string;
     step: WorkflowAction;
   }): Promise<WorkflowAction> {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workflowVersionId,
         workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+      });
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
@@ -150,25 +125,51 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const enrichedNewStep =
-      await this.workflowSchemaWorkspaceService.enrichOutputSchema({
-        step,
-        workspaceId,
-      });
+    const existingStep = workflowVersion.steps.find(
+      (existingStep) => existingStep.id === step.id,
+    );
+
+    if (!isDefined(existingStep)) {
+      throw new WorkflowVersionStepException(
+        'Step not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const isStepTypeChanged = existingStep.type !== step.type;
+
+    const updatedStep = isStepTypeChanged
+      ? await this.updateWorkflowVersionStepType({
+          existingStep,
+          newStep: step,
+          workspaceId,
+          workflowVersionId,
+        })
+      : await this.updateWorkflowVersionStepSettings({
+          newStep: step,
+          workspaceId,
+        });
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
-        return enrichedNewStep;
+        return updatedStep;
       } else {
         return existingStep;
       }
     });
 
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedStep;
   }
 
   async deleteWorkflowVersionStep({
@@ -180,25 +181,11 @@ export class WorkflowVersionStepWorkspaceService {
     workflowVersionId: string;
     stepIdToDelete: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workflowVersionId,
         workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+      });
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
@@ -235,6 +222,13 @@ export class WorkflowVersionStepWorkspaceService {
       stepIdToDelete,
       stepToDeleteChildrenIds,
     });
+
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
 
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: updatedSteps,
@@ -273,25 +267,11 @@ export class WorkflowVersionStepWorkspaceService {
     workflowVersionId: string;
     stepId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workflowVersionId,
         workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!isDefined(workflowVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+      });
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
@@ -320,6 +300,13 @@ export class WorkflowVersionStepWorkspaceService {
       insertedStep: duplicatedStep,
     });
 
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: updatedSteps,
       trigger: updatedTrigger,
@@ -332,70 +319,6 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
-  async submitFormStep({
-    workspaceId,
-    stepId,
-    workflowRunId,
-    response,
-  }: {
-    workspaceId: string;
-    stepId: string;
-    workflowRunId: string;
-    response: object;
-  }) {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    const step = workflowRun.state?.flow?.steps?.find(
-      (step) => step.id === stepId,
-    );
-
-    if (!isDefined(step)) {
-      throw new WorkflowVersionStepException(
-        'Step not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    if (!isWorkflowFormAction(step)) {
-      throw new WorkflowVersionStepException(
-        'Step is not a form',
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        {
-          userFriendlyMessage: t`Step is not a form`,
-        },
-      );
-    }
-
-    const enrichedResponse =
-      await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
-        {
-          workspaceId,
-          step,
-          response,
-        },
-      );
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
-
-    await this.workflowRunnerWorkspaceService.resume({
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId: stepId,
-    });
-  }
-
   async createDraftStep({
     step,
     workspaceId,
@@ -405,6 +328,58 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     return this.workflowVersionStepOperationsWorkspaceService.createDraftStep({
       step,
+      workspaceId,
+    });
+  }
+
+  private async updateWorkflowVersionStepType({
+    existingStep,
+    newStep,
+    workspaceId,
+    workflowVersionId,
+  }: {
+    existingStep: WorkflowAction;
+    newStep: WorkflowAction;
+    workspaceId: string;
+    workflowVersionId: string;
+  }): Promise<WorkflowAction> {
+    await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+      {
+        step: existingStep,
+        workspaceId,
+      },
+    );
+
+    const defaultStep =
+      await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
+        {
+          type: newStep.type,
+          workspaceId,
+          position: newStep.position,
+          workflowVersionId,
+        },
+      );
+
+    return this.workflowSchemaWorkspaceService.enrichOutputSchema({
+      step: {
+        ...defaultStep,
+        id: existingStep.id,
+        nextStepIds: existingStep.nextStepIds,
+        position: existingStep.position,
+      },
+      workspaceId,
+    });
+  }
+
+  private async updateWorkflowVersionStepSettings({
+    newStep,
+    workspaceId,
+  }: {
+    newStep: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    return this.workflowSchemaWorkspaceService.enrichOutputSchema({
+      step: newStep,
       workspaceId,
     });
   }
