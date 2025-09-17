@@ -378,6 +378,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
   castWorkspaceToAvailableWorkspace(workspace: Workspace) {
     let signedLogo: string | undefined = workspace.logo ?? undefined;
+
     if (isDefined(workspace.logo)) {
       try {
         signedLogo = this.fileService.signFileUrl({
