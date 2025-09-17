@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddOutboundMessageDomainEntity1757870000000
+export class CreateOutboundMessageDomainEntity1758123456789
   implements MigrationInterface
 {
-  name = 'AddOutboundMessageDomainEntity1757870000000';
+  name = 'CreateOutboundMessageDomainEntity1758123456789';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
