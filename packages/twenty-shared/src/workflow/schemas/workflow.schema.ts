@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { FieldMetadataType } from '../../types/FieldMetadataType';
 import { StepLogicalOperator } from '../../types/StepFilters';
 import { ViewFilterOperand } from '../../types/ViewFilterOperand';
