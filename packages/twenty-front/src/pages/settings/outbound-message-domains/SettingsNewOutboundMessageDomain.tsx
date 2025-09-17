@@ -55,7 +55,7 @@ export const SettingsNewOutboundMessageDomain = () => {
     const result =
       settingsOutboundMessageDomainFormSchema.safeParse(formValues);
 
-    if (!result.success) {
+    return result.success;
       setFieldErrors(result.error?.flatten().fieldErrors as FieldErrors);
       return false;
     }
