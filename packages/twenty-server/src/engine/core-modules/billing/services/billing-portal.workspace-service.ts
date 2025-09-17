@@ -8,33 +8,29 @@ import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingException, BillingExceptionCode, } from 'src/engine/core-modules/billing/billing.exception';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import {
-  StripeBillingPortalService
-} from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
+import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
-import {
-  type BillingGetPricesPerPlanResult
-} from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import {
-  type BillingPortalCheckoutSessionParameters
-} from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import {
-  StripeSubscriptionScheduleService
-} from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { validator } from 'src/utils/assert-is-defined';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -104,12 +100,15 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
+    validator.assertIsDefined(customer);
+    validator.assertIsDefined(customer.stripeCustomerId);
+
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
         workspace,
         stripeSubscriptionLineItems,
-        stripeCustomerId: customer?.stripeCustomerId,
+        stripeCustomerId: customer.stripeCustomerId,
         plan,
         requirePaymentMethod,
         withTrialPeriod:

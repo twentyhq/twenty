@@ -14,6 +14,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
+import { useState, useMemo } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +23,7 @@ import {
   IconArrowUp,
   IconCalendarEvent,
   IconCalendarRepeat,
+  IconCircleX,
   IconCoins,
   IconTag,
   IconUsers,
@@ -156,7 +158,36 @@ export const SettingsBillingSubscriptionInfo = ({
       BillingProductKey.BASE_PRODUCT,
   )?.quantity as number | undefined;
 
+  // Loading states to avoid race conditions on actions
+  const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
+  const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
+  const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
+  const [isCancellingIntervalSwitch, setIsCancellingIntervalSwitch] =
+    useState(false);
+  const [isCancellingMeteredSwitch, setIsCancellingMeteredSwitch] =
+    useState(false);
+
+  const isAnyActionLoading = useMemo(
+    () =>
+      isSwitchingInterval ||
+      isSwitchingPlan ||
+      isCancellingPlanSwitch ||
+      isCancellingIntervalSwitch ||
+      isCancellingMeteredSwitch ||
+      isEndTrialPeriodLoading,
+    [
+      isSwitchingInterval,
+      isSwitchingPlan,
+      isCancellingPlanSwitch,
+      isCancellingIntervalSwitch,
+      isCancellingMeteredSwitch,
+      isEndTrialPeriodLoading,
+    ],
+  );
+
   const switchInterval = async () => {
+    if (isAnyActionLoading || isSwitchingInterval) return;
+    setIsSwitchingInterval(true);
     try {
       const { success } = await endTrialPeriodIfNeeded();
       if (success === false) {
@@ -188,6 +219,8 @@ export const SettingsBillingSubscriptionInfo = ({
       enqueueErrorSnackBar({
         message: t`Error while switching subscription.`,
       });
+    } finally {
+      setIsSwitchingInterval(false);
     }
   };
 
@@ -199,6 +232,8 @@ export const SettingsBillingSubscriptionInfo = ({
   };
 
   const switchPlan = async () => {
+    if (isAnyActionLoading || isSwitchingPlan) return;
+    setIsSwitchingPlan(true);
     const newPlan = getOppositPlan();
     try {
       const { success } = await endTrialPeriodIfNeeded();
@@ -226,10 +261,14 @@ export const SettingsBillingSubscriptionInfo = ({
       enqueueErrorSnackBar({
         message: t`Error while switching subscription to ${newPlan} Plan.`,
       });
+    } finally {
+      setIsSwitchingPlan(false);
     }
   };
 
   const cancelPlanSwitching = async () => {
+    if (isAnyActionLoading || isCancellingPlanSwitch) return;
+    setIsCancellingPlanSwitch(true);
     try {
       const { data } = await cancelSwitchBillingPlan();
 
@@ -251,10 +290,14 @@ export const SettingsBillingSubscriptionInfo = ({
       enqueueErrorSnackBar({
         message: t`Error while cancelling plan switching.`,
       });
+    } finally {
+      setIsCancellingPlanSwitch(false);
     }
   };
 
   const cancelIntervalSwitching = async () => {
+    if (isAnyActionLoading || isCancellingIntervalSwitch) return;
+    setIsCancellingIntervalSwitch(true);
     try {
       const { data } = await cancelSwitchBillingInterval();
       if (
@@ -276,10 +319,14 @@ export const SettingsBillingSubscriptionInfo = ({
       enqueueErrorSnackBar({
         message: t`Error while cancelling interval switching.`,
       });
+    } finally {
+      setIsCancellingIntervalSwitch(false);
     }
   };
 
   const cancelMeteredSwitching = async () => {
+    if (isAnyActionLoading || isCancellingMeteredSwitch) return;
+    setIsCancellingMeteredSwitch(true);
     try {
       const { data } = await cancelSwitchMeteredPrice();
 
@@ -303,6 +350,8 @@ export const SettingsBillingSubscriptionInfo = ({
       enqueueErrorSnackBar({
         message: t`Error while cancelling metered tier switching.`,
       });
+    } finally {
+      setIsCancellingMeteredSwitch(false);
     }
   };
 
@@ -388,18 +437,18 @@ export const SettingsBillingSubscriptionInfo = ({
             title={t`Subscribe Now`}
             variant="secondary"
             onClick={() => openModal(END_TRIAL_PERIOD_MODAL_ID)}
-            disabled={isEndTrialPeriodLoading}
+            disabled={isEndTrialPeriodLoading || isAnyActionLoading}
           />
         )}
         {hasNextBillingPhase &&
           getCurrentMeteredBillingPrice().recurringInterval !==
             getNextInterval() && (
             <Button
-              Icon={IconArrowUp}
+              Icon={IconCircleX}
               title={t`Cancel interval switching`}
               variant="secondary"
               onClick={() => openModal(CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID)}
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
         {isMonthlyPlan &&
@@ -413,7 +462,7 @@ export const SettingsBillingSubscriptionInfo = ({
               onClick={() =>
                 openModal(SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID)
               }
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
         {isYearlyPlan &&
@@ -427,7 +476,7 @@ export const SettingsBillingSubscriptionInfo = ({
               onClick={() =>
                 openModal(SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID)
               }
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
         {isProPlan &&
@@ -440,7 +489,7 @@ export const SettingsBillingSubscriptionInfo = ({
               onClick={() =>
                 openModal(SWITCH_BILLING_PLAN_TO_ENTERPRISE_MODAL_ID)
               }
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
         {isEnterprisePlan &&
@@ -451,28 +500,31 @@ export const SettingsBillingSubscriptionInfo = ({
               title={t`Switch to Pro`}
               variant="secondary"
               onClick={() => openModal(SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID)}
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
         {hasNextBillingPhase &&
           getCurrentPlan().planKey !== getNextPlan().planKey && (
             <Button
-              Icon={IconArrowUp}
+              Icon={IconCircleX}
               title={t`Cancel plan switching`}
               variant="secondary"
               onClick={() => openModal(CANCEL_SWITCH_BILLING_PLAN_MODAL_ID)}
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
+        {/*@todo: find a way to check if the metered tier match when interval change too*/}
         {hasNextBillingPhase &&
+          getCurrentMeteredBillingPrice().recurringInterval ===
+            getNextInterval() &&
           getCurrentMeteredBillingPrice().tiers[0].upTo !==
             getNextMeteredPrice().tiers[0].upTo && (
             <Button
-              Icon={IconArrowUp}
+              Icon={IconCircleX}
               title={t`Cancel metered tier switching`}
               variant="secondary"
               onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
-              disabled={!canSwitchSubscription}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
       </StyledSwitchButtonContainer>
@@ -483,6 +535,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
+        loading={isSwitchingInterval}
       />
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID}
@@ -491,6 +544,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isSwitchingInterval}
       />
       <ConfirmationModal
         modalId={CANCEL_SWITCH_BILLING_INTERVAL_MODAL_ID}
@@ -499,6 +553,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={cancelIntervalSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isCancellingIntervalSwitch}
       />
       <ConfirmationModal
         modalId={SWITCH_BILLING_PLAN_TO_ENTERPRISE_MODAL_ID}
@@ -507,6 +562,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isSwitchingPlan}
       />
       <ConfirmationModal
         modalId={SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID}
@@ -515,6 +571,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isSwitchingPlan}
       />
       <ConfirmationModal
         modalId={CANCEL_SWITCH_BILLING_PLAN_MODAL_ID}
@@ -523,6 +580,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={cancelPlanSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isCancellingPlanSwitch}
       />
       <ConfirmationModal
         modalId={END_TRIAL_PERIOD_MODAL_ID}
@@ -540,6 +598,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onConfirmClick={cancelMeteredSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
+        loading={isCancellingMeteredSwitch}
       />
     </Section>
   );

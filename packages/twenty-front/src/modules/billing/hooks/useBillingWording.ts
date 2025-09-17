@@ -47,7 +47,11 @@ export const useBillingWording = (
   };
 
   const getBeautifiedRenewDate = () => {
-    const renewData = getCurrentBillingSubscription().currentPeriodEnd;
+    const currentBillingSubscription = getCurrentBillingSubscription();
+    const endDateFromPhase = currentBillingSubscription.phases?.[0]?.end_date;
+    const renewData = endDateFromPhase
+      ? endDateFromPhase * 1000
+      : currentBillingSubscription.currentPeriodEnd;
 
     if (!isDefined(renewData)) {
       throw new Error(`No renew date defined for current subscription.`);

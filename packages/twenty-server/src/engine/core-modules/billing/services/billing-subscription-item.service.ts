@@ -82,11 +82,8 @@ export class BillingSubscriptionItemService {
   private getFreeTrialQuantity(item: BillingSubscriptionItem): number {
     switch (item.billingProduct.metadata.productKey) {
       case BillingProductKey.WORKFLOW_NODE_EXECUTION:
-        return (
-          // item.metadata.trialPeriodFreeWorkflowCredits ||
-          this.twentyConfigService.get(
-            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
-          )
+        return this.twentyConfigService.get(
+          'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
         );
       default:
         return 0;
