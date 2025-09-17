@@ -54,7 +54,6 @@ export class AwsSesDriver implements OutboundMessageDomainDriverInterface {
     } catch (error) {
       this.logger.error(`Failed to verify domain ${domain.domain}: ${error}`);
       this.awsSesHandleErrorService.handleAwsSesError(error, 'verifyDomain');
-      throw error;
     }
   }
 
