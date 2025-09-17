@@ -34,7 +34,6 @@ export class AwsSesClientProvider {
           sessionToken,
         };
       }
-      console.log('config', config);
 
       this.sesClient = new SESClient(config);
     }
