@@ -4,7 +4,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useMutation } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconShield, IconTrash } from 'twenty-ui/display';
@@ -25,7 +25,7 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
 }: SettingsOutboundMessageDomainRowDropdownMenuProps) => {
   const dropdownId = `settings-outbound-message-domain-row-${outboundMessageDomain.id}`;
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -55,19 +55,20 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
   };
 
   const handleVerifyOutboundMessageDomain = async () => {
-    const result = await verifyOutboundMessageDomain({
-      variables: {
-        input: {
-          id: outboundMessageDomain.id,
+    try {
+      await verifyOutboundMessageDomain({
+        variables: {
+          input: {
+            id: outboundMessageDomain.id,
+          },
         },
-      },
-    });
-    if (isDefined(result.errors)) {
+      });
+      enqueueSuccessSnackBar({
+        message: t`Started verification process`,
+      });
+    } catch (error) {
       enqueueErrorSnackBar({
-        message: t`Could not verify outbound message domain`,
-        options: {
-          duration: 2000,
-        },
+        ...(error instanceof ApolloError ? { apolloError: error } : {}),
       });
     }
   };
