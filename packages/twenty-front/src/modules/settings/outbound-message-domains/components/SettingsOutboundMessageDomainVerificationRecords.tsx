@@ -30,7 +30,7 @@ export const SettingsOutboundMessageDomainVerificationRecords = ({
 
   return (
     <Section>
-      <H2Title title={t`DNS Records`} description={description} />
+      <H2Title title={title} description={description} />
       <StyledTableContainer rounded>
         <SettingsOutboundMessageDomainVerificationRecordsTableHeader />
         <Table>
