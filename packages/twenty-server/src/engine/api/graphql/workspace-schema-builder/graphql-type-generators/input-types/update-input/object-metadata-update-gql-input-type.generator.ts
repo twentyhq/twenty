@@ -142,9 +142,15 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
             throw new Error(message);
           }
         }
+
+        const modifiedType = this.typeMapperService.applyTypeOptions(
+          type,
+          typeOptions,
+        );
+
         generatedFields = {
           [fieldMetadata.name]: {
-            type,
+            type: modifiedType,
             description: fieldMetadata.description,
           },
         };
