@@ -51882,7 +51882,7 @@ __metadata:
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
-    zod: "npm:^4.1.9"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
