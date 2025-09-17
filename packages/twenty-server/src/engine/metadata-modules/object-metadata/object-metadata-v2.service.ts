@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
@@ -53,20 +54,25 @@ export class ObjectMetadataServiceV2 {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
   }): Promise<ObjectMetadataDTO> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatIndexMaps: existingFlatIndexMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatEntities: ['flatObjectMetadataMaps', 'flatIndexMaps'],
         },
       );
 
     const {
       flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-      otherObjectFlatFieldMetadatas,
+      otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
+      flatIndexMetadataToUpdate,
     } = fromUpdateObjectInputToFlatObjectMetadata({
       existingFlatObjectMetadataMaps,
       updateObjectInput,
+      flatIndexMaps: existingFlatIndexMaps,
     });
 
     const impactedObjectMetadataIds = [
@@ -93,6 +99,15 @@ export class ObjectMetadataServiceV2 {
       }),
     );
 
+    const toFlatIndexMaps = flatIndexMetadataToUpdate.reduce(
+      (flatIndexMaps, flatIndexMetadata) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatIndexMetadata,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -100,6 +115,10 @@ export class ObjectMetadataServiceV2 {
             flatObjectMetadataMaps: {
               from: fromFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
