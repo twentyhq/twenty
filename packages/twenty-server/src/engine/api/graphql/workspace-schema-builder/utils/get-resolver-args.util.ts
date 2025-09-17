@@ -161,6 +161,27 @@ export const getResolverArgs = (
           isNullable: true,
         },
       };
+    case 'groupBy':
+      return {
+        groupBy: {
+          kind: GqlInputTypeDefinitionKind.GroupBy,
+          isNullable: false,
+          isArray: true,
+        },
+        filter: {
+          kind: GqlInputTypeDefinitionKind.Filter,
+          isNullable: true,
+        },
+        orderBy: {
+          kind: GqlInputTypeDefinitionKind.OrderBy,
+          isNullable: true,
+          isArray: true,
+        },
+        viewId: {
+          type: UUIDScalarType,
+          isNullable: true,
+        },
+      };
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }
