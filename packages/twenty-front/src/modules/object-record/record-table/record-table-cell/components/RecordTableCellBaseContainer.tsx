@@ -75,14 +75,11 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   );
-  const { onMoveHoverToCurrentCell, onCellMouseEnter } =
-    useRecordTableBodyContextOrThrow();
+  const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
     setIsFocused(true);
-    onCellMouseEnter({
-      cellPosition,
-    });
+    onMoveHoverToCurrentCell(cellPosition);
   };
 
   const handleContainerMouseLeave = () => {

@@ -25,6 +25,8 @@ export const VIEW_FRAGMENT = gql`
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
     anyFieldFilterValue
+    calendarFieldMetadataId
+    calendarLayout
     viewFields {
       ...ViewFieldFragment
     }

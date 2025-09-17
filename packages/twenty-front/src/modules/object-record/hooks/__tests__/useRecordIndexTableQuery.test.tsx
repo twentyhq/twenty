@@ -10,6 +10,7 @@ import { RecordTableContextProvider } from '@/object-record/record-table/compone
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
+import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
 import {
@@ -630,6 +631,7 @@ const mocks: MockedResponse[] = [
       variables: {
         filter: {},
         orderBy: [{ position: 'AscNullsFirst' }],
+        limit: QUERY_DEFAULT_LIMIT_RECORDS,
       },
     },
     result: jest.fn(() => ({

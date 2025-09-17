@@ -68,6 +68,7 @@ export const RecordTableDraggableTr = ({
             data-virtualized-id={recordId}
             data-selectable-id={recordId}
             onClick={onClick}
+            isFirstRowOfGroup={false}
           >
             <RecordTableRowDraggableContextProvider
               value={{
