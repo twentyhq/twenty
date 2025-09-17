@@ -97,12 +97,8 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
       let newWidth =
         align === 'center'
-          ? initialWidth + handleUsed === 'left'
-            ? -deltaX * 2
-            : deltaX * 2
-          : initialWidth + handleUsed === 'left'
-            ? -deltaX
-            : deltaX;
+          ? initialWidth + (handleUsed === 'left' ? -deltaX * 2 : deltaX * 2)
+          : initialWidth + (handleUsed === 'left' ? -deltaX : deltaX);
 
       const maxWidth =
         editor.view.dom.firstElementChild?.clientWidth || IMAGE_MAX_WIDTH;

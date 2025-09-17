@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { EditorContent, type Editor } from '@tiptap/react';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
+const EMAIL_EDITOR_MAX_WIDTH = 600;
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
@@ -21,6 +22,8 @@ const StyledEditorContainer = styled.div<{
     width: 100%;
     height: 100%;
     min-height: ${EMAIL_EDITOR_MIN_HEIGHT}px;
+    max-width: ${EMAIL_EDITOR_MAX_WIDTH}px;
+    margin: 0 auto;
   }
 
   .tiptap {
