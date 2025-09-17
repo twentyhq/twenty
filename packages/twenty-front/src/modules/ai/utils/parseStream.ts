@@ -88,7 +88,7 @@ export const parseStream = (streamText: string): ParsedStep[] => {
             isThinking: true,
           };
         }
-        currentTextBlock.content += event.textDelta || '';
+        currentTextBlock.content += event.text || '';
         break;
 
       case 'text-delta':
@@ -96,7 +96,7 @@ export const parseStream = (streamText: string): ParsedStep[] => {
           flushTextBlock();
           currentTextBlock = { type: 'text', content: '' };
         }
-        currentTextBlock.content += event.textDelta || '';
+        currentTextBlock.content += event.text || '';
         break;
 
       case 'reasoning-signature':

@@ -26,7 +26,7 @@ export const constructAssistantMessageContentFromStream = (
 
     switch (event.type) {
       case 'reasoning':
-        reasoningText += event.textDelta || '';
+        reasoningText += event.text || '';
         break;
 
       case 'reasoning-signature':
@@ -41,7 +41,7 @@ export const constructAssistantMessageContentFromStream = (
         break;
 
       case 'text-delta':
-        textContent += event.textDelta || '';
+        textContent += event.text || '';
         break;
 
       default:
