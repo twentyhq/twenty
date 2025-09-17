@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type TagColor } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -39,7 +39,6 @@ export const SelectInput = ({
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Get the SelectableList instance id from context
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
   );

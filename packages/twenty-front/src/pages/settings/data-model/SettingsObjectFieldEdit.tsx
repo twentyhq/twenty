@@ -146,14 +146,10 @@ export const SettingsObjectFieldEdit = () => {
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
-        // Only navigate back if we came from the "add option" flow
-        if (
-          (formValues.type === FieldMetadataType.MULTI_SELECT ||
-            formValues.type === FieldMetadataType.SELECT) &&
-          navigationMemorizedUrl.isAddingFieldOption === true
-        ) {
+
+        if (navigationMemorizedUrl.isAddingFieldOption === true) {
           navigate(navigationMemorizedUrl.url, { replace: true });
-          setNavigationMemorizedUrl({ url: '/' }); // Reset to default
+          setNavigationMemorizedUrl({ url: '/' });
         } else {
           navigateSettings(SettingsPath.ObjectDetail, {
             objectNamePlural,
