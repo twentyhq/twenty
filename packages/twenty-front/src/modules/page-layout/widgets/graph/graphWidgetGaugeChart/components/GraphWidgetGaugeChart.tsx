@@ -12,6 +12,7 @@ import {
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import {
   type RadialBarCustomLayerProps,
   ResponsiveRadialBar,
@@ -100,7 +101,7 @@ export const GraphWidgetGaugeChart = ({
   const { createTooltipData } = useGaugeChartTooltip({
     value: data.value,
     normalizedValue,
-    label: data.label || 'Value',
+    label: data.label || t`Value`,
     colorScheme,
     formatOptions,
     to: data.to,
@@ -167,7 +168,7 @@ export const GraphWidgetGaugeChart = ({
         items={[
           {
             id: 'gauge',
-            label: data.label || 'Value',
+            label: data.label || t`Value`,
             formattedValue: formattedValue,
             color: colorScheme.solid,
           },
