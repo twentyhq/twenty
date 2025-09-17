@@ -7,6 +7,9 @@ import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthClassName';
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -74,9 +77,9 @@ const StyledTable = styled.div<{
     // }
 
     @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: 38px;
-      max-width: 38px;
-      min-width: 38px;
+      width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
     }
   }
 
@@ -95,22 +98,12 @@ const StyledTable = styled.div<{
   div.table-cell-0-0 {
     position: sticky;
     left: 48px;
-
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${38}px;
-      max-width: ${38}px;
-    }
   }
 
   div.table-cell:nth-of-type(3) {
     position: sticky;
     left: 48px;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
-
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${38}px;
-      max-width: ${38}px;
-    }
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
@@ -144,9 +137,22 @@ const StyledTable = styled.div<{
         min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
         max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
       } \n`;
+
+      const isLabelIdentifierColumn = i === 0;
+
+      if (isLabelIdentifierColumn) {
+        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
+          @media (max-width: ${MOBILE_VIEWPORT}px) {
+            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+          }
+        } \n`;
+      }
     }
 
     returnedCSS += `${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
+    returnedCSS += `${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
 
     return returnedCSS;
   }};
@@ -158,6 +164,18 @@ const StyledTable = styled.div<{
     );
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+  }
+
+  div.${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
+    width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    min-width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    max-width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
   }
 `;

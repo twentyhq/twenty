@@ -173,15 +173,17 @@ export class ToolService {
 
       return {
         success: true,
-        records,
-        count: records.length,
         message: `Found ${records.length} ${objectName} records`,
+        result: {
+          records,
+          count: records.length,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to find ${objectName} records`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -205,8 +207,8 @@ export class ToolService {
       if (!id || typeof id !== 'string') {
         return {
           success: false,
-          error: 'Record ID is required',
           message: `Failed to find ${objectName}: Record ID is required`,
+          error: 'Record ID is required',
         };
       }
 
@@ -217,21 +219,21 @@ export class ToolService {
       if (!record) {
         return {
           success: false,
-          error: 'Record not found',
           message: `Failed to find ${objectName}: Record with ID ${id} not found`,
+          error: 'Record not found',
         };
       }
 
       return {
         success: true,
-        record,
         message: `Found ${objectName} record`,
+        result: record,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to find ${objectName} record`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -261,8 +263,8 @@ export class ToolService {
       if (!objectMetadataItemWithFieldsMaps) {
         return {
           success: false,
-          error: 'Object metadata not found',
           message: `Failed to create ${objectName}: Object metadata not found`,
+          error: 'Object metadata not found',
         };
       }
 
@@ -276,14 +278,14 @@ export class ToolService {
 
       return {
         success: true,
-        record: createdRecord,
         message: `Successfully created ${objectName}`,
+        result: createdRecord,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to create ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -307,8 +309,8 @@ export class ToolService {
       if (!id || typeof id !== 'string') {
         return {
           success: false,
-          error: 'Record ID is required for update',
           message: `Failed to update ${objectName}: Record ID is required`,
+          error: 'Record ID is required for update',
         };
       }
 
@@ -319,8 +321,8 @@ export class ToolService {
       if (!existingRecord) {
         return {
           success: false,
-          error: 'Record not found',
           message: `Failed to update ${objectName}: Record with ID ${id} not found`,
+          error: 'Record not found',
         };
       }
 
@@ -335,8 +337,8 @@ export class ToolService {
       if (!objectMetadataItemWithFieldsMaps) {
         return {
           success: false,
-          error: 'Object metadata not found',
           message: `Failed to update ${objectName}: Object metadata not found`,
+          error: 'Object metadata not found',
         };
       }
 
@@ -355,21 +357,21 @@ export class ToolService {
       if (!updatedRecord) {
         return {
           success: false,
-          error: 'Failed to retrieve updated record',
           message: `Failed to update ${objectName}: Could not retrieve updated record`,
+          error: 'Failed to retrieve updated record',
         };
       }
 
       return {
         success: true,
-        record: updatedRecord,
         message: `Successfully updated ${objectName}`,
+        result: updatedRecord,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to update ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -393,8 +395,8 @@ export class ToolService {
       if (!id || typeof id !== 'string') {
         return {
           success: false,
-          error: 'Record ID is required for soft delete',
           message: `Failed to soft delete ${objectName}: Record ID is required`,
+          error: 'Record ID is required for soft delete',
         };
       }
 
@@ -405,8 +407,8 @@ export class ToolService {
       if (!existingRecord) {
         return {
           success: false,
-          error: 'Record not found',
           message: `Failed to soft delete ${objectName}: Record with ID ${id} not found`,
+          error: 'Record not found',
         };
       }
 
@@ -415,12 +417,13 @@ export class ToolService {
       return {
         success: true,
         message: `Successfully soft deleted ${objectName}`,
+        result: { id },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to soft delete ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -444,8 +447,8 @@ export class ToolService {
       if (!id || typeof id !== 'string') {
         return {
           success: false,
-          error: 'Record ID is required for destroy',
           message: `Failed to destroy ${objectName}: Record ID is required`,
+          error: 'Record ID is required for destroy',
         };
       }
 
@@ -456,8 +459,8 @@ export class ToolService {
       if (!existingRecord) {
         return {
           success: false,
-          error: 'Record not found',
           message: `Failed to destroy ${objectName}: Record with ID ${id} not found`,
+          error: 'Record not found',
         };
       }
 
@@ -466,12 +469,13 @@ export class ToolService {
       return {
         success: true,
         message: `Successfully destroyed ${objectName}`,
+        result: { id },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to destroy ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -495,8 +499,8 @@ export class ToolService {
       if (!filter || typeof filter !== 'object' || !('id' in filter)) {
         return {
           success: false,
-          error: 'Filter with record IDs is required for bulk soft delete',
           message: `Failed to soft delete many ${objectName}: Filter with record IDs is required`,
+          error: 'Filter with record IDs is required for bulk soft delete',
         };
       }
 
@@ -506,8 +510,8 @@ export class ToolService {
       if (!Array.isArray(recordIds) || recordIds.length === 0) {
         return {
           success: false,
-          error: 'At least one record ID is required for bulk soft delete',
           message: `Failed to soft delete many ${objectName}: At least one record ID is required`,
+          error: 'At least one record ID is required for bulk soft delete',
         };
       }
 
@@ -518,8 +522,8 @@ export class ToolService {
       if (existingRecords.length === 0) {
         return {
           success: false,
-          error: 'No records found to soft delete',
           message: `Failed to soft delete many ${objectName}: No records found with the provided IDs`,
+          error: 'No records found to soft delete',
         };
       }
 
@@ -527,14 +531,17 @@ export class ToolService {
 
       return {
         success: true,
-        count: existingRecords.length,
         message: `Successfully soft deleted ${existingRecords.length} ${objectName} records`,
+        result: {
+          count: existingRecords.length,
+          deletedIds: recordIds,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to soft delete many ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -558,8 +565,8 @@ export class ToolService {
       if (!filter || typeof filter !== 'object' || !('id' in filter)) {
         return {
           success: false,
-          error: 'Filter with record IDs is required for bulk destroy',
           message: `Failed to destroy many ${objectName}: Filter with record IDs is required`,
+          error: 'Filter with record IDs is required for bulk destroy',
         };
       }
 
@@ -569,8 +576,8 @@ export class ToolService {
       if (!Array.isArray(recordIds) || recordIds.length === 0) {
         return {
           success: false,
-          error: 'At least one record ID is required for bulk destroy',
           message: `Failed to destroy many ${objectName}: At least one record ID is required`,
+          error: 'At least one record ID is required for bulk destroy',
         };
       }
 
@@ -581,8 +588,8 @@ export class ToolService {
       if (existingRecords.length === 0) {
         return {
           success: false,
-          error: 'No records found to destroy',
           message: `Failed to destroy many ${objectName}: No records found with the provided IDs`,
+          error: 'No records found to destroy',
         };
       }
 
@@ -590,14 +597,17 @@ export class ToolService {
 
       return {
         success: true,
-        count: existingRecords.length,
         message: `Successfully destroyed ${existingRecords.length} ${objectName} records`,
+        result: {
+          count: existingRecords.length,
+          destroyedIds: recordIds,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to destroy many ${objectName}`,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

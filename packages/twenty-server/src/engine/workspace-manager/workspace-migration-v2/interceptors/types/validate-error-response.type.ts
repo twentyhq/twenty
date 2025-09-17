@@ -1,4 +1,4 @@
-import { type AllFlatEntitiesByMetadataEngineName } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { type AllFlatEntitiesByMetadataEngineName } from 'src/engine/core-modules/common/types/all-flat-entities-by-metadata-engine-name.type';
 import { type FieldMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-field-metadata/types/field-metadata-minimal-information.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
@@ -23,7 +23,7 @@ export type ValidationErrorResponse = {
   summary: {
     totalErrors: number;
   } & {
-    [P in keyof AllFlatEntitiesByMetadataEngineName as `invalid${Capitalize<P>}s`]: number;
+    [P in keyof AllFlatEntitiesByMetadataEngineName as `invalid${Capitalize<P>}`]: number;
   };
   errors: OrchestratorFailureReport;
 };

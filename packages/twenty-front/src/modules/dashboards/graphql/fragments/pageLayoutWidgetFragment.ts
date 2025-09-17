@@ -14,5 +14,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     }
     configuration
     canReadWidget
+    pageLayoutTabId
   }
 `;

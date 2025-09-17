@@ -10,8 +10,6 @@ import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/r
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
 import { filterOutByProperty } from 'twenty-shared/utils';
 
-export const FIRST_TH_WIDTH = '10px';
-
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
