@@ -57,7 +57,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { flatFieldMetadata } = action;
 
-    await fieldMetadataRepository.save(flatFieldMetadata);
+    await fieldMetadataRepository.insert(flatFieldMetadata);
   }
 
   async executeForWorkspaceSchema(

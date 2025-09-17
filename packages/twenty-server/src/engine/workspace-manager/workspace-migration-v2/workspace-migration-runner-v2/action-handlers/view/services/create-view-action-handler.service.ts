@@ -45,7 +45,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
-    await viewRepository.save({
+    await viewRepository.insert({
       ...view,
       workspaceId,
     });

@@ -29,7 +29,7 @@ import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-import { FlatFieldMetadataPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-field-metadata-property-update.type';
+import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
 import {
@@ -54,7 +54,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata<T>;
-  update: FlatFieldMetadataPropertyUpdate<P, T>;
+  update: PropertyUpdate<FlatFieldMetadata<T>, P>;
 };
 
 @Injectable()
@@ -199,9 +199,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           queryRunner,
           schemaName,
           tableName,
-          update: update as FlatFieldMetadataPropertyUpdate<
-            'settings',
-            MorphOrRelationFieldMetadataType
+          update: update as PropertyUpdate<
+            FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+            'settings'
           >,
         });
       }
