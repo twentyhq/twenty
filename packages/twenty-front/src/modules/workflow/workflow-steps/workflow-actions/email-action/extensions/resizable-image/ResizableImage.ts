@@ -1,4 +1,4 @@
-import { ResizableImageView } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/ResizableImageView';
+import { ResizableImageView } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImageView';
 import {
   type ImageOptions,
   Image as TiptapImage,
@@ -6,6 +6,8 @@ import {
 import { ReactNodeViewRenderer } from '@tiptap/react';
 
 export const ResizableImage = TiptapImage.extend<ImageOptions>({
+  selectable: true,
+
   addAttributes() {
     return {
       ...this.parent?.(),

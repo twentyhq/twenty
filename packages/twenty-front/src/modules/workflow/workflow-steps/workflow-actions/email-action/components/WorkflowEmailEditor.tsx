@@ -1,4 +1,5 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
+import { ImageBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/image-bubble-menu/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/link-bubble-menu/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/TextBubbleMenu';
 import styled from '@emotion/styled';
@@ -84,6 +85,7 @@ export const WorkflowEmailEditor = ({
       <EditorContent className="editor-content" editor={editor} />
       <TextBubbleMenu editor={editor} />
       <LinkBubbleMenu editor={editor} />
+      <ImageBubbleMenu editor={editor} />
     </StyledEditorContainer>
   );
 };

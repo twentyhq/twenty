@@ -30,7 +30,6 @@ const StyledNodeViewWrapper = styled(NodeViewWrapper)`
 
 const StyledImageWrapper = styled.div<{ width?: number }>`
   height: 100%;
-  width: ${({ width }) => (width ? `${width}px` : 'fit-content')};
 `;
 
 const StyledImageContainer = styled.div`
@@ -184,12 +183,15 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
   return (
     <StyledNodeViewWrapper
-      contentEditable={false}
       onMouseEnter={handleWrapperMouseEnter}
       onMouseLeave={handleWrapperMouseLeave}
       align={align}
+      draggable={true}
     >
-      <StyledImageWrapper width={width} ref={imageWrapperRef}>
+      <StyledImageWrapper
+        ref={imageWrapperRef}
+        style={{ width: width ? `${width}px` : 'fit-content' }}
+      >
         <StyledImageContainer>
           <StyledImage
             src={src}
