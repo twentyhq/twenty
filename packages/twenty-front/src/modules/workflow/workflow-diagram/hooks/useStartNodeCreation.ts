@@ -16,7 +16,7 @@ export const useStartNodeCreation = () => {
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentState(workflowInsertStepIdsComponentState);
 
-  const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -57,13 +57,13 @@ export const useStartNodeCreation = () => {
         setCommandMenuNavigationStack([]);
       }
 
-      openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
+      openWorkflowCreateStepInCommandMenu(workflowVisualizerWorkflowId);
     },
     [
       setWorkflowInsertStepIds,
       workflowVisualizerWorkflowId,
       isInRightDrawer,
-      openStepSelectInCommandMenu,
+      openWorkflowCreateStepInCommandMenu,
       setCommandMenuNavigationStack,
     ],
   );
