@@ -1,4 +1,4 @@
-export const formatAmount = (amount: number) => {
+export const formatToShortNumber = (amount: number) => {
   if (amount < 1000) {
     return amount.toFixed(1).replace(/\.?0+$/, '');
   } else if (amount < 1000000) {

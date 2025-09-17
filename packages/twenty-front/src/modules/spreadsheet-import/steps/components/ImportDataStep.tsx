@@ -7,7 +7,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/feedback';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
