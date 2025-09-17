@@ -19,6 +19,7 @@ export class ActivateUnaccentExtension1758117800000
     await queryRunner.query(`DROP FUNCTION IF EXISTS unaccent_immutable(text)`);
 
     // Note: We don't drop the extension as it might be used by other parts
-    // of the application or other databases. Extensions are typically
+    // Note: We don't drop the extension as it might be used by other parts
+    // of the application or other databases. Extensions are typically left in place.
   }
 }
