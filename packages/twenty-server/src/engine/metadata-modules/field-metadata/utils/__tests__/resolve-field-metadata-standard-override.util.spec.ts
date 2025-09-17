@@ -1,20 +1,23 @@
-import { i18n } from '@lingui/core';
+import { type I18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 
-jest.mock('@lingui/core');
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
 
-const mockI18n = i18n as jest.Mocked<typeof i18n>;
 const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
 >;
 
 describe('resolveFieldMetadataStandardOverride', () => {
+  let mockI18n: jest.Mocked<I18n>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockI18n = {
+      _: jest.fn(),
+    } as unknown as jest.Mocked<I18n>;
   });
 
   describe('Custom fields', () => {

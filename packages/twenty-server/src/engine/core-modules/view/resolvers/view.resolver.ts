@@ -36,6 +36,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 @Resolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -48,6 +49,7 @@ export class ViewResolver {
     private readonly viewFilterGroupService: ViewFilterGroupService,
     private readonly viewSortService: ViewSortService,
     private readonly viewGroupService: ViewGroupService,
+    private readonly i18nService: I18nService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
   ) {}
@@ -65,6 +67,7 @@ export class ViewResolver {
       });
 
       if (objectMetadata) {
+        const i18n = this.i18nService.getI18nInstance(context.req.locale);
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,
@@ -76,6 +79,7 @@ export class ViewResolver {
           },
           'labelPlural',
           context.req.locale,
+          i18n,
         );
 
         return this.viewService.processViewNameWithTemplate(
