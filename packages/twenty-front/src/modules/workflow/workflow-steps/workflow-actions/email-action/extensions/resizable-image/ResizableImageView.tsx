@@ -95,20 +95,14 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
       const deltaX = event.clientX - resizeParams.initialClientX;
       const { initialWidth, handleUsed } = resizeParams;
 
-      let newWidth: number;
-      if (align === 'center') {
-        if (handleUsed === 'left') {
-          newWidth = initialWidth + -deltaX * 2;
-        } else {
-          newWidth = initialWidth + deltaX * 2;
-        }
-      } else {
-        if (handleUsed === 'left') {
-          newWidth = initialWidth + -deltaX;
-        } else {
-          newWidth = initialWidth + deltaX;
-        }
-      }
+      let newWidth =
+        align === 'center'
+          ? initialWidth + handleUsed === 'left'
+            ? -deltaX * 2
+            : deltaX * 2
+          : initialWidth + handleUsed === 'left'
+            ? -deltaX
+            : deltaX;
 
       const maxWidth =
         editor.view.dom.firstElementChild?.clientWidth || IMAGE_MAX_WIDTH;
