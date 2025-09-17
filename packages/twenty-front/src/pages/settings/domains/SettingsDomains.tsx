@@ -9,6 +9,9 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledMainContent = styled.div`
   display: flex;
@@ -23,6 +26,10 @@ const StyledSection = styled(Section)`
 
 export const SettingsDomains = () => {
   const { t } = useLingui();
+  const featureFlags = useFeatureFlagsMap();
+
+  const isPublicDomainEnabled =
+    featureFlags[FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED];
 
   return (
     <SubMenuTopBarContainer
@@ -51,6 +58,15 @@ export const SettingsDomains = () => {
             />
             <SettingsApprovedAccessDomainsListCard />
           </StyledSection>
+          {isPublicDomainEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Public Domains`}
+                description={t`Provision a complete and secure hosting environment on these domains.`}
+              />
+              <SettingsPublicDomainsListCard />
+            </StyledSection>
+          )}
         </StyledMainContent>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

@@ -1,20 +1,77 @@
-import { CommandMenuWorkflowSelectActionContent } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent';
-import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
-import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
-import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
+import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
+import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
+import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
+import { FeatureFlagKey } from '~/generated/graphql';
 
-export const CommandMenuWorkflowSelectAction = () => {
-  const workflowId = useCommandMenuWorkflowIdOrThrow();
+export const CommandMenuWorkflowSelectAction = ({
+  onActionSelected,
+}: {
+  onActionSelected: (actionType: WorkflowActionType) => void;
+}) => {
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
+
+  const { t } = useLingui();
 
   return (
-    <WorkflowVisualizerComponentInstanceContext.Provider
-      value={{
-        instanceId: getWorkflowVisualizerComponentInstanceId({
-          recordId: workflowId,
-        }),
-      }}
-    >
-      <CommandMenuWorkflowSelectActionContent />
-    </WorkflowVisualizerComponentInstanceContext.Provider>
+    <RightDrawerStepListContainer>
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Data`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={RECORD_ACTIONS}
+        onClick={onActionSelected}
+      />
+
+      {isAiEnabled && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`AI`}
+          </RightDrawerWorkflowSelectStepTitle>
+          <WorkflowActionMenuItems
+            actions={AI_ACTIONS}
+            onClick={onActionSelected}
+          />
+        </>
+      )}
+
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Core`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={CORE_ACTIONS}
+        onClick={onActionSelected}
+      />
+
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Human Input`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={HUMAN_INPUT_ACTIONS}
+        onClick={onActionSelected}
+      />
+
+      {isIteratorEnabled && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`Others`}
+          </RightDrawerWorkflowSelectStepTitle>
+          <WorkflowActionMenuItems
+            actions={OTHER_ACTIONS}
+            onClick={onActionSelected}
+          />
+        </>
+      )}
+    </RightDrawerStepListContainer>
   );
 };

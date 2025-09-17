@@ -13,9 +13,7 @@ import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-sch
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
-import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -61,20 +59,13 @@ export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {
       }
 
       // Skip hidden fields
-      if (property.hidden === true || property.hidden === 'input') {
+      if (property.hidden === true) {
         continue;
       }
 
-      const key = computeCompositeFieldEnumTypeKey(
-        compositeType.type,
-        property.name,
-      );
-
       const typeOptions = computeCompositeFieldTypeOptions(property);
 
-      const type = isEnumFieldMetadataType(property.type)
-        ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToOrderByType(property.type);
+      const type = this.typeMapperService.mapToOrderByType(property.type);
 
       if (!isDefined(type) || isObjectType(type)) {
         const message = `Could not find a GraphQL input type for ${compositeType.type} ${property.name}`;

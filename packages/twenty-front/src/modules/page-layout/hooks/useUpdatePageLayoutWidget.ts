@@ -1,8 +1,21 @@
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpdatePageLayoutWidget = () => {
+export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
   const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
       (widgetId: string, updates: Partial<PageLayoutWidgetWithData>) => {
@@ -16,7 +29,7 @@ export const useUpdatePageLayoutWidget = () => {
           })),
         }));
       },
-    [],
+    [pageLayoutDraftState],
   );
 
   return { updatePageLayoutWidget };

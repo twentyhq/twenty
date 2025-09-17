@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const createMockToolRegistry = () => ({
   getAllToolTypes: jest.fn(),
@@ -27,6 +27,8 @@ describe('ToolAdapterService', () => {
 
   // Shared tools
   const unflaggedToolExecute = jest.fn(async (input: ToolInput) => ({
+    success: true,
+    message: 'Tool executed successfully',
     result: { echoed: input },
   }));
   const unflaggedTool: Tool = {
@@ -36,6 +38,8 @@ describe('ToolAdapterService', () => {
   };
 
   const flaggedToolExecute = jest.fn(async (input: ToolInput) => ({
+    success: true,
+    message: 'Tool executed successfully',
     result: { sent: input },
   }));
   const flaggedTool: Tool = {
@@ -152,6 +156,10 @@ describe('ToolAdapterService', () => {
 
     // Ensure wrapper forwards only parameters.input
     expect(unflaggedToolExecute).toHaveBeenCalledWith(input);
-    expect(result).toEqual({ result: { echoed: input } });
+    expect(result).toEqual({
+      success: true,
+      message: 'Tool executed successfully',
+      result: { echoed: input },
+    });
   });
 });

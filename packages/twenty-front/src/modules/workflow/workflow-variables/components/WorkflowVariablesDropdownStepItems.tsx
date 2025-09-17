@@ -73,7 +73,7 @@ export const WorkflowVariablesDropdownStepItems = ({
     onSelect(
       getVariableTemplateFromPath({
         stepId: step.id,
-        path: [...currentPath, 'id'],
+        path: [...currentPath, currentSubStep.object.fieldIdName ?? 'id'],
       }),
     );
   };
