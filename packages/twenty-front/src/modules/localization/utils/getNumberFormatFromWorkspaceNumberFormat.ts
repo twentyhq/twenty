@@ -1,4 +1,5 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
 import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
 
 export const getNumberFormatFromWorkspaceNumberFormat = (
@@ -6,7 +7,7 @@ export const getNumberFormatFromWorkspaceNumberFormat = (
 ): NumberFormat => {
   switch (numberFormat) {
     case WorkspaceMemberNumberFormatEnum.SYSTEM:
-      return NumberFormat.SYSTEM;
+      return NumberFormat[detectNumberFormat()];
     case WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT:
       return NumberFormat.COMMAS_AND_DOT;
     case WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA:
@@ -17,24 +18,5 @@ export const getNumberFormatFromWorkspaceNumberFormat = (
       return NumberFormat.APOSTROPHE_AND_DOT;
     default:
       return NumberFormat.COMMAS_AND_DOT;
-  }
-};
-
-export const getWorkspaceNumberFormatFromNumberFormat = (
-  value: NumberFormat,
-): WorkspaceMemberNumberFormatEnum => {
-  switch (value) {
-    case NumberFormat.SYSTEM:
-      return WorkspaceMemberNumberFormatEnum.SYSTEM;
-    case NumberFormat.COMMAS_AND_DOT:
-      return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
-    case NumberFormat.SPACES_AND_COMMA:
-      return WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA;
-    case NumberFormat.DOTS_AND_COMMA:
-      return WorkspaceMemberNumberFormatEnum.DOTS_AND_COMMA;
-    case NumberFormat.APOSTROPHE_AND_DOT:
-      return WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT;
-    default:
-      return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
   }
 };
