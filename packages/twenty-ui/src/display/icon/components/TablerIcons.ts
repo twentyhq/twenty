@@ -74,6 +74,7 @@ export {
   IconColorSwatch,
   IconMessageCircle as IconComment,
   IconCopy,
+  IconCopyPlus,
   IconCreativeCommonsSa,
   IconCreditCard,
   IconCsv,

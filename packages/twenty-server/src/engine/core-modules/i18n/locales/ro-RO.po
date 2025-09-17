@@ -3447,6 +3447,21 @@ msgstr "Obiect țintă al vizualizării"
 msgid "View to delete has not been soft deleted"
 msgstr ""
 
+#. js-lingui-id: toB/08
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+msgid "View to delete not found"
+msgstr ""
+
+#. js-lingui-id: NnD3Ti
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+msgid "View to destroy not found"
+msgstr ""
+
+#. js-lingui-id: 3+GbNY
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "View to update not found"
+msgstr ""
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"

@@ -28,6 +28,7 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+// We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
   'workspaceId',
