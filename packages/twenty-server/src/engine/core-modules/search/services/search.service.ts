@@ -29,7 +29,6 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { unaccentText } from 'src/engine/core-modules/search/utils/unaccent-text';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
@@ -85,15 +84,13 @@ export class SearchService {
               objectMetadataItem.nameSingular,
             );
 
-          const unaccentedSearchInput = unaccentText(searchInput);
-
           return {
             objectMetadataItem,
             records: await this.buildSearchQueryAndGetRecords({
               entityManager: repository,
               objectMetadataItem,
-              searchTerms: formatSearchTerms(unaccentedSearchInput, 'and'),
-              searchTermsOr: formatSearchTerms(unaccentedSearchInput, 'or'),
+              searchTerms: formatSearchTerms(searchInput, 'and'),
+              searchTermsOr: formatSearchTerms(searchInput, 'or'),
               limit: limit as number,
               filter: filter ?? ({} as ObjectRecordFilter),
               after,
@@ -180,9 +177,9 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`;
+    const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery('simple', public.unaccent_immutable(:searchTerms)))`;
 
-    const tsRankExpr = `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`;
+    const tsRankExpr = `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery('simple', public.unaccent_immutable(:searchTermsOr)))`;
 
     const cursorWhereCondition = this.computeCursorWhereCondition({
       after,
@@ -200,10 +197,10 @@ export class SearchService {
       queryBuilder.andWhere(
         new Brackets((qb) => {
           qb.where(
-            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTerms))`,
             { searchTerms },
           ).orWhere(
-            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTermsOr))`,
             { searchTermsOr },
           );
         }),
