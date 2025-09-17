@@ -16,6 +16,7 @@ export interface RegisteredAIModel {
   modelId: string;
   provider: ModelProvider;
   model: LanguageModel;
+  doesSupportThinking?: boolean;
 }
 
 @Injectable()
@@ -86,6 +87,7 @@ export class AiModelRegistryService {
         modelId: modelConfig.modelId,
         provider: ModelProvider.ANTHROPIC,
         model: anthropic(modelConfig.modelId),
+        doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });
   }
