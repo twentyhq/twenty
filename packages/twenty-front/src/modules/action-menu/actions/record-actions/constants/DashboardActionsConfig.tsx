@@ -23,7 +23,8 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shouldBeRegistered: ({ selectedRecord }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
-        !isDefined(selectedRecord?.deletedAt),
+        !isDefined(selectedRecord?.deletedAt) &&
+        isDefined(selectedRecord?.pageLayoutId),
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },

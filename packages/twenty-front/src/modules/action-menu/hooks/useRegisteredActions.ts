@@ -73,7 +73,10 @@ export const useRegisteredActions = (
       );
 
       if (isDefined(forcedShouldBeRegistered)) {
-        return forcedShouldBeRegistered;
+        return (
+          forcedShouldBeRegistered &&
+          action.shouldBeRegistered(shouldBeRegisteredParams)
+        );
       }
 
       return action.shouldBeRegistered(shouldBeRegisteredParams);
