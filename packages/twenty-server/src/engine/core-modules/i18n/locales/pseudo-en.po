@@ -2208,6 +2208,11 @@ msgstr ""
 msgid "NoteTarget person"
 msgstr ""
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -3207,6 +3212,11 @@ msgstr ""
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
+msgstr ""
+
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
 msgstr ""
 
 #. js-lingui-id: Uce+A8
