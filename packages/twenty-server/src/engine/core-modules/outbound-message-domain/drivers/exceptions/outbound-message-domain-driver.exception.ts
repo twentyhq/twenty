@@ -1,11 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class OutboundMessageDomainDriverException extends CustomException {
-  code: OutboundMessageDomainDriverExceptionCode;
-  constructor(message: string, code: OutboundMessageDomainDriverExceptionCode) {
-    super(message, code);
-  }
-}
+export class OutboundMessageDomainDriverException extends CustomException<OutboundMessageDomainDriverExceptionCode> {}
 
 export enum OutboundMessageDomainDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
