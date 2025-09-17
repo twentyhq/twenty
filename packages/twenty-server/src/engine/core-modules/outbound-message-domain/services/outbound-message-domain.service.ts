@@ -155,6 +155,7 @@ export class OutboundMessageDomainService {
         { id: outboundMessageDomainId },
         {
           verificationRecords: outboundMessageDomain.verificationRecords,
+          status: outboundMessageDomain.status,
         },
       );
 
