@@ -1382,6 +1382,7 @@ export enum ModelProvider {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  ImpersonateWorkspaceUserById: AuthTokens;
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
@@ -1472,7 +1473,6 @@ export type Mutation = {
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
-  ImpersonateWorkspaceUserById: AuthTokens;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
@@ -1535,6 +1535,11 @@ export type Mutation = {
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
+};
+
+
+export type MutationImpersonateWorkspaceUserByIdArgs = {
+  targetWorkspaceMemberId: Scalars['UUID'];
 };
 
 
@@ -1968,11 +1973,6 @@ export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-
-export type MutationImpersonateWorkspaceUserByIdArgs = {
-  targetWorkspaceMemberId: Scalars['UUID'];
 };
 
 
