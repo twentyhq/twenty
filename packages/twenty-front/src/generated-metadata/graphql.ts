@@ -1047,6 +1047,7 @@ export enum FeatureFlagKey {
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -2678,6 +2679,7 @@ export type Query = {
   findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
+  findManyPublicDomains: Array<PublicDomain>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
@@ -4804,6 +4806,32 @@ export type GetWebhooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetWebhooksQuery = { __typename?: 'Query', webhooks: Array<{ __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string }> };
+
+export type CheckPublicDomainValidRecordsMutationVariables = Exact<{
+  domain: Scalars['String'];
+}>;
+
+
+export type CheckPublicDomainValidRecordsMutation = { __typename?: 'Mutation', checkPublicDomainValidRecords?: { __typename?: 'DomainValidRecords', id: string, domain: string, records: Array<{ __typename?: 'DomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
+
+export type CreatePublicDomainMutationVariables = Exact<{
+  domain: Scalars['String'];
+}>;
+
+
+export type CreatePublicDomainMutation = { __typename?: 'Mutation', createPublicDomain: { __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, createdAt: string } };
+
+export type DeletePublicDomainMutationVariables = Exact<{
+  domain: Scalars['String'];
+}>;
+
+
+export type DeletePublicDomainMutation = { __typename?: 'Mutation', deletePublicDomain: boolean };
+
+export type FindManyPublicDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyPublicDomainsQuery = { __typename?: 'Query', findManyPublicDomains: Array<{ __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, createdAt: string }> };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -9576,6 +9604,151 @@ export function useGetWebhooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetWebhooksQueryHookResult = ReturnType<typeof useGetWebhooksQuery>;
 export type GetWebhooksLazyQueryHookResult = ReturnType<typeof useGetWebhooksLazyQuery>;
 export type GetWebhooksQueryResult = Apollo.QueryResult<GetWebhooksQuery, GetWebhooksQueryVariables>;
+export const CheckPublicDomainValidRecordsDocument = gql`
+    mutation CheckPublicDomainValidRecords($domain: String!) {
+  checkPublicDomainValidRecords(domain: $domain) {
+    id
+    domain
+    records {
+      type
+      key
+      value
+      validationType
+      status
+    }
+  }
+}
+    `;
+export type CheckPublicDomainValidRecordsMutationFn = Apollo.MutationFunction<CheckPublicDomainValidRecordsMutation, CheckPublicDomainValidRecordsMutationVariables>;
+
+/**
+ * __useCheckPublicDomainValidRecordsMutation__
+ *
+ * To run a mutation, you first call `useCheckPublicDomainValidRecordsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckPublicDomainValidRecordsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkPublicDomainValidRecordsMutation, { data, loading, error }] = useCheckPublicDomainValidRecordsMutation({
+ *   variables: {
+ *      domain: // value for 'domain'
+ *   },
+ * });
+ */
+export function useCheckPublicDomainValidRecordsMutation(baseOptions?: Apollo.MutationHookOptions<CheckPublicDomainValidRecordsMutation, CheckPublicDomainValidRecordsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckPublicDomainValidRecordsMutation, CheckPublicDomainValidRecordsMutationVariables>(CheckPublicDomainValidRecordsDocument, options);
+      }
+export type CheckPublicDomainValidRecordsMutationHookResult = ReturnType<typeof useCheckPublicDomainValidRecordsMutation>;
+export type CheckPublicDomainValidRecordsMutationResult = Apollo.MutationResult<CheckPublicDomainValidRecordsMutation>;
+export type CheckPublicDomainValidRecordsMutationOptions = Apollo.BaseMutationOptions<CheckPublicDomainValidRecordsMutation, CheckPublicDomainValidRecordsMutationVariables>;
+export const CreatePublicDomainDocument = gql`
+    mutation CreatePublicDomain($domain: String!) {
+  createPublicDomain(domain: $domain) {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+export type CreatePublicDomainMutationFn = Apollo.MutationFunction<CreatePublicDomainMutation, CreatePublicDomainMutationVariables>;
+
+/**
+ * __useCreatePublicDomainMutation__
+ *
+ * To run a mutation, you first call `useCreatePublicDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePublicDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPublicDomainMutation, { data, loading, error }] = useCreatePublicDomainMutation({
+ *   variables: {
+ *      domain: // value for 'domain'
+ *   },
+ * });
+ */
+export function useCreatePublicDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreatePublicDomainMutation, CreatePublicDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePublicDomainMutation, CreatePublicDomainMutationVariables>(CreatePublicDomainDocument, options);
+      }
+export type CreatePublicDomainMutationHookResult = ReturnType<typeof useCreatePublicDomainMutation>;
+export type CreatePublicDomainMutationResult = Apollo.MutationResult<CreatePublicDomainMutation>;
+export type CreatePublicDomainMutationOptions = Apollo.BaseMutationOptions<CreatePublicDomainMutation, CreatePublicDomainMutationVariables>;
+export const DeletePublicDomainDocument = gql`
+    mutation DeletePublicDomain($domain: String!) {
+  deletePublicDomain(domain: $domain)
+}
+    `;
+export type DeletePublicDomainMutationFn = Apollo.MutationFunction<DeletePublicDomainMutation, DeletePublicDomainMutationVariables>;
+
+/**
+ * __useDeletePublicDomainMutation__
+ *
+ * To run a mutation, you first call `useDeletePublicDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePublicDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePublicDomainMutation, { data, loading, error }] = useDeletePublicDomainMutation({
+ *   variables: {
+ *      domain: // value for 'domain'
+ *   },
+ * });
+ */
+export function useDeletePublicDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeletePublicDomainMutation, DeletePublicDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePublicDomainMutation, DeletePublicDomainMutationVariables>(DeletePublicDomainDocument, options);
+      }
+export type DeletePublicDomainMutationHookResult = ReturnType<typeof useDeletePublicDomainMutation>;
+export type DeletePublicDomainMutationResult = Apollo.MutationResult<DeletePublicDomainMutation>;
+export type DeletePublicDomainMutationOptions = Apollo.BaseMutationOptions<DeletePublicDomainMutation, DeletePublicDomainMutationVariables>;
+export const FindManyPublicDomainsDocument = gql`
+    query FindManyPublicDomains {
+  findManyPublicDomains {
+    id
+    domain
+    isValidated
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useFindManyPublicDomainsQuery__
+ *
+ * To run a query within a React component, call `useFindManyPublicDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyPublicDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyPublicDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManyPublicDomainsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>(FindManyPublicDomainsDocument, options);
+      }
+export function useFindManyPublicDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>(FindManyPublicDomainsDocument, options);
+        }
+export type FindManyPublicDomainsQueryHookResult = ReturnType<typeof useFindManyPublicDomainsQuery>;
+export type FindManyPublicDomainsLazyQueryHookResult = ReturnType<typeof useFindManyPublicDomainsLazyQuery>;
+export type FindManyPublicDomainsQueryResult = Apollo.QueryResult<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {

@@ -46,7 +46,7 @@ const StyledButton = styled(Button)`
   width: 100%;
 `;
 
-export const SettingsCustomDomainRecords = ({
+export const SettingsDomainRecords = ({
   records,
 }: {
   records: DomainValidRecords['records'];
