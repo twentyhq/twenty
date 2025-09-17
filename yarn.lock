@@ -60,7 +60,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/provider-utils@npm:3.0.9":
+"@ai-sdk/provider-utils@npm:3.0.9, @ai-sdk/provider-utils@npm:^3.0.9":
   version: 3.0.9
   resolution: "@ai-sdk/provider-utils@npm:3.0.9"
   dependencies:
@@ -51648,6 +51648,7 @@ __metadata:
   dependencies:
     "@ai-sdk/anthropic": "npm:^2.0.17"
     "@ai-sdk/openai": "npm:^2.0.30"
+    "@ai-sdk/provider-utils": "npm:^3.0.9"
     "@aws-sdk/client-lambda": "npm:3.825.0"
     "@aws-sdk/client-s3": "npm:3.825.0"
     "@aws-sdk/client-sts": "npm:3.825.0"

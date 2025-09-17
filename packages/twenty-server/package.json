@@ -17,6 +17,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.17",
     "@ai-sdk/openai": "^2.0.30",
+    "@ai-sdk/provider-utils": "^3.0.9",
     "@aws-sdk/client-lambda": "3.825.0",
     "@aws-sdk/client-s3": "3.825.0",
     "@aws-sdk/client-sts": "3.825.0",
