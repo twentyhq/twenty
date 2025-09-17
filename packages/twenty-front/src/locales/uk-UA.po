@@ -455,6 +455,11 @@ msgstr "Додати або вилучити користувачів"
 msgid "Add Output Field"
 msgstr "Додати поле результату"
 
+#. js-lingui-id: wTsnV9
+#: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
+msgid "Add Public Domain"
+msgstr ""
+
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
@@ -2142,6 +2147,7 @@ msgstr "видалити"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -2393,6 +2399,7 @@ msgstr "Домен"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Домени"
 
@@ -3145,6 +3152,11 @@ msgstr "Завершити"
 msgid "Finish flow with errors"
 msgstr "Завершити потік з помилками"
 
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr ""
+
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -3664,16 +3676,6 @@ msgstr "Недійсний ключ API"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Invalid auth provider"
 msgstr "Недійсний провайдер авторизації"
-
-#. js-lingui-id: P3qQyo
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
-msgstr "Неприпустимий користувацький домен. Будь ласка, включіть принаймні один субдомен (наприклад, sub.example.com)."
-
-#. js-lingui-id: u3hwhx
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
-msgstr "Недійсний домен. Домен має бути коротшим за 256 символів, не може бути IP-адресою, не може містити пробіли, не може містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не може починатися або закінчуватися символом '-'."
 
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -5243,10 +5245,42 @@ msgstr "Профіль - Налаштування"
 msgid "Provide your OIDC provider details"
 msgstr "Надайте деталі вашого OIDC провайдера"
 
+#. js-lingui-id: AULPv1
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Provision a complete and secure hosting environment on these domains."
+msgstr ""
+
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Pseudo-English"
 msgstr "Псевдо-англійська"
+
+#. js-lingui-id: knP82t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain"
+msgstr ""
+
+#. js-lingui-id: +fsX3t
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public Domain"
+msgstr ""
+
+#. js-lingui-id: Rjk8Vl
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain created successfully"
+msgstr ""
+
+#. js-lingui-id: za+Mr9
+#: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain successfully deleted"
+msgstr ""
+
+#. js-lingui-id: g55kfn
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Public Domains"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
@@ -5352,6 +5386,7 @@ msgstr "Релізи"
 
 #. js-lingui-id: HpK/8d
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Reload"
 msgstr "Перезавантажити"
 
@@ -5996,6 +6031,11 @@ msgstr "Установити загальні параметри робочог�
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Встановіть ім'я вашого домашнього домену та налаштуйте записи DNS."
 
+#. js-lingui-id: d+3DrP
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Set the name of your public domain and configure your DNS records."
+msgstr ""
+
 #. js-lingui-id: tn41zE
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
@@ -6267,16 +6307,6 @@ msgstr "Субдомен"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Субдомен вже зайнятий"
-
-#. js-lingui-id: OlC/tU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be longer than 30 characters"
-msgstr "Субдомен не може бути довшим за 30 символів"
-
-#. js-lingui-id: ZETwlU
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Subdomain can not be shorter than 3 characters"
-msgstr "Субдомен не може бути коротшим за 3 символи"
 
 #. js-lingui-id: DTG2nE
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -6605,6 +6635,11 @@ msgstr "Є ще рядки, що містять помилки. Рядки з п
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Сталася помилка під час оновлення пароля."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr ""
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6936,11 +6971,6 @@ msgstr "Використовувати як чернетку"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Використовуйте додатки для аутентифікації та розширення браузера, такі як 1Password, Authy, Microsoft Authenticator для генерації одноразових паролів"
 
-#. js-lingui-id: oTTQsc
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Використовуйте тільки літери, цифри та тире. Починайте та закінчуйте літерою або цифрою"
-
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -7244,6 +7274,7 @@ msgstr "Робочі процеси"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"

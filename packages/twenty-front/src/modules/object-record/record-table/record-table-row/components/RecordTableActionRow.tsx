@@ -6,7 +6,7 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableDragAndDropPlaceholderCell';
-import { RecordTableLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableLastDynamicFillingCell';
+import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 import { useTheme } from '@emotion/react';
 import {
   filterOutByProperty,
@@ -142,7 +142,7 @@ export const RecordTableActionRow = ({
         }
       />
       <RecordTableAddButtonPlaceholderCell />
-      <RecordTableLastDynamicFillingCell />
+      <RecordTableGroupSectionLastDynamicFillingCell />
     </StyledRecordTableDraggableTr>
   );
 };

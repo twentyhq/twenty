@@ -21,6 +21,11 @@ const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRecordCardHeaderContainer = styled(RecordCardHeaderContainer)`
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 type RecordCalendarCardHeaderProps = {
@@ -53,7 +58,7 @@ export const RecordCalendarCardHeader = ({
   }
 
   return (
-    <RecordCardHeaderContainer isCompact={isCompactModeActive}>
+    <StyledRecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
           <RecordChip
@@ -76,6 +81,6 @@ export const RecordCalendarCardHeader = ({
           />
         </StopPropagationContainer>
       </StyledCheckboxContainer>
-    </RecordCardHeaderContainer>
+    </StyledRecordCardHeaderContainer>
   );
 };
