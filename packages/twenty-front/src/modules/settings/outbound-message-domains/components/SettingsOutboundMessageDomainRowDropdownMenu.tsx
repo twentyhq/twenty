@@ -85,7 +85,7 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
               OutboundMessageDomainStatus.VERIFIED && (
               <MenuItem
                 LeftIcon={IconShield}
-                text="Verify Domain"
+                text={t`Verify Domain`}
                 onClick={() => {
                   handleVerifyOutboundMessageDomain();
                   closeDropdown(dropdownId);
