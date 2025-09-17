@@ -45,7 +45,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
-    await viewFieldRepository.save({
+    await viewFieldRepository.insert({
       ...viewField,
       workspaceId,
     });
