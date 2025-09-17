@@ -37,14 +37,16 @@ export const SettingsOutboundMessageDomains = () => {
     return t`Added ${beautifyPastDateRelative}`;
   };
 
-  if (isDefined(isLoading)) {
-    <StyledLink to={getSettingsPath(SettingsPath.NewOutboundMessageDomain)}>
-      <SettingsCard
-        title={t`Add Outbound Message Domain`}
-        description={t`Configure domains for sending outbound emails from this workspace.`}
-        Icon={<IconMail />}
-      />
-    </StyledLink>;
+  if (isLoading) {
+    return (
+      <StyledLink to={getSettingsPath(SettingsPath.NewOutboundMessageDomain)}>
+        <SettingsCard
+          title={t`Add Outbound Message Domain`}
+          description={t`Configure domains for sending outbound emails from this workspace.`}
+          Icon={<IconMail />}
+        />
+      </StyledLink>
+    );
   }
 
   return (
