@@ -9,8 +9,8 @@ import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
-import { computeIndexCreationQuery } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/index/utils/compute-index-creation-query.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
 
@@ -40,47 +40,12 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       );
 
     const {
-      flatIndexMetadata: {
-        createdAt,
-        flatIndexFieldMetadatas,
-        id,
-        indexType,
-        indexWhereClause,
-        isCustom,
-        isUnique,
-        name,
-        objectMetadataId,
-        universalIdentifier,
-      },
+      flatIndexMetadata: { flatIndexFieldMetadatas, ...rest },
     } = action;
 
     await indexMetadataRepository.save({
-      createdAt,
-      indexFieldMetadatas: flatIndexFieldMetadatas.map(
-        ({
-          createdAt,
-          fieldMetadataId,
-          id,
-          indexMetadataId,
-          order,
-          updatedAt,
-        }) => ({
-          createdAt,
-          fieldMetadataId,
-          id,
-          indexMetadataId,
-          order,
-          updatedAt,
-        }),
-      ),
-      id,
-      indexType,
-      indexWhereClause,
-      isCustom,
-      isUnique,
-      name,
-      objectMetadataId,
-      universalIdentifier,
+      indexFieldMetadatas: flatIndexFieldMetadatas,
+      ...rest,
     });
   }
 
@@ -103,12 +68,22 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
       flatObjectMetadata,
     });
-    const createIndexQuery = await computeIndexCreationQuery({
-      flatIndexMetadata,
-      flatObjectMetadataMaps,
-      schemaName,
-      tableName,
-    });
+
+    let createIndexQuery: string | undefined = undefined;
+    const quotedColumns = flatIndexMetadata.flatIndexFieldMetadatas.map(
+      (column) => `"${column}"`,
+    );
+
+    if (flatIndexMetadata.indexType === IndexType.BTREE) {
+      createIndexQuery = `\nCREATE INDEX IF NOT EXISTS "${flatIndexMetadata.name}" ON "${schemaName}"."${tableName}" USING ${flatIndexMetadata.indexType} (${quotedColumns.join(', ')})\n`;
+    } else {
+      const isUnique = flatIndexMetadata.isUnique ? 'UNIQUE' : '';
+      const whereClause = flatIndexMetadata.indexWhereClause
+        ? `WHERE ${flatIndexMetadata.indexWhereClause}`
+        : '';
+
+      createIndexQuery = `\nCREATE ${isUnique} INDEX IF NOT EXISTS "${flatIndexMetadata.name}" ON "${schemaName}"."${tableName}" (${quotedColumns.join(', ')}) ${whereClause}\n`;
+    }
 
     await queryRunner.query(createIndexQuery);
   }

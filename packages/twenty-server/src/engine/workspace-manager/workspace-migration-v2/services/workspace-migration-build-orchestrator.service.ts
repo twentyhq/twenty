@@ -10,7 +10,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
-import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder';
+import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
@@ -112,7 +112,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
     if (isDefined(flatIndexMaps)) {
       const { from: fromFlatIndexMaps, to: toFlatIndexMaps } = flatIndexMaps;
-      const viewFieldResult =
+      const indexResult =
         await this.workspaceMigrationV2IndexActionsBuilderService.validateAndBuild(
           {
             from: fromFlatIndexMaps,
@@ -126,12 +126,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
         );
 
       optimisticAllFlatEntityMaps.flatIndexMaps =
-        viewFieldResult.optimisticFlatEntityMaps;
+        indexResult.optimisticFlatEntityMaps;
 
-      if (viewFieldResult.status === 'fail') {
-        orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
+      if (indexResult.status === 'fail') {
+        orchestratorFailureReport.index.push(...indexResult.errors);
       } else {
-        allActions.push(...viewFieldResult.actions);
+        allActions.push(...indexResult.actions);
       }
     }
 

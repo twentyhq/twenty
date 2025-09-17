@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
-
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -44,7 +42,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     const { flatIndexMetadataId } = action;
 
     await indexMetadataRepository.delete({
-      id: In([flatIndexMetadataId]),
+      id: flatIndexMetadataId,
     });
   }
 

@@ -112,12 +112,12 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       >
     | undefined
   > {
-    const viewUpdatedProperties = compareTwoFlatIndexMetadata({
+    const indexUpdatedProperties = compareTwoFlatIndexMetadata({
       fromFlatIndexMetadata: fromFlatIndex,
       toFlatIndexMetadata: toFlatIndex,
     });
 
-    if (viewUpdatedProperties.length === 0) {
+    if (indexUpdatedProperties.length === 0) {
       return undefined;
     }
 

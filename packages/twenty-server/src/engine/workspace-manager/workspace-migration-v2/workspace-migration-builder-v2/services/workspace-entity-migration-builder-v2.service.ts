@@ -174,7 +174,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.created.push(
+      validateAndBuildResult.deleted.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),
@@ -202,7 +202,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.created.push(
+      validateAndBuildResult.updated.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
           : [validationResult.action]),

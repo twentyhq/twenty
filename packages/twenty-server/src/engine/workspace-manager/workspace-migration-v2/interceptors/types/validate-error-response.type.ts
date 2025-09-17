@@ -23,7 +23,7 @@ export type ValidationErrorResponse = {
   summary: {
     totalErrors: number;
   } & {
-    [P in keyof AllFlatEntitiesByMetadataEngineName as `invalid${Capitalize<P>}s`]: number;
+    [P in keyof AllFlatEntitiesByMetadataEngineName as `invalid${Capitalize<P>}`]: number;
   };
   errors: OrchestratorFailureReport;
 };
