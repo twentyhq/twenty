@@ -24,15 +24,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/anthropic@npm:^2.0.0":
-  version: 2.0.16
-  resolution: "@ai-sdk/anthropic@npm:2.0.16"
+"@ai-sdk/anthropic@npm:^2.0.17":
+  version: 2.0.17
+  resolution: "@ai-sdk/anthropic@npm:2.0.17"
   dependencies:
     "@ai-sdk/provider": "npm:2.0.0"
     "@ai-sdk/provider-utils": "npm:3.0.9"
   peerDependencies:
     zod: ^3.25.76 || ^4
-  checksum: 10c0/1afda00f0029cd2290a1d8da16a3dee4a9ff024c2e83ad26fce863635cc5fc0508c38af96e32b3fe271a696d9bbe06084391387ae6c4b960cffe31f0b6cdc88e
+  checksum: 10c0/783b6a953f3854c4303ad7c30dd56d4706486c7d1151adb17071d87933418c59c26bce53d5c26d34c4d4728eaac4a856ce49a336caed26a7216f982fea562814
   languageName: node
   linkType: hard
 
@@ -48,7 +48,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/openai@npm:^2.0.0":
+"@ai-sdk/openai@npm:^2.0.30":
   version: 2.0.30
   resolution: "@ai-sdk/openai@npm:2.0.30"
   dependencies:
@@ -22924,7 +22924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ai@npm:^5.0.0":
+"ai@npm:^5.0.44":
   version: 5.0.44
   resolution: "ai@npm:5.0.44"
   dependencies:
@@ -51646,8 +51646,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
-    "@ai-sdk/anthropic": "npm:^2.0.0"
-    "@ai-sdk/openai": "npm:^2.0.0"
+    "@ai-sdk/anthropic": "npm:^2.0.17"
+    "@ai-sdk/openai": "npm:^2.0.30"
     "@aws-sdk/client-lambda": "npm:3.825.0"
     "@aws-sdk/client-s3": "npm:3.825.0"
     "@aws-sdk/client-sts": "npm:3.825.0"
@@ -51745,7 +51745,7 @@ __metadata:
     "@types/unzipper": "npm:^0"
     "@yarnpkg/types": "npm:^4.0.0"
     addressparser: "npm:1.0.1"
-    ai: "npm:^5.0.0"
+    ai: "npm:^5.0.44"
     apollo-server-core: "npm:3.13.0"
     archiver: "npm:7.0.1"
     axios: "npm:1.10.0"

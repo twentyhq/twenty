@@ -15,8 +15,8 @@
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^2.0.0",
-    "@ai-sdk/openai": "^2.0.0",
+    "@ai-sdk/anthropic": "^2.0.17",
+    "@ai-sdk/openai": "^2.0.30",
     "@aws-sdk/client-lambda": "3.825.0",
     "@aws-sdk/client-s3": "3.825.0",
     "@aws-sdk/client-sts": "3.825.0",
@@ -76,7 +76,7 @@
     "@sentry/profiling-node": "9.26.0",
     "@sniptt/guards": "0.2.0",
     "addressparser": "1.0.1",
-    "ai": "^5.0.0",
+    "ai": "^5.0.44",
     "apollo-server-core": "3.13.0",
     "archiver": "7.0.1",
     "axios": "1.10.0",
