@@ -101,7 +101,7 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
-    await this.workflowVersionStepWorkspaceService.submitFormStep({
+    await this.workflowRunWorkspaceService.submitFormStep({
       workspaceId,
       stepId,
       workflowRunId,
