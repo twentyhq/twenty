@@ -124,6 +124,7 @@ export class AwsSesDriver implements OutboundMessageDomainDriverInterface {
         error,
         'getDomainVerificationRecords',
       );
+      throw error;
     }
   }
 
