@@ -69,6 +69,10 @@ const StyledEditorContainer = styled.div<{
   .ProseMirror-focused {
     outline: none;
   }
+
+  .ProseMirror-hideselection * {
+    caret-color: transparent;
+  }
 `;
 
 type WorkflowEmailEditorProps = {

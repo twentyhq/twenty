@@ -82,7 +82,7 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
   const imageWrapperRef = useRef<HTMLDivElement>(null);
 
   const [isDragging, setIsDragging] = useState(false);
-  const [width, setWidth] = useState(initialWidth ?? 0);
+  const [width, setWidth] = useState(initialWidth || 0);
   const [resizeParams, setResizeParams] = useState<ResizeParams | null>(null);
 
   const handleMouseMove = useCallback(
