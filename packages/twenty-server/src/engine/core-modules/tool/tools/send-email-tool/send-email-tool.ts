@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 import {
   SendEmailToolException,
