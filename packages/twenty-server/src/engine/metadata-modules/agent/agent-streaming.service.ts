@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Response } from 'express';
 import { Repository } from 'typeorm';
 
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
@@ -12,7 +13,6 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 export type StreamAgentChatOptions = {
@@ -45,6 +45,8 @@ export class AgentStreamingService {
     recordIdsByObjectMetadataNameSingular,
     res,
   }: StreamAgentChatOptions) {
+    let rawStreamString = '';
+
     try {
       const thread = await this.threadRepository.findOne({
         where: {
@@ -74,66 +76,23 @@ export class AgentStreamingService {
           recordIdsByObjectMetadataNameSingular,
         });
 
-      let aiResponse = '';
-
       for await (const chunk of fullStream) {
-        switch (chunk.type) {
-          case 'text-delta':
-            aiResponse += chunk.textDelta;
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.textDelta,
-            });
-            break;
-          case 'tool-call':
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.args?.toolDescription,
-            });
-            break;
-          case 'error':
-            {
-              const errorMessage =
-                chunk.error &&
-                typeof chunk.error === 'object' &&
-                'message' in chunk.error
-                  ? chunk.error.message
-                  : 'Something went wrong. Please try again.';
+        rawStreamString += JSON.stringify(chunk) + '\n';
 
-              this.sendStreamEvent(res, {
-                type: 'error',
-                message: errorMessage as string,
-              });
-              res.end();
-            }
-            this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
-            break;
-          default:
-            this.logger.log(`Unknown chunk type: ${chunk.type}`);
-            break;
-        }
+        this.sendStreamEvent(
+          res,
+          [
+            'text-delta',
+            'reasoning',
+            'reasoning-signature',
+            'tool-call',
+            'tool-result',
+            'error',
+          ].includes(chunk.type)
+            ? chunk
+            : { type: chunk.type },
+        );
       }
-
-      if (!aiResponse) {
-        res.end();
-
-        return;
-      }
-
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-        fileIds,
-      });
-
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.ASSISTANT,
-        content: aiResponse,
-      });
-
-      res.end();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';
@@ -146,19 +105,33 @@ export class AgentStreamingService {
         this.setupStreamingHeaders(res);
       }
 
-      this.sendStreamEvent(res, {
+      const errorChunk = {
         type: 'error',
         message: errorMessage,
-      });
+      };
 
-      res.end();
+      rawStreamString += JSON.stringify(errorChunk) + '\n';
+
+      this.sendStreamEvent(res, errorChunk);
     }
+
+    await this.agentChatService.addMessage({
+      threadId,
+      role: AgentChatMessageRole.USER,
+      rawContent: userMessage,
+      fileIds,
+    });
+
+    await this.agentChatService.addMessage({
+      threadId,
+      role: AgentChatMessageRole.ASSISTANT,
+      rawContent: rawStreamString.trim() || null,
+    });
+
+    res.end();
   }
 
-  private sendStreamEvent(
-    res: Response,
-    event: { type: string; message: string },
-  ): void {
+  private sendStreamEvent(res: Response, event: object): void {
     res.write(JSON.stringify(event) + '\n');
   }
 

@@ -229,7 +229,7 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expectSuccessResult(result, 'Successfully created testObject');
-      expect(result.record).toEqual(testRecord);
+      expect(result.result).toEqual(testRecord);
       expect(mockRepository.save).toHaveBeenCalledWith({
         name: 'Test Record',
         description: 'Test description',
@@ -317,8 +317,8 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expectSuccessResult(result, 'Found 3 testObject records');
-      expect(result.records).toEqual(testRecords);
-      expect(result.count).toBe(3);
+      expect(result.result.records).toEqual(testRecords);
+      expect(result.result.count).toBe(3);
       expect(mockRepository.find).toHaveBeenCalledWith({
         where: {},
         take: 10,
@@ -365,7 +365,7 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expectSuccessResult(result, 'Found testObject record');
-      expect(result.record).toEqual(testRecord);
+      expect(result.result).toEqual(testRecord);
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: 'test-record-id' },
       });
@@ -506,7 +506,7 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expectSuccessResult(result, 'Successfully updated testObject');
-      expect(result.record).toEqual(updatedRecord);
+      expect(result.result).toEqual(updatedRecord);
       expect(mockRepository.update).toHaveBeenCalledWith('test-record-id', {
         name: 'New Name',
         description: 'New description',

@@ -7,7 +7,6 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
-import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
   type CamelCasedWorkspaceMigrationActionsType,
@@ -30,10 +29,6 @@ const allWorkspaceBuilderTestCases: {
   {
     label: 'field',
     testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
-  },
-  {
-    label: 'index',
-    testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
   },
 ];
 

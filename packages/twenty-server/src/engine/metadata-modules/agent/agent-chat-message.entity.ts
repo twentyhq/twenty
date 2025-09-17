@@ -36,8 +36,8 @@ export class AgentChatMessageEntity {
   @Column({ type: 'enum', enum: AgentChatMessageRole })
   role: AgentChatMessageRole;
 
-  @Column('text')
-  content: string;
+  @Column({ type: 'text', nullable: true })
+  rawContent: string | null;
 
   @OneToMany(() => FileEntity, (file) => file.message)
   files: Relation<FileEntity[]>;

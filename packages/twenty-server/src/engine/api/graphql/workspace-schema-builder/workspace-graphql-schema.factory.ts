@@ -17,10 +17,14 @@ export class WorkspaceGraphQLSchemaGenerator {
     private readonly orphanedTypesGenerator: OrphanedTypesGenerator,
   ) {}
 
-  generateSchema(
+  async generateSchema(
     objectMetadataCollection: ObjectMetadataEntity[],
-  ): GraphQLSchema {
-    this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
+    workspaceId: string,
+  ): Promise<GraphQLSchema> {
+    await this.gqlTypeGenerator.buildAndStore(
+      objectMetadataCollection,
+      workspaceId,
+    );
 
     // Assemble schema
     const schema = new GraphQLSchema({
