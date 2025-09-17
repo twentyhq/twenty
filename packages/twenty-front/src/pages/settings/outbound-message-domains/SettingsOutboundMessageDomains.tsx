@@ -37,7 +37,7 @@ export const SettingsOutboundMessageDomains = () => {
     return t`Added ${beautifyPastDateRelative}`;
   };
 
-  if (isLoading) {
+  if (isLoading === true) {
     return (
       <StyledLink to={getSettingsPath(SettingsPath.NewOutboundMessageDomain)}>
         <SettingsCard
@@ -72,10 +72,9 @@ export const SettingsOutboundMessageDomains = () => {
           </>
         )}
         to={(outboundMessageDomain) =>
-          getSettingsPath(SettingsPath.OutboundMessageDomainDetail).replace(
-            ':domainId',
-            outboundMessageDomain.id,
-          )
+          getSettingsPath(SettingsPath.OutboundMessageDomainDetail, {
+            domainId: outboundMessageDomain.id,
+          })
         }
         hasFooter
         footerButtonLabel="Add Outbound Message Domain"

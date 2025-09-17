@@ -1,11 +1,10 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { CREATE_OUTBOUND_MESSAGE_DOMAIN } from '@/settings/outbound-message-domains/graphql/mutations/createOutboundMessageDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError, useMutation } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -13,7 +12,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { OutboundMessageDomainDriver } from '~/generated-metadata/graphql';
+import {
+  OutboundMessageDomainDriver,
+  useCreateOutboundMessageDomainMutation,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   settingsOutboundMessageDomainFormSchema,
@@ -43,9 +45,8 @@ export const SettingsNewOutboundMessageDomain = () => {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [createOutboundMessageDomain] = useMutation(
-    CREATE_OUTBOUND_MESSAGE_DOMAIN,
-  );
+  const [createOutboundMessageDomain] =
+    useCreateOutboundMessageDomainMutation();
 
   const validateForm = (): boolean => {
     const result =
@@ -94,11 +95,15 @@ export const SettingsNewOutboundMessageDomain = () => {
             driver: formValues.driver,
           },
         },
-        onCompleted: () => {
+        onCompleted: (data) => {
           enqueueSuccessSnackBar({
             message: t`Outbound message domain created successfully. Please verify the domain to start using it.`,
           });
-          navigate(SettingsPath.Domains);
+          if (!data.createOutboundMessageDomain?.id) return;
+
+          navigate(SettingsPath.OutboundMessageDomainDetail, {
+            domainId: data.createOutboundMessageDomain.id,
+          });
         },
         onError: (error) => {
           enqueueErrorSnackBar({
