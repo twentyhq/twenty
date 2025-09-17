@@ -1,6 +1,7 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
@@ -18,6 +19,10 @@ export const RecordTableCellEditModePortal = () => {
     recordTableCellEditModePositionComponentState,
   );
 
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
   if (!focusedCellPosition) {
     return null;
   }
@@ -26,7 +31,11 @@ export const RecordTableCellEditModePortal = () => {
     <RecordTableCellPortalWrapper position={focusedCellPosition}>
       {currentTableCellInEditModePosition && (
         <RecordTableCellPortalRootContainer
-          zIndex={TABLE_Z_INDEX.cell.editMode}
+          zIndex={
+            hasRecordGroups
+              ? TABLE_Z_INDEX.cell.withGroups.editMode
+              : TABLE_Z_INDEX.cell.withoutGroups.editMode
+          }
         >
           <RecordTableCellEditMode>
             <RecordTableCellFieldInput />
