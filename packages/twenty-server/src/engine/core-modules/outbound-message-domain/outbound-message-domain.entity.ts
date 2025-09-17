@@ -60,7 +60,7 @@ export class OutboundMessageDomain {
   @Column({ type: 'timestamptz', nullable: true })
   verifiedAt: Date | null;
 
-  @Column()
+  @Column({ nullable: false })
   workspaceId: string;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.outboundMessageDomains, {
