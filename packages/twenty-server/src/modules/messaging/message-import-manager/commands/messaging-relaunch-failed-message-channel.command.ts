@@ -16,8 +16,8 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Command({
-  name: 'messaging:relaunch-failed-messsage-channel',
-  description: 'Relaunch a failed message channel',
+  name: 'messaging:relaunch-failed-message-channels',
+  description: 'Relaunch failed message channels',
 })
 export class MessagingRelaunchFailedMessageChannelCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(

@@ -11,6 +11,8 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { MessagingRelaunchFailedMessageChannelCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-relaunch-failed-message-channel.command';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
@@ -39,7 +41,6 @@ import { MessagingMessagesImportService } from 'src/modules/messaging/message-im
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
-import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
     MessagingSingleMessageImportCommand,
+    MessagingRelaunchFailedMessageChannelCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
     MessagingOngoingStaleJob,
