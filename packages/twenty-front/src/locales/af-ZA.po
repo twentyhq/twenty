@@ -3152,6 +3152,11 @@ msgstr "Voltooi"
 msgid "Finish flow with errors"
 msgstr "Voltooi stroom met foute"
 
+#. js-lingui-id: eYwdpC
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Finished thinking"
+msgstr ""
+
 #. js-lingui-id: USZ2N6
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
@@ -6630,6 +6635,11 @@ msgstr "Daar is nog steeds rye wat foute bevat. Rye met foute sal geïgnoreer wo
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Daar was 'n fout terwyl die wagwoord opgedateer is."
+
+#. js-lingui-id: Ed99mE
+#: src/modules/ai/components/ReasoningSummaryDisplay.tsx
+msgid "Thinking..."
+msgstr ""
 
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
