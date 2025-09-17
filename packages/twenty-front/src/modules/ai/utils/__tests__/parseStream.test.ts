@@ -112,15 +112,16 @@ describe('parseStream', () => {
   describe('reasoning events', () => {
     it('should parse reasoning events correctly', () => {
       const streamText = [
+        JSON.stringify({ type: 'reasoning-start' }),
         JSON.stringify({
-          type: 'reasoning',
+          type: 'reasoning-delta',
           text: 'Let me think about this...',
         }),
         JSON.stringify({
-          type: 'reasoning',
+          type: 'reasoning-delta',
           text: ' I need to consider the options.',
         }),
-        JSON.stringify({ type: 'reasoning-signature' }),
+        JSON.stringify({ type: 'reasoning-end' }),
       ].join('\n');
 
       const result = parseStream(streamText);
@@ -133,11 +134,14 @@ describe('parseStream', () => {
       });
     });
 
-    it('should handle reasoning without signature as thinking', () => {
-      const streamText = JSON.stringify({
-        type: 'reasoning',
-        text: 'Still thinking...',
-      });
+    it('should handle reasoning without end as thinking', () => {
+      const streamText = [
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({
+          type: 'reasoning-delta',
+          text: 'Still thinking...',
+        }),
+      ].join('\n');
 
       const result = parseStream(streamText);
 
@@ -151,9 +155,10 @@ describe('parseStream', () => {
 
     it('should concatenate multiple reasoning deltas', () => {
       const streamText = [
-        JSON.stringify({ type: 'reasoning', text: 'First part' }),
-        JSON.stringify({ type: 'reasoning', text: ' second part' }),
-        JSON.stringify({ type: 'reasoning', text: ' third part' }),
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({ type: 'reasoning-delta', text: 'First part' }),
+        JSON.stringify({ type: 'reasoning-delta', text: ' second part' }),
+        JSON.stringify({ type: 'reasoning-delta', text: ' third part' }),
       ].join('\n');
 
       const result = parseStream(streamText);
@@ -264,7 +269,8 @@ describe('parseStream', () => {
 
     it('should mark reasoning as not thinking on step-finish', () => {
       const streamText = [
-        JSON.stringify({ type: 'reasoning', text: 'Thinking...' }),
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({ type: 'reasoning-delta', text: 'Thinking...' }),
         JSON.stringify({ type: 'step-finish' }),
       ].join('\n');
 
@@ -289,7 +295,8 @@ describe('parseStream', () => {
           toolName: 'send_email',
           args: { loadingMessage: 'Sending...', input: {} },
         }),
-        JSON.stringify({ type: 'reasoning', text: 'Let me think...' }),
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({ type: 'reasoning-delta', text: 'Let me think...' }),
         JSON.stringify({
           type: 'tool-result',
           toolCallId: 'call-1',
@@ -390,7 +397,8 @@ describe('parseStream', () => {
   describe('text block transitions', () => {
     it('should create new text block when switching from reasoning to text', () => {
       const streamText = [
-        JSON.stringify({ type: 'reasoning', text: 'Thinking...' }),
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({ type: 'reasoning-delta', text: 'Thinking...' }),
         JSON.stringify({ type: 'text-delta', text: 'Speaking...' }),
       ].join('\n');
 
@@ -411,7 +419,8 @@ describe('parseStream', () => {
     it('should create new reasoning block when switching from text to reasoning', () => {
       const streamText = [
         JSON.stringify({ type: 'text-delta', text: 'Speaking...' }),
-        JSON.stringify({ type: 'reasoning', text: 'Thinking...' }),
+        JSON.stringify({ type: 'reasoning-start' }),
+        JSON.stringify({ type: 'reasoning-delta', text: 'Thinking...' }),
       ].join('\n');
 
       const result = parseStream(streamText);
