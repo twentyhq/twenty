@@ -150,11 +150,12 @@ export const SettingsObjectFieldEdit = () => {
         if (navigationMemorizedUrl.isAddingFieldOption === true) {
           navigate(navigationMemorizedUrl.url, { replace: true });
           setNavigationMemorizedUrl({ url: '/' });
-        } else {
-          navigateSettings(SettingsPath.ObjectDetail, {
-            objectNamePlural,
-          });
+          return;
         }
+
+        navigateSettings(SettingsPath.ObjectDetail, {
+          objectNamePlural,
+        });
       }
     } catch (error) {
       enqueueErrorSnackBar({
