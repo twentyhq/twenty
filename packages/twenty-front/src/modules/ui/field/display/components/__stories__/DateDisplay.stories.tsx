@@ -5,7 +5,6 @@ import { UserContext } from '@/users/contexts/UserContext';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { DateDisplay } from '../DateDisplay';
-import { NumberFormat } from '@/localization/constants/NumberFormat';
 
 const meta: Meta<typeof DateDisplay> = {
   title: 'UI/Field/Display/DateDisplay',
@@ -17,7 +16,6 @@ const meta: Meta<typeof DateDisplay> = {
           dateFormat: DateFormat.DAY_FIRST,
           timeFormat: TimeFormat.HOUR_24,
           timeZone: 'Pacific/Tahiti', // Needed for our test on time difference
-          numberFormat: NumberFormat.COMMAS_AND_DOT,
         }}
       >
         <Story />

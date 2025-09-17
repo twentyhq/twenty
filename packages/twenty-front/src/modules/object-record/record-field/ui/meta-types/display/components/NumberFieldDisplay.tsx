@@ -1,14 +1,15 @@
-import { useContext } from 'react';
 import { useNumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useNumberFieldDisplay';
 import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
-import { UserContext } from '@/users/contexts/UserContext';
 import { isDefined } from 'twenty-shared/utils';
-import { formatNumber } from '@/localization/utils/formatNumber';
 import { formatAmount } from '~/utils/format/formatAmount';
+import { formatNumberLocalized } from '~/utils/format/number';
+import { useRecoilState } from 'recoil';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getNumberFormatFromWorkspaceNumberFormat } from '@/localization/utils/getNumberFormatFromWorkspaceNumberFormat';
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
-  const { numberFormat } = useContext(UserContext);
+  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
   const type = fieldDefinition.metadata.settings?.type;
   const decimals = fieldDefinition.metadata.settings?.decimals;
 
@@ -20,11 +21,17 @@ export const NumberFieldDisplay = () => {
   let formattedValue: string;
 
   if (type === 'percentage') {
-    formattedValue = `${formatNumber(numericValue * 100, numberFormat, decimals)}%`;
+    formattedValue = `${formatNumberLocalized(numericValue * 100, getNumberFormatFromWorkspaceNumberFormat(currentWorkspaceMember?.numberFormat!), decimals)}%`;
   } else if (type === 'shortNumber') {
     formattedValue = formatAmount(numericValue);
   } else {
-    formattedValue = formatNumber(numericValue, numberFormat, decimals);
+    formattedValue = formatNumberLocalized(
+      numericValue,
+      getNumberFormatFromWorkspaceNumberFormat(
+        currentWorkspaceMember?.numberFormat!,
+      ),
+      decimals,
+    );
   }
 
   return <NumberDisplay value={formattedValue} />;

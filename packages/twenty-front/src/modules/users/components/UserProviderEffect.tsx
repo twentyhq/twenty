@@ -35,9 +35,6 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { getNumberFormatFromWorkspaceNumberFormat } from '@/localization/utils/getNumberFormatFromWorkspaceNumberFormat';
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
 
 export const UserProviderEffect = () => {
   const location = useLocation();
@@ -170,12 +167,6 @@ export const UserProviderEffect = () => {
         timeFormat: isDefined(workspaceMember.timeFormat)
           ? getTimeFormatFromWorkspaceTimeFormat(workspaceMember.timeFormat)
           : TimeFormat[detectTimeFormat()],
-
-        numberFormat: isDefined(workspaceMember.numberFormat)
-          ? getNumberFormatFromWorkspaceNumberFormat(
-              workspaceMember.numberFormat,
-            )
-          : NumberFormat[detectNumberFormat()],
       });
 
       dynamicActivate(

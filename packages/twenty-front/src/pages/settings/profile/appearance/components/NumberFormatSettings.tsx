@@ -3,18 +3,18 @@ import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 import { useRecoilState } from 'recoil';
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { formatNumber } from '@/localization/utils/formatNumber';
+import { formatNumberLocalized } from '~/utils/format/number';
+import {
+  getNumberFormatFromWorkspaceNumberFormat,
+  getWorkspaceNumberFormatFromNumberFormat,
+} from '@/localization/utils/getNumberFormatFromWorkspaceNumberFormat';
 
 export const NumberFormatSettings = () => {
   const { t } = useLingui();
-  const [dateTimeFormat, setDateTimeFormat] =
-    useRecoilState(dateTimeFormatState);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -24,28 +24,11 @@ export const NumberFormatSettings = () => {
     currentWorkspaceMemberState,
   );
 
-  const systemNumberFormatLabel = formatNumber(
+  const systemNumberFormatLabel = formatNumberLocalized(
     1234.56,
     detectNumberFormat(),
     2,
   );
-
-  const getWorkspaceFormat = (
-    value: NumberFormat,
-  ): WorkspaceMemberNumberFormatEnum => {
-    switch (value) {
-      case NumberFormat.SYSTEM:
-        return WorkspaceMemberNumberFormatEnum.SYSTEM;
-      case NumberFormat.COMMAS_AND_DOT:
-        return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
-      case NumberFormat.SPACES_AND_COMMA:
-        return WorkspaceMemberNumberFormatEnum.SPACES_AND_COMMA;
-      case NumberFormat.SPACES_AND_DOT:
-        return WorkspaceMemberNumberFormatEnum.SPACES_AND_DOT;
-      default:
-        return WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT;
-    }
-  };
 
   const handleNumberFormatChange = async (value: NumberFormat) => {
     if (!currentWorkspaceMember?.id) {
@@ -53,38 +36,38 @@ export const NumberFormatSettings = () => {
       return;
     }
 
-    const workspaceNumberFormat = getWorkspaceFormat(value);
+    const originalChoice = getWorkspaceNumberFormatFromNumberFormat(value);
+
+    const resolvedFormat =
+      value === NumberFormat.SYSTEM
+        ? getWorkspaceNumberFormatFromNumberFormat(detectNumberFormat())
+        : originalChoice;
 
     try {
       await updateOneRecord({
         idToUpdate: currentWorkspaceMember.id,
         updateOneRecordInput: {
-          numberFormat: workspaceNumberFormat,
+          numberFormat: resolvedFormat,
         },
       });
 
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
-        numberFormat: workspaceNumberFormat,
+        numberFormat: resolvedFormat,
+        originalNumberFormatChoice: originalChoice,
       });
-
-      setDateTimeFormat((prev) => ({
-        ...prev,
-        numberFormat:
-          value === NumberFormat.SYSTEM
-            ? NumberFormat[detectNumberFormat()]
-            : value,
-      }));
     } catch (error) {
       logError(error);
     }
   };
 
-  const numberFormat =
-    currentWorkspaceMember?.numberFormat ===
-    WorkspaceMemberNumberFormatEnum.SYSTEM
-      ? NumberFormat.SYSTEM
-      : dateTimeFormat.numberFormat;
+  const formatChoice =
+    currentWorkspaceMember?.originalNumberFormatChoice ??
+    currentWorkspaceMember?.numberFormat;
+
+  const numberFormat = formatChoice
+    ? getNumberFormatFromWorkspaceNumberFormat(formatChoice)
+    : NumberFormat.SYSTEM;
 
   return (
     <Select
