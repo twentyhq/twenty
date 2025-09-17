@@ -330,7 +330,7 @@ describe('McpService', () => {
             {
               name: 'testTool',
               description: 'Test tool',
-              inputSchema: { type: 'object', properties: {} },
+              inputSchema: jsonSchema({ type: 'object', properties: {} }),
             },
           ],
         }),
