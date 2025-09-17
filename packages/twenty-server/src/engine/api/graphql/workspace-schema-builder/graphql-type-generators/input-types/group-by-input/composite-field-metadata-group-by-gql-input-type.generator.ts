@@ -1,26 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  GraphQLBoolean,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
-  isObjectType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
-import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {
+export class CompositeFieldMetadataGroupByGqlInputTypeGenerator {
   private readonly logger = new Logger(
-    CompositeFieldMetadataOrderByGqlInputTypeGenerator.name,
+    CompositeFieldMetadataGroupByGqlInputTypeGenerator.name,
   );
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
@@ -30,11 +28,11 @@ export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {
   public buildAndStore(compositeType: CompositeType) {
     const key = computeCompositeFieldInputTypeKey(
       compositeType.type,
-      GqlInputTypeDefinitionKind.OrderBy,
+      GqlInputTypeDefinitionKind.GroupBy,
     );
 
     const type = new GraphQLInputObjectType({
-      name: `${pascalCase(compositeType.type)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
+      name: `${pascalCase(compositeType.type)}${GqlInputTypeDefinitionKind.GroupBy.toString()}Input`,
       fields: this.generateFields(compositeType),
     });
 
@@ -47,7 +45,6 @@ export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {
     const fields: GraphQLInputFieldConfigMap = {};
 
     for (const property of compositeType.properties) {
-      property.isRequired = false;
       // Relation fields are not supported in composite types
       if (isMorphOrRelationFieldMetadataType(property.type)) {
         this.logger.error(
@@ -59,32 +56,14 @@ export class CompositeFieldMetadataOrderByGqlInputTypeGenerator {
       }
 
       // Skip hidden fields
-      if (property.hidden === true) {
+      if (property.hidden === true || property.hidden === 'input') {
         continue;
       }
 
-      const typeOptions = computeCompositeFieldTypeOptions(property);
-
-      const type = this.typeMapperService.mapToOrderByType(property.type);
-
-      if (!isDefined(type) || isObjectType(type)) {
-        const message = `Could not find a GraphQL input type for ${compositeType.type} ${property.name}`;
-
-        this.logger.error(message, {
-          type,
-          typeOptions,
-        });
-
-        throw new Error(message);
-      }
-
-      const modifiedType = this.typeMapperService.applyTypeOptions(
-        type,
-        typeOptions,
-      );
+      const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
 
       fields[property.name] = {
-        type: modifiedType,
+        type,
         description: property.description,
       };
     }

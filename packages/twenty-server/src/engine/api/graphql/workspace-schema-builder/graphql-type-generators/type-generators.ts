@@ -6,6 +6,8 @@ import { CompositeFieldMetadataCreateGqlInputTypeGenerator } from 'src/engine/ap
 import { ObjectMetadataCreateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/create-input/object-metadata-create-gql-input-type.generator';
 import { CompositeFieldMetadataFilterGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/filter-input/composite-field-metadata-filter-gql-input-types.generator';
 import { ObjectMetadataFilterGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/filter-input/object-metadata-filter-gql-input-type.generator';
+import { CompositeFieldMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/composite-field-metadata-group-by-gql-input-type.generator';
+import { ObjectMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/object-metadata-group-by-gql-input-type.generator';
 import { ObjectMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/object-metadata-gql-input-type.generator';
 import { CompositeFieldMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/composite-field-metadata-order-by-gql-input-type.generator';
 import { ObjectMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-gql-input-type.generator';
@@ -17,6 +19,7 @@ import { AggregationObjectTypeGenerator } from 'src/engine/api/graphql/workspace
 import { CompositeFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/composite-field-metadata-gql-object-type.generator';
 import { ConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/connection-gql-object-type.generator';
 import { EdgeGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/edge-gql-object-type.generator';
+import { GroupByConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/group-by-connection-gql-object-type.generator';
 import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { RelationFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/relation-field-metadata-gql-object-type.generator';
@@ -33,6 +36,7 @@ export const workspaceSchemaBuilderTypeGenerators = [
   CompositeFieldMetadataUpdateGqlInputTypeGenerator,
   CompositeFieldMetadataFilterGqlInputTypeGenerator,
   CompositeFieldMetadataOrderByGqlInputTypeGenerator,
+  CompositeFieldMetadataGroupByGqlInputTypeGenerator,
   RelationFieldMetadataGqlInputTypeGenerator,
   RelationFieldMetadataGqlObjectTypeGenerator,
   ObjectMetadataGqlInputTypeGenerator,
@@ -40,11 +44,13 @@ export const workspaceSchemaBuilderTypeGenerators = [
   ObjectMetadataUpdateGqlInputTypeGenerator,
   ObjectMetadataFilterGqlInputTypeGenerator,
   ObjectMetadataOrderByGqlInputTypeGenerator,
+  ObjectMetadataGroupByGqlInputTypeGenerator,
   CompositeFieldMetadataGqlObjectTypeGenerator,
   ObjectMetadataGqlObjectTypeGenerator,
   RelationConnectGqlInputTypeGenerator,
   ConnectionGqlObjectTypeGenerator,
   EdgeGqlObjectTypeGenerator,
+  GroupByConnectionGqlObjectTypeGenerator,
   ObjectMetadataWithRelationsGqlObjectTypeGenerator,
   AggregationObjectTypeGenerator,
   ArgsTypeGenerator,

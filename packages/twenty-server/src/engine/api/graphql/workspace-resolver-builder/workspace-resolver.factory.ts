@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { GroupByResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/group-by-resolver.factory';
 import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
@@ -54,6 +55,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
     private readonly mergeManyResolverFactory: MergeManyResolverFactory,
+    private readonly groupByResolverFactory: GroupByResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -81,6 +83,7 @@ export class WorkspaceResolverFactory {
       ['restoreOne', this.restoreOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
+      ['groupBy', this.groupByResolverFactory],
     ]);
     const resolvers: IResolvers = {
       Query: {},
