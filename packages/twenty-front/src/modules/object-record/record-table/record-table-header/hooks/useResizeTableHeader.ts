@@ -1,7 +1,7 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 
-import { COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/ColumnMinWidth';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -75,7 +75,7 @@ export const useResizeTableHeader = () => {
 
       const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
 
-      if (newRecordFieldSizeWithOffset < COLUMN_MIN_WIDTH) {
+      if (newRecordFieldSizeWithOffset < RECORD_TABLE_COLUMN_MIN_WIDTH) {
         return;
       }
 
@@ -133,7 +133,10 @@ export const useResizeTableHeader = () => {
         );
 
         const nextWidth = Math.round(
-          Math.max(recordField.size + resizeFieldOffset, COLUMN_MIN_WIDTH),
+          Math.max(
+            recordField.size + resizeFieldOffset,
+            RECORD_TABLE_COLUMN_MIN_WIDTH,
+          ),
         );
 
         set(resizeFieldOffsetCallbackState, 0);
