@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 
 import { type Request } from 'express';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -104,8 +105,8 @@ describe('AccessTokenService', () => {
 
   describe('generateAccessToken', () => {
     it('should generate an access token successfully', async () => {
-      const userId = 'user-id';
-      const workspaceId = 'workspace-id';
+      const userId = randomUUID();
+      const workspaceId = randomUUID();
       const mockUser = {
         id: userId,
       };
@@ -113,8 +114,8 @@ describe('AccessTokenService', () => {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       };
-      const mockUserWorkspace = { id: 'userWorkspaceId' };
-      const mockWorkspaceMember = { id: 'workspace-member-id' };
+      const mockUserWorkspace = { id: randomUUID() };
+      const mockWorkspaceMember = { id: randomUUID() };
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
@@ -153,15 +154,17 @@ describe('AccessTokenService', () => {
     });
 
     it('embeds impersonation claims when provided', async () => {
-      const userId = 'user-id';
-      const workspaceId = 'workspace-id';
+      const userId = randomUUID();
+      const workspaceId = randomUUID();
+      const impersonatorUserWorkspaceId = randomUUID();
+      const impersonatedUserWorkspaceId = randomUUID();
       const mockUser = { id: userId } as User;
       const mockWorkspace = {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
         id: workspaceId,
       } as Workspace;
-      const mockUserWorkspace = { id: 'uw-orig' } as UserWorkspace;
-      const mockWorkspaceMember = { id: 'wm-1' };
+      const mockUserWorkspace = { id: impersonatedUserWorkspaceId } as UserWorkspace;
+      const mockWorkspaceMember = { id: randomUUID() };
       const mockToken = 'mock-token';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
@@ -172,8 +175,14 @@ describe('AccessTokenService', () => {
       jest
         .spyOn(userWorkspaceRepository, 'findOne')
         .mockResolvedValueOnce(mockUserWorkspace as UserWorkspace)
-        .mockResolvedValueOnce({ id: 'uw-imp', workspaceId } as UserWorkspace)
-        .mockResolvedValueOnce({ id: 'uw-orig', workspaceId } as UserWorkspace);
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          workspaceId,
+        } as UserWorkspace)
+        .mockResolvedValueOnce({
+          id: impersonatedUserWorkspaceId,
+          workspaceId,
+        } as UserWorkspace);
       jest
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue({
@@ -188,15 +197,15 @@ describe('AccessTokenService', () => {
         workspaceId,
         authProvider: AuthProviderEnum.Impersonation,
         isImpersonating: true,
-        impersonatorUserWorkspaceId: 'uw-imp',
-        impersonatedUserWorkspaceId: 'uw-orig',
+        impersonatorUserWorkspaceId: impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: impersonatedUserWorkspaceId,
       });
 
       expect(signSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           isImpersonating: true,
-          impersonatorUserWorkspaceId: 'uw-imp',
-          impersonatedUserWorkspaceId: 'uw-orig',
+          impersonatorUserWorkspaceId: impersonatorUserWorkspaceId,
+          impersonatedUserWorkspaceId: impersonatedUserWorkspaceId,
         }),
         expect.any(Object),
       );

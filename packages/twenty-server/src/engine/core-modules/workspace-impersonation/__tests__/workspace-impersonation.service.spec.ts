@@ -183,7 +183,7 @@ describe('WorkspaceImpersonationService', () => {
       tokenResult.refreshToken,
     );
 
-    const result = await service.impersonateWorkspaceUserByMemberId({
+    const result = await service.impersonateWorkspaceUserById({
       workspaceId,
       impersonatorUserWorkspaceId: impersonatorUWId,
       targetWorkspaceMemberId: 'member-id',
@@ -220,7 +220,7 @@ describe('WorkspaceImpersonationService', () => {
     permissionsService.checkRolePermissions.mockReturnValue(false);
 
     await expect(
-      service.impersonateWorkspaceUserByMemberId({
+      service.impersonateWorkspaceUserById({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
         targetWorkspaceMemberId: 'member-id',
@@ -243,7 +243,7 @@ describe('WorkspaceImpersonationService', () => {
     manager.findOne.mockResolvedValueOnce(null); // target not found
 
     await expect(
-      service.impersonateWorkspaceUserByMemberId({
+      service.impersonateWorkspaceUserById({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
         targetWorkspaceMemberId: 'member-id',
@@ -287,7 +287,7 @@ describe('WorkspaceImpersonationService', () => {
       tokenResult.refreshToken,
     );
 
-    const result = await service.impersonateWorkspaceUserByMemberId({
+    const result = await service.impersonateWorkspaceUserById({
       workspaceId,
       impersonatorUserWorkspaceId: impersonatorUWId,
       targetWorkspaceMemberId: 'wm-1',

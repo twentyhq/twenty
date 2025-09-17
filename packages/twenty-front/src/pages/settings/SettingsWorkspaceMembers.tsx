@@ -44,7 +44,7 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
-import { IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID } from '../../modules/auth/graphql/mutations/impersonateWorkspaceByMemberId';
+import { IMPERSONATE_WORKSPACE_USER_BY_ID } from '../../modules/auth/graphql/mutations/impersonateWorkspaceUserById';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -110,7 +110,7 @@ export const SettingsWorkspaceMembers = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const [impersonateByWorkspaceMemberId] = useMutation(
-    IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID,
+    IMPERSONATE_WORKSPACE_USER_BY_ID,
   );
 
   const {
@@ -151,7 +151,7 @@ export const SettingsWorkspaceMembers = () => {
         return;
       }
 
-      const tokens = data?.impersonateWorkspaceUserByWorkspaceMemberId?.tokens;
+      const tokens = data?.ImpersonateWorkspaceUserById?.tokens;
       if (isDefined(tokens)) {
         setImpersonationTokens(tokens);
         await loadCurrentUser();

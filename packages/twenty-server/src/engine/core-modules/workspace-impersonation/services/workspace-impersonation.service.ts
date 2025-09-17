@@ -37,7 +37,7 @@ export class WorkspaceImpersonationService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
-  async impersonateWorkspaceUserByMemberId({
+  async impersonateWorkspaceUserById({
     workspaceId,
     impersonatorUserWorkspaceId,
     targetWorkspaceMemberId,
@@ -46,38 +46,26 @@ export class WorkspaceImpersonationService {
     impersonatorUserWorkspaceId: string;
     targetWorkspaceMemberId: string;
   }): Promise<AuthTokens> {
-    return await this.impersonateCore({
-      workspaceId,
-      impersonatorUserWorkspaceId,
-      resolveTarget: async () => {
-        const workspaceMemberRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-          );
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: { id: targetWorkspaceMemberId },
-        });
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+      );
 
-        if (!workspaceMember) return null;
-
-        return await this.userWorkspaceRepository.findOne({
-          where: { userId: workspaceMember.userId, workspaceId },
-        });
-      },
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: { id: targetWorkspaceMemberId },
     });
-  }
 
-  private async impersonateCore({
-    workspaceId,
-    impersonatorUserWorkspaceId,
-    resolveTarget,
-  }: {
-    workspaceId: string;
-    impersonatorUserWorkspaceId: string;
-    resolveTarget: () => Promise<UserWorkspace | null>;
-  }): Promise<AuthTokens> {
-    const target = await resolveTarget();
+    if (!workspaceMember) {
+      throw new AuthException(
+        'User workspace not found in current workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const target = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+    });
 
     if (!target || target.workspaceId !== workspaceId) {
       throw new AuthException(

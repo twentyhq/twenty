@@ -1,10 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const IMPERSONATE_WORKSPACE_USER_BY_MEMBER_ID = gql`
-  mutation ImpersonateWorkspaceUserByWorkspaceMemberId(
-    $targetWorkspaceMemberId: UUID!
-  ) {
-    impersonateWorkspaceUserByWorkspaceMemberId(
+export const IMPERSONATE_WORKSPACE_USER_BY_ID = gql`
+  mutation ImpersonateWorkspaceUserById($targetWorkspaceMemberId: UUID!) {
+    ImpersonateWorkspaceUserById(
       targetWorkspaceMemberId: $targetWorkspaceMemberId
     ) {
       tokens {

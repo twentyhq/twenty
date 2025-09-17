@@ -30,7 +30,7 @@ export class WorkspaceImpersonationResolver {
     SettingsPermissionsGuard(PermissionFlagType.IMPERSONATE),
   )
   @Mutation(() => AuthTokens)
-  async impersonateWorkspaceUserByWorkspaceMemberId(
+  async ImpersonateWorkspaceUserById(
     @Args() { targetWorkspaceMemberId }: ImpersonateWorkspaceMemberInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
@@ -41,7 +41,7 @@ export class WorkspaceImpersonationResolver {
         workspaceId: workspace.id,
       });
 
-    return await this.workspaceImpersonationService.impersonateWorkspaceUserByMemberId(
+    return await this.workspaceImpersonationService.impersonateWorkspaceUserById(
       {
         workspaceId: workspace.id,
         impersonatorUserWorkspaceId: currentUserWorkspace.id,
