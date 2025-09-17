@@ -34,16 +34,20 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   return (
     <WidgetContainer>
-      {!showRestrictedContent && (
-        <WidgetHeader
-          isInEditMode={isPageLayoutInEditMode}
-          title={widget.title}
-          onEdit={() =>
-            handleEditWidget({ widgetId: widget.id, widgetType: widget.type })
-          }
-          onRemove={() => deletePageLayoutWidget(widget.id)}
-        />
-      )}
+      <WidgetHeader
+        isInEditMode={isPageLayoutInEditMode}
+        title={widget.title}
+        onEdit={
+          showRestrictedContent
+            ? undefined
+            : () =>
+                handleEditWidget({
+                  widgetId: widget.id,
+                  widgetType: widget.type,
+                })
+        }
+        onRemove={() => deletePageLayoutWidget(widget.id)}
+      />
       <StyledContent>
         {showRestrictedContent ? (
           <WidgetNoAccessContent />

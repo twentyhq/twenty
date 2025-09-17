@@ -80,8 +80,8 @@ export const usePageLayoutHandleLayoutChange = (
                     type: widget.type,
                     objectMetadataId: null,
                     canReadWidget:
-                      tab.widgets.find((w) => w.id === widget.id)?.canReadWidget ??
-                      true,
+                      tab.widgets.find((w) => w.id === widget.id)
+                        ?.canReadWidget ?? true,
                     gridPosition: widget.gridPosition,
                     configuration: widget.configuration || undefined,
                     data: widget.data,
