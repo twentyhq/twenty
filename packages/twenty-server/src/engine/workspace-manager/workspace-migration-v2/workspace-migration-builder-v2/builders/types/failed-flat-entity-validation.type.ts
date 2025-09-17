@@ -8,6 +8,7 @@ export type FlatEntityValidationError<TCode extends string = string> = {
   value?: unknown;
 };
 
+// Should be improved to be scoped to a given set of actions
 export type FailedFlatEntityValidation<T extends FlatEntity> = {
   type: WorkspaceMigrationActionTypeV2;
   errors: FlatEntityValidationError[];

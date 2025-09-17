@@ -13,12 +13,13 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
 import { useState } from 'react';
-import { findByProperty } from 'twenty-shared/utils';
+import { findByProperty, isDefined } from 'twenty-shared/utils';
 
 const StyledColumnHeadContainer = styled.div`
   cursor: pointer;
@@ -66,6 +67,12 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
     hasRecordGroupsComponentSelector,
   );
 
+  const resizedFieldMetadataItemId = useRecoilComponentValue(
+    resizedFieldMetadataIdComponentState,
+  );
+
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
+
   const shouldDisplayBorderBottom =
     hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
@@ -80,6 +87,7 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
       onMouseEnter={() => setIconIsVisible(true)}
       onMouseLeave={() => setIconIsVisible(false)}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+      isResizing={isResizingAnyColumn}
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown
@@ -88,7 +96,7 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
         />
         {iconIsVisible && <RecordTableHeaderLabelIdentifierCellPlusButton />}
       </StyledColumnHeadContainer>
-      <RecordTableHeaderResizeHandler recordField={recordField} />
+      <RecordTableHeaderResizeHandler recordFieldIndex={0} position="right" />
     </RecordTableHeaderCellContainer>
   );
 };

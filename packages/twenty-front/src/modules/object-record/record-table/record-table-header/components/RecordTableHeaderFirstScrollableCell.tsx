@@ -13,11 +13,12 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
-import { filterOutByProperty } from 'twenty-shared/utils';
+import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
 export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
@@ -94,6 +95,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
   const shouldDisplayBorderBottom =
     hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
+  const resizedFieldMetadataItemId = useRecoilComponentValue(
+    resizedFieldMetadataIdComponentState,
+  );
+
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
+
   if (!recordField) {
     return <></>;
   }
@@ -104,12 +111,14 @@ export const RecordTableHeaderFirstScrollableCell = () => {
       key={recordField.fieldMetadataItemId}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={zIndex}
+      isResizing={isResizingAnyColumn}
     >
+      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       <RecordTableColumnHeadWithDropdown
         recordField={recordField}
         objectMetadataId={objectMetadataItem.id}
       />
-      <RecordTableHeaderResizeHandler recordField={recordField} />
+      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
     </RecordTableHeaderCellContainer>
   );
 };

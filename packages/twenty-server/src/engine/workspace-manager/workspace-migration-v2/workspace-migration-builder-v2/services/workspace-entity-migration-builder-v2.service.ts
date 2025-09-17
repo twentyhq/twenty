@@ -1,6 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
@@ -86,14 +87,14 @@ export type FlatEntityValidationReturnType<
 > =
   | {
       status: 'success';
-      action: TActions;
+      action: TActions | TActions[];
     }
   | ({
       status: 'fail';
     } & FailedFlatEntityValidation<TFlatEntity>);
 
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > {
@@ -147,7 +148,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.created.push(validationResult.action);
+      validateAndBuildResult.created.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     for (const flatEntityToDelete of buildOptions.inferDeletionFromMissingEntities
@@ -169,7 +174,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.deleted.push(validationResult.action);
+      validateAndBuildResult.deleted.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     for (const flatEntityUpdate of updated) {
@@ -193,7 +202,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 
-      validateAndBuildResult.updated.push(validationResult.action);
+      validateAndBuildResult.updated.push(
+        ...(Array.isArray(validationResult.action)
+          ? validationResult.action
+          : [validationResult.action]),
+      );
     }
 
     if (validateAndBuildResult.failed.length > 0) {

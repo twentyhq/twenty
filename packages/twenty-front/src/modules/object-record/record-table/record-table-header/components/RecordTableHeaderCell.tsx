@@ -9,10 +9,12 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableHeaderCellProps = {
   recordField: RecordField;
@@ -50,6 +52,12 @@ export const RecordTableHeaderCell = ({
     hasRecordGroupsComponentSelector,
   );
 
+  const resizedFieldMetadataItemId = useRecoilComponentValue(
+    resizedFieldMetadataIdComponentState,
+  );
+
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
+
   const shouldDisplayBorderBottom =
     hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
@@ -61,12 +69,20 @@ export const RecordTableHeaderCell = ({
       )}
       key={recordField.fieldMetadataItemId}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+      isResizing={isResizingAnyColumn}
     >
+      <RecordTableHeaderResizeHandler
+        recordFieldIndex={recordFieldIndex}
+        position="left"
+      />
       <RecordTableColumnHeadWithDropdown
         recordField={recordField}
         objectMetadataId={objectMetadataItem.id}
       />
-      <RecordTableHeaderResizeHandler recordField={recordField} />
+      <RecordTableHeaderResizeHandler
+        recordFieldIndex={recordFieldIndex}
+        position="right"
+      />
     </RecordTableHeaderCellContainer>
   );
 };
