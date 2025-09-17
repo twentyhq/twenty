@@ -2194,6 +2194,11 @@ msgstr "Delete API key"
 msgid "Delete branch"
 msgstr "Delete branch"
 
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr "Delete dashboard"
+
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Delete field"
@@ -2476,6 +2481,7 @@ msgstr "Earliest date"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Edit"
 
@@ -2504,6 +2510,11 @@ msgstr "Edit Connection"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Edit CRM data structure and fields"
+
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr "Edit Dashboard"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -2958,6 +2969,11 @@ msgstr "Export"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Export CSV"
 msgstr "Export CSV"
+
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr "Export dashboard"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4389,6 +4405,11 @@ msgstr "Name of your workspace"
 msgid "Navbar"
 msgstr "Navbar"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr "Navigate to next dashboard"
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4403,6 +4424,11 @@ msgstr "Navigate to next version"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Navigate to next workflow"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr "Navigate to previous dashboard"
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5067,6 +5093,11 @@ msgstr "Percent not empty"
 msgid "Percentage"
 msgstr "Percentage"
 
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr "Permanently destroy dashboard"
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -5527,6 +5558,11 @@ msgstr "Restart Import"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Restore"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr "Restore dashboard"
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
