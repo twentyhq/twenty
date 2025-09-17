@@ -377,11 +377,23 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   castWorkspaceToAvailableWorkspace(workspace: Workspace) {
+    let signedLogo: string | undefined = workspace.logo ?? undefined;
+    if (isDefined(workspace.logo)) {
+      try {
+        signedLogo = this.fileService.signFileUrl({
+          url: workspace.logo as string,
+          workspaceId: workspace.id,
+        });
+      } catch {
+        signedLogo = workspace.logo as string;
+      }
+    }
+
     return {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      logo: workspace.logo,
+      logo: signedLogo,
       sso:
         workspace.workspaceSSOIdentityProviders?.reduce(
           (acc, identityProvider) =>
