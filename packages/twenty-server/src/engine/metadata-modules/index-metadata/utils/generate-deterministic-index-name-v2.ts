@@ -6,12 +6,12 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 type GenerateDeterministicIndexNameArgs = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'isCustom'>;
   flatFieldMetadatas: Pick<FlatFieldMetadata, 'name'>[];
-  isUnique: boolean;
+  isUnique?: boolean;
 };
 export const generateDeterministicIndexNameV2 = ({
   flatFieldMetadatas,
   flatObjectMetadata,
-  isUnique,
+  isUnique = false,
 }: GenerateDeterministicIndexNameArgs): string => {
   const hash = createHash('sha256');
 

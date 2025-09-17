@@ -23,6 +23,7 @@ export type FlatObjectMetadata = Omit<
   ObjectMetadataRelationProperties | 'dataSourceId'
 > & {
   universalIdentifier: string;
+  // Should remove !
   flatIndexMetadatas: FlatIndexMetadata[];
   flatFieldMetadatas: FlatFieldMetadata[];
 };
