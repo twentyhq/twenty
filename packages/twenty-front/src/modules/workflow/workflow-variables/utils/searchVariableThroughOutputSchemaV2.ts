@@ -6,7 +6,7 @@ import { isCodeOutputSchema } from '@/workflow/workflow-variables/types/guards/i
 import { isDatabaseEventTriggerOutputSchema } from '@/workflow/workflow-variables/types/guards/isDatabaseEventTriggerOutputSchema';
 import { isFindRecordsOutputSchema } from '@/workflow/workflow-variables/types/guards/isFindRecordsOutputSchema';
 import { isFormOutputSchema } from '@/workflow/workflow-variables/types/guards/isFormOutputSchema';
-import { isRecordActionOutputSchema } from '@/workflow/workflow-variables/types/guards/isRecordActionOutputSchema';
+import { isRecordStepOutputSchema } from '@/workflow/workflow-variables/types/guards/isRecordStepOutputSchema';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
 import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
@@ -27,7 +27,7 @@ export const searchVariableThroughOutputSchemaV2 = ({
   rawVariableName: string;
   isFullRecord: boolean;
 }) => {
-  if (isRecordActionOutputSchema(stepType, stepOutputSchema.outputSchema)) {
+  if (isRecordStepOutputSchema(stepType, stepOutputSchema.outputSchema)) {
     return searchVariableThroughRecordOutputSchema({
       stepName: stepOutputSchema.name,
       recordOutputSchema: stepOutputSchema.outputSchema,

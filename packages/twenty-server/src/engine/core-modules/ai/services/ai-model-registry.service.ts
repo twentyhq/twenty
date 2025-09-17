@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { createOpenAI, openai } from '@ai-sdk/openai';
+import { xai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
 import {
   AI_MODELS,
-  type AIModelConfig,
   ModelProvider,
+  type AIModelConfig,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -39,6 +40,12 @@ export class AiModelRegistryService {
 
     if (anthropicApiKey) {
       this.registerAnthropicModels();
+    }
+
+    const xaiApiKey = this.twentyConfigService.get('XAI_API_KEY');
+
+    if (xaiApiKey) {
+      this.registerXaiModels();
     }
 
     const openaiCompatibleBaseUrl = this.twentyConfigService.get(
@@ -81,6 +88,20 @@ export class AiModelRegistryService {
         provider: ModelProvider.ANTHROPIC,
         model: anthropic(modelConfig.modelId),
         doesSupportThinking: modelConfig.doesSupportThinking,
+      });
+    });
+  }
+
+  private registerXaiModels(): void {
+    const xaiModels = AI_MODELS.filter(
+      (model) => model.provider === ModelProvider.XAI,
+    );
+
+    xaiModels.forEach((modelConfig) => {
+      this.modelRegistry.set(modelConfig.modelId, {
+        modelId: modelConfig.modelId,
+        provider: ModelProvider.XAI,
+        model: xai(modelConfig.modelId),
       });
     });
   }
@@ -207,6 +228,9 @@ export class AiModelRegistryService {
         break;
       case ModelProvider.ANTHROPIC:
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
+        break;
+      case ModelProvider.XAI:
+        apiKey = this.twentyConfigService.get('XAI_API_KEY');
         break;
       case ModelProvider.OPENAI_COMPATIBLE:
         apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');

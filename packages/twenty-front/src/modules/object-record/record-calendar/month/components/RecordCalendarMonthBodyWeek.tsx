@@ -5,6 +5,10 @@ import { eachDayOfInterval, endOfWeek } from 'date-fns';
 
 const StyledContainer = styled.div`
   display: flex;
+
+  &:not(:last-of-type) {
+    border-bottom: 0.5px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 type RecordCalendarMonthBodyWeekProps = {

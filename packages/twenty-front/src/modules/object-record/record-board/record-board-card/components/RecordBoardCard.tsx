@@ -5,7 +5,6 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -16,6 +15,7 @@ import { RecordBoardCardBody } from '@/object-record/record-board/record-board-c
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
+import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -24,10 +24,11 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -80,11 +81,14 @@ export const RecordBoardCard = () => {
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
 
-  const isCompactModeActive = useRecoilComponentValue(
-    isRecordBoardCompactModeActiveComponentState,
-  );
+  const { currentView } = useGetCurrentViewOnly();
 
-  const [isCardExpanded, setIsCardExpanded] = useState(false);
+  const isCompactModeActive = currentView?.isCompact ?? false;
+
+  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+    recordBoardCardIsExpandedComponentState,
+    `record-board-card-${recordId}`,
+  );
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
     useRecoilComponentFamilyState(
@@ -194,10 +198,7 @@ export const RecordBoardCard = () => {
               isPrimaryMultiDrag={isPrimaryMultiDrag}
               isSecondaryDragged={isSecondaryDragged}
             >
-              <RecordBoardCardHeader
-                isCardExpanded={isCardExpanded}
-                setIsCardExpanded={setIsCardExpanded}
-              />
+              <RecordBoardCardHeader />
               <AnimatedEaseInOut
                 isOpen={isCardExpanded || !isCompactModeActive}
                 initial={false}

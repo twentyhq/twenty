@@ -1,47 +1,75 @@
-import { SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID } from '@/page-layout/constants/SettingsPageLayoutTabsInstanceId';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutCurrentLayoutsState } from '@/page-layout/states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '@/page-layout/states/pageLayoutDraftState';
-import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
-import { createUpdatedTabLayouts } from '@/page-layout/utils/createUpdatedTabLayouts';
 import {
   getDefaultWidgetData,
   getWidgetSize,
   getWidgetTitle,
 } from '@/page-layout/utils/getDefaultWidgetData';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type WidgetType } from '~/generated/graphql';
 
-export const useCreatePageLayoutWidget = () => {
-  const activeTabId = useRecoilComponentValue(
+export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
+
+  const activeTabIdState = useRecoilComponentCallbackState(
     activeTabIdComponentState,
-    SETTINGS_PAGE_LAYOUT_TABS_INSTANCE_ID,
+    tabListInstanceId,
+  );
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+    pageLayoutDraggedAreaComponentState,
+    pageLayoutId,
   );
 
   const createPageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetType: WidgetType, graphType: GraphType) => {
+        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+
+        if (!activeTabId) {
+          return;
+        }
+
         const widgetData = getDefaultWidgetData(graphType);
 
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
+
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
+
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
-
-        if (!activeTabId) {
-          return;
-        }
 
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
@@ -86,7 +114,7 @@ export const useCreatePageLayoutWidget = () => {
           h: position.h,
         };
 
-        const updatedLayouts = createUpdatedTabLayouts(
+        const updatedLayouts = getUpdatedTabLayouts(
           allTabLayouts,
           activeTabId,
           newLayout,
@@ -100,7 +128,12 @@ export const useCreatePageLayoutWidget = () => {
 
         set(pageLayoutDraggedAreaState, null);
       },
-    [activeTabId],
+    [
+      activeTabIdState,
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      pageLayoutDraggedAreaState,
+    ],
   );
 
   return { createPageLayoutWidget };

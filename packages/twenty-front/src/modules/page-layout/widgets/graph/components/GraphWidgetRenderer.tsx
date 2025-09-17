@@ -14,19 +14,19 @@ const GraphWidgetBarChart = lazy(() =>
 );
 
 const GraphWidgetLineChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetLineChart').then(
-    (module) => ({
-      default: module.GraphWidgetLineChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
+  ).then((module) => ({
+    default: module.GraphWidgetLineChart,
+  })),
 );
 
 const GraphWidgetPieChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetPieChart').then(
-    (module) => ({
-      default: module.GraphWidgetPieChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
+  ).then((module) => ({
+    default: module.GraphWidgetPieChart,
+  })),
 );
 
 const GraphWidgetGaugeChart = lazy(() =>

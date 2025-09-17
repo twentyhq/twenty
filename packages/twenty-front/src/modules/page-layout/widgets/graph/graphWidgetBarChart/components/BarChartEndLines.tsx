@@ -6,19 +6,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 type BarChartEndLinesProps = {
   bars: readonly ComputedBarDatum<BarChartDataItem>[];
-  enrichedKeys: BarChartEnrichedKey[];
+  enrichedKeysMap: Map<string, BarChartEnrichedKey>;
   layout: 'vertical' | 'horizontal';
 };
 
 export const BarChartEndLines = ({
   bars,
-  enrichedKeys,
+  enrichedKeysMap,
   layout,
 }: BarChartEndLinesProps) => {
   return (
     <g>
       {bars.map((bar: ComputedBarDatum<BarChartDataItem>, index: number) => {
-        const enrichedKey = enrichedKeys.find((k) => k.key === bar.data.id);
+        const enrichedKey = enrichedKeysMap.get(String(bar.data.id));
         if (!isDefined(enrichedKey)) {
           return null;
         }
