@@ -281,35 +281,56 @@ describe('BillingSubscriptionService public actions', () => {
       next: nextPhase,
     });
 
-    // Always return event-like wrapper with data.object containing SubscriptionWithSchedule
+    // Always return plain SubscriptionWithSchedule (no event/data wrapper)
     stripeSchedSvc.getSubscriptionWithSchedule.mockResolvedValue({
-      data: {
-        object: {
-          id: 'sub_1',
-          status: 'active',
-          current_period_end: now + 1000,
-          schedule: {
-            id: schedule.id,
-            phases: [
-              {
-                start_date: currentPhase.start_date,
-                end_date: currentPhase.end_date,
-                items: currentPhase.items,
-              },
-              ...(nextPhase
-                ? [
-                    {
-                      start_date: nextPhase.start_date,
-                      end_date: nextPhase.end_date,
-                      items: nextPhase.items,
-                    },
-                  ]
-                : []),
-            ],
+      id: 'sub_1',
+      status: 'active',
+      customer: 'cus_1',
+      currency: 'usd',
+      collection_method: 'charge_automatically',
+      automatic_tax: null as any,
+      cancellation_details: null as any,
+      cancel_at_period_end: false,
+      canceled_at: null as any,
+      cancel_at: null as any,
+      ended_at: null as any,
+      trial_start: null as any,
+      trial_end: null as any,
+      current_period_start: now - 1000,
+      current_period_end: now + 1000,
+      metadata: {},
+      items: {
+        data: [
+          {
+            id: 'si_licensed',
+            plan: { interval: 'month' } as any,
+            price: { id: 'price_licensed_m', product: 'prod_base' } as any,
+          } as any,
+          {
+            id: 'si_metered',
+            plan: { interval: 'month' } as any,
+            price: {
+              id: 'price_metered_m_1000',
+              product: 'prod_metered',
+            } as any,
+          } as any,
+        ],
+      } as any,
+      schedule: {
+        id: schedule.id,
+        phases: [
+          {
+            start_date: currentPhase.start_date,
+            end_date: currentPhase.end_date,
+            items: currentPhase.items,
           },
-          items: { data: [{ id: 'si_licensed' }, { id: 'si_metered' }] },
-        },
-      },
+          {
+            start_date: nextPhase.start_date,
+            end_date: nextPhase.end_date,
+            items: nextPhase.items,
+          },
+        ],
+      } as any,
     } as any);
     stripeSchedSvc.findOrCreateSubscriptionSchedule.mockResolvedValue(schedule);
     stripeSchedSvc.getEditablePhases.mockReturnValue({
@@ -323,12 +344,60 @@ describe('BillingSubscriptionService public actions', () => {
       items: p.items,
       proration_behavior: 'none',
     }));
+    phaseSvc.getLicensedPriceIdFromSnapshot.mockImplementation((snap: any) => {
+      const items: Array<{ price: string; quantity?: number }> =
+        (snap && snap.items) || [];
+      const licensed = items.find((it) => typeof it.quantity === 'number');
+
+      return licensed?.price ?? 'price_licensed_m';
+    });
+    // Provide a concrete Subscription for paths that call updateSubscription
+    stripeSubSvc.updateSubscription.mockResolvedValue({
+      id: 'sub_1',
+      status: 'active',
+      customer: 'cus_1',
+      currency: 'usd',
+      collection_method: 'charge_automatically',
+      automatic_tax: null as any,
+      cancellation_details: null as any,
+      cancel_at_period_end: false,
+      canceled_at: null as any,
+      cancel_at: null as any,
+      ended_at: null as any,
+      trial_start: null as any,
+      trial_end: null as any,
+      current_period_start: now - 1000,
+      current_period_end: now + 1000,
+      metadata: {},
+      items: {
+        data: [
+          {
+            id: 'si_licensed',
+            plan: { interval: 'month' } as any,
+            price: { id: 'price_licensed_m', product: 'prod_base' } as any,
+          } as any,
+          {
+            id: 'si_metered',
+            plan: { interval: 'month' } as any,
+            price: {
+              id: 'price_metered_m_1000',
+              product: 'prod_metered',
+            } as any,
+          } as any,
+        ],
+      } as any,
+      // schedule is an id string here to exercise the re-fetch branch
+      schedule: schedule.id as any,
+    } as any);
 
     return { currentPhase, nextPhase };
   }
 
   function arrangeCurrentDetails() {
-    const metered = mkMeteredPrice();
+    const metered = mkMeteredPrice({
+      stripePriceId: 'price_metered_m_1000',
+      interval: SubscriptionInterval.Month,
+    });
     const licensed = mkLicensedPrice();
 
     phaseSvc.getDetailsFromPhase.mockResolvedValue({
@@ -346,21 +415,106 @@ describe('BillingSubscriptionService public actions', () => {
     return { metered, licensed };
   }
 
-  function arrangePlanMapping(prices?: BillingPrice[]) {
-    const metered = mkMeteredPrice();
-    const licensed = mkLicensedPrice();
+  function arrangePlanMapping() {
+    // Build catalogs per interval
+    const licensedMonth = mkLicensedPrice({
+      stripePriceId: 'price_licensed_m',
+      interval: SubscriptionInterval.Month,
+    });
+    const licensedYear = mkLicensedPrice({
+      stripePriceId: 'price_licensed_y',
+      interval: SubscriptionInterval.Year,
+    });
 
-    // Ensure resolvePrices can find BASE_PRODUCT licensed price
-    const withRequiredShapes = [licensed, metered, ...(prices ?? [])];
+    const meteredMonth1k = mkMeteredPrice({
+      stripePriceId: 'price_metered_m_1000',
+      interval: SubscriptionInterval.Month,
+      tiers: [
+        { up_to: 1000, unit_amount_decimal: '0' },
+        { up_to: null, unit_amount_decimal: '5' },
+      ] as any,
+    });
+    const meteredMonth5k = mkMeteredPrice({
+      stripePriceId: 'price_metered_m_5000',
+      interval: SubscriptionInterval.Month,
+      tiers: [
+        { up_to: 5000, unit_amount_decimal: '0' },
+        { up_to: null, unit_amount_decimal: '5' },
+      ] as any,
+    });
 
-    (productSvc.getProductPrices as jest.Mock).mockResolvedValue(
-      withRequiredShapes as any,
+    const meteredYear12k = mkMeteredPrice({
+      stripePriceId: 'price_metered_y_12000',
+      interval: SubscriptionInterval.Year,
+      tiers: [
+        { up_to: 12000, unit_amount_decimal: '0' },
+        { up_to: null, unit_amount_decimal: '5' },
+      ] as any,
+    });
+    const meteredYear24k = mkMeteredPrice({
+      stripePriceId: 'price_metered_y_24000',
+      interval: SubscriptionInterval.Year,
+      tiers: [
+        { up_to: 24000, unit_amount_decimal: '0' },
+        { up_to: null, unit_amount_decimal: '5' },
+      ] as any,
+    });
+
+    const byId: Record<string, BillingPrice> = {
+      [licensedMonth.stripePriceId]: licensedMonth,
+      [licensedYear.stripePriceId]: licensedYear,
+      [meteredMonth1k.stripePriceId]: meteredMonth1k,
+      [meteredMonth5k.stripePriceId]: meteredMonth5k,
+      [meteredYear12k.stripePriceId]: meteredYear12k,
+      [meteredYear24k.stripePriceId]: meteredYear24k,
+    };
+
+    (productSvc.getProductPrices as jest.Mock).mockImplementation(
+      ({ interval }: { interval: SubscriptionInterval }) => {
+        if (interval === SubscriptionInterval.Month) {
+          return Promise.resolve([
+            licensedMonth,
+            meteredMonth1k,
+            meteredMonth5k,
+          ]);
+        }
+        if (interval === SubscriptionInterval.Year) {
+          return Promise.resolve([
+            licensedYear,
+            meteredYear12k,
+            meteredYear24k,
+          ]);
+        }
+
+        return Promise.resolve([]);
+      },
     );
 
-    priceRepo.findOneOrFail.mockResolvedValue(metered);
-    priceRepo.findOneByOrFail.mockResolvedValue(metered);
-    priceRepo.findOneBy.mockResolvedValue(metered);
-    priceRepo.findOne.mockResolvedValue(metered);
+    priceRepo.findOneOrFail.mockImplementation(async ({ where }: any) => {
+      const id = where?.stripePriceId;
+      const hit = byId[id];
+
+      if (!hit) throw new Error('unknown price id ' + id);
+
+      return hit;
+    });
+
+    priceRepo.findOneByOrFail.mockImplementation(
+      async ({ stripePriceId }: any) => {
+        const hit = byId[stripePriceId];
+
+        if (!hit) throw new Error('unknown price id ' + stripePriceId);
+
+        return hit;
+      },
+    );
+
+    priceRepo.findOneBy.mockImplementation(
+      async ({ stripePriceId }: any) => byId[stripePriceId] ?? null,
+    );
+    priceRepo.findOne.mockImplementation(
+      async ({ where }: any) => byId[where?.stripePriceId] ?? null,
+    );
   }
 
   function arrangeGetCurrentSubEntity() {
