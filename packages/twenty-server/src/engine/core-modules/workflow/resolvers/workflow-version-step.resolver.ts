@@ -24,6 +24,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -40,6 +41,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 export class WorkflowVersionStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -101,7 +103,7 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
-    await this.workflowRunWorkspaceService.submitFormStep({
+    await this.workflowRunnerWorkspaceService.submitFormStep({
       workspaceId,
       stepId,
       workflowRunId,

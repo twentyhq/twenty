@@ -125,15 +125,34 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const enrichedNewStep =
-      await this.workflowSchemaWorkspaceService.enrichOutputSchema({
-        step,
-        workspaceId,
-      });
+    const existingStep = workflowVersion.steps.find(
+      (existingStep) => existingStep.id === step.id,
+    );
+
+    if (!isDefined(existingStep)) {
+      throw new WorkflowVersionStepException(
+        'Step not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const isStepTypeChanged = existingStep.type !== step.type;
+
+    const updatedStep = isStepTypeChanged
+      ? await this.updateWorkflowVersionStepType({
+          existingStep,
+          newStep: step,
+          workspaceId,
+          workflowVersionId,
+        })
+      : await this.updateWorkflowVersionStepSettings({
+          newStep: step,
+          workspaceId,
+        });
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
-        return enrichedNewStep;
+        return updatedStep;
       } else {
         return existingStep;
       }
@@ -150,7 +169,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedStep;
   }
 
   async deleteWorkflowVersionStep({
@@ -309,6 +328,58 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     return this.workflowVersionStepOperationsWorkspaceService.createDraftStep({
       step,
+      workspaceId,
+    });
+  }
+
+  private async updateWorkflowVersionStepType({
+    existingStep,
+    newStep,
+    workspaceId,
+    workflowVersionId,
+  }: {
+    existingStep: WorkflowAction;
+    newStep: WorkflowAction;
+    workspaceId: string;
+    workflowVersionId: string;
+  }): Promise<WorkflowAction> {
+    await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+      {
+        step: existingStep,
+        workspaceId,
+      },
+    );
+
+    const defaultStep =
+      await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
+        {
+          type: newStep.type,
+          workspaceId,
+          position: newStep.position,
+          workflowVersionId,
+        },
+      );
+
+    return this.workflowSchemaWorkspaceService.enrichOutputSchema({
+      step: {
+        ...defaultStep,
+        id: existingStep.id,
+        nextStepIds: existingStep.nextStepIds,
+        position: existingStep.position,
+      },
+      workspaceId,
+    });
+  }
+
+  private async updateWorkflowVersionStepSettings({
+    newStep,
+    workspaceId,
+  }: {
+    newStep: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    return this.workflowSchemaWorkspaceService.enrichOutputSchema({
+      step: newStep,
       workspaceId,
     });
   }
