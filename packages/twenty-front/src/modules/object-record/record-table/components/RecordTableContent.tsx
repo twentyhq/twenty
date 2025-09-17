@@ -95,6 +95,7 @@ export const RecordTableContent = ({
         lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
         onMouseLeave={handleMouseLeave}
+        hasRecordGroups={hasRecordGroups}
       >
         <RecordTableHeader />
         {hasRecordGroups ? (
