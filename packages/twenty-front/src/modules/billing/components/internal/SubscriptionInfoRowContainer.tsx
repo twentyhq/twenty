@@ -24,7 +24,6 @@ const StyledIconLabelContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  min-width: 0; /* allow label ellipsis within grid column */
 `;
 
 const StyledLabelContainer = styled.div`
