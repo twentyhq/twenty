@@ -39,8 +39,6 @@ export const useBillingWording = () => {
 
   const { isYearlyPlan } = useCurrentBillingFlags();
 
-  const formattedPrices = formatPrices();
-
   const getIntervalLabel = (
     isMonthly: boolean,
     asAdjective: boolean = false,
@@ -71,12 +69,12 @@ export const useBillingWording = () => {
   };
 
   const yearlyPrice =
-    formattedPrices?.[
+    formatPrices[
       currentBillingSubscription.metadata['plan'] as BillingPlanKey
     ]?.[SubscriptionInterval.Year];
 
   const monthlyPrice =
-    formattedPrices?.[
+    formatPrices[
       currentBillingSubscription.metadata['plan'] as BillingPlanKey
     ]?.[SubscriptionInterval.Month];
 
@@ -87,14 +85,14 @@ export const useBillingWording = () => {
     );
 
   const enterprisePrice =
-    formattedPrices?.[BillingPlanKey.ENTERPRISE]?.[
+    formatPrices[BillingPlanKey.ENTERPRISE]?.[
       currentBillingSubscription.interval as
         | SubscriptionInterval.Month
         | SubscriptionInterval.Year
     ];
 
   const proPrice =
-    formattedPrices?.[BillingPlanKey.PRO]?.[
+    formatPrices[BillingPlanKey.PRO]?.[
       currentBillingSubscription.interval as
         | SubscriptionInterval.Month
         | SubscriptionInterval.Year

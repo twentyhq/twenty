@@ -5,37 +5,35 @@ export const useFormatPrices = () => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
-  const formatPrices = () => {
-    const enterpriseYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-      BillingPlanKey.ENTERPRISE,
-      SubscriptionInterval.Year,
-    );
+  const enterpriseYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(
+    BillingPlanKey.ENTERPRISE,
+    SubscriptionInterval.Year,
+  );
 
-    const enterpriseMonthPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-      BillingPlanKey.ENTERPRISE,
-      SubscriptionInterval.Month,
-    );
+  const enterpriseMonthPrice = getBaseLicensedPriceByPlanKeyAndInterval(
+    BillingPlanKey.ENTERPRISE,
+    SubscriptionInterval.Month,
+  );
 
-    const proYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-      BillingPlanKey.PRO,
-      SubscriptionInterval.Year,
-    );
+  const proYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(
+    BillingPlanKey.PRO,
+    SubscriptionInterval.Year,
+  );
 
-    const proMonthPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-      BillingPlanKey.PRO,
-      SubscriptionInterval.Month,
-    );
+  const proMonthPrice = getBaseLicensedPriceByPlanKeyAndInterval(
+    BillingPlanKey.PRO,
+    SubscriptionInterval.Month,
+  );
 
-    return {
-      [BillingPlanKey.ENTERPRISE]: {
-        [SubscriptionInterval.Year]: enterpriseYearPrice?.unitAmount / 100 / 12,
-        [SubscriptionInterval.Month]: enterpriseMonthPrice?.unitAmount / 100,
-      },
-      [BillingPlanKey.PRO]: {
-        [SubscriptionInterval.Year]: proYearPrice?.unitAmount / 100 / 12,
-        [SubscriptionInterval.Month]: proMonthPrice?.unitAmount / 100,
-      },
-    };
+  const formatPrices = {
+    [BillingPlanKey.ENTERPRISE]: {
+      [SubscriptionInterval.Year]: enterpriseYearPrice?.unitAmount / 100 / 12,
+      [SubscriptionInterval.Month]: enterpriseMonthPrice?.unitAmount / 100,
+    },
+    [BillingPlanKey.PRO]: {
+      [SubscriptionInterval.Year]: proYearPrice?.unitAmount / 100 / 12,
+      [SubscriptionInterval.Month]: proMonthPrice?.unitAmount / 100,
+    },
   };
 
   return {
