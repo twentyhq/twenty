@@ -1,3 +1,4 @@
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { formatDateISOStringToDateTimeSimplified } from '@/localization/utils/formatDateISOStringToDateTimeSimplified';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -5,18 +6,25 @@ import { formatInTimeZone } from 'date-fns-tz';
 jest.mock('@/localization/utils/detection/detectDateFormat');
 jest.mock('date-fns-tz');
 
+const mockDetectDateFormat = detectDateFormat as jest.MockedFunction<
+  typeof detectDateFormat
+>;
+const mockFormatInTimeZone = formatInTimeZone as jest.MockedFunction<
+  typeof formatInTimeZone
+>;
+
 describe('formatDateISOStringToDateTimeSimplified', () => {
   const mockDate = new Date('2023-08-15T10:30:00Z');
   const mockTimeZone = 'America/New_York';
-  const mockTimeFormat = 'HH:mm';
+  const mockTimeFormat = TimeFormat.HOUR_24;
 
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
   it('should format the date correctly when DATE_FORMAT is MONTH_FIRST', () => {
-    detectDateFormat.mockReturnValue('MONTH_FIRST');
-    formatInTimeZone.mockReturnValue('Oct 15 · 06:30');
+    mockDetectDateFormat.mockReturnValue('MONTH_FIRST');
+    mockFormatInTimeZone.mockReturnValue('Oct 15 · 06:30');
 
     const result = formatDateISOStringToDateTimeSimplified(
       mockDate,
@@ -24,8 +32,8 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
       mockTimeFormat,
     );
 
-    expect(detectDateFormat).toHaveBeenCalled();
-    expect(formatInTimeZone).toHaveBeenCalledWith(
+    expect(mockDetectDateFormat).toHaveBeenCalled();
+    expect(mockFormatInTimeZone).toHaveBeenCalledWith(
       mockDate,
       mockTimeZone,
       'MMM d · HH:mm',
@@ -34,8 +42,8 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
   });
 
   it('should format the date correctly when DATE_FORMAT is DAY_FIRST', () => {
-    detectDateFormat.mockReturnValue('DAY_FIRST');
-    formatInTimeZone.mockReturnValue('15 Oct · 06:30');
+    mockDetectDateFormat.mockReturnValue('DAY_FIRST');
+    mockFormatInTimeZone.mockReturnValue('15 Oct · 06:30');
 
     const result = formatDateISOStringToDateTimeSimplified(
       mockDate,
@@ -43,8 +51,8 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
       mockTimeFormat,
     );
 
-    expect(detectDateFormat).toHaveBeenCalled();
-    expect(formatInTimeZone).toHaveBeenCalledWith(
+    expect(mockDetectDateFormat).toHaveBeenCalled();
+    expect(mockFormatInTimeZone).toHaveBeenCalledWith(
       mockDate,
       mockTimeZone,
       'd MMM · HH:mm',
@@ -53,16 +61,16 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
   });
 
   it('should use the provided time format', () => {
-    detectDateFormat.mockReturnValue('MONTH_FIRST');
-    formatInTimeZone.mockReturnValue('Oct 15 · 6:30 AM');
+    mockDetectDateFormat.mockReturnValue('MONTH_FIRST');
+    mockFormatInTimeZone.mockReturnValue('Oct 15 · 6:30 AM');
 
     const result = formatDateISOStringToDateTimeSimplified(
       mockDate,
       mockTimeZone,
-      'h:mm aa',
+      TimeFormat.HOUR_12,
     );
 
-    expect(formatInTimeZone).toHaveBeenCalledWith(
+    expect(mockFormatInTimeZone).toHaveBeenCalledWith(
       mockDate,
       mockTimeZone,
       'MMM d · h:mm aa',
@@ -71,8 +79,8 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
   });
 
   it('should handle different time zones', () => {
-    detectDateFormat.mockReturnValue('MONTH_FIRST');
-    formatInTimeZone.mockReturnValue('Oct 16 · 02:30');
+    mockDetectDateFormat.mockReturnValue('MONTH_FIRST');
+    mockFormatInTimeZone.mockReturnValue('Oct 16 · 02:30');
 
     const result = formatDateISOStringToDateTimeSimplified(
       mockDate,
@@ -80,7 +88,7 @@ describe('formatDateISOStringToDateTimeSimplified', () => {
       mockTimeFormat,
     );
 
-    expect(formatInTimeZone).toHaveBeenCalledWith(
+    expect(mockFormatInTimeZone).toHaveBeenCalledWith(
       mockDate,
       'Asia/Tokyo',
       'MMM d · HH:mm',
