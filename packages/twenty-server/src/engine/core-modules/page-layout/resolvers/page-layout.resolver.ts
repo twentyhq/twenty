@@ -2,10 +2,13 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
+import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
+import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,7 +19,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class PageLayoutResolver {
-  constructor(private readonly pageLayoutService: PageLayoutService) {}
+  constructor(
+    private readonly pageLayoutService: PageLayoutService,
+    private readonly pageLayoutUpdateService: PageLayoutUpdateService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Query(() => [PageLayoutDTO])
   async getPageLayouts(
@@ -91,5 +98,38 @@ export class PageLayoutResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.restore(id, workspace.id);
+  }
+
+  @Mutation(() => PageLayoutDTO)
+  async updatePageLayoutWithTabsAndWidgets(
+    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: UpdatePageLayoutWithTabsInput,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PageLayoutDTO> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const transactionManager = queryRunner.manager;
+
+      const result =
+        await this.pageLayoutUpdateService.updatePageLayoutWithTabs(
+          id,
+          workspace.id,
+          input,
+          transactionManager,
+        );
+
+      await queryRunner.commitTransaction();
+
+      return result;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

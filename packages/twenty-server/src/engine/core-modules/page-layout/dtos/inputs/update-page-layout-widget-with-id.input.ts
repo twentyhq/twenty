@@ -5,7 +5,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsObject,
-  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -17,34 +16,40 @@ import { GridPositionInput } from 'src/engine/core-modules/page-layout/dtos/inpu
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 @InputType()
-export class CreatePageLayoutWidgetInput {
-  @Field(() => UUIDScalarType, { nullable: false })
+export class UpdatePageLayoutWidgetWithIdInput {
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsNotEmpty()
   pageLayoutTabId: string;
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   @IsString()
-  @IsOptional()
-  title?: string;
+  @IsNotEmpty()
+  title: string;
 
-  @Field(() => WidgetType, { nullable: true, defaultValue: WidgetType.VIEW })
+  @Field(() => WidgetType, { nullable: true })
   @IsEnum(WidgetType)
-  @IsOptional()
-  type?: WidgetType;
+  @IsNotEmpty()
+  type: WidgetType;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsOptional()
-  objectMetadataId?: string | null;
+  @IsNotEmpty()
+  objectMetadataId: string | null;
 
-  @Field(() => GridPositionInput, { nullable: false })
+  @Field(() => GridPositionInput, { nullable: true })
   @ValidateNested()
   @Type(() => GridPositionInput)
+  @IsNotEmpty()
   gridPosition: GridPositionInput;
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
-  @IsOptional()
-  configuration?: Record<string, unknown> | null;
+  @IsNotEmpty()
+  configuration: Record<string, unknown> | null;
 }
