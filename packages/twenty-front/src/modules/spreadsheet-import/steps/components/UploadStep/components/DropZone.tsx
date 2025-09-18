@@ -10,7 +10,7 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledContainer = styled.div`
   align-items: center;

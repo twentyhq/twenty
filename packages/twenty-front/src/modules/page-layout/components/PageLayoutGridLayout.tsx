@@ -32,8 +32,6 @@ const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   position: relative;
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;

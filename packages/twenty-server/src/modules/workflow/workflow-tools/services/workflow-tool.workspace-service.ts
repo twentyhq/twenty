@@ -137,18 +137,21 @@ This is the most efficient way for AI to create workflows as it handles all the 
           }
 
           return {
-            workflowId,
-            workflowVersionId,
-            name: parameters.name,
-            trigger: parameters.trigger,
-            steps: parameters.steps,
+            success: true,
             message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
+            result: {
+              workflowId,
+              workflowVersionId,
+              name: parameters.name,
+              trigger: parameters.trigger,
+              steps: parameters.steps,
+            },
           };
         } catch (error) {
           return {
             success: false,
-            error: error.message,
             message: `Failed to create workflow "${parameters.name}": ${error.message}`,
+            error: error.message,
           };
         }
       },

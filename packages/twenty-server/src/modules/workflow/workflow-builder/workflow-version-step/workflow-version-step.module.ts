@@ -9,15 +9,11 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
-import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
 @Module({
   imports: [
     WorkflowSchemaModule,
     ServerlessFunctionModule,
-    WorkflowRunnerModule,
-    WorkflowRunModule,
     WorkflowCommonModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity, AgentEntity]),
   ],
@@ -25,6 +21,9 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     WorkflowVersionStepWorkspaceService,
     WorkflowVersionStepOperationsWorkspaceService,
   ],
-  exports: [WorkflowVersionStepWorkspaceService],
+  exports: [
+    WorkflowVersionStepWorkspaceService,
+    WorkflowVersionStepOperationsWorkspaceService,
+  ],
 })
 export class WorkflowVersionStepModule {}

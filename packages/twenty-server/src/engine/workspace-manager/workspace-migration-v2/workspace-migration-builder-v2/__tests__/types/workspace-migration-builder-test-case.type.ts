@@ -21,5 +21,4 @@ export type WorkspaceMigrationBuilderTestCase = EachTestingContext<{
   input:
     | TestWorkspaceMigrationBuildArgs
     | (() => TestWorkspaceMigrationBuildArgs);
-  expectedActionsTypeCounter?: ExpectedActionCounters;
 }>;
