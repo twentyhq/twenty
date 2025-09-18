@@ -1,8 +1,8 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber as utilFormatNumber } from '~/utils/format/formatNumber';
 
 type NumberFormatSelectProps = {
   value: NumberFormat;
@@ -17,23 +17,23 @@ export const NumberFormatSelect = ({
 
   const systemNumberFormat = NumberFormat[detectNumberFormat()];
 
-  const systemNumberFormatLabel = formatNumber(1234.56, {
+  const systemNumberFormatLabel = utilFormatNumber(1234.56, {
     format: systemNumberFormat,
     decimals: 2,
   });
-  const commasAndDotExample = formatNumber(1234.56, {
+  const commasAndDotExample = utilFormatNumber(1234.56, {
     format: NumberFormat.COMMAS_AND_DOT,
     decimals: 2,
   });
-  const spacesAndCommaExample = formatNumber(1234.56, {
+  const spacesAndCommaExample = utilFormatNumber(1234.56, {
     format: NumberFormat.SPACES_AND_COMMA,
     decimals: 2,
   });
-  const dotsAndCommaExample = formatNumber(1234.56, {
+  const dotsAndCommaExample = utilFormatNumber(1234.56, {
     format: NumberFormat.DOTS_AND_COMMA,
     decimals: 2,
   });
-  const apostropheAndDotExample = formatNumber(1234.56, {
+  const apostropheAndDotExample = utilFormatNumber(1234.56, {
     format: NumberFormat.APOSTROPHE_AND_DOT,
     decimals: 2,
   });

@@ -1,5 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import {
+  formatNumber as utilFormatNumber,
+  type FormatNumberOptions,
+} from '~/utils/format/formatNumber';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 export type GraphValueFormatOptions = {
@@ -8,6 +11,10 @@ export type GraphValueFormatOptions = {
   prefix?: string;
   suffix?: string;
   customFormatter?: (value: number) => string;
+  formatNumberFn?: (
+    value: number,
+    options?: Omit<FormatNumberOptions, 'format'>,
+  ) => string;
 };
 
 export const formatGraphValue = (
@@ -20,7 +27,13 @@ export const formatGraphValue = (
     prefix = '',
     suffix = '',
     customFormatter,
+    formatNumberFn,
   } = options || {};
+
+  const formatNumber =
+    formatNumberFn ??
+    ((v: number, opts?: Omit<FormatNumberOptions, 'format'>) =>
+      utilFormatNumber(v, opts));
 
   if (displayType === 'custom' && isDefined(customFormatter)) {
     return customFormatter(value);

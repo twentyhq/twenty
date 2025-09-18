@@ -1,4 +1,4 @@
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
+import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 
 describe('detectDateFormat', () => {
   it('should return MONTH_FIRST if the detected format starts with month', () => {

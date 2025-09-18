@@ -1,4 +1,4 @@
-import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
+import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 
 describe('detectTimeFormat', () => {
   it('should return HOUR_12 if the hour format is 12-hour', () => {

@@ -9,13 +9,27 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 
+import { PlansTags } from '@/billing/components/internal/PlansTags';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
+import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';
+import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useHasNextBillingPhase } from '@/billing/hooks/useHasNextBillingPhase';
+import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
+import { useNextBillingSeats } from '@/billing/hooks/useNextBillingSeats';
+import { useNextPlan } from '@/billing/hooks/useNextPlan';
+import { useSplitPhaseItemsInPrices } from '@/billing/hooks/useSplitPhaseItemsInPrices';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { useState, useMemo } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -41,22 +55,8 @@ import {
   useSwitchBillingPlanMutation,
   useSwitchSubscriptionIntervalMutation,
 } from '~/generated-metadata/graphql';
-import { beautifyExactDate } from '~/utils/date-utils';
-import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { formatNumber } from '~/utils/format/formatNumber';
-import { PlansTags } from '@/billing/components/internal/PlansTags';
-import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import { SubscriptionStatus } from '~/generated/graphql';
-import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';
-import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
-import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
-import { useSplitPhaseItemsInPrices } from '@/billing/hooks/useSplitPhaseItemsInPrices';
-import { useNextPlan } from '@/billing/hooks/useNextPlan';
-import { useNextBillingSeats } from '@/billing/hooks/useNextBillingSeats';
-import { useHasNextBillingPhase } from '@/billing/hooks/useHasNextBillingPhase';
-import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
-import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
   'switch-billing-interval-to-monthly-modal';
@@ -96,6 +96,7 @@ export const SettingsBillingSubscriptionInfo = ({
   >;
 }) => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
 
   const { openModal } = useModal();
 

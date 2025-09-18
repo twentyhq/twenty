@@ -1,5 +1,5 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DEFAULT_DECIMAL_VALUE = 0;
