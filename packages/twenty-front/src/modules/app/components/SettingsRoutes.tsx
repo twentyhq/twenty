@@ -5,6 +5,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated/graphql';
+import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -287,20 +288,6 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsPageLayouts = lazy(() =>
-  import('~/pages/settings/page-layout/SettingsPageLayouts').then((module) => ({
-    default: module.SettingsPageLayouts,
-  })),
-);
-
-const SettingsPageLayoutEdit = lazy(() =>
-  import('~/pages/settings/page-layout/SettingsPageLayoutEdit').then(
-    (module) => ({
-      default: module.SettingsPageLayoutEdit,
-    }),
-  ),
-);
-
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -386,13 +373,11 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
-  isPageLayoutFeatureFlagEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
-  isPageLayoutFeatureFlagEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -444,6 +429,10 @@ export const SettingsRoutes = ({
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
       </Route>
       <Route
         element={
@@ -614,22 +603,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      {isPageLayoutFeatureFlagEnabled && (
-        <>
-          <Route
-            path={SettingsPath.PageLayout}
-            element={<SettingsPageLayouts />}
-          />
-          <Route
-            path={SettingsPath.PageLayoutNew}
-            element={<SettingsPageLayoutEdit />}
-          />
-          <Route
-            path={SettingsPath.PageLayoutEdit}
-            element={<SettingsPageLayoutEdit />}
-          />
-        </>
-      )}
+
       <Route
         element={
           <SettingsProtectedRouteWrapper

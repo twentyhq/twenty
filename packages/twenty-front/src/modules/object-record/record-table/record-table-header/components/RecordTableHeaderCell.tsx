@@ -1,22 +1,29 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/ColumnMinWidth';
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
-import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { cx } from '@linaria/core';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableHeaderCellProps = {
   recordField: RecordField;
+  recordFieldIndex: number;
 };
 
 export const RecordTableHeaderCell = ({
   recordField,
+  recordFieldIndex,
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
@@ -30,42 +37,52 @@ export const RecordTableHeaderCell = ({
     0,
   );
 
-  const resizeFieldOffset = useRecoilComponentValue(
-    resizeFieldOffsetComponentState,
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
   );
 
   const resizedFieldMetadataItemId = useRecoilComponentValue(
     resizedFieldMetadataIdComponentState,
   );
 
-  const widthOffsetWhileResizing =
-    resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-      ? resizeFieldOffset
-      : 0;
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
 
-  const baseWidth = recordField?.size ?? 0;
-
-  const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
-
-  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
-
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
   return (
     <RecordTableHeaderCellContainer
-      className="header-cell"
+      className={cx(
+        'header-cell',
+        getRecordTableColumnFieldWidthClassName(recordFieldIndex),
+      )}
       key={recordField.fieldMetadataItemId}
-      isResizing={
-        resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-      }
-      columnWidth={columnWidth}
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+      isResizing={isResizingAnyColumn}
     >
+      <RecordTableHeaderResizeHandler
+        recordFieldIndex={recordFieldIndex}
+        position="left"
+      />
       <RecordTableColumnHeadWithDropdown
         recordField={recordField}
         objectMetadataId={objectMetadataItem.id}
       />
-      <RecordTableHeaderResizeHandler recordField={recordField} />
+      <RecordTableHeaderResizeHandler
+        recordFieldIndex={recordFieldIndex}
+        position="right"
+      />
     </RecordTableHeaderCellContainer>
   );
 };

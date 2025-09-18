@@ -19,9 +19,6 @@ import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 
-// TODO prastoin test defaultValue and settings updates
-// TODO prastoin test standard abstraction in TDD style
-
 const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
   {
     title: 'It should build an create_field action for a RELATION field',
@@ -92,9 +89,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           toFlatObjectMetadataMaps,
         };
       },
-      expectedActionsTypeCounter: {
-        createField: 2,
-      },
     },
   },
   {
@@ -111,9 +105,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
             }),
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           }),
-      },
-      expectedActionsTypeCounter: {
-        updateField: 1,
       },
     },
   },
@@ -159,9 +150,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           }),
       },
-      expectedActionsTypeCounter: {
-        createField: 1,
-      },
     },
   },
   {
@@ -181,9 +169,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
             }),
           }),
       },
-      expectedActionsTypeCounter: {
-        updateField: 1,
-      },
     },
   },
   {
@@ -200,9 +185,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
               icon: 'new icon',
             }),
           }),
-      },
-      expectedActionsTypeCounter: {
-        updateField: 1,
       },
     },
   },
@@ -223,9 +205,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
           objectMetadataId: PET_FLAT_FIELDS_MOCK.species.objectMetadataId,
           flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         }),
-      },
-      expectedActionsTypeCounter: {
-        deleteField: 1,
       },
     },
   },

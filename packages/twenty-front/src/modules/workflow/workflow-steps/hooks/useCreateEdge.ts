@@ -1,5 +1,5 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdge';
+import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
 import { useCreateWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
 import { useState } from 'react';
 
@@ -11,7 +11,10 @@ export const useCreateEdge = () => {
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
-  const createEdge = async ({ source, target }: WorkflowDiagramEdge) => {
+  const createEdge = async ({
+    source,
+    target,
+  }: WorkflowDiagramEdgeDescriptor) => {
     if (isLoading) {
       return;
     }

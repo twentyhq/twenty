@@ -7,21 +7,20 @@ import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import {
+  type WorkflowConnection,
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
-import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
-import { WorkflowDiagramIteratorEmptyActionEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { addEdge, type Connection, ReactFlowProvider } from '@xyflow/react';
+import { addEdge, ReactFlowProvider } from '@xyflow/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,7 +49,7 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
-  const onConnect = (edgeConnect: Connection) => {
+  const onConnect = (edgeConnect: WorkflowConnection) => {
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
@@ -60,7 +59,7 @@ export const WorkflowDiagramCanvasEditable = () => {
 
       return {
         ...diagram,
-        edges: addEdge(edgeConnect, diagram.edges),
+        edges: addEdge<WorkflowDiagramEdge>(edgeConnect, diagram.edges),
       };
     });
 
@@ -68,7 +67,10 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
-    await deleteEdge(edge);
+    await deleteEdge({
+      source: edge.source,
+      target: edge.target,
+    });
   };
 
   const onNodeDragStop = async (
@@ -122,12 +124,10 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
-          'iterator-empty-action': WorkflowDiagramIteratorEmptyActionEditable,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
-          'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
-          'filter--editable': WorkflowDiagramFilterEdgeEditable,
+          editable: WorkflowDiagramDefaultEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}

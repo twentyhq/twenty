@@ -1,29 +1,42 @@
 import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowRunDiagramBaseEdge';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type EdgeProps, getBezierPath } from '@xyflow/react';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
 
-type WorkflowDiagramDefaultEdgeRunProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramDefaultEdgeRunProps = WorkflowDiagramEdgeComponentProps;
 
 export const WorkflowDiagramDefaultEdgeRun = ({
   sourceX,
   sourceY,
+  sourcePosition,
   targetX,
   targetY,
+  targetPosition,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeRunProps) => {
-  const [edgePath] = getBezierPath({
+  const { segments } = getEdgePath({
     sourceX,
     sourceY,
+    sourcePosition,
     targetX,
     targetY,
+    targetPosition,
+    markerStart,
+    markerEnd,
+    strategy: data?.edgePathStrategy,
   });
 
   return (
-    <WorkflowRunDiagramBaseEdge
-      path={edgePath}
-      markerStart={markerStart}
-      markerEnd={markerEnd}
-    />
+    <>
+      {segments.map((segment) => (
+        <WorkflowRunDiagramBaseEdge
+          key={segment.path}
+          path={segment.path}
+          markerStart={segment.markerStart}
+          markerEnd={segment.markerEnd}
+        />
+      ))}
+    </>
   );
 };

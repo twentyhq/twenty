@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetNumberChart } from '../GraphWidgetNumberChart';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 
 const meta: Meta<typeof GraphWidgetNumberChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetNumberChart',

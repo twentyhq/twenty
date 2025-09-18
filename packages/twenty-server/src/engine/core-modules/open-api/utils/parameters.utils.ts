@@ -1,4 +1,8 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
+import {
+  QUERY_DEFAULT_LIMIT_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
 
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -13,8 +17,8 @@ export const computeLimitParameters = (
     schema: {
       type: 'integer',
       minimum: 0,
-      maximum: fromMetadata ? 1000 : 60,
-      default: fromMetadata ? 1000 : 60,
+      maximum: fromMetadata ? 1000 : QUERY_MAX_RECORDS,
+      default: fromMetadata ? 1000 : QUERY_DEFAULT_LIMIT_RECORDS,
     },
   };
 };
@@ -53,7 +57,7 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
     required: false,
     schema: {
       type: 'integer',
-      enum: [0, 1, 2],
+      enum: [0, 1],
       default: 1,
     },
   };

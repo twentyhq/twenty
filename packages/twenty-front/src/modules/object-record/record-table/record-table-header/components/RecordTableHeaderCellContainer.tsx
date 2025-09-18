@@ -1,29 +1,34 @@
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import styled from '@emotion/styled';
 
 const StyledHeaderCell = styled.div<{
-  columnWidth: number;
-  isResizing?: boolean;
-  isFirstRowActiveOrFocused: boolean;
   zIndex?: number;
+  shouldDisplayBorderBottom: boolean;
+  isResizing: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
 
-  height: 32px;
-  max-height: 32px;
+  position: relative;
+
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+    shouldDisplayBorderBottom
+      ? `1px solid ${theme.border.color.light}`
+      : 'none'};
 
-  ${({ columnWidth }) => `
-      min-width: ${columnWidth}px;
-      width: ${columnWidth}px;
-      `}
   user-select: none;
-  ${({ theme }) => {
+  ${({ theme, isResizing }) => {
+    if (isResizing) {
+      return '';
+    }
+
     return `
     &:hover {
       background: ${theme.background.secondary};
@@ -33,20 +38,8 @@ const StyledHeaderCell = styled.div<{
     };
     `;
   }};
-  ${({ isResizing, theme }) => {
-    if (isResizing === true) {
-      return `&:after {
-        background-color: ${theme.color.blue};
-        bottom: 0;
-        content: '';
-        display: block;
-        position: absolute;
-        right: -1px;
-        top: 0;
-        width: 2px;
-      }`;
-    }
-  }};
+
+  cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
 
   z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;

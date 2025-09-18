@@ -5,13 +5,18 @@ import {
   type WorkflowDiagramNode,
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getEdgePathStrategy } from '@/workflow/workflow-diagram/utils/getEdgePathStrategy';
 import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const generateNodesAndEdgesForDefaultNode = ({
   step,
+  steps,
   xPos,
   yPos,
   nodes,
@@ -19,6 +24,7 @@ export const generateNodesAndEdgesForDefaultNode = ({
   workflowContext,
 }: {
   step: WorkflowStep;
+  steps: WorkflowStep[];
   yPos: number;
   xPos: number;
   nodes: readonly WorkflowDiagramNode[];
@@ -55,18 +61,30 @@ export const generateNodesAndEdgesForDefaultNode = ({
     },
   });
 
-  step.nextStepIds?.forEach((child) => {
-    updatedEdges.push({
-      ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-      type: edgeTypeBetweenTwoNodes,
-      id: v4(),
-      source: step.id,
-      target: child,
-      ...(edgeTypeBetweenTwoNodes.includes('editable')
-        ? { deletable: true, selectable: true }
-        : {}),
-    });
-  });
+  if (isNonEmptyArray(step.nextStepIds)) {
+    for (const nextStepId of step.nextStepIds) {
+      updatedEdges.push({
+        ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        type: edgeTypeBetweenTwoNodes,
+        id: v4(),
+        source: step.id,
+        sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+        target: nextStepId,
+        targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
+        data: {
+          ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION.data,
+          edgePathStrategy: getEdgePathStrategy({
+            step,
+            steps,
+            nextStepId,
+          }),
+        },
+        ...(edgeTypeBetweenTwoNodes.includes('editable')
+          ? { deletable: true, selectable: true }
+          : {}),
+      });
+    }
+  }
 
   return {
     nodes: updatedNodes,

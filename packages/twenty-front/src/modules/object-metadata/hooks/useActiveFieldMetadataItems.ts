@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { useMemo } from 'react';
 
 export const useActiveFieldMetadataItems = ({
@@ -10,7 +11,11 @@ export const useActiveFieldMetadataItems = ({
     () =>
       objectMetadataItem
         ? objectMetadataItem.readableFields.filter(
-            ({ isActive, isSystem }) => isActive && !isSystem,
+            ({ isActive, isSystem, name }) =>
+              isActiveFieldMetadataItem({
+                objectNameSingular: objectMetadataItem.nameSingular,
+                fieldMetadata: { isActive, isSystem, name },
+              }),
           )
         : [],
     [objectMetadataItem],

@@ -1,11 +1,11 @@
+import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
+import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { RecoilRoot } from 'recoil';
 import { PageLayoutType } from '~/generated/graphql';
 import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
@@ -13,21 +13,14 @@ import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
-  const revenueElements = await canvas.findAllByText('Revenue');
-  await expect(revenueElements).toHaveLength(2);
-  const goalProgressElements = await canvas.findAllByText('Goal Progress');
-  await expect(goalProgressElements).toHaveLength(2);
+  await expect(await canvas.findByText('Revenue')).toBeVisible();
+  await expect(await canvas.findByText('Goal Progress')).toBeVisible();
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
-
-  await expect(await canvas.findByText('$125,000')).toBeVisible();
-
-  await expect(await canvas.findByText('Product Sales')).toBeVisible();
-  await expect(await canvas.findByText('Services')).toBeVisible();
-  await expect(await canvas.findByText('Support')).toBeVisible();
 };
 
-const mixedGraphsPageLayout = {
+const mixedGraphsPageLayoutMocks = {
+  __typename: 'PageLayout',
   id: 'mixed-graphs-layout',
   name: 'Mixed Graph Dashboard',
   type: PageLayoutType.DASHBOARD,
@@ -37,6 +30,7 @@ const mixedGraphsPageLayout = {
   deletedAt: null,
   tabs: [
     {
+      __typename: 'PageLayoutTab',
       id: 'mixed-tab',
       title: 'Mixed Graphs',
       position: 0,
@@ -46,12 +40,14 @@ const mixedGraphsPageLayout = {
       deletedAt: null,
       widgets: [
         {
+          __typename: 'PageLayoutWidget',
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
           objectMetadataId: null,
           gridPosition: {
+            __typename: 'GridPosition',
             row: 0,
             column: 0,
             rowSpan: 2,
@@ -69,12 +65,14 @@ const mixedGraphsPageLayout = {
           deletedAt: null,
         } as PageLayoutWidgetWithData,
         {
+          __typename: 'PageLayoutWidget',
           id: 'gauge-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Goal Progress',
           objectMetadataId: null,
           gridPosition: {
+            __typename: 'GridPosition',
             row: 0,
             column: 3,
             rowSpan: 4,
@@ -94,12 +92,14 @@ const mixedGraphsPageLayout = {
           deletedAt: null,
         } as PageLayoutWidgetWithData,
         {
+          __typename: 'PageLayoutWidget',
           id: 'pie-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
           objectMetadataId: null,
           gridPosition: {
+            __typename: 'GridPosition',
             row: 0,
             column: 6,
             rowSpan: 4,
@@ -120,12 +120,14 @@ const mixedGraphsPageLayout = {
           deletedAt: null,
         } as PageLayoutWidgetWithData,
         {
+          __typename: 'PageLayoutWidget',
           id: 'bar-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
           objectMetadataId: null,
           gridPosition: {
+            __typename: 'GridPosition',
             row: 2,
             column: 0,
             rowSpan: 4,
@@ -158,28 +160,33 @@ const mixedGraphsPageLayout = {
   ],
 };
 
+const graphqlMocks: MockedResponse[] = [
+  {
+    request: {
+      query: FIND_ONE_PAGE_LAYOUT,
+      variables: {
+        id: 'mixed-graphs-layout',
+      },
+    },
+    result: {
+      data: {
+        getPageLayout: mixedGraphsPageLayoutMocks,
+      },
+    },
+  },
+];
+
 const meta: Meta<typeof PageLayoutRenderer> = {
   title: 'Modules/PageLayout/PageLayoutRenderer',
   component: PageLayoutRenderer,
   decorators: [
-    (Story, { args }: { args: any }) => (
+    (Story) => (
       <MemoryRouter>
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(
-              activeTabIdComponentState.atomFamily({
-                instanceId: 'page-layout-stories',
-              }),
-              args.activeTabId,
-            );
-          }}
-        >
-          <TabListComponentInstanceContext.Provider
-            value={{ instanceId: 'page-layout-stories' }}
-          >
+        <MockedProvider mocks={graphqlMocks} addTypename={false}>
+          <RecoilRoot>
             <Story />
-          </TabListComponentInstanceContext.Provider>
-        </RecoilRoot>
+          </RecoilRoot>
+        </MockedProvider>
       </MemoryRouter>
     ),
   ],
@@ -187,7 +194,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
     layout: 'fullscreen',
   },
   args: {
-    pageLayout: mixedGraphsPageLayout,
+    pageLayoutId: mixedGraphsPageLayoutMocks.id,
   },
 };
 
@@ -196,9 +203,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const DesktopView: Story = {
-  args: {
-    activeTabId: 'mixed-tab',
-  },
   parameters: {
     viewport: {
       defaultViewport: 'desktop1',
@@ -210,9 +214,6 @@ export const DesktopView: Story = {
 };
 
 export const MobileView: Story = {
-  args: {
-    activeTabId: 'mixed-tab',
-  },
   parameters: {
     viewport: {
       defaultViewport: 'mobile1',

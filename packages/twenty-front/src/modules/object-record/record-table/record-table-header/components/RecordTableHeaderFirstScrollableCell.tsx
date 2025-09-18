@@ -7,16 +7,18 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
-import { COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/ColumnMinWidth';
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
-import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { filterOutByProperty } from 'twenty-shared/utils';
+import { cx } from '@linaria/core';
+import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
 export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
@@ -41,26 +43,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     ),
   )[0] as RecordField | undefined;
 
-  const resizeFieldOffset = useRecoilComponentValue(
-    resizeFieldOffsetComponentState,
+  const isRowFocusActive = useRecoilComponentValue(
+    isRecordTableRowFocusActiveComponentState,
   );
 
-  const resizedFieldMetadataItemId = useRecoilComponentValue(
-    resizedFieldMetadataIdComponentState,
-  );
-
-  const widthOffsetWhileResizing =
-    resizedFieldMetadataItemId === recordField?.fieldMetadataItemId
-      ? resizeFieldOffset
-      : 0;
-
-  const baseWidth = recordField?.size ?? 0;
-
-  const computedDynamicWidth = baseWidth + widthOffsetWhileResizing;
-
-  const columnWidth = Math.max(computedDynamicWidth, COLUMN_MIN_WIDTH);
-
-  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+  const isFirstRowActiveOrFocused =
+    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
   const isRecordTableScrolledVertically = useRecoilComponentValue(
     isRecordTableScrolledVerticallyComponentState,
@@ -70,15 +58,48 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const zIndex =
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const zIndexWithGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
-      ? TABLE_Z_INDEX.scrolledBothVerticallyAndHorizontally
+      ? TABLE_Z_INDEX.withGroups.scrolledBothVerticallyAndHorizontally
           .firstScrollableHeaderCell
       : isRecordTableScrolledHorizontally
-        ? TABLE_Z_INDEX.scrolledHorizontallyOnly.firstScrollableHeaderCell
+        ? TABLE_Z_INDEX.withGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
         : isRecordTableScrolledVertically
-          ? TABLE_Z_INDEX.scrolledVerticallyOnly.firstScrollableHeaderCell
-          : TABLE_Z_INDEX.noScrollAtAll.firstScrollableHeaderCell;
+          ? TABLE_Z_INDEX.withGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndexWithoutGroups =
+    isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
+      ? TABLE_Z_INDEX.withoutGroups.scrolledBothVerticallyAndHorizontally
+          .firstScrollableHeaderCell
+      : isRecordTableScrolledHorizontally
+        ? TABLE_Z_INDEX.withoutGroups.scrolledHorizontallyOnly
+            .firstScrollableHeaderCell
+        : isRecordTableScrolledVertically
+          ? TABLE_Z_INDEX.withoutGroups.scrolledVerticallyOnly
+              .firstScrollableHeaderCell
+          : TABLE_Z_INDEX.withoutGroups.noScrollAtAll.firstScrollableHeaderCell;
+
+  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
+
+  const isScrolledVertically = useRecoilComponentValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+
+  const resizedFieldMetadataItemId = useRecoilComponentValue(
+    resizedFieldMetadataIdComponentState,
+  );
+
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
 
   if (!recordField) {
     return <></>;
@@ -86,20 +107,18 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   return (
     <RecordTableHeaderCellContainer
-      className="header-cell"
+      className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
       key={recordField.fieldMetadataItemId}
-      isResizing={
-        resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-      }
-      columnWidth={columnWidth}
-      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={zIndex}
+      isResizing={isResizingAnyColumn}
     >
+      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       <RecordTableColumnHeadWithDropdown
         recordField={recordField}
         objectMetadataId={objectMetadataItem.id}
       />
-      <RecordTableHeaderResizeHandler recordField={recordField} />
+      <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
     </RecordTableHeaderCellContainer>
   );
 };

@@ -18,6 +18,7 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
@@ -121,7 +122,8 @@ export const WorkflowRunDiagramStepNode = ({
               {capitalize(data.nodeType)}
             </WorkflowNodeLabel>
 
-            {data.runStatus === StepStatus.SUCCESS && (
+            {(data.runStatus === StepStatus.SUCCESS ||
+              data.runStatus === StepStatus.STOPPED) && (
               <StyledNodeCounter>
                 <StyledColorIcon color={theme.tag.background.turquoise}>
                   <IconCheck color={theme.tag.text.turquoise} size={14} />
@@ -152,6 +154,7 @@ export const WorkflowRunDiagramStepNode = ({
       </WorkflowNodeContainer>
 
       <WorkflowDiagramHandleSource
+        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID}
         type="source"
         position={Position.Bottom}
         disableHoverEffect

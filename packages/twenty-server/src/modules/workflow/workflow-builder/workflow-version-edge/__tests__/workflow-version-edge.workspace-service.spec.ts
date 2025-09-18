@@ -132,6 +132,29 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
       );
     });
 
+    it('should throw if trigger is not found', async () => {
+      const mockWorkflowVersionWithoutTrigger = {
+        ...mockWorkflowVersion,
+        trigger: null,
+      } as WorkflowVersionWorkspaceEntity;
+
+      workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+        mockWorkflowVersionWithoutTrigger,
+      );
+
+      const call = async () =>
+        await service.createWorkflowVersionEdge({
+          source: TRIGGER_STEP_ID,
+          target: 'step-1',
+          workflowVersionId: mockWorkflowVersionId,
+          workspaceId: mockWorkspaceId,
+        });
+
+      await expect(call).rejects.toThrow(
+        `Trigger not found in workflowVersion '${mockWorkflowVersionId}'`,
+      );
+    });
+
     describe('with source is the trigger', () => {
       it('should create an edge between trigger and step-1', async () => {
         const result = await service.createWorkflowVersionEdge({
@@ -191,6 +214,160 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     });
 
     describe('with source is a step', () => {
+      describe('with iterator step', () => {
+        const mockIteratorStep = {
+          id: 'iterator-step',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
+            },
+            input: {
+              initialLoopStepIds: ['step-1'],
+            },
+          },
+          nextStepIds: ['step-2'],
+        } as WorkflowAction;
+
+        beforeEach(() => {
+          const mockStepsWithIterator = [...mockSteps, mockIteratorStep];
+          const mockWorkflowVersionWithIterator = {
+            ...mockWorkflowVersion,
+            steps: mockStepsWithIterator,
+          } as WorkflowVersionWorkspaceEntity;
+
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+            mockWorkflowVersionWithIterator,
+          );
+        });
+
+        it('should add target to initialLoopStepIds when isConnectedToLoop is true', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-3',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                settings: expect.objectContaining({
+                  input: expect.objectContaining({
+                    initialLoopStepIds: ['step-1', 'step-3'],
+                  }),
+                }),
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2'],
+            },
+          });
+        });
+
+        it('should not duplicate target in initialLoopStepIds when it already exists', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).not.toHaveBeenCalled();
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2'],
+            },
+          });
+        });
+
+        it('should throw if source is not an iterator but connection options are for iterator', async () => {
+          const call = async () =>
+            await service.createWorkflowVersionEdge({
+              source: 'step-1',
+              target: 'step-3',
+              workflowVersionId: mockWorkflowVersionId,
+              workspaceId: mockWorkspaceId,
+              sourceConnectionOptions: {
+                connectedStepType: WorkflowActionType.ITERATOR,
+                settings: {
+                  isConnectedToLoop: true,
+                },
+              },
+            });
+
+          await expect(call).rejects.toThrow(
+            `Source step 'step-1' is not an iterator`,
+          );
+        });
+
+        it('should create normal edge when isConnectedToLoop is false', async () => {
+          const result = await service.createWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-3',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: false,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                nextStepIds: ['step-2', 'step-3'],
+              }),
+            ]),
+          });
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+              'iterator-step': ['step-2', 'step-3'],
+            },
+          });
+        });
+      });
+
       it('should create an edge between step-2 and step-3', async () => {
         const result = await service.createWorkflowVersionEdge({
           source: 'step-2',
@@ -413,192 +590,159 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
       });
     });
 
-    describe('with filter steps', () => {
-      it('should delete the filter step when deleting edge from trigger to target through filter', async () => {
-        const mockStepsWithFilter = [
-          {
-            id: 'step-1',
-            type: WorkflowActionType.FORM,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
+    describe('with sourceConnectionOptions', () => {
+      describe('with iterator step', () => {
+        const mockIteratorStep = {
+          id: 'iterator-step',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            errorHandlingOptions: {
+              continueOnFailure: { value: false },
+              retryOnFailure: { value: false },
             },
-            nextStepIds: ['step-2'],
-          },
-          {
-            id: 'step-2',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
+            input: {
+              initialLoopStepIds: ['step-2', 'step-3'],
             },
-            nextStepIds: [],
           },
-          {
-            id: 'filter-step',
-            type: WorkflowActionType.FILTER,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-2'],
-          },
-        ] as WorkflowAction[];
+          nextStepIds: ['step-1'],
+        } as WorkflowAction;
 
-        const mockTriggerWithFilter = {
-          type: WorkflowTriggerType.MANUAL,
-          settings: {},
-          nextStepIds: ['step-1', 'filter-step'],
+        const mockStepsWithIterator = [mockIteratorStep, ...mockSteps];
+
+        const mockWorkflowVersionWithIterator = {
+          ...mockWorkflowVersion,
+          steps: mockStepsWithIterator,
         };
 
-        const mockWorkflowVersionWithFilter = {
-          id: mockWorkflowVersionId,
-          trigger: mockTriggerWithFilter,
-          steps: mockStepsWithFilter,
-          status: 'DRAFT',
-        } as WorkflowVersionWorkspaceEntity;
-
-        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
-          mockWorkflowVersionWithFilter,
-        );
-
-        const result = await service.deleteWorkflowVersionEdge({
-          source: TRIGGER_STEP_ID,
-          target: 'step-2',
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
+        beforeEach(() => {
+          workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+            mockWorkflowVersionWithIterator,
+          );
         });
 
-        expect(
-          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
-        ).toHaveBeenCalledWith({
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
+        it('should throw if source step is not an iterator when connectedStepType is ITERATOR', async () => {
+          const call = async () =>
+            await service.deleteWorkflowVersionEdge({
+              source: 'step-1',
+              target: 'step-2',
+              workflowVersionId: mockWorkflowVersionId,
+              workspaceId: mockWorkspaceId,
+              sourceConnectionOptions: {
+                connectedStepType: WorkflowActionType.ITERATOR,
+                settings: {
+                  isConnectedToLoop: true,
+                },
+              },
+            });
+
+          await expect(call).rejects.toThrow(
+            `Source step 'step-1' is not an iterator`,
+          );
         });
 
-        expect(
-          mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          trigger: {
-            ...mockTriggerWithFilter,
-            nextStepIds: ['step-1'],
-          },
-          steps: mockStepsWithFilter.filter(
-            (step) => step.id !== 'filter-step',
-          ),
-        });
-
-        expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-          },
-        });
-      });
-      it('should delete the filter step when deleting edge from step to target through filter', async () => {
-        const mockStepsWithFilter = [
-          {
-            id: 'step-1',
-            type: WorkflowActionType.FORM,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
+        it('should remove target from initialLoopStepIds when isConnectedToLoop is true', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-2',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
               },
             },
-            nextStepIds: ['step-2', 'filter-step'],
-          },
-          {
-            id: 'step-2',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: [],
-          },
-          {
-            id: 'step-3',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: [],
-          },
-          {
-            id: 'filter-step',
-            type: WorkflowActionType.FILTER,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-3'],
-          },
-        ] as WorkflowAction[];
+          });
 
-        const mockWorkflowVersionWithFilter = {
-          id: mockWorkflowVersionId,
-          trigger: mockTrigger,
-          steps: mockStepsWithFilter,
-          status: 'DRAFT',
-        } as WorkflowVersionWorkspaceEntity;
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                settings: expect.objectContaining({
+                  input: expect.objectContaining({
+                    initialLoopStepIds: ['step-3'],
+                  }),
+                }),
+              }),
+            ]),
+          });
 
-        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
-          mockWorkflowVersionWithFilter,
-        );
-
-        const result = await service.deleteWorkflowVersionEdge({
-          source: 'step-1',
-          target: 'step-3',
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': ['step-1'],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
         });
 
-        expect(
-          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
-        ).toHaveBeenCalledWith({
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
+        it('should not update if target is not in initialLoopStepIds when isConnectedToLoop is true', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: true,
+              },
+            },
+          });
+
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).not.toHaveBeenCalled();
+
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': ['step-1'],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
         });
 
-        expect(
-          mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          steps: mockStepsWithFilter
-            .map((step) => {
-              if (step.id === 'step-1') {
-                return {
-                  ...step,
-                  nextStepIds: ['step-2'],
-                };
-              }
+        it('should remove target from nextStepIds when isConnectedToLoop is false', async () => {
+          const result = await service.deleteWorkflowVersionEdge({
+            source: 'iterator-step',
+            target: 'step-1',
+            workflowVersionId: mockWorkflowVersionId,
+            workspaceId: mockWorkspaceId,
+            sourceConnectionOptions: {
+              connectedStepType: WorkflowActionType.ITERATOR,
+              settings: {
+                isConnectedToLoop: false,
+              },
+            },
+          });
 
-              return step;
-            })
-            .filter((step) => step.id !== 'filter-step'),
-        });
+          expect(
+            mockWorkflowVersionWorkspaceRepository.update,
+          ).toHaveBeenCalledWith(mockWorkflowVersionId, {
+            steps: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'iterator-step',
+                nextStepIds: [],
+              }),
+            ]),
+          });
 
-        expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          expect(result).toEqual({
+            triggerNextStepIds: ['step-1'],
+            stepsNextStepIds: {
+              'iterator-step': [],
+              'step-1': ['step-2'],
+              'step-2': [],
+              'step-3': [],
+            },
+          });
         });
       });
     });

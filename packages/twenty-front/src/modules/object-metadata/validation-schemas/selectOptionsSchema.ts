@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { themeColorSchema } from 'twenty-ui/theme';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 const selectOptionSchema = z
   .object({

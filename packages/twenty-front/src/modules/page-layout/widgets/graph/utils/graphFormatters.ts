@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 export type GraphValueFormatOptions = {
   displayType?: 'percentage' | 'number' | 'shortNumber' | 'currency' | 'custom';
@@ -31,7 +31,7 @@ export const formatGraphValue = (
       return `${formatNumber(value * 100, decimals)}%`;
 
     case 'shortNumber':
-      return `${prefix}${formatAmount(value)}${suffix}`;
+      return `${prefix}${formatToShortNumber(value)}${suffix}`;
 
     case 'currency': {
       const currencyPrefix = prefix || '$';

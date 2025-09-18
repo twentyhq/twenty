@@ -6,11 +6,9 @@ import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
 import { RecordTableHeaderLabelIdentifierCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCell';
-import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
+import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
 import { filterOutByProperty } from 'twenty-shared/utils';
-
-export const FIRST_TH_WIDTH = '10px';
 
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -33,14 +31,17 @@ export const RecordTableHeader = () => {
       <RecordTableHeaderCheckboxColumn />
       <RecordTableHeaderLabelIdentifierCell />
       <RecordTableHeaderFirstScrollableCell />
-      {recordFieldsWithoutLabelIdentifierAndFirstOne.map((recordField) => (
-        <RecordTableHeaderCell
-          key={recordField.fieldMetadataItemId}
-          recordField={recordField}
-        />
-      ))}
+      {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
+        (recordField, index) => (
+          <RecordTableHeaderCell
+            key={recordField.fieldMetadataItemId}
+            recordField={recordField}
+            recordFieldIndex={index + 2}
+          />
+        ),
+      )}
       <RecordTableHeaderAddColumnButton />
-      <RecordTableHeaderLastColumn />
+      <RecordTableHeaderLastEmptyColumn />
     </>
   );
 };

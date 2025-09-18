@@ -16,6 +16,8 @@ import { generateNodesAndEdgesForIteratorNode } from '@/workflow/workflow-diagra
 import { getEdgeTypeBetweenTwoNodes } from '@/workflow/workflow-diagram/utils/getEdgeTypeBetweenTwoNodes';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
@@ -48,10 +50,12 @@ export const generateWorkflowDiagram = ({
       type: edgeTypeBetweenTwoNodes,
       id: v4(),
       source: TRIGGER_STEP_ID,
+      sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
       target: stepLinkToTriggerId,
       ...(edgeTypeBetweenTwoNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
+      targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
     });
   }
 
@@ -66,6 +70,7 @@ export const generateWorkflowDiagram = ({
         const { nodes: iteratorNodes, edges: iteratorEdges } =
           generateNodesAndEdgesForIteratorNode({
             step,
+            steps,
             xPos,
             yPos: levelYPos,
             nodes,
@@ -82,6 +87,7 @@ export const generateWorkflowDiagram = ({
         const { nodes: defaultNodes, edges: defaultEdges } =
           generateNodesAndEdgesForDefaultNode({
             step,
+            steps,
             xPos,
             yPos: levelYPos,
             nodes,
