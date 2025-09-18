@@ -6,13 +6,10 @@ import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout
 import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { checkWidgetsPermissions } from 'src/engine/core-modules/page-layout/utils/check-widget-permission.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Resolver(() => PageLayoutWidgetDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
@@ -20,8 +17,6 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
-    private readonly userRoleService: UserRoleService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   @Query(() => [PageLayoutWidgetDTO])
@@ -30,50 +25,37 @@ export class PageLayoutWidgetResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('pageLayoutTabId', { type: () => String }) pageLayoutTabId: string,
   ): Promise<PageLayoutWidgetDTO[]> {
-    const widgets = await this.pageLayoutWidgetService.findByPageLayoutTabId(
+    return this.pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
       workspace.id,
       pageLayoutTabId,
+      userWorkspaceId,
     );
-
-    const [userRole] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
-        workspaceId: workspace.id,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-    if (!userRole) {
-      return widgets.map((widget) => ({
-        ...widget,
-        configuration: null,
-        canReadWidget: false,
-      }));
-    }
-
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId: workspace.id,
-      });
-
-    const userObjectPermissions = rolesPermissions[userRole.id] ?? {};
-
-    return checkWidgetsPermissions(widgets, userObjectPermissions);
   }
 
   @Query(() => PageLayoutWidgetDTO)
   async getPageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutWidgetService.findByIdOrThrowWithPermissions(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
   async createPageLayoutWidget(
     @Args('input') input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    return this.pageLayoutWidgetService.createWithPermissions(
+      input,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -81,16 +63,27 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    return this.pageLayoutWidgetService.updateWithPermissions(
+      id,
+      workspace.id,
+      input,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
   async deletePageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+    return this.pageLayoutWidgetService.deleteWithPermissions(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => Boolean)
@@ -105,7 +98,12 @@ export class PageLayoutWidgetResolver {
   async restorePageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.restore(id, workspace.id);
+    return this.pageLayoutWidgetService.restoreWithPermissions(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 }

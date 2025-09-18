@@ -1,6 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -54,6 +55,8 @@ export const pageLayoutGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS:
+        throw new ForbiddenError(error.message);
       default: {
         return assertUnreachable(error.code);
       }

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
+import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import {
   PageLayoutTabException,
@@ -19,6 +21,9 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
+import { checkWidgetsPermissions } from 'src/engine/core-modules/page-layout/utils/check-widget-permission.util';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 @Injectable()
 export class PageLayoutWidgetService {
@@ -26,6 +31,8 @@ export class PageLayoutWidgetService {
     @InjectRepository(PageLayoutWidgetEntity)
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
     private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly userRoleService: UserRoleService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   private getPageLayoutWidgetRepository(
@@ -299,5 +306,246 @@ export class PageLayoutWidgetService {
     );
 
     return restoredPageLayoutWidget;
+  }
+
+  private async getUserPermissions(
+    workspaceId: string,
+    userWorkspaceId: string,
+  ) {
+    const [userRole] = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+    if (!userRole) {
+      return null;
+    }
+
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId,
+      });
+
+    return rolesPermissions[userRole.id] ?? {};
+  }
+
+  private async validateObjectMetadataAccess(
+    objectMetadataId: string | null | undefined,
+    userObjectPermissions: ObjectsPermissions | null,
+  ): Promise<void> {
+    if (!isDefined(objectMetadataId) || objectMetadataId === null) {
+      return;
+    }
+
+    const hasPermission =
+      userObjectPermissions?.[objectMetadataId]?.canReadObjectRecords === true;
+
+    if (!hasPermission) {
+      throw new PageLayoutWidgetException(
+        generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.OBJECT_METADATA_ACCESS_FORBIDDEN,
+          objectMetadataId,
+        ),
+        PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS,
+      );
+    }
+  }
+
+  private validateConfigurationUpdate(
+    updateData: UpdatePageLayoutWidgetInput,
+    existingObjectMetadataId: string | null,
+    userObjectPermissions: ObjectsPermissions | null,
+  ): void {
+    if (
+      isDefined(updateData.configuration) &&
+      isDefined(existingObjectMetadataId)
+    ) {
+      const hasPermission =
+        userObjectPermissions?.[existingObjectMetadataId]
+          ?.canReadObjectRecords === true;
+
+      if (!hasPermission) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.CONFIGURATION_UPDATE_FORBIDDEN,
+          ),
+          PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS,
+        );
+      }
+    }
+  }
+
+  private formatWidgetWithPermissions(
+    widget: PageLayoutWidgetEntity,
+    userObjectPermissions: ObjectsPermissions | null,
+  ): PageLayoutWidgetDTO {
+    if (!userObjectPermissions) {
+      return {
+        ...widget,
+        configuration: null,
+        canReadWidget: false,
+      };
+    }
+
+    return checkWidgetsPermissions(
+      [{ ...widget, canReadWidget: true }],
+      userObjectPermissions,
+    )[0];
+  }
+
+  async findByPageLayoutTabIdWithPermissions(
+    workspaceId: string,
+    pageLayoutTabId: string,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO[]> {
+    const widgets = await this.findByPageLayoutTabId(
+      workspaceId,
+      pageLayoutTabId,
+      transactionManager,
+    );
+
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Use formatWidgetWithPermissions for each widget
+    return widgets.map((widget) =>
+      this.formatWidgetWithPermissions(widget, userObjectPermissions),
+    );
+  }
+
+  async findByIdOrThrowWithPermissions(
+    id: string,
+    workspaceId: string,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO> {
+    const widget = await this.findByIdOrThrow(
+      id,
+      workspaceId,
+      transactionManager,
+    );
+
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Format response with permissions
+    return this.formatWidgetWithPermissions(widget, userObjectPermissions);
+  }
+
+  async createWithPermissions(
+    pageLayoutWidgetData: CreatePageLayoutWidgetInput,
+    workspaceId: string,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO> {
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Validate objectMetadataId access before creating
+    await this.validateObjectMetadataAccess(
+      pageLayoutWidgetData.objectMetadataId,
+      userObjectPermissions,
+    );
+
+    // Create widget (allowed since validation passed)
+    const widget = await this.create(
+      pageLayoutWidgetData,
+      workspaceId,
+      transactionManager,
+    );
+
+    // Format response with permissions
+    return this.formatWidgetWithPermissions(widget, userObjectPermissions);
+  }
+
+  async updateWithPermissions(
+    id: string,
+    workspaceId: string,
+    updateData: UpdatePageLayoutWidgetInput,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO> {
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Get existing widget to check current objectMetadataId
+    const existingWidget = await this.findByIdOrThrow(
+      id,
+      workspaceId,
+      transactionManager,
+    );
+
+    // If trying to change objectMetadataId, validate new one
+    if (isDefined(updateData.objectMetadataId)) {
+      await this.validateObjectMetadataAccess(
+        updateData.objectMetadataId,
+        userObjectPermissions,
+      );
+    }
+
+    // Validate configuration update permission
+    this.validateConfigurationUpdate(
+      updateData,
+      existingWidget.objectMetadataId,
+      userObjectPermissions,
+    );
+
+    // Perform update
+    const widget = await this.update(
+      id,
+      workspaceId,
+      updateData,
+      transactionManager,
+    );
+
+    // Format response with permissions
+    return this.formatWidgetWithPermissions(widget, userObjectPermissions);
+  }
+
+  async deleteWithPermissions(
+    id: string,
+    workspaceId: string,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO> {
+    // No validation needed - users can delete any widget
+    const widget = await this.delete(id, workspaceId, transactionManager);
+
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Format response with permissions
+    return this.formatWidgetWithPermissions(widget, userObjectPermissions);
+  }
+
+  async restoreWithPermissions(
+    id: string,
+    workspaceId: string,
+    userWorkspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<PageLayoutWidgetDTO> {
+    // No validation needed - users can restore any widget
+    const widget = await this.restore(id, workspaceId, transactionManager);
+
+    const userObjectPermissions = await this.getUserPermissions(
+      workspaceId,
+      userWorkspaceId,
+    );
+
+    // Format response with permissions
+    return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 }

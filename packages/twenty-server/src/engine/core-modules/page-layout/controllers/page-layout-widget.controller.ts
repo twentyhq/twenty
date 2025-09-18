@@ -25,6 +25,7 @@ import {
 import { PageLayoutWidgetRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-widget-rest-api-exception.filter';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -39,6 +40,7 @@ export class PageLayoutWidgetController {
   @Get()
   async findMany(
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Query('pageLayoutTabId') pageLayoutTabId: string,
   ): Promise<PageLayoutWidgetDTO[]> {
     if (!isDefined(pageLayoutTabId)) {
@@ -50,9 +52,10 @@ export class PageLayoutWidgetController {
       );
     }
 
-    return this.pageLayoutWidgetService.findByPageLayoutTabId(
+    return this.pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
       workspace.id,
       pageLayoutTabId,
+      userWorkspaceId,
     );
   }
 
@@ -60,16 +63,26 @@ export class PageLayoutWidgetController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO | null> {
-    return this.pageLayoutWidgetService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutWidgetService.findByIdOrThrowWithPermissions(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Post()
   async create(
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    return this.pageLayoutWidgetService.createWithPermissions(
+      input,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Patch(':id')
@@ -77,15 +90,26 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    return this.pageLayoutWidgetService.updateWithPermissions(
+      id,
+      workspace.id,
+      input,
+      userWorkspaceId,
+    );
   }
 
   @Delete(':id')
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+    return this.pageLayoutWidgetService.deleteWithPermissions(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 }

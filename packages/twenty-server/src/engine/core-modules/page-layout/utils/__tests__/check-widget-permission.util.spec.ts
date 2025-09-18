@@ -17,6 +17,7 @@ const createMockWidget = (
   objectMetadataId: null,
   gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
   configuration: null,
+  canReadWidget: true,
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides,

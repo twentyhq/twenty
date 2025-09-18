@@ -5,6 +5,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum PageLayoutWidgetExceptionCode {
   PAGE_LAYOUT_WIDGET_NOT_FOUND = 'PAGE_LAYOUT_WIDGET_NOT_FOUND',
   INVALID_PAGE_LAYOUT_WIDGET_DATA = 'INVALID_PAGE_LAYOUT_WIDGET_DATA',
+  FORBIDDEN_OBJECT_METADATA_ACCESS = 'FORBIDDEN_OBJECT_METADATA_ACCESS',
 }
 
 export enum PageLayoutWidgetExceptionMessageKey {
@@ -14,6 +15,8 @@ export enum PageLayoutWidgetExceptionMessageKey {
   PAGE_LAYOUT_TAB_NOT_FOUND = 'PAGE_LAYOUT_TAB_NOT_FOUND',
   PAGE_LAYOUT_WIDGET_NOT_DELETED = 'PAGE_LAYOUT_WIDGET_NOT_DELETED',
   GRID_POSITION_REQUIRED = 'GRID_POSITION_REQUIRED',
+  OBJECT_METADATA_ACCESS_FORBIDDEN = 'OBJECT_METADATA_ACCESS_FORBIDDEN',
+  CONFIGURATION_UPDATE_FORBIDDEN = 'CONFIGURATION_UPDATE_FORBIDDEN',
 }
 
 export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetExceptionCode> {}
@@ -35,6 +38,10 @@ export const generatePageLayoutWidgetExceptionMessage = (
       return 'Page layout widget is not deleted and cannot be restored';
     case PageLayoutWidgetExceptionMessageKey.GRID_POSITION_REQUIRED:
       return 'Grid position is required';
+    case PageLayoutWidgetExceptionMessageKey.OBJECT_METADATA_ACCESS_FORBIDDEN:
+      return `Cannot create or update widget for object "${value}" without permission`;
+    case PageLayoutWidgetExceptionMessageKey.CONFIGURATION_UPDATE_FORBIDDEN:
+      return 'Cannot update widget configuration without object permission';
     default:
       assertUnreachable(key);
   }

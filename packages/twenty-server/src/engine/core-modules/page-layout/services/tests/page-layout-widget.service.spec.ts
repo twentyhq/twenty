@@ -17,11 +17,15 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 describe('PageLayoutWidgetService', () => {
   let pageLayoutWidgetService: PageLayoutWidgetService;
   let pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>;
   let pageLayoutTabService: PageLayoutTabService;
+  let userRoleService: UserRoleService;
+  let workspacePermissionsCacheService: WorkspacePermissionsCacheService;
 
   const mockPageLayoutWidget = {
     id: 'page-layout-widget-id',
@@ -64,6 +68,18 @@ describe('PageLayoutWidgetService', () => {
             findByIdOrThrow: jest.fn(),
           },
         },
+        {
+          provide: UserRoleService,
+          useValue: {
+            getRolesByUserWorkspaces: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspacePermissionsCacheService,
+          useValue: {
+            getRolesPermissionsFromCache: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -75,6 +91,11 @@ describe('PageLayoutWidgetService', () => {
     );
     pageLayoutTabService =
       module.get<PageLayoutTabService>(PageLayoutTabService);
+    userRoleService = module.get<UserRoleService>(UserRoleService);
+    workspacePermissionsCacheService =
+      module.get<WorkspacePermissionsCacheService>(
+        WorkspacePermissionsCacheService,
+      );
   });
 
   it('should be defined', () => {
@@ -568,6 +589,661 @@ describe('PageLayoutWidgetService', () => {
         workspaceId,
         undefined,
       );
+    });
+  });
+
+  describe('Permission-aware methods', () => {
+    const userWorkspaceId = 'user-workspace-id';
+    const roleId = 'role-id';
+    const objectWithPermission = 'object-with-permission';
+    const objectWithoutPermission = 'object-without-permission';
+
+    const mockPermissionGranted = {
+      canRead: true,
+      canUpdate: true,
+      canSoftDelete: true,
+      canDestroy: false,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: true,
+      canDestroyObjectRecords: false,
+      restrictedFields: {},
+    };
+
+    const mockPermissionDenied = {
+      canRead: false,
+      canUpdate: false,
+      canSoftDelete: false,
+      canDestroy: false,
+      canReadObjectRecords: false,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+      restrictedFields: {},
+    };
+
+    const mockPermissionsWithAccess = {
+      version: '1',
+      data: {
+        [roleId]: {
+          [objectWithPermission]: mockPermissionGranted,
+        },
+      },
+    };
+
+    const mockPermissionsWithoutAccess = {
+      version: '1',
+      data: {
+        [roleId]: {
+          [objectWithoutPermission]: mockPermissionDenied,
+        },
+      },
+    };
+
+    const mockPermissionsMixed = {
+      version: '1',
+      data: {
+        [roleId]: {
+          [objectWithPermission]: mockPermissionGranted,
+          [objectWithoutPermission]: mockPermissionDenied,
+        },
+      },
+    };
+
+    const mockEmptyPermissions = {
+      version: '1',
+      data: {
+        [roleId]: {},
+      },
+    };
+
+    describe('findByPageLayoutTabIdWithPermissions', () => {
+      it('should return widgets with canReadWidget false when user has no role', async () => {
+        const workspaceId = 'workspace-id';
+        const pageLayoutTabId = 'page-layout-tab-id';
+        const widgets = [
+          { ...mockPageLayoutWidget, objectMetadataId: objectWithPermission },
+          {
+            ...mockPageLayoutWidget,
+            id: 'widget-2',
+            objectMetadataId: objectWithoutPermission,
+          },
+        ];
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'find')
+          .mockResolvedValue(widgets);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(new Map());
+
+        const result =
+          await pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
+            workspaceId,
+            pageLayoutTabId,
+            userWorkspaceId,
+          );
+
+        expect(result).toHaveLength(2);
+        expect(result[0].canReadWidget).toBe(false);
+        expect(result[0].configuration).toBe(null);
+        expect(result[1].canReadWidget).toBe(false);
+        expect(result[1].configuration).toBe(null);
+      });
+
+      it('should return widgets with mixed permissions based on user role', async () => {
+        const workspaceId = 'workspace-id';
+        const pageLayoutTabId = 'page-layout-tab-id';
+        const widgets = [
+          {
+            ...mockPageLayoutWidget,
+            objectMetadataId: objectWithPermission,
+            configuration: { data: 'config1' },
+          },
+          {
+            ...mockPageLayoutWidget,
+            id: 'widget-2',
+            objectMetadataId: objectWithoutPermission,
+            configuration: { data: 'config2' },
+          },
+          {
+            ...mockPageLayoutWidget,
+            id: 'widget-3',
+            objectMetadataId: null,
+            configuration: { data: 'config3' },
+          },
+        ];
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'find')
+          .mockResolvedValue(widgets);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsMixed);
+
+        const result =
+          await pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
+            workspaceId,
+            pageLayoutTabId,
+            userWorkspaceId,
+          );
+
+        expect(result).toHaveLength(3);
+        expect(result[0].canReadWidget).toBe(true);
+        expect(result[0].configuration).toEqual({ data: 'config1' });
+        expect(result[1].canReadWidget).toBe(false);
+        expect(result[1].configuration).toBe(null);
+        expect(result[2].canReadWidget).toBe(true);
+        expect(result[2].configuration).toEqual({ data: 'config3' });
+      });
+    });
+
+    describe('findByIdOrThrowWithPermissions', () => {
+      it('should return widget with permission when user has access', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const widget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithPermission,
+          configuration: { test: 'data' },
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(widget);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithAccess);
+
+        const result =
+          await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
+            id,
+            workspaceId,
+            userWorkspaceId,
+          );
+
+        expect(result.canReadWidget).toBe(true);
+        expect(result.configuration).toEqual({ test: 'data' });
+      });
+
+      it('should return widget without configuration when user lacks access', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const widget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithoutPermission,
+          configuration: { test: 'data' },
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(widget);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        const result =
+          await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
+            id,
+            workspaceId,
+            userWorkspaceId,
+          );
+
+        expect(result.canReadWidget).toBe(false);
+        expect(result.configuration).toBe(null);
+      });
+
+      it('should allow access to widget without objectMetadataId', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const widget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: null,
+          configuration: { test: 'data' },
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(widget);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockEmptyPermissions);
+
+        const result =
+          await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
+            id,
+            workspaceId,
+            userWorkspaceId,
+          );
+
+        expect(result.canReadWidget).toBe(true);
+        expect(result.configuration).toEqual({ test: 'data' });
+      });
+    });
+
+    describe('createWithPermissions', () => {
+      const validWidgetData = {
+        title: 'New Widget',
+        pageLayoutTabId: 'page-layout-tab-id',
+        gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+        type: WidgetType.VIEW,
+      };
+
+      it('should create widget without objectMetadataId successfully', async () => {
+        const workspaceId = 'workspace-id';
+        const widgetData = { ...validWidgetData, objectMetadataId: null };
+
+        jest.spyOn(pageLayoutWidgetRepository, 'insert').mockResolvedValue({
+          identifiers: [{ id: 'new-widget-id' }],
+          generatedMaps: [],
+          raw: [],
+        });
+        jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue({
+          ...mockPageLayoutWidget,
+          id: 'new-widget-id',
+          objectMetadataId: null,
+        });
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockEmptyPermissions);
+
+        const result = await pageLayoutWidgetService.createWithPermissions(
+          widgetData,
+          workspaceId,
+          userWorkspaceId,
+        );
+
+        expect(result.id).toBe('new-widget-id');
+        expect(result.canReadWidget).toBe(true);
+        expect(pageLayoutWidgetRepository.insert).toHaveBeenCalled();
+      });
+
+      it('should create widget with objectMetadataId when user has permission', async () => {
+        const workspaceId = 'workspace-id';
+        const widgetData = {
+          ...validWidgetData,
+          objectMetadataId: objectWithPermission,
+        };
+
+        jest.spyOn(pageLayoutWidgetRepository, 'insert').mockResolvedValue({
+          identifiers: [{ id: 'new-widget-id' }],
+          generatedMaps: [],
+          raw: [],
+        });
+        jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue({
+          ...mockPageLayoutWidget,
+          id: 'new-widget-id',
+          objectMetadataId: objectWithPermission,
+        });
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithAccess);
+
+        const result = await pageLayoutWidgetService.createWithPermissions(
+          widgetData,
+          workspaceId,
+          userWorkspaceId,
+        );
+
+        expect(result.id).toBe('new-widget-id');
+        expect(result.canReadWidget).toBe(true);
+        expect(pageLayoutWidgetRepository.insert).toHaveBeenCalled();
+      });
+
+      it('should throw exception when creating widget with objectMetadataId user lacks permission for', async () => {
+        const workspaceId = 'workspace-id';
+        const widgetData = {
+          ...validWidgetData,
+          objectMetadataId: objectWithoutPermission,
+        };
+
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        await expect(
+          pageLayoutWidgetService.createWithPermissions(
+            widgetData,
+            workspaceId,
+            userWorkspaceId,
+          ),
+        ).rejects.toThrow(PageLayoutWidgetException);
+        await expect(
+          pageLayoutWidgetService.createWithPermissions(
+            widgetData,
+            workspaceId,
+            userWorkspaceId,
+          ),
+        ).rejects.toHaveProperty(
+          'code',
+          PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS,
+        );
+
+        expect(pageLayoutWidgetRepository.insert).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('updateWithPermissions', () => {
+      it('should allow updating widget when user has permission for current objectMetadataId', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const updateData = { title: 'Updated Title' };
+        const existingWidget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValueOnce(existingWidget)
+          .mockResolvedValueOnce(existingWidget) // For update check
+          .mockResolvedValueOnce({ ...existingWidget, title: 'Updated Title' }); // After update
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'update')
+          .mockResolvedValue({ affected: 1 } as any);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithAccess);
+
+        const result = await pageLayoutWidgetService.updateWithPermissions(
+          id,
+          workspaceId,
+          updateData,
+          userWorkspaceId,
+        );
+
+        expect(result.title).toBe('Updated Title');
+        expect(pageLayoutWidgetRepository.update).toHaveBeenCalledWith(
+          { id },
+          updateData,
+        );
+      });
+
+      it('should throw exception when updating configuration without object permission', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const updateData = { configuration: { new: 'config' } };
+        const existingWidget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithoutPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(existingWidget);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        await expect(
+          pageLayoutWidgetService.updateWithPermissions(
+            id,
+            workspaceId,
+            updateData,
+            userWorkspaceId,
+          ),
+        ).rejects.toThrow(PageLayoutWidgetException);
+        await expect(
+          pageLayoutWidgetService.updateWithPermissions(
+            id,
+            workspaceId,
+            updateData,
+            userWorkspaceId,
+          ),
+        ).rejects.toHaveProperty(
+          'code',
+          PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS,
+        );
+
+        expect(pageLayoutWidgetRepository.update).not.toHaveBeenCalled();
+      });
+
+      it('should allow updating non-configuration fields without object permission', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const updateData = {
+          title: 'Updated Title',
+          gridPosition: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
+        };
+        const existingWidget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithoutPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValueOnce(existingWidget) // For permission check
+          .mockResolvedValueOnce(existingWidget) // For update check
+          .mockResolvedValueOnce({ ...existingWidget, ...updateData });
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'update')
+          .mockResolvedValue({ affected: 1 } as any);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        const result = await pageLayoutWidgetService.updateWithPermissions(
+          id,
+          workspaceId,
+          updateData,
+          userWorkspaceId,
+        );
+
+        expect(result.title).toBe('Updated Title');
+        expect(pageLayoutWidgetRepository.update).toHaveBeenCalledWith(
+          { id },
+          updateData,
+        );
+      });
+
+      it('should throw exception when changing objectMetadataId to one without permission', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const updateData = { objectMetadataId: objectWithoutPermission };
+        const existingWidget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(existingWidget);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsMixed);
+
+        await expect(
+          pageLayoutWidgetService.updateWithPermissions(
+            id,
+            workspaceId,
+            updateData,
+            userWorkspaceId,
+          ),
+        ).rejects.toThrow(PageLayoutWidgetException);
+        await expect(
+          pageLayoutWidgetService.updateWithPermissions(
+            id,
+            workspaceId,
+            updateData,
+            userWorkspaceId,
+          ),
+        ).rejects.toHaveProperty(
+          'code',
+          PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS,
+        );
+
+        expect(pageLayoutWidgetRepository.update).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('deleteWithPermissions', () => {
+      it('should allow deleting widget regardless of object permissions', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const widget = {
+          ...mockPageLayoutWidget,
+          objectMetadataId: objectWithoutPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValue(widget);
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'softDelete')
+          .mockResolvedValue({ affected: 1 } as any);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        const result = await pageLayoutWidgetService.deleteWithPermissions(
+          id,
+          workspaceId,
+          userWorkspaceId,
+        );
+
+        expect(result.id).toBe(id);
+        expect(result.canReadWidget).toBe(false);
+        expect(result.configuration).toBe(null);
+        expect(pageLayoutWidgetRepository.softDelete).toHaveBeenCalledWith(id);
+      });
+    });
+
+    describe('restoreWithPermissions', () => {
+      it('should allow restoring widget regardless of object permissions', async () => {
+        const id = 'page-layout-widget-id';
+        const workspaceId = 'workspace-id';
+        const deletedWidget = {
+          ...mockPageLayoutWidget,
+          deletedAt: new Date(),
+          objectMetadataId: objectWithoutPermission,
+        };
+
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'findOne')
+          .mockResolvedValueOnce(deletedWidget) // For restore check
+          .mockResolvedValueOnce({ ...deletedWidget, deletedAt: null }); // After restore
+        jest
+          .spyOn(pageLayoutWidgetRepository, 'restore')
+          .mockResolvedValue({ affected: 1 } as any);
+        jest
+          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
+          .mockResolvedValue(
+            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
+          );
+        jest
+          .spyOn(
+            workspacePermissionsCacheService,
+            'getRolesPermissionsFromCache',
+          )
+          .mockResolvedValue(mockPermissionsWithoutAccess);
+
+        const result = await pageLayoutWidgetService.restoreWithPermissions(
+          id,
+          workspaceId,
+          userWorkspaceId,
+        );
+
+        expect(result.id).toBe(id);
+        expect(result.canReadWidget).toBe(false);
+        expect(result.configuration).toBe(null);
+        expect(pageLayoutWidgetRepository.restore).toHaveBeenCalledWith(id);
+      });
     });
   });
 });
