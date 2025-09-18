@@ -401,11 +401,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
         queryRunner,
       );
-      if (inputPayload.labelIdentifierFieldMetadataId) {
+
+      const didUpdateLabelIdentifierFieldMetadata =
+        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
+        inputPayload.labelIdentifierFieldMetadataId !==
+          existingObjectMetadata.labelIdentifierFieldMetadataId;
+
+      if (didUpdateLabelIdentifierFieldMetadata) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
-            inputPayload.labelIdentifierFieldMetadataId
+            inputPayload.labelIdentifierFieldMetadataId!
           ];
+
+        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
+          {
+            newLabelMetadataIdentifierFieldMetadata:
+              labelIdentifierFieldMetadata,
+          },
+        );
 
         if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
           await this.searchVectorService.updateSearchVector(

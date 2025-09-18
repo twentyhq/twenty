@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import {
   ViewFieldException,
@@ -12,12 +13,14 @@ import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 @Injectable()
 export class ViewFieldService {
   constructor(
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
+    private readonly viewService: ViewService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
@@ -169,6 +172,14 @@ export class ViewFieldService {
       );
     }
 
+    if (this.updatesPosition(updateData)) {
+      await this.verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
+        existingViewField,
+        workspaceId,
+        updateData,
+      );
+    }
+
     const updatedViewField = await this.viewFieldRepository.save({
       id,
       ...updateData,
@@ -211,5 +222,64 @@ export class ViewFieldService {
     await this.viewFieldRepository.delete(id);
 
     return viewField;
+  }
+
+  private async verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
+    viewField: ViewFieldEntity,
+    workspaceId: string,
+    newViewField: Partial<ViewFieldEntity> & { position: number },
+  ) {
+    const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+      viewField.viewId,
+      workspaceId,
+    );
+
+    if (!isDefined(view)) {
+      throw new Error(`View not found: ${viewField.viewId}`);
+    }
+
+    const labelMetadataIdentifierFieldMetadataId =
+      view.objectMetadata.labelIdentifierFieldMetadataId;
+
+    const viewFieldsWithUpdatedPosition = view.viewFields.map((field) =>
+      field.id === viewField.id
+        ? { ...field, position: newViewField.position }
+        : field,
+    );
+
+    const fieldMetadataIdWithMinPositionInViewAfterUpdate =
+      viewFieldsWithUpdatedPosition.reduce(
+        (minField, field) =>
+          field.position < minField.position ? field : minField,
+        viewFieldsWithUpdatedPosition[0],
+      );
+
+    if (labelMetadataIdentifierFieldMetadataId === viewField.id) {
+      if (fieldMetadataIdWithMinPositionInViewAfterUpdate.id !== viewField.id) {
+        throw new UserInputError(
+          'Label metadata identifier must keep the minimal position in the view.',
+          {
+            userFriendlyMessage:
+              'Record text must be in first position of the view.',
+          },
+        );
+      }
+    } else {
+      if (fieldMetadataIdWithMinPositionInViewAfterUpdate.id === viewField.id) {
+        throw new UserInputError(
+          'Label metadata identifier must keep the minimal position in the view.',
+          {
+            userFriendlyMessage:
+              'Record text must be in first position of the view.',
+          },
+        );
+      }
+    }
+  }
+
+  private updatesPosition(
+    data: Partial<ViewFieldEntity>,
+  ): data is Partial<ViewFieldEntity> & { position: number } {
+    return isDefined(data.position);
   }
 }

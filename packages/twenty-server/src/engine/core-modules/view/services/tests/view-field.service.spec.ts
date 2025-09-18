@@ -1,9 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { UserInputError } from 'apollo-server-core';
 import { type Repository } from 'typeorm';
 
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
@@ -12,10 +14,12 @@ import {
   generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 
 describe('ViewFieldService', () => {
   let viewFieldService: ViewFieldService;
   let viewFieldRepository: Repository<ViewFieldEntity>;
+  let viewService: ViewService;
 
   const mockViewField = {
     id: 'view-field-id',
@@ -45,6 +49,12 @@ describe('ViewFieldService', () => {
             delete: jest.fn(),
           },
         },
+        {
+          provide: ViewService,
+          useValue: {
+            findByIdWithRelatedObjectMetadata: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -52,6 +62,7 @@ describe('ViewFieldService', () => {
     viewFieldRepository = module.get<Repository<ViewFieldEntity>>(
       getRepositoryToken(ViewFieldEntity),
     );
+    viewService = module.get<ViewService>(ViewService);
   });
 
   it('should be defined', () => {
@@ -243,6 +254,110 @@ describe('ViewFieldService', () => {
             id,
           ),
           ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+        ),
+      );
+    });
+
+    it('should throw exception when label metadata identifier is not in first position (label metadata identifier field update case)', async () => {
+      const workspaceId = 'workspace-id';
+      const updateData = { position: 2 };
+      const labelIdentifierFieldMetadataId =
+        'label-identifier-field-matadata-id';
+
+      const labelIdentifierViewField = {
+        ...mockViewField,
+        id: labelIdentifierFieldMetadataId,
+        position: 0,
+      };
+
+      const mockView = {
+        id: 'view-id',
+        objectMetadata: {
+          labelIdentifierFieldMetadataId,
+        },
+        viewFields: [
+          labelIdentifierViewField,
+          { ...mockViewField, position: 1 },
+        ],
+      } as ViewEntity;
+
+      jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
+        if (id === labelIdentifierFieldMetadataId) {
+          return Promise.resolve(labelIdentifierViewField);
+        }
+
+        return Promise.resolve(null);
+      });
+      jest
+        .spyOn(
+          viewFieldService['viewService'],
+          'findByIdWithRelatedObjectMetadata',
+        )
+        .mockResolvedValue(mockView);
+
+      await expect(
+        viewFieldService.update(
+          labelIdentifierFieldMetadataId,
+          workspaceId,
+          updateData,
+        ),
+      ).rejects.toThrow(
+        new UserInputError(
+          'Label metadata identifier must keep the minimal position in the view.',
+          {
+            userFriendlyMessage:
+              'Record text must be in first position of the view.',
+          },
+        ),
+      );
+    });
+
+    it('should throw exception when label metadata identifier is not in first position (regular field update case)', async () => {
+      const workspaceId = 'workspace-id';
+      const updateData = { position: -1 };
+      const labelIdentifierFieldMetadataId =
+        'label-identifier-field-matadata-id';
+
+      const labelIdentifierViewField = {
+        ...mockViewField,
+        id: labelIdentifierFieldMetadataId,
+        position: 0,
+      };
+
+      const mockView = {
+        id: 'view-id',
+        objectMetadata: {
+          labelIdentifierFieldMetadataId,
+        },
+        viewFields: [
+          labelIdentifierViewField,
+          { ...mockViewField, position: 1 },
+        ],
+      } as ViewEntity;
+
+      jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
+        if (id === mockViewField.id) {
+          return Promise.resolve(mockViewField);
+        }
+
+        return Promise.resolve(null);
+      });
+      jest
+        .spyOn(
+          viewFieldService['viewService'],
+          'findByIdWithRelatedObjectMetadata',
+        )
+        .mockResolvedValue(mockView);
+
+      await expect(
+        viewFieldService.update(mockViewField.id, workspaceId, updateData),
+      ).rejects.toThrow(
+        new UserInputError(
+          'Label metadata identifier must keep the minimal position in the view.',
+          {
+            userFriendlyMessage:
+              'Record text must be in first position of the view.',
+          },
         ),
       );
     });
