@@ -95,7 +95,7 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Impersonate`,
         description: t`Impersonate workspace users`,
         Icon: IconSpy,
-      }
+      },
     ];
 
   return (
