@@ -1,8 +1,8 @@
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
+import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { formatDateISOStringToDateTimeSimplified } from '@/localization/utils/formatDateISOStringToDateTimeSimplified';
 import { formatInTimeZone } from 'date-fns-tz';
-// Mock the imported modules
-jest.mock('@/localization/utils/detectDateFormat');
+
+jest.mock('@/localization/utils/detection/detectDateFormat');
 jest.mock('date-fns-tz');
 
 describe('formatDateISOStringToDateTimeSimplified', () => {
