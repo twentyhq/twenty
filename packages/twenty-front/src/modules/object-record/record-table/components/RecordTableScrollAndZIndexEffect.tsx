@@ -1,5 +1,8 @@
+import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCSSVariableName';
+import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCSSVariableName';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -51,7 +54,27 @@ export const RecordTableScrollAndZIndexEffect = () => {
         return;
       }
 
-      // TODO: insert imperative CSS update here
+      if (newIsScrolledHorizontally !== isScrolledHorizontally) {
+        const newVisibilityOfShadows = newIsScrolledHorizontally
+          ? 'visible'
+          : 'hidden';
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newVisibilityOfShadows,
+        );
+      }
+
+      if (newIsScrolledVertically !== isScrolledVertically) {
+        const newVisibilityOfShadows = newIsScrolledVertically
+          ? 'visible'
+          : 'hidden';
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newVisibilityOfShadows,
+        );
+      }
     };
 
     scrollWrapperHTMLElement?.addEventListener('scroll', handleScroll);
