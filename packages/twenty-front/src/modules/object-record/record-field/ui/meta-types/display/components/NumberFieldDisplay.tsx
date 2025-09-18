@@ -21,17 +21,16 @@ export const NumberFieldDisplay = () => {
   let formattedValue: string;
 
   if (type === 'percentage') {
-    formattedValue = `${formatNumber(numericValue * 100, getNumberFormatFromWorkspaceNumberFormat(currentWorkspaceMember?.numberFormat!), decimals)}%`;
+    formattedValue = `${formatNumber(numericValue * 100, { format: getNumberFormatFromWorkspaceNumberFormat(currentWorkspaceMember?.numberFormat!), decimals })})}%`;
   } else if (type === 'shortNumber') {
     formattedValue = formatToShortNumber(numericValue);
   } else {
-    formattedValue = formatNumber(
-      numericValue,
-      getNumberFormatFromWorkspaceNumberFormat(
+    formattedValue = formatNumber(numericValue, {
+      format: getNumberFormatFromWorkspaceNumberFormat(
         currentWorkspaceMember?.numberFormat!,
       ),
       decimals,
-    );
+    });
   }
 
   return <NumberDisplay value={formattedValue} />;

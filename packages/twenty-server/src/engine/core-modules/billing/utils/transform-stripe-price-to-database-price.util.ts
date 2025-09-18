@@ -12,7 +12,7 @@ export const transformStripePriceToDatabasePrice = (data: Stripe.Price) => {
   return {
     stripePriceId: data.id,
     active: data.active,
-    stripeProductId: data.product,
+    stripeProductId: String(data.product),
     stripeMeterId: data.recurring?.meter,
     currency: data.currency.toUpperCase(),
     nickname: data.nickname === null ? undefined : data.nickname,

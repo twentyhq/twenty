@@ -28,18 +28,18 @@ export const formatGraphValue = (
 
   switch (displayType) {
     case 'percentage':
-      return `${formatNumber(value * 100, decimals)}%`;
+      return `${formatNumber(value * 100, { decimals })}%`;
 
     case 'shortNumber':
       return `${prefix}${formatToShortNumber(value)}${suffix}`;
 
     case 'currency': {
       const currencyPrefix = prefix || '$';
-      return `${currencyPrefix}${formatNumber(value, decimals)}${suffix}`;
+      return `${currencyPrefix}${formatNumber(value, { decimals })}${suffix}`;
     }
 
     case 'number':
     default:
-      return `${prefix}${formatNumber(value, decimals)}${suffix}`;
+      return `${prefix}${formatNumber(value, { decimals })}${suffix}`;
   }
 };

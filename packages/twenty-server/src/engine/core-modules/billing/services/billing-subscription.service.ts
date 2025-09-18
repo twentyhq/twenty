@@ -26,7 +26,6 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
-import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
@@ -68,7 +67,6 @@ export class BillingSubscriptionService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
-    private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,

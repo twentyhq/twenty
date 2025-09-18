@@ -17,27 +17,26 @@ export const NumberFormatSelect = ({
 
   const systemNumberFormat = NumberFormat[detectNumberFormat()];
 
-  const systemNumberFormatLabel = formatNumber(1234.56, systemNumberFormat, 2);
-  const commasAndDotExample = formatNumber(
-    1234.56,
-    NumberFormat.COMMAS_AND_DOT,
-    2,
-  );
-  const spacesAndCommaExample = formatNumber(
-    1234.56,
-    NumberFormat.SPACES_AND_COMMA,
-    2,
-  );
-  const dotsAndCommaExample = formatNumber(
-    1234.56,
-    NumberFormat.DOTS_AND_COMMA,
-    2,
-  );
-  const apostropheAndDotExample = formatNumber(
-    1234.56,
-    NumberFormat.APOSTROPHE_AND_DOT,
-    2,
-  );
+  const systemNumberFormatLabel = formatNumber(1234.56, {
+    format: systemNumberFormat,
+    decimals: 2,
+  });
+  const commasAndDotExample = formatNumber(1234.56, {
+    format: NumberFormat.COMMAS_AND_DOT,
+    decimals: 2,
+  });
+  const spacesAndCommaExample = formatNumber(1234.56, {
+    format: NumberFormat.SPACES_AND_COMMA,
+    decimals: 2,
+  });
+  const dotsAndCommaExample = formatNumber(1234.56, {
+    format: NumberFormat.DOTS_AND_COMMA,
+    decimals: 2,
+  });
+  const apostropheAndDotExample = formatNumber(1234.56, {
+    format: NumberFormat.APOSTROPHE_AND_DOT,
+    decimals: 2,
+  });
 
   return (
     <Select

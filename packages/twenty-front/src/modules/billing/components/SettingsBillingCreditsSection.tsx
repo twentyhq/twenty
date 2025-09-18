@@ -92,7 +92,7 @@ export const SettingsBillingCreditsSection = ({
             <SettingsBillingLabelValueItem
               label={t`Cost`}
               isValueInPrimaryColor={true}
-              value={`$${formatNumber(costExtraCredits, 2)}`}
+              value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
             />
           )}
         </SubscriptionInfoContainer>
