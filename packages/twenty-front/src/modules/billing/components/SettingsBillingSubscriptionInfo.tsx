@@ -9,13 +9,20 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 
+import { PlansTags } from '@/billing/components/internal/PlansTags';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { useState, useMemo } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -41,15 +48,8 @@ import {
   useSwitchBillingPlanMutation,
   useSwitchSubscriptionIntervalMutation,
 } from '~/generated-metadata/graphql';
-import { beautifyExactDate } from '~/utils/date-utils';
-import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { formatNumber } from '~/utils/format/formatNumber';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
-import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
-import { PlansTags } from '@/billing/components/internal/PlansTags';
-import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import { SubscriptionStatus } from '~/generated/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
   'switch-billing-interval-to-monthly-modal';
@@ -89,6 +89,7 @@ export const SettingsBillingSubscriptionInfo = ({
   >;
 }) => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
 
   const { openModal } = useModal();
 

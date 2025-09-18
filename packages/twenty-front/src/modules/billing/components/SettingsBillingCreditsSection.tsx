@@ -1,6 +1,11 @@
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -10,11 +15,6 @@ import { Section } from 'twenty-ui/layout';
 import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
-import { formatNumber } from '~/utils/format/formatNumber';
-import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
-import { useBillingWording } from '@/billing/hooks/useBillingWording';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -30,6 +30,7 @@ export const SettingsBillingCreditsSection = ({
   >;
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
+  const { formatNumber } = useNumberFormat();
 
   const { getCurrentMeteredPricesByInterval, isMonthlyPlan } = useBillingPlan();
 

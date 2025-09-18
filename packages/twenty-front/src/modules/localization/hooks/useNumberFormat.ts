@@ -18,7 +18,6 @@ export const useNumberFormat = () => {
         value: number,
         options?: Omit<FormatNumberOptions, 'format'>,
       ): string => {
-        // Use user's preferred number format unless explicitly overridden
         return utilFormatNumber(value, {
           format: workspaceMemberFormatPreferences.numberFormat,
           ...options,

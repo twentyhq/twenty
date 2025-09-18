@@ -1,25 +1,25 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
-import { SubscriptionInterval } from '~/generated/graphql';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import {
   type BillingPriceTiers,
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
-import { useBillingWording } from '@/billing/hooks/useBillingWording';
-import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
 import { useRecoilState } from 'recoil';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
+import { SubscriptionInterval } from '~/generated/graphql';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -44,6 +44,7 @@ export const MeteredPriceSelector = ({
   isTrialing?: boolean;
 }) => {
   const { getCurrentMeteredBillingPrice } = useBillingPlan();
+  const { formatNumber } = useNumberFormat();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

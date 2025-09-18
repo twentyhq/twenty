@@ -6,14 +6,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
-import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
-import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
-import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
+import { useFormatPreferences } from '@/localization/hooks/useFormatPreferences';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -38,7 +31,7 @@ export const useLoadCurrentUser = () => {
     currentWorkspaceMembersState,
   );
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const { initializeFormatPreferences } = useFormatPreferences();
   const setCoreViews = useSetRecoilState(coreViewsState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
@@ -91,23 +84,8 @@ export const useLoadCurrentUser = () => {
 
       setCurrentWorkspaceMember(workspaceMember);
 
-      // TODO: factorize with UserProviderEffect
-      setDateTimeFormat({
-        timeZone:
-          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
-            ? workspaceMember.timeZone
-            : detectTimeZone(),
-        dateFormat: isDefined(user.workspaceMember.dateFormat)
-          ? getDateFormatFromWorkspaceDateFormat(
-              user.workspaceMember.dateFormat,
-            )
-          : DateFormat[detectDateFormat()],
-        timeFormat: isDefined(user.workspaceMember.timeFormat)
-          ? getTimeFormatFromWorkspaceTimeFormat(
-              user.workspaceMember.timeFormat,
-            )
-          : TimeFormat[detectTimeFormat()],
-      });
+      // Initialize unified format preferences state
+      initializeFormatPreferences(workspaceMember);
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       );
@@ -143,7 +121,7 @@ export const useLoadCurrentUser = () => {
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setCurrentWorkspaceMembers,
-    setDateTimeFormat,
+    initializeFormatPreferences,
     setLastAuthenticateWorkspaceDomain,
   ]);
 

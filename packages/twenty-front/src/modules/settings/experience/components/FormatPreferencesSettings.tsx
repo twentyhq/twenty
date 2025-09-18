@@ -47,8 +47,8 @@ export const FormatPreferencesSettings = () => {
     updateFormatPreference('numberFormat', value);
   };
 
-  const handleCalendarStartDayChange = (value: number) => {
-    updateFormatPreference('calendarStartDay', value as CalendarStartDay);
+  const handleCalendarStartDayChange = (value: CalendarStartDay) => {
+    updateFormatPreference('calendarStartDay', value);
   };
 
   // Convert workspace member values to display values
@@ -73,7 +73,7 @@ export const FormatPreferencesSettings = () => {
       ? NumberFormat.SYSTEM
       : formatPreferences.numberFormat;
 
-  const displayCalendarStartDay =
+  const displayCalendarStartDay: CalendarStartDay =
     currentWorkspaceMember.calendarStartDay == null ||
     currentWorkspaceMember.calendarStartDay === CalendarStartDay.SYSTEM
       ? CalendarStartDay.SYSTEM
@@ -100,7 +100,7 @@ export const FormatPreferencesSettings = () => {
         onChange={handleNumberFormatChange}
       />
       <DateTimeSettingsCalendarStartDaySelect
-        value={displayCalendarStartDay as number}
+        value={displayCalendarStartDay}
         onChange={handleCalendarStartDayChange}
       />
     </StyledContainer>

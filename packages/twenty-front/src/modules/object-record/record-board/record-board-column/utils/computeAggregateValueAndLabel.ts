@@ -13,8 +13,11 @@ import isEmpty from 'lodash.isempty';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  formatNumber as utilFormatNumber,
+  type FormatNumberOptions,
+} from '~/utils/format/formatNumber';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
-import { formatNumber } from '~/utils/format/formatNumber';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -27,6 +30,7 @@ export const computeAggregateValueAndLabel = ({
   timeFormat,
   timeZone,
   localeCatalog,
+  formatNumberFn,
 }: {
   data: AggregateRecordsData;
   objectMetadataItem: ObjectMetadataItem;
@@ -36,7 +40,15 @@ export const computeAggregateValueAndLabel = ({
   timeFormat: TimeFormat;
   timeZone: string;
   localeCatalog: Locale;
+  formatNumberFn?: (
+    value: number,
+    options?: Omit<FormatNumberOptions, 'format'>,
+  ) => string;
 }) => {
+  const formatNumber =
+    formatNumberFn ??
+    ((v: number, opts?: Omit<FormatNumberOptions, 'format'>) =>
+      utilFormatNumber(v, opts));
   if (isEmpty(data)) {
     return {};
   }
@@ -92,8 +104,8 @@ export const computeAggregateValueAndLabel = ({
         const { decimals, type } = field.settings ?? {};
         value =
           type === 'percentage'
-            ? `${formatNumber(value * 100, decimals)}%`
-            : formatNumber(value, decimals);
+            ? `${formatNumber(value * 100, { decimals })}%`
+            : formatNumber(value, { decimals });
         break;
       }
 
