@@ -6,7 +6,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
-import { useFormatPreferences } from '@/localization/hooks/useFormatPreferences';
+import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -31,7 +31,7 @@ export const useLoadCurrentUser = () => {
     currentWorkspaceMembersState,
   );
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const { initializeFormatPreferences } = useFormatPreferences();
+  const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const setCoreViews = useSetRecoilState(coreViewsState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();

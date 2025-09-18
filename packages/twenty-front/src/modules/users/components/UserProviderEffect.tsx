@@ -9,7 +9,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { useFormatPreferences } from '@/localization/hooks/useFormatPreferences';
+import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -39,7 +39,7 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
-  const { initializeFormatPreferences } = useFormatPreferences();
+  const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
   const updateLocaleCatalog = useRecoilCallback(

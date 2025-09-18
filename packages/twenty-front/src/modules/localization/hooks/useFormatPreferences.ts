@@ -119,7 +119,7 @@ export const useFormatPreferences = () => {
       const resolvedUpdates = { ...updates };
       Object.entries(updates).forEach(([key, value]) => {
         if (value === 'SYSTEM' || value === 'system' || value === 7) {
-          switch (key as FormatPreferenceKey) {
+          switch (key) {
             case 'timeZone':
               resolvedUpdates.timeZone = detectTimeZone();
               break;
