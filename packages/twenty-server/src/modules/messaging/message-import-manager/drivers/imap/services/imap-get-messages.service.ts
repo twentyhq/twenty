@@ -47,7 +47,7 @@ export class ImapGetMessagesService {
         continue;
       }
 
-      const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
+      const { results } = await this.fetchByBatchService.fetchAllByBatches(
         uids,
         connectedAccount,
         folder,
@@ -55,8 +55,8 @@ export class ImapGetMessagesService {
 
       this.logger.log(`IMAP fetch completed for folder: ${folder}`);
 
-      const messages = this.formatBatchResponsesAsMessages(
-        batchResults,
+      const messages = this.formatBatchResponseAsMessages(
+        results,
         connectedAccount,
         folder,
       );
@@ -87,23 +87,6 @@ export class ImapGetMessagesService {
     }
 
     return folderToUidsMap;
-  }
-
-  public formatBatchResponsesAsMessages(
-    batchResults: MessageFetchResult[][],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
-    folder: string,
-  ): MessageWithParticipants[] {
-    return batchResults.flatMap((batchResult) => {
-      return this.formatBatchResponseAsMessages(
-        batchResult,
-        connectedAccount,
-        folder,
-      );
-    });
   }
 
   private formatBatchResponseAsMessages(
