@@ -20,9 +20,10 @@ import {
   TWENTY_PRICING_LINK,
 } from 'twenty-ui/navigation';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { type Billing } from '~/generated/graphql';
 import { AppPath } from 'twenty-shared/types';
+import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
+import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -85,8 +86,9 @@ const StyledLinkGroup = styled.div`
 export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
   const { t } = useLingui();
 
-  const { getBaseProductByPlanKey, getBaseLicensedPriceByPlanKeyAndInterval } =
-    useBillingPlan();
+  const { getBaseProductByPlanKey } = useBaseProductByPlanKey();
+  const { getBaseLicensedPriceByPlanKeyAndInterval } =
+    useBaseLicensedPriceByPlanKeyAndInterval();
 
   const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
     billingCheckoutSessionState,

@@ -1,8 +1,9 @@
 import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 
 export const useFormatPrices = () => {
-  const { getBaseLicensedPriceByPlanKeyAndInterval } = useBillingPlan();
+  const { getBaseLicensedPriceByPlanKeyAndInterval } =
+    useBaseLicensedPriceByPlanKeyAndInterval();
 
   const formatPrices = () => {
     const enterpriseYearPrice = getBaseLicensedPriceByPlanKeyAndInterval(

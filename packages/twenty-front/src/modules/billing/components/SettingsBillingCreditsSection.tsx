@@ -13,8 +13,9 @@ import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 import { formatNumber } from '~/utils/format/formatNumber';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -31,9 +32,11 @@ export const SettingsBillingCreditsSection = ({
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { getCurrentMeteredPricesByInterval, isMonthlyPlan } = useBillingPlan();
+  const { isMonthlyPlan } = useCurrentBillingFlags();
 
-  const { getIntervalLabel } = useBillingWording(currentBillingSubscription);
+  const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
+
+  const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 

@@ -1,11 +1,11 @@
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
-export const useNextBillingPhase = () => {
+export const useHasNextBillingPhase = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const nextBillingPhase =
-    currentWorkspace?.currentBillingSubscription?.phases[1];
+  const hasNextBillingPhase =
+    currentWorkspace?.currentBillingSubscription?.phases.length === 2;
 
-  return { nextBillingPhase };
+  return { hasNextBillingPhase };
 };

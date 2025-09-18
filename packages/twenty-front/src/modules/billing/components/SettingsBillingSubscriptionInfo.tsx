@@ -45,11 +45,17 @@ import { beautifyExactDate } from '~/utils/date-utils';
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { formatNumber } from '~/utils/format/formatNumber';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
-import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
 import { PlansTags } from '@/billing/components/internal/PlansTags';
 import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import { SubscriptionStatus } from '~/generated/graphql';
+import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';
+import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
+import { useSplitPhaseItemsInPrices } from '@/billing/hooks/useSplitPhaseItemsInPrices';
+import { useNextPlan } from '@/billing/hooks/useNextPlan';
+import { useNextBillingSeats } from '@/billing/hooks/useNextBillingSeats';
+import { useHasNextBillingPhase } from '@/billing/hooks/useHasNextBillingPhase';
+import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
   'switch-billing-interval-to-monthly-modal';
@@ -94,23 +100,20 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const {
-    getCurrentMeteredBillingPrice,
-    getCurrentPlan,
-    getOppositPlan,
-    isEnterprisePlan,
-    isYearlyPlan,
-    isMonthlyPlan,
-    isProPlan,
-  } = useBillingPlan();
+  const { currentMeteredBillingPrice } = useCurrentMetered();
 
-  const {
-    hasNextBillingPhase,
-    getNextInterval,
-    getNextPlan,
-    getNextMeteredPrice,
-    getNextBillingSeats,
-  } = useNextBillingPhase();
+  const { currentPlan, oppositPlan } = useCurrentPlan();
+  const { isEnterprisePlan, isYearlyPlan, isMonthlyPlan, isProPlan } =
+    useCurrentBillingFlags();
+  const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
+
+  const { hasNextBillingPhase } = useHasNextBillingPhase();
+  const { nextPlan } = useNextPlan();
+  const { nextBillingSeats } = useNextBillingSeats();
+  const { nextBillingPhase } = useNextBillingPhase();
+  const nextInterval =
+    splitedPhaseItemsInPrices?.nextLicensedPrice?.recurringInterval;
+  const nextMeteredBillingPrice = splitedPhaseItemsInPrices.nextMereredPrice;
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -123,7 +126,7 @@ export const SettingsBillingSubscriptionInfo = ({
     confirmationModalCancelPlanSwitchingMessage,
     confirmationModalCancelIntervalSwitchingMessage,
     getBeautifiedRenewDate,
-  } = useBillingWording(currentBillingSubscription);
+  } = useBillingWording();
 
   const [switchSubscriptionIntervalMutation] =
     useSwitchSubscriptionIntervalMutation();
@@ -138,8 +141,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const [cancelSwitchMeteredPrice] = useCancelSwitchMeteredPriceMutation();
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-
-  const currentMeterPrice = getCurrentMeteredBillingPrice();
 
   const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
 
@@ -234,7 +235,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const switchPlan = async () => {
     if (isAnyActionLoading || isSwitchingPlan) return;
     setIsSwitchingPlan(true);
-    const newPlan = getOppositPlan();
     try {
       const { success } = await endTrialPeriodIfNeeded();
       if (success === false) {
@@ -253,13 +253,13 @@ export const SettingsBillingSubscriptionInfo = ({
       const beautifiedRenewDate = getBeautifiedRenewDate();
       enqueueSuccessSnackBar({
         message:
-          newPlan === BillingPlanKey.ENTERPRISE
-            ? t`Subscription has been switched to ${newPlan} Plan.`
-            : `Subscription will be switched to ${newPlan} Plan the ${beautifiedRenewDate}.`,
+          oppositPlan === BillingPlanKey.ENTERPRISE
+            ? t`Subscription has been switched to ${oppositPlan} Plan.`
+            : `Subscription will be switched to ${oppositPlan} Plan the ${beautifiedRenewDate}.`,
       });
     } catch {
       enqueueErrorSnackBar({
-        message: t`Error while switching subscription to ${newPlan} Plan.`,
+        message: t`Error while switching subscription to ${oppositPlan} Plan.`,
       });
     } finally {
       setIsSwitchingPlan(false);
@@ -365,14 +365,14 @@ export const SettingsBillingSubscriptionInfo = ({
           Icon={IconTag}
           currentValue={
             <PlansTags
-              plan={getCurrentPlan().planKey}
+              plan={currentPlan.planKey}
               isTrialPeriod={isTrialPeriod}
             />
           }
           nextValue={
-            hasNextBillingPhase ? (
+            nextPlan ? (
               <PlansTags
-                plan={getNextPlan().planKey}
+                plan={nextPlan.planKey}
                 isTrialPeriod={isTrialPeriod}
               />
             ) : undefined
@@ -382,13 +382,13 @@ export const SettingsBillingSubscriptionInfo = ({
           label={t`Billing interval`}
           Icon={IconCalendarEvent}
           currentValue={getIntervalLabelAsAdjectiveCapitalize(
-            getCurrentMeteredBillingPrice().recurringInterval ===
+            currentMeteredBillingPrice.recurringInterval ===
               SubscriptionInterval.Month,
           )}
           nextValue={
-            hasNextBillingPhase
+            nextInterval
               ? getIntervalLabelAsAdjectiveCapitalize(
-                  getNextInterval() === SubscriptionInterval.Month,
+                  nextInterval === SubscriptionInterval.Month,
                 )
               : undefined
           }
@@ -399,10 +399,8 @@ export const SettingsBillingSubscriptionInfo = ({
             Icon={IconCalendarRepeat}
             currentValue={getBeautifiedRenewDate()}
             nextValue={
-              hasNextBillingPhase
-                ? beautifyExactDate(
-                    currentBillingSubscription.phases[1].end_date * 1000,
-                  )
+              nextBillingPhase
+                ? beautifyExactDate(nextBillingPhase.end_date * 1000)
                 : undefined
             }
           />
@@ -411,18 +409,18 @@ export const SettingsBillingSubscriptionInfo = ({
           label={t`Seats`}
           Icon={IconUsers}
           currentValue={seats}
-          nextValue={hasNextBillingPhase ? getNextBillingSeats() : undefined}
+          nextValue={nextBillingSeats}
         />
         <SubscriptionInfoRowContainer
           label={t`Credits by period`}
           Icon={IconCoins}
-          currentValue={formatNumber(currentMeterPrice.tiers[0].upTo, {
+          currentValue={formatNumber(currentMeteredBillingPrice.tiers[0].upTo, {
             abbreviate: true,
             decimals: 2,
           })}
           nextValue={
-            hasNextBillingPhase
-              ? formatNumber(getNextMeteredPrice().tiers[0].upTo, {
+            nextMeteredBillingPrice
+              ? formatNumber(nextMeteredBillingPrice.tiers[0].upTo, {
                   abbreviate: true,
                   decimals: 2,
                 })
@@ -440,9 +438,8 @@ export const SettingsBillingSubscriptionInfo = ({
             disabled={isEndTrialPeriodLoading || isAnyActionLoading}
           />
         )}
-        {hasNextBillingPhase &&
-          getCurrentMeteredBillingPrice().recurringInterval !==
-            getNextInterval() && (
+        {nextInterval &&
+          currentMeteredBillingPrice.recurringInterval !== nextInterval && (
             <Button
               Icon={IconCircleX}
               title={t`Cancel interval switching`}
@@ -452,9 +449,8 @@ export const SettingsBillingSubscriptionInfo = ({
             />
           )}
         {isMonthlyPlan &&
-          (!hasNextBillingPhase ||
-            getCurrentMeteredBillingPrice().recurringInterval ===
-              getNextInterval()) && (
+          (!nextInterval ||
+            currentMeteredBillingPrice.recurringInterval === nextInterval) && (
             <Button
               Icon={IconArrowUp}
               title={t`Switch to Yearly`}
@@ -466,9 +462,8 @@ export const SettingsBillingSubscriptionInfo = ({
             />
           )}
         {isYearlyPlan &&
-          (!hasNextBillingPhase ||
-            getCurrentMeteredBillingPrice().recurringInterval ===
-              getNextInterval()) && (
+          (!nextInterval ||
+            currentMeteredBillingPrice.recurringInterval === nextInterval) && (
             <Button
               Icon={IconArrowUp}
               title={t`Switch to Monthly`}
@@ -480,8 +475,7 @@ export const SettingsBillingSubscriptionInfo = ({
             />
           )}
         {isProPlan &&
-          (!hasNextBillingPhase ||
-            getCurrentPlan().planKey === getNextPlan().planKey) && (
+          (!nextPlan || currentPlan.planKey === nextPlan.planKey) && (
             <Button
               Icon={IconArrowUp}
               title={t`Switch to Organization`}
@@ -493,8 +487,7 @@ export const SettingsBillingSubscriptionInfo = ({
             />
           )}
         {isEnterprisePlan &&
-          (!hasNextBillingPhase ||
-            getCurrentPlan().planKey === getNextPlan().planKey) && (
+          (!nextPlan || currentPlan.planKey === nextPlan.planKey) && (
             <Button
               Icon={IconArrowUp}
               title={t`Switch to Pro`}
@@ -503,22 +496,21 @@ export const SettingsBillingSubscriptionInfo = ({
               disabled={!canSwitchSubscription || isAnyActionLoading}
             />
           )}
-        {hasNextBillingPhase &&
-          getCurrentPlan().planKey !== getNextPlan().planKey && (
-            <Button
-              Icon={IconCircleX}
-              title={t`Cancel plan switching`}
-              variant="secondary"
-              onClick={() => openModal(CANCEL_SWITCH_BILLING_PLAN_MODAL_ID)}
-              disabled={!canSwitchSubscription || isAnyActionLoading}
-            />
-          )}
+        {nextPlan && currentPlan.planKey !== nextPlan.planKey && (
+          <Button
+            Icon={IconCircleX}
+            title={t`Cancel plan switching`}
+            variant="secondary"
+            onClick={() => openModal(CANCEL_SWITCH_BILLING_PLAN_MODAL_ID)}
+            disabled={!canSwitchSubscription || isAnyActionLoading}
+          />
+        )}
         {/*@todo: find a way to check if the metered tier match when interval change too*/}
-        {hasNextBillingPhase &&
-          getCurrentMeteredBillingPrice().recurringInterval ===
-            getNextInterval() &&
-          getCurrentMeteredBillingPrice().tiers[0].upTo !==
-            getNextMeteredPrice().tiers[0].upTo && (
+        {nextInterval &&
+          nextMeteredBillingPrice &&
+          currentMeteredBillingPrice.recurringInterval === nextInterval &&
+          currentMeteredBillingPrice.tiers[0].upTo !==
+            nextMeteredBillingPrice.tiers[0].upTo && (
             <Button
               Icon={IconCircleX}
               title={t`Cancel metered tier switching`}

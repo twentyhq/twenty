@@ -10,7 +10,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import {
   type BillingPriceTiers,
   type MeteredBillingPrice,
@@ -20,6 +19,7 @@ import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/gra
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { useRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -43,7 +43,7 @@ export const MeteredPriceSelector = ({
   meteredBillingPrices: Array<MeteredBillingPrice>;
   isTrialing?: boolean;
 }) => {
-  const { getCurrentMeteredBillingPrice } = useBillingPlan();
+  const { currentMeteredBillingPrice } = useCurrentMetered();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -51,8 +51,8 @@ export const MeteredPriceSelector = ({
 
   const { getIntervalLabel } = useBillingWording();
 
-  const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
-    getCurrentMeteredBillingPrice(),
+  const [currentMeteredPrice, setCurrentMeteredPrice] = useState(
+    currentMeteredBillingPrice,
   );
 
   const toOption = (meteredBillingPrice: MeteredBillingPrice) => {
@@ -85,15 +85,13 @@ export const MeteredPriceSelector = ({
     : undefined;
 
   const isChanged =
-    selectedPriceId &&
-    selectedPriceId !== currentMeteredBillingPrice?.stripePriceId;
+    selectedPriceId && selectedPriceId !== currentMeteredPrice?.stripePriceId;
 
   const isUpgrade = () => {
-    if (!isChanged || !selectedPrice || !currentMeteredBillingPrice)
-      return false;
+    if (!isChanged || !selectedPrice || !currentMeteredPrice) return false;
     return (
       (selectedPrice.tiers as BillingPriceTiers)[0].flatAmount >
-      (currentMeteredBillingPrice.tiers as BillingPriceTiers)[0].flatAmount
+      (currentMeteredPrice.tiers as BillingPriceTiers)[0].flatAmount
     );
   };
 
@@ -109,8 +107,7 @@ export const MeteredPriceSelector = ({
   };
 
   const recurringInterval = getIntervalLabel(
-    currentMeteredBillingPrice?.recurringInterval ===
-      SubscriptionInterval.Month,
+    currentMeteredPrice?.recurringInterval === SubscriptionInterval.Month,
   );
 
   const handleConfirmClick = async () => {
@@ -135,7 +132,7 @@ export const MeteredPriceSelector = ({
         setCurrentWorkspace(newCurrentWorkspace);
       }
       enqueueSuccessSnackBar({ message: t`Price updated.` });
-      setCurrentMeteredBillingPrice(
+      setCurrentMeteredPrice(
         findOrThrow(
           meteredBillingPrices,
           ({ stripePriceId }) => stripePriceId === selectedPrice.stripePriceId,
@@ -157,7 +154,7 @@ export const MeteredPriceSelector = ({
         <StyledSelect
           dropdownId="settings_billing-metered-price"
           options={options}
-          value={selectedPriceId ?? currentMeteredBillingPrice.stripePriceId}
+          value={selectedPriceId ?? currentMeteredPrice.stripePriceId}
           onChange={handleChange}
           disabled={isUpdating || isTrialing}
           description={
