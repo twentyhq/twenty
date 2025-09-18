@@ -1,4 +1,4 @@
-import { detectNumberFormat } from '../detectNumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 
 // Mock navigator.language
 Object.defineProperty(navigator, 'language', {

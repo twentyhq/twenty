@@ -1,11 +1,13 @@
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
+import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
 
-export const getNumberFormatFromWorkspaceNumberFormat = (
-  numberFormat: WorkspaceMemberNumberFormatEnum,
+export const getNumberFormatFromWorkspaceMember = (
+  workspaceMember: WorkspaceMember | CurrentWorkspaceMember,
 ): NumberFormat => {
-  switch (numberFormat) {
+  switch (workspaceMember.numberFormat) {
     case WorkspaceMemberNumberFormatEnum.SYSTEM:
       return NumberFormat[detectNumberFormat()];
     case WorkspaceMemberNumberFormatEnum.COMMAS_AND_DOT:
@@ -17,6 +19,6 @@ export const getNumberFormatFromWorkspaceNumberFormat = (
     case WorkspaceMemberNumberFormatEnum.APOSTROPHE_AND_DOT:
       return NumberFormat.APOSTROPHE_AND_DOT;
     default:
-      return NumberFormat.COMMAS_AND_DOT;
+      return NumberFormat[detectNumberFormat()];
   }
 };

@@ -10,15 +10,13 @@ import {
   workspaceMemberFormatPreferencesState,
   type WorkspaceMemberFormatPreferences,
 } from '@/localization/states/workspaceMemberFormatPreferencesState';
-import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
-import { detectNumberFormat } from '@/localization/utils/detectNumberFormat';
-import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
-import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import {
-  getFormatPreferencesFromWorkspaceMember,
-  getWorkspaceMemberUpdateFromFormatPreferences,
-} from '@/localization/utils/formatPreferencesConverter';
+import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
+import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
+import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
+import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/format-preferences/getFormatPreferencesFromWorkspaceMember';
+import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { logError } from '~/utils/logError';
@@ -48,7 +46,12 @@ export const useFormatPreferences = () => {
 
       // Handle system values by detecting the actual format
       let resolvedValue = value;
-      if (value === 'SYSTEM' || value === 'system' || value === 7) {
+      // This is dirty and will need to be unified
+      if (
+        value === 'SYSTEM' ||
+        value === 'system' ||
+        value === CalendarStartDay.SYSTEM
+      ) {
         switch (key) {
           case 'timeZone':
             resolvedValue =
@@ -115,7 +118,11 @@ export const useFormatPreferences = () => {
 
       const resolvedUpdates = { ...updates };
       Object.entries(updates).forEach(([key, value]) => {
-        if (value === 'SYSTEM' || value === 'system' || value === 7) {
+        if (
+          value === 'SYSTEM' ||
+          value === 'system' ||
+          value === CalendarStartDay.SYSTEM
+        ) {
           switch (key) {
             case 'timeZone':
               resolvedUpdates.timeZone = detectTimeZone();

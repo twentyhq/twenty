@@ -74,7 +74,7 @@ export const FormatPreferencesSettings = () => {
       : formatPreferences.numberFormat;
 
   const displayCalendarStartDay: CalendarStartDay =
-    currentWorkspaceMember.calendarStartDay == null ||
+    currentWorkspaceMember.calendarStartDay === null ||
     currentWorkspaceMember.calendarStartDay === CalendarStartDay.SYSTEM
       ? CalendarStartDay.SYSTEM
       : formatPreferences.calendarStartDay;
