@@ -1,4 +1,5 @@
 import { ResizableImage } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImage';
+import { UploadImageExtension } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/UploadImageExtension';
 import { getInitialEmailEditorContent } from '@/workflow/workflow-variables/utils/getInitialEmailEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Bold } from '@tiptap/extension-bold';
@@ -11,7 +12,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Strike } from '@tiptap/extension-strike';
 import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
-import { Placeholder, UndoRedo } from '@tiptap/extensions';
+import { Dropcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
 import { type Editor, useEditor } from '@tiptap/react';
 import { type DependencyList } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,6 +24,7 @@ type UseEmailEditorProps = {
   onUpdate: (editor: Editor) => void;
   onFocus?: (editor: Editor) => void;
   onBlur?: (editor: Editor) => void;
+  onImageUpload?: (file: File) => Promise<string>;
 };
 
 export const useEmailEditor = (
@@ -33,6 +35,7 @@ export const useEmailEditor = (
     onUpdate,
     onFocus,
     onBlur,
+    onImageUpload,
   }: UseEmailEditorProps,
   dependencies?: DependencyList,
 ) => {
@@ -61,6 +64,10 @@ export const useEmailEditor = (
           openOnClick: false,
         }),
         ResizableImage,
+        Dropcursor,
+        UploadImageExtension.configure({
+          onImageUpload,
+        }),
       ],
       content: isDefined(defaultValue)
         ? getInitialEmailEditorContent(defaultValue)
