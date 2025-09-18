@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
@@ -29,6 +29,9 @@ export const useFormatPreferences = () => {
     setWorkspaceMemberFormatPreferences,
   ] = useRecoilState(workspaceMemberFormatPreferencesState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -97,6 +100,15 @@ export const useFormatPreferences = () => {
           idToUpdate: currentWorkspaceMember.id,
           updateOneRecordInput: workspaceMemberUpdate,
         });
+
+        // Update the currentWorkspaceMemberState with the new backend values
+        setCurrentWorkspaceMember((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            ...workspaceMemberUpdate,
+          };
+        });
       } catch (error) {
         logError(error);
         throw error;
@@ -106,6 +118,7 @@ export const useFormatPreferences = () => {
       currentWorkspaceMember,
       updateOneRecord,
       setWorkspaceMemberFormatPreferences,
+      setCurrentWorkspaceMember,
     ],
   );
 
@@ -157,6 +170,15 @@ export const useFormatPreferences = () => {
           idToUpdate: currentWorkspaceMember.id,
           updateOneRecordInput: workspaceMemberUpdate,
         });
+
+        // Update the currentWorkspaceMemberState with the new backend values
+        setCurrentWorkspaceMember((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            ...workspaceMemberUpdate,
+          };
+        });
       } catch (error) {
         logError(error);
         throw error;
@@ -166,6 +188,7 @@ export const useFormatPreferences = () => {
       currentWorkspaceMember,
       updateOneRecord,
       setWorkspaceMemberFormatPreferences,
+      setCurrentWorkspaceMember,
     ],
   );
 
