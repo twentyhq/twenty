@@ -9,6 +9,7 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { BORDER_COMMON } from 'twenty-ui/theme';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
@@ -47,11 +48,11 @@ export const RecordTableCellFocusedPortalContent = () => {
   );
 
   const arePositionsDifferent =
-    hoverPosition?.row !== focusPosition.row ||
-    hoverPosition?.column !== focusPosition.column;
+    hoverPosition?.row !== focusPosition?.row ||
+    hoverPosition?.column !== focusPosition?.column;
 
   const handleContainerMouseMove = () => {
-    if (arePositionsDifferent) {
+    if (arePositionsDifferent && isDefined(focusPosition)) {
       onMoveHoverToCurrentCell(focusPosition);
     }
   };

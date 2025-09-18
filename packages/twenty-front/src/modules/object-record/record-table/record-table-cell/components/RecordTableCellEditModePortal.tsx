@@ -7,8 +7,10 @@ import { RecordTableCellEditMode } from '@/object-record/record-table/record-tab
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
 import { RecordTableCellHotkeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHotkeysEffect';
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
+import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellEditModePortal = () => {
   const focusedCellPosition = useRecoilComponentValue(
@@ -23,7 +25,9 @@ export const RecordTableCellEditModePortal = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  if (!focusedCellPosition) {
+  const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
+
+  if (!isDefined(focusedCellPosition) || !isDefined(cellFocusId)) {
     return null;
   }
 
@@ -42,7 +46,7 @@ export const RecordTableCellEditModePortal = () => {
           </RecordTableCellEditMode>
         </RecordTableCellPortalRootContainer>
       )}
-      <RecordTableCellHotkeysEffect />
+      <RecordTableCellHotkeysEffect cellFocusId={cellFocusId} />
     </RecordTableCellPortalWrapper>
   );
 };
