@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -9,7 +9,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
-import { findOrThrow } from '~/utils/array/findOrThrow';
 import { formatNumber } from '~/utils/format/formatNumber';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import {
@@ -18,7 +17,7 @@ import {
 } from '@/billing/types/billing-price-tiers.type';
 import { useBillingWording } from '@/billing/hooks/useBillingWording';
 import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { useRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
@@ -89,14 +88,14 @@ export const MeteredPriceSelector = ({
     selectedPriceId &&
     selectedPriceId !== currentMeteredBillingPrice?.stripePriceId;
 
-  const isUpgrade = useMemo(() => {
+  const isUpgrade = () => {
     if (!isChanged || !selectedPrice || !currentMeteredBillingPrice)
       return false;
     return (
       (selectedPrice.tiers as BillingPriceTiers)[0].flatAmount >
       (currentMeteredBillingPrice.tiers as BillingPriceTiers)[0].flatAmount
     );
-  }, [currentMeteredBillingPrice, isChanged, selectedPrice]);
+  };
 
   const handleChange = (priceId: string) => {
     setSelectedPriceId(priceId);
@@ -168,21 +167,21 @@ export const MeteredPriceSelector = ({
         />
         {isChanged && (
           <StyledButton
-            title={isUpgrade ? t`Upgrade` : t`Downgrade`}
+            title={isUpgrade() ? t`Upgrade` : t`Downgrade`}
             onClick={handleOpenConfirm}
             variant="primary"
             isLoading={isUpdating}
             disabled={!isChanged}
-            accent={isUpgrade ? 'blue' : 'danger'}
+            accent={isUpgrade() ? 'blue' : 'danger'}
           />
         )}
       </StyledRow>
       <ConfirmationModal
         modalId={confirmModalId}
-        title={isUpgrade ? t`Confirm upgrade` : t`Confirm downgrade`}
+        title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
         subtitle={t`Confirm changing your current credit plan.`}
-        confirmButtonText={isUpgrade ? t`Upgrade` : t`Downgrade`}
-        confirmButtonAccent={isUpgrade ? 'blue' : 'danger'}
+        confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
+        confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
         loading={isUpdating}
         onConfirmClick={handleConfirmClick}
       />

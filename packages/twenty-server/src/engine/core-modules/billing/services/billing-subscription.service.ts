@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { Not, Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { differenceInDays } from 'date-fns';
 
 import type Stripe from 'stripe';
@@ -31,7 +31,6 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { LicensedBillingSubscriptionItem } from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
@@ -50,7 +49,7 @@ import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { ensureFutureStartDate } from 'src/engine/core-modules/billing/utils/billing-phase.utils';
+import { ensureFutureStartDate } from 'src/engine/core-modules/billing/utils/ensure-future-start-date.util';
 
 @Injectable()
 export class BillingSubscriptionService {

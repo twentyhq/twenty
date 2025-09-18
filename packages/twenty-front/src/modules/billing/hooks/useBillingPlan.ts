@@ -3,7 +3,6 @@ import {
   useListPlansQuery,
 } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { findOrThrow } from '~/utils/array/findOrThrow';
 import {
   BillingPlanKey,
   type BillingPriceLicensedDto,
@@ -12,7 +11,7 @@ import {
   BillingUsageType,
 } from '~/generated/graphql';
 import { type MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
-import { isDefined } from 'twenty-shared/utils';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { useRecoilValue } from 'recoil';
 
 export const useBillingPlan = () => {

@@ -1,15 +1,13 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from '@/utils';
 
 export const findOrThrow = <T>(
   array: T[],
   predicate: (value: T) => boolean,
-  error?: Error,
+  error: Error =  new Error('Element not found'),
 ): T => {
   const result = array.find(predicate);
 
-  if (!isDefined(result)) {
-    throw error ?? new Error('Element not found');
-  }
+  assertIsDefinedOrThrow(result, error)
 
   return result;
 };

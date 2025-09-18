@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
@@ -14,7 +15,6 @@ import {
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { validator } from 'src/utils/assert-is-defined';
 
 @Injectable()
 export class BillingWebhookAlertService {
@@ -32,7 +32,7 @@ export class BillingWebhookAlertService {
 
     const stripeMeterId = alert.usage_threshold?.meter;
 
-    validator.assertIsDefined(stripeMeterId);
+    assertIsDefinedOrThrow(stripeMeterId);
 
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(

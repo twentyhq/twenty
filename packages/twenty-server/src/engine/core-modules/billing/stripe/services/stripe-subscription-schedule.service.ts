@@ -7,7 +7,7 @@ import type Stripe from 'stripe';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/billing-phase.utils';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()
 export class StripeSubscriptionScheduleService {

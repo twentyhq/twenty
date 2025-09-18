@@ -6,7 +6,7 @@ import type { MeteredBillingPrice } from '@/billing/types/billing-price-tiers.ty
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { findOrThrow } from '~/utils/array/findOrThrow';
+import { findOrThrow } from 'twenty-shared/utils';
 
 export const useNextBillingPhase = () => {
   const { getPriceAndBillingUsageByPriceId, getPlanByPriceId } =

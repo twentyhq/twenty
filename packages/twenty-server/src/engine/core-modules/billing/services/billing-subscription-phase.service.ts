@@ -3,18 +3,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  findOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 
 import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
-import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/billing-phase.utils';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { validator } from 'src/utils/assert-is-defined';
 
 @Injectable()
 export class BillingSubscriptionPhaseService {
@@ -99,7 +101,7 @@ export class BillingSubscriptionPhaseService {
   ): string {
     const licensedItem = findOrThrow(phase.items!, (i) => i.quantity != null);
 
-    validator.assertIsDefined(licensedItem.price);
+    assertIsDefinedOrThrow(licensedItem.price);
 
     return licensedItem.price;
   }
@@ -132,7 +134,7 @@ export class BillingSubscriptionPhaseService {
     const metered = findOrThrow(phase.items!, (i) => i.quantity == null);
     const meteredPriceId = metered.price;
 
-    validator.assertIsDefined(meteredPriceId);
+    assertIsDefinedOrThrow(meteredPriceId);
 
     const meteredPrice = await this.billingPriceRepository.findOneOrFail({
       where: {

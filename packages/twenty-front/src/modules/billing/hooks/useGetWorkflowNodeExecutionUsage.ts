@@ -2,7 +2,7 @@ import {
   BillingProductKey,
   useGetMeteredProductsUsageQuery,
 } from '~/generated-metadata/graphql';
-import { findOrThrow } from '~/utils/array/findOrThrow';
+import { findOrThrow } from 'twenty-shared/utils';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
   const { data, loading } = useGetMeteredProductsUsageQuery();
@@ -20,13 +20,11 @@ export const useGetWorkflowNodeExecutionUsage = () => {
   };
 
   const getWorkflowNodeExecutionUsage = () => {
-    const workflowUsage = findOrThrow(
+    return findOrThrow(
       getMeteredProductUsage(),
       (productUsage) =>
         productUsage.productKey === BillingProductKey.WORKFLOW_NODE_EXECUTION,
     );
-
-    return workflowUsage;
   };
 
   return {

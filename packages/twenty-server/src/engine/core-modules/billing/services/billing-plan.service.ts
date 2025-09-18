@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
+import { findOrThrow } from 'twenty-shared/utils';
 
 import {
   BillingException,
@@ -16,7 +17,6 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
-import { findOrThrow } from 'src/utils/find-or-throw.util';
 
 @Injectable()
 export class BillingPlanService {
@@ -35,7 +35,7 @@ export class BillingPlanService {
     priceUsageBased: BillingUsageType;
     productKey: BillingProductKey;
   }): Promise<BillingProduct[]> {
-    const products = await this.billingProductRepository.find({
+    return await this.billingProductRepository.find({
       where: {
         metadata: JsonContains({
           priceUsageBased,
@@ -46,8 +46,6 @@ export class BillingPlanService {
       },
       relations: ['billingPrices'],
     });
-
-    return products;
   }
 
   async getPlanBaseProduct(planKey: BillingPlanKey): Promise<BillingProduct> {

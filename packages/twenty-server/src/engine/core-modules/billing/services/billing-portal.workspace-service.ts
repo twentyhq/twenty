@@ -3,7 +3,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  findOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -27,10 +31,8 @@ import { assert } from 'src/utils/assert';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { findOrThrow } from 'src/utils/find-or-throw.util';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { validator } from 'src/utils/assert-is-defined';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -100,8 +102,8 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    validator.assertIsDefined(customer);
-    validator.assertIsDefined(customer.stripeCustomerId);
+    assertIsDefinedOrThrow(customer);
+    assertIsDefinedOrThrow(customer.stripeCustomerId);
 
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({
