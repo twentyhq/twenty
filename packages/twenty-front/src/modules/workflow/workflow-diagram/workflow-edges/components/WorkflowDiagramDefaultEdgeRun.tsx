@@ -13,6 +13,7 @@ export const WorkflowDiagramDefaultEdgeRun = ({
   targetPosition,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeRunProps) => {
   const { segments } = getEdgePath({
     sourceX,
@@ -23,6 +24,7 @@ export const WorkflowDiagramDefaultEdgeRun = ({
     targetPosition,
     markerStart,
     markerEnd,
+    strategy: data?.edgePathStrategy,
   });
 
   return (

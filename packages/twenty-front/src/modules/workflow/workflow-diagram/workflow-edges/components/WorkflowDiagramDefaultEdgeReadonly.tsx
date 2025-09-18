@@ -15,6 +15,7 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
   targetPosition,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeReadonlyProps) => {
   const theme = useTheme();
 
@@ -27,6 +28,7 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
     targetPosition,
     markerStart,
     markerEnd,
+    strategy: data?.edgePathStrategy,
   });
 
   return (
