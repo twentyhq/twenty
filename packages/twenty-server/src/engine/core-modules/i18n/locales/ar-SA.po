@@ -2213,6 +2213,11 @@ msgstr "هدف الملاحظة الخاص بالفرصة"
 msgid "NoteTarget person"
 msgstr "هدف الملاحظة الخاص بالشخص"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -2734,7 +2739,7 @@ msgid "Statuses cannot be set manually."
 msgstr "لا يمكن ضبط الحالات يدويًا."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "المخطط ليس نموذجًا"
 
@@ -3213,6 +3218,11 @@ msgstr "لم يتم إنشاء المستخدم بالبريد الإلكترو�
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "تنسيق التاريخ المفضل للمستخدم"
+
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr ""
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
