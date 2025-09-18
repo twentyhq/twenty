@@ -16,12 +16,19 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { type WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
+export type CreatedDeletedUpdatedActions<TActions extends WorkspaceMigrationActionV2> =
+  {
+    created: TActions[];
+    deleted: TActions[];
+    updated: TActions[];
+  };
+
 export type SuccessfulEntityMigrationBuildResult<
   TActions extends WorkspaceMigrationActionV2,
   TFlatEntity extends FlatEntity,
 > = {
   status: 'success';
-  actions: TActions[];
+  actions: CreatedDeletedUpdatedActions<TActions>;
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
 
@@ -57,10 +64,7 @@ export type ValidateAndBuilActionsReturnType<
   TActions extends WorkspaceMigrationActionV2,
 > = {
   failed: FailedFlatEntityValidation<TFlatEntity>[];
-  created: TActions[];
-  deleted: TActions[];
-  updated: TActions[];
-};
+} & CreatedDeletedUpdatedActions<TActions>;
 
 export type FlatEntityValidationArgs<
   TFlatEntity extends FlatEntity,
@@ -219,11 +223,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
     return {
       status: 'success',
-      actions: [
-        ...validateAndBuildResult.deleted,
-        ...validateAndBuildResult.created,
-        ...validateAndBuildResult.updated,
-      ],
+      actions: {
+        created: validateAndBuildResult.created,
+        deleted: validateAndBuildResult.deleted,
+        updated: validateAndBuildResult.updated,
+      },
       optimisticFlatEntityMaps,
     };
   }
