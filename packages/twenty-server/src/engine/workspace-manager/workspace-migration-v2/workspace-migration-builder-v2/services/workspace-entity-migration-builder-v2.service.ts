@@ -16,12 +16,13 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { type WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
-export type CreatedDeletedUpdatedActions<TActions extends WorkspaceMigrationActionV2> =
-  {
-    created: TActions[];
-    deleted: TActions[];
-    updated: TActions[];
-  };
+export type CreatedDeletedUpdatedActions<
+  TActions extends WorkspaceMigrationActionV2,
+> = {
+  created: TActions[];
+  deleted: TActions[];
+  updated: TActions[];
+};
 
 export type SuccessfulEntityMigrationBuildResult<
   TActions extends WorkspaceMigrationActionV2,
