@@ -749,9 +749,9 @@ msgstr "예상치 못한 오류가 발생했습니다"
 msgid "and"
 msgstr "및"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
+msgid "Any field"
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
