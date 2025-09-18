@@ -69,7 +69,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true })}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={progressBarValue}

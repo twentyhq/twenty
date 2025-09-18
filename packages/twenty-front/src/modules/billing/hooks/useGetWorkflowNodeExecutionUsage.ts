@@ -5,7 +5,11 @@ import {
 import { findOrThrow } from 'twenty-shared/utils';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
-  const { data, loading } = useGetMeteredProductsUsageQuery();
+  const { data, loading, refetch } = useGetMeteredProductsUsageQuery();
+
+  const refetchMeteredProductsUsage = () => {
+    refetch();
+  };
 
   const isGetMeteredProductsUsageQueryLoaded = () => {
     return data?.getMeteredProductsUsage && !loading;
@@ -28,6 +32,7 @@ export const useGetWorkflowNodeExecutionUsage = () => {
   };
 
   return {
+    refetchMeteredProductsUsage,
     isGetMeteredProductsUsageQueryLoaded:
       isGetMeteredProductsUsageQueryLoaded(),
     getWorkflowNodeExecutionUsage,

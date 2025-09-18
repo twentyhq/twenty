@@ -20,6 +20,7 @@ import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { useRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
+import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -48,6 +49,8 @@ export const MeteredPriceSelector = ({
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const { refetchMeteredProductsUsage } = useGetWorkflowNodeExecutionUsage();
 
   const { getIntervalLabel } = useBillingWording();
 
@@ -78,11 +81,9 @@ export const MeteredPriceSelector = ({
     undefined,
   );
 
-  const selectedPrice = selectedPriceId
-    ? meteredBillingPrices.find(
-        ({ stripePriceId }) => stripePriceId === selectedPriceId,
-      )
-    : undefined;
+  const selectedPrice = meteredBillingPrices.find(
+    ({ stripePriceId }) => stripePriceId === selectedPriceId,
+  );
 
   const isChanged =
     selectedPriceId && selectedPriceId !== currentMeteredPrice?.stripePriceId;
@@ -130,6 +131,7 @@ export const MeteredPriceSelector = ({
             data?.setMeteredSubscriptionPrice.billingSubscriptions,
         };
         setCurrentWorkspace(newCurrentWorkspace);
+        refetchMeteredProductsUsage();
       }
       enqueueSuccessSnackBar({ message: t`Price updated.` });
       setCurrentMeteredPrice(

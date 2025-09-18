@@ -201,7 +201,7 @@ export class BillingSubscriptionService {
       mappedCurrentMeteredId,
       mappedNextMeteredId,
     } = await this.loadInitialState(workspace, meteredPriceId);
-
+    const isUpgrade = targetCap > currentCap;
     const {
       subscription: updatedSubscription,
       schedule: updatedSchedule,
@@ -227,6 +227,7 @@ export class BillingSubscriptionService {
       mappedCurrentMeteredId,
       mappedNextMeteredId,
       updatedSubscription.current_period_end,
+      isUpgrade,
     );
 
     const nextForUpdate = await this.dedupeNextPhase(
@@ -696,6 +697,7 @@ export class BillingSubscriptionService {
     mappedCurrentMeteredId: string,
     mappedNextMeteredId: string,
     subscriptionCurrentPeriodEnd: number | undefined,
+    mutateCurrentNow: boolean,
   ): Promise<{
     currentSnap: Stripe.SubscriptionScheduleUpdateParams.Phase | undefined;
     nextSnap: Stripe.SubscriptionScheduleUpdateParams.Phase | undefined;
@@ -728,13 +730,15 @@ export class BillingSubscriptionService {
         )
       : currentLicensedId;
     const currentMutated = currentSnap
-      ? this.billingSubscriptionPhaseService.buildSnapshot(
-          currentSnap,
-          currentLicensedId,
-          currentPhaseDetails.quantity,
-          mappedCurrentMeteredId,
-          await this.getBillingThresholdsByPriceId(currentLicensedId),
-        )
+      ? mutateCurrentNow
+        ? this.billingSubscriptionPhaseService.buildSnapshot(
+            currentSnap,
+            currentLicensedId,
+            currentPhaseDetails.quantity,
+            mappedCurrentMeteredId,
+            await this.getBillingThresholdsByPriceId(currentLicensedId),
+          )
+        : currentSnap
       : undefined;
 
     const baseItems = (currentSnap?.items ?? nextSnap?.items) as

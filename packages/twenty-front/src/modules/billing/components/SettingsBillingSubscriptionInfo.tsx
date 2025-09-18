@@ -56,6 +56,7 @@ import { useNextPlan } from '@/billing/hooks/useNextPlan';
 import { useNextBillingSeats } from '@/billing/hooks/useNextBillingSeats';
 import { useHasNextBillingPhase } from '@/billing/hooks/useHasNextBillingPhase';
 import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
+import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
   'switch-billing-interval-to-monthly-modal';
@@ -98,6 +99,8 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { openModal } = useModal();
 
+  const { refetchMeteredProductsUsage } = useGetWorkflowNodeExecutionUsage();
+
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const { currentMeteredBillingPrice } = useCurrentMetered();
@@ -114,7 +117,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const nextInterval =
     splitedPhaseItemsInPrices?.nextLicensedPrice?.recurringInterval;
   const nextMeteredBillingPrice = splitedPhaseItemsInPrices.nextMereredPrice;
-
   const subscriptionStatus = useSubscriptionStatus();
 
   const {
@@ -186,6 +188,21 @@ export const SettingsBillingSubscriptionInfo = ({
     ],
   );
 
+  const refreshWorkspace = ({
+    currentBillingSubscription,
+    billingSubscriptions,
+  }: Pick<
+    CurrentWorkspace,
+    'currentBillingSubscription' | 'billingSubscriptions'
+  >) => {
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      currentBillingSubscription,
+      billingSubscriptions,
+    });
+    refetchMeteredProductsUsage();
+  };
+
   const switchInterval = async () => {
     if (isAnyActionLoading || isSwitchingInterval) return;
     setIsSwitchingInterval(true);
@@ -206,14 +223,7 @@ export const SettingsBillingSubscriptionInfo = ({
       if (
         isDefined(data?.switchSubscriptionInterval.currentBillingSubscription)
       ) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription:
-            data.switchSubscriptionInterval.currentBillingSubscription,
-          billingSubscriptions:
-            data?.switchSubscriptionInterval.billingSubscriptions,
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
+        refreshWorkspace(data.switchSubscriptionInterval);
       }
       enqueueSuccessSnackBar({ message });
     } catch {
@@ -242,13 +252,7 @@ export const SettingsBillingSubscriptionInfo = ({
       }
       const { data } = await switchBillingPlan();
       if (isDefined(data?.switchBillingPlan.currentBillingSubscription)) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription:
-            data.switchBillingPlan.currentBillingSubscription,
-          billingSubscriptions: data?.switchBillingPlan.billingSubscriptions,
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
+        refreshWorkspace(data.switchBillingPlan);
       }
       const beautifiedRenewDate = getBeautifiedRenewDate();
       enqueueSuccessSnackBar({
@@ -273,14 +277,7 @@ export const SettingsBillingSubscriptionInfo = ({
       const { data } = await cancelSwitchBillingPlan();
 
       if (isDefined(data?.cancelSwitchBillingPlan.currentBillingSubscription)) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription:
-            data?.cancelSwitchBillingPlan.currentBillingSubscription,
-          billingSubscriptions:
-            data?.cancelSwitchBillingPlan.billingSubscriptions,
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
+        refreshWorkspace(data.cancelSwitchBillingPlan);
       }
 
       enqueueSuccessSnackBar({
@@ -303,14 +300,7 @@ export const SettingsBillingSubscriptionInfo = ({
       if (
         isDefined(data?.cancelSwitchBillingInterval.currentBillingSubscription)
       ) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription:
-            data?.cancelSwitchBillingInterval.currentBillingSubscription,
-          billingSubscriptions:
-            data?.cancelSwitchBillingInterval.billingSubscriptions,
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
+        refreshWorkspace(data.cancelSwitchBillingInterval);
       }
       enqueueSuccessSnackBar({
         message: t`Interval switching has been cancelled.`,
@@ -333,14 +323,7 @@ export const SettingsBillingSubscriptionInfo = ({
       if (
         isDefined(data?.cancelSwitchMeteredPrice?.currentBillingSubscription)
       ) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription:
-            data.cancelSwitchMeteredPrice.currentBillingSubscription,
-          billingSubscriptions:
-            data.cancelSwitchMeteredPrice.billingSubscriptions,
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
+        refreshWorkspace(data.cancelSwitchMeteredPrice);
       }
 
       enqueueSuccessSnackBar({
