@@ -104,10 +104,15 @@ export type WorkflowDiagramEdgeLabelOptions = {
   label: MessageDescriptor;
 };
 
+export type WorkflowDiagramEdgePathStrategy =
+  | 'smooth-step-path-to-target'
+  | 'bypass-source-node-on-right-side';
+
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
   edgeExecutionStatus?: StepStatus;
   labelOptions?: WorkflowDiagramEdgeLabelOptions;
+  edgePathStrategy?: WorkflowDiagramEdgePathStrategy;
 };
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;

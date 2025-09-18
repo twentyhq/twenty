@@ -70,6 +70,7 @@ export const generateWorkflowDiagram = ({
         const { nodes: iteratorNodes, edges: iteratorEdges } =
           generateNodesAndEdgesForIteratorNode({
             step,
+            steps,
             xPos,
             yPos: levelYPos,
             nodes,
@@ -86,6 +87,7 @@ export const generateWorkflowDiagram = ({
         const { nodes: defaultNodes, edges: defaultEdges } =
           generateNodesAndEdgesForDefaultNode({
             step,
+            steps,
             xPos,
             yPos: levelYPos,
             nodes,
