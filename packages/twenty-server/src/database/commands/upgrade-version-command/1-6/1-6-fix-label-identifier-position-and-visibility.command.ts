@@ -13,11 +13,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:1-6:fix-label-identifier-position',
+  name: 'upgrade:1-6:fix-label-identifier-position-and-visibility',
   description:
     'Fix label identifier position to ensure it has the minimal position in each view',
 })
-export class FixLabelIdentifierPositionCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class FixLabelIdentifierPositionAndVisibilityCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
@@ -35,7 +35,7 @@ export class FixLabelIdentifierPositionCommand extends ActiveOrSuspendedWorkspac
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
-      `Checking label identifiers position for workspace ${workspaceId}`,
+      `Checking label identifiers position and visibility for workspace ${workspaceId}`,
     );
 
     // Get all views with their related object metadata and view fields
@@ -72,29 +72,51 @@ export class FixLabelIdentifierPositionCommand extends ActiveOrSuspendedWorkspac
         ...viewFields.map((viewField: ViewFieldEntity) => viewField.position),
       );
 
+      const labelIdentifierPositionIsAlreadyTheMinimalPosition =
+        labelIdentifierViewField.position === minPosition;
+
+      const labelIdentifierIsAlreadyVisible =
+        labelIdentifierViewField.isVisible;
+
       // Check if label identifier already has the minimal position
-      if (labelIdentifierViewField.position === minPosition) {
-        this.logger.log(
-          `Label identifier position is already the minimal position for view ${view.id} in workspace ${workspaceId}`,
-        );
+      if (
+        labelIdentifierPositionIsAlreadyTheMinimalPosition &&
+        labelIdentifierIsAlreadyVisible
+      ) {
         continue;
       }
 
-      // Update the label identifier position to be the minimal one
-      const newPosition = minPosition - 1;
+      if (!labelIdentifierPositionIsAlreadyTheMinimalPosition) {
+        // Update the label identifier position to be the minimal one
+        const newPosition = minPosition - 1;
 
-      if (!options.dryRun) {
-        await this.viewFieldRepository.update(
-          { id: labelIdentifierViewField.id },
-          { position: newPosition },
-        );
+        if (!options.dryRun) {
+          await this.viewFieldRepository.update(
+            { id: labelIdentifierViewField.id },
+            { position: newPosition },
+          );
+
+          this.logger.log(
+            `Fixed label identifier position for view ${view.id} in workspace ${workspaceId}: ${labelIdentifierViewField.position} -> ${newPosition}`,
+          );
+        } else {
+          this.logger.log(
+            `Would fix label identifier position for view ${view.id} in workspace ${workspaceId}: ${labelIdentifierViewField.position} -> ${newPosition}`,
+          );
+        }
+      }
+
+      if (!labelIdentifierIsAlreadyVisible) {
+        // Update the label identifier visibility to be true
+        if (!options.dryRun) {
+          await this.viewFieldRepository.update(
+            { id: labelIdentifierViewField.id },
+            { isVisible: true },
+          );
+        }
 
         this.logger.log(
-          `Fixed label identifier position for view ${view.id} in workspace ${workspaceId}: ${labelIdentifierViewField.position} -> ${newPosition}`,
-        );
-      } else {
-        this.logger.log(
-          `Would fix label identifier position for view ${view.id} in workspace ${workspaceId}: ${labelIdentifierViewField.position} -> ${newPosition}`,
+          `Fixed label identifier visibility for view ${view.id} in workspace ${workspaceId}: ${labelIdentifierViewField.isVisible} -> true`,
         );
       }
     }

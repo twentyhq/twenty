@@ -361,6 +361,53 @@ describe('ViewFieldService', () => {
         ),
       );
     });
+
+    it('should throw exception when attempting to make label metadata identifier invisible', async () => {
+      const workspaceId = 'workspace-id';
+      const updateData = { isVisible: false };
+      const labelIdentifierFieldMetadataId =
+        'label-identifier-field-matadata-id';
+
+      const labelIdentifierViewField = {
+        ...mockViewField,
+        id: labelIdentifierFieldMetadataId,
+        position: 0,
+      };
+
+      const mockView = {
+        id: 'view-id',
+        objectMetadata: {
+          labelIdentifierFieldMetadataId,
+        },
+        viewFields: [labelIdentifierViewField, mockViewField],
+      } as ViewEntity;
+
+      jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
+        if (id === labelIdentifierFieldMetadataId) {
+          return Promise.resolve(labelIdentifierViewField);
+        }
+
+        return Promise.resolve(null);
+      });
+      jest
+        .spyOn(
+          viewFieldService['viewService'],
+          'findByIdWithRelatedObjectMetadata',
+        )
+        .mockResolvedValue(mockView);
+
+      await expect(
+        viewFieldService.update(
+          labelIdentifierViewField.id,
+          workspaceId,
+          updateData,
+        ),
+      ).rejects.toThrow(
+        new UserInputError('Label metadata identifier must stay visible.', {
+          userFriendlyMessage: 'Record text must stay visible.',
+        }),
+      );
+    });
   });
 
   describe('delete', () => {

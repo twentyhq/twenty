@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FixLabelIdentifierPositionCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position.command';
+import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -24,7 +24,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     WorkspaceSchemaManagerModule,
     WorkspaceMetadataVersionModule,
   ],
-  providers: [FixLabelIdentifierPositionCommand],
-  exports: [FixLabelIdentifierPositionCommand],
+  providers: [FixLabelIdentifierPositionAndVisibilityCommand],
+  exports: [FixLabelIdentifierPositionAndVisibilityCommand],
 })
 export class V1_6_UpgradeVersionCommandModule {}

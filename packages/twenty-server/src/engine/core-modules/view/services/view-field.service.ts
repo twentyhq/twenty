@@ -180,6 +180,14 @@ export class ViewFieldService {
       );
     }
 
+    if (this.disablesVisibility(updateData)) {
+      await this.verifyLabelMetadataIdentifierIsStillVisibleOrThrow(
+        existingViewField,
+        workspaceId,
+        updateData,
+      );
+    }
+
     const updatedViewField = await this.viewFieldRepository.save({
       id,
       ...updateData,
@@ -224,10 +232,22 @@ export class ViewFieldService {
     return viewField;
   }
 
-  private async verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
+  private updatesPosition(
+    data: Partial<ViewFieldEntity>,
+  ): data is Partial<ViewFieldEntity> & { position: number } {
+    return isDefined(data.position);
+  }
+
+  private disablesVisibility(
+    data: Partial<ViewFieldEntity>,
+  ): data is Partial<ViewFieldEntity> & { isVisible: boolean } {
+    return data.isVisible === false;
+  }
+
+  private async verifyLabelMetadataIdentifierIsStillVisibleOrThrow(
     viewField: ViewFieldEntity,
     workspaceId: string,
-    newViewField: Partial<ViewFieldEntity> & { position: number },
+    newViewField: Partial<ViewFieldEntity> & { isVisible: boolean },
   ) {
     const view = await this.viewService.findByIdWithRelatedObjectMetadata(
       viewField.viewId,
@@ -241,8 +261,36 @@ export class ViewFieldService {
     const labelMetadataIdentifierFieldMetadataId =
       view.objectMetadata.labelIdentifierFieldMetadataId;
 
+    if (labelMetadataIdentifierFieldMetadataId !== viewField.id) {
+      return;
+    }
+
+    if (newViewField.isVisible === false) {
+      throw new UserInputError('Label metadata identifier must stay visible.', {
+        userFriendlyMessage: 'Record text must stay visible.',
+      });
+    }
+  }
+
+  private async verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
+    existingViewField: ViewFieldEntity,
+    workspaceId: string,
+    newViewField: Partial<ViewFieldEntity> & { position: number },
+  ) {
+    const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+      existingViewField.viewId,
+      workspaceId,
+    );
+
+    if (!isDefined(view)) {
+      throw new Error(`View not found: ${existingViewField.viewId}`);
+    }
+
+    const labelMetadataIdentifierFieldMetadataId =
+      view.objectMetadata.labelIdentifierFieldMetadataId;
+
     const viewFieldsWithUpdatedPosition = view.viewFields.map((field) =>
-      field.id === viewField.id
+      field.id === existingViewField.id
         ? { ...field, position: newViewField.position }
         : field,
     );
@@ -254,8 +302,11 @@ export class ViewFieldService {
         viewFieldsWithUpdatedPosition[0],
       );
 
-    if (labelMetadataIdentifierFieldMetadataId === viewField.id) {
-      if (fieldMetadataIdWithMinPositionInViewAfterUpdate.id !== viewField.id) {
+    if (labelMetadataIdentifierFieldMetadataId === existingViewField.id) {
+      if (
+        fieldMetadataIdWithMinPositionInViewAfterUpdate.id !==
+        existingViewField.id
+      ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
@@ -265,7 +316,10 @@ export class ViewFieldService {
         );
       }
     } else {
-      if (fieldMetadataIdWithMinPositionInViewAfterUpdate.id === viewField.id) {
+      if (
+        fieldMetadataIdWithMinPositionInViewAfterUpdate.id ===
+        existingViewField.id
+      ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
           {
@@ -275,11 +329,5 @@ export class ViewFieldService {
         );
       }
     }
-  }
-
-  private updatesPosition(
-    data: Partial<ViewFieldEntity>,
-  ): data is Partial<ViewFieldEntity> & { position: number } {
-    return isDefined(data.position);
   }
 }
