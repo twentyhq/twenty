@@ -5,24 +5,21 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollAndZIndexEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
-    isRecordTableScrolledHorizontallyComponentState,
-  );
+  const [
+    isRecordTableScrolledHorizontally,
+    setIsRecordTableScrolledHorizontally,
+  ] = useRecoilComponentState(isRecordTableScrolledHorizontallyComponentState);
 
-  const setIsRecordTableScrolledVertically = useSetRecoilComponentState(
-    isRecordTableScrolledVerticallyComponentState,
-  );
-
-  const [isScrolledVertically, setIsScrolledVertically] = useState(false);
-  const [isScrolledHorizontally, setIsScrolledHorizontally] = useState(false);
+  const [isRecordTableScrolledVertically, setIsRecordTableScrolledVertically] =
+    useRecoilComponentState(isRecordTableScrolledVerticallyComponentState);
 
   useEffect(() => {
     if (!isDefined(scrollWrapperHTMLElement)) {
@@ -34,8 +31,7 @@ export const RecordTableScrollAndZIndexEffect = () => {
 
       const newIsScrolledVertically = target?.scrollTop > 0;
 
-      if (newIsScrolledVertically !== isScrolledVertically) {
-        setIsScrolledVertically(newIsScrolledVertically);
+      if (newIsScrolledVertically !== isRecordTableScrolledVertically) {
         setIsRecordTableScrolledVertically(newIsScrolledVertically);
 
         const newVisibilityOfShadows = newIsScrolledVertically
@@ -50,8 +46,7 @@ export const RecordTableScrollAndZIndexEffect = () => {
 
       const newIsScrolledHorizontally = target?.scrollLeft > 0;
 
-      if (newIsScrolledHorizontally !== isScrolledHorizontally) {
-        setIsScrolledHorizontally(newIsScrolledHorizontally);
+      if (newIsScrolledHorizontally !== isRecordTableScrolledHorizontally) {
         setIsRecordTableScrolledHorizontally(newIsScrolledHorizontally);
 
         const newVisibilityOfShadows = newIsScrolledHorizontally
@@ -72,8 +67,8 @@ export const RecordTableScrollAndZIndexEffect = () => {
     };
   }, [
     scrollWrapperHTMLElement,
-    isScrolledVertically,
-    isScrolledHorizontally,
+    isRecordTableScrolledVertically,
+    isRecordTableScrolledHorizontally,
     setIsRecordTableScrolledVertically,
     setIsRecordTableScrolledHorizontally,
   ]);
