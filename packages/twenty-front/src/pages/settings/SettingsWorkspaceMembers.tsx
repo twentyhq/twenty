@@ -136,11 +136,18 @@ export const SettingsWorkspaceMembers = () => {
     setWorkspaceMemberToDelete(undefined);
   };
 
-  const handleImpersonate = async (workspaceMemberId: string) => {
+  const handleImpersonate = async (targetWorkspaceMember: WorkspaceMember) => {
+    if (!targetWorkspaceMember.userId || !currentWorkspace?.id) {
+      enqueueErrorSnackBar({
+        message: t`Cannot impersonate selected user`,
+        options: { duration: 2000 },
+      });
+      return;
+    }
+
     try {
-      const variables = { targetWorkspaceMemberId: workspaceMemberId };
       const { data, errors } = await impersonateByWorkspaceMemberId({
-        variables,
+        variables: { targetUserId: targetWorkspaceMember.userId },
       });
 
       if (isDefined(errors)) {
@@ -416,7 +423,7 @@ export const SettingsWorkspaceMembers = () => {
                         <StyledButtonContainer>
                           <ManageMembersDropdownMenu
                             dropdownId={`workspace-member-actions-${workspaceMember.id}`}
-                            workspaceMemberId={workspaceMember.id}
+                            workspaceMember={workspaceMember}
                             onImpersonate={handleImpersonate}
                             onDelete={(id) => {
                               setWorkspaceMemberToDelete(id);

@@ -1588,7 +1588,7 @@ export type Mutation = {
 
 
 export type MutationImpersonateWorkspaceUserByIdArgs = {
-  targetWorkspaceMemberId: Scalars['UUID'];
+  targetUserId: Scalars['UUID'];
 };
 
 
@@ -4343,7 +4343,7 @@ export type ImpersonateMutationVariables = Exact<{
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type ImpersonateWorkspaceUserByIdMutationVariables = Exact<{
-  targetWorkspaceMemberId: Scalars['UUID'];
+  targetUserId: Scalars['UUID'];
 }>;
 
 
@@ -6953,8 +6953,8 @@ export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMuta
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
 export const ImpersonateWorkspaceUserByIdDocument = gql`
-    mutation ImpersonateWorkspaceUserById($targetWorkspaceMemberId: UUID!) {
-  ImpersonateWorkspaceUserById(targetWorkspaceMemberId: $targetWorkspaceMemberId) {
+    mutation ImpersonateWorkspaceUserById($targetUserId: UUID!) {
+  ImpersonateWorkspaceUserById(targetUserId: $targetUserId) {
     tokens {
       accessOrWorkspaceAgnosticToken {
         token
@@ -6983,7 +6983,7 @@ export type ImpersonateWorkspaceUserByIdMutationFn = Apollo.MutationFunction<Imp
  * @example
  * const [impersonateWorkspaceUserByIdMutation, { data, loading, error }] = useImpersonateWorkspaceUserByIdMutation({
  *   variables: {
- *      targetWorkspaceMemberId: // value for 'targetWorkspaceMemberId'
+ *      targetUserId: // value for 'targetUserId'
  *   },
  * });
  */

@@ -147,7 +147,7 @@ describe('WorkspaceImpersonationService', () => {
     };
   };
 
-  it('impersonates successfully by userWorkspaceId', async () => {
+  it('impersonates successfully by userId', async () => {
     const {
       manager,
       permissionsService,
@@ -186,7 +186,7 @@ describe('WorkspaceImpersonationService', () => {
     const result = await service.impersonateWorkspaceUserById({
       workspaceId,
       impersonatorUserWorkspaceId: impersonatorUWId,
-      targetWorkspaceMemberId: 'member-id',
+      targetUserId: targetUserId,
     });
 
     expect(result.tokens).toEqual(tokenResult);
@@ -223,7 +223,7 @@ describe('WorkspaceImpersonationService', () => {
       service.impersonateWorkspaceUserById({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
-        targetWorkspaceMemberId: 'member-id',
+        targetUserId: targetUserId,
       }),
     ).rejects.toThrow(AuthException);
   });
@@ -246,12 +246,12 @@ describe('WorkspaceImpersonationService', () => {
       service.impersonateWorkspaceUserById({
         workspaceId,
         impersonatorUserWorkspaceId: impersonatorUWId,
-        targetWorkspaceMemberId: 'member-id',
+        targetUserId: targetUserId,
       }),
     ).rejects.toThrow(AuthException);
   });
 
-  it('impersonates successfully by workspaceMemberId', async () => {
+  it('impersonates successfully by userId', async () => {
     const {
       manager,
       permissionsService,
@@ -290,7 +290,7 @@ describe('WorkspaceImpersonationService', () => {
     const result = await service.impersonateWorkspaceUserById({
       workspaceId,
       impersonatorUserWorkspaceId: impersonatorUWId,
-      targetWorkspaceMemberId: 'wm-1',
+      targetUserId: targetUserId,
     });
 
     expect(result.tokens).toEqual(tokenResult);

@@ -21,7 +21,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceImpersonationService {
@@ -40,31 +39,14 @@ export class WorkspaceImpersonationService {
   async impersonateWorkspaceUserById({
     workspaceId,
     impersonatorUserWorkspaceId,
-    targetWorkspaceMemberId,
+    targetUserId,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
-    targetWorkspaceMemberId: string;
+    targetUserId: string;
   }): Promise<AuthTokens> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: { id: targetWorkspaceMemberId },
-    });
-
-    if (!workspaceMember) {
-      throw new AuthException(
-        'User workspace not found in current workspace',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
     const target = await this.userWorkspaceRepository.findOne({
-      where: { userId: workspaceMember.userId, workspaceId },
+      where: { userId: targetUserId, workspaceId },
     });
 
     if (!target || target.workspaceId !== workspaceId) {
@@ -123,7 +105,7 @@ export class WorkspaceImpersonationService {
       );
     }
 
-    const { userId: targetUserId, id: targetUserWorkspaceId } = target;
+    const targetUserWorkspaceIdValue = target.id;
     const impersonatorUserId = impersonatorUserWorkspace?.userId ?? null;
     const correlationId = randomUUID();
 
@@ -134,7 +116,7 @@ export class WorkspaceImpersonationService {
 
     await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.attempted',
-      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceId}; workspaceId=${workspaceId}`,
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceIdValue}; workspaceId=${workspaceId}`,
     });
 
     const accessToken = await this.accessTokenService.generateAccessToken({
@@ -143,7 +125,7 @@ export class WorkspaceImpersonationService {
       authProvider: AuthProviderEnum.Impersonation,
       isImpersonating: true,
       impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId: targetUserWorkspaceId,
+      impersonatedUserWorkspaceId: targetUserWorkspaceIdValue,
     });
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: targetUserId,
@@ -152,12 +134,12 @@ export class WorkspaceImpersonationService {
       targetedTokenType: JwtTokenTypeEnum.ACCESS,
       isImpersonating: true,
       impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId: targetUserWorkspaceId,
+      impersonatedUserWorkspaceId: targetUserWorkspaceIdValue,
     });
 
     await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
-      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceId}; workspaceId=${workspaceId}`,
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${targetUserWorkspaceIdValue}; workspaceId=${workspaceId}`,
     });
 
     return {

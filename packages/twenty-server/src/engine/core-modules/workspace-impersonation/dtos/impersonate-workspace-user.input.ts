@@ -9,5 +9,5 @@ export class ImpersonateWorkspaceMemberInput {
   @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()
-  targetWorkspaceMemberId: string;
+  targetUserId: string;
 }

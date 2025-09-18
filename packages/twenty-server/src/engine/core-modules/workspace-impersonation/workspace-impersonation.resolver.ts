@@ -9,6 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { StopImpersonationGuard } from 'src/engine/guards/stop-impersonation.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -27,11 +28,12 @@ export class WorkspaceImpersonationResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     UserAuthGuard,
+    StopImpersonationGuard,
     SettingsPermissionsGuard(PermissionFlagType.IMPERSONATE),
   )
   @Mutation(() => AuthTokens)
   async ImpersonateWorkspaceUserById(
-    @Args() { targetWorkspaceMemberId }: ImpersonateWorkspaceMemberInput,
+    @Args() { targetUserId }: ImpersonateWorkspaceMemberInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ): Promise<AuthTokens> {
@@ -45,7 +47,7 @@ export class WorkspaceImpersonationResolver {
       {
         workspaceId: workspace.id,
         impersonatorUserWorkspaceId: currentUserWorkspace.id,
-        targetWorkspaceMemberId,
+        targetUserId,
       },
     );
   }

@@ -14,6 +14,7 @@ import {
   IconLockOpen,
   IconSettings,
   IconSettingsAutomation,
+  IconSpy,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -89,6 +90,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
       },
+      {
+        key: PermissionFlagType.IMPERSONATE,
+        name: t`Impersonate`,
+        description: t`Impersonate workspace users`,
+        Icon: IconSpy,
+      }
     ];
 
   return (

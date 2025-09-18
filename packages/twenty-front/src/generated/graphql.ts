@@ -1539,7 +1539,7 @@ export type Mutation = {
 
 
 export type MutationImpersonateWorkspaceUserByIdArgs = {
-  targetWorkspaceMemberId: Scalars['UUID'];
+  targetUserId: Scalars['UUID'];
 };
 
 
