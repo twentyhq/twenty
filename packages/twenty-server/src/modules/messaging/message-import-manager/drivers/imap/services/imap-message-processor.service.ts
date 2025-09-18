@@ -140,7 +140,12 @@ export class ImapMessageProcessorService {
     uid: number,
   ): Promise<ParsedMail> {
     try {
-      return await simpleParser(rawContent);
+      return await simpleParser(rawContent, {
+        skipTextToHtml: true,
+        skipImageLinks: true,
+        skipTextLinks: true,
+        keepCidLinks: false,
+      });
     } catch (error) {
       this.logger.error(`Failed to parse message UID ${uid}: ${error.message}`);
       throw error;

@@ -4,11 +4,15 @@ import { JSDOM } from 'jsdom';
 import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
 
+import { safeDecodeURIComponent } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/safe-decode-uri-component.util';
+
 export const extractTextWithoutReplyQuotations = (
   parsed: ParsedMail,
 ): string => {
   if (parsed.text) {
-    return planer.extractFrom(parsed.text, 'text/plain');
+    const extractedText = planer.extractFrom(parsed.text, 'text/plain');
+
+    return safeDecodeURIComponent(extractedText);
   }
 
   if (parsed.html) {
@@ -27,7 +31,9 @@ export const extractTextWithoutReplyQuotations = (
       preserveNewlines: true,
     }).trim();
 
-    return text.replace(/\u00A0/g, ' ');
+    const processedText = text.replace(/\u00A0/g, ' ');
+
+    return safeDecodeURIComponent(processedText);
   }
 
   return '';
