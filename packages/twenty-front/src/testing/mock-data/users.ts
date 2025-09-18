@@ -91,7 +91,7 @@ export const mockCurrentWorkspace: Workspace = {
     status: SubscriptionStatus.Active,
     currentPeriodEnd: new Date().toString(),
     metadata: {
-      plan: PRO_PLAN.planKey
+      plan: PRO_PLAN.planKey,
     },
     phases: [],
     billingSubscriptionItems: [
