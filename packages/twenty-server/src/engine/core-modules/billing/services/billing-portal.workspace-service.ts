@@ -3,12 +3,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  assertIsDefinedOrThrow,
-  findOrThrow,
-  isDefined,
-} from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -102,15 +98,12 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    assertIsDefinedOrThrow(customer);
-    assertIsDefinedOrThrow(customer.stripeCustomerId);
-
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
         workspace,
         stripeSubscriptionLineItems,
-        stripeCustomerId: customer.stripeCustomerId,
+        stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
         withTrialPeriod:
@@ -177,7 +170,10 @@ export class BillingPortalWorkspaceService {
     returnUrlPath?: string,
   ) {
     const lastSubscription = await this.billingSubscriptionRepository.findOne({
-      where: { workspaceId: workspace.id, status: SubscriptionStatus.Active },
+      where: {
+        workspaceId: workspace.id,
+        status: Not(SubscriptionStatus.Canceled),
+      },
       order: { createdAt: 'DESC' },
     });
 

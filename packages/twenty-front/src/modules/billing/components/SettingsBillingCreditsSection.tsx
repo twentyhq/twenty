@@ -2,8 +2,9 @@ import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -32,9 +33,11 @@ export const SettingsBillingCreditsSection = ({
   const subscriptionStatus = useSubscriptionStatus();
   const { formatNumber } = useNumberFormat();
 
-  const { getCurrentMeteredPricesByInterval, isMonthlyPlan } = useBillingPlan();
+  const { isMonthlyPlan } = useCurrentBillingFlags();
 
-  const { getIntervalLabel } = useBillingWording(currentBillingSubscription);
+  const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
+
+  const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
@@ -67,7 +70,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true })}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={progressBarValue}

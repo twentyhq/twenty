@@ -433,11 +433,6 @@ msgstr "Nieuwe toevoegen"
 msgid "Add node"
 msgstr "Voeg knooppunt toe"
 
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
-msgstr "Voeg knooppunt toe"
-
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -749,10 +744,10 @@ msgstr "Er is een onverwachte fout opgetreden"
 msgid "and"
 msgstr "en"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "Elk veld :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -2217,11 +2212,6 @@ msgstr "Agent verwijderen"
 msgid "Delete API key"
 msgstr "API-sleutel verwijderen"
 
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "Verwijder tak"
-
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
@@ -3236,6 +3226,11 @@ msgstr "Eerste 5 regels"
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Voornaam"
+
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
 
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
@@ -5053,11 +5048,6 @@ msgstr ""
 msgid "Other workspaces"
 msgstr "Andere werkruimtes"
 
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-msgid "Others"
-msgstr "Andere"
-
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
@@ -5489,11 +5479,6 @@ msgstr "Verwijderen als standaard"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "Remove Deleted filter"
 msgstr "Verwijder Verwijderd-filter"
-
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr "Verwijder filter"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx

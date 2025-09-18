@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Usage: STRIPE_API_KEY=sk_live_xxx PRODUCT_ID=prod_xxx node update-stripe-prices.js
 
 import crypto from 'crypto';

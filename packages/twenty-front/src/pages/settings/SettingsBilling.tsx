@@ -4,16 +4,16 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsBillingContent } from '@/billing/components/SettingsBillingContent';
-import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
+import { usePlans } from '@/billing/hooks/usePlans';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { isPlansLoaded } = useBillingPlan();
+  const { isPlansLoaded } = usePlans();
 
   return (
     <SubMenuTopBarContainer
