@@ -1,3 +1,4 @@
+import { type WorkflowDiagramEdgePathStrategy } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getBezierPath, getSmoothStepPath, Position } from '@xyflow/react';
 
@@ -15,7 +16,9 @@ type GetEdgePathParams = Pick<
   | 'targetPosition'
   | 'markerStart'
   | 'markerEnd'
->;
+> & {
+  strategy?: WorkflowDiagramEdgePathStrategy;
+};
 
 export const getEdgePath = ({
   sourceX,
@@ -26,16 +29,20 @@ export const getEdgePath = ({
   targetPosition,
   markerStart,
   markerEnd,
+  strategy,
 }: GetEdgePathParams) => {
-  if (sourceY < targetY) {
-    const [path, labelX, labelY] = getBezierPath({
+  if (strategy === 'smooth-step-path-to-target') {
+    const [path, labelX, labelY] = getSmoothStepPath({
       sourceX,
       sourceY,
       sourcePosition,
       targetX,
       targetY,
       targetPosition,
+      borderRadius: EDGE_BORDER_RADIUS,
+      offset: EDGE_PADDING_X,
     });
+
     return {
       segments: [
         {
@@ -48,7 +55,32 @@ export const getEdgePath = ({
     };
   }
 
-  const firstSegmentTargetX = (sourceX + targetX) / 2;
+  if (sourceY < targetY) {
+    const [path, labelX, labelY] = getBezierPath({
+      sourceX,
+      sourceY,
+      sourcePosition,
+      targetX,
+      targetY,
+      targetPosition,
+    });
+
+    return {
+      segments: [
+        {
+          path,
+          markerStart,
+          markerEnd,
+        },
+      ],
+      labelPosition: [labelX, labelY],
+    };
+  }
+
+  const firstSegmentTargetX =
+    strategy === 'bypass-source-node-on-right-side'
+      ? sourceX + 200
+      : (sourceX + targetX) / 2;
   const firstSegmentTargetY = sourceY + EDGE_PADDING_BOTTOM;
   const firstSegment = getSmoothStepPath({
     sourceX,

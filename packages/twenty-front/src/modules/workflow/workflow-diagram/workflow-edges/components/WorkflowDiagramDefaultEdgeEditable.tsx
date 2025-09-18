@@ -51,6 +51,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     targetPosition,
     markerStart,
     markerEnd,
+    strategy: data?.edgePathStrategy,
   });
 
   const { deleteEdge } = useDeleteEdge();
