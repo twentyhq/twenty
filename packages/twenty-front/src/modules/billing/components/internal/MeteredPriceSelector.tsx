@@ -4,6 +4,8 @@ import {
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
 import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -41,12 +43,8 @@ export const MeteredPriceSelector = ({
   meteredBillingPrices: Array<MeteredBillingPrice>;
   isTrialing?: boolean;
 }) => {
-<<<<<<< HEAD
-  const { getCurrentMeteredBillingPrice } = useBillingPlan();
-  const { formatNumber } = useNumberFormat();
-=======
   const { currentMeteredBillingPrice } = useCurrentMetered();
->>>>>>> 30b5fc651ce1d82d4eb5c0946d13e3cf1ad3e70e
+  const { formatNumber } = useNumberFormat();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
