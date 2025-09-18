@@ -4,14 +4,12 @@ import {
 } from '@/workflow/types/Workflow';
 import {
   type WorkflowDiagramEdgeData,
-  type WorkflowDiagramEdgeType,
   type WorkflowRunDiagram,
   type WorkflowRunDiagramNode,
   type WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
-import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
@@ -87,11 +85,9 @@ export const generateWorkflowRunDiagram = ({
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    const edgeType: WorkflowDiagramEdgeType = 'empty-filter--run';
-
     return {
       ...edge,
-      type: edgeType,
+      type: 'run',
       data: {
         ...edge.data,
         edgeType: 'default',
@@ -101,11 +97,10 @@ export const generateWorkflowRunDiagram = ({
   });
 
   return {
-    diagram: transformFilterNodesAsEdges({
+    diagram: {
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-      workflowContext: 'workflow-run',
-    }),
+    },
     stepToOpenByDefault,
   };
 };
