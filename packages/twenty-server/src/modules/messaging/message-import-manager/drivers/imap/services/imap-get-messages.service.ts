@@ -7,7 +7,7 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
 import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
-import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-message-text.util';
+import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
@@ -25,7 +25,10 @@ type ConnectedAccountType = Pick<
 export class ImapGetMessagesService {
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
-  constructor(private readonly fetchByBatchService: ImapFetchByBatchService) {}
+  constructor(
+    private readonly fetchByBatchService: ImapFetchByBatchService,
+    private readonly messageTextExtractor: ImapMessageTextExtractorService,
+  ) {}
 
   async getMessages(
     messageIds: string[],
@@ -158,7 +161,7 @@ export class ImapGetMessagesService {
     const fromHandle = fromAddresses.length > 0 ? fromAddresses[0].address : '';
 
     const textWithoutReplyQuotations =
-      extractTextWithoutReplyQuotations(parsed);
+      this.messageTextExtractor.extractTextWithoutReplyQuotations(parsed);
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
