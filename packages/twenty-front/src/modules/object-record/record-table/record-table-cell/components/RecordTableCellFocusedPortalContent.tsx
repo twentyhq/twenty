@@ -1,9 +1,13 @@
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { BORDER_COMMON } from 'twenty-ui/theme';
 
@@ -27,14 +31,36 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
 
 export const RecordTableCellFocusedPortalContent = () => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
+  const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
+
+  const focusPosition = useRecoilComponentValue(
+    recordTableFocusPositionComponentState,
+  );
 
   const isRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
 
+  const hoverPosition = useRecoilComponentValue(
+    recordTableHoverPositionComponentState,
+  );
+
+  const arePositionsDifferent =
+    hoverPosition?.row !== focusPosition.row ||
+    hoverPosition?.column !== focusPosition.column;
+
+  const handleContainerMouseMove = () => {
+    if (arePositionsDifferent) {
+      onMoveHoverToCurrentCell(focusPosition);
+    }
+  };
+
   return (
-    <StyledRecordTableCellFocusPortalContent isRowActive={isRowActive}>
+    <StyledRecordTableCellFocusPortalContent
+      isRowActive={isRowActive}
+      onMouseMove={handleContainerMouseMove}
+    >
       <RecordTableCellDisplayMode>
         <FieldDisplay />
       </RecordTableCellDisplayMode>
