@@ -749,10 +749,10 @@ msgstr "Ein unerwarteter Fehler ist aufgetreten"
 msgid "and"
 msgstr "und"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "Jedes Feld :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx

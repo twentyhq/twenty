@@ -744,10 +744,10 @@ msgstr "An unexpected error occurred"
 msgid "and"
 msgstr "and"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "Any field :"
+msgid "Any field"
+msgstr "Any field"
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
