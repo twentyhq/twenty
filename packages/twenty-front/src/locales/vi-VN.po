@@ -433,11 +433,6 @@ msgstr "Thêm mới"
 msgid "Add node"
 msgstr "Thêm nút"
 
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
-msgstr "Thêm nút"
-
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -2217,11 +2212,6 @@ msgstr "Xóa Tác Nhân"
 msgid "Delete API key"
 msgstr "Xóa khóa API"
 
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "Xóa nhánh"
-
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
@@ -3236,6 +3226,11 @@ msgstr "5 dòng đầu tiên"
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "\"Tên riêng\""
+
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
 
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
@@ -5053,11 +5048,6 @@ msgstr ""
 msgid "Other workspaces"
 msgstr "Không gian làm việc khác"
 
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-msgid "Others"
-msgstr "Khác"
-
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
@@ -5489,11 +5479,6 @@ msgstr "Xóa mặc định"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "Remove Deleted filter"
 msgstr "Gỡ bỏ bộ lọc đã xóa"
-
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr "Gỡ bỏ bộ lọc"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
