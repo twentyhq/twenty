@@ -11,31 +11,29 @@ const FORMAT_PATTERNS = new Map<string, keyof typeof NumberFormat>([
 ]);
 
 export const detectNumberFormat = (): keyof typeof NumberFormat => {
-  const testNumber = 1234567.89;
-  let language = navigator?.language || 'en-US';
-
-  let formatter: Intl.NumberFormat;
   try {
-    formatter = new Intl.NumberFormat(language);
+    const testNumber = 1234567.89;
+    const language = navigator?.language || 'en-US';
+
+    const formatter = new Intl.NumberFormat(language);
+    const parts = formatter.formatToParts(testNumber);
+    const thousandSeparator =
+      parts.find((part) => part.type === 'group')?.value || '';
+    const decimalSeparator =
+      parts.find((part) => part.type === 'decimal')?.value || '';
+
+    let thousandCategory: string;
+    if (SPACE_CHARS.has(thousandSeparator)) {
+      thousandCategory = 'space';
+    } else if (APOSTROPHE_CHARS.has(thousandSeparator)) {
+      thousandCategory = 'apostrophe';
+    } else {
+      thousandCategory = thousandSeparator;
+    }
+
+    const pattern = `${thousandCategory}|${decimalSeparator}`;
+    return FORMAT_PATTERNS.get(pattern) || NumberFormat.COMMAS_AND_DOT;
   } catch {
-    formatter = new Intl.NumberFormat('en-US');
+    return NumberFormat.COMMAS_AND_DOT;
   }
-
-  const parts = formatter.formatToParts(testNumber);
-  const thousandSeparator =
-    parts.find((part) => part.type === 'group')?.value || '';
-  const decimalSeparator =
-    parts.find((part) => part.type === 'decimal')?.value || '';
-
-  let thousandCategory: string;
-  if (SPACE_CHARS.has(thousandSeparator)) {
-    thousandCategory = 'space';
-  } else if (APOSTROPHE_CHARS.has(thousandSeparator)) {
-    thousandCategory = 'apostrophe';
-  } else {
-    thousandCategory = thousandSeparator;
-  }
-
-  const pattern = `${thousandCategory}|${decimalSeparator}`;
-  return FORMAT_PATTERNS.get(pattern) || NumberFormat.COMMAS_AND_DOT;
 };

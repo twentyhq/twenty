@@ -17,29 +17,14 @@ export type WorkspaceMemberFormatPreferences = {
   calendarStartDay: CalendarStartDay;
 };
 
-const getDefaultFormatPreferences = (): WorkspaceMemberFormatPreferences => {
-  try {
-    return {
+export const workspaceMemberFormatPreferencesState =
+  createState<WorkspaceMemberFormatPreferences>({
+    key: 'workspaceMemberFormatPreferencesState',
+    defaultValue: {
       timeZone: detectTimeZone(),
       dateFormat: DateFormat[detectDateFormat()],
       timeFormat: TimeFormat[detectTimeFormat()],
       numberFormat: NumberFormat[detectNumberFormat()],
       calendarStartDay: CalendarStartDay[detectCalendarStartDay()],
-    };
-  } catch {
-    // Fallback for testing environments where detection might fail
-    return {
-      timeZone: 'UTC',
-      dateFormat: DateFormat.MONTH_FIRST,
-      timeFormat: TimeFormat.HOUR_24,
-      numberFormat: NumberFormat.COMMAS_AND_DOT,
-      calendarStartDay: CalendarStartDay.MONDAY,
-    };
-  }
-};
-
-export const workspaceMemberFormatPreferencesState =
-  createState<WorkspaceMemberFormatPreferences>({
-    key: 'workspaceMemberFormatPreferencesState',
-    defaultValue: getDefaultFormatPreferences(),
+    },
   });

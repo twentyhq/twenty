@@ -8,7 +8,7 @@ export const detectCalendarStartDay = (): keyof typeof CalendarStartDay => {
   // Use Intl.Locale to get the first day of the week from the user's locale
   // This requires a modern browser that supports Intl.Locale
   try {
-    const locale = new Intl.Locale(navigator.language);
+    const locale = new Intl.Locale(navigator?.language || 'en-US');
 
     // Check if the weekInfo property is available (newer browsers)
     if (
@@ -37,7 +37,7 @@ export const detectCalendarStartDay = (): keyof typeof CalendarStartDay => {
   }
 
   // Fallback: Use a heuristic based on common locale patterns
-  const language = navigator.language.toLowerCase();
+  const language = (navigator?.language || 'en-US').toLowerCase();
 
   // Most European countries, Australia, New Zealand start with Monday
   if (
