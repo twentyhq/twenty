@@ -27,6 +27,7 @@ import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/
 import { AddPositionsToWorkflowVersionsAndWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
 import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-migrate-views-to-core.command';
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
+import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-deduplicate-unique-fields.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -75,6 +76,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly removeFavoriteViewRelationCommand: RemoveFavoriteViewRelationCommand,
     protected readonly addPositionsToWorkflowVersionsAndWorkflowRunsCommand: AddPositionsToWorkflowVersionsAndWorkflowRunsCommand,
     protected readonly migrateViewsToCoreCommand: MigrateViewsToCoreCommand,
+
+    // 1.6 Commands
+    protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -157,7 +161,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_160: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [this.deduplicateUniqueFieldsCommand],
       afterSyncMetadata: [],
     };
 
