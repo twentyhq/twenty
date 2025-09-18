@@ -223,10 +223,21 @@ describe('ViewFieldService', () => {
       const updateData = { position: 1 };
       const updatedViewField = { ...mockViewField, ...updateData };
 
+      const mockView = {
+        id: 'view-id',
+        objectMetadata: {
+          labelIdentifierFieldMetadataId: mockViewField.fieldMetadataId,
+        },
+        viewFields: [mockViewField],
+      } as ViewEntity;
+
       jest.spyOn(viewFieldService, 'findById').mockResolvedValue(mockViewField);
       jest
         .spyOn(viewFieldRepository, 'save')
         .mockResolvedValue(updatedViewField);
+      jest
+        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .mockResolvedValue(mockView);
 
       const result = await viewFieldService.update(id, workspaceId, updateData);
 
@@ -289,10 +300,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(
-          viewFieldService['viewService'],
-          'findByIdWithRelatedObjectMetadata',
-        )
+        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
         .mockResolvedValue(mockView);
 
       await expect(
@@ -343,10 +351,7 @@ describe('ViewFieldService', () => {
         return Promise.resolve(null);
       });
       jest
-        .spyOn(
-          viewFieldService['viewService'],
-          'findByIdWithRelatedObjectMetadata',
-        )
+        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
         .mockResolvedValue(mockView);
 
       await expect(

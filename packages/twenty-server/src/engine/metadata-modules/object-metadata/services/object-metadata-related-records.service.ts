@@ -71,7 +71,10 @@ export class ObjectMetadataRelatedRecordsService {
       await this.viewFieldService.update(
         labelMetadataIdentifierViewField.id,
         newLabelMetadataIdentifierFieldMetadata.workspaceId,
-        { position: currentMinPositionAmongViewFields - 1 },
+        {
+          position: currentMinPositionAmongViewFields - 1,
+          isVisible: true,
+        },
       );
     }
   }

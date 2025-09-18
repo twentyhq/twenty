@@ -300,12 +300,15 @@ export class ViewFieldService {
         (minField, field) =>
           field.position < minField.position ? field : minField,
         viewFieldsWithUpdatedPosition[0],
-      );
+      ).fieldMetadataId;
 
-    if (labelMetadataIdentifierFieldMetadataId === existingViewField.id) {
+    if (
+      labelMetadataIdentifierFieldMetadataId ===
+      existingViewField.fieldMetadataId
+    ) {
       if (
-        fieldMetadataIdWithMinPositionInViewAfterUpdate.id !==
-        existingViewField.id
+        fieldMetadataIdWithMinPositionInViewAfterUpdate !==
+        existingViewField.fieldMetadataId
       ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
@@ -317,8 +320,8 @@ export class ViewFieldService {
       }
     } else {
       if (
-        fieldMetadataIdWithMinPositionInViewAfterUpdate.id ===
-        existingViewField.id
+        fieldMetadataIdWithMinPositionInViewAfterUpdate ===
+        existingViewField.fieldMetadataId
       ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',

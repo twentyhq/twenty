@@ -402,23 +402,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         queryRunner,
       );
 
-      const didUpdateLabelIdentifierFieldMetadata =
-        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
-        inputPayload.labelIdentifierFieldMetadataId !==
-          existingObjectMetadata.labelIdentifierFieldMetadataId;
-
-      if (didUpdateLabelIdentifierFieldMetadata) {
+      if (didUpdateLabelOrIcon) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
             inputPayload.labelIdentifierFieldMetadataId!
           ];
-
-        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
-          {
-            newLabelMetadataIdentifierFieldMetadata:
-              labelIdentifierFieldMetadata,
-          },
-        );
 
         if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
           await this.searchVectorService.updateSearchVector(
@@ -452,6 +440,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.objectMetadataRelatedRecordsService.updateObjectViews(
           updatedObject,
           workspaceId,
+        );
+      }
+
+      const didUpdateLabelIdentifierFieldMetadata =
+        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
+        inputPayload.labelIdentifierFieldMetadataId !==
+          existingObjectMetadata.labelIdentifierFieldMetadataId;
+
+      if (didUpdateLabelIdentifierFieldMetadata) {
+        const labelIdentifierFieldMetadata =
+          existingObjectMetadata.fieldsById[
+            inputPayload.labelIdentifierFieldMetadataId!
+          ];
+
+        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
+          {
+            newLabelMetadataIdentifierFieldMetadata:
+              labelIdentifierFieldMetadata,
+          },
         );
       }
 
