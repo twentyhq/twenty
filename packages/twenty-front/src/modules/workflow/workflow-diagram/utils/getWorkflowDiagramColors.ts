@@ -41,8 +41,7 @@ export const getWorkflowDiagramColors = ({
         },
       };
     }
-    case 'FAILED':
-    case 'STOPPED': {
+    case 'FAILED': {
       return {
         selected: {
           background: theme.adaptiveColors.red1,
@@ -60,6 +59,7 @@ export const getWorkflowDiagramColors = ({
         },
       };
     }
+    case 'STOPPED':
     case 'SUCCESS': {
       return {
         selected: {
