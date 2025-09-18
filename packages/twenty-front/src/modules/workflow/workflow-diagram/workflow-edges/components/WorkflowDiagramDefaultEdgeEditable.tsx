@@ -1,6 +1,4 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -17,9 +15,8 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
 import { EdgeLabelRenderer, getBezierPath } from '@xyflow/react';
 import { type MouseEvent, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconPlus, IconTrash } from 'twenty-ui/display';
 
 type WorkflowDiagramDefaultEdgeEditableProps =
   WorkflowDiagramEdgeComponentProps;
@@ -60,34 +57,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     parentStepId: source,
     nextStepId: target,
   });
-
-  const setCommandMenuNavigationStack = useSetRecoilState(
-    commandMenuNavigationStackState,
-  );
-
-  const { openWorkflowEditFilterInCommandMenu } =
-    useOpenWorkflowEditFilterInCommandMenu();
-
-  const handleCreateFilter = async () => {
-    const createdStep = await createStep({
-      newStepType: 'FILTER',
-      parentStepId: source,
-      nextStepId: target,
-    });
-
-    if (!isDefined(createdStep)) {
-      return;
-    }
-
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
-    }
-
-    openWorkflowEditFilterInCommandMenu({
-      stepId: createdStep.id,
-      stepName: createdStep.name,
-    });
-  };
 
   const handleNodeButtonClick = () => {
     startNodeCreation({
@@ -153,10 +122,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           >
             <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
-                {
-                  Icon: IconFilter,
-                  onClick: handleCreateFilter,
-                },
                 {
                   Icon: IconPlus,
                   onClick: handleNodeButtonClick,
