@@ -9,6 +9,7 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
@@ -24,6 +25,7 @@ export class MessagingRelaunchFailedMessageChannelCommand extends ActiveOrSuspen
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly accountsToReconnectService: AccountsToReconnectService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -44,6 +46,11 @@ export class MessagingRelaunchFailedMessageChannelCommand extends ActiveOrSuspen
         where: {
           syncStage: MessageChannelSyncStage.FAILED,
         },
+        relations: {
+          connectedAccount: {
+            accountOwner: true,
+          },
+        },
       });
 
       if (!options.dryRun && failedMessageChannels.length > 0) {
@@ -54,6 +61,14 @@ export class MessagingRelaunchFailedMessageChannelCommand extends ActiveOrSuspen
             syncStatus: MessageChannelSyncStatus.ACTIVE,
           },
         );
+
+        for (const failedMessageChannel of failedMessageChannels) {
+          await this.accountsToReconnectService.removeAccountToReconnect(
+            failedMessageChannel.connectedAccount.accountOwner.userId,
+            failedMessageChannel.connectedAccountId,
+            workspaceId,
+          );
+        }
       }
 
       this.logger.log(
