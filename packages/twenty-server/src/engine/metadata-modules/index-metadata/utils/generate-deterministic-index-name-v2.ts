@@ -8,6 +8,7 @@ type GenerateDeterministicIndexNameArgs = {
   flatFieldMetadatas: Pick<FlatFieldMetadata, 'name'>[];
   isUnique?: boolean;
 };
+// This method should sort on index field order TODO
 export const generateDeterministicIndexNameV2 = ({
   flatFieldMetadatas,
   flatObjectMetadata,

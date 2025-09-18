@@ -37,7 +37,7 @@ type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
 > & {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
-// We should recompute each index here too
+// We should recompute each index here too ? YES TODO prastoin
 export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   fromFlatObjectMetadata,
   existingFlatObjectMetadataMaps,

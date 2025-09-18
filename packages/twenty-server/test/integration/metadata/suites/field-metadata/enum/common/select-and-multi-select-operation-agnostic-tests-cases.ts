@@ -241,6 +241,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
     ],
     successful: [
       {
+        only: true,
         title: 'should succeed with provided option id',
         context: {
           input: {

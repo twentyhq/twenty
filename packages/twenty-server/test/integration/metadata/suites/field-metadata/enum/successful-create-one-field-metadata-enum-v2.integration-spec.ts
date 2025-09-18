@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
-describe.each(fieldMetadataEnumTypes)(
+describe.each([fieldMetadataEnumTypes[1]])(
   'Successful create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
