@@ -1,3 +1,5 @@
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
@@ -98,6 +100,7 @@ export const WorkflowSendEmailBody = ({
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -107,6 +110,19 @@ export const WorkflowSendEmailBody = ({
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
   const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
+
+  const handleUploadAttachment = async (file: File) => {
+    if (!isDefined(workflowVisualizerWorkflowId)) {
+      return undefined;
+    }
+
+    const { attachmentAbsoluteURL } = await uploadAttachmentFile(file, {
+      id: workflowVisualizerWorkflowId,
+      targetObjectNameSingular: CoreObjectNameSingular.Workflow,
+    });
+
+    return attachmentAbsoluteURL;
+  };
 
   const editor = useEmailEditor(
     {
@@ -132,6 +148,7 @@ export const WorkflowSendEmailBody = ({
       onBlur: () => {
         removeFocusItemFromFocusStackById({ focusId: instanceId });
       },
+      onImageUpload: handleUploadAttachment,
     },
     [isFullScreen],
   );
