@@ -116,7 +116,7 @@ export class WorkspaceMigrationBuilderV2Service {
     return {
       status: 'success',
       fieldsActions: {
-        created: fieldActionsValidateAndBuildResult.updated,
+        created: fieldActionsValidateAndBuildResult.created,
         deleted: fieldActionsValidateAndBuildResult.deleted,
         updated: fieldActionsValidateAndBuildResult.updated,
       },
