@@ -102,8 +102,13 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    assertIsDefinedOrThrow(customer);
-    assertIsDefinedOrThrow(customer.stripeCustomerId);
+    assertIsDefinedOrThrow(
+      customer?.stripeCustomerId,
+      new BillingException(
+        'Customer not found',
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      ),
+    );
 
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({

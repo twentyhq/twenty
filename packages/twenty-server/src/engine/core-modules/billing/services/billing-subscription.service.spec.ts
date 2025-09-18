@@ -551,7 +551,6 @@ describe('BillingSubscriptionService public actions', () => {
   describe('cancelSwitchMeteredPrice', () => {
     it('maps to current metered price and calls changeMeteredPrice', async () => {
       const ws = mkWorkspace();
-      const sub = arrangeGetCurrentSubEntity();
 
       arrangeScheduleWithCurrentAndNext();
       const { metered } = arrangeCurrentDetails();
