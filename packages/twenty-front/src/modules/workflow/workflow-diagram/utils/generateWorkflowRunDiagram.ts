@@ -4,7 +4,6 @@ import {
 } from '@/workflow/types/Workflow';
 import {
   type WorkflowDiagramEdgeData,
-  type WorkflowDiagramEdgeType,
   type WorkflowRunDiagram,
   type WorkflowRunDiagramNode,
   type WorkflowRunDiagramStepNodeData,
@@ -86,11 +85,9 @@ export const generateWorkflowRunDiagram = ({
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    const edgeType: WorkflowDiagramEdgeType = 'run';
-
     return {
       ...edge,
-      type: edgeType,
+      type: 'run',
       data: {
         ...edge.data,
         edgeType: 'default',

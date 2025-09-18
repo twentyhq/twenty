@@ -29,7 +29,7 @@ const computeUpdatedNextStepIds = ({
   ];
 };
 
-const removeOneStep = ({
+export const removeStep = ({
   existingTrigger,
   existingSteps,
   stepIdToDelete,
@@ -39,11 +39,15 @@ const removeOneStep = ({
   existingSteps: WorkflowAction[] | null;
   stepIdToDelete: string;
   stepToDeleteChildrenIds?: string[];
-}): {
-  updatedSteps: WorkflowAction[];
-  updatedTrigger: WorkflowTrigger | null;
-  removedStepIds: string[];
-} => {
+}) => {
+  if (stepIdToDelete === TRIGGER_STEP_ID) {
+    return {
+      updatedSteps: existingSteps,
+      updatedTrigger: null,
+      removedStepIds: [TRIGGER_STEP_ID],
+    };
+  }
+
   const updatedSteps =
     existingSteps
       ?.filter((step) => step.id !== stepIdToDelete)
@@ -103,60 +107,4 @@ const removeOneStep = ({
     updatedTrigger,
     removedStepIds: [stepIdToDelete],
   };
-};
-
-const removeRegularStep = ({
-  existingTrigger,
-  existingSteps,
-  stepIdToDelete,
-  stepToDeleteChildrenIds,
-}: {
-  existingTrigger: WorkflowTrigger | null;
-  existingSteps: WorkflowAction[] | null;
-  stepIdToDelete: string;
-  stepToDeleteChildrenIds?: string[];
-}): {
-  updatedSteps: WorkflowAction[];
-  updatedTrigger: WorkflowTrigger | null;
-  removedStepIds: string[];
-} => {
-  let { updatedSteps, updatedTrigger, removedStepIds } = removeOneStep({
-    existingTrigger,
-    existingSteps,
-    stepIdToDelete,
-    stepToDeleteChildrenIds,
-  });
-
-  return {
-    updatedSteps,
-    updatedTrigger,
-    removedStepIds,
-  };
-};
-
-export const removeStep = ({
-  existingTrigger,
-  existingSteps,
-  stepIdToDelete,
-  stepToDeleteChildrenIds,
-}: {
-  existingTrigger: WorkflowTrigger | null;
-  existingSteps: WorkflowAction[] | null;
-  stepIdToDelete: string;
-  stepToDeleteChildrenIds?: string[];
-}) => {
-  if (stepIdToDelete === TRIGGER_STEP_ID) {
-    return {
-      updatedSteps: existingSteps,
-      updatedTrigger: null,
-      removedStepIds: [TRIGGER_STEP_ID],
-    };
-  } else {
-    return removeRegularStep({
-      existingTrigger,
-      existingSteps,
-      stepIdToDelete,
-      stepToDeleteChildrenIds,
-    });
-  }
 };

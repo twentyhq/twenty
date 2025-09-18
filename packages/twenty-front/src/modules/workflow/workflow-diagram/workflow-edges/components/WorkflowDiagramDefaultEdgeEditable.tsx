@@ -1,4 +1,3 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -10,11 +9,10 @@ import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workf
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
-import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useLingui } from '@lingui/react/macro';
 import { EdgeLabelRenderer, getBezierPath } from '@xyflow/react';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconTrash } from 'twenty-ui/display';
 
@@ -36,8 +34,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
   const { i18n } = useLingui();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
-
   const { isEdgeHovered } = useEdgeState();
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -46,8 +42,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     targetX,
     targetY,
   });
-
-  const { createStep } = useCreateStep();
 
   const { deleteEdge } = useDeleteEdge();
 
