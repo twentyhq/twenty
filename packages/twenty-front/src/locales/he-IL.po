@@ -749,10 +749,10 @@ msgstr "אירעה שגיאה בלתי צפויה"
 msgid "and"
 msgstr "וגם"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "כל שדה :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx

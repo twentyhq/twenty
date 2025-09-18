@@ -749,10 +749,10 @@ msgstr "Παρουσιάστηκε ένα απρόβλεπτο σφάλμα"
 msgid "and"
 msgstr "και"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "Οποιοδήποτε πεδίο :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
