@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
@@ -9,6 +8,7 @@ import { RecordTableHeaderCellContainer } from '@/object-record/record-table/rec
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableHeaderLabelIdentifierCellPlusButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton';
+import { getVisibleFieldWithLowestPosition } from '@/object-record/record-table/record-table-header/utils/getVisibleFieldWithLowestPosition.util';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -19,7 +19,7 @@ import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-st
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { cx } from '@linaria/core';
 import { useState } from 'react';
-import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledColumnHeadContainer = styled.div`
   cursor: pointer;
@@ -30,7 +30,7 @@ const StyledColumnHeadContainer = styled.div`
   overflow: hidden;
 `;
 
-export const RecordTableHeaderLabelIdentifierCell = () => {
+export const RecordTableHeaderFirstCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
     useRecordTableContextOrThrow();
 
@@ -46,11 +46,7 @@ export const RecordTableHeaderLabelIdentifierCell = () => {
     0,
   );
 
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', labelIdentifierFieldMetadataItem?.id),
-  );
+  const recordField = getVisibleFieldWithLowestPosition(visibleRecordFields);
 
   const isScrolledVertically = useRecoilComponentValue(
     isRecordTableScrolledVerticallyComponentState,
