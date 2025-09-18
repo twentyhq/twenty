@@ -5,11 +5,7 @@ import { HttpResponse, graphql } from 'msw';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { AppPath } from 'twenty-shared/types';
-import {
-  BillingPlanKey,
-  OnboardingStatus,
-  SubscriptionInterval,
-} from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import {
   PageDecorator,
@@ -17,7 +13,6 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/ChooseYourPlan',
@@ -33,27 +28,6 @@ const meta: Meta<PageDecoratorArgs> = {
               currentUser: mockedOnboardingUserData(
                 OnboardingStatus.PLAN_REQUIRED,
               ),
-            },
-          });
-        }),
-        graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
-          return HttpResponse.json({
-            data: {
-              plans: [
-                {
-                  planKey: BillingPlanKey.PRO,
-                  baseProduct: {
-                    prices: [
-                      {
-                        __typename: 'BillingPriceLicensedDTO',
-                        unitAmount: 900,
-                        stripePriceId: 'monthly8usd',
-                        recurringInterval: SubscriptionInterval.Month,
-                      },
-                    ],
-                  },
-                },
-              ],
             },
           });
         }),
