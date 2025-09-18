@@ -539,3 +539,21 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return customDomainWithRecords;
   }
 }
+
+  /**
+   * Creates a personal workspace for a user and activates it.
+   * Never auto-joins existing workspaces; always new.
+   */
+  async createPersonalWorkspaceForUser(user: User, displayName: string) {
+    // 1) Create a fresh workspace row in PENDING_CREATION
+    const workspace = await this.workspaceRepository.save({
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+    });
+
+    // 2) Activate (seeds, schema init, create membership for user)
+    const activated = await this.activateWorkspace(user, workspace, {
+      displayName,
+    });
+
+    return activated;
+  }

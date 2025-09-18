@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { t, msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -60,6 +60,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -88,6 +89,7 @@ export class AuthService {
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly i18nService: I18nService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -720,6 +722,53 @@ export class AuthService {
     const existingUser = await this.userRepository.findOne({
       where: { email },
     });
+
+    // --- BEGIN: ensure personal workspace on first login ---
+const membershipsForEmail = await this.userWorkspaceService.find({
+  where: { userEmail: email },
+});
+
+// If no memberships AND no invite/context forcing a workspace -> create a personal workspace
+if (
+  (!workspaceId && !workspaceInviteHash) &&
+  (membershipsForEmail?.length ?? 0) === 0
+) {
+  const user =
+    existingUser ??
+    (await this.signInUpService.signUpWithoutWorkspace(
+      {
+        firstName,
+        lastName,
+        email,
+        picture,
+        isEmailAlreadyVerified: true,
+      },
+      { provider: authProvider },
+    ));
+
+  // Build a friendly workspace name from the email local-part
+  const local = email.split('@')[0];
+  const displayName = `${local}'s workspace`;
+
+  const created = await this.workspaceService.createPersonalWorkspaceForUser(
+    user,
+    displayName,
+  );
+
+  // Redirect straight into the new workspace
+  const loginToken = await this.loginTokenService.generateLoginToken(
+    user.email,
+    created.id,
+    authProvider,
+  );
+
+  return this.computeRedirectURI({
+    loginToken: loginToken.token,
+    workspace: created,
+    billingCheckoutSessionState,
+  });
+}
+// --- END: ensure personal workspace on first login ---
 
     if (
       !workspaceId &&
