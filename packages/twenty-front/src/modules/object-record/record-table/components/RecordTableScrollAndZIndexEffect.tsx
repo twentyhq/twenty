@@ -32,14 +32,20 @@ export const RecordTableScrollAndZIndexEffect = () => {
     const handleScroll = (event: any) => {
       const target = event.currentTarget;
 
-      let somethingHasChanged = false;
-
       const newIsScrolledVertically = target?.scrollTop > 0;
 
       if (newIsScrolledVertically !== isScrolledVertically) {
         setIsScrolledVertically(newIsScrolledVertically);
         setIsRecordTableScrolledVertically(newIsScrolledVertically);
-        somethingHasChanged = true;
+
+        const newVisibilityOfShadows = newIsScrolledVertically
+          ? 'visible'
+          : 'hidden';
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newVisibilityOfShadows,
+        );
       }
 
       const newIsScrolledHorizontally = target?.scrollLeft > 0;
@@ -47,31 +53,13 @@ export const RecordTableScrollAndZIndexEffect = () => {
       if (newIsScrolledHorizontally !== isScrolledHorizontally) {
         setIsScrolledHorizontally(newIsScrolledHorizontally);
         setIsRecordTableScrolledHorizontally(newIsScrolledHorizontally);
-        somethingHasChanged = true;
-      }
 
-      if (!somethingHasChanged) {
-        return;
-      }
-
-      if (newIsScrolledHorizontally !== isScrolledHorizontally) {
         const newVisibilityOfShadows = newIsScrolledHorizontally
           ? 'visible'
           : 'hidden';
 
         updateRecordTableCSSVariable(
           RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
-          newVisibilityOfShadows,
-        );
-      }
-
-      if (newIsScrolledVertically !== isScrolledVertically) {
-        const newVisibilityOfShadows = newIsScrolledVertically
-          ? 'visible'
-          : 'hidden';
-
-        updateRecordTableCSSVariable(
-          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
           newVisibilityOfShadows,
         );
       }
