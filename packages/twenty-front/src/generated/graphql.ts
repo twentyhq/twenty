@@ -3921,6 +3921,7 @@ export type WorkspaceMember = {
   id: Scalars['UUID'];
   locale?: Maybe<Scalars['String']>;
   name: FullName;
+  numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
@@ -3934,6 +3935,15 @@ export enum WorkspaceMemberDateFormatEnum {
   MONTH_FIRST = 'MONTH_FIRST',
   SYSTEM = 'SYSTEM',
   YEAR_FIRST = 'YEAR_FIRST'
+}
+
+/** Number format for displaying numbers */
+export enum WorkspaceMemberNumberFormatEnum {
+  APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
+  COMMAS_AND_DOT = 'COMMAS_AND_DOT',
+  DOTS_AND_COMMA = 'DOTS_AND_COMMA',
+  SPACES_AND_COMMA = 'SPACES_AND_COMMA',
+  SYSTEM = 'SYSTEM'
 }
 
 /** Time time as Military, Standard or system as default */

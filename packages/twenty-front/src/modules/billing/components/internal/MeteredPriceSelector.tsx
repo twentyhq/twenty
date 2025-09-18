@@ -10,7 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import {
   type BillingPriceTiers,

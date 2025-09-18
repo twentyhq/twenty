@@ -9,8 +9,8 @@ import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
+import { formatNumber } from '~/utils/format/formatNumber';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
@@ -79,7 +79,7 @@ export const SettingsBillingCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatAmount(extraCreditsUsed)}`}
+              value={`${formatToShortNumber(extraCreditsUsed)}`}
             />
           )}
           {!isTrialing && (
