@@ -150,7 +150,7 @@ export class WorkspaceEventEmitter {
 
     const eventName = computeEventName(objectMetadataNameSingular, action);
 
-    await this.eventEmitter.emitAsync(eventName, {
+    this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
       events,
