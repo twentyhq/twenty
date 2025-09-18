@@ -25,9 +25,10 @@ export const useAvailableVariablesInWorkflowStep = ({
   );
   const flow = useFlowOrThrow();
   const steps = flow.steps ?? [];
+  const currentStep = steps.find((step) => step.id === workflowSelectedNode);
 
-  const previousStepIds: string[] = isDefined(workflowSelectedNode)
-    ? getPreviousSteps(steps, workflowSelectedNode).map((step) => step.id)
+  const previousStepIds: string[] = isDefined(currentStep)
+    ? getPreviousSteps({ steps, currentStep }).map((step) => step.id)
     : [];
 
   const availableStepsOutputSchema: StepOutputSchemaV2[] = useRecoilValue(
