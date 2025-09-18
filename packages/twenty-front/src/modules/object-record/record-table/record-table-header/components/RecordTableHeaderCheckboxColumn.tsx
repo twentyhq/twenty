@@ -4,6 +4,7 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
@@ -23,7 +24,7 @@ const StyledContainer = styled.div<{
 }>`
   align-items: center;
   display: flex;
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: 24px;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -37,12 +38,12 @@ const StyledContainer = styled.div<{
 const StyledColumnHeaderCell = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
 
-  min-width: 32px;
+  min-width: ${RECORD_TABLE_ROW_HEIGHT}px;
   box-sizing: border-box;
 
   cursor: pointer;
 
-  max-height: 32px;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {

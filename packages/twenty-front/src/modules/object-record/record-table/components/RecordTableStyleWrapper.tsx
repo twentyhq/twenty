@@ -98,7 +98,7 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(2) {
-    left: 16px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     top: 0;
 
     background-color: ${({ theme }) => theme.background.primary};
@@ -110,7 +110,8 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(3) {
-    left: 48px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     right: 0;
 
     background-color: ${({ theme }) => theme.background.primary};
@@ -140,7 +141,7 @@ const StyledTable = styled.div<{
 
   div.table-cell:nth-of-type(2) {
     position: sticky;
-    left: 16px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
         ? TABLE_Z_INDEX.cell.withGroups.sticky
@@ -149,14 +150,16 @@ const StyledTable = styled.div<{
 
   div.table-cell-0-0 {
     position: sticky;
-    left: 48px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell:nth-of-type(3) {
     position: sticky;
-    left: 48px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
         ? TABLE_Z_INDEX.cell.withGroups.sticky
