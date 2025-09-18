@@ -198,7 +198,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
-  const shouldDisplayBorderBottom = !isFirstRowActiveOrFocused;
+  const shouldDisplayBorderBottom =
+    !isFirstRowActiveOrFocused || !isRecordGroupTableSectionToggled;
 
   if (!isDefined(recordGroup)) {
     return null;

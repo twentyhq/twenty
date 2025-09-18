@@ -1,3 +1,4 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
 import { RecordTableStyleWrapper } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
@@ -71,6 +72,10 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     emptyTableContainerComputedWidth,
   );
 
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
   return (
     <StyledEmptyStateContainer width={tableContainerWidth}>
       <RecordTableStyleWrapper
@@ -78,6 +83,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         visibleRecordFields={visibleRecordFields}
         lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
+        hasRecordGroups={hasRecordGroups}
       >
         <RecordTableHeader />
       </RecordTableStyleWrapper>

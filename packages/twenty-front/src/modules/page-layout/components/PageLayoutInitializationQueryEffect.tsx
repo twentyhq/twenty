@@ -14,10 +14,12 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
+  onInitialized: (pageLayout: PageLayoutWithData) => void;
 };
 
 export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
+  onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -88,9 +90,10 @@ export const PageLayoutInitializationQueryEffect = ({
   useEffect(() => {
     if (!isInitialized && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
+      onInitialized?.(pageLayout);
       setIsInitialized(true);
     }
-  }, [initializePageLayout, isInitialized, pageLayout]);
+  }, [initializePageLayout, isInitialized, pageLayout, onInitialized]);
 
   return null;
 };

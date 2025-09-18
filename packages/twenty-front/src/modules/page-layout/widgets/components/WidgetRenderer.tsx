@@ -27,7 +27,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
-    widget.id,
   );
 
   const showRestrictedContent = widget.canReadWidget === false;
