@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsEnum,
   IsNotEmpty,
@@ -32,8 +33,8 @@ export class UpdatePageLayoutWithTabsInput {
 
   @Field(() => [UpdatePageLayoutTabWithWidgetsInput], { nullable: true })
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => UpdatePageLayoutTabWithWidgetsInput)
-  @IsNotEmpty()
   tabs: UpdatePageLayoutTabWithWidgetsInput[];
 }

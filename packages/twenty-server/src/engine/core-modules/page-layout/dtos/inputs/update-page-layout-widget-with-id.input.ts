@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsObject,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -39,7 +40,7 @@ export class UpdatePageLayoutWidgetWithIdInput {
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
-  @IsNotEmpty()
+  @IsOptional()
   objectMetadataId: string | null;
 
   @Field(() => GridPositionInput, { nullable: true })

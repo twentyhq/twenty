@@ -10,7 +10,7 @@ import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entit
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-tabs-update.service';
+import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
