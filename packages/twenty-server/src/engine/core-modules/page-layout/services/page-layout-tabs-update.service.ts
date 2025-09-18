@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { EntityManager } from 'typeorm';
 
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
+import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
+import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { computeIdsDiff } from 'src/engine/core-modules/page-layout/utils/compute-ids-diff';
+import { computeDiffBetweenExistingEntitiesAndInput } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-existing-entities-and-input';
 
 @Injectable()
 export class PageLayoutUpdateService {
@@ -41,14 +42,7 @@ export class PageLayoutUpdateService {
       transactionManager,
     );
 
-    if (isDefined(tabs)) {
-      await this.updatePageLayoutTabs(
-        id,
-        workspaceId,
-        tabs,
-        transactionManager,
-      );
-    }
+    await this.updatePageLayoutTabs(id, workspaceId, tabs, transactionManager);
 
     return this.pageLayoutService.findByIdOrThrow(
       id,
@@ -63,21 +57,17 @@ export class PageLayoutUpdateService {
     tabs: UpdatePageLayoutTabWithWidgetsInput[],
     transactionManager: EntityManager,
   ): Promise<void> {
-    if (!tabs) return;
-
     const existingTabs = await this.pageLayoutTabService.findByPageLayoutId(
       workspaceId,
       pageLayoutId,
       transactionManager,
     );
 
-    const { idsToCreate, idsToDelete, idsToUpdate } = computeIdsDiff(
-      existingTabs.map((tab) => tab.id),
-      tabs.map((tab) => tab.id),
-    );
-
-    const tabsToUpdate = tabs.filter((tab) => idsToUpdate.includes(tab.id));
-    const tabsToCreate = tabs.filter((tab) => idsToCreate.includes(tab.id));
+    const { entitiesToCreate, entitiesToUpdate, idsToDelete } =
+      computeDiffBetweenExistingEntitiesAndInput<
+        PageLayoutTabEntity,
+        UpdatePageLayoutTabWithWidgetsInput
+      >(existingTabs, tabs, ['title', 'position']);
 
     for (const tabId of idsToDelete) {
       await this.pageLayoutTabService.delete(
@@ -87,7 +77,7 @@ export class PageLayoutUpdateService {
       );
     }
 
-    for (const tabToUpdate of tabsToUpdate) {
+    for (const tabToUpdate of entitiesToUpdate) {
       const { widgets: _widgets, ...updateData } = tabToUpdate;
 
       await this.pageLayoutTabService.update(
@@ -98,7 +88,7 @@ export class PageLayoutUpdateService {
       );
     }
 
-    for (const tabToCreate of tabsToCreate) {
+    for (const tabToCreate of entitiesToCreate) {
       await this.pageLayoutTabService.create(
         {
           ...tabToCreate,
@@ -132,17 +122,18 @@ export class PageLayoutUpdateService {
         transactionManager,
       );
 
-    const { idsToCreate, idsToDelete, idsToUpdate } = computeIdsDiff(
-      existingWidgets.map((widget) => widget.id),
-      widgets.map((widget) => widget.id),
-    );
-
-    const widgetsToUpdate = widgets.filter((widget) =>
-      idsToUpdate.includes(widget.id),
-    );
-    const widgetsToCreate = widgets.filter((widget) =>
-      idsToCreate.includes(widget.id),
-    );
+    const { entitiesToCreate, entitiesToUpdate, idsToDelete } =
+      computeDiffBetweenExistingEntitiesAndInput<
+        PageLayoutWidgetEntity,
+        UpdatePageLayoutWidgetWithIdInput
+      >(existingWidgets, widgets, [
+        'pageLayoutTabId',
+        'objectMetadataId',
+        'title',
+        'type',
+        'gridPosition',
+        'configuration',
+      ]);
 
     for (const widgetId of idsToDelete) {
       await this.pageLayoutWidgetService.delete(
@@ -152,7 +143,7 @@ export class PageLayoutUpdateService {
       );
     }
 
-    for (const widgetUpdate of widgetsToUpdate) {
+    for (const widgetUpdate of entitiesToUpdate) {
       await this.pageLayoutWidgetService.update(
         widgetUpdate.id,
         workspaceId,
@@ -161,7 +152,7 @@ export class PageLayoutUpdateService {
       );
     }
 
-    for (const widgetToCreate of widgetsToCreate) {
+    for (const widgetToCreate of entitiesToCreate) {
       await this.pageLayoutWidgetService.create(
         widgetToCreate,
         workspaceId,

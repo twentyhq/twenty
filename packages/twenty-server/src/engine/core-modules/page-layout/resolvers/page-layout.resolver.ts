@@ -8,7 +8,7 @@ import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
+import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-tabs-update.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
