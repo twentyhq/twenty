@@ -1,9 +1,11 @@
 import {
   Body,
+  Column,
   Container,
   Head,
   Heading,
   Html,
+  Row,
   Text,
 } from '@react-email/components';
 import type { JSONContent } from '@tiptap/core';
@@ -128,6 +130,8 @@ export class EmailRenderer {
         return this.heading(node);
       case 'variableTag':
         return this.variableTag(node);
+      case 'image':
+        return this.image(node);
       default:
         return <>{node.type}</>;
     }
@@ -205,6 +209,33 @@ export class EmailRenderer {
     }
 
     return <>{variable}</>;
+  }
+
+  image(node: JSONContent): ReactNode {
+    const { src, alt, align = 'left', width } = node?.attrs || {};
+    if (!isDefined(src)) {
+      return null;
+    }
+
+    return (
+      <Row>
+        <Column align={align}>
+          <img
+            src={src}
+            alt={alt}
+            style={{
+              width: isDefined(width) ? width : 'auto',
+              height: 'auto',
+              maxWidth: '100%',
+              outline: 'none',
+              border: 'none',
+              textDecoration: 'none',
+              display: 'block',
+            }}
+          />
+        </Column>
+      </Row>
+    );
   }
 }
 

@@ -5,6 +5,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -23,13 +24,13 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction';
 import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowEmailEditor';
 import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledWorkflowSendEmailBodyContainer = styled(FormFieldInputContainer)`
@@ -58,8 +59,8 @@ const StyledWorkflowSendEmailBodyInnerContainer = styled.div`
 
 const StyledEmailEditorActionButtonContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
+  top: ${({ theme }) => theme.spacing(0)};
+  right: ${({ theme }) => theme.spacing(7.5)};
   z-index: 1;
 `;
 
@@ -71,6 +72,17 @@ const StyledFullScreenEmailEditorContainer = styled.div`
   min-height: 0;
   padding: ${({ theme }) => theme.spacing(2)};
   overflow-y: auto;
+`;
+
+const StyledFullScreenButtonContainer = styled(StyledDropdownButtonContainer)`
+  background-color: 'transparent';
+
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: ${({ theme }) => theme.spacing(2)};
+  :hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => theme.background.transparent.light};
+  }
 `;
 
 type WorkflowSendEmailBodyProps = {
@@ -99,6 +111,7 @@ export const WorkflowSendEmailBody = ({
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const theme = useTheme();
 
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -223,23 +236,23 @@ export const WorkflowSendEmailBody = ({
 
             <StyledEmailEditorActionButtonContainer>
               {!readonly && !isFullScreen && (
-                <LightIconButton
-                  Icon={IconMaximize}
+                <StyledFullScreenButtonContainer
+                  isUnfolded={false}
+                  transparentBackground
                   onClick={handleEnterFullScreen}
-                  title={t`Expand to Full Screen`}
-                  size="small"
-                  accent="tertiary"
-                />
+                >
+                  <IconMaximize size={theme.icon.size.sm} />
+                </StyledFullScreenButtonContainer>
               )}
-
-              {VariablePicker && !readonly ? (
-                <VariablePicker
-                  instanceId={instanceId}
-                  multiline={false}
-                  onVariableSelect={handleVariableTagInsert}
-                />
-              ) : null}
             </StyledEmailEditorActionButtonContainer>
+
+            {VariablePicker && !readonly ? (
+              <VariablePicker
+                instanceId={instanceId}
+                multiline={true}
+                onVariableSelect={handleVariableTagInsert}
+              />
+            ) : null}
           </StyledWorkflowSendEmailBodyInnerContainer>
         </StyledWorkflowSendEmailFieldContainer>
         {hint && <InputHint>{hint}</InputHint>}
