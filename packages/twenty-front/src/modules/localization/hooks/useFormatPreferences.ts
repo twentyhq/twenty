@@ -77,7 +77,6 @@ export const useFormatPreferences = () => {
         }
       }
 
-      // Update local state immediately for better UX
       setWorkspaceMemberFormatPreferences(
         (prev: WorkspaceMemberFormatPreferences) => ({
           ...prev,
@@ -85,7 +84,6 @@ export const useFormatPreferences = () => {
         }),
       );
 
-      // Prepare workspace member update
       const workspaceMemberUpdate =
         getWorkspaceMemberUpdateFromFormatPreferences({
           [key]: value, // Use original value (including SYSTEM) for backend
@@ -115,7 +113,6 @@ export const useFormatPreferences = () => {
         return;
       }
 
-      // Resolve system values
       const resolvedUpdates = { ...updates };
       Object.entries(updates).forEach(([key, value]) => {
         if (value === 'SYSTEM' || value === 'system' || value === 7) {
@@ -140,13 +137,11 @@ export const useFormatPreferences = () => {
         }
       });
 
-      // Update local state immediately
       setWorkspaceMemberFormatPreferences((prev) => ({
         ...prev,
         ...resolvedUpdates,
       }));
 
-      // Prepare workspace member update
       const workspaceMemberUpdate =
         getWorkspaceMemberUpdateFromFormatPreferences(updates);
 
