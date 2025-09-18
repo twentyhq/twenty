@@ -66,23 +66,23 @@ export class ImapMessageProcessorService {
         { uid: true },
       );
 
-      const messagesData = new Map<number, FetchMessageObject>();
+      const processedMessages = new Map<number, MessageFetchResult>();
 
       for await (const message of fetchResults) {
-        messagesData.set(message.uid, message);
+        const result = await this.processMessageData(
+          message.uid,
+          message,
+          startTime,
+        );
+
+        processedMessages.set(message.uid, result);
       }
 
       for (const uid of uids) {
-        const messageData = messagesData.get(uid);
+        const processedMessage = processedMessages.get(uid);
 
-        if (messageData) {
-          const result = await this.processMessageData(
-            uid,
-            messageData,
-            startTime,
-          );
-
-          results.push(result);
+        if (processedMessage) {
+          results.push(processedMessage);
         } else {
           results.push({
             uid,
@@ -108,9 +108,7 @@ export class ImapMessageProcessorService {
     startTime: number,
   ): Promise<MessageFetchResult> {
     try {
-      const rawContent = messageData.source?.toString() || '';
-
-      if (!rawContent) {
+      if (!messageData.source) {
         this.logger.debug(`No source content for message UID ${uid}`);
 
         return {
@@ -120,7 +118,7 @@ export class ImapMessageProcessorService {
         };
       }
 
-      const parsed = await this.parseMessage(rawContent, uid);
+      const parsed = await this.parseMessageFromBuffer(messageData.source, uid);
       const processingTime = Date.now() - startTime;
 
       this.logger.debug(`Processed message UID ${uid} in ${processingTime}ms`);
@@ -135,12 +133,12 @@ export class ImapMessageProcessorService {
     }
   }
 
-  private async parseMessage(
-    rawContent: string,
+  private async parseMessageFromBuffer(
+    source: Buffer,
     uid: number,
   ): Promise<ParsedMail> {
     try {
-      return await simpleParser(rawContent, {
+      return await simpleParser(source, {
         skipTextToHtml: true,
         skipImageLinks: true,
         skipTextLinks: true,
