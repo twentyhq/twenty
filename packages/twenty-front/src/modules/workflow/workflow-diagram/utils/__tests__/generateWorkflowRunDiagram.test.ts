@@ -130,6 +130,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "FAILED",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -147,6 +148,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "NOT_STARTED",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -367,6 +369,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "SUCCESS",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -384,6 +387,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "SUCCESS",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -604,6 +608,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "RUNNING",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -621,6 +626,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "NOT_STARTED",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -860,6 +866,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "SUCCESS",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -877,6 +884,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "RUNNING",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
@@ -894,6 +902,7 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "edgeExecutionStatus": "NOT_STARTED",
+          "edgePathStrategy": undefined,
           "edgeType": "default",
         },
         "deletable": false,
