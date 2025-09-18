@@ -92,8 +92,8 @@ export const computeAggregateValueAndLabel = ({
         const { decimals, type } = field.settings ?? {};
         value =
           type === 'percentage'
-            ? `${formatNumber(value * 100, decimals)}%`
-            : formatNumber(value, decimals);
+            ? `${formatNumber(value * 100, { decimals })}%`
+            : formatNumber(value, { decimals });
         break;
       }
 
