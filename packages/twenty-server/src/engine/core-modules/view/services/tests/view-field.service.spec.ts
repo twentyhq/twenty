@@ -214,6 +214,54 @@ describe('ViewFieldService', () => {
         ),
       );
     });
+
+    it('should throw exception if position is lower than label metadata identifier', async () => {
+      const labelIdentifierFieldMetadataId =
+        'label-identifier-field-matadata-id';
+      const labelIdentifierViewFieldId =
+        'view-field-for-label-metadata-identifier-id';
+
+      const labelIdentifierViewField = {
+        ...mockViewField,
+        id: labelIdentifierViewFieldId,
+        fieldMetadataId: labelIdentifierFieldMetadataId,
+        position: 0,
+      };
+
+      const mockView = {
+        id: 'view-id',
+        objectMetadata: {
+          labelIdentifierFieldMetadataId,
+        },
+        viewFields: [
+          labelIdentifierViewField,
+          { ...mockViewField, position: 1 },
+        ],
+      } as ViewEntity;
+
+      jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
+        if (id === mockViewField.id) {
+          return Promise.resolve(mockViewField);
+        }
+
+        return Promise.resolve(null);
+      });
+      jest
+        .spyOn(viewService, 'findByIdWithRelatedObjectMetadata')
+        .mockResolvedValue(mockView);
+
+      const invalidData = { ...validViewFieldData, position: -1 };
+
+      await expect(viewFieldService.create(invalidData)).rejects.toThrow(
+        new UserInputError(
+          'Label metadata identifier must keep the minimal position in the view.',
+          {
+            userFriendlyMessage:
+              'Record text must be in first position of the view.',
+          },
+        ),
+      );
+    });
   });
 
   describe('update', () => {
@@ -274,10 +322,13 @@ describe('ViewFieldService', () => {
       const updateData = { position: 2 };
       const labelIdentifierFieldMetadataId =
         'label-identifier-field-matadata-id';
+      const labelIdentifierViewFieldId =
+        'view-field-for-label-metadata-identifier-id';
 
       const labelIdentifierViewField = {
         ...mockViewField,
-        id: labelIdentifierFieldMetadataId,
+        id: labelIdentifierViewFieldId,
+        fieldMetadataId: labelIdentifierFieldMetadataId,
         position: 0,
       };
 
@@ -293,7 +344,7 @@ describe('ViewFieldService', () => {
       } as ViewEntity;
 
       jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
-        if (id === labelIdentifierFieldMetadataId) {
+        if (id === labelIdentifierViewFieldId) {
           return Promise.resolve(labelIdentifierViewField);
         }
 
@@ -305,7 +356,7 @@ describe('ViewFieldService', () => {
 
       await expect(
         viewFieldService.update(
-          labelIdentifierFieldMetadataId,
+          labelIdentifierViewFieldId,
           workspaceId,
           updateData,
         ),
@@ -325,10 +376,13 @@ describe('ViewFieldService', () => {
       const updateData = { position: -1 };
       const labelIdentifierFieldMetadataId =
         'label-identifier-field-matadata-id';
+      const labelIdentifierViewFieldId =
+        'view-field-for-label-metadata-identifier-id';
 
       const labelIdentifierViewField = {
         ...mockViewField,
-        id: labelIdentifierFieldMetadataId,
+        id: labelIdentifierViewFieldId,
+        fieldMetadataId: labelIdentifierFieldMetadataId,
         position: 0,
       };
 
@@ -372,10 +426,13 @@ describe('ViewFieldService', () => {
       const updateData = { isVisible: false };
       const labelIdentifierFieldMetadataId =
         'label-identifier-field-matadata-id';
+      const labelIdentifierViewFieldId =
+        'view-field-for-label-metadata-identifier-id';
 
       const labelIdentifierViewField = {
         ...mockViewField,
-        id: labelIdentifierFieldMetadataId,
+        id: labelIdentifierViewFieldId,
+        fieldMetadataId: labelIdentifierFieldMetadataId,
         position: 0,
       };
 
@@ -388,7 +445,7 @@ describe('ViewFieldService', () => {
       } as ViewEntity;
 
       jest.spyOn(viewFieldService, 'findById').mockImplementation((id) => {
-        if (id === labelIdentifierFieldMetadataId) {
+        if (id === labelIdentifierViewFieldId) {
           return Promise.resolve(labelIdentifierViewField);
         }
 
