@@ -114,13 +114,14 @@ export class BillingPrice {
     (billingProduct) => billingProduct.billingPrices,
     {
       onDelete: 'CASCADE',
+      nullable: true,
     },
   )
   @JoinColumn({
     referencedColumnName: 'stripeProductId',
     name: 'stripeProductId',
   })
-  billingProduct: Relation<BillingProduct>;
+  billingProduct: Relation<BillingProduct> | null;
 
   @ManyToOne(() => BillingMeter, (billingMeter) => billingMeter.billingPrices, {
     nullable: true,
@@ -129,5 +130,5 @@ export class BillingPrice {
     referencedColumnName: 'stripeMeterId',
     name: 'stripeMeterId',
   })
-  billingMeter: Relation<BillingMeter>;
+  billingMeter: Relation<BillingMeter> | null;
 }

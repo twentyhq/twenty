@@ -855,7 +855,7 @@ export class BillingSubscriptionService {
     const targetLicensedPrice = findOrThrow(
       billingPricesPerPlanAndIntervalArray,
       ({ billingProduct }) =>
-        billingProduct.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+        billingProduct?.metadata.productKey === BillingProductKey.BASE_PRODUCT,
     );
 
     const targetMeteredPrice =

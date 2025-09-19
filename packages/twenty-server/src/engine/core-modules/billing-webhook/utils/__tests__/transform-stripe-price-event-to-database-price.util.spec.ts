@@ -9,28 +9,26 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 
 describe('transformStripePriceEventToDatabasePrice', () => {
   const createMockPriceData = (overrides = {}) => ({
-    object: {
-      id: 'price_123',
-      active: true,
-      product: 'prod_123',
-      meter: null,
-      currency: 'usd',
-      nickname: null,
-      tax_behavior: null,
-      type: 'recurring',
-      billing_scheme: 'per_unit',
-      unit_amount_decimal: '1000',
-      unit_amount: 1000,
-      transform_quantity: null,
-      recurring: {
-        usage_type: 'licensed',
-        interval: 'month',
-      },
-      currency_options: null,
-      tiers: null,
-      tiers_mode: null,
-      ...overrides,
+    id: 'price_123',
+    active: true,
+    product: 'prod_123',
+    meter: null,
+    currency: 'usd',
+    nickname: null,
+    tax_behavior: null,
+    type: 'recurring',
+    billing_scheme: 'per_unit',
+    unit_amount_decimal: '1000',
+    unit_amount: 1000,
+    transform_quantity: null,
+    recurring: {
+      usage_type: 'licensed',
+      interval: 'month',
     },
+    currency_options: null,
+    tiers: null,
+    tiers_mode: null,
+    ...overrides,
   });
 
   it('should transform basic price data correctly', () => {

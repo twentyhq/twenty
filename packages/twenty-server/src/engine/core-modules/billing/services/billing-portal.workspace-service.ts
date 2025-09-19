@@ -101,8 +101,6 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod:
-          !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
     const createdBillingSubscription =
@@ -247,7 +245,7 @@ export class BillingPortalWorkspaceService {
     const defaultLicensedProductPrice = findOrThrow(
       billingPricesPerPlan.licensedProductsPrices,
       (licensedProductsPrice) =>
-        licensedProductsPrice.billingProduct.metadata.productKey ===
+        licensedProductsPrice.billingProduct?.metadata.productKey ===
         BillingProductKey.BASE_PRODUCT,
       new BillingException(
         `Base product not found`,

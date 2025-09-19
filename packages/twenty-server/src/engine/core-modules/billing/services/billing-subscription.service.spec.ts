@@ -29,8 +29,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 import { BillingSubscriptionService } from './billing-subscription.service';
 
-// Utility typed helpers
-
 // Minimal fixtures
 function mkWorkspace(): Workspace {
   return { id: 'ws_1' } as Workspace;
@@ -151,7 +149,7 @@ function repoMock<T extends ObjectLiteral>() {
   } as unknown as jest.Mocked<Repository<T>>;
 }
 
-describe('BillingSubscriptionService public actions', () => {
+describe('BillingSubscriptionService', () => {
   let module: TestingModule;
   let service: BillingSubscriptionService;
 
@@ -553,6 +551,7 @@ describe('BillingSubscriptionService public actions', () => {
       const ws = mkWorkspace();
 
       arrangeScheduleWithCurrentAndNext();
+      arrangeGetCurrentSubEntity();
       const { metered } = arrangeCurrentDetails();
 
       const spy = jest.spyOn(service as any, 'changeMeteredPrice');
