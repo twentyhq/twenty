@@ -13,7 +13,6 @@ import {
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
@@ -22,7 +21,6 @@ export class ImpersonationService {
     private readonly auditService: AuditService,
     private readonly domainManagerService: DomainManagerService,
     private readonly loginTokenService: LoginTokenService,
-    @InjectRepository(User)
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
