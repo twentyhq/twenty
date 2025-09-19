@@ -14,6 +14,8 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ImpersonationService {
@@ -23,6 +25,7 @@ export class ImpersonationService {
     private readonly loginTokenService: LoginTokenService,
     @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async impersonate(
@@ -59,9 +62,27 @@ export class ImpersonationService {
       toImpersonateUserWorkspace.workspace.id !==
       impersonatorUserWorkspace.workspace.id;
 
+    const hasServerLevelImpersonatePermission =
+      impersonatorUserWorkspace.user.canImpersonate === true &&
+      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+
+    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
+      throw new AuthException(
+        'Impersonation not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const hasWorkspaceLevelImpersonatePermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        setting: PermissionFlagType.IMPERSONATE,
+        workspaceId: workspaceId,
+      });
+
     if (
-      isServerLevelImpersonation &&
-      toImpersonateUserWorkspace.workspace.allowImpersonation !== true
+      !hasWorkspaceLevelImpersonatePermission &&
+      !hasServerLevelImpersonatePermission
     ) {
       throw new AuthException(
         'Impersonation not enabled for this workspace',

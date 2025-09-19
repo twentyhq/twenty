@@ -11,9 +11,11 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const UserWorkspaceFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
+const PermissionsServiceUserHasWorkspaceSettingPermissionMock = jest.fn();
 
 describe('ImpersonationService', () => {
   let service: ImpersonationService;
@@ -55,6 +57,13 @@ describe('ImpersonationService', () => {
             createContext: jest.fn().mockReturnValue({
               insertWorkspaceEvent: jest.fn(),
             }),
+          },
+        },
+        {
+          provide: PermissionsService,
+          useValue: {
+            userHasWorkspaceSettingPermission:
+              PermissionsServiceUserHasWorkspaceSettingPermissionMock,
           },
         },
       ],
@@ -110,6 +119,11 @@ describe('ImpersonationService', () => {
       mockImpersonatorUserWorkspace,
     );
 
+    // Mock workspace-level permission check to return true
+    PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+      true,
+    );
+
     LoginTokenServiceGenerateLoginTokenMock.mockResolvedValueOnce({
       token: 'mock-login-token',
       expiresAt: new Date(),
@@ -143,6 +157,61 @@ describe('ImpersonationService', () => {
       'workspace-id',
       'impersonation',
       { impersonatorUserWorkspaceId: 'impersonator-user-workspace-id' },
+    );
+
+    expect(result).toEqual({
+      workspace: {
+        id: 'workspace-id',
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://twenty.twenty.com',
+        },
+      },
+      loginToken: {
+        token: 'mock-login-token',
+        expiresAt: expect.any(Date),
+      },
+    });
+  });
+
+  it('should allow impersonation within the same workspace even when allowImpersonation is false', async () => {
+    const mockToImpersonateUserWorkspace = {
+      userId: 'target-user-id',
+      workspaceId: 'workspace-id',
+      user: { id: 'target-user-id', email: 'target@example.com' },
+      workspace: { id: 'workspace-id', allowImpersonation: false },
+    };
+
+    const mockImpersonatorUserWorkspace = {
+      id: 'impersonator-user-workspace-id',
+      userId: 'impersonator-user-id',
+      workspaceId: 'workspace-id', // Same workspace ID
+      user: { id: 'impersonator-user-id', canImpersonate: false }, // Explicitly set to false
+      workspace: { id: 'workspace-id', allowImpersonation: false }, // Same workspace ID
+    };
+
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(
+      mockToImpersonateUserWorkspace,
+    );
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(
+      mockImpersonatorUserWorkspace,
+    );
+
+    // Mock workspace-level permission check to return true
+    PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+      true,
+    );
+
+    LoginTokenServiceGenerateLoginTokenMock.mockResolvedValueOnce({
+      token: 'mock-login-token',
+      expiresAt: new Date(),
+    });
+
+    // This should succeed because same-workspace impersonation doesn't check allowImpersonation
+    const result = await service.impersonate(
+      'target-user-id',
+      'workspace-id',
+      'impersonator-user-workspace-id',
     );
 
     expect(result).toEqual({
@@ -244,7 +313,45 @@ describe('ImpersonationService', () => {
     );
   });
 
-  it('should throw an error when impersonation is not enabled at server level for the user', async () => {});
+  it('should throw an error when impersonation is not enabled at server level for the user', async () => {
+    const mockToImpersonateUserWorkspace = {
+      userId: 'target-user-id',
+      workspaceId: 'target-workspace-id',
+      user: { id: 'target-user-id', email: 'target@example.com' },
+      workspace: { id: 'target-workspace-id', allowImpersonation: true },
+    };
 
-  it('should throw an error when impersonation is not enabled at workspace level for the user', async () => {});
+    const mockImpersonatorUserWorkspace = {
+      id: 'impersonator-user-workspace-id',
+      userId: 'impersonator-user-id',
+      workspaceId: 'impersonator-workspace-id',
+      user: { id: 'impersonator-user-id', canImpersonate: false },
+      workspace: { id: 'impersonator-workspace-id', allowImpersonation: true },
+    };
+
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(
+      mockToImpersonateUserWorkspace,
+    );
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(
+      mockImpersonatorUserWorkspace,
+    );
+
+    // Mock workspace-level permission check to return false
+    PermissionsServiceUserHasWorkspaceSettingPermissionMock.mockResolvedValueOnce(
+      false,
+    );
+
+    await expect(
+      service.impersonate(
+        'target-user-id',
+        'target-workspace-id',
+        'impersonator-user-workspace-id',
+      ),
+    ).rejects.toThrow(
+      new AuthException(
+        'Impersonation not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+  });
 });
