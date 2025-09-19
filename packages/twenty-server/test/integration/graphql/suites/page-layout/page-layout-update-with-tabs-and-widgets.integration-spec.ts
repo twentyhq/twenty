@@ -14,12 +14,22 @@ import {
   cleanupPageLayoutRecords,
 } from 'test/integration/utils/page-layout-test.util';
 import { cleanupPageLayoutWidgetRecords } from 'test/integration/utils/page-layout-widget-test.util';
-import { v4 as uuid } from 'uuid';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
+
+const existingTabId = '20202020-e02c-4292-9994-42695c4e41e8';
+const tabToUpdateId = '20202020-974a-4480-b814-1fca24937132';
+const tabToDeleteId = '20202020-a510-49e6-a9d9-0ff3e5c6a1ae';
+const newTabId = '20202020-1db1-4c18-8804-6c700a8106a6';
+
+const existingWidgetId = '20202020-afbe-46a3-a759-9a10ea7f5888';
+const widgetToUpdateId = '20202020-c312-4342-93c0-f02c92c4a609';
+const widgetToDeleteId = '20202020-8a0b-4ec2-8784-af4adb27c18a';
+const newWidgetId = '20202020-da21-4321-b313-699eeff00798';
+const anotherNewWidgetId = '20202020-3937-4617-bc88-8a811f769c90';
 
 describe('Page Layout Update With Tabs And Widgets Integration', () => {
   let testObjectMetadataId: string;
@@ -62,18 +72,8 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
         objectMetadataId: testObjectMetadataId,
       });
 
-      const existingTabId = uuid();
-      const tabToUpdateId = uuid();
-      const tabToDeleteId = uuid();
-      const newTabId = uuid();
-
-      const existingWidgetId = uuid();
-      const widgetToUpdateId = uuid();
-      const widgetToDeleteId = uuid();
-      const newWidgetId = uuid();
-      const anotherNewWidgetId = uuid();
-
       const initialUpdateInput = {
+        id: pageLayout.id,
         name: 'Updated Page Layout',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: testObjectMetadataId,
@@ -363,7 +363,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
         objectMetadataId: 'invalid-uuid',
         tabs: [
           {
-            id: uuid(),
+            id: '20202020-9a4c-4f97-bd63-a5f5843ee610',
             title: 'Test Tab',
             position: 1,
             widgets: [],
