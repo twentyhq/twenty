@@ -3473,7 +3473,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
   configuration: Scalars['JSON'];
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
-  objectMetadataId: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
   title: Scalars['String'];
   type: WidgetType;
