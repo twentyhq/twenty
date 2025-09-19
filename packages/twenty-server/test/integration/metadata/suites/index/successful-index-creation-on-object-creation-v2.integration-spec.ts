@@ -7,8 +7,9 @@ import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
-describe('Object metadata creation with index creation', () => {
+describe('Object metadata creation with index creation v2', () => {
   let createdObjectId: string | undefined;
 
   beforeAll(async () => {
@@ -29,7 +30,17 @@ describe('Object metadata creation with index creation', () => {
 
   afterEach(async () => {
     if (isDefined(createdObjectId)) {
+      await updateOneObjectMetadata({
+        input: {
+          idToUpdate: createdObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+        expectToFail: false,
+      });
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: createdObjectId },
       });
     }
@@ -44,6 +55,7 @@ describe('Object metadata creation with index creation', () => {
     } = CUSTOM_OBJECT_DISHES;
 
     const { data } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         labelPlural,
         description,
@@ -60,6 +72,7 @@ describe('Object metadata creation with index creation', () => {
     createdObjectId = data.createOneObject.id;
 
     const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
       input: {
         filter: {
           id: {
@@ -78,6 +91,13 @@ describe('Object metadata creation with index creation', () => {
           isUnique
           isCustom
           indexType
+          indexFieldMetadataList {
+            id
+            fieldMetadataId
+            createdAt
+            updatedAt
+            order
+          }
         }
       `,
     });

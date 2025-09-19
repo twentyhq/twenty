@@ -298,7 +298,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     id: tsFlatVectorIndexId,
     indexType: IndexType.GIN,
     indexWhereClause: null,
-    isCustom: true,
+    isCustom: false,
     isUnique: false,
     name: generateDeterministicIndexNameV2({
       flatObjectMetadata: {
