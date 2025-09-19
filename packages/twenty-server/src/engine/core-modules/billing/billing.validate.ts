@@ -85,7 +85,7 @@ const assertIsMeteredPrice = (
   price: BillingPrice,
 ): asserts price is BillingMeterPrice => {
   if (
-    price.billingProduct.metadata.priceUsageBased !== BillingUsageType.METERED
+    price.billingProduct?.metadata.priceUsageBased !== BillingUsageType.METERED
   ) {
     throw new BillingException(
       'Price is not a metered price',
@@ -105,7 +105,7 @@ const assertIsMeteredPrice = (
 
 const isMeteredPrice = (price: BillingPrice): price is BillingMeterPrice => {
   if (
-    price.billingProduct.metadata.priceUsageBased !==
+    price.billingProduct?.metadata.priceUsageBased !==
       BillingUsageType.METERED ||
     !isMeteredTiersSchema(price.tiers)
   ) {
