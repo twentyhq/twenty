@@ -4,8 +4,8 @@ import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/componen
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
-import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
@@ -46,6 +46,16 @@ export const CommandMenuWorkflowSelectAction = ({
       )}
 
       <RightDrawerWorkflowSelectStepTitle>
+        {t`Flow`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={FLOW_ACTIONS.filter(
+          (action) => action.type !== 'ITERATOR' || isIteratorEnabled,
+        )}
+        onClick={onActionSelected}
+      />
+
+      <RightDrawerWorkflowSelectStepTitle>
         {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
@@ -60,18 +70,6 @@ export const CommandMenuWorkflowSelectAction = ({
         actions={HUMAN_INPUT_ACTIONS}
         onClick={onActionSelected}
       />
-
-      {isIteratorEnabled && (
-        <>
-          <RightDrawerWorkflowSelectStepTitle>
-            {t`Others`}
-          </RightDrawerWorkflowSelectStepTitle>
-          <WorkflowActionMenuItems
-            actions={OTHER_ACTIONS}
-            onClick={onActionSelected}
-          />
-        </>
-      )}
     </RightDrawerStepListContainer>
   );
 };

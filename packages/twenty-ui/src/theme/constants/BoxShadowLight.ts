@@ -2,6 +2,7 @@ import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
 
 export const BOX_SHADOW_LIGHT = {
+  color: RGBA(GRAY_SCALE.gray100, 0.04),
   light: `0px 2px 4px 0px ${RGBA(
     GRAY_SCALE.gray100,
     0.04,

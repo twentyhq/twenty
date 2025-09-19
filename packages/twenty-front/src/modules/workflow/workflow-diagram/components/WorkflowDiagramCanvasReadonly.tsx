@@ -4,7 +4,6 @@ import { WorkflowDiagramDefaultEdgeReadonly } from '@/workflow/workflow-diagram/
 
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramEmptyTriggerReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly';
-import { WorkflowDiagramFilterEdgeReadonly } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeReadonly';
 import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeReadonly';
 import { ReactFlowProvider } from '@xyflow/react';
 
@@ -25,8 +24,7 @@ export const WorkflowDiagramCanvasReadonly = ({
           'empty-trigger': WorkflowDiagramEmptyTriggerReadonly,
         }}
         edgeTypes={{
-          'empty-filter--readonly': WorkflowDiagramDefaultEdgeReadonly,
-          'filter--readonly': WorkflowDiagramFilterEdgeReadonly,
+          readonly: WorkflowDiagramDefaultEdgeReadonly,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}

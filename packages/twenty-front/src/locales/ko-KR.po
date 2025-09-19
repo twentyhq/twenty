@@ -433,11 +433,6 @@ msgstr "새로 추가"
 msgid "Add node"
 msgstr "노드 추가"
 
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
-msgstr "노드 추가"
-
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -749,9 +744,9 @@ msgstr "예상치 못한 오류가 발생했습니다"
 msgid "and"
 msgstr "및"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
+msgid "Any field"
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
@@ -2217,11 +2212,6 @@ msgstr "에이전트 삭제"
 msgid "Delete API key"
 msgstr "API 키 삭제"
 
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "분기 삭제"
-
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
@@ -3236,6 +3226,11 @@ msgstr "처음 5줄"
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "이름"
+
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
 
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
@@ -5053,11 +5048,6 @@ msgstr ""
 msgid "Other workspaces"
 msgstr "기타 워크스페이스"
 
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-msgid "Others"
-msgstr "기타"
-
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
@@ -5489,11 +5479,6 @@ msgstr "기본으로 설정 해제"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "Remove Deleted filter"
 msgstr "삭제된 필터 제거"
-
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr "필터 제거"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx

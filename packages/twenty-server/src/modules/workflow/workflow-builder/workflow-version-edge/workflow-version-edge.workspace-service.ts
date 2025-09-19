@@ -222,6 +222,16 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
+    if (
+      sourceStep.nextStepIds?.includes(target) &&
+      !isDefined(sourceConnectionOptions)
+    ) {
+      return computeWorkflowVersionStepChanges({
+        trigger,
+        steps,
+      });
+    }
+
     const { updatedSourceStep, shouldPersist } = isDefined(
       sourceConnectionOptions,
     )
@@ -364,12 +374,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     }
 
     if (!trigger.nextStepIds?.includes(target)) {
-      return this.handleFilterBetweenTriggerAndTarget({
+      return computeWorkflowVersionStepChanges({
         trigger,
         steps,
-        target,
-        workflowVersionId: workflowVersion.id,
-        workflowVersionRepository,
       });
     }
 
@@ -416,24 +423,13 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    // TODO: Remove this once we start using filters as regular steps
-    const isIteratorWithLoopTarget =
-      isDefined(sourceConnectionOptions) &&
-      sourceConnectionOptions.connectedStepType ===
-        WorkflowActionType.ITERATOR &&
-      sourceConnectionOptions.settings.isConnectedToLoop;
-
     if (
       !sourceStep.nextStepIds?.includes(target) &&
-      !isIteratorWithLoopTarget
+      !isDefined(sourceConnectionOptions)
     ) {
-      return await this.handleFilterBetweenSourceAndTarget({
+      return computeWorkflowVersionStepChanges({
         trigger,
         steps,
-        sourceStep,
-        target,
-        workflowVersionId: workflowVersion.id,
-        workflowVersionRepository,
       });
     }
 
@@ -471,109 +467,6 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     await workflowVersionRepository.update(workflowVersion.id, {
-      steps: updatedSteps,
-    });
-
-    return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
-    });
-  }
-
-  private async handleFilterBetweenTriggerAndTarget({
-    trigger,
-    steps,
-    target,
-    workflowVersionId,
-    workflowVersionRepository,
-  }: {
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-    target: string;
-    workflowVersionId: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-  }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenTriggerAndTarget = this.findFilterBetweenNodes({
-      steps,
-      sourceNextStepIds: trigger.nextStepIds,
-      target,
-    });
-
-    if (!isDefined(filterBetweenTriggerAndTarget)) {
-      return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
-      });
-    }
-
-    const updatedTrigger = {
-      ...trigger,
-      nextStepIds: trigger.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== filterBetweenTriggerAndTarget.id,
-      ),
-    };
-
-    const updatedSteps = steps.filter(
-      (step) => step.id !== filterBetweenTriggerAndTarget.id,
-    );
-
-    await workflowVersionRepository.update(workflowVersionId, {
-      trigger: updatedTrigger,
-      steps: updatedSteps,
-    });
-
-    return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps: updatedSteps,
-    });
-  }
-
-  private async handleFilterBetweenSourceAndTarget({
-    trigger,
-    steps,
-    sourceStep,
-    target,
-    workflowVersionRepository,
-    workflowVersionId,
-  }: {
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[];
-    sourceStep: WorkflowAction;
-    target: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-    workflowVersionId: string;
-  }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenSourceAndTarget = this.findFilterBetweenNodes({
-      steps,
-      sourceNextStepIds: sourceStep.nextStepIds,
-      target,
-    });
-
-    if (!isDefined(filterBetweenSourceAndTarget)) {
-      return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
-      });
-    }
-
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: sourceStep.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== filterBetweenSourceAndTarget.id,
-      ),
-    };
-
-    const updatedSteps = steps
-      .map((step) => {
-        if (step.id === sourceStep.id) {
-          return updatedSourceStep;
-        }
-
-        return step;
-      })
-      .filter((step) => step.id !== filterBetweenSourceAndTarget.id);
-
-    await workflowVersionRepository.update(workflowVersionId, {
       steps: updatedSteps,
     });
 
@@ -649,23 +542,5 @@ export class WorkflowVersionEdgeWorkspaceService {
           shouldPersist: true,
         };
     }
-  }
-
-  private findFilterBetweenNodes({
-    steps,
-    sourceNextStepIds,
-    target,
-  }: {
-    steps: WorkflowAction[];
-    sourceNextStepIds: string[] | undefined;
-    target: string;
-  }) {
-    const nextStepFilters = steps.filter(
-      (step) =>
-        sourceNextStepIds?.includes(step.id) &&
-        step.type === WorkflowActionType.FILTER,
-    );
-
-    return nextStepFilters.find((step) => step.nextStepIds?.includes(target));
   }
 }
