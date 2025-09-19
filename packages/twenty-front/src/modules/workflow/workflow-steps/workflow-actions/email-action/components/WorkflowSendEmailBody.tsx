@@ -6,10 +6,8 @@ import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -17,18 +15,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import {
-  StyledFullScreenContent,
-  StyledFullScreenHeader,
-  StyledFullScreenOverlay,
-} from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction';
 import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowEmailEditor';
 import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -198,26 +190,20 @@ export const WorkflowSendEmailBody = ({
     },
   ];
 
-  const fullScreenOverlay = isFullScreen
-    ? createPortal(
-        <StyledFullScreenOverlay
-          data-globally-prevent-click-outside="true"
-          tabIndex={-1}
-        >
-          <StyledFullScreenHeader
-            title={<Breadcrumb links={breadcrumbLinks} />}
-            hasClosePageButton={!isMobile}
-            onClosePage={handleExitFullScreen}
-          />
-          <StyledFullScreenContent data-globally-prevent-click-outside="true">
-            <StyledFullScreenEmailEditorContainer>
-              <WorkflowEmailEditor editor={editor} readonly={readonly} />
-            </StyledFullScreenEmailEditorContainer>
-          </StyledFullScreenContent>
-        </StyledFullScreenOverlay>,
-        document.body,
-      )
-    : null;
+  const { renderFullScreenModal } = useFullScreenModal({
+    links: breadcrumbLinks,
+    onClose: handleExitFullScreen,
+    hasClosePageButton: !isMobile,
+  });
+
+  const fullScreenOverlay = renderFullScreenModal(
+    <div data-globally-prevent-click-outside="true">
+      <StyledFullScreenEmailEditorContainer>
+        <WorkflowEmailEditor editor={editor} readonly={readonly} />
+      </StyledFullScreenEmailEditorContainer>
+    </div>,
+    isFullScreen,
+  );
 
   if (!isDefined(editor)) {
     return null;
@@ -241,7 +227,7 @@ export const WorkflowSendEmailBody = ({
                   transparentBackground
                   onClick={handleEnterFullScreen}
                 >
-                  <IconMaximize size={theme.icon.size.sm} />
+                  <IconMaximize size={theme.icon.size.md} />
                 </StyledFullScreenButtonContainer>
               )}
             </StyledEmailEditorActionButtonContainer>
