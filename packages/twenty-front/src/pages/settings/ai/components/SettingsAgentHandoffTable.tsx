@@ -18,6 +18,7 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
 import { type AgentHandoffDto } from '~/generated/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const AGENT_HANDOFF_DELETION_MODAL_ID = 'agent-handoff-deletion-modal';
 
@@ -70,9 +71,9 @@ export const SettingsAgentHandoffTable = ({
   const filteredHandoffTargets = !searchFilter
     ? handoffTargets
     : handoffTargets.filter((handoff) => {
-        const searchTerm = searchFilter.toLowerCase();
-        const label = handoff.toAgent.label?.toLowerCase() || '';
-        const description = handoff.description?.toLowerCase() || '';
+        const searchTerm = normalizeSearchText(searchFilter);
+        const label = normalizeSearchText(handoff.toAgent.label);
+        const description = normalizeSearchText(handoff.description);
 
         return label.includes(searchTerm) || description.includes(searchTerm);
       });

@@ -6,6 +6,7 @@ import { useMemo, useRef, useState } from 'react';
 import { type TagColor } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SubMatchingSelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -28,9 +29,10 @@ export const SubMatchingSelectInput = ({
   const optionsToSelect = useMemo(
     () =>
       options.filter((option) => {
+        const searchTerm = normalizeSearchText(searchFilter);
         return (
           option.value !== selectedOption?.value &&
-          option.label.toLowerCase().includes(searchFilter.toLowerCase())
+          normalizeSearchText(option.label).includes(searchTerm)
         );
       }) || [],
     [options, searchFilter, selectedOption?.value],

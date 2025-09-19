@@ -12,6 +12,7 @@ import {
   useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledLoadingContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
@@ -90,14 +91,16 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
     if (isAgent) {
       const agent = entity as Agent;
+      const searchTerm = normalizeSearchText(searchFilter);
       return (
-        agent.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        agent.label.toLowerCase().includes(searchFilter.toLowerCase())
+        normalizeSearchText(agent.name).includes(searchTerm) ||
+        normalizeSearchText(agent.label).includes(searchTerm)
       );
     } else {
-      return (entity as ApiKeyForRole).name
-        .toLowerCase()
-        .includes(searchFilter.toLowerCase());
+      const searchTerm = normalizeSearchText(searchFilter);
+      return normalizeSearchText((entity as ApiKeyForRole).name).includes(
+        searchTerm,
+      );
     }
   });
 

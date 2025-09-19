@@ -13,6 +13,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight, IconSearch } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 import {
   SettingsAIAgentTableRow,
@@ -39,11 +40,13 @@ export const SettingsAIAgentsTable = ({ agents }: { agents: Agent[] }) => {
 
   const sortedAgents = useSortedArray(agents, SETTINGS_AI_AGENT_TABLE_METADATA);
 
-  const filteredAgents = sortedAgents.filter(
-    (agent) =>
-      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredAgents = sortedAgents.filter((agent) => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+    return (
+      normalizeSearchText(agent.name).includes(searchNormalized) ||
+      normalizeSearchText(agent.label).includes(searchNormalized)
+    );
+  });
 
   return (
     <>

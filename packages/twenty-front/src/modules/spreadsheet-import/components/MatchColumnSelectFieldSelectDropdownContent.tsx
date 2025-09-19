@@ -20,6 +20,7 @@ import { IconForbid, IconX, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type ReadonlyDeep } from 'type-fest';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledContainer = styled.div`
   max-height: 360px;
@@ -55,11 +56,13 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { availableFieldMetadataItems } = useSpreadsheetImportInternal();
 
   const filteredAvailableFieldMetadataItems =
-    availableFieldMetadataItems.filter(
-      (field) =>
-        field.label.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        field.name.toLowerCase().includes(searchFilter.toLowerCase()),
-    );
+    availableFieldMetadataItems.filter((field) => {
+      const searchTerm = normalizeSearchText(searchFilter);
+      return (
+        normalizeSearchText(field.label).includes(searchTerm) ||
+        normalizeSearchText(field.name).includes(searchTerm)
+      );
+    });
 
   const { getIcon } = useIcons();
 

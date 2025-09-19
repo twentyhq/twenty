@@ -15,6 +15,7 @@ import { useRecoilValue } from 'recoil';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
 
 const StyledTable = styled.div`
@@ -93,22 +94,22 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
       case 'member': {
         const member = roleTarget as PartialWorkspaceMember;
         return [
-          member.name.firstName?.toLowerCase() || '',
-          member.name.lastName?.toLowerCase() || '',
-          member.userEmail?.toLowerCase() || '',
+          normalizeSearchText(member.name.firstName),
+          normalizeSearchText(member.name.lastName),
+          normalizeSearchText(member.userEmail),
         ];
       }
       case 'agent': {
         const agent = roleTarget as Agent;
         return [
-          agent.name?.toLowerCase() || '',
-          agent.label?.toLowerCase() || '',
-          agent.description?.toLowerCase() || '',
+          normalizeSearchText(agent.name),
+          normalizeSearchText(agent.label),
+          normalizeSearchText(agent.description),
         ];
       }
       case 'apiKey': {
         const apiKey = roleTarget as ApiKeyForRole;
-        return [apiKey.name?.toLowerCase() || ''];
+        return [normalizeSearchText(apiKey.name)];
       }
     }
   };
@@ -116,7 +117,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   const filteredRoleTargets = !searchFilter
     ? roleTargets
     : roleTargets.filter((roleTarget) => {
-        const searchTerm = searchFilter.toLowerCase();
+        const searchTerm = normalizeSearchText(searchFilter);
         const searchableFields = getSearchableFields(roleTarget);
         return searchableFields.some((field) => field.includes(searchTerm));
       });

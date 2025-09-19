@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -56,9 +57,10 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = options.filter((option) =>
-    option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-  );
+  const filteredOptionsInDropDown = options.filter((option) => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return normalizeSearchText(option.label).includes(searchTerm);
+  });
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
