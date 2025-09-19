@@ -51,6 +51,6 @@ export class UpdatePageLayoutWidgetWithIdInput {
 
   @Field(() => GraphQLJSON)
   @IsObject()
-  @IsNotEmpty()
+  @IsOptional()
   configuration: Record<string, unknown> | null;
 }
