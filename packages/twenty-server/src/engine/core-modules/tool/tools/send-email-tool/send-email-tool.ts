@@ -142,14 +142,19 @@ export class SendEmailTool implements Tool {
       this.logger.log(`Email sent successfully to ${email}`);
 
       return {
+        success: true,
+        message: `Email sent successfully to ${email}`,
         result: {
-          success: true,
-          message: `Email sent successfully to ${email}`,
+          recipient: email,
+          subject: safeSubject,
+          connectedAccountId,
         },
       };
     } catch (error) {
       if (error instanceof SendEmailToolException) {
         return {
+          success: false,
+          message: `Failed to send email to ${email}`,
           error: error.message,
         };
       }
@@ -157,6 +162,8 @@ export class SendEmailTool implements Tool {
       this.logger.error(`Failed to send email: ${error}`);
 
       return {
+        success: false,
+        message: `Failed to send email to ${email}`,
         error: error instanceof Error ? error.message : 'Failed to send email',
       };
     }

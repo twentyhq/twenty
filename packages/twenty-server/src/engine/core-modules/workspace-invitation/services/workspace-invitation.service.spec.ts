@@ -16,6 +16,7 @@ import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -94,6 +95,14 @@ describe('WorkspaceInvitationService', () => {
             // Add other methods as needed
           },
         },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn().mockReturnValue({
+              _: jest.fn().mockReturnValue('mocked-translation'),
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -163,6 +172,7 @@ describe('WorkspaceInvitationService', () => {
       const sender = {
         userEmail: 'sender@example.com',
         name: { firstName: 'Sender' },
+        locale: 'en',
       };
 
       jest.spyOn(service, 'createWorkspaceInvitation').mockResolvedValue({

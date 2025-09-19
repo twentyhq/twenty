@@ -1,7 +1,7 @@
-import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { StyledCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -37,6 +37,13 @@ export const RecordTableCellFirstRowFirstColumn = ({
     recordTableHoverPositionComponentState,
   );
 
+  const focusPosition = useRecoilComponentValue(
+    recordTableFocusPositionComponentState,
+  );
+
+  const isFocusPortalOnThisCell =
+    focusPosition?.column === 0 && focusPosition.row === 0;
+
   const isHoveredPortalOnThisCell =
     hoverPosition?.column === 0 && hoverPosition.row === 0;
 
@@ -44,21 +51,11 @@ export const RecordTableCellFirstRowFirstColumn = ({
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
-    hasRecordGroupsComponentSelector,
-  );
-
-  const zIndexWithoutGroups =
-    !isRecordTableScrolledVertically && isHoveredPortalOnThisCell
+  const zIndex =
+    !isRecordTableScrolledVertically &&
+    (isHoveredPortalOnThisCell || isFocusPortalOnThisCell)
       ? TABLE_Z_INDEX.withoutGroupsCell0_0.cell0_0HoveredWithoutScroll
       : TABLE_Z_INDEX.withoutGroupsCell0_0.cell0_0Normal;
-
-  const zIndexWithGroups =
-    !isRecordTableScrolledVertically && isHoveredPortalOnThisCell
-      ? TABLE_Z_INDEX.withGroupsCell0_0.cell0_0HoveredWithoutScroll
-      : TABLE_Z_INDEX.withGroupsCell0_0.cell0_0Normal;
-
-  const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary

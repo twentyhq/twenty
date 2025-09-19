@@ -9,7 +9,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 export const useBatchCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,

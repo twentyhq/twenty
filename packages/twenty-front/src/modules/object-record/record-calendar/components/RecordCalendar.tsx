@@ -11,6 +11,8 @@ const StyledContainerContainer = styled.div`
   flex-direction: column;
   min-height: calc(100% - ${({ theme }) => theme.spacing(2)});
   height: min-content;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const RecordCalendar = () => {

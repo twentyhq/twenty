@@ -1,3 +1,4 @@
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
 export type WorkspaceMigrationV2<
@@ -9,5 +10,5 @@ export type WorkspaceMigrationV2<
   // description?: string;
   actions: TActions[];
   workspaceId: string;
-  // objectActions: TActions[] // could be cool ?
+  relatedFlatEntityMapsKeys?: (keyof AllFlatEntityMaps)[];
 };

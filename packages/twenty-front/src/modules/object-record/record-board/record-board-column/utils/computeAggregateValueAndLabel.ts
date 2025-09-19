@@ -13,8 +13,8 @@ import isEmpty from 'lodash.isempty';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
+import { formatNumber } from '~/utils/format/formatNumber';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -83,7 +83,7 @@ export const computeAggregateValueAndLabel = ({
     switch (field.type) {
       case FieldMetadataType.CURRENCY: {
         value = Number(aggregateValue);
-        value = formatAmount(value / 1_000_000);
+        value = formatToShortNumber(value / 1_000_000);
         break;
       }
 

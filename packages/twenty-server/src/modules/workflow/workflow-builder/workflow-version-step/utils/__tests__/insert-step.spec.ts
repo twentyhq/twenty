@@ -228,4 +228,35 @@ describe('insertStep', () => {
       'existing-loop-step',
     ]);
   });
+
+  it('should handle inserting a step between two steps within an iterator', () => {
+    const existingTrigger = createMockTrigger(['1']);
+    const insertedStep = createMockAction('2');
+
+    const result = insertStep({
+      existingTrigger,
+      existingSteps: [mockIteratorStep],
+      insertedStep,
+      parentStepId: '1',
+      nextStepId: 'existing-loop-step',
+      parentStepConnectionOptions: {
+        connectedStepType: WorkflowActionType.ITERATOR,
+        settings: {
+          isConnectedToLoop: true,
+        },
+      },
+    });
+
+    const updatedIteratorStep = result.updatedSteps.find(
+      (step) => step.id === mockIteratorStep.id,
+    ) as WorkflowIteratorAction;
+    const updatedInsertedStep = result.updatedSteps.find(
+      (step) => step.id === insertedStep.id,
+    ) as WorkflowAction;
+
+    expect(updatedIteratorStep.settings.input.initialLoopStepIds).toEqual([
+      insertedStep.id,
+    ]);
+    expect(updatedInsertedStep.nextStepIds).toEqual(['existing-loop-step']);
+  });
 });

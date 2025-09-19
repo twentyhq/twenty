@@ -10,7 +10,7 @@ import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/f
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { IconDecimal, IconEye } from 'twenty-ui/display';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
+import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,

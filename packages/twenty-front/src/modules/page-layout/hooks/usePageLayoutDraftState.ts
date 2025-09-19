@@ -1,15 +1,29 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '../states/pageLayoutPersistedComponentState';
 
-export const usePageLayoutDraftState = () => {
-  const [pageLayoutDraft, setPageLayoutDraft] =
-    useRecoilState(pageLayoutDraftState);
-  const pageLayoutPersisted = useRecoilValue(pageLayoutPersistedState);
+export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const [pageLayoutDraft, setPageLayoutDraft] = useRecoilComponentState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+  const pageLayoutPersisted = useRecoilComponentValue(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
 
   const isDirty = pageLayoutPersisted
     ? !isDeeplyEqual(pageLayoutDraft, {
+        id: pageLayoutPersisted.id,
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,

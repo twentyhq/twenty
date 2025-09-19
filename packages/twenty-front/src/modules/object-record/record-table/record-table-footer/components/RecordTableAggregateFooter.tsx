@@ -76,7 +76,7 @@ export const RecordTableAggregateFooter = ({
           >
             <RecordTableAggregateFooterCell
               currentRecordGroupId={currentRecordGroupId}
-              isFirstCell={index === 0}
+              columnIndex={index}
             />
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );

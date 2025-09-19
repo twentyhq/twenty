@@ -28,6 +28,7 @@ export const deleteFieldFromFlatObjectMetadataMapsOrThrow = ({
   }
 
   return {
+    idByUniversalIdentifier: flatObjectMetadataMaps.idByUniversalIdentifier,
     byId: {
       ...flatObjectMetadataMaps.byId,
       [objectMetadataId]:
