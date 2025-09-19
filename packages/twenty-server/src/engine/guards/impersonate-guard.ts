@@ -51,7 +51,7 @@ export class ImpersonateGuard implements CanActivate {
       PermissionsExceptionCode.PERMISSION_DENIED,
       {
         userFriendlyMessage:
-          'You do not have permission to access this feature. Please contact your workspace administrator for access.',
+          'You do not have permission to impersonate users. Please contact your workspace administrator for access.',
       },
     );
   }
