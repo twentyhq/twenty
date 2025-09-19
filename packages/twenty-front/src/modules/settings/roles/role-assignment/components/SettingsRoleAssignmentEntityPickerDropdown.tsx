@@ -7,9 +7,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import {
-    type Agent,
-    useFindManyAgentsQuery,
-    useGetApiKeysQuery,
+  type Agent,
+  useFindManyAgentsQuery,
+  useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';

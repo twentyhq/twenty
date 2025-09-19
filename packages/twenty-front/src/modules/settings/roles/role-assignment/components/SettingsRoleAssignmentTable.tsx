@@ -1,6 +1,6 @@
 import {
-    SettingsRoleAssignmentTableRow,
-    type RoleTarget,
+  SettingsRoleAssignmentTableRow,
+  type RoleTarget,
 } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
