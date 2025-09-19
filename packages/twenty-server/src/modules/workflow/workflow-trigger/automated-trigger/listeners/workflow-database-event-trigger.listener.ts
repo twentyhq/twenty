@@ -27,6 +27,7 @@ import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { hasSubstantialRecordData } from 'src/modules/workflow/workflow-trigger/utils/has-substantial-record-data.util';
 
 @Injectable()
 export class WorkflowDatabaseEventTriggerListener {
@@ -56,6 +57,9 @@ export class WorkflowDatabaseEventTriggerListener {
       payload: clonedPayload,
       action: DatabaseEventAction.CREATED,
     });
+
+    // Also trigger upsert event if record has substantial data
+    await this.handleUpsertEventForCreated(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
@@ -74,6 +78,9 @@ export class WorkflowDatabaseEventTriggerListener {
       payload: clonedPayload,
       action: DatabaseEventAction.UPDATED,
     });
+
+    // Also trigger upsert event for all updates
+    await this.handleUpsertEventForUpdated(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
@@ -221,6 +228,43 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
     }
+  }
+
+  private async handleUpsertEventForCreated(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
+  ) {
+    // Check if any created records have substantial data
+    const recordsWithSubstantialData = payload.events.filter((event) => {
+      const recordData = event.properties.after;
+      return recordData && typeof recordData === 'object' 
+        ? hasSubstantialRecordData(recordData as Record<string, unknown>)
+        : false;
+    });
+
+    if (recordsWithSubstantialData.length === 0) {
+      return;
+    }
+
+    // Create a new payload with only records that have substantial data
+    const upsertPayload: WorkspaceEventBatch<ObjectRecordCreateEvent> = {
+      ...payload,
+      events: recordsWithSubstantialData,
+    };
+
+    await this.handleEvent({
+      payload: upsertPayload,
+      action: DatabaseEventAction.UPSERTED,
+    });
+  }
+
+  private async handleUpsertEventForUpdated(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
+  ) {
+    // All update events qualify as upsert events
+    await this.handleEvent({
+      payload,
+      action: DatabaseEventAction.UPSERTED,
+    });
   }
 
   private async shouldIgnoreEvent(
