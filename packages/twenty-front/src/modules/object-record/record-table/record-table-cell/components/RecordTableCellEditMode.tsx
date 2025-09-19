@@ -107,7 +107,6 @@ export const RecordTableCellEditMode = ({
   return (
     <StyledEditableCellEditModeContainer
       ref={(el) => {
-        refs.setReference(el);
         setContainerRef(el);
       }}
       data-testid="editable-cell-edit-mode-container"
