@@ -82,6 +82,8 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     trigger.settings.eventName,
   );
   const isUpdateEvent = triggerEvent.event === 'updated';
+  const isUpsertEvent = triggerEvent.event === 'upserted';
+  const isFieldFilteringSupported = isUpdateEvent || isUpsertEvent;
 
   const regularObjects = objectMetadataItems
     .filter((item) => item.isActive && !item.isSystem)
@@ -271,7 +273,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         </StyledRecordTypeSelectContainer>
-        {isDefined(selectedObjectMetadataItem) && isUpdateEvent && (
+        {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
             label="Fields (Optional)"
             placeholder="Select specific fields to listen to"

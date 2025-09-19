@@ -878,7 +878,8 @@ export enum DatabaseEventAction {
   DELETED = 'DELETED',
   DESTROYED = 'DESTROYED',
   RESTORED = 'RESTORED',
-  UPDATED = 'UPDATED'
+  UPDATED = 'UPDATED',
+  UPSERTED = 'UPSERTED'
 }
 
 export type DateFilter = {

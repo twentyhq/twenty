@@ -4,6 +4,8 @@ export class ObjectRecordUpsertEvent<
   T = object,
 > extends ObjectRecordBaseEvent<T> {
   properties: {
+    before?: T;
     after: T;
+    updatedFields?: string[];
   };
 }
