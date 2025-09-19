@@ -1,4 +1,5 @@
-import { PAGE_LAYOUT_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-data-seeds.constant';
+import { PAGE_LAYOUT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-seeds.constant';
+import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type DashboardDataSeed = {
@@ -34,11 +35,16 @@ export const DASHBOARD_DATA_SEED_IDS = {
   EXECUTIVE_SUMMARY: '20202020-d2e3-4304-9c80-b3db67903974',
 };
 
-export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
+export const getDashboardDataSeeds = (
+  workspaceId: string,
+): DashboardDataSeed[] => [
   {
     id: DASHBOARD_DATA_SEED_IDS.SALES_OVERVIEW,
     title: 'Sales Overview',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.SALES_DASHBOARD,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.SALES_DASHBOARD,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim Apple',
@@ -47,7 +53,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.CUSTOMER_INSIGHTS,
     title: 'Customer Insights',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.CUSTOMER_DASHBOARD,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.CUSTOMER_DASHBOARD,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     createdByName: 'Jony Ive',
@@ -56,7 +65,7 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.TEAM_PERFORMANCE,
     title: 'Team Performance',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.TEAM_DASHBOARD,
+    pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.TEAM_DASHBOARD),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     createdByName: 'Phil Schiller',
@@ -65,7 +74,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.REVENUE_ANALYTICS,
     title: 'Revenue Analytics',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.REVENUE_ANALYTICS,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.REVENUE_ANALYTICS,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim Apple',
@@ -74,7 +86,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.MARKETING_METRICS,
     title: 'Marketing Metrics',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.MARKETING_METRICS,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.MARKETING_METRICS,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     createdByName: 'Jony Ive',
@@ -83,7 +98,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.SUPPORT_DASHBOARD,
     title: 'Support Dashboard',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.SUPPORT_DASHBOARD,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.SUPPORT_DASHBOARD,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     createdByName: 'Phil Schiller',
@@ -92,7 +110,7 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.PRODUCT_USAGE,
     title: 'Product Usage',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.PRODUCT_USAGE,
+    pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.PRODUCT_USAGE),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim Apple',
@@ -101,7 +119,7 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.OPERATIONS_KPI,
     title: 'Operations KPI',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.OPERATIONS_KPI,
+    pageLayoutId: generateSeedId(workspaceId, PAGE_LAYOUT_SEEDS.OPERATIONS_KPI),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     createdByName: 'Jony Ive',
@@ -110,7 +128,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.FINANCE_OVERVIEW,
     title: 'Finance Overview',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.FINANCE_OVERVIEW,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.FINANCE_OVERVIEW,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     createdByName: 'Phil Schiller',
@@ -119,7 +140,10 @@ export const DASHBOARD_DATA_SEEDS: DashboardDataSeed[] = [
   {
     id: DASHBOARD_DATA_SEED_IDS.EXECUTIVE_SUMMARY,
     title: 'Executive Summary',
-    pageLayoutId: PAGE_LAYOUT_SEED_IDS.EXECUTIVE_SUMMARY,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.EXECUTIVE_SUMMARY,
+    ),
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim Apple',
