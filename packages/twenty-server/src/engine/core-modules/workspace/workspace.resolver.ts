@@ -13,11 +13,13 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -46,6 +48,7 @@ import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/upd
 import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -65,7 +68,6 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
@@ -94,6 +96,8 @@ export class WorkspaceResolver {
     private readonly roleService: RoleService,
     private readonly agentService: AgentService,
     private readonly viewService: ViewService,
+    @InjectRepository(BillingSubscription)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @Query(() => Workspace)
@@ -202,9 +206,9 @@ export class WorkspaceResolver {
     }
 
     try {
-      return this.billingSubscriptionService.getBillingSubscriptions(
-        workspace.id,
-      );
+      return this.billingSubscriptionRepository.find({
+        where: { workspaceId: workspace.id },
+      });
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
@@ -353,7 +357,7 @@ export class WorkspaceResolver {
           origin,
         );
 
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       let workspaceLogoWithToken = '';
 

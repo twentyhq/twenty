@@ -35,8 +35,6 @@ import {
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
-import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 
 const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesRecordConnectionMock();
@@ -682,11 +680,6 @@ export const graphqlMocks = {
         data: {
           getRoles: getRolesMock(),
         },
-      });
-    }),
-    graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
-      return HttpResponse.json({
-        data: mockBillingPlans,
       });
     }),
     http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {

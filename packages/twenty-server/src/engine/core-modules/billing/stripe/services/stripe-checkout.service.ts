@@ -95,6 +95,7 @@ export class StripeCheckoutService {
     stripeCustomerId,
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = false,
+    withTrialPeriod,
   }: {
     user: User;
     workspace: Pick<Workspace, 'id' | 'displayName'>;
@@ -102,6 +103,7 @@ export class StripeCheckoutService {
     stripeCustomerId?: string;
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
+    withTrialPeriod: boolean;
   }): Promise<Stripe.Subscription> {
     if (!isDefined(stripeCustomerId)) {
       const stripeCustomer =
@@ -128,6 +130,10 @@ export class StripeCheckoutService {
         workspaceId: workspace.id,
         plan,
       },
+      ...this.getStripeSubscriptionTrialPeriodConfig(
+        withTrialPeriod,
+        requirePaymentMethod,
+      ),
       automatic_tax: { enabled: !!requirePaymentMethod },
     };
 

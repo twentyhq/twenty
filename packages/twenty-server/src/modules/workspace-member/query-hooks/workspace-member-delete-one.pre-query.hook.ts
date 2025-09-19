@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -9,6 +9,7 @@ import { type DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -17,7 +18,6 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
@@ -39,7 +39,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
 
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {

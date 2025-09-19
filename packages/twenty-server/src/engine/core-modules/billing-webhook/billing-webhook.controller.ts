@@ -22,7 +22,6 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
-import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
 import {
   BillingException,
   BillingExceptionCode,
@@ -48,7 +47,6 @@ export class BillingWebhookController {
     private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
-    private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
   ) {}
 
   @Post(['webhooks/stripe'])
@@ -99,11 +97,6 @@ export class BillingWebhookController {
       case BillingWebhookEvent.PRICE_UPDATED:
       case BillingWebhookEvent.PRICE_CREATED:
         return await this.billingWebhookPriceService.processStripeEvent(
-          event.data,
-        );
-
-      case BillingWebhookEvent.SUBSCRIPTION_SCHEDULE_UPDATED:
-        return await this.billingWebhookSubscriptionScheduleService.processStripeEvent(
           event.data,
         );
 

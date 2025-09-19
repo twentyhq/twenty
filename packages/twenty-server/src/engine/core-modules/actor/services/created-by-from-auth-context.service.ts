@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CreateInput = Record<string, any>;
@@ -36,7 +36,7 @@ export class CreatedByFromAuthContextService {
   ): Promise<CreateInput[]> {
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const { objectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
@@ -99,7 +99,7 @@ export class CreatedByFromAuthContextService {
   ): Promise<ActorMetadata> {
     const { workspace, workspaceMemberId, user, apiKey } = authContext;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     // TODO: remove that code once we have the workspace member id in all tokens
     if (isDefined(workspaceMemberId) && isDefined(user)) {

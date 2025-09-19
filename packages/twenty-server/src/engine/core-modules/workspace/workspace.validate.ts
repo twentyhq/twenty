@@ -4,6 +4,23 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { type CustomException } from 'src/utils/custom-exception';
+
+const assertIsDefinedOrThrow = (
+  workspace: Workspace | undefined | null,
+  exceptionToThrow: CustomException = new WorkspaceException(
+    'Workspace not found',
+    WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+  ),
+): asserts workspace is Workspace => {
+  if (!workspace) {
+    throw exceptionToThrow;
+  }
+};
 
 const isAuthEnabledOrThrow = (
   provider: AuthProviderEnum,
@@ -42,9 +59,11 @@ const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
 };
 
 export const workspaceValidator: {
+  assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
   isAuthEnabled: typeof isAuthEnabled;
 } = {
+  assertIsDefinedOrThrow: assertIsDefinedOrThrow,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
   isAuthEnabled: isAuthEnabled,
 };

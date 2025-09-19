@@ -1,4 +1,4 @@
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -6,9 +6,6 @@ type MoneyDisplayProps = {
   value: number | null;
 };
 
-export const MoneyDisplay = ({ value }: MoneyDisplayProps) => {
-  const { formatNumber } = useNumberFormat();
-  return (
-    <EllipsisDisplay>{value ? `$${formatNumber(value)}` : ''}</EllipsisDisplay>
-  );
-};
+export const MoneyDisplay = ({ value }: MoneyDisplayProps) => (
+  <EllipsisDisplay>{value ? `$${formatNumber(value)}` : ''}</EllipsisDisplay>
+);

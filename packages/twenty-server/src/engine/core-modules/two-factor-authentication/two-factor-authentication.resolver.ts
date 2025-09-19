@@ -2,7 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -15,6 +15,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -61,7 +62,7 @@ export class TwoFactorAuthenticationResolver {
         origin,
       );
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',

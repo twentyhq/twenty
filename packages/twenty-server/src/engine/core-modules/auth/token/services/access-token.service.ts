@@ -6,7 +6,6 @@ import { type Request } from 'express';
 import ms from 'ms';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -22,13 +21,13 @@ import {
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
 
 @Injectable()
 export class AccessTokenService {
@@ -72,7 +71,7 @@ export class AccessTokenService {
       where: { id: workspaceId },
     });
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     if (isWorkspaceActiveOrSuspended(workspace)) {
       const workspaceMemberRepository =
@@ -87,13 +86,12 @@ export class AccessTokenService {
         },
       });
 
-      assertIsDefinedOrThrow(
-        workspaceMember,
-        new AuthException(
+      if (!workspaceMember) {
+        throw new AuthException(
           'User is not a member of the workspace',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        ),
-      );
+        );
+      }
 
       tokenWorkspaceMemberId = workspaceMember.id;
     }
@@ -104,7 +102,7 @@ export class AccessTokenService {
       },
     });
 
-    assertIsDefinedOrThrow(userWorkspace, UserWorkspaceNotFoundDefaultError);
+    userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,

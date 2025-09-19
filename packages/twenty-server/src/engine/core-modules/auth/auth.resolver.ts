@@ -6,7 +6,6 @@ import omit from 'lodash.omit';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -65,6 +64,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -175,7 +175,7 @@ export class AuthResolver {
         origin,
       );
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',
@@ -332,9 +332,8 @@ export class AuthResolver {
         origin,
       );
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
-
       new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
@@ -590,7 +589,7 @@ export class AuthResolver {
         origin,
       );
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',

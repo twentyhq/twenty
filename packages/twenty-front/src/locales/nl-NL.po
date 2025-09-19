@@ -18,12 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
-#. js-lingui-id: lndIq/
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid " billed annually"
-msgstr ""
-
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid " must be one of {ratingValues} values"
@@ -68,11 +62,6 @@ msgstr ": Verleden"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr ": Vandaag"
-
-#. js-lingui-id: N/lIUf
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid ". The change will be applied the {beautifiedRenewDate}."
-msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -124,6 +113,11 @@ msgstr "{failedCount} bestand(en) kon(den) niet worden geüpload"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} van {formattedRecordsToImportCount} records geïmporteerd."
 
+#. js-lingui-id: J2Vio9
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "{nickname} - {price}$"
+msgstr "{nickname} - {price}€"
+
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -168,7 +162,7 @@ msgid "1. Type"
 msgstr "1. Type"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "10,000 workflow node executions"
 msgstr "{num, plural, one {10 werkknooppuntuitvoering} other {# werkknooppuntuitvoeringen}}"
 
@@ -199,7 +193,7 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. Stel {objectLabelPlural} machtigingen in"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "20,000 workflow node executions"
 msgstr "{num, plural, one {20 werkknooppuntuitvoering} other {# werkknooppuntuitvoeringen}}"
 
@@ -766,8 +760,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -1084,7 +1078,7 @@ msgid "Blocklist"
 msgstr "Blokkeringslijst"
 
 #. js-lingui-id: 2yl5lQ
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Book a Call"
 msgstr "Boek een gesprek"
 
@@ -1212,43 +1206,13 @@ msgstr "Kan je niet scannen? Kopieer de"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#. js-lingui-id: dV4HC5
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel interval switching"
-msgstr ""
-
-#. js-lingui-id: M5CqkG
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel interval switching?"
-msgstr ""
-
-#. js-lingui-id: /Dmw1h
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching"
-msgstr ""
-
-#. js-lingui-id: Q/chGD
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching?"
-msgstr ""
-
 #. js-lingui-id: rRK/Lf
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel Plan"
 msgstr "Plan annuleren"
 
-#. js-lingui-id: 8eSMLX
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel plan switching"
-msgstr ""
-
-#. js-lingui-id: f6KFEf
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel plan switching?"
-msgstr ""
-
 #. js-lingui-id: N6gPiD
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel your subscription"
 msgstr "Annuleer uw abonnement"
 
@@ -1280,7 +1244,7 @@ msgid "Change Password"
 msgstr "Wachtwoord wijzigen"
 
 #. js-lingui-id: wRtBJP
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Change Plan"
 msgstr "Plan wijzigen"
 
@@ -1289,20 +1253,10 @@ msgstr "Plan wijzigen"
 msgid "Change subdomain?"
 msgstr "Subdomeinnaam wijzigen?"
 
-#. js-lingui-id: 9m7pJA
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Change to Monthly?"
-msgstr ""
-
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Overschakelen naar Organisatieplan?"
-
-#. js-lingui-id: t7uUc+
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Change to Pro Plan?"
-msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1344,6 +1298,11 @@ msgstr "Chinees — Traditioneel"
 msgid "Choose a Workspace"
 msgstr "Kies een Werkruimte"
 
+#. js-lingui-id: ub6oFI
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Choose additional formatting preferences"
+msgstr ""
+
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -1370,7 +1329,7 @@ msgid "Choose the format used to display date value"
 msgstr "Kies het formaat dat wordt gebruikt om de datumnotatie weer te geven"
 
 #. js-lingui-id: 9qP96p
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Kies uw proefperiode"
 
@@ -1521,10 +1480,10 @@ msgstr "Configureer en pas uw kalendervoorkeuren aan."
 msgid "Configure CalDAV settings to sync your calendar events."
 msgstr "Configureer CalDAV-instellingen om uw agenda-evenementen te synchroniseren."
 
-#. js-lingui-id: ahqAfe
+#. js-lingui-id: aGwm+D
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Configure date, time, number, timezone, and calendar start day"
-msgstr ""
+msgid "Configure how dates are displayed across the app"
+msgstr "Stel in hoe datums in de app worden weergegeven"
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1563,33 +1522,13 @@ msgstr "Configureer uw e-mail- en kalenderinstellingen."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Bevestigen"
-
-#. js-lingui-id: qmnX/6
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm changing your current credit plan."
-msgstr ""
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "Bevestigen verwijderen van rol {roleName}? Dit kan niet ongedaan worden gemaakt. Alle leden zullen worden herverdeeld naar de standaard rol."
-
-#. js-lingui-id: kZkFSm
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm downgrade"
-msgstr ""
-
-#. js-lingui-id: DDbn3x
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm upgrade"
-msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1652,7 +1591,7 @@ msgstr "Context"
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1939,11 +1878,6 @@ msgstr "Kredietplan"
 msgid "Credit Usage"
 msgstr "Kredietgebruik"
 
-#. js-lingui-id: hdSacI
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Credits by period"
-msgstr ""
-
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -1953,11 +1887,6 @@ msgstr "Gebruikte credits"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
 msgstr "valuta's"
-
-#. js-lingui-id: Hp1l6f
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
-msgid "Current"
-msgstr ""
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -1986,8 +1915,8 @@ msgid "Custom domain updated"
 msgstr "Aangepast domein bijgewerkt"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Custom objects"
 msgstr "Aangepaste objecten"
 
@@ -2095,6 +2024,11 @@ msgstr "Databaseconfiguratie is momenteel uitgeschakeld."
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Datum"
+
+#. js-lingui-id: Ud9zHv
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Date and time"
+msgstr "Datum en tijd"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -2517,12 +2451,6 @@ msgstr "Synchroniseer geen e-mails van team@ support@ noreply@..."
 msgid "Dots and comma - {dotsAndCommaExample}"
 msgstr ""
 
-#. js-lingui-id: LE8J+K
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Downgrade"
-msgstr ""
-
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2628,7 +2556,7 @@ msgid "Edit iFrame"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Bewerk betaalmethode, bekijk uw facturen en meer"
 
@@ -2679,8 +2607,8 @@ msgid "Email copied to clipboard"
 msgstr "E-mail gekopieerd naar klembord"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Email integration"
 msgstr "E-mailintegratie"
 
@@ -2796,7 +2724,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "Verhoogt de beveiliging door naast uw wachtwoord een code te vereisen"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Geniet van een {withCreditCardTrialPeriodDuration}-daagse gratis proefperiode"
 
@@ -2916,35 +2844,20 @@ msgstr "Fout bij het bijwerken van de rol"
 msgid "Error validating approved access domain"
 msgstr "Fout bij het valideren van de goedgekeurde toegangsdomein "
 
-#. js-lingui-id: pt7mmi
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling interval switching."
-msgstr ""
-
-#. js-lingui-id: a1gs9Y
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling metered tier switching."
-msgstr ""
-
-#. js-lingui-id: FS6DQK
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling plan switching."
-msgstr ""
-
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Fout tijdens het beëindigen van de proefperiode. Neem contact op met het Twenty-team."
 
-#. js-lingui-id: QEee5f
+#. js-lingui-id: JKNROf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to {oppositPlan} Plan."
-msgstr ""
+msgid "Error while switching subscription to Organization Plan."
+msgstr "Fout tijdens het overstappen van abonnement naar Organisatieplan."
 
-#. js-lingui-id: QPJi2W
+#. js-lingui-id: ENV7jU
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription."
-msgstr ""
+msgid "Error while switching subscription to Yearly."
+msgstr "Fout tijdens het overstappen van abonnement naar jaarlijks."
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3344,11 +3257,6 @@ msgstr "Formaat"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Formaat bijv. d-MMM-j (qqq''jj)"
 
-#. js-lingui-id: 4JsQoY
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Formats"
-msgstr ""
-
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
@@ -3360,8 +3268,8 @@ msgid "French"
 msgstr "Frans"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Full access"
 msgstr "Volledige toegang"
 
@@ -3399,7 +3307,7 @@ msgid "Get the most out of your workspace by inviting your team."
 msgstr "Haal het meeste uit je werkruimte door je team uit te nodigen."
 
 #. js-lingui-id: zSGbaR
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Get your subscription"
 msgstr "Krijg je abonnement"
 
@@ -3797,11 +3705,6 @@ msgstr "Integraties - Instellingen"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Interageer met uw werkruimtegegevens"
-
-#. js-lingui-id: jyjroS
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Interval switching has been cancelled."
-msgstr ""
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4216,7 +4119,7 @@ msgid "Loading..."
 msgstr "Laden..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
@@ -4258,7 +4161,7 @@ msgid "Manage API keys and webhooks"
 msgstr "Beheer API-sleutels en webhooks"
 
 #. js-lingui-id: nvgUPq
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Manage billing information"
 msgstr "Beheer factuurinformatie"
 
@@ -4388,11 +4291,6 @@ msgstr "Metadata"
 msgid "Metadata file generation failed"
 msgstr "Metadatabestandsgeneratie mislukt"
 
-#. js-lingui-id: onCJJ6
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Metered tier switching has been cancelled."
-msgstr ""
-
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4420,7 +4318,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "Controleer de uitvoering van uw e-mailsynchronisatietaak"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
 msgstr "maand"
 
@@ -4432,7 +4330,7 @@ msgid "Month"
 msgstr ""
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
 msgstr "maandelijks"
 
@@ -4661,7 +4559,6 @@ msgid "New SSO provider"
 msgstr "Nieuwe SSO-provider"
 
 #. js-lingui-id: hXzOVo
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "Volgende"
@@ -5127,8 +5024,7 @@ msgid "Or"
 msgstr "Of"
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
 msgstr "Organisatie"
 
@@ -5140,6 +5036,11 @@ msgstr "Organisatie"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Overige"
+
+#. js-lingui-id: vPKFXl
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Other formats"
+msgstr ""
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -5282,11 +5183,6 @@ msgstr "Afbeelding"
 msgid "Plan"
 msgstr "Plan"
 
-#. js-lingui-id: XduPHC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Plan switching has been cancelled."
-msgstr ""
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -5386,8 +5282,7 @@ msgid "Privacy Policy"
 msgstr "Privacybeleid"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Pro"
 msgstr "Pro"
 
@@ -6431,7 +6326,7 @@ msgid "SSO"
 msgstr "Eenmalige aanmelding"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -6540,20 +6435,15 @@ msgstr "Abonnement"
 msgid "Subscription activated."
 msgstr "Abonnement geactiveerd."
 
-#. js-lingui-id: gvXPJz
+#. js-lingui-id: KNMVB5
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription has been switched to {oppositPlan} Plan."
-msgstr ""
+msgid "Subscription has been switched to Organization Plan."
+msgstr "Abonnement is veranderd naar Organisatieplan."
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Abonnement is veranderd naar jaarlijks."
-
-#. js-lingui-id: nQcG+x
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
-msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6586,20 +6476,10 @@ msgstr "Ondersteuning"
 msgid "Swedish"
 msgstr "Zweeds"
 
-#. js-lingui-id: dpXnFC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Switch to Monthly"
-msgstr ""
-
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "Wissel naar Organisatie"
-
-#. js-lingui-id: GPKudC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Switch to Pro"
-msgstr ""
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6906,16 +6786,6 @@ msgstr "Deze waarde zal in de database worden opgeslagen."
 msgid "This week"
 msgstr "Deze week"
 
-#. js-lingui-id: h4VeOo
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
-msgstr ""
-
-#. js-lingui-id: XpARoU
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
-msgstr ""
-
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -6976,7 +6846,7 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Volg je {intervalLabel} workflow kredietverbruik."
 
 #. js-lingui-id: lhkaAC
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
 msgstr "Proef"
 
@@ -7104,8 +6974,8 @@ msgid "Unknown error"
 msgstr "Onbekende fout"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Onbeperkte contacten"
 
@@ -7144,12 +7014,6 @@ msgstr "Agent informatie bijwerken"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Werk uw accountconfiguratie bij. Configureer naar behoefte een combinatie van IMAP, SMTP en CalDAV."
-
-#. js-lingui-id: kwkhPe
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Upgrade"
-msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7312,7 +7176,7 @@ msgid "View"
 msgstr "Weergave"
 
 #. js-lingui-id: KANz0G
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
 msgstr "Factuurdetails bekijken"
 
@@ -7548,12 +7412,12 @@ msgstr "Schrijf een beschrijving voor deze agent"
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
 msgstr "jaar"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
 msgstr "jaarlijks"
 
@@ -7603,30 +7467,20 @@ msgstr ""
 "U kunt deze verbinding niet bewerken omdat deze getrackte tabellen bevat.\n"
 "Als u wijzigingen moet aanbrengen, maak dan een nieuwe verbinding of desynchroniseer eerst de tabellen."
 
-#. js-lingui-id: M2lYgq
+#. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You have scheduled a metered tier change. Do you want to cancel it?"
-msgstr ""
+msgid "You will be charged ${enterprisePrice} per user per month billed annually."
+msgstr "U wordt €${enterprisePrice} per gebruiker per maand in rekening gebracht, jaarlijks gefactureerd."
 
-#. js-lingui-id: z8eKS7
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "you will be charged ${enterprisePrice} per user per month"
-msgstr ""
+#. js-lingui-id: HM4D8s
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You will be charged ${enterprisePrice} per user per month."
+msgstr "U wordt €${enterprisePrice} per gebruiker per maand in rekening gebracht."
 
-#. js-lingui-id: u3S6u8
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
-msgstr ""
-
-#. js-lingui-id: /T5zAB
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "You will be charged ${proPrice} per user per month"
-msgstr ""
-
-#. js-lingui-id: W3k5LA
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
-msgstr ""
+#. js-lingui-id: o4xIH4
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
+msgstr "U wordt €${yearlyPrice} per gebruiker per maand in rekening gebracht, jaarlijks gefactureerd. Een prorata met uw huidige abonnement wordt toegepast."
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -7663,16 +7517,6 @@ msgstr "Uw naam zoals deze zal worden weergegeven"
 msgid "Your name as it will be displayed on the app"
 msgstr "Uw naam zoals deze in de app zal worden weergegeven"
 
-#. js-lingui-id: QOd24n
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "Your trial period will end, and "
-msgstr ""
-
-#. js-lingui-id: 2Fkd7s
-#: src/modules/billing/hooks/useBillingWording.ts
-msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
-msgstr ""
-
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
@@ -7689,6 +7533,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "Uw werkruimte heeft geen actief abonnement. Neem contact op met uw beheerder."
 
 #. js-lingui-id: RhNbPE
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Your workspace will be disabled"
 msgstr "Uw werkruimte wordt uitgeschakeld"

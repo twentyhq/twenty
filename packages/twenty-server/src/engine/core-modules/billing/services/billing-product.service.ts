@@ -47,7 +47,7 @@ export class BillingProductService {
   }
 
   async getProductsByPlan(planKey: BillingPlanKey): Promise<BillingProduct[]> {
-    const products = await this.billingPlanService.listPlans();
+    const products = await this.billingPlanService.getPlans();
     const plan = products.find((product) => product.planKey === planKey);
 
     if (!plan) {
@@ -57,6 +57,6 @@ export class BillingProductService {
       );
     }
 
-    return [...plan.licensedProducts, ...plan.meteredProducts];
+    return [plan.baseProduct, ...plan.meteredProducts];
   }
 }

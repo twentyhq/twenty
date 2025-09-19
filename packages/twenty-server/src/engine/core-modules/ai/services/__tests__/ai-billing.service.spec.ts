@@ -94,7 +94,7 @@ describe('AIBillingService', () => {
         [
           {
             eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 7500,
+            value: 8,
           },
         ],
         'workspace-1',

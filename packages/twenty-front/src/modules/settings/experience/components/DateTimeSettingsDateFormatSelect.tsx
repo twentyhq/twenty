@@ -1,8 +1,8 @@
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
-import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { detectDateFormat } from '@/localization/utils/detectDateFormat';
+import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 

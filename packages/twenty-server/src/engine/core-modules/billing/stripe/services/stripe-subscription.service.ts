@@ -7,7 +7,6 @@ import type Stripe from 'stripe';
 import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @Injectable()
 export class StripeSubscriptionService {
@@ -35,10 +34,11 @@ export class StripeSubscriptionService {
       query: `metadata['workspaceId']:'${workspaceId}'`,
       limit: 1,
     });
-
-    return subscription.data[0].customer
-      ? subscription.data[0].customer
+    const stripeCustomerId = subscription.data[0].customer
+      ? String(subscription.data[0].customer)
       : undefined;
+
+    return stripeCustomerId;
   }
 
   async collectLastInvoice(stripeSubscriptionId: string) {
@@ -84,20 +84,15 @@ export class StripeSubscriptionService {
     return this.stripe.subscriptions.update(stripeSubscriptionId, updateData);
   }
 
-  getBillingThresholdsByInterval(interval: SubscriptionInterval) {
-    return {
-      amount_gte:
-        this.twentyConfigService.get('BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT') *
-        (interval === SubscriptionInterval.Year ? 12 : 1),
-      reset_billing_cycle_anchor: false,
-    };
-  }
-
   async setYearlyThresholds(stripeSubscriptionId: string) {
     return this.stripe.subscriptions.update(stripeSubscriptionId, {
-      billing_thresholds: this.getBillingThresholdsByInterval(
-        SubscriptionInterval.Year,
-      ),
+      billing_thresholds: {
+        amount_gte:
+          this.twentyConfigService.get(
+            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+          ) * 12,
+        reset_billing_cycle_anchor: false,
+      },
     });
   }
 }

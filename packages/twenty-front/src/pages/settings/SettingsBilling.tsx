@@ -2,18 +2,54 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
+import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsBillingContent } from '@/billing/components/SettingsBillingContent';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { SettingsPath } from 'twenty-shared/types';
-import { usePlans } from '@/billing/hooks/usePlans';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import {
+  SubscriptionStatus,
+  useBillingPortalSessionQuery,
+} from '~/generated-metadata/graphql';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
+  const { redirect } = useRedirect();
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { isPlansLoaded } = usePlans();
+  const subscriptions = currentWorkspace?.billingSubscriptions;
+
+  const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
+
+  const subscriptionStatus = useSubscriptionStatus();
+
+  const hasNotCanceledCurrentSubscription =
+    isDefined(subscriptionStatus) &&
+    subscriptionStatus !== SubscriptionStatus.Canceled;
+
+  const { data, loading } = useBillingPortalSessionQuery({
+    variables: {
+      returnUrlPath: getSettingsPath(SettingsPath.Billing),
+    },
+    skip: !hasSubscriptions,
+  });
+
+  const billingPortalButtonDisabled =
+    loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
+
+  const openBillingPortal = () => {
+    if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
+      redirect(data.billingPortalSession.url);
+    }
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -26,7 +62,43 @@ export const SettingsBilling = () => {
         { children: <Trans>Billing</Trans> },
       ]}
     >
-      {currentWorkspace && isPlansLoaded ? <SettingsBillingContent /> : <></>}
+      <SettingsPageContainer>
+        {hasNotCanceledCurrentSubscription && (
+          <SettingsBillingSubscriptionInfo />
+        )}
+        {hasNotCanceledCurrentSubscription && currentWorkspace && (
+          <SettingsBillingCreditsSection currentWorkspace={currentWorkspace} />
+        )}
+        <Section>
+          <H2Title
+            title={t`Manage billing information`}
+            description={t`Edit payment method, see your invoices and more`}
+          />
+          <Button
+            Icon={IconCreditCard}
+            title={t`View billing details`}
+            variant="secondary"
+            onClick={openBillingPortal}
+            disabled={billingPortalButtonDisabled}
+          />
+        </Section>
+        {hasNotCanceledCurrentSubscription && (
+          <Section>
+            <H2Title
+              title={t`Cancel your subscription`}
+              description={t`Your workspace will be disabled`}
+            />
+            <Button
+              Icon={IconCircleX}
+              title={t`Cancel Plan`}
+              variant="secondary"
+              accent="danger"
+              onClick={openBillingPortal}
+              disabled={billingPortalButtonDisabled}
+            />
+          </Section>
+        )}
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

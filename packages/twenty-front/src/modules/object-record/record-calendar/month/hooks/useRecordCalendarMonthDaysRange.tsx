@@ -1,6 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
-import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
 import {
   addDays,
   eachWeekOfInterval,

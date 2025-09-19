@@ -10,8 +10,6 @@ import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/grap
 import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
-import { CURRENT_BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/currentBillingSubscriptionFragement';
-import { BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/billingSubscriptionsFragment';
 
 export const USER_QUERY_FRAGMENT = gql`
   fragment UserQueryFragment on User {
@@ -67,10 +65,31 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       metadataVersion
       currentBillingSubscription {
-        ...CurrentBillingSubscriptionFragment
+        id
+        status
+        interval
+        metadata
+        currentPeriodEnd
+        billingSubscriptionItems {
+          id
+          hasReachedCurrentPeriodCap
+          quantity
+          stripePriceId
+          billingProduct {
+            name
+            description
+            metadata {
+              planKey
+              priceUsageBased
+              productKey
+            }
+          }
+        }
       }
       billingSubscriptions {
-        ...BillingSubscriptionFragment
+        id
+        status
+        metadata
       }
       workspaceMembersCount
       defaultRole {
@@ -99,6 +118,4 @@ export const USER_QUERY_FRAGMENT = gql`
   ${VIEW_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
-  ${CURRENT_BILLING_SUBSCRIPTION_FRAGMENT}
-  ${BILLING_SUBSCRIPTION_FRAGMENT}
 `;

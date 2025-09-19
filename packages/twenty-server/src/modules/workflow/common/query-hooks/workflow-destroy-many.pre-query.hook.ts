@@ -1,12 +1,10 @@
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook('workflow.destroyMany')
 export class WorkflowDestroyManyPreQueryHook
@@ -23,7 +21,7 @@ export class WorkflowDestroyManyPreQueryHook
   ): Promise<DestroyManyResolverArgs<{ id: { in: string[] } }>> {
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
       workflowIds: payload.filter.id.in,

@@ -4,57 +4,52 @@ import type Stripe from 'stripe';
 
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
-import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
 
 export const transformStripeSubscriptionEventToDatabaseSubscription = (
   workspaceId: string,
-  subscription: SubscriptionWithSchedule,
+  data:
+    | Stripe.CustomerSubscriptionUpdatedEvent.Data
+    | Stripe.CustomerSubscriptionCreatedEvent.Data
+    | Stripe.CustomerSubscriptionDeletedEvent.Data,
 ) => {
   return {
     workspaceId,
-    stripeCustomerId: String(subscription.customer),
-    stripeSubscriptionId: subscription.id,
-    status: getSubscriptionStatus(subscription.status),
-    interval: subscription.items.data[0].plan.interval as SubscriptionInterval,
-    phases: subscription.schedule
-      ? transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase(
-          subscription.schedule,
-        )
-      : [],
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    currency: subscription.currency.toUpperCase(),
-    currentPeriodEnd: getDateFromTimestamp(subscription.current_period_end),
-    currentPeriodStart: getDateFromTimestamp(subscription.current_period_start),
-    metadata: subscription.metadata,
+    stripeCustomerId: String(data.object.customer),
+    stripeSubscriptionId: data.object.id,
+    status: getSubscriptionStatus(data.object.status),
+    interval: data.object.items.data[0].plan.interval,
+    cancelAtPeriodEnd: data.object.cancel_at_period_end,
+    currency: data.object.currency.toUpperCase(),
+    currentPeriodEnd: getDateFromTimestamp(data.object.current_period_end),
+    currentPeriodStart: getDateFromTimestamp(data.object.current_period_start),
+    metadata: data.object.metadata,
     collectionMethod:
       // @ts-expect-error legacy noImplicitAny
       BillingSubscriptionCollectionMethod[
-        subscription.collection_method.toUpperCase()
+        data.object.collection_method.toUpperCase()
       ],
     automaticTax:
-      subscription.automatic_tax === null
+      data.object.automatic_tax === null
         ? undefined
-        : subscription.automatic_tax,
+        : data.object.automatic_tax,
     cancellationDetails:
-      subscription.cancellation_details === null
+      data.object.cancellation_details === null
         ? undefined
-        : subscription.cancellation_details,
-    endedAt: subscription.ended_at
-      ? getDateFromTimestamp(subscription.ended_at)
+        : data.object.cancellation_details,
+    endedAt: data.object.ended_at
+      ? getDateFromTimestamp(data.object.ended_at)
       : undefined,
-    trialStart: subscription.trial_start
-      ? getDateFromTimestamp(subscription.trial_start)
+    trialStart: data.object.trial_start
+      ? getDateFromTimestamp(data.object.trial_start)
       : undefined,
-    trialEnd: subscription.trial_end
-      ? getDateFromTimestamp(subscription.trial_end)
+    trialEnd: data.object.trial_end
+      ? getDateFromTimestamp(data.object.trial_end)
       : undefined,
-    cancelAt: subscription.cancel_at
-      ? getDateFromTimestamp(subscription.cancel_at)
+    cancelAt: data.object.cancel_at
+      ? getDateFromTimestamp(data.object.cancel_at)
       : undefined,
-    canceledAt: subscription.canceled_at
-      ? getDateFromTimestamp(subscription.canceled_at)
+    canceledAt: data.object.canceled_at
+      ? getDateFromTimestamp(data.object.canceled_at)
       : undefined,
   };
 };

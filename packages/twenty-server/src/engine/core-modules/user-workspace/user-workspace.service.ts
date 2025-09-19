@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -206,7 +206,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     const workspace = user?.userWorkspaces?.[0]?.workspace;
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',

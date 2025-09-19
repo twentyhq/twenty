@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -12,8 +11,8 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 @WorkspaceQueryHook(`dashboard.createOne`)
@@ -34,7 +33,7 @@ export class DashboardCreateOnePreQueryHook
   ): Promise<CreateOneResolverArgs<DashboardWorkspaceEntity>> {
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     return await this.coreDataSource.transaction(async (manager) => {
       const pageLayout = await this.pageLayoutService.create(

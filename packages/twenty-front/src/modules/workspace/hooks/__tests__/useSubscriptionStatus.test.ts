@@ -50,7 +50,6 @@ describe('useSubscriptionStatus', () => {
             id: v4(),
             status: subscriptionStatus,
             metadata: {},
-            phases: [],
           },
         });
       });

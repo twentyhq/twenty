@@ -1,16 +1,14 @@
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workspaceMember.createOne`)
 export class WorkspaceMemberCreateOnePreQueryHook
@@ -21,7 +19,7 @@ export class WorkspaceMemberCreateOnePreQueryHook
   async execute(authContext: AuthContext): Promise<CreateOneResolverArgs> {
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,

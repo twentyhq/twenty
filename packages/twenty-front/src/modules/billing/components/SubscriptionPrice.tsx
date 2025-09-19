@@ -33,6 +33,8 @@ export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
     case SubscriptionInterval.Year:
       priceUnit = t`seat / month - billed yearly`;
       break;
+    default:
+      priceUnit = `seat / ${type.toLocaleLowerCase()}`;
   }
 
   return (

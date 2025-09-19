@@ -24,7 +24,7 @@ export class BillingProduct {
   id: string;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt?: Date;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

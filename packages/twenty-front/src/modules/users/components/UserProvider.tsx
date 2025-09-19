@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -13,7 +13,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const isCurrentUserLoaded = useRecoilValue(isCurrentUserLoadedState);
   const location = useLocation();
 
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const dateTimeFormat = useRecoilValue(dateTimeFormatState);
 
   return !isCurrentUserLoaded &&
     !isMatchingLocation(location, AppPath.Verify) &&
@@ -23,9 +23,9 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   ) : (
     <UserContext.Provider
       value={{
-        dateFormat,
-        timeFormat,
-        timeZone,
+        dateFormat: dateTimeFormat.dateFormat,
+        timeFormat: dateTimeFormat.timeFormat,
+        timeZone: dateTimeFormat.timeZone,
       }}
     >
       {children}

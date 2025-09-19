@@ -8,7 +8,7 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 export type BillingPortalCheckoutSessionParameters = {
   user: User;
   workspace: Workspace;
-  billingPricesPerPlan: BillingGetPricesPerPlanResult;
+  billingPricesPerPlan?: BillingGetPricesPerPlanResult;
   successUrlPath?: string;
   plan: BillingPlanKey;
   requirePaymentMethod?: boolean;

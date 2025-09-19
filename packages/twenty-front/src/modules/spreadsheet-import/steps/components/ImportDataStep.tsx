@@ -1,6 +1,5 @@
 import { useRecoilValue } from 'recoil';
 
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
@@ -8,6 +7,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/feedback';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -41,7 +41,6 @@ export const ImportDataStep = ({
   const spreadsheetImportCreatedRecordsProgress = useRecoilValue(
     spreadsheetImportCreatedRecordsProgressState,
   );
-  const { formatNumber } = useNumberFormat();
 
   const formattedCreatedRecordsProgress = formatNumber(
     spreadsheetImportCreatedRecordsProgress,

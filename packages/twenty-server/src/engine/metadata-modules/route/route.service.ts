@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   HTTPMethod,
@@ -16,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/route/route.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   AuthException,
   AuthExceptionCode,
@@ -49,7 +50,7 @@ export class RouteService {
         host,
       );
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',

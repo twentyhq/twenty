@@ -64,11 +64,11 @@ describe('getDomainNameByEmail', () => {
     expect(getDomainNameByEmail('"user name"@example.com')).toBe('example.com');
   });
 
-  it.skip('should handle email with special characters in quoted local part', () => {
+  xit('should handle email with special characters in quoted local part', () => {
     expect(getDomainNameByEmail('"user@#$%"@example.com')).toBe('example.com');
   });
 
-  it.skip('should handle email with quoted local part containing @', () => {
+  xit('should handle email with quoted local part containing @', () => {
     expect(getDomainNameByEmail('"user@local"@example.com')).toBe(
       'example.com',
     );

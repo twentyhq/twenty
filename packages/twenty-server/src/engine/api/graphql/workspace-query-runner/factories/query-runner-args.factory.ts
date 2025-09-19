@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ObjectRecord,
@@ -23,9 +23,9 @@ import {
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -159,7 +159,7 @@ export class QueryRunnerArgsFactory {
 
     const workspace = options.authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const overriddenPositionRecords =
       await this.recordPositionService.overridePositionOnRecords({

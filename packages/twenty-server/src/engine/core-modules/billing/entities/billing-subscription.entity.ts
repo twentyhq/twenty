@@ -25,7 +25,6 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionSchedulePhase } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
@@ -73,7 +72,7 @@ export class BillingSubscription {
     enum: Object.values(SubscriptionInterval),
     nullable: true,
   })
-  interval: SubscriptionInterval;
+  interval: Stripe.Price.Recurring.Interval;
 
   @Field(() => [BillingSubscriptionItemDTO], { nullable: true })
   @OneToMany(
@@ -121,10 +120,6 @@ export class BillingSubscription {
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
-
-  @Field(() => [BillingSubscriptionSchedulePhase])
-  @Column({ nullable: false, type: 'jsonb', default: [] })
-  phases: Array<BillingSubscriptionSchedulePhase>;
 
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;

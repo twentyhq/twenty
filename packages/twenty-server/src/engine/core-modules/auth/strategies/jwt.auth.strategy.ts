@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -22,9 +21,11 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -78,7 +79,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       id: payload.sub,
     });
 
-    assertIsDefinedOrThrow(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',
@@ -144,7 +145,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       },
     });
 
-    assertIsDefinedOrThrow(
+    userWorkspaceValidator.assertIsDefinedOrThrow(
       userWorkspace,
       new AuthException(
         'UserWorkspace not found',

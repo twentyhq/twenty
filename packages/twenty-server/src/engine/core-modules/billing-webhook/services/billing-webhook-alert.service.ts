@@ -3,8 +3,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
@@ -14,13 +14,17 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+
+const TRIAL_PERIOD_ALERT_TITLE = 'TRIAL_PERIOD_ALERT'; // to set in Stripe config
 
 @Injectable()
 export class BillingWebhookAlertService {
   protected readonly logger = new Logger(BillingWebhookAlertService.name);
   constructor(
-    private readonly billingSubscriptionService: BillingSubscriptionService,
+    @InjectRepository(BillingSubscription)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
     @InjectRepository(BillingSubscriptionItem)
@@ -30,39 +34,57 @@ export class BillingWebhookAlertService {
   async processStripeEvent(data: Stripe.BillingAlertTriggeredEvent.Data) {
     const { customer: stripeCustomerId, alert } = data.object;
 
-    const stripeMeterId = alert.usage_threshold?.meter;
+    const stripeMeterId = alert.usage_threshold?.meter as string | undefined;
 
-    assertIsDefinedOrThrow(stripeMeterId);
+    if (alert.title === TRIAL_PERIOD_ALERT_TITLE && isDefined(stripeMeterId)) {
+      const subscription = await this.billingSubscriptionRepository.findOne({
+        where: { stripeCustomerId, status: SubscriptionStatus.Trialing },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
+      });
 
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { stripeCustomerId },
+      if (!subscription) return;
+
+      const product = await this.billingProductRepository.findOne({
+        where: {
+          billingPrices: { stripeMeterId },
+        },
+      });
+
+      if (!product) {
+        throw new BillingException(
+          `Product associated to meter ${stripeMeterId} not found`,
+          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+        );
+      }
+
+      const subscriptionItem = subscription.billingSubscriptionItems.find(
+        (item) =>
+          item.billingProduct.stripeProductId === product.stripeProductId,
       );
 
-    const product = await this.billingProductRepository.findOne({
-      where: {
-        billingPrices: {
-          stripeMeterId:
-            typeof stripeMeterId === 'string'
-              ? stripeMeterId
-              : stripeMeterId.id,
-        },
-      },
-    });
+      const trialPeriodFreeWorkflowCredits = isDefined(
+        subscriptionItem?.metadata.trialPeriodFreeWorkflowCredits,
+      )
+        ? Number(subscriptionItem?.metadata.trialPeriodFreeWorkflowCredits)
+        : 0;
 
-    if (!product) {
-      throw new BillingException(
-        `Product associated to meter ${stripeMeterId} not found`,
-        BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+      if (
+        !isDefined(alert.usage_threshold?.gte) ||
+        trialPeriodFreeWorkflowCredits !== alert.usage_threshold.gte
+      ) {
+        return;
+      }
+
+      await this.billingSubscriptionItemRepository.update(
+        {
+          billingSubscriptionId: subscription.id,
+          stripeProductId: product.stripeProductId,
+        },
+        { hasReachedCurrentPeriodCap: true },
       );
     }
-
-    await this.billingSubscriptionItemRepository.update(
-      {
-        billingSubscriptionId: subscription.id,
-        stripeProductId: product.stripeProductId,
-      },
-      { hasReachedCurrentPeriodCap: true },
-    );
   }
 }
