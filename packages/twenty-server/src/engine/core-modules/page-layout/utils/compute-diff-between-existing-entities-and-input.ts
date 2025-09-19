@@ -7,6 +7,18 @@ export type EntitiesDiff<T extends { id: string }> = {
   idsToDelete: string[];
 };
 
+const extractProperties = <T extends { id: string }>(
+  entity: T,
+  properties: (keyof T)[],
+) => {
+  return properties.reduce((acc, property) => {
+    return {
+      ...acc,
+      [property]: entity[property],
+    };
+  }, {});
+};
+
 export const computeDiffBetweenExistingEntitiesAndInput = <
   T extends { id: string },
   K extends { id: string },
@@ -29,24 +41,14 @@ export const computeDiffBetweenExistingEntitiesAndInput = <
     const existingEntity = existingEntitiesMap.get(receivedEntity.id);
 
     if (isDefined(existingEntity)) {
-      const comparableExistingEntity = propertiesToCompare.reduce(
-        (acc, property) => {
-          return {
-            ...acc,
-            [property]: existingEntity[property],
-          };
-        },
-        {},
+      const comparableExistingEntity = extractProperties(
+        existingEntity,
+        propertiesToCompare,
       );
 
-      const comparableReceivedEntity = propertiesToCompare.reduce(
-        (acc, property) => {
-          return {
-            ...acc,
-            [property]: receivedEntity[property],
-          };
-        },
-        {},
+      const comparableReceivedEntity = extractProperties(
+        receivedEntity,
+        propertiesToCompare,
       );
 
       if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
