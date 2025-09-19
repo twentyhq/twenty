@@ -9,7 +9,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -59,7 +59,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -285,7 +284,7 @@ export class AuthService {
       where: { email },
     });
 
-    userValidator.assertIsDefinedOrThrow(
+    assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
@@ -380,7 +379,7 @@ export class AuthService {
       email,
     });
 
-    const isUserExist = userValidator.isDefined(user);
+    const isUserExist = isDefined(user);
 
     return {
       exists: isUserExist,

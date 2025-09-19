@@ -2,9 +2,8 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
-import { useRecoilValue } from 'recoil';
 
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
@@ -53,7 +52,7 @@ export const DateTimeInput = ({
   isDateTimeInput,
 }: DateTimeInputProps) => {
   const [hasError, setHasError] = useState(false);
-  const { dateFormat } = useRecoilValue(dateTimeFormatState);
+  const { dateFormat } = useDateTimeFormat();
   const { parseToString, parseToDate } = useDateParser({
     isDateTimeInput: isDateTimeInput === true,
   });

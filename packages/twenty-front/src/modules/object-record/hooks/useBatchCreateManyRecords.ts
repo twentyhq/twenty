@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import {
@@ -9,7 +10,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { formatNumber } from '~/utils/format/formatNumber';
 
 export const useBatchCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
@@ -43,6 +43,7 @@ export const useBatchCreateManyRecords = <
   });
 
   const { enqueueWarningSnackBar } = useSnackBar();
+  const { formatNumber } = useNumberFormat();
 
   const batchCreateManyRecords = async ({
     recordsToCreate,
