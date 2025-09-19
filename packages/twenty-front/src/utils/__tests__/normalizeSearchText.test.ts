@@ -21,6 +21,15 @@ describe('normalizeSearchText', () => {
     expect(normalizeSearchText('Øyvind')).toBe('oyvind');
   });
 
+  it('should handle Nordic and Germanic special characters', () => {
+    expect(normalizeSearchText('Øyvind')).toBe('oyvind');
+    expect(normalizeSearchText('Åse')).toBe('ase');
+    expect(normalizeSearchText('Æther')).toBe('aether');
+    expect(normalizeSearchText('Straße')).toBe('strasse');
+    expect(normalizeSearchText('Łódź')).toBe('lodz');
+    expect(normalizeSearchText('Œuvre')).toBe('oeuvre');
+  });
+
   it('should handle mixed case with accents', () => {
     expect(normalizeSearchText('CAFÉ')).toBe('cafe');
     expect(normalizeSearchText('NaÏvE')).toBe('naive');
