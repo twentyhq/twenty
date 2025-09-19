@@ -1,6 +1,5 @@
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-
-import { computeDiffBetweenExistingEntitiesAndInput } from './compute-diff-between-existing-entities-and-input';
+import { computeDiffBetweenExistingEntitiesAndInput } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-existing-entities-and-input';
 
 describe('computeDiffBetweenExistingEntitiesAndInput', () => {
   describe('with page layout tabs', () => {
