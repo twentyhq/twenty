@@ -1,44 +1,53 @@
 import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 
-export type EntitiesDiff<T extends { id: string }> = {
-  entitiesToCreate: T[];
-  entitiesToUpdate: T[];
+type Diff<T extends { id: string }> = {
+  toCreate: T[];
+  toUpdate: T[];
   idsToDelete: string[];
 };
 
 const extractProperties = <T extends { id: string }>(
-  entity: T,
+  object: T,
   properties: (keyof T)[],
 ) => {
   return properties.reduce((acc, property) => {
     return {
       ...acc,
-      [property]: entity[property],
+      [property]: object[property],
     };
   }, {});
 };
 
-export const computeDiffBetweenExistingEntitiesAndInput = <
+type ComputeDiffBetweenObjectsParams<
   T extends { id: string },
   K extends { id: string },
->(
-  existingEntities: T[],
-  receivedInputEntities: K[],
-  propertiesToCompare: (keyof K & keyof T)[],
-): EntitiesDiff<K> => {
-  const entitiesToCreate: K[] = [];
-  const entitiesToUpdate: K[] = [];
+> = {
+  existingObjects: T[];
+  receivedObjects: K[];
+  propertiesToCompare: (keyof K & keyof T)[];
+};
+
+export const computeDiffBetweenObjects = <
+  T extends { id: string },
+  K extends { id: string },
+>({
+  existingObjects,
+  receivedObjects,
+  propertiesToCompare,
+}: ComputeDiffBetweenObjectsParams<T, K>): Diff<K> => {
+  const toCreate: K[] = [];
+  const toUpdate: K[] = [];
 
   const existingEntitiesMap = new Map(
-    existingEntities.map((entity) => [entity.id, entity]),
+    existingObjects.map((entity) => [entity.id, entity]),
   );
   const receivedEntitiesMap = new Map(
-    receivedInputEntities.map((entity) => [entity.id, entity]),
+    receivedObjects.map((entity) => [entity.id, entity]),
   );
 
-  for (const receivedEntity of receivedInputEntities) {
-    const existingEntity = existingEntitiesMap.get(receivedEntity.id);
+  for (const receivedObject of receivedObjects) {
+    const existingEntity = existingEntitiesMap.get(receivedObject.id);
 
     if (isDefined(existingEntity)) {
       const comparableExistingEntity = extractProperties(
@@ -47,25 +56,25 @@ export const computeDiffBetweenExistingEntitiesAndInput = <
       );
 
       const comparableReceivedEntity = extractProperties(
-        receivedEntity,
+        receivedObject,
         propertiesToCompare,
       );
 
       if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
-        entitiesToUpdate.push(receivedEntity);
+        toUpdate.push(receivedObject);
       }
     } else {
-      entitiesToCreate.push(receivedEntity);
+      toCreate.push(receivedObject);
     }
   }
 
-  const idsToDelete = existingEntities
+  const idsToDelete = existingObjects
     .filter((existingEntity) => !receivedEntitiesMap.has(existingEntity.id))
     .map((entity) => entity.id);
 
   return {
-    entitiesToCreate,
-    entitiesToUpdate,
+    toCreate,
+    toUpdate,
     idsToDelete,
   };
 };

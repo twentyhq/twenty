@@ -11,7 +11,7 @@ import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/p
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { computeDiffBetweenExistingEntitiesAndInput } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-existing-entities-and-input';
+import { computeDiffBetweenObjects } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-objects';
 
 @Injectable()
 export class PageLayoutUpdateService {
@@ -63,11 +63,18 @@ export class PageLayoutUpdateService {
       transactionManager,
     );
 
-    const { entitiesToCreate, entitiesToUpdate, idsToDelete } =
-      computeDiffBetweenExistingEntitiesAndInput<
-        PageLayoutTabEntity,
-        UpdatePageLayoutTabWithWidgetsInput
-      >(existingTabs, tabs, ['title', 'position']);
+    const {
+      toCreate: entitiesToCreate,
+      toUpdate: entitiesToUpdate,
+      idsToDelete,
+    } = computeDiffBetweenObjects<
+      PageLayoutTabEntity,
+      UpdatePageLayoutTabWithWidgetsInput
+    >({
+      existingObjects: existingTabs,
+      receivedObjects: tabs,
+      propertiesToCompare: ['title', 'position'],
+    });
 
     for (const tabId of idsToDelete) {
       await this.pageLayoutTabService.delete(
@@ -122,18 +129,25 @@ export class PageLayoutUpdateService {
         transactionManager,
       );
 
-    const { entitiesToCreate, entitiesToUpdate, idsToDelete } =
-      computeDiffBetweenExistingEntitiesAndInput<
-        PageLayoutWidgetEntity,
-        UpdatePageLayoutWidgetWithIdInput
-      >(existingWidgets, widgets, [
+    const {
+      toCreate: entitiesToCreate,
+      toUpdate: entitiesToUpdate,
+      idsToDelete,
+    } = computeDiffBetweenObjects<
+      PageLayoutWidgetEntity,
+      UpdatePageLayoutWidgetWithIdInput
+    >({
+      existingObjects: existingWidgets,
+      receivedObjects: widgets,
+      propertiesToCompare: [
         'pageLayoutTabId',
         'objectMetadataId',
         'title',
         'type',
         'gridPosition',
         'configuration',
-      ]);
+      ],
+    });
 
     for (const widgetId of idsToDelete) {
       await this.pageLayoutWidgetService.delete(
