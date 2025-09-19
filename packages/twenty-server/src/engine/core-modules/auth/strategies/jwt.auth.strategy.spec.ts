@@ -9,6 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
+//tododo - fix
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let workspaceRepository: any;
@@ -16,6 +17,7 @@ describe('JwtAuthStrategy', () => {
   let userRepository: any;
   let apiKeyRepository: any;
   let jwtWrapperService: any;
+  let permissionsService: any;
 
   const jwt = {
     sub: 'sub-default',
@@ -42,6 +44,10 @@ describe('JwtAuthStrategy', () => {
     jwtWrapperService = {
       extractJwtFromRequest: jest.fn(() => () => 'token'),
     };
+
+    permissionsService = {
+      // Add any methods that might be called on permissionsService
+    };
   });
 
   afterEach(() => {
@@ -63,6 +69,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -92,6 +99,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -124,6 +132,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -156,6 +165,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       const result = await strategy.validate(payload as JwtPayload);
@@ -195,6 +205,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -232,6 +243,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -273,6 +285,7 @@ describe('JwtAuthStrategy', () => {
         userRepository,
         userWorkspaceRepository,
         apiKeyRepository,
+        permissionsService,
       );
 
       const user = await strategy.validate(payload as JwtPayload);
