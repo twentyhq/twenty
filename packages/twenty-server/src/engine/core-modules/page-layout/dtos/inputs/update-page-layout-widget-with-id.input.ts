@@ -18,38 +18,38 @@ import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-typ
 
 @InputType()
 export class UpdatePageLayoutWidgetWithIdInput {
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
   id: string;
 
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
   pageLayoutTabId: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @Field(() => WidgetType, { nullable: true })
+  @Field(() => WidgetType)
   @IsEnum(WidgetType)
   @IsNotEmpty()
   type: WidgetType;
 
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
   @IsOptional()
   objectMetadataId: string | null;
 
-  @Field(() => GridPositionInput, { nullable: true })
+  @Field(() => GridPositionInput)
   @ValidateNested()
   @Type(() => GridPositionInput)
   @IsNotEmpty()
   gridPosition: GridPositionInput;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => GraphQLJSON)
   @IsObject()
   @IsNotEmpty()
   configuration: Record<string, unknown> | null;

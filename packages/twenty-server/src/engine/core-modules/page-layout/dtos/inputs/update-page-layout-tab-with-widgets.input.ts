@@ -15,21 +15,21 @@ import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-
 
 @InputType()
 export class UpdatePageLayoutTabWithWidgetsInput {
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
   id: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @Field(() => Float, { nullable: true })
+  @Field(() => Float)
   @IsNumber()
   @IsNotEmpty()
   position: number;
 
-  @Field(() => [UpdatePageLayoutWidgetWithIdInput], { nullable: true })
+  @Field(() => [UpdatePageLayoutWidgetWithIdInput])
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdatePageLayoutWidgetWithIdInput)

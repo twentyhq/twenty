@@ -17,21 +17,21 @@ import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-l
 
 @InputType()
 export class UpdatePageLayoutWithTabsInput {
-  @Field({ nullable: true })
+  @Field()
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @Field(() => PageLayoutType, { nullable: true })
+  @Field(() => PageLayoutType)
   @IsEnum(PageLayoutType)
   @IsNotEmpty()
   type: PageLayoutType;
 
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => UUIDScalarType)
   @IsUUID()
   objectMetadataId: string | null;
 
-  @Field(() => [UpdatePageLayoutTabWithWidgetsInput], { nullable: true })
+  @Field(() => [UpdatePageLayoutTabWithWidgetsInput])
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

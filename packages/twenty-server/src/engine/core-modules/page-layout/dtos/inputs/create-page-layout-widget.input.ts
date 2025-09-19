@@ -25,8 +25,8 @@ export class CreatePageLayoutWidgetInput {
 
   @Field({ nullable: false })
   @IsString()
-  @IsOptional()
-  title?: string;
+  @IsNotEmpty()
+  title: string;
 
   @Field(() => WidgetType, { nullable: true, defaultValue: WidgetType.VIEW })
   @IsEnum(WidgetType)
