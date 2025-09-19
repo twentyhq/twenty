@@ -1,6 +1,12 @@
-import { SettingsBillingLabelValueItem } from '@/billing/components/SettingsBillingLabelValueItem';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
+import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
+import { useBillingWording } from '@/billing/hooks/useBillingWording';
+import { useCurrentBillingFlags } from '@/billing/hooks/useCurrentBillingFlags';
+import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -10,14 +16,6 @@ import { Section } from 'twenty-ui/layout';
 import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
-import { formatNumber } from '~/utils/format/formatNumber';
-// import { useListAvailableMeteredBillingPricesQuery } from '~/generated-metadata/graphql';
-// import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import {
-  getIntervalLabel,
-  isMonthlyPlan,
-} from '@/billing/utils/subscriptionFlags';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -26,23 +24,41 @@ const StyledLineSeparator = styled.div`
 `;
 
 export const SettingsBillingCreditsSection = ({
-  currentWorkspace,
+  currentBillingSubscription,
 }: {
-  currentWorkspace: CurrentWorkspace;
+  currentBillingSubscription: NonNullable<
+    CurrentWorkspace['currentBillingSubscription']
+  >;
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
+  const { formatNumber } = useNumberFormat();
+
+  const { isMonthlyPlan } = useCurrentBillingFlags();
+
+  const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
+
+  const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const { usedCredits, grantedCredits, unitPriceCents } =
-    useGetWorkflowNodeExecutionUsage();
+  const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
 
-  // const { data: meteredBillingPrices } =
-  //   useListAvailableMeteredBillingPricesQuery();
+  const { usedCredits, grantedCredits, unitPriceCents } =
+    getWorkflowNodeExecutionUsage();
 
   const progressBarValue = (usedCredits / grantedCredits) * 100;
 
-  const intervalLabel = getIntervalLabel(isMonthlyPlan(currentWorkspace));
+  const intervalLabel = getIntervalLabel(isMonthlyPlan);
+
+  const extraCreditsUsed = Math.max(0, usedCredits - grantedCredits);
+
+  const costPer1kExtraCredits = (unitPriceCents / 100) * 1000;
+
+  const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
+
+  const meteredBillingPrices = getCurrentMeteredPricesByInterval(
+    currentBillingSubscription.interval,
+  );
 
   return (
     <>
@@ -54,7 +70,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatToShortNumber(grantedCredits)}`}
+            value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -67,36 +83,30 @@ export const SettingsBillingCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatNumber(Math.max(0, usedCredits - grantedCredits))}`}
+              value={`${formatToShortNumber(extraCreditsUsed)}`}
             />
           )}
-          <SettingsBillingLabelValueItem
-            label={t`Cost per 1k Extra Credits`}
-            value={`$${formatNumber((unitPriceCents / 100) * 1000, 2)}`}
-          />
+          {!isTrialing && (
+            <SettingsBillingLabelValueItem
+              label={t`Cost per 1k Extra Credits`}
+              value={`$${formatNumber(costPer1kExtraCredits, { abbreviate: true, decimals: 6 })}`}
+            />
+          )}
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Cost`}
               isValueInPrimaryColor={true}
-              value={`$${formatNumber(((usedCredits - grantedCredits) * unitPriceCents) / 100, 2)}`}
+              value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
             />
           )}
         </SubscriptionInfoContainer>
       </Section>
-      {/*<Section>*/}
-      {/*  {meteredBillingPrices?.listAvailableMeteredBillingPrices && (*/}
-      {/*    <MeteredPriceSelector*/}
-      {/*      billingSubscriptionItems={*/}
-      {/*        currentWorkspace.currentBillingSubscription*/}
-      {/*          ?.billingSubscriptionItems ?? []*/}
-      {/*      }*/}
-      {/*      meteredBillingPrices={*/}
-      {/*        meteredBillingPrices.listAvailableMeteredBillingPrices*/}
-      {/*      }*/}
-      {/*      isTrialing={isTrialing}*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*</Section>*/}
+      <Section>
+        <MeteredPriceSelector
+          meteredBillingPrices={meteredBillingPrices}
+          isTrialing={isTrialing}
+        />
+      </Section>
     </>
   );
 };
