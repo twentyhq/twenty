@@ -13,6 +13,27 @@ import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/servic
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 
+type UpdatePageLayoutWithTabsParams = {
+  id: string;
+  workspaceId: string;
+  input: UpdatePageLayoutWithTabsInput;
+  transactionManager: EntityManager;
+};
+
+type UpdatePageLayoutTabsParams = {
+  pageLayoutId: string;
+  workspaceId: string;
+  tabs: UpdatePageLayoutTabWithWidgetsInput[];
+  transactionManager: EntityManager;
+};
+
+type UpdateWidgetsForTabParams = {
+  tabId: string;
+  widgets: UpdatePageLayoutWidgetWithIdInput[];
+  workspaceId: string;
+  transactionManager: EntityManager;
+};
+
 @Injectable()
 export class PageLayoutUpdateService {
   constructor(
@@ -21,12 +42,12 @@ export class PageLayoutUpdateService {
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
   ) {}
 
-  async updatePageLayoutWithTabs(
-    id: string,
-    workspaceId: string,
-    input: UpdatePageLayoutWithTabsInput,
-    transactionManager: EntityManager,
-  ): Promise<PageLayoutEntity> {
+  async updatePageLayoutWithTabs({
+    id,
+    workspaceId,
+    input,
+    transactionManager,
+  }: UpdatePageLayoutWithTabsParams): Promise<PageLayoutEntity> {
     await this.pageLayoutService.findByIdOrThrow(
       id,
       workspaceId,
@@ -42,7 +63,12 @@ export class PageLayoutUpdateService {
       transactionManager,
     );
 
-    await this.updatePageLayoutTabs(id, workspaceId, tabs, transactionManager);
+    await this.updatePageLayoutTabs({
+      pageLayoutId: id,
+      workspaceId,
+      tabs,
+      transactionManager,
+    });
 
     return this.pageLayoutService.findByIdOrThrow(
       id,
@@ -51,12 +77,12 @@ export class PageLayoutUpdateService {
     );
   }
 
-  private async updatePageLayoutTabs(
-    pageLayoutId: string,
-    workspaceId: string,
-    tabs: UpdatePageLayoutTabWithWidgetsInput[],
-    transactionManager: EntityManager,
-  ): Promise<void> {
+  private async updatePageLayoutTabs({
+    pageLayoutId,
+    workspaceId,
+    tabs,
+    transactionManager,
+  }: UpdatePageLayoutTabsParams): Promise<void> {
     const existingTabs = await this.pageLayoutTabService.findByPageLayoutId(
       workspaceId,
       pageLayoutId,
@@ -107,21 +133,21 @@ export class PageLayoutUpdateService {
     }
 
     for (const tabInput of tabs) {
-      await this.updateWidgetsForTab(
-        tabInput.id,
-        tabInput.widgets,
+      await this.updateWidgetsForTab({
+        tabId: tabInput.id,
+        widgets: tabInput.widgets,
         workspaceId,
         transactionManager,
-      );
+      });
     }
   }
 
-  private async updateWidgetsForTab(
-    tabId: string,
-    widgets: UpdatePageLayoutWidgetWithIdInput[],
-    workspaceId: string,
-    transactionManager: EntityManager,
-  ): Promise<void> {
+  private async updateWidgetsForTab({
+    tabId,
+    widgets,
+    workspaceId,
+    transactionManager,
+  }: UpdateWidgetsForTabParams): Promise<void> {
     const existingWidgets =
       await this.pageLayoutWidgetService.findByPageLayoutTabId(
         workspaceId,

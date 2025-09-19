@@ -166,12 +166,12 @@ describe('PageLayoutUpdateService', () => {
         title: 'Updated Widget',
       });
 
-      const result = await pageLayoutUpdateService.updatePageLayoutWithTabs(
+      const result = await pageLayoutUpdateService.updatePageLayoutWithTabs({
         id,
         workspaceId,
         input,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
@@ -204,12 +204,12 @@ describe('PageLayoutUpdateService', () => {
         .mockRejectedValue(new Error('Page layout not found'));
 
       await expect(
-        pageLayoutUpdateService.updatePageLayoutWithTabs(
+        pageLayoutUpdateService.updatePageLayoutWithTabs({
           id,
           workspaceId,
           input,
-          mockTransactionManager,
-        ),
+          transactionManager: mockTransactionManager,
+        }),
       ).rejects.toThrow('Page layout not found');
     });
   });
@@ -240,12 +240,12 @@ describe('PageLayoutUpdateService', () => {
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([]);
 
-      await pageLayoutUpdateService['updatePageLayoutTabs'](
+      await pageLayoutUpdateService['updatePageLayoutTabs']({
         pageLayoutId,
         workspaceId,
         tabs,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutTabService.create).toHaveBeenCalledWith(
         {
@@ -283,12 +283,12 @@ describe('PageLayoutUpdateService', () => {
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([]);
 
-      await pageLayoutUpdateService['updatePageLayoutTabs'](
+      await pageLayoutUpdateService['updatePageLayoutTabs']({
         pageLayoutId,
         workspaceId,
         tabs,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutTabService.update).toHaveBeenCalledWith(
         'tab-1',
@@ -313,12 +313,12 @@ describe('PageLayoutUpdateService', () => {
         .mockResolvedValue(existingTabs);
       jest.spyOn(pageLayoutTabService, 'delete').mockResolvedValue(mockTab);
 
-      await pageLayoutUpdateService['updatePageLayoutTabs'](
+      await pageLayoutUpdateService['updatePageLayoutTabs']({
         pageLayoutId,
         workspaceId,
         tabs,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutTabService.delete).toHaveBeenCalledWith(
         'tab-1',
@@ -375,12 +375,12 @@ describe('PageLayoutUpdateService', () => {
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([]);
 
-      await pageLayoutUpdateService['updatePageLayoutTabs'](
+      await pageLayoutUpdateService['updatePageLayoutTabs']({
         pageLayoutId,
         workspaceId,
         tabs,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutTabService.delete).toHaveBeenCalledWith(
         'tab-to-delete',
@@ -440,12 +440,12 @@ describe('PageLayoutUpdateService', () => {
         gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
       });
 
-      await pageLayoutUpdateService['updateWidgetsForTab'](
+      await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutWidgetService.create).toHaveBeenCalledWith(
         {
@@ -486,12 +486,12 @@ describe('PageLayoutUpdateService', () => {
         gridPosition: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
       });
 
-      await pageLayoutUpdateService['updateWidgetsForTab'](
+      await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutWidgetService.update).toHaveBeenCalledWith(
         'widget-1',
@@ -522,12 +522,12 @@ describe('PageLayoutUpdateService', () => {
         .spyOn(pageLayoutWidgetService, 'delete')
         .mockResolvedValue(mockWidget);
 
-      await pageLayoutUpdateService['updateWidgetsForTab'](
+      await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutWidgetService.delete).toHaveBeenCalledWith(
         'widget-1',
@@ -588,12 +588,12 @@ describe('PageLayoutUpdateService', () => {
         title: 'Widget to Delete',
       });
 
-      await pageLayoutUpdateService['updateWidgetsForTab'](
+      await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutWidgetService.delete).toHaveBeenCalledWith(
         'widget-to-delete',
@@ -713,12 +713,12 @@ describe('PageLayoutUpdateService', () => {
         gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 2 },
       });
 
-      const result = await pageLayoutUpdateService.updatePageLayoutWithTabs(
+      const result = await pageLayoutUpdateService.updatePageLayoutWithTabs({
         id,
         workspaceId,
         input,
-        mockTransactionManager,
-      );
+        transactionManager: mockTransactionManager,
+      });
 
       expect(pageLayoutService.update).toHaveBeenCalledWith(
         id,
