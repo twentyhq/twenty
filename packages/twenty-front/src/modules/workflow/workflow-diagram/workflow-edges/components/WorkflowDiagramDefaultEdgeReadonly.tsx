@@ -1,7 +1,11 @@
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
+import { WorkflowDiagramEdgeLabelContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabelContainer';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
 import { useTheme } from '@emotion/react';
-import { BaseEdge } from '@xyflow/react';
+import { i18n } from '@lingui/core';
+import { BaseEdge, EdgeLabelRenderer } from '@xyflow/react';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowDiagramDefaultEdgeReadonlyProps =
   WorkflowDiagramEdgeComponentProps;
@@ -42,6 +46,18 @@ export const WorkflowDiagramDefaultEdgeReadonly = ({
           style={{ stroke: theme.border.color.strong }}
         />
       ))}
+
+      <EdgeLabelRenderer>
+        {isDefined(data?.labelOptions) && (
+          <WorkflowDiagramEdgeLabelContainer
+            sourceX={sourceX}
+            sourceY={sourceY}
+            position={data.labelOptions.position}
+          >
+            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
+          </WorkflowDiagramEdgeLabelContainer>
+        )}
+      </EdgeLabelRenderer>
     </>
   );
 };
