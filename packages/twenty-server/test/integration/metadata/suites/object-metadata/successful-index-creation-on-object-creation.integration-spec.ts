@@ -1,0 +1,83 @@
+import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
+
+describe('Object metadata creation with index creation', () => {
+  let createdObjectId: string | undefined;
+  afterEach(async () => {
+    if (isDefined(createdObjectId)) {
+      await deleteOneObjectMetadata({
+        input: { idToDelete: createdObjectId },
+      });
+    }
+  });
+  it('should create unique index for unique field', async () => {
+    const {
+      labelPlural,
+      description,
+      labelSingular,
+      namePlural,
+      nameSingular,
+    } = CUSTOM_OBJECT_DISHES;
+
+    const { data } = await createOneObjectMetadata({
+      input: {
+        labelPlural,
+        description,
+        labelSingular,
+        namePlural,
+        nameSingular,
+        icon: 'IconTest',
+      },
+      gqlFields: `
+        id
+      `,
+    });
+
+    createdObjectId = data.createOneObject.id;
+
+    const { objects } = await findManyObjectMetadata({
+      input: {
+        filter: {
+          id: {
+            eq: createdObjectId,
+          },
+        },
+        paging: {
+          first: 1,
+        },
+      },
+      gqlFields: `
+        id
+        nameSingular
+        indexMetadataList {
+          name
+          isUnique
+          isCustom
+          indexType
+        }
+      `,
+    });
+
+    const foundObject = objects.find((object) => object.id === createdObjectId);
+    jestExpectToBeDefined(foundObject);
+    expect(foundObject.id).toBe(createdObjectId);
+    expect(foundObject).toMatchInlineSnapshot(`
+{
+  "id": "851cded3-68d4-47cc-b286-eaf19f2905f2",
+  "indexMetadataList": [
+    {
+      "indexType": "GIN",
+      "isCustom": false,
+      "isUnique": false,
+      "name": "IDX_be6fe08944beb9886fb83dfbbf1",
+    },
+  ],
+  "nameSingular": "dish",
+}
+`);
+  });
+});
