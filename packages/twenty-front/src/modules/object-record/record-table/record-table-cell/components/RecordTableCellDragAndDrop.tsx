@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { IconListViewGrip } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   border-color: transparent;
   cursor: grab;
   display: flex;
@@ -27,7 +28,7 @@ const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
   }
 `;
 
-export const RecordTableCellGrip = () => {
+export const RecordTableCellDragAndDrop = () => {
   const { dragHandleProps, isDragging } =
     useRecordTableRowDraggableContextOrThrow();
 
