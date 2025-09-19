@@ -216,7 +216,7 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   const optimizedWorkspaceMembers = useMemo(() => {
-    if (!searchFilter.trim() || searchFilter === debouncedSearchFilter) {
+    if (!searchFilter.trim()) {
       return workspaceMembers;
     }
 
@@ -237,7 +237,7 @@ export const SettingsWorkspaceMembers = () => {
           email.includes(term),
       );
     });
-  }, [workspaceMembers, searchFilter, debouncedSearchFilter]);
+  }, [workspaceMembers, searchFilter]);
 
   const { openModal } = useModal();
 

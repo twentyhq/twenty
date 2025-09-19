@@ -5,11 +5,11 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  type Agent,
-  useFindManyAgentsQuery,
-  useGetApiKeysQuery,
+    type Agent,
+    useFindManyAgentsQuery,
+    useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -66,9 +66,11 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const loading = isAgent ? agentsLoading : apiKeysLoading;
 
-  const entities = ((isAgent
-    ? agentsData?.findManyAgents.filter((agent) => agent.isCustom)
-    : apiKeysData?.apiKeys) || []) as EntityData[];
+  const entities = useMemo(() => {
+    return ((isAgent
+      ? agentsData?.findManyAgents.filter((agent) => agent.isCustom)
+      : apiKeysData?.apiKeys) || []) as EntityData[];
+  }, [isAgent, agentsData?.findManyAgents, apiKeysData?.apiKeys]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 
@@ -82,27 +84,28 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     }
   };
 
-  const filteredEntities = entities.filter((entity) => {
-    const isExcluded = excludedIds.includes(entity.id);
+  const filteredEntities = useMemo(() => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return entities.filter((entity) => {
+      const isExcluded = excludedIds.includes(entity.id);
 
-    if (isExcluded) {
-      return false;
-    }
+      if (isExcluded) {
+        return false;
+      }
 
-    if (isAgent) {
-      const agent = entity as Agent;
-      const searchTerm = normalizeSearchText(searchFilter);
-      return (
-        normalizeSearchText(agent.name).includes(searchTerm) ||
-        normalizeSearchText(agent.label).includes(searchTerm)
-      );
-    } else {
-      const searchTerm = normalizeSearchText(searchFilter);
-      return normalizeSearchText((entity as ApiKeyForRole).name).includes(
-        searchTerm,
-      );
-    }
-  });
+      if (isAgent) {
+        const agent = entity as Agent;
+        return (
+          normalizeSearchText(agent.name).includes(searchTerm) ||
+          normalizeSearchText(agent.label).includes(searchTerm)
+        );
+      } else {
+        return normalizeSearchText((entity as ApiKeyForRole).name).includes(
+          searchTerm,
+        );
+      }
+    });
+  }, [entities, searchFilter, excludedIds, isAgent]);
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>

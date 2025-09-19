@@ -1,6 +1,6 @@
 import {
-  SettingsRoleAssignmentTableRow,
-  type RoleTarget,
+    SettingsRoleAssignmentTableRow,
+    type RoleTarget,
 } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -9,7 +9,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { H2Title, IconSearch } from 'twenty-ui/display';
@@ -87,40 +87,42 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
 
   const roleTargets = tableConfig[roleTargetType].roleTargets;
 
-  const getSearchableFields = (
-    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
-  ): string[] => {
-    switch (roleTargetType) {
-      case 'member': {
-        const member = roleTarget as PartialWorkspaceMember;
-        return [
-          normalizeSearchText(member.name.firstName),
-          normalizeSearchText(member.name.lastName),
-          normalizeSearchText(member.userEmail),
-        ];
-      }
-      case 'agent': {
-        const agent = roleTarget as Agent;
-        return [
-          normalizeSearchText(agent.name),
-          normalizeSearchText(agent.label),
-          normalizeSearchText(agent.description),
-        ];
-      }
-      case 'apiKey': {
-        const apiKey = roleTarget as ApiKeyForRole;
-        return [normalizeSearchText(apiKey.name)];
-      }
-    }
-  };
+  const filteredRoleTargets = useMemo(() => {
+    if (!searchFilter) return roleTargets;
 
-  const filteredRoleTargets = !searchFilter
-    ? roleTargets
-    : roleTargets.filter((roleTarget) => {
-        const searchTerm = normalizeSearchText(searchFilter);
-        const searchableFields = getSearchableFields(roleTarget);
-        return searchableFields.some((field) => field.includes(searchTerm));
-      });
+    const getSearchableFields = (
+      roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
+    ): string[] => {
+      switch (roleTargetType) {
+        case 'member': {
+          const member = roleTarget as PartialWorkspaceMember;
+          return [
+            normalizeSearchText(member.name.firstName),
+            normalizeSearchText(member.name.lastName),
+            normalizeSearchText(member.userEmail),
+          ];
+        }
+        case 'agent': {
+          const agent = roleTarget as Agent;
+          return [
+            normalizeSearchText(agent.name),
+            normalizeSearchText(agent.label),
+            normalizeSearchText(agent.description),
+          ];
+        }
+        case 'apiKey': {
+          const apiKey = roleTarget as ApiKeyForRole;
+          return [normalizeSearchText(apiKey.name)];
+        }
+      }
+    };
+
+    const searchTerm = normalizeSearchText(searchFilter);
+    return roleTargets.filter((roleTarget) => {
+      const searchableFields = getSearchableFields(roleTarget);
+      return searchableFields.some((field) => field.includes(searchTerm));
+    });
+  }, [roleTargets, searchFilter, roleTargetType]);
 
   const createRoleTarget = (
     roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,

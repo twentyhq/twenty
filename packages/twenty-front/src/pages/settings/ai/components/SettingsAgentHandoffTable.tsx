@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -68,15 +68,17 @@ export const SettingsAgentHandoffTable = ({
 
   const [removeAgentHandoff] = useRemoveAgentHandoffMutation();
 
-  const filteredHandoffTargets = !searchFilter
-    ? handoffTargets
-    : handoffTargets.filter((handoff) => {
-        const searchTerm = normalizeSearchText(searchFilter);
-        const label = normalizeSearchText(handoff.toAgent.label);
-        const description = normalizeSearchText(handoff.description);
+  const filteredHandoffTargets = useMemo(() => {
+    if (!searchFilter) return handoffTargets;
 
-        return label.includes(searchTerm) || description.includes(searchTerm);
-      });
+    const searchTerm = normalizeSearchText(searchFilter);
+    return handoffTargets.filter((handoff) => {
+      const label = normalizeSearchText(handoff.toAgent.label);
+      const description = normalizeSearchText(handoff.description);
+
+      return label.includes(searchTerm) || description.includes(searchTerm);
+    });
+  }, [handoffTargets, searchFilter]);
 
   const handleRemoveHandoff = async () => {
     if (!handoffToDelete) {

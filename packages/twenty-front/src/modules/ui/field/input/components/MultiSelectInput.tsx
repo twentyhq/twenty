@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -57,10 +57,12 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = options.filter((option) => {
+  const filteredOptionsInDropDown = useMemo(() => {
     const searchTerm = normalizeSearchText(searchFilter);
-    return normalizeSearchText(option.label).includes(searchTerm);
-  });
+    return options.filter((option) => {
+      return normalizeSearchText(option.label).includes(searchTerm);
+    });
+  }, [options, searchFilter]);
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(

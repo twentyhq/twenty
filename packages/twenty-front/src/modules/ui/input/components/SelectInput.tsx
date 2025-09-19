@@ -52,17 +52,17 @@ export const SelectInput = ({
     SelectOption | undefined
   >(defaultOption);
 
-  const optionsToSelect = useMemo(
-    () =>
+  const optionsToSelect = useMemo(() => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return (
       options.filter((option) => {
-        const searchTerm = normalizeSearchText(searchFilter);
         return (
           option.value !== selectedOption?.value &&
           normalizeSearchText(option.label).includes(searchTerm)
         );
-      }) || [],
-    [options, searchFilter, selectedOption?.value],
-  );
+      }) || []
+    );
+  }, [options, searchFilter, selectedOption?.value]);
 
   const optionsInDropDown = useMemo(
     () =>

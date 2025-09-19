@@ -156,29 +156,25 @@ export const SettingsObjectFieldTable = ({
     tableMetadata,
   );
 
-  const filteredActiveItems = useMemo(
-    () =>
-      sortedActiveObjectSettingsDetailItems.filter((item) => {
-        const searchNormalized = normalizeSearchText(searchTerm);
-        return (
-          normalizeSearchText(item.label).includes(searchNormalized) ||
-          normalizeSearchText(item.dataType).includes(searchNormalized)
-        );
-      }),
-    [sortedActiveObjectSettingsDetailItems, searchTerm],
-  );
+  const filteredActiveItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+    return sortedActiveObjectSettingsDetailItems.filter((item) => {
+      return (
+        normalizeSearchText(item.label).includes(searchNormalized) ||
+        normalizeSearchText(item.dataType).includes(searchNormalized)
+      );
+    });
+  }, [sortedActiveObjectSettingsDetailItems, searchTerm]);
 
-  const filteredDisabledItems = useMemo(
-    () =>
-      sortedDisabledObjectSettingsDetailItems.filter((item) => {
-        const searchNormalized = normalizeSearchText(searchTerm);
-        return (
-          normalizeSearchText(item.label).includes(searchNormalized) ||
-          normalizeSearchText(item.dataType).includes(searchNormalized)
-        );
-      }),
-    [sortedDisabledObjectSettingsDetailItems, searchTerm],
-  );
+  const filteredDisabledItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+    return sortedDisabledObjectSettingsDetailItems.filter((item) => {
+      return (
+        normalizeSearchText(item.label).includes(searchNormalized) ||
+        normalizeSearchText(item.dataType).includes(searchNormalized)
+      );
+    });
+  }, [sortedDisabledObjectSettingsDetailItems, searchTerm]);
 
   return (
     <>
