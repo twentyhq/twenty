@@ -82,17 +82,17 @@ export class ViewDTO {
   deletedAt?: Date | null;
 
   @Field(() => [ViewFieldDTO])
-  viewFields: ViewFieldDTO[];
+  viewFields?: ViewFieldDTO[];
 
   @Field(() => [ViewFilterDTO])
-  viewFilters: ViewFilterDTO[];
+  viewFilters?: ViewFilterDTO[];
 
   @Field(() => [ViewFilterGroupDTO])
-  viewFilterGroups: ViewFilterGroupDTO[];
+  viewFilterGroups?: ViewFilterGroupDTO[];
 
   @Field(() => [ViewSortDTO])
-  viewSorts: ViewSortDTO[];
+  viewSorts?: ViewSortDTO[];
 
   @Field(() => [ViewGroupDTO])
-  viewGroups: ViewGroupDTO[];
+  viewGroups?: ViewGroupDTO[];
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
+import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/view-field-related-flat-entity-maps.type';
 import {
   FlatEntityUpdateValidationArgs,
   FlatEntityValidationArgs,
@@ -19,10 +19,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-field-action';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
-export type ViewFieldRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatViewMaps'
->;
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatViewField,

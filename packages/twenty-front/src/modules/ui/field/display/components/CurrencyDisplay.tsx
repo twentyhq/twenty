@@ -8,8 +8,8 @@ import {
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
+import { formatNumber } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {
@@ -52,7 +52,7 @@ export const CurrencyDisplay = ({
       )}
       {amountToDisplay !== null
         ? !isDefined(format) || format === 'short'
-          ? formatAmount(amountToDisplay)
+          ? formatToShortNumber(amountToDisplay)
           : formatNumber(amountToDisplay)
         : null}
     </EllipsisDisplay>

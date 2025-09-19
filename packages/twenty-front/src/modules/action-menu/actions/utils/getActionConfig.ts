@@ -1,3 +1,4 @@
+import { DASHBOARD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DashboardActionsConfig';
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowActionsConfig';
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
@@ -17,6 +18,9 @@ export const getActionConfig = ({
   }
 
   switch (objectMetadataItem.nameSingular) {
+    case CoreObjectNameSingular.Dashboard: {
+      return DASHBOARD_ACTIONS_CONFIG;
+    }
     case CoreObjectNameSingular.Workflow: {
       return WORKFLOW_ACTIONS_CONFIG;
     }

@@ -25,7 +25,14 @@ export const deleteObjectFromFlatObjectMetadataMapsOrThrow = ({
     flatObjectMetadataMaps.idByNameSingular,
   ).filter(([_nameSingular, id]) => id !== objectMetadataId);
 
+  const updatedIdByUniversalIdentifierEntries = Object.entries(
+    flatObjectMetadataMaps.idByUniversalIdentifier,
+  ).filter(([_universalIdentifier, id]) => id !== objectMetadataId);
+
   return {
+    idByUniversalIdentifier: Object.fromEntries(
+      updatedIdByUniversalIdentifierEntries,
+    ),
     byId: removePropertiesFromRecord(flatObjectMetadataMaps.byId, [
       objectMetadataId,
     ]),

@@ -15,8 +15,8 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
-import { RecordTableLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableLastDynamicFillingCell';
-import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
+import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
+
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -167,8 +167,7 @@ export const RecordTableRecordGroupSection = () => {
   const sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField =
     visibleRecordFieldsWithoutLabelIdentifier.reduce(sumByProperty('size'), 0);
 
-  const sumOfBorderWidthForFields =
-    visibleRecordFieldsWithoutLabelIdentifier.length;
+  const sumOfBorderWidthForFields = visibleRecordFields.length;
 
   const fieldsPlaceholderWidth =
     sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
@@ -199,7 +198,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
-  const shouldDisplayBorderBottom = !isFirstRowActiveOrFocused;
+  const shouldDisplayBorderBottom =
+    !isFirstRowActiveOrFocused || !isRecordGroupTableSectionToggled;
 
   if (!isDefined(recordGroup)) {
     return null;
@@ -246,11 +246,10 @@ export const RecordTableRecordGroupSection = () => {
           objectMetadataItem={objectMetadataItem}
           aggregateLabel={aggregateLabel}
         />
-        <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />
       <RecordTableAddButtonPlaceholderCell />
-      <RecordTableLastDynamicFillingCell />
+      <RecordTableGroupSectionLastDynamicFillingCell />
     </StyledTrContainer>
   );
 };

@@ -56,11 +56,11 @@ export const DateTimeSettingsTimeFormatSelect = ({
           value: TimeFormat.SYSTEM,
         },
         {
-          label: t`24h (${hour24Label})`,
+          label: t`24h - ${hour24Label}`,
           value: TimeFormat.HOUR_24,
         },
         {
-          label: t`12h (${hour12Label})`,
+          label: t`12h - ${hour12Label}`,
           value: TimeFormat.HOUR_12,
         },
       ]}

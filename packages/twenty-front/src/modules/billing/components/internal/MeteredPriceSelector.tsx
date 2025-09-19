@@ -14,7 +14,7 @@ import {
   SubscriptionInterval,
 } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const compareByAmountAsc = (a: BillingPriceOutput, b: BillingPriceOutput) =>
   a.amount - b.amount;
