@@ -5,9 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import omit from 'lodash.omit';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
