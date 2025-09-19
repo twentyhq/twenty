@@ -80,16 +80,22 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           billingPrices: [
             {
               interval: SubscriptionInterval.Month,
-              tiers: [{ up_to: 10, flat_amount: 500, unit_amount: 50 }],
-              stripePriceId: 'price_456',
+              tiers: [
+                { up_to: 10, flat_amount: 500, unit_amount: null },
+                { up_to: null, flat_amount: null, unit_amount: 0.001 },
+              ],
+              stripePriceId: 'price_metered1',
               priceUsageType: BillingUsageType.METERED,
             },
           ],
           prices: [
             {
-              tiers: [{ upTo: 10, flatAmount: 500, unitAmount: 50 }],
+              tiers: [
+                { upTo: 10, flatAmount: 500, unitAmount: null },
+                { upTo: null, flatAmount: null, unitAmount: 0.001 },
+              ],
               recurringInterval: SubscriptionInterval.Month,
-              stripePriceId: 'price_456',
+              stripePriceId: 'price_metered1',
               priceUsageType: BillingUsageType.METERED,
             },
           ],
