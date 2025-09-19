@@ -1,4 +1,4 @@
-import { computeDiffBetweenObjects } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-objects';
+import { computeDiffBetweenObjects } from '../compute-diff-between-objects';
 
 describe('computeDiffBetweenObjects', () => {
   it('should return the correct diff', () => {

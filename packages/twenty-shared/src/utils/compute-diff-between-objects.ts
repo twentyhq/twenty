@@ -1,5 +1,5 @@
+import { isDefined } from '@/utils/validation';
 import deepEqual from 'deep-equal';
-import { isDefined } from 'twenty-shared/utils';
 
 type Diff<T extends { id: string }> = {
   toCreate: T[];

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { computeDiffBetweenObjects } from 'twenty-shared/utils';
 import { EntityManager } from 'typeorm';
 
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
@@ -11,7 +12,6 @@ import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/p
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { computeDiffBetweenObjects } from 'src/engine/core-modules/page-layout/utils/compute-diff-between-objects';
 
 @Injectable()
 export class PageLayoutUpdateService {
