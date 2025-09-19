@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 
 export const customAllView = (
   objectMetadataItem: ObjectMetadataEntity,
@@ -39,13 +40,13 @@ export const customAllView = (
             ?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
       },
       ...otherFields.map((field, index) => ({
         fieldMetadataId: field.id,
         position: index + 1,
         isVisible: true,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
       })),
     ],
   };

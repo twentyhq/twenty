@@ -1,6 +1,6 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
+import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
@@ -52,7 +52,7 @@ export const RecordTableRow = ({
           <RecordTableRowArrowKeysEffect />
         </>
       )}
-      <RecordTableCellGrip />
+      <RecordTableCellDragAndDrop />
       <RecordTableCellCheckbox />
       <RecordTableCells />
       <RecordTablePlusButtonCellPlaceholder />
@@ -75,7 +75,7 @@ export const RecordTableRow = ({
           <RecordTableRowArrowKeysEffect />
         </>
       )}
-      <RecordTableCellGrip />
+      <RecordTableCellDragAndDrop />
       <RecordTableCellCheckbox />
       <RecordTableCells />
       <RecordTablePlusButtonCellPlaceholder />

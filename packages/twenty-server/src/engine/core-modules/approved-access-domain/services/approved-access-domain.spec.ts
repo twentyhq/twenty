@@ -249,6 +249,7 @@ describe('ApprovedAccessDomainService', () => {
       const sender = {
         userEmail: 'sender@example.com',
         name: { firstName: 'John', lastName: 'Doe' },
+        locale: 'en',
       } as WorkspaceMemberWorkspaceEntity;
       const workspace = {
         displayName: 'Test Workspace',

@@ -17,6 +17,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -54,11 +55,11 @@ const StyledChevronContainer = styled.div`
   display: flex;
   text-align: center;
   vertical-align: middle;
-  width: 32px;
-  min-width: 32px;
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
-  left: 16px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -76,12 +77,13 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   width: ${({ width }) => width}px;
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: 48px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -198,7 +200,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
 
-  const shouldDisplayBorderBottom = !isFirstRowActiveOrFocused;
+  const shouldDisplayBorderBottom =
+    !isFirstRowActiveOrFocused || !isRecordGroupTableSectionToggled;
 
   if (!isDefined(recordGroup)) {
     return null;

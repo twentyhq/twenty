@@ -18,6 +18,12 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#. js-lingui-id: lndIq/
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid " billed annually"
+msgstr ""
+
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid " must be one of {ratingValues} values"
@@ -62,6 +68,11 @@ msgstr ": Минуле"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr "Сьогодні"
+
+#. js-lingui-id: N/lIUf
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid ". The change will be applied the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -113,11 +124,6 @@ msgstr "{failedCount} файл(и) не вдалося завантажити"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} із {formattedRecordsToImportCount} записів імпортовано."
 
-#. js-lingui-id: J2Vio9
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{nickname} - {price}$"
-msgstr "{nickname} - {price}$"
-
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -162,13 +168,17 @@ msgid "1. Type"
 msgstr "1. Тип"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "10,000 workflow node executions"
 msgstr "10 000 виконань вузлів робочого процесу"
 
+#. js-lingui-id: bM5lnW
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "12h - {hour12Label}"
+msgstr ""
+
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12 год ({hour12Label})"
 
@@ -189,13 +199,17 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. Встановіть дозволи для {objectLabelPlural}"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "20,000 workflow node executions"
 msgstr "20 000 виконань вузлів робочого процесу"
 
+#. js-lingui-id: mwTnop
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "24h - {hour24Label}"
+msgstr ""
+
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24 год ({hour24Label})"
 
@@ -425,11 +439,6 @@ msgstr "Додати новий"
 msgid "Add node"
 msgstr "Додати вузол"
 
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
-msgstr "Додати вузол"
-
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -600,7 +609,7 @@ msgstr "Агенти використовувалися для маршрути�
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "ШІ"
 
@@ -741,10 +750,10 @@ msgstr "Сталася несподівана помилка"
 msgid "and"
 msgstr "та"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "Будь-яке поле :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -757,8 +766,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "API & Webhooks"
 msgstr "API та Webhooks"
 
@@ -837,6 +846,11 @@ msgstr "API"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
 msgstr "API та Webhooks"
+
+#. js-lingui-id: BnUHmx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Apostrophe and dot - {apostropheAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1070,7 +1084,7 @@ msgid "Blocklist"
 msgstr "Чорний список"
 
 #. js-lingui-id: 2yl5lQ
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Book a Call"
 msgstr "Запланувати дзвінок"
 
@@ -1198,13 +1212,43 @@ msgstr "Не можете сканувати? Скопіюйте"
 msgid "Cancel"
 msgstr "Скасувати"
 
+#. js-lingui-id: dV4HC5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching"
+msgstr ""
+
+#. js-lingui-id: M5CqkG
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching?"
+msgstr ""
+
+#. js-lingui-id: /Dmw1h
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching"
+msgstr ""
+
+#. js-lingui-id: Q/chGD
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching?"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "Скасувати план"
 
+#. js-lingui-id: 8eSMLX
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching"
+msgstr ""
+
+#. js-lingui-id: f6KFEf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching?"
+msgstr ""
+
 #. js-lingui-id: N6gPiD
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Скасувати підписку"
 
@@ -1223,6 +1267,11 @@ msgstr "Змінити колір"
 msgid "Change email"
 msgstr "Змінити імейл"
 
+#. js-lingui-id: Vf6hT6
+#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+msgid "Change node type"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -1231,7 +1280,7 @@ msgid "Change Password"
 msgstr "Змінити пароль"
 
 #. js-lingui-id: wRtBJP
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Change Plan"
 msgstr "Змінити план"
 
@@ -1240,10 +1289,20 @@ msgstr "Змінити план"
 msgid "Change subdomain?"
 msgstr "Установити новий піддомен?"
 
+#. js-lingui-id: 9m7pJA
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Monthly?"
+msgstr ""
+
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Змінити на план «Організація»?"
+
+#. js-lingui-id: t7uUc+
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Pro Plan?"
+msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1311,7 +1370,7 @@ msgid "Choose the format used to display date value"
 msgstr "Оберіть формат для відображення значення дати"
 
 #. js-lingui-id: 9qP96p
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
 msgstr "Виберіть вашу пробну версію"
 
@@ -1413,6 +1472,11 @@ msgstr "Стовпці не збіглися:"
 msgid "Command Icon"
 msgstr "Значок команди"
 
+#. js-lingui-id: A9u+7N
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Commas and dot - {commasAndDotExample}"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -1457,10 +1521,10 @@ msgstr "Налаштувати та настроїти уподобання ва
 msgid "Configure CalDAV settings to sync your calendar events."
 msgstr "Налаштуйте параметри CalDAV для синхронізації ваших подій календаря."
 
-#. js-lingui-id: aGwm+D
+#. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Configure how dates are displayed across the app"
-msgstr "Налаштуйте відображення дат у додатку"
+msgid "Configure date, time, number, timezone, and calendar start day"
+msgstr ""
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1499,13 +1563,33 @@ msgstr "Налаштуйте налаштування електронної п�
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Підтвердити"
+
+#. js-lingui-id: qmnX/6
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm changing your current credit plan."
+msgstr ""
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "Підтвердьте видалення ролі {roleName}? Це не можна скасувати. Всі учасники будуть перепризначені на роль за замовчуванням."
+
+#. js-lingui-id: kZkFSm
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm downgrade"
+msgstr ""
+
+#. js-lingui-id: DDbn3x
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm upgrade"
+msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1568,7 +1652,7 @@ msgstr "Контекст"
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1649,7 +1733,7 @@ msgstr "Скопіюйте цей ключ, адже він більше не б
 
 #. js-lingui-id: SGsgDO
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Ядро"
 
@@ -1855,6 +1939,11 @@ msgstr "План кредитування"
 msgid "Credit Usage"
 msgstr "Використання кредитів"
 
+#. js-lingui-id: hdSacI
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credits by period"
+msgstr ""
+
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -1864,6 +1953,11 @@ msgstr "Використано кредити"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
 msgstr "валюти"
+
+#. js-lingui-id: Hp1l6f
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+msgid "Current"
+msgstr ""
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -1892,8 +1986,8 @@ msgid "Custom domain updated"
 msgstr "Користувацький домен оновлено"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Custom objects"
 msgstr "Користувацькі об'єкти"
 
@@ -1956,7 +2050,7 @@ msgid "Dark"
 msgstr "Темна"
 
 #. js-lingui-id: HKH+W+
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
 msgstr "Дані"
 
@@ -2001,11 +2095,6 @@ msgstr "Конфігурація бази даних наразі вимкнен
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Дата"
-
-#. js-lingui-id: Ud9zHv
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Date and time"
-msgstr "Дата та час"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -2189,10 +2278,10 @@ msgstr "Видалити агента"
 msgid "Delete API key"
 msgstr "Видалити ключ API"
 
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "Видалити гілку"
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr ""
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2423,6 +2512,17 @@ msgstr "Не створювати контакти з/до листів Gmail, O
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Не синхронізувати електронні листи з team@, support@, noreply@..."
 
+#. js-lingui-id: bd+DPX
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Dots and comma - {dotsAndCommaExample}"
+msgstr ""
+
+#. js-lingui-id: LE8J+K
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Downgrade"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2476,6 +2576,7 @@ msgstr "Найраніша дата"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -2505,6 +2606,11 @@ msgstr "Редагувати з'єднання"
 msgid "Edit CRM data structure and fields"
 msgstr "Редагувати структуру даних і поля CRM"
 
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -2522,7 +2628,7 @@ msgid "Edit iFrame"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Редагувати спосіб оплати, переглядати свої рахунки та більше"
 
@@ -2573,8 +2679,8 @@ msgid "Email copied to clipboard"
 msgstr "Електронна пошта скопійована в буфер обміну"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Email integration"
 msgstr "Інтеграція електронної пошти"
 
@@ -2690,7 +2796,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "Покращує безпеку, вимагаючи введення коду разом із вашим паролем"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Насолоджуйтеся {withCreditCardTrialPeriodDuration}-денним безкоштовним пробним періодом"
 
@@ -2810,20 +2916,35 @@ msgstr "Помилка оновлення ролі"
 msgid "Error validating approved access domain"
 msgstr "Помилка перевірки затвердженого домену доступу"
 
+#. js-lingui-id: pt7mmi
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling interval switching."
+msgstr ""
+
+#. js-lingui-id: a1gs9Y
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling metered tier switching."
+msgstr ""
+
+#. js-lingui-id: FS6DQK
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling plan switching."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Помилка під час завершення пробного періоду. Будь ласка, звʼяжіться з командою Twenty."
 
-#. js-lingui-id: JKNROf
+#. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Organization Plan."
-msgstr "Помилка під час переходу на підписку «Організація»."
+msgid "Error while switching subscription to {oppositPlan} Plan."
+msgstr ""
 
-#. js-lingui-id: ENV7jU
+#. js-lingui-id: QPJi2W
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Yearly."
-msgstr "Помилка під час переходу на підписку на рік."
+msgid "Error while switching subscription."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2958,6 +3079,11 @@ msgstr "Експорт"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Export CSV"
 msgstr "Експорт CSV"
+
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr ""
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3188,6 +3314,11 @@ msgstr "Перші 5 рядків"
 msgid "First Name"
 msgstr "Ім’я"
 
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
+
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
@@ -3213,6 +3344,11 @@ msgstr "Формат"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Формат, напр. д-MMM-р (qqq''yy)"
 
+#. js-lingui-id: 4JsQoY
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Formats"
+msgstr ""
+
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
@@ -3224,8 +3360,8 @@ msgid "French"
 msgstr "Французька"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Повний доступ"
 
@@ -3263,7 +3399,7 @@ msgid "Get the most out of your workspace by inviting your team."
 msgstr "Отримайте максимум від свого робочого простору, запросивши свою команду."
 
 #. js-lingui-id: zSGbaR
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Get your subscription"
 msgstr "Отримайте свою передплату"
 
@@ -3473,7 +3609,7 @@ msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Введення людини"
 
@@ -3661,6 +3797,11 @@ msgstr "Інтеграції - Налаштування"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Взаємодія з даними вашого робочого простору"
+
+#. js-lingui-id: jyjroS
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Interval switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4075,7 +4216,7 @@ msgid "Loading..."
 msgstr "Завантаження..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
@@ -4117,7 +4258,7 @@ msgid "Manage API keys and webhooks"
 msgstr "Керувати API ключами та webhooks"
 
 #. js-lingui-id: nvgUPq
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Керування платіжною інформацією"
 
@@ -4247,6 +4388,11 @@ msgstr "Метадані"
 msgid "Metadata file generation failed"
 msgstr "Не вдалося згенерувати файл метаданих"
 
+#. js-lingui-id: onCJJ6
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Metered tier switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4274,7 +4420,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "Нагляд за виконанням вашого завдання з синхронізації електронних листів"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "місяць"
 
@@ -4286,7 +4432,7 @@ msgid "Month"
 msgstr ""
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "щомісяця"
 
@@ -4389,6 +4535,11 @@ msgstr "Назва вашого робочого простору"
 msgid "Navbar"
 msgstr "Панель навігації"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4403,6 +4554,11 @@ msgstr "Перейти до наступної версії"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Перейти до наступного Workflow"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr ""
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4505,6 +4661,7 @@ msgid "New SSO provider"
 msgstr "Новий провайдер єдиної системи входу"
 
 #. js-lingui-id: hXzOVo
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "Далі"
@@ -4836,6 +4993,11 @@ msgstr "зараз"
 msgid "Number"
 msgstr "Число"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
@@ -4965,7 +5127,8 @@ msgid "Or"
 msgstr "Або"
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "Організація"
 
@@ -4983,11 +5146,6 @@ msgstr "Інший"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "Інші робочі простори"
-
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
-msgid "Others"
-msgstr "Інше"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -5067,6 +5225,11 @@ msgstr "Відсоток не пустого"
 msgid "Percentage"
 msgstr "Відсоток"
 
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr ""
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -5118,6 +5281,11 @@ msgstr "Зображення"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "План"
+
+#. js-lingui-id: XduPHC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Plan switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -5218,7 +5386,8 @@ msgid "Privacy Policy"
 msgstr "Політика конфіденційності"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Професіонал"
 
@@ -5416,11 +5585,6 @@ msgstr "Видалити як за замовчуванням"
 msgid "Remove Deleted filter"
 msgstr "Видалити фільтр видалених"
 
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr "Прибрати фільтр"
-
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5527,6 +5691,11 @@ msgstr "Перезапустити імпорт"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "Відновити"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5899,6 +6068,12 @@ msgstr "Вибрати роль"
 msgid "Select a target agent"
 msgstr "Виберіть цільового агента"
 
+#. js-lingui-id: YcJS1T
+#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
+msgid "Select action"
+msgstr ""
+
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
@@ -6240,6 +6415,11 @@ msgstr "Сортування"
 msgid "Source"
 msgstr "Джерело"
 
+#. js-lingui-id: IEtmGM
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Spaces and comma - {spacesAndCommaExample}"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -6251,7 +6431,7 @@ msgid "SSO"
 msgstr "Єдиний вхід"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -6360,15 +6540,20 @@ msgstr "Підписка"
 msgid "Subscription activated."
 msgstr "Підписка активована."
 
-#. js-lingui-id: KNMVB5
+#. js-lingui-id: gvXPJz
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription has been switched to Organization Plan."
-msgstr "Перехід на підписку «Організація» здійснено."
+msgid "Subscription has been switched to {oppositPlan} Plan."
+msgstr ""
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Перехід на передплату <b>на рік</b> здійснено."
+
+#. js-lingui-id: nQcG+x
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6401,10 +6586,20 @@ msgstr "Підтримка"
 msgid "Swedish"
 msgstr "Шведська"
 
+#. js-lingui-id: dpXnFC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Monthly"
+msgstr ""
+
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "Перехід до організації"
+
+#. js-lingui-id: GPKudC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Pro"
+msgstr ""
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6460,6 +6655,11 @@ msgstr "Системні налаштування"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "Системні налаштування - {systemDateFormatLabel}"
+
+#. js-lingui-id: uKM6SP
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "System Settings - {systemNumberFormatLabel}"
+msgstr ""
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6706,6 +6906,16 @@ msgstr "Це значення буде збережено в базі даних
 msgid "This week"
 msgstr "Цього тижня"
 
+#. js-lingui-id: h4VeOo
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
+msgstr ""
+
+#. js-lingui-id: XpARoU
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
+msgstr ""
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -6766,7 +6976,7 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Відстежуйте споживання кредитів у робочих процесах за {intervalLabel}."
 
 #. js-lingui-id: lhkaAC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "Випробування"
 
@@ -6894,8 +7104,8 @@ msgid "Unknown error"
 msgstr "Невідома помилка"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Unlimited contacts"
 msgstr "Необмежена кількість контактів"
 
@@ -6934,6 +7144,12 @@ msgstr "Оновити інформацію про агента"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Оновіть конфігурацію вашого облікового запису. Налаштуйте будь-яку комбінацію IMAP, SMTP та CalDAV за потреби."
+
+#. js-lingui-id: kwkhPe
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Upgrade"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7096,7 +7312,7 @@ msgid "View"
 msgstr "Перегляд"
 
 #. js-lingui-id: KANz0G
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Переглянути деталі оплати"
 
@@ -7332,12 +7548,12 @@ msgstr "Напишіть опис для цього агента"
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "рік"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "щорічно"
 
@@ -7387,20 +7603,30 @@ msgstr ""
 "Ви не можете редагувати це з'єднання, тому що воно має відстежувані таблиці.\n"
 "Якщо вам потрібно внести зміни, створіть нове з'єднання або спочатку відключіть таблиці."
 
-#. js-lingui-id: zEM7Ne
+#. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month billed annually."
-msgstr "Ви будете платити ${enterprisePrice} за кожного користувача на місяць, оплачуючи щороку."
+msgid "You have scheduled a metered tier change. Do you want to cancel it?"
+msgstr ""
 
-#. js-lingui-id: HM4D8s
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month."
-msgstr "Ви будете платити ${enterprisePrice} за кожного користувача в місяць."
+#. js-lingui-id: z8eKS7
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "you will be charged ${enterprisePrice} per user per month"
+msgstr ""
 
-#. js-lingui-id: o4xIH4
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
-msgstr "Ви будете платити ${yearlyPrice} за кожного користувача в місяць, оплачуючи щороку. Буде застосовано пропорційну знижку з вашою поточною підпискою."
+#. js-lingui-id: u3S6u8
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
+msgstr ""
+
+#. js-lingui-id: /T5zAB
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${proPrice} per user per month"
+msgstr ""
+
+#. js-lingui-id: W3k5LA
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -7437,6 +7663,16 @@ msgstr "Ваше ім'я, як воно буде відображатися"
 msgid "Your name as it will be displayed on the app"
 msgstr "Ваше ім'я, як воно буде відображатися в додатку"
 
+#. js-lingui-id: QOd24n
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and "
+msgstr ""
+
+#. js-lingui-id: 2Fkd7s
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
+
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
@@ -7453,6 +7689,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "У вашому робочому просторі немає активної підписки. Будь ласка, зв'яжіться з вашим адміністратором."
 
 #. js-lingui-id: RhNbPE
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ваш робочий простір буде вимкнено"

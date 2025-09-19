@@ -127,9 +127,14 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
       throw new Error(message);
     }
 
+    const modifiedEnumType = this.typeMapperService.applyTypeOptions(
+      enumType,
+      typeOptions,
+    );
+
     return {
       [fieldMetadata.name]: {
-        type: enumType,
+        type: modifiedEnumType,
         description: fieldMetadata.description,
       },
     };
@@ -156,9 +161,14 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
       throw new Error(message);
     }
 
+    const modifiedCompositeType = this.typeMapperService.applyTypeOptions(
+      compositeType,
+      typeOptions,
+    );
+
     return {
       [fieldMetadata.name]: {
-        type: compositeType,
+        type: modifiedCompositeType,
         description: fieldMetadata.description,
       },
     };
@@ -183,9 +193,14 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
       throw new Error(message);
     }
 
+    const modifiedType = this.typeMapperService.applyTypeOptions(
+      type,
+      typeOptions,
+    );
+
     return {
       [fieldMetadata.name]: {
-        type,
+        type: modifiedType,
         description: fieldMetadata.description,
       },
     };

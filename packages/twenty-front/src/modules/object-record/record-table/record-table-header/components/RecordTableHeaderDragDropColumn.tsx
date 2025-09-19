@@ -1,5 +1,7 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -16,11 +18,11 @@ const StyledDragDropHeaderCell = styled.div<{
   backgroundColor: string;
 }>`
   background-color: ${({ backgroundColor }) => backgroundColor};
-  min-width: 16px;
-  width: 16px;
-  max-width: 16px;
-  min-height: 32px;
-  max-height: 32px;
+  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   cursor: pointer;
 
