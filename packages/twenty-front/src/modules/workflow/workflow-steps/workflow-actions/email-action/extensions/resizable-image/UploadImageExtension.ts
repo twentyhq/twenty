@@ -1,6 +1,6 @@
 import {
-    UploadImagePlugin,
-    type UploadImagePluginProps,
+  UploadImagePlugin,
+  type UploadImagePluginProps,
 } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/UploadImagePlugin';
 import { Extension } from '@tiptap/core';
 
