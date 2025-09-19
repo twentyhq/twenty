@@ -644,7 +644,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {
-    await this.objectMetadataRepository.delete({ workspaceId });
+    const objectsMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    for (const objectMetadata of objectsMetadata) {
+      await this.objectMetadataRepository.delete({ id: objectMetadata.id });
+    }
   }
 
   private async handleObjectNameAndLabelUpdates({
