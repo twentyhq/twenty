@@ -4,34 +4,32 @@ import { type ReactNode } from 'react';
 import { mappedNodeContent } from 'src/utils/email-renderer/nodes/render-node';
 import { isDefined } from 'twenty-shared/utils';
 
+type HeadingLevel = 1 | 2 | 3;
+
+type HeadingStyle = {
+  element: 'h1' | 'h2' | 'h3';
+  fontSize: string;
+};
+
+const HEADING_STYLES: Record<HeadingLevel, HeadingStyle> = {
+  1: { element: 'h1', fontSize: '36px' },
+  2: { element: 'h2', fontSize: '30px' },
+  3: { element: 'h3', fontSize: '24px' },
+};
+
 export const heading = (node: JSONContent): ReactNode => {
   const { level } = node?.attrs || {};
-  if (!isDefined(level)) {
+
+  if (!isDefined(level) || !HEADING_STYLES[level as HeadingLevel]) {
     return null;
   }
 
   const content = mappedNodeContent(node);
-  if (level === 1) {
-    return (
-      <Heading as="h1" style={{ fontSize: '36px' }}>
-        {content}
-      </Heading>
-    );
-  }
+  const { element, fontSize } = HEADING_STYLES[level as HeadingLevel];
 
-  if (level === 2) {
-    return (
-      <Heading as="h2" style={{ fontSize: '30px' }}>
-        {content}
-      </Heading>
-    );
-  }
-
-  if (level === 3) {
-    return (
-      <Heading as="h3" style={{ fontSize: '24px' }}>
-        {content}
-      </Heading>
-    );
-  }
+  return (
+    <Heading as={element} style={{ fontSize }}>
+      {content}
+    </Heading>
+  );
 };
