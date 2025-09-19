@@ -1,4 +1,5 @@
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
@@ -23,9 +24,9 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
   box-sizing: border-box;
   display: flex;
 
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme }) => `1px solid ${theme.color.blue}`};
+  outline: ${({ theme }) => `1px solid ${theme.adaptiveColors.blue4}`};
 
   user-select: none;
 `;

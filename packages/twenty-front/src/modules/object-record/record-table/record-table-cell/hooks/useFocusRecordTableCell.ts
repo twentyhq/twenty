@@ -17,7 +17,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const focusPositionState = useRecoilComponentCallbackState(
+  const focusPositionCallbackState = useRecoilComponentCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );
@@ -30,10 +30,10 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
     useRemoveFocusItemFromFocusStackById();
 
   const focusRecordTableCell = useRecoilCallback(
-    ({ set, snapshot }) => {
+    ({ snapshot }) => {
       return (newPosition: TableCellPosition) => {
         const currentPosition = snapshot
-          .getLoadable(focusPositionState)
+          .getLoadable(focusPositionCallbackState)
           .getValue();
 
         if (isDefined(currentPosition)) {
@@ -44,15 +44,6 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
 
           removeFocusItemFromFocusStackById({
             focusId: currentCellFocusId,
-          });
-        }
-
-        set(focusPositionState, newPosition);
-
-        if (isDefined(currentPosition)) {
-          setIsRecordTableCellFocusActive({
-            isRecordTableFocusActive: false,
-            cellPosition: currentPosition,
           });
         }
 
@@ -76,7 +67,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
       };
     },
     [
-      focusPositionState,
+      focusPositionCallbackState,
       recordTableIdFromProps,
       removeFocusItemFromFocusStackById,
       setIsRecordTableCellFocusActive,

@@ -101,6 +101,8 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
+        withTrialPeriod:
+          !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
     const createdBillingSubscription =
