@@ -58,7 +58,7 @@ export class ObjectMetadataRelatedRecordsService {
       );
 
       if (!labelMetadataIdentifierViewField) {
-        return await this.viewFieldService.create({
+        await this.viewFieldService.create({
           fieldMetadataId: newLabelMetadataIdentifierFieldMetadata.id,
           position: currentMinPositionAmongViewFields - 1,
           isVisible: true,
@@ -66,6 +66,7 @@ export class ObjectMetadataRelatedRecordsService {
           viewId: view.id,
           workspaceId: newLabelMetadataIdentifierFieldMetadata.workspaceId,
         });
+        continue;
       }
 
       await this.viewFieldService.update(
@@ -80,6 +81,10 @@ export class ObjectMetadataRelatedRecordsService {
   }
 
   private getViewFieldsMinPosition(viewFields: ViewFieldEntity[]): number {
+    if (viewFields.length === 0) {
+      return 0;
+    }
+
     return viewFields.reduce((min, field) => Math.min(min, field.position), 0);
   }
 

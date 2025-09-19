@@ -402,10 +402,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         queryRunner,
       );
 
-      if (didUpdateLabelOrIcon) {
+      if (inputPayload.labelIdentifierFieldMetadataId) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
-            inputPayload.labelIdentifierFieldMetadataId!
+            inputPayload.labelIdentifierFieldMetadataId
           ];
 
         if (isSearchableFieldType(labelIdentifierFieldMetadata.type)) {
@@ -443,15 +443,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         );
       }
 
-      const didUpdateLabelIdentifierFieldMetadata =
+      if (
         isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
         inputPayload.labelIdentifierFieldMetadataId !==
-          existingObjectMetadata.labelIdentifierFieldMetadataId;
-
-      if (didUpdateLabelIdentifierFieldMetadata) {
+          existingObjectMetadata.labelIdentifierFieldMetadataId
+      ) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
-            inputPayload.labelIdentifierFieldMetadataId!
+            inputPayload.labelIdentifierFieldMetadataId
           ];
 
         await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(

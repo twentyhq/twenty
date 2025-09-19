@@ -334,13 +334,6 @@ export class ViewFieldService {
       return;
     }
 
-    const minPositionInViewWithoutUpdatedViewField =
-      viewFieldsWithoutUpdatedViewField.reduce(
-        (minViewField, viewField) =>
-          viewField.position < minViewField.position ? viewField : minViewField,
-        viewFieldsWithoutUpdatedViewField[0],
-      ).position;
-
     const labelMetadataIdentifierFieldMetadataId =
       view.objectMetadata.labelIdentifierFieldMetadataId;
 
@@ -348,6 +341,15 @@ export class ViewFieldService {
       labelMetadataIdentifierFieldMetadataId ===
       newOrUpdatedViewField.fieldMetadataId
     ) {
+      const minPositionInViewWithoutUpdatedViewField =
+        viewFieldsWithoutUpdatedViewField.reduce(
+          (minViewField, viewField) =>
+            viewField.position < minViewField.position
+              ? viewField
+              : minViewField,
+          viewFieldsWithoutUpdatedViewField[0],
+        ).position;
+
       if (
         newOrUpdatedViewField.position >=
         minPositionInViewWithoutUpdatedViewField
