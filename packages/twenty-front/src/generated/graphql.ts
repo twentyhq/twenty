@@ -1384,7 +1384,6 @@ export enum ModelProvider {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  ImpersonateWorkspaceUserById: AuthTokens;
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
@@ -1537,11 +1536,6 @@ export type Mutation = {
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
-};
-
-
-export type MutationImpersonateWorkspaceUserByIdArgs = {
-  targetUserId: Scalars['UUID'];
 };
 
 
