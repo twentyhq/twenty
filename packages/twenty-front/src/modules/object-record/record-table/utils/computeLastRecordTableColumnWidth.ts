@@ -2,16 +2,21 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
-import { sumByProperty } from 'twenty-shared/utils';
+import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 
 export const computeLastRecordTableColumnWidth = ({
   recordFields,
   tableWidth,
+  isMobile,
 }: {
   recordFields: Pick<RecordField, 'size'>[];
   tableWidth: number;
+  isMobile: boolean;
 }) => {
-  const totalColumnsWidth = recordFields.reduce(sumByProperty('size'), 0);
+  const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
+    isMobile,
+    visibleRecordFields: recordFields,
+  });
 
   const widthOfBorders = recordFields.length;
 
@@ -23,7 +28,7 @@ export const computeLastRecordTableColumnWidth = ({
 
   const remainingWidthToFill = Math.max(
     0,
-    tableWidth - fixedColumnsWidth - totalColumnsWidth,
+    tableWidth - fixedColumnsWidth - visibleRecordFieldsWidth,
   );
 
   const lastColumnWidth = remainingWidthToFill;
