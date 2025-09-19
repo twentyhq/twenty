@@ -50,5 +50,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           error.message,
         );
       });
+
+    console.log('salut');
   }
 }

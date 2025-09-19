@@ -5,6 +5,7 @@ import {
 import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
@@ -24,7 +25,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
-    relationTargetFlatFieldMetadatas: FlatFieldMetadata[];
+    relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[];
+    flatIndexMetadataToCreate: FlatIndexMetadata[];
   } => {
     const createObjectInput =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -43,7 +45,10 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const objectMetadataId = v4();
     const baseCustomFlatFieldMetadatas =
       buildDefaultFlatFieldMetadatasForCustomObject({
-        objectMetadataId,
+        flatObjectMetadata: {
+          id: objectMetadataId,
+          nameSingular: createObjectInput.nameSingular,
+        },
         workspaceId,
       });
     const createdAt = new Date();
@@ -65,7 +70,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isSearchable: true,
       isUIReadOnly: false,
       isSystem: false,
-      labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
+      labelIdentifierFieldMetadataId:
+        baseCustomFlatFieldMetadatas.fields.nameField.id,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
       namePlural: createObjectInput.namePlural,
@@ -87,12 +93,15 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     });
 
     flatObjectMetadataToCreate.flatFieldMetadatas = [
-      ...Object.values(baseCustomFlatFieldMetadatas),
+      ...Object.values(baseCustomFlatFieldMetadatas.fields),
       ...standardSourceFlatFieldMetadatas,
     ];
 
     return {
       flatObjectMetadataToCreate,
-      relationTargetFlatFieldMetadatas: standardTargetFlatFieldMetadatas,
+      relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
+      flatIndexMetadataToCreate: Object.values(
+        baseCustomFlatFieldMetadatas.indexes,
+      ),
     };
   };
