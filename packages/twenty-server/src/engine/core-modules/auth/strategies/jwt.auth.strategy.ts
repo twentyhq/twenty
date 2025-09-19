@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { isUUID } from 'class-validator';
 import { Strategy } from 'passport-jwt';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -27,6 +28,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -39,6 +42,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(ApiKey)
     private readonly apiKeyRepository: Repository<ApiKey>,
+    private readonly permissionsService: PermissionsService,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
     // @ts-expect-error legacy noImplicitAny
@@ -206,19 +210,56 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     workspace: Workspace,
     user: User,
   ) {
-    if (workspace.allowImpersonation !== true) {
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: payload.impersonatorUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    const impersonatedUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: payload.impersonatedUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    if (
+      !isDefined(impersonatorUserWorkspace) ||
+      !isDefined(impersonatedUserWorkspace)
+    ) {
       throw new AuthException(
-        'Impersonation not allowed for this workspace',
+        'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const isServerLevelImpersonation =
+      impersonatorUserWorkspace.workspace.id !==
+      impersonatedUserWorkspace.workspace.id;
+
+    const hasServerLevelImpersonatePermission =
+      impersonatorUserWorkspace.user.canImpersonate === true &&
+      workspace.allowImpersonation === true;
+
+    if (isServerLevelImpersonation && !hasServerLevelImpersonatePermission) {
+      throw new AuthException(
+        'Server level impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
+    const hasWorkspaceLevelImpersonatePermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        setting: PermissionFlagType.IMPERSONATE,
+        workspaceId: impersonatedUserWorkspace.workspace.id,
+      });
+
     if (
-      !payload.impersonatedUserWorkspaceId ||
-      !payload.impersonatorUserWorkspaceId
+      !hasWorkspaceLevelImpersonatePermission &&
+      !hasServerLevelImpersonatePermission
     ) {
       throw new AuthException(
-        'Invalid impersonation token: missing required fields',
+        'Impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -236,52 +277,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
       throw new AuthException(
         'Token user workspace ID does not match impersonated user workspace ID',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const impersonatedUserWorkspace =
-      await this.userWorkspaceRepository.findOne({
-        where: {
-          id: payload.impersonatedUserWorkspaceId,
-          workspaceId: workspace.id,
-        },
-        relations: ['user'],
-      });
-
-    if (!impersonatedUserWorkspace) {
-      throw new AuthException(
-        'Impersonated user workspace not found',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    const impersonatorUserWorkspace =
-      await this.userWorkspaceRepository.findOne({
-        where: {
-          id: payload.impersonatorUserWorkspaceId,
-          workspaceId: workspace.id,
-        },
-        relations: ['user'],
-      });
-
-    if (!impersonatorUserWorkspace) {
-      throw new AuthException(
-        'Impersonator user workspace not found',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (user.id !== impersonatedUserWorkspace.user.id) {
-      throw new AuthException(
-        'Token user does not match impersonated user',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (impersonatorUserWorkspace.user.canImpersonate !== true) {
-      throw new AuthException(
-        'Impersonator user does not have impersonation permissions',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }

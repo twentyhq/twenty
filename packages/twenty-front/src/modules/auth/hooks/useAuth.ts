@@ -1,4 +1,3 @@
-import { AppPath } from 'twenty-shared/types';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -27,7 +27,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { impersonationTokenPairState } from '../states/impersonationTokenPairState';
 import { tokenPairState } from '../states/tokenPairState';
 
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
@@ -70,9 +69,7 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
-  const setImpersonationTokenPair = useSetRecoilState(
-    impersonationTokenPairState,
-  );
+
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -196,19 +193,6 @@ export const useAuth = () => {
     },
     [setTokenPair],
   );
-
-  const handleSetImpersonationTokens = useCallback(
-    (tokens: AuthTokenPair) => {
-      setImpersonationTokenPair(tokens);
-      cookieStorage.setItem('impersonationTokenPair', JSON.stringify(tokens));
-    },
-    [setImpersonationTokenPair],
-  );
-
-  const handleClearImpersonationTokens = useCallback(() => {
-    setImpersonationTokenPair(null);
-    cookieStorage.removeItem('impersonationTokenPair');
-  }, [setImpersonationTokenPair]);
 
   const handleGetLoginTokenFromCredentials = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
@@ -697,8 +681,6 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
-    setImpersonationTokens: handleSetImpersonationTokens,
-    clearImpersonationTokens: handleClearImpersonationTokens,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
   };
 };

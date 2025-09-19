@@ -6,13 +6,12 @@ import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ManageMembersDropdownMenu } from '@/settings/members/ManageMembersDropdownMenu';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,11 +21,10 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { ApolloError, useMutation } from '@apollo/client';
+import { type ApolloError } from '@apollo/client';
 import { formatDistanceToNow } from 'date-fns';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -43,8 +41,10 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
-import { IMPERSONATE_WORKSPACE_USER_BY_ID } from '../../modules/auth/graphql/mutations/impersonateWorkspaceUserById';
+import {
+  useGetWorkspaceInvitationsQuery,
+  useImpersonateMutation,
+} from '~/generated-metadata/graphql';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -106,12 +106,8 @@ export const SettingsWorkspaceMembers = () => {
     string | undefined
   >();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const { setImpersonationTokens } = useAuth();
-  const { loadCurrentUser } = useLoadCurrentUser();
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const [impersonateByWorkspaceMemberId] = useMutation(
-    IMPERSONATE_WORKSPACE_USER_BY_ID,
-  );
+  const [impersonate] = useImpersonateMutation();
+  const { executeImpersonationAuth } = useImpersonationAuth();
 
   const {
     records: workspaceMembers,
@@ -145,30 +141,23 @@ export const SettingsWorkspaceMembers = () => {
       return;
     }
 
-    try {
-      const { data, errors } = await impersonateByWorkspaceMemberId({
-        variables: { targetUserId: targetWorkspaceMember.userId },
-      });
-
-      if (isDefined(errors)) {
+    await impersonate({
+      variables: {
+        userId: targetWorkspaceMember.userId,
+        workspaceId: currentWorkspace.id,
+      },
+      onCompleted: async (data) => {
+        const { loginToken } = data.impersonate;
+        await executeImpersonationAuth(loginToken.token);
+        return;
+      },
+      onError: () => {
         enqueueErrorSnackBar({
           message: t`Cannot impersonate selected user`,
           options: { duration: 2000 },
         });
-        return;
-      }
-
-      const tokens = data?.ImpersonateWorkspaceUserById?.tokens;
-      if (isDefined(tokens)) {
-        setImpersonationTokens(tokens);
-        await loadCurrentUser();
-        await refreshObjectMetadataItems();
-      }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
-    }
+      },
+    });
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);

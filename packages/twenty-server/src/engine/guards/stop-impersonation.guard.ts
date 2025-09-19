@@ -24,7 +24,7 @@ export class StopImpersonationGuard implements CanActivate {
 
     if (isCurrentlyImpersonating) {
       throw new ForbiddenException(
-        'Cannot impersonate while already impersonating',
+        "Can't access this resource while impersonating",
       );
     }
 

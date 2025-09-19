@@ -22,6 +22,7 @@ import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
@@ -35,8 +36,6 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
-import { getCurrentTokenPair } from '../utils/getCurrentTokenPair';
-import { isImpersonating } from '../utils/IsImpersonating';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -95,7 +94,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const authLink = setContext(async (_, { headers }) => {
-        const tokenPair = getCurrentTokenPair();
+        const tokenPair = getTokenPair();
 
         if (isUndefinedOrNull(tokenPair)) {
           return {
@@ -144,18 +143,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         forward: (operation: Operation) => Observable<FetchResult>,
       ) => {
         return fromPromise(
-          renewToken(uri, getCurrentTokenPair())
+          renewToken(uri, getTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
-                if (isImpersonating()) {
-                  cookieStorage.setItem(
-                    'impersonationTokenPair',
-                    JSON.stringify(tokens),
-                  );
-                } else {
-                  onTokenPairChange?.(tokens);
-                  cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
-                }
+                onTokenPairChange?.(tokens);
+                cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
               }
             })
             .catch(() => {
