@@ -5,7 +5,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebounce } from 'use-debounce';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -107,10 +107,7 @@ export const SettingsWorkspaceMembers = () => {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
-  const debouncedSearchFilter = useDebouncedCallback(
-    (value: string) => value,
-    300,
-  )(searchFilter);
+  const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
   const searchServerFilter = useMemo(() => {
     if (!debouncedSearchFilter?.trim()) return undefined;
