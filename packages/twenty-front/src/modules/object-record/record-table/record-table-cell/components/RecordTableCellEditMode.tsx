@@ -17,7 +17,7 @@ import {
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
-import { useContext, type ReactElement } from 'react';
+import { useContext, useState, type ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -93,9 +93,23 @@ export const RecordTableCellEditMode = ({
 
   const { focusRecordTableCell } = useFocusRecordTableCell();
 
+  const [cellWidth, setCellWidth] = useState(0);
+
+  const setContainerRef = (el: HTMLDivElement | null) => {
+    refs.setReference(el);
+    if (el !== null) {
+      const rect = el.getBoundingClientRect();
+      setCellWidth(rect.width);
+    }
+  };
+  const overlayWidth = Math.min(Math.max(cellWidth * 1.24, 160), 340);
+
   return (
     <StyledEditableCellEditModeContainer
-      ref={refs.setReference}
+      ref={(el) => {
+        refs.setReference(el);
+        setContainerRef(el);
+      }}
       data-testid="editable-cell-edit-mode-container"
       isFieldInputOnly={isFieldInputOnly}
     >
@@ -110,7 +124,7 @@ export const RecordTableCellEditMode = ({
       ) : (
         <OverlayContainer
           ref={refs.setFloating}
-          style={floatingStyles}
+          style={{ ...floatingStyles, width: overlayWidth }}
           borderRadius="sm"
           hasDangerBorder={isFieldInError}
         >
