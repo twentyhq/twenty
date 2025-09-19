@@ -39,32 +39,10 @@ const StyledButton = styled('button', { shouldForwardProp })<
   >
 >`
   align-items: center;
-  backdrop-filter: ${({ theme, applyBlur }) =>
-    applyBlur ? theme.blur.medium : 'none'};
   background: ${({ theme, isActive }) =>
     isActive ? theme.background.transparent.medium : theme.background.primary};
-  border: ${({ focus, theme }) =>
-    focus
-      ? `1px solid ${theme.color.blue}`
-      : `1px solid ${theme.border.color.strong}`};
-  border-radius: ${({ position, theme }) => {
-    switch (position) {
-      case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
-      case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
-      case 'middle':
-        return '0px';
-      case 'standalone':
-        return theme.border.radius.sm;
-    }
-  }};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
-    applyShadow
-      ? theme.boxShadow.light
-      : focus
-        ? `0 0 0 3px ${theme.color.blue10}`
-        : 'none'};
+  border: none;
+  border-radius: ${({ theme }) => theme.spacing(1.5)};
   box-sizing: border-box;
   color: ${({ theme, disabled, focus }) => {
     return !disabled
@@ -86,16 +64,8 @@ const StyledButton = styled('button', { shouldForwardProp })<
   transition: background ${({ theme }) => theme.animation.duration.instant}s
     ease;
   white-space: nowrap;
-
-  ${({ position, size }) => {
-    const sizeInPx =
-      (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4);
-
-    return `
-      height: ${sizeInPx}px;
-      width: ${sizeInPx}px;
-    `;
-  }}
+  width: ${({ theme }) => theme.spacing(6)};
+  height: ${({ theme }) => theme.spacing(6)};
 
   ${({ theme, disabled }) =>
     !disabled &&
