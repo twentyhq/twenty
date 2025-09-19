@@ -39,12 +39,20 @@ export const computeDiffBetweenExistingEntitiesAndInput = <
         {},
       );
 
-      if (!deepEqual(comparableExistingEntity, receivedEntity)) {
+      const comparableReceivedEntity = propertiesToCompare.reduce(
+        (acc, property) => {
+          return {
+            ...acc,
+            [property]: receivedEntity[property],
+          };
+        },
+        {},
+      );
+
+      if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
         entitiesToUpdate.push(receivedEntity);
       }
-    }
-
-    if (!isDefined(existingEntity)) {
+    } else {
       entitiesToCreate.push(receivedEntity);
     }
   }
