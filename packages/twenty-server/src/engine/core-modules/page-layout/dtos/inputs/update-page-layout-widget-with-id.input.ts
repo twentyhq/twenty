@@ -38,7 +38,7 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsNotEmpty()
   type: WidgetType;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
   objectMetadataId: string | null;

@@ -73,7 +73,6 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
       });
 
       const initialUpdateInput = {
-        id: pageLayout.id,
         name: 'Updated Page Layout',
         type: PageLayoutType.DASHBOARD,
         objectMetadataId: testObjectMetadataId,
