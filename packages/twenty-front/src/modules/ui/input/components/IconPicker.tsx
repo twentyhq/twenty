@@ -23,6 +23,10 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { IconPickerScrollEffect } from '../hooks/IconPickerScrollEffect';
+import { iconPickerVisibleCountState } from '../states/iconPickerVisibleCountState';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -124,7 +128,7 @@ export const IconPicker = ({
   clickableComponent,
   dropdownWidth,
   dropdownOffset,
-  maxIconsVisible = 25,
+  maxIconsVisible,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -143,6 +147,13 @@ export const IconPicker = ({
   };
 
   const { closeDropdown } = useCloseDropdown();
+
+  const visibleCountState =
+    useRecoilValue(iconPickerVisibleCountState(dropdownId)) ?? maxIconsVisible;
+
+  const resetVisibleCount = useResetRecoilState(
+    iconPickerVisibleCountState(dropdownId),
+  );
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
@@ -186,9 +197,9 @@ export const IconPicker = ({
           ...filteredAndSortedIconKeys.filter(
             (iconKey) => iconKey !== selectedIconKey,
           ),
-        ].slice(0, maxIconsVisible)
-      : filteredAndSortedIconKeys.slice(0, maxIconsVisible);
-  }, [icons, searchString, selectedIconKey, maxIconsVisible]);
+        ].slice(0, visibleCountState)
+      : filteredAndSortedIconKeys.slice(0, visibleCountState);
+  }, [icons, searchString, selectedIconKey, visibleCountState]);
 
   const iconKeys2d = useMemo(
     () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
@@ -226,51 +237,61 @@ export const IconPicker = ({
           )
         }
         dropdownComponents={
-          <DropdownContent
-            widthInPixels={dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH}
-          >
-            <SelectableList
-              selectableListInstanceId={selectableListInstanceId}
-              selectableItemIdMatrix={iconKeys2d}
-              focusId={dropdownId}
+          <ScrollWrapper componentInstanceId="icon-picker-scroll">
+            <DropdownContent
+              widthInPixels={
+                dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
+              }
             >
-              <DropdownMenuSearchInput
-                placeholder={t`Search icon`}
-                autoFocus
-                onChange={(event) => {
-                  setSearchString(event.target.value);
-                }}
-              />
-              <DropdownMenuSeparator />
-              <div
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+              <SelectableList
+                selectableListInstanceId={selectableListInstanceId}
+                selectableItemIdMatrix={iconKeys2d}
+                focusId={dropdownId}
               >
-                <DropdownMenuItemsContainer>
-                  <StyledMenuIconItemsContainer>
-                    {matchingSearchIconKeys.map((iconKey) => (
-                      <IconPickerIcon
-                        key={iconKey}
-                        iconKey={iconKey}
-                        onClick={() => {
-                          onChange({ iconKey, Icon: getIcon(iconKey) });
-                          closeDropdown(dropdownId);
-                        }}
-                        selectedIconKey={selectedIconKey}
-                        Icon={getIcon(iconKey)}
-                        focusedIconKey={focusedIconKey}
-                      />
-                    ))}
-                  </StyledMenuIconItemsContainer>
-                </DropdownMenuItemsContainer>
-              </div>
-            </SelectableList>
-          </DropdownContent>
+                <DropdownMenuSearchInput
+                  placeholder={t`Search icon`}
+                  autoFocus
+                  onChange={(event) => {
+                    setSearchString(event.target.value);
+                  }}
+                />
+                <DropdownMenuSeparator />
+                <div
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <DropdownMenuItemsContainer hasMaxHeight>
+                    <StyledMenuIconItemsContainer>
+                      {matchingSearchIconKeys.map((iconKey) => (
+                        <IconPickerIcon
+                          key={iconKey}
+                          iconKey={iconKey}
+                          onClick={() => {
+                            onChange({ iconKey, Icon: getIcon(iconKey) });
+                            closeDropdown(dropdownId);
+                          }}
+                          selectedIconKey={selectedIconKey}
+                          Icon={getIcon(iconKey)}
+                          focusedIconKey={focusedIconKey}
+                        />
+                      ))}
+                    </StyledMenuIconItemsContainer>
+                    <IconPickerScrollEffect
+                      sentinelId="icon-picker-scroll-sentinel"
+                      dropdownId={dropdownId}
+                    />
+                    <div id="icon-picker-scroll-sentinel"></div>
+                  </DropdownMenuItemsContainer>
+                </div>
+              </SelectableList>
+            </DropdownContent>
+          </ScrollWrapper>
         }
         onClickOutside={onClickOutside}
         onClose={() => {
           onClose?.();
           setSearchString('');
+          resetVisibleCount();
         }}
         onOpen={onOpen}
       />
