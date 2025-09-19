@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
-import { isValidUuid } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -108,75 +107,10 @@ export class AccessTokenService {
 
     userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
 
-    const isImpersonatingToken = isImpersonating === true;
-    const hasImpersonationFields =
-      impersonatorUserWorkspaceId !== undefined ||
-      impersonatedUserWorkspaceId !== undefined;
-
-    if (!isImpersonatingToken && hasImpersonationFields) {
-      throw new AuthException(
-        'Invalid impersonation parameters',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (isImpersonatingToken) {
-      const isImpersonatorUserWorkspaceIdValid =
-        impersonatorUserWorkspaceId && isValidUuid(impersonatorUserWorkspaceId);
-      const impersonatedUserWorkspaceIdValid =
-        impersonatedUserWorkspaceId && isValidUuid(impersonatedUserWorkspaceId);
-
-      if (
-        !isImpersonatorUserWorkspaceIdValid ||
-        !impersonatedUserWorkspaceIdValid ||
-        impersonatorUserWorkspaceId === impersonatedUserWorkspaceId
-      ) {
-        throw new AuthException(
-          'Invalid impersonation parameters',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      const impersonatorUserWorkspace =
-        await this.userWorkspaceRepository.findOne({
-          where: { id: impersonatorUserWorkspaceId! },
-        });
-      const impersonatedUserWorkspace =
-        await this.userWorkspaceRepository.findOne({
-          where: { id: impersonatedUserWorkspaceId! },
-        });
-
-      if (!impersonatorUserWorkspace || !impersonatedUserWorkspace) {
-        throw new AuthException(
-          'Impersonator or impersonated user workspace not found',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      if (
-        impersonatorUserWorkspace.workspaceId !== workspaceId ||
-        impersonatedUserWorkspace.workspaceId !== workspaceId
-      ) {
-        throw new AuthException(
-          'Invalid impersonation parameters',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      if (impersonatedUserWorkspaceId !== userWorkspace.id) {
-        throw new AuthException(
-          'Impersonated user workspace ID does not match user workspace ID in token',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
-    }
-
-    const payloadImpersonatorUserWorkspaceId = isImpersonatingToken
-      ? impersonatorUserWorkspaceId
-      : undefined;
-    const payloadOriginalUserWorkspaceId = isImpersonatingToken
-      ? impersonatedUserWorkspaceId
-      : undefined;
+    const payloadImpersonatorUserWorkspaceId =
+      isImpersonating === true ? impersonatorUserWorkspaceId : undefined;
+    const payloadOriginalUserWorkspaceId =
+      isImpersonating === true ? impersonatedUserWorkspaceId : undefined;
 
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
@@ -186,7 +120,7 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
-      isImpersonating: isImpersonatingToken,
+      isImpersonating: isImpersonating === true,
       impersonatorUserWorkspaceId: payloadImpersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };

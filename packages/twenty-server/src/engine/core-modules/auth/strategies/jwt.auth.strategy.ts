@@ -135,30 +135,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    if (payload.isImpersonating === true) {
-      if (
-        !payload.impersonatedUserWorkspaceId ||
-        !isUUID(payload.impersonatedUserWorkspaceId) ||
-        !payload.impersonatorUserWorkspaceId ||
-        !isUUID(payload.impersonatorUserWorkspaceId)
-      ) {
-        throw new AuthException(
-          'Invalid or missing user workspace ID in impersonation token',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      if (
-        payload.impersonatedUserWorkspaceId ===
-        payload.impersonatorUserWorkspaceId
-      ) {
-        throw new AuthException(
-          'Invalid impersonation token: cannot impersonate self',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-    }
-
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { id: payload.userWorkspaceId },
       relations: ['user', 'workspace'],
@@ -198,7 +174,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       context.impersonationContext = await this.validateImpersonation(
         payload,
         workspace,
-        user,
       );
     }
 
@@ -208,7 +183,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateImpersonation(
     payload: AccessTokenJwtPayload,
     workspace: Workspace,
-    user: User,
   ) {
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
