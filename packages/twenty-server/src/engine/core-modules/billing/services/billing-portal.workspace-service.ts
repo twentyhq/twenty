@@ -13,7 +13,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
@@ -26,7 +25,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
@@ -37,12 +35,9 @@ export class BillingPortalWorkspaceService {
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingSubscriptionItem)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(UserWorkspace)
