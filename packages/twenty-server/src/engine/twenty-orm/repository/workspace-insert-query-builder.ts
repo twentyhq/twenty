@@ -169,16 +169,16 @@ export class WorkspaceInsertQueryBuilder<
         authContext: this.authContext,
       });
 
-      const isEntitiesWithSufficientData = formattedResultForEvent.filter(
+      const entitiesWithSubstantialData = formattedResultForEvent.filter(
         (entity) => hasSubstantialRecordData(entity as Record<string, unknown>),
       );
 
-      if (isEntitiesWithSufficientData.length > 0) {
+      if (entitiesWithSubstantialData.length > 0) {
         await this.internalContext.eventEmitterService.emitMutationEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
-          entities: isEntitiesWithSufficientData,
+          entities: entitiesWithSubstantialData,
           authContext: this.authContext,
         });
       }
