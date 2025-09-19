@@ -68,35 +68,105 @@ export class ViewFieldService {
   async create(
     viewFieldData: Partial<ViewFieldEntity>,
   ): Promise<ViewFieldEntity> {
-    if (!isDefined(viewFieldData.workspaceId)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+    if (this.hasRequiredFields(viewFieldData)) {
+      try {
+        if (isDefined(viewFieldData.position)) {
+          const viewFieldDataWithPosition =
+            viewFieldData as typeof viewFieldData & { position: number };
+
+          await this.verifyLabelMetadataIdentifierIsInFirstPositionOrThrow(
+            viewFieldDataWithPosition,
+            viewFieldData.workspaceId,
+          );
+        }
+
+        await this.verifyLabelMetadataIdentifierIsVisibleOrThrow(
+          viewFieldData,
+          viewFieldData.workspaceId,
+        );
+
+        const viewFieldDataWithPosition = await this.formatViewFieldData(
+          viewFieldData,
+          viewFieldData.workspaceId,
+        );
+
+        const viewField = this.viewFieldRepository.create(
+          viewFieldDataWithPosition,
+        );
+
+        const savedViewField = await this.viewFieldRepository.save(viewField);
+        const createdViewField = await this.findById(
+          savedViewField.id,
+          viewFieldData.workspaceId,
+        );
+
+        if (!isDefined(createdViewField)) {
+          throw new ViewFieldException(
+            generateViewFieldExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+            ),
+            ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+            {
+              userFriendlyMessage:
+                generateViewFieldUserFriendlyExceptionMessage(
+                  ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+                ),
+            },
+          );
+        }
+
+        return createdViewField;
+      } catch (error) {
+        if (
+          error.message.includes(
+            'duplicate key value violates unique constraint',
+          )
+        ) {
+          throw new ViewFieldException(
+            generateViewFieldExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+            ),
+            ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+            {
+              userFriendlyMessage:
+                generateViewFieldUserFriendlyExceptionMessage(
+                  ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
+                ),
+            },
+          );
+        }
+
+        throw error;
+      }
+    } else {
+      if (!isDefined(viewFieldData.workspaceId)) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
             ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
           ),
-        },
-      );
-    }
+          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.WORKSPACE_ID_REQUIRED,
+            ),
+          },
+        );
+      }
 
-    if (!isDefined(viewFieldData.viewId)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
-        ),
-        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+      if (!isDefined(viewFieldData.viewId)) {
+        throw new ViewFieldException(
+          generateViewFieldExceptionMessage(
             ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
           ),
-        },
-      );
-    }
+          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+          {
+            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+              ViewFieldExceptionMessageKey.VIEW_ID_REQUIRED,
+            ),
+          },
+        );
+      }
 
-    if (!isDefined(viewFieldData.fieldMetadataId)) {
       throw new ViewFieldException(
         generateViewFieldExceptionMessage(
           ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
@@ -108,50 +178,6 @@ export class ViewFieldService {
           ),
         },
       );
-    }
-
-    try {
-      const viewField = this.viewFieldRepository.create(viewFieldData);
-
-      const savedViewField = await this.viewFieldRepository.save(viewField);
-      const createdViewField = await this.findById(
-        savedViewField.id,
-        viewFieldData.workspaceId,
-      );
-
-      if (!isDefined(createdViewField)) {
-        throw new ViewFieldException(
-          generateViewFieldExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          ),
-          ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-          {
-            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-              ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-            ),
-          },
-        );
-      }
-
-      return createdViewField;
-    } catch (error) {
-      if (
-        error.message.includes('duplicate key value violates unique constraint')
-      ) {
-        throw new ViewFieldException(
-          generateViewFieldExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
-          ),
-          ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
-          {
-            userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-              ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS,
-            ),
-          },
-        );
-      }
-
-      throw error;
     }
   }
 
@@ -171,20 +197,24 @@ export class ViewFieldService {
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }
+    const viewId = existingViewField.viewId;
 
     if (this.updatesPosition(updateData)) {
-      await this.verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
-        existingViewField,
+      await this.verifyLabelMetadataIdentifierIsInFirstPositionOrThrow(
+        {
+          ...updateData,
+          viewId,
+          id,
+          fieldMetadataId: existingViewField.fieldMetadataId,
+        },
         workspaceId,
-        updateData,
       );
     }
 
     if (this.disablesVisibility(updateData)) {
-      await this.verifyLabelMetadataIdentifierIsStillVisibleOrThrow(
-        existingViewField,
+      await this.verifyLabelMetadataIdentifierIsVisibleOrThrow(
+        { ...updateData, viewId, id },
         workspaceId,
-        updateData,
       );
     }
 
@@ -244,71 +274,83 @@ export class ViewFieldService {
     return data.isVisible === false;
   }
 
-  private async verifyLabelMetadataIdentifierIsStillVisibleOrThrow(
-    viewField: ViewFieldEntity,
+  private async verifyLabelMetadataIdentifierIsVisibleOrThrow(
+    newOrUpdatedViewField: Partial<ViewFieldEntity> & {
+      viewId: string;
+    },
     workspaceId: string,
-    newViewField: Partial<ViewFieldEntity> & { isVisible: boolean },
   ) {
     const view = await this.viewService.findByIdWithRelatedObjectMetadata(
-      viewField.viewId,
+      newOrUpdatedViewField.viewId,
       workspaceId,
     );
 
     if (!isDefined(view)) {
-      throw new Error(`View not found: ${viewField.viewId}`);
+      throw new Error(`View not found: ${newOrUpdatedViewField.viewId}`);
     }
 
     const labelMetadataIdentifierFieldMetadataId =
       view.objectMetadata.labelIdentifierFieldMetadataId;
 
-    if (labelMetadataIdentifierFieldMetadataId !== viewField.id) {
+    const labelMetadataIdentifierViewField = view.viewFields.find(
+      (viewField) =>
+        viewField.fieldMetadataId === labelMetadataIdentifierFieldMetadataId,
+    );
+
+    if (
+      !isDefined(labelMetadataIdentifierViewField) ||
+      labelMetadataIdentifierViewField.id !== newOrUpdatedViewField.id
+    ) {
       return;
     }
 
-    if (newViewField.isVisible === false) {
+    if (newOrUpdatedViewField.isVisible === false) {
       throw new UserInputError('Label metadata identifier must stay visible.', {
         userFriendlyMessage: 'Record text must stay visible.',
       });
     }
   }
 
-  private async verifyLabelMetadataIdentifierIsStillInFirstPositionOrThrow(
-    existingViewField: ViewFieldEntity,
+  private async verifyLabelMetadataIdentifierIsInFirstPositionOrThrow(
+    newOrUpdatedViewField: Partial<ViewFieldEntity> & { viewId: string } & {
+      position: number;
+    },
     workspaceId: string,
-    newViewField: Partial<ViewFieldEntity> & { position: number },
   ) {
     const view = await this.viewService.findByIdWithRelatedObjectMetadata(
-      existingViewField.viewId,
+      newOrUpdatedViewField.viewId,
       workspaceId,
     );
 
     if (!isDefined(view)) {
-      throw new Error(`View not found: ${existingViewField.viewId}`);
+      throw new Error(`View not found: ${newOrUpdatedViewField.viewId}`);
     }
+
+    const viewFieldsWithoutUpdatedViewField = view.viewFields.filter(
+      (viewField) => viewField.id !== newOrUpdatedViewField?.id,
+    );
+
+    if (viewFieldsWithoutUpdatedViewField.length === 0) {
+      return;
+    }
+
+    const minPositionInViewWithoutUpdatedViewField =
+      viewFieldsWithoutUpdatedViewField.reduce(
+        (minViewField, viewField) =>
+          viewField.position < minViewField.position ? viewField : minViewField,
+        viewFieldsWithoutUpdatedViewField[0],
+      ).position;
 
     const labelMetadataIdentifierFieldMetadataId =
       view.objectMetadata.labelIdentifierFieldMetadataId;
 
-    const viewFieldsWithUpdatedPosition = view.viewFields.map((field) =>
-      field.id === existingViewField.id
-        ? { ...field, position: newViewField.position }
-        : field,
-    );
-
-    const fieldMetadataIdWithMinPositionInViewAfterUpdate =
-      viewFieldsWithUpdatedPosition.reduce(
-        (minField, field) =>
-          field.position < minField.position ? field : minField,
-        viewFieldsWithUpdatedPosition[0],
-      ).fieldMetadataId;
-
     if (
       labelMetadataIdentifierFieldMetadataId ===
-      existingViewField.fieldMetadataId
+      newOrUpdatedViewField.fieldMetadataId
     ) {
       if (
-        fieldMetadataIdWithMinPositionInViewAfterUpdate !==
-        existingViewField.fieldMetadataId
+        newOrUpdatedViewField.position >=
+        minPositionInViewWithoutUpdatedViewField
       ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
@@ -319,9 +361,15 @@ export class ViewFieldService {
         );
       }
     } else {
+      const labelMetadataIdentifierViewFieldPosition = view.viewFields.find(
+        (viewField) =>
+          viewField.fieldMetadataId === labelMetadataIdentifierFieldMetadataId,
+      )?.position;
+
       if (
-        fieldMetadataIdWithMinPositionInViewAfterUpdate ===
-        existingViewField.fieldMetadataId
+        isDefined(labelMetadataIdentifierViewFieldPosition) &&
+        newOrUpdatedViewField.position <=
+          labelMetadataIdentifierViewFieldPosition
       ) {
         throw new UserInputError(
           'Label metadata identifier must keep the minimal position in the view.',
@@ -332,5 +380,45 @@ export class ViewFieldService {
         );
       }
     }
+  }
+
+  private async formatViewFieldData(
+    viewFieldData: Partial<ViewFieldEntity> & { viewId: string },
+    workspaceId: string,
+  ): Promise<Partial<ViewFieldEntity>> {
+    if (!isDefined(viewFieldData.position)) {
+      const view = await this.viewService.findByIdWithRelatedObjectMetadata(
+        viewFieldData.viewId,
+        workspaceId,
+      );
+
+      if (!isDefined(view)) {
+        throw new Error(`View not found: ${viewFieldData.viewId}`);
+      }
+
+      const highestPositionInView = view.viewFields.reduce(
+        (maxViewField, viewField) =>
+          viewField.position > maxViewField.position ? viewField : maxViewField,
+        view.viewFields[0],
+      );
+
+      return { ...viewFieldData, position: highestPositionInView.position + 1 };
+    } else {
+      return viewFieldData;
+    }
+  }
+
+  private hasRequiredFields(
+    data: Partial<ViewFieldEntity>,
+  ): data is Partial<ViewFieldEntity> & {
+    viewId: string;
+    fieldMetadataId: string;
+    workspaceId: string;
+  } {
+    return (
+      isDefined(data.viewId) &&
+      isDefined(data.fieldMetadataId) &&
+      isDefined(data.workspaceId)
+    );
   }
 }

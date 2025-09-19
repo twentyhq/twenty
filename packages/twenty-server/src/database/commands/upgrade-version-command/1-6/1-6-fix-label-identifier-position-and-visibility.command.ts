@@ -38,7 +38,6 @@ export class FixLabelIdentifierPositionAndVisibilityCommand extends ActiveOrSusp
       `Checking label identifiers position and visibility for workspace ${workspaceId}`,
     );
 
-    // Get all views with their related object metadata and view fields
     const views = await this.viewRepository.find({
       where: { workspaceId },
       relations: {
@@ -50,35 +49,45 @@ export class FixLabelIdentifierPositionAndVisibilityCommand extends ActiveOrSusp
     for (const view of views) {
       const { objectMetadata, viewFields } = view;
 
-      // Skip if no label identifier field metadata ID
       if (!objectMetadata.labelIdentifierFieldMetadataId) {
         continue;
       }
 
-      // Find the label identifier view field
       const labelIdentifierViewField = viewFields.find(
         (viewField: ViewFieldEntity) =>
           viewField.fieldMetadataId ===
           objectMetadata.labelIdentifierFieldMetadataId,
       );
 
-      // Skip if label identifier view field not found
       if (!labelIdentifierViewField) {
         continue;
       }
 
-      // Find the minimum position among all view fields
-      const minPosition = Math.min(
-        ...viewFields.map((viewField: ViewFieldEntity) => viewField.position),
+      // Find minimum position and count fields at that position in single pass
+      const minPositionData = viewFields.reduce(
+        (acc, viewField: ViewFieldEntity) => {
+          if (viewField.position < acc.minPosition) {
+            return { minPosition: viewField.position, count: 1 };
+          }
+          if (viewField.position === acc.minPosition) {
+            return { ...acc, count: acc.count + 1 };
+          }
+
+          return acc;
+        },
+        { minPosition: Number.MAX_SAFE_INTEGER, count: 0 },
       );
 
+      const minPosition = minPositionData.minPosition;
+      const numberOfViewFieldsAtTheMinimalPosition = minPositionData.count;
+
       const labelIdentifierPositionIsAlreadyTheMinimalPosition =
-        labelIdentifierViewField.position === minPosition;
+        labelIdentifierViewField.position === minPosition &&
+        numberOfViewFieldsAtTheMinimalPosition === 1;
 
       const labelIdentifierIsAlreadyVisible =
         labelIdentifierViewField.isVisible;
 
-      // Check if label identifier already has the minimal position
       if (
         labelIdentifierPositionIsAlreadyTheMinimalPosition &&
         labelIdentifierIsAlreadyVisible
@@ -107,7 +116,6 @@ export class FixLabelIdentifierPositionAndVisibilityCommand extends ActiveOrSusp
       }
 
       if (!labelIdentifierIsAlreadyVisible) {
-        // Update the label identifier visibility to be true
         if (!options.dryRun) {
           await this.viewFieldRepository.update(
             { id: labelIdentifierViewField.id },
