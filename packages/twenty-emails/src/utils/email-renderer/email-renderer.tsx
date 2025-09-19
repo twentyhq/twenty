@@ -1,8 +1,6 @@
 import { Body, Container, Head, Html } from '@react-email/components';
 import { type JSONContent } from '@tiptap/core';
-import { mappedNodeContent } from 'src/utils/email-renderer/nodes/render-node';
-
-export type MarkType = NonNullable<JSONContent['marks']>[number];
+import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 
 export const reactMarkupFromJSON = (json: JSONContent | string) => {
   if (typeof json === 'string') {

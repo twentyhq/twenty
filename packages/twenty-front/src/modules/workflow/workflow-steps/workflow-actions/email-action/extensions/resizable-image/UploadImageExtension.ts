@@ -1,6 +1,6 @@
 import {
-  UploadImagePlugin,
-  type UploadImagePluginProps,
+    UploadImagePlugin,
+    type UploadImagePluginProps,
 } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/UploadImagePlugin';
 import { Extension } from '@tiptap/core';
 
@@ -32,6 +32,7 @@ export const UploadImageExtension = Extension.create<
         'image/svg+xml',
       ],
       onImageUpload: undefined,
+      onImageUploadError: undefined,
     };
   },
 
@@ -53,6 +54,7 @@ export const UploadImageExtension = Extension.create<
         editor: this.editor,
         allowedMimeTypes: this.options.allowedMimeTypes,
         onImageUpload: this.options.onImageUpload,
+        onImageUploadError: this.options.onImageUploadError,
       }),
     ];
   },

@@ -2,6 +2,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -20,6 +21,7 @@ import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
@@ -106,6 +108,8 @@ export const WorkflowSendEmailBody = ({
   const theme = useTheme();
 
   const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { t: tLingui } = useLingui();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -127,6 +131,13 @@ export const WorkflowSendEmailBody = ({
     });
 
     return attachmentAbsoluteURL;
+  };
+
+  const handleImageUploadError = (error: Error, file: File) => {
+    // Show user-friendly error message
+    enqueueErrorSnackBar({
+      message: tLingui`Failed to upload image: ${file.name}`,
+    });
   };
 
   const editor = useEmailEditor(
@@ -154,6 +165,7 @@ export const WorkflowSendEmailBody = ({
         removeFocusItemFromFocusStackById({ focusId: instanceId });
       },
       onImageUpload: handleUploadAttachment,
+      onImageUploadError: handleImageUploadError,
     },
     [isFullScreen],
   );

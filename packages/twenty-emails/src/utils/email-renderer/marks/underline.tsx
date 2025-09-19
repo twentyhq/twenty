@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { type MarkType } from 'src/utils/email-renderer/email-renderer';
+import { type TipTapMark } from 'twenty-shared/utils';
 
-export const underline = (_: MarkType, text: ReactNode): ReactNode => {
-  return <u>{text}</u>;
+export const underline = (_: TipTapMark, children: ReactNode): ReactNode => {
+  return <span style={{ textDecoration: 'underline' }}>{children}</span>;
 };

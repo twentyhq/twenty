@@ -1,12 +1,12 @@
 import { type ReactNode } from 'react';
-import { type MarkType } from 'src/utils/email-renderer/email-renderer';
+import { type LinkMarkAttributes, type TipTapMark } from 'twenty-shared/utils';
 
-export const link = (mark: MarkType, text: ReactNode): ReactNode => {
+export const link = (mark: TipTapMark, children: ReactNode): ReactNode => {
   const {
     href,
     target = '_blank',
     rel = 'noopener noreferrer',
-  } = mark?.attrs || {};
+  } = (mark.attrs as LinkMarkAttributes) || {};
 
   return (
     <a
@@ -15,7 +15,7 @@ export const link = (mark: MarkType, text: ReactNode): ReactNode => {
       rel={rel}
       style={{ textDecoration: 'underline' }}
     >
-      {text}
+      {children}
     </a>
   );
 };

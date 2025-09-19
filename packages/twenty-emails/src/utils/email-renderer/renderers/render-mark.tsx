@@ -1,16 +1,16 @@
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import {
-  type TipTapMark,
-  type TipTapMarkType,
-  TIPTAP_MARKS_RENDER_ORDER,
-  TIPTAP_MARK_TYPES,
+    type TipTapMark,
+    type TipTapMarkType,
+    TIPTAP_MARKS_RENDER_ORDER,
+    TIPTAP_MARK_TYPES,
 } from 'twenty-shared/utils';
-import { bold } from './bold';
-import { italic } from './italic';
-import { link } from './link';
-import { strike } from './strike';
-import { underline } from './underline';
+import { bold } from '../marks/bold';
+import { italic } from '../marks/italic';
+import { link } from '../marks/link';
+import { strike } from '../marks/strike';
+import { underline } from '../marks/underline';
 
 const MARK_RENDERERS = {
   [TIPTAP_MARK_TYPES.BOLD]: bold,

@@ -1,6 +1,6 @@
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
-import { renderMark } from 'src/utils/email-renderer/marks/render-mark';
+import { renderMark } from 'src/utils/email-renderer/renderers/render-mark';
 import { isDefined } from 'twenty-shared/utils';
 
 export const text = (node: JSONContent): ReactNode => {

@@ -7,10 +7,12 @@ export type UploadImagePluginProps = {
   editor: Editor;
   allowedMimeTypes?: string[];
   onImageUpload?: (file: File) => Promise<string>;
+  onImageUploadError?: (error: Error, file: File) => void;
 };
 
 export const UploadImagePlugin = (options: UploadImagePluginProps) => {
-  const { editor, onImageUpload, allowedMimeTypes } = options;
+  const { editor, onImageUpload, allowedMimeTypes, onImageUploadError } =
+    options;
 
   const handleImageUpload = (view: EditorView, file: File, pos?: number) => {
     const placeholderSrc = URL.createObjectURL(file);
@@ -38,17 +40,43 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
         const predicate = (node: Node) =>
           node.type.name === 'image' && node.attrs.src === placeholderSrc;
 
+        let found = false;
         view.state.doc.descendants((node, pos) => {
+          if (found) {
+            return false;
+          }
           if (predicate(node)) {
             updateTr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
               src: uploadedSrc,
             });
+            found = true;
             return false;
           }
         });
 
         view.dispatch(updateTr);
+      })
+      .catch((error: Error) => {
+        const removeTr = view.state.tr;
+        const predicate = (node: Node) =>
+          node.type.name === 'image' && node.attrs.src === placeholderSrc;
+
+        let found = false;
+        view.state.doc.descendants((node, pos) => {
+          if (found) {
+            return false;
+          }
+          if (predicate(node)) {
+            removeTr.delete(pos, pos + node.nodeSize);
+            found = true;
+            return false;
+          }
+        });
+
+        view.dispatch(removeTr);
+
+        onImageUploadError?.(error, file);
       })
       .finally(() => {
         editor.extensionStorage.uploadImage.placeholderImages.delete(

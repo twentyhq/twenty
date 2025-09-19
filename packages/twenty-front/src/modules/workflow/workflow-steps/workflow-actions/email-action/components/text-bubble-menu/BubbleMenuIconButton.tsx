@@ -3,14 +3,10 @@ import styled from '@emotion/styled';
 import React from 'react';
 import type { IconComponent } from 'twenty-ui/display';
 
-export type FloatingIconButtonSize = 'small' | 'medium';
-export type FloatingIconButtonPosition =
-  | 'standalone'
-  | 'left'
-  | 'middle'
-  | 'right';
+type FloatingIconButtonSize = 'small' | 'medium';
+type FloatingIconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 
-export type BubbleMenuIconButtonProps = {
+type BubbleMenuIconButtonProps = {
   className?: string;
   Icon?: IconComponent;
   size?: FloatingIconButtonSize;

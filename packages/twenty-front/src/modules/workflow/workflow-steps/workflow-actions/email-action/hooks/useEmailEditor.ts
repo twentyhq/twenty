@@ -25,6 +25,7 @@ type UseEmailEditorProps = {
   onFocus?: (editor: Editor) => void;
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<string>;
+  onImageUploadError?: (error: Error, file: File) => void;
 };
 
 export const useEmailEditor = (
@@ -36,6 +37,7 @@ export const useEmailEditor = (
     onFocus,
     onBlur,
     onImageUpload,
+    onImageUploadError,
   }: UseEmailEditorProps,
   dependencies?: DependencyList,
 ) => {
@@ -67,6 +69,7 @@ export const useEmailEditor = (
         Dropcursor,
         UploadImageExtension.configure({
           onImageUpload,
+          onImageUploadError,
         }),
       ],
       content: isDefined(defaultValue)

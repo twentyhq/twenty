@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { type MarkType } from '../email-renderer';
+import { type TipTapMark } from 'twenty-shared/utils';
 
-export const bold = (_: MarkType, text: ReactNode): ReactNode => {
-  return <strong>{text}</strong>;
+export const bold = (_: TipTapMark, children: ReactNode): ReactNode => {
+  return <strong>{children}</strong>;
 };

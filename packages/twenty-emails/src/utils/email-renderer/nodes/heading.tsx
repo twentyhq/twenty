@@ -1,7 +1,7 @@
 import { Heading } from '@react-email/components';
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
-import { mappedNodeContent } from 'src/utils/email-renderer/nodes/render-node';
+import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 import { isDefined } from 'twenty-shared/utils';
 
 type HeadingLevel = 1 | 2 | 3;

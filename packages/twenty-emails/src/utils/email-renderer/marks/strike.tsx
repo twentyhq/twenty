@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { type MarkType } from 'src/utils/email-renderer/email-renderer';
+import { type TipTapMark } from 'twenty-shared/utils';
 
-export const strike = (_: MarkType, text: ReactNode): ReactNode => {
-  return <s style={{ textDecoration: 'line-through' }}>{text}</s>;
+export const strike = (_: TipTapMark, children: ReactNode): ReactNode => {
+  return <span style={{ textDecoration: 'line-through' }}>{children}</span>;
 };

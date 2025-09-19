@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const IMAGE_MIN_WIDTH = 32;
@@ -54,15 +54,15 @@ const StyledImageHandle = styled.div<{ handle: 'left' | 'right' }>`
   width: ${({ theme }) => theme.spacing(2)};
   z-index: 1;
 
-  ${({ handle }) => {
+  ${({ handle, theme }) => {
     if (handle === 'left') {
       return css`
-        left: 2px;
+        left: ${theme.betweenSiblingsGap};
       `;
     }
 
     return css`
-      right: 2px;
+      right: ${theme.betweenSiblingsGap};
     `;
   }}
 `;
@@ -81,19 +81,25 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
   const imageWrapperRef = useRef<HTMLDivElement>(null);
 
-  const [isDragging, setIsDragging] = useState(false);
+  // Controls visibility of resize handles when hovering over the image
+  const [isHovering, setIsHovering] = useState(false);
   const [width, setWidth] = useState(initialWidth || 0);
+  // Controls actual resize operation state (null = not resizing, object = actively resizing)
   const [resizeParams, setResizeParams] = useState<ResizeParams | null>(null);
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent) => {
+  // Create stable event handlers using a closure approach
+  const createMouseHandlers = useCallback(() => {
+    let currentResizeParams: ResizeParams | null = null;
+
+    const handleMouseMove = (event: MouseEvent) => {
       const imageWrapper = imageWrapperRef.current;
-      if (!isDefined(resizeParams) || !isDefined(imageWrapper)) {
+
+      if (!isDefined(currentResizeParams) || !isDefined(imageWrapper)) {
         return;
       }
 
-      const deltaX = event.clientX - resizeParams.initialClientX;
-      const { initialWidth, handleUsed } = resizeParams;
+      const deltaX = event.clientX - currentResizeParams.initialClientX;
+      const { initialWidth, handleUsed } = currentResizeParams;
 
       let newWidth =
         align === 'center'
@@ -106,75 +112,76 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
       setWidth(newWidth);
       imageWrapper.style.width = `${newWidth}px`;
-    },
-    [resizeParams, editor, align],
-  );
+    };
 
-  const handleMouseUp = useCallback(
-    (event: MouseEvent) => {
+    const handleMouseUp = (event: MouseEvent) => {
       const imageWrapper = imageWrapperRef.current;
-      if (!isDefined(imageWrapper) || !isDefined(resizeParams)) {
+
+      if (!isDefined(imageWrapper) || !isDefined(currentResizeParams)) {
         return;
       }
 
       if (
         (!event.target || !imageWrapper.contains(event.target as Node)) &&
-        isDragging
+        isHovering
       ) {
-        setIsDragging(false);
+        setIsHovering(false);
         return;
       }
 
+      const finalWidth = imageWrapper.clientWidth;
+      currentResizeParams = null;
       setResizeParams(null);
-      updateAttributes({ width });
-    },
-    [resizeParams, updateAttributes, width, isDragging, setIsDragging],
-  );
+      updateAttributes({ width: finalWidth });
+
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    const startResize = (resizeParams: ResizeParams) => {
+      currentResizeParams = resizeParams;
+      setResizeParams(resizeParams);
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    };
+
+    return { startResize };
+  }, [editor, align, isHovering, updateAttributes]);
+
+  const { startResize } = createMouseHandlers();
 
   const handleImageHandleMouseDown = useCallback(
     (handle: 'left' | 'right', event: React.MouseEvent<HTMLDivElement>) => {
       event.preventDefault();
 
-      setResizeParams({
+      const resizeParams = {
         initialWidth: imageWrapperRef.current?.clientWidth ?? IMAGE_MAX_WIDTH,
         initialClientX: event.clientX,
         handleUsed: handle,
-      });
+      };
+
+      startResize(resizeParams);
     },
-    [],
+    [startResize],
   );
 
-  const handleWrapperMouseEnter = useCallback(() => {
+  const handleImageHover = useCallback(() => {
     if (!editor.isEditable) {
       return;
     }
 
-    setIsDragging(true);
-  }, [setIsDragging, editor.isEditable]);
+    setIsHovering(true);
+  }, [editor.isEditable]);
 
-  const handleWrapperMouseLeave = useCallback(() => {
-    setIsDragging(false);
-  }, [setIsDragging]);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    window.addEventListener('mouseup', handleMouseUp, {
-      signal: abortController.signal,
-    });
-    window.addEventListener('mousemove', handleMouseMove, {
-      signal: abortController.signal,
-    });
-
-    return () => {
-      abortController.abort();
-    };
-  }, [handleMouseUp, handleMouseMove]);
+  const handleImageHoverEnd = useCallback(() => {
+    setIsHovering(false);
+  }, []);
 
   return (
     <StyledNodeViewWrapper
-      onMouseEnter={handleWrapperMouseEnter}
-      onMouseLeave={handleWrapperMouseLeave}
+      onMouseEnter={handleImageHover}
+      onMouseLeave={handleImageHoverEnd}
       align={align}
     >
       <StyledImageWrapper
@@ -188,7 +195,8 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
             draggable={false}
             contentEditable={false}
           />
-          {(isDragging || isDefined(resizeParams)) && (
+          {/* Show resize handles when hovering over image OR actively resizing */}
+          {(isHovering || isDefined(resizeParams)) && (
             <>
               <StyledImageHandle
                 handle="left"
