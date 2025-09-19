@@ -20,7 +20,7 @@ import {
   name: 'messaging:relaunch-failed-message-channels',
   description: 'Relaunch failed message channels',
 })
-export class MessagingRelaunchFailedMessageChannelCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MessagingRelaunchFailedMessageChannelsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,

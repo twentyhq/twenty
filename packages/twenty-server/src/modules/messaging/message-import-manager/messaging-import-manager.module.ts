@@ -13,7 +13,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
-import { MessagingRelaunchFailedMessageChannelCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-relaunch-failed-message-channel.command';
+import { MessagingRelaunchFailedMessageChannelsCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-relaunch-failed-message-channels.command';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
@@ -71,7 +71,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
     MessagingSingleMessageImportCommand,
-    MessagingRelaunchFailedMessageChannelCommand,
+    MessagingRelaunchFailedMessageChannelsCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
     MessagingOngoingStaleJob,
