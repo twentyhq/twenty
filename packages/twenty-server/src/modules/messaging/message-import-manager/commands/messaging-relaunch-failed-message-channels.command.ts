@@ -57,7 +57,7 @@ export class MessagingRelaunchFailedMessageChannelsCommand extends ActiveOrSuspe
         await messageChannelRepository.update(
           failedMessageChannels.map(({ id }) => id),
           {
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
             syncStatus: MessageChannelSyncStatus.ACTIVE,
           },
         );

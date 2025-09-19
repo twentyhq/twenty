@@ -58,7 +58,7 @@ export class CalendarRelaunchFailedCalendarChannelsCommand extends ActiveOrSuspe
           failedCalendarChannels.map(({ id }) => id),
           {
             syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+              CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
             syncStatus: CalendarChannelSyncStatus.ACTIVE,
           },
         );
