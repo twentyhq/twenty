@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type CoreMessage, streamText, LanguageModelV1 } from 'ai';
+import { LanguageModel, type ModelMessage, streamText } from 'ai';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
@@ -28,18 +28,18 @@ export class AiService {
     messages,
     options,
   }: {
-    messages: CoreMessage[];
+    messages: ModelMessage[];
     options: {
       temperature?: number;
-      maxTokens?: number;
-      model: LanguageModelV1;
+      maxOutputTokens?: number;
+      model: LanguageModel;
     };
   }) {
     return streamText({
       model: options.model,
       messages,
       temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
+      maxOutputTokens: options?.maxOutputTokens,
     });
   }
 }

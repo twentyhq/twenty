@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 import {
   type CreateManyResolverArgs,

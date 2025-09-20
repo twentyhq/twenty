@@ -3,13 +3,13 @@ import {
   type WorkflowHttpRequestAction,
   type WorkflowSendEmailAction,
 } from '@/workflow/types/Workflow';
-import { renderHook } from '@testing-library/react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   workflowFormActionSettingsSchema,
   workflowHttpRequestActionSettingsSchema,
   workflowSendEmailActionSettingsSchema,
-} from 'twenty-shared/workflow';
+} from '@/workflow/validation-schemas/workflowSchema';
+import { renderHook } from '@testing-library/react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { useWorkflowActionHeader } from '../useWorkflowActionHeader';
 
 jest.mock('../useActionIconColorOrThrow', () => ({

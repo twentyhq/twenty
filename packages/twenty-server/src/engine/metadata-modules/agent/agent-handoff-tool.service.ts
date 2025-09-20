@@ -35,7 +35,7 @@ export class AgentHandoffToolService {
             '{agentName}',
             handoff.toAgent.name,
           ),
-        parameters: AGENT_HANDOFF_SCHEMA,
+        inputSchema: AGENT_HANDOFF_SCHEMA,
         execute: async ({ input }) => {
           const result = await this.agentHandoffExecutorService.executeHandoff({
             fromAgentId: agentId,

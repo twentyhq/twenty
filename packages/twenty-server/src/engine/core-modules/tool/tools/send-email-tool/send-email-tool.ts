@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 import {
   SendEmailToolException,
@@ -23,7 +23,7 @@ export class SendEmailTool implements Tool {
 
   description =
     'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
-  parameters = SendEmailToolParametersZodSchema;
+  inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,

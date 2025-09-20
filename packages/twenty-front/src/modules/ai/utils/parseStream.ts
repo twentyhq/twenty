@@ -79,7 +79,16 @@ export const parseStream = (streamText: string): ParsedStep[] => {
         break;
       }
 
-      case 'reasoning':
+      case 'reasoning-start':
+        flushTextBlock();
+        currentTextBlock = {
+          type: 'reasoning',
+          content: '',
+          isThinking: true,
+        };
+        break;
+
+      case 'reasoning-delta':
         if (!currentTextBlock || currentTextBlock.type !== 'reasoning') {
           flushTextBlock();
           currentTextBlock = {
@@ -88,7 +97,13 @@ export const parseStream = (streamText: string): ParsedStep[] => {
             isThinking: true,
           };
         }
-        currentTextBlock.content += event.textDelta || '';
+        currentTextBlock.content += event.text || '';
+        break;
+
+      case 'reasoning-end':
+        if (currentTextBlock?.type === 'reasoning') {
+          currentTextBlock.isThinking = false;
+        }
         break;
 
       case 'text-delta':
@@ -96,13 +111,7 @@ export const parseStream = (streamText: string): ParsedStep[] => {
           flushTextBlock();
           currentTextBlock = { type: 'text', content: '' };
         }
-        currentTextBlock.content += event.textDelta || '';
-        break;
-
-      case 'reasoning-signature':
-        if (currentTextBlock?.type === 'reasoning') {
-          currentTextBlock.isThinking = false;
-        }
+        currentTextBlock.content += event.text || '';
         break;
 
       case 'step-finish':

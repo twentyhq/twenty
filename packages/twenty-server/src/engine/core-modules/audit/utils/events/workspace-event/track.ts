@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 import { baseEventSchema } from 'src/engine/core-modules/audit/utils/events/common/base-schemas';
 
