@@ -8,6 +8,19 @@ import { logError } from '~/utils/logError';
 export const getInitialEmailEditorContent = (
   rawContent: string,
 ): JSONContent => {
+  // Handle empty or null content
+  if (!rawContent || rawContent.trim() === '') {
+    return {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [],
+        },
+      ],
+    };
+  }
+
   try {
     const json = JSON.parse(rawContent);
     return json;
