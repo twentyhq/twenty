@@ -1213,7 +1213,7 @@ export class ConfigVariables {
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWSSeSSettings,
+    group: ConfigVariablesGroup.AwsSesSettings,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
@@ -1222,7 +1222,7 @@ export class ConfigVariables {
   AWS_SES_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWSSeSSettings,
+    group: ConfigVariablesGroup.AwsSesSettings,
     isSensitive: true,
     description: 'AWS access key ID',
     type: ConfigVariableType.STRING,
@@ -1231,7 +1231,7 @@ export class ConfigVariables {
   AWS_SES_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWSSeSSettings,
+    group: ConfigVariablesGroup.AwsSesSettings,
     isSensitive: true,
     description: 'AWS session token',
     type: ConfigVariableType.STRING,
@@ -1240,7 +1240,7 @@ export class ConfigVariables {
   AWS_SES_SESSION_TOKEN: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWSSeSSettings,
+    group: ConfigVariablesGroup.AwsSesSettings,
     isSensitive: true,
     description: 'AWS secret access key',
     type: ConfigVariableType.STRING,
@@ -1249,7 +1249,7 @@ export class ConfigVariables {
   AWS_SES_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWSSeSSettings,
+    group: ConfigVariablesGroup.AwsSesSettings,
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
   })

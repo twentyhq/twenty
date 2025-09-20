@@ -26,7 +26,7 @@ export class OutboundMessageDomainDriverFactory extends DriverFactoryBase<Outbou
 
     if (driver === OutboundMessageDomainDriver.AWS_SES) {
       const awsConfigHash = this.getConfigGroupHash(
-        ConfigVariablesGroup.AWSSeSSettings,
+        ConfigVariablesGroup.AwsSesSettings,
       );
 
       return `aws-ses|${awsConfigHash}`;

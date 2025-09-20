@@ -131,7 +131,6 @@ export class OutboundMessageDomainService {
       throw new Error('Outbound message domain not found');
     }
 
-    // Set sync status to syncing
     await this.outboundMessageDomainRepository.update(
       {
         id: outboundMessageDomainId,
