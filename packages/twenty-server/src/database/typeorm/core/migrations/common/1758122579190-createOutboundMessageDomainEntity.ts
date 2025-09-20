@@ -25,11 +25,7 @@ export class CreateEmailingDomainEntity1758122579190
       `ALTER TABLE "core"."emailingDomain" DROP CONSTRAINT "FK_342775dc0b5dc94f924ce143841"`,
     );
     await queryRunner.query(`DROP TABLE "core"."emailingDomain"`);
-    await queryRunner.query(
-      `DROP TYPE "core"."emailingDomain_status_enum"`,
-    );
-    await queryRunner.query(
-      `DROP TYPE "core"."emailingDomain_driver_enum"`,
-    );
+    await queryRunner.query(`DROP TYPE "core"."emailingDomain_status_enum"`);
+    await queryRunner.query(`DROP TYPE "core"."emailingDomain_driver_enum"`);
   }
 }

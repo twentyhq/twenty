@@ -24,17 +24,13 @@ export class EmailingDomainService {
     driver: EmailingDomainDriver,
     workspace: Workspace,
   ): Promise<EmailingDomain> {
-    const existingDomain = await this.emailingDomainRepository.findOneBy(
-      {
-        domain,
-        workspaceId: workspace.id,
-      },
-    );
+    const existingDomain = await this.emailingDomainRepository.findOneBy({
+      domain,
+      workspaceId: workspace.id,
+    });
 
     if (existingDomain) {
-      throw new Error(
-        'Emailing domain already exists for this workspace',
-      );
+      throw new Error('Emailing domain already exists for this workspace');
     }
 
     const domainToCreate = {
@@ -44,8 +40,7 @@ export class EmailingDomainService {
       workspaceId: workspace.id,
     } as EmailingDomain;
 
-    const driverInstance =
-      this.emailingDomainDriverFactory.getCurrentDriver();
+    const driverInstance = this.emailingDomainDriverFactory.getCurrentDriver();
     const verifiedDomain = await driverInstance.verifyDomain(domainToCreate);
 
     const savedDomain =
@@ -58,12 +53,10 @@ export class EmailingDomainService {
     workspace: Workspace,
     emailingDomainId: string,
   ): Promise<void> {
-    const emailingDomain = await this.emailingDomainRepository.findOneBy(
-      {
-        id: emailingDomainId,
-        workspaceId: workspace.id,
-      },
-    );
+    const emailingDomain = await this.emailingDomainRepository.findOneBy({
+      id: emailingDomainId,
+      workspaceId: workspace.id,
+    });
 
     if (!emailingDomain) {
       throw new Error('Emailing domain not found');

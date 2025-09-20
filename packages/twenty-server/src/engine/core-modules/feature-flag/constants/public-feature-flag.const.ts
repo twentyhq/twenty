@@ -36,8 +36,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'Emailing Domain',
       description: 'Send emails from your own domain',
-      imagePath:
-        'https://twenty.com/images/lab/is-emailing-domain-enabled.png',
+      imagePath: 'https://twenty.com/images/lab/is-emailing-domain-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

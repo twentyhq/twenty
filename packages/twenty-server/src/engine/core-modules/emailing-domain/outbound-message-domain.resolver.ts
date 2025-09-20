@@ -13,9 +13,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UsePipes(ResolverValidationPipe)
 @Resolver(() => EmailingDomainDto)
 export class EmailingDomainResolver {
-  constructor(
-    private readonly emailingDomainService: EmailingDomainService,
-  ) {}
+  constructor(private readonly emailingDomainService: EmailingDomainService) {}
 
   @Mutation(() => EmailingDomainDto)
   async createEmailingDomain(
@@ -38,10 +36,7 @@ export class EmailingDomainResolver {
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<boolean> {
-    await this.emailingDomainService.deleteEmailingDomain(
-      currentWorkspace,
-      id,
-    );
+    await this.emailingDomainService.deleteEmailingDomain(currentWorkspace, id);
 
     return true;
   }
@@ -65,9 +60,7 @@ export class EmailingDomainResolver {
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<EmailingDomainDto[]> {
     const emailingDomains =
-      await this.emailingDomainService.getEmailingDomains(
-        currentWorkspace,
-      );
+      await this.emailingDomainService.getEmailingDomains(currentWorkspace);
 
     return emailingDomains;
   }

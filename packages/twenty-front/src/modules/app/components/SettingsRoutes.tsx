@@ -311,19 +311,19 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
 );
 
 const SettingsNewEmailingDomain = lazy(() =>
-  import(
-    '~/pages/settings/emailing-domains/SettingsNewEmailingDomain'
-  ).then((module) => ({
-    default: module.SettingsNewEmailingDomain,
-  })),
+  import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
+    (module) => ({
+      default: module.SettingsNewEmailingDomain,
+    }),
+  ),
 );
 
 const SettingsEmailingDomainDetail = lazy(() =>
-  import(
-    '~/pages/settings/emailing-domains/SettingsEmailingDomainDetail'
-  ).then((module) => ({
-    default: module.SettingsEmailingDomainDetail,
-  })),
+  import('~/pages/settings/emailing-domains/SettingsEmailingDomainDetail').then(
+    (module) => ({
+      default: module.SettingsEmailingDomainDetail,
+    }),
+  ),
 );
 
 const SettingsAdmin = lazy(() =>
