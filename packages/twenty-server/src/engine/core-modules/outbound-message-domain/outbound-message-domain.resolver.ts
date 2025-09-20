@@ -2,10 +2,7 @@ import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { CreateOutboundMessageDomainInput } from 'src/engine/core-modules/outbound-message-domain/dtos/create-outbound-message-domain.input';
-import { DeleteOutboundMessageDomainInput } from 'src/engine/core-modules/outbound-message-domain/dtos/delete-outbound-message-domain.input';
 import { OutboundMessageDomainDto } from 'src/engine/core-modules/outbound-message-domain/dtos/outbound-message-domain.dto';
-import { VerifyOutboundMessageDomainInput } from 'src/engine/core-modules/outbound-message-domain/dtos/verify-outbound-message-domain.input';
 import { OutboundMessageDomainService } from 'src/engine/core-modules/outbound-message-domain/services/outbound-message-domain.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,13 +18,12 @@ export class OutboundMessageDomainResolver {
 
   @Mutation(() => OutboundMessageDomainDto)
   async createOutboundMessageDomain(
-    @Args('input')
-    createOutboundMessageDomainInput: CreateOutboundMessageDomainInput,
+    @Args('domain') domain: string,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<OutboundMessageDomainDto> {
     const outboundMessageDomain =
       await this.outboundMessageDomainService.createOutboundMessageDomain(
-        createOutboundMessageDomainInput,
+        { domain },
         currentWorkspace,
       );
 
@@ -36,7 +32,7 @@ export class OutboundMessageDomainResolver {
 
   @Mutation(() => Boolean)
   async deleteOutboundMessageDomain(
-    @Args('input') { id }: DeleteOutboundMessageDomainInput,
+    @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<boolean> {
     await this.outboundMessageDomainService.deleteOutboundMessageDomain(
@@ -49,7 +45,7 @@ export class OutboundMessageDomainResolver {
 
   @Mutation(() => OutboundMessageDomainDto)
   async verifyOutboundMessageDomain(
-    @Args('input') { id }: VerifyOutboundMessageDomainInput,
+    @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<OutboundMessageDomainDto> {
     const outboundMessageDomain =

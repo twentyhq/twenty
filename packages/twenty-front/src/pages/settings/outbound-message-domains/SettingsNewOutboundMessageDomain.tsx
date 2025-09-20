@@ -1,11 +1,9 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -21,12 +19,6 @@ import {
   settingsOutboundMessageDomainFormSchema,
   type SettingsOutboundMessageDomainFormValues,
 } from '~/pages/settings/outbound-message-domains/validation-schemas/settingsOutboundMessageDomainFormSchema';
-
-const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-`;
 
 type FieldErrors = Partial<
   Record<keyof SettingsOutboundMessageDomainFormValues, string>
@@ -120,13 +112,6 @@ export const SettingsNewOutboundMessageDomain = () => {
     }
   };
 
-  const driverOptions = [
-    {
-      label: 'AWS SES',
-      value: OutboundMessageDomainDriver.AWS_SES,
-    },
-  ];
-
   return (
     <SubMenuTopBarContainer
       title="New Outbound Message Domain"
@@ -169,28 +154,6 @@ export const SettingsNewOutboundMessageDomain = () => {
             placeholder="yourdomain.com"
             error={fieldErrors.domain}
           />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Email Provider`}
-            description={t`Choose the email service provider for this domain`}
-          />
-          <Select
-            dropdownId="outbound-message-domain-driver"
-            value={formValues.driver}
-            onChange={(value) => {
-              if (isDefined(value)) {
-                handleFieldChange(
-                  'driver',
-                  value as OutboundMessageDomainDriver,
-                );
-              }
-            }}
-            options={driverOptions}
-          />
-          {fieldErrors.driver && (
-            <StyledErrorMessage>{fieldErrors.driver}</StyledErrorMessage>
-          )}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
