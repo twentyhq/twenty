@@ -22,6 +22,8 @@ const StyledCreateObjectOverrideSection = styled(Section)`
 `;
 
 const StyledTableRows = styled.div`
+  max-height: 488px;
+  overflow-y: auto;
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
