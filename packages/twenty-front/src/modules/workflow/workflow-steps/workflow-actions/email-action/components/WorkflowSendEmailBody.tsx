@@ -20,7 +20,6 @@ import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/
 import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -109,7 +108,7 @@ export const WorkflowSendEmailBody = ({
 
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { t: tLingui } = useLingui();
+  const { t } = useLingui();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -134,9 +133,11 @@ export const WorkflowSendEmailBody = ({
   };
 
   const handleImageUploadError = (error: Error, file: File) => {
-    // Show user-friendly error message
     enqueueErrorSnackBar({
-      message: tLingui`Failed to upload image: ${file.name}`,
+      message: t({
+        message: 'Failed to upload image: {fileName}',
+        values: { fileName: file.name },
+      }),
     });
   };
 

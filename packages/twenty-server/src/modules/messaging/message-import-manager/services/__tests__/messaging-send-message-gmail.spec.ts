@@ -2,11 +2,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { GmailClientProvider } from '../../drivers/gmail/providers/gmail-client.provider';
-import { OAuth2ClientProvider } from '../../drivers/gmail/providers/oauth2-client.provider';
-import { MicrosoftClientProvider } from '../../drivers/microsoft/providers/microsoft-client.provider';
-import { SmtpClientProvider } from '../../drivers/smtp/providers/smtp-client.provider';
-import { MessagingSendMessageService } from '../messaging-send-message.service';
+import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
+import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 
 describe('MessagingSendMessageService - Gmail HTML Support', () => {
   let service: MessagingSendMessageService;
