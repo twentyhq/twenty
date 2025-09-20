@@ -6,7 +6,7 @@ export class VerificationRecord {
   type: 'TXT' | 'CNAME' | 'MX';
 
   @Field(() => String)
-  name: string;
+  key: string;
 
   @Field(() => String)
   value: string;

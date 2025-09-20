@@ -1,6 +1,6 @@
 export type VerificationRecord = {
   type: 'TXT' | 'CNAME' | 'MX';
-  name: string;
+  key: string;
   value: string;
   priority?: number;
 };

@@ -10,7 +10,7 @@ export const GET_ALL_EMAILING_DOMAINS = gql`
       verifiedAt
       verificationRecords {
         type
-        name
+        key
         value
         priority
       }

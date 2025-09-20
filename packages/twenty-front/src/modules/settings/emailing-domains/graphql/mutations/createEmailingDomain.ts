@@ -13,7 +13,7 @@ export const CREATE_EMAILING_DOMAIN = gql`
       verifiedAt
       verificationRecords {
         type
-        name
+        key
         value
         priority
       }

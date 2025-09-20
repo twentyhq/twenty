@@ -4,14 +4,13 @@ import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-d
 import { GET_ALL_EMAILING_DOMAINS } from '@/settings/emailing-domains/graphql/queries/getAllEmailingDomains';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useQuery } from '@apollo/client';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type GetEmailingDomainsQuery } from '~/generated-metadata/graphql';
 
 export const SettingsEmailingDomainDetail = () => {
-  const { t } = useLingui();
   const { domainId } = useParams<{ domainId: string }>();
 
   const { data, loading, error } = useQuery<GetEmailingDomainsQuery>(
@@ -52,9 +51,7 @@ export const SettingsEmailingDomainDetail = () => {
         {emailingDomain.verificationRecords &&
           emailingDomain.verificationRecords.length > 0 && (
             <SettingsEmailingDomainVerificationRecords
-              title={t`DNS Records`}
-              verificationRecords={emailingDomain.verificationRecords}
-              description={t`DNS records required for this domain to be verified and operational.`}
+              domain={emailingDomain}
             />
           )}
       </SettingsPageContainer>

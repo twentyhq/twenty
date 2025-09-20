@@ -18,7 +18,7 @@ type DnsRecordBase = {
   type: string;
   key: string;
   value: string;
-  priority?: number;
+  priority?: number | null;
   ttl?: string;
 };
 

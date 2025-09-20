@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
 
 import {
-    CreateEmailIdentityCommand,
-    CreateTenantCommand,
-    CreateTenantResourceAssociationCommand,
-    GetEmailIdentityCommand,
-    PutEmailIdentityDkimAttributesCommand,
+  CreateEmailIdentityCommand,
+  CreateTenantCommand,
+  CreateTenantResourceAssociationCommand,
+  GetEmailIdentityCommand,
+  PutEmailIdentityDkimAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
@@ -221,7 +221,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   ): VerificationRecord[] {
     return dkimTokens.map((token) => ({
       type: 'CNAME' as const,
-      name: `${token}._domainkey.${domain}`,
+      key: `${token}._domainkey.${domain}`,
       value: `${token}.dkim.amazonses.com`,
     }));
   }

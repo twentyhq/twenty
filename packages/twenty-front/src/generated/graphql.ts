@@ -3740,7 +3740,7 @@ export type ValidatePasswordResetToken = {
 
 export type VerificationRecord = {
   __typename?: 'VerificationRecord';
-  name: Scalars['String'];
+  key: Scalars['String'];
   priority?: Maybe<Scalars['Float']>;
   type: Scalars['String'];
   value: Scalars['String'];

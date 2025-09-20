@@ -3912,7 +3912,7 @@ export type ValidatePasswordResetToken = {
 
 export type VerificationRecord = {
   __typename?: 'VerificationRecord';
-  name: Scalars['String'];
+  key: Scalars['String'];
   priority?: Maybe<Scalars['Float']>;
   type: Scalars['String'];
   value: Scalars['String'];
@@ -4943,7 +4943,7 @@ export type CreateEmailingDomainMutationVariables = Exact<{
 }>;
 
 
-export type CreateEmailingDomainMutation = { __typename?: 'Mutation', createEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, name: string, value: string, priority?: number | null }> | null } };
+export type CreateEmailingDomainMutation = { __typename?: 'Mutation', createEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null } };
 
 export type DeleteEmailingDomainMutationVariables = Exact<{
   id: Scalars['String'];
@@ -4962,7 +4962,7 @@ export type VerifyEmailingDomainMutation = { __typename?: 'Mutation', verifyEmai
 export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, name: string, value: string, priority?: number | null }> | null }> };
+export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -10065,7 +10065,7 @@ export const CreateEmailingDomainDocument = gql`
     verifiedAt
     verificationRecords {
       type
-      name
+      key
       value
       priority
     }
@@ -10181,7 +10181,7 @@ export const GetEmailingDomainsDocument = gql`
     verifiedAt
     verificationRecords {
       type
-      name
+      key
       value
       priority
     }
