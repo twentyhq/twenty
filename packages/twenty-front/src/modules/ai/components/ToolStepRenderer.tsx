@@ -6,11 +6,9 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import type {
-  ToolCallEvent,
-  ToolEvent,
-  ToolResultEvent,
-} from '@/ai/types/streamTypes';
+import type { ToolCallEvent } from '@/ai/types/ToolCallEvent';
+import type { ToolEvent } from '@/ai/types/ToolEvent';
+import type { ToolResultEvent } from '@/ai/types/ToolResultEvent';
 import { extractErrorMessage } from '@/ai/utils/extractErrorMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 

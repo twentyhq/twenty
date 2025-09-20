@@ -1,7 +1,7 @@
 import { ErrorStepRenderer } from '@/ai/components/ErrorStepRenderer';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import type { ParsedStep } from '@/ai/types/streamTypes';
+import type { ParsedStep } from '@/ai/types/ParsedStep';
 import { hasStructuredStreamData } from '@/ai/utils/hasStructuredStreamData';
 import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';

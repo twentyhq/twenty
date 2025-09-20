@@ -1,10 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type ParsedStep,
-  type ToolEvent,
-  type ToolResultEvent,
-} from '@/ai/types/streamTypes';
+import type { ParsedStep } from '@/ai/types/ParsedStep';
+import type { ToolEvent } from '@/ai/types/ToolEvent';
+import type { ToolResultEvent } from '@/ai/types/ToolResultEvent';
 
 type TextBlock =
   | { type: 'reasoning'; content: string; isThinking: boolean }
