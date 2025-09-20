@@ -9,9 +9,15 @@ import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-r
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import React, { Suspense } from 'react';
+
+const LazyShowPageSubContainer = React.lazy(() =>
+  import('@/ui/layout/show-page/components/ShowPageSubContainer').then(
+    (mod) => ({ default: mod.ShowPageSubContainer }),
+  ),
+);
 
 const StyledShowPageBannerContainer = styled.div`
   z-index: 1;
@@ -67,16 +73,18 @@ export const RecordShowContainer = ({
         </StyledShowPageBannerContainer>
       )}
       <ShowPageContainer>
-        <ShowPageSubContainer
-          tabs={tabs}
-          layout={layout}
-          targetableObject={{
-            id: objectRecordId,
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          isInRightDrawer={isInRightDrawer}
-          loading={isPrefetchLoading || loading || recordLoading}
-        />
+        <Suspense fallback={<div>Loading page...</div>}>
+          <LazyShowPageSubContainer
+            tabs={tabs}
+            layout={layout}
+            targetableObject={{
+              id: objectRecordId,
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+            }}
+            isInRightDrawer={isInRightDrawer}
+            loading={isPrefetchLoading || loading || recordLoading}
+          />
+        </Suspense>
       </ShowPageContainer>
     </RightDrawerProvider>
   );
