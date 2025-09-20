@@ -1,10 +1,9 @@
-import { VERIFY_OUTBOUND_MESSAGE_DOMAIN } from '@/settings/outbound-message-domains/graphql/mutations/verifyOutboundMessageDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ApolloError, useMutation } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconShield, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -14,6 +13,7 @@ import {
   OutboundMessageDomainStatus,
   useDeleteOutboundMessageDomainMutation,
   useGetOutboundMessageDomainsQuery,
+  useVerifyOutboundMessageDomainMutation,
 } from '~/generated-metadata/graphql';
 
 type SettingsOutboundMessageDomainRowDropdownMenuProps = {
@@ -35,9 +35,8 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
   const [deleteOutboundMessageDomainMutation] =
     useDeleteOutboundMessageDomainMutation();
 
-  const [verifyOutboundMessageDomain] = useMutation(
-    VERIFY_OUTBOUND_MESSAGE_DOMAIN,
-  );
+  const [verifyOutboundMessageDomainMutation] =
+    useVerifyOutboundMessageDomainMutation();
 
   const handleDeleteOutboundMessageDomain = async () => {
     try {
@@ -61,16 +60,16 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
 
   const handleVerifyOutboundMessageDomain = async () => {
     try {
-      await verifyOutboundMessageDomain({
+      await verifyOutboundMessageDomainMutation({
         variables: {
-          input: {
-            id: outboundMessageDomain.id,
-          },
+          id: outboundMessageDomain.id,
         },
       });
       enqueueSuccessSnackBar({
         message: t`Started verification process`,
       });
+
+      await refetchOutboundMessageDomains();
     } catch (error) {
       enqueueErrorSnackBar({
         ...(error instanceof ApolloError ? { apolloError: error } : {}),
