@@ -3,9 +3,9 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated/graphql';
-import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -310,6 +310,22 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
+const SettingsNewEmailingDomain = lazy(() =>
+  import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
+    (module) => ({
+      default: module.SettingsNewEmailingDomain,
+    }),
+  ),
+);
+
+const SettingsEmailingDomainDetail = lazy(() =>
+  import('~/pages/settings/emailing-domains/SettingsEmailingDomainDetail').then(
+    (module) => ({
+      default: module.SettingsEmailingDomainDetail,
+    }),
+  ),
+);
+
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -429,6 +445,14 @@ export const SettingsRoutes = ({
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
+        />
+        <Route
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
+        />
         <Route
           path={SettingsPath.PublicDomain}
           element={<SettingPublicDomain />}

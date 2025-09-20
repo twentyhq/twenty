@@ -17,7 +17,10 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
+import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
+import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -35,6 +38,7 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PageLayoutModule } from 'src/engine/core-modules/page-layout/page-layout.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
+import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
@@ -53,9 +57,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
-import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
-import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -82,6 +83,7 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
+    EmailingDomainModule,
     PublicDomainModule,
     CloudflareModule,
     DnsManagerModule,

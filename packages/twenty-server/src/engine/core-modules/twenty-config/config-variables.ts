@@ -1211,6 +1211,50 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS region',
+    type: ConfigVariableType.STRING,
+  })
+  @IsAWSRegion()
+  @IsOptional()
+  AWS_SES_REGION: AwsRegion;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS access key ID',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCESS_KEY_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS session token',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SESSION_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS secret access key',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS Account ID for SES ARN construction',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCOUNT_ID: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
