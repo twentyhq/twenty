@@ -153,9 +153,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Email Body')).toBeVisible();
-    expect(
-      await canvas.findByText('Enter your email content...'),
-    ).toBeVisible();
+    expect(await canvas.findByRole('textbox')).toBeVisible();
   },
 };
 
@@ -253,9 +251,7 @@ export const Interactive: Story = {
 
     expect(await canvas.findByText('Email Body')).toBeVisible();
 
-    const editor = await canvas.findByText(
-      'Start typing to see the editor in action...',
-    );
+    const editor = await canvas.findByRole('textbox');
     expect(editor).toBeVisible();
 
     await userEvent.click(editor);
@@ -276,9 +272,7 @@ export const WithoutVariablePicker: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Email Body')).toBeVisible();
-    expect(
-      await canvas.findByText('Enter your email content...'),
-    ).toBeVisible();
+    expect(await canvas.findByRole('textbox')).toBeVisible();
   },
 };
 

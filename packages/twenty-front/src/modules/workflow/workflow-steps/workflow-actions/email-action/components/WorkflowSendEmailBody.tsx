@@ -134,10 +134,7 @@ export const WorkflowSendEmailBody = ({
 
   const handleImageUploadError = (error: Error, file: File) => {
     enqueueErrorSnackBar({
-      message: t({
-        message: 'Failed to upload image: {fileName}',
-        values: { fileName: file.name },
-      }),
+      message: t`Failed to upload image: `.concat(file.name),
     });
   };
 

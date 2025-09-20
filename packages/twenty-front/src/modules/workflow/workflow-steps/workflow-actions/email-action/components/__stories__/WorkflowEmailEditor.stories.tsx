@@ -2,7 +2,14 @@ import { WorkflowEmailEditor } from '@/workflow/workflow-steps/workflow-actions/
 import { useEmailEditor } from '@/workflow/workflow-steps/workflow-actions/email-action/hooks/useEmailEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const EditorWrapper = ({
   readonly = false,
@@ -42,7 +49,19 @@ const EditorWrapper = ({
 const meta: Meta<typeof EditorWrapper> = {
   title: 'Modules/Workflow/Actions/SendEmail/EmailEditor',
   component: EditorWrapper,
-  decorators: [ComponentDecorator],
+  parameters: {
+    msw: graphqlMocks,
+  },
+  decorators: [
+    WorkflowStepActionDrawerDecorator,
+    WorkflowStepDecorator,
+    ComponentDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+    RouterDecorator,
+    WorkspaceDecorator,
+    I18nFrontDecorator,
+  ],
 };
 
 export default meta;
