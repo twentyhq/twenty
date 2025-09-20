@@ -37,7 +37,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: shipfox-8vcpu-ubuntu-2404
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
