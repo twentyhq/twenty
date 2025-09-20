@@ -1,6 +1,7 @@
 import { extractErrorMessage } from '@/ai/utils/extractErrorMessage';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { IconAlertCircle } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
@@ -53,7 +54,7 @@ export const ErrorStepRenderer = ({
         <IconAlertCircle size={theme.icon.size.md} />
       </StyledIconContainer>
       <StyledContent>
-        <StyledTitle>Error</StyledTitle>
+        <StyledTitle>{t`Error`}</StyledTitle>
         <StyledMessage>{errorMessage}</StyledMessage>
       </StyledContent>
     </StyledContainer>
