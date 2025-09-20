@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
-import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 import { useTheme } from '@emotion/react';
 import {
@@ -62,7 +63,7 @@ const StyledIconContainer = styled.div`
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
-  left: 16px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 `;
 
 const StyledActionTextContainer = styled.div<{ width: number }>`
@@ -74,7 +75,8 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: start;
 
-  left: 48px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   position: sticky;
   width: ${({ width }) => width}px;
 `;

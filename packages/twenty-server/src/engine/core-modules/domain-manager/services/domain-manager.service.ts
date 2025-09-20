@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
@@ -11,7 +11,7 @@ import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class DomainManagerService {
@@ -158,7 +158,7 @@ export class DomainManagerService {
 
     const foundWorkspace = workspaces[0];
 
-    workspaceValidator.assertIsDefinedOrThrow(foundWorkspace);
+    assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 
     return foundWorkspace;
   }

@@ -18,6 +18,12 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#. js-lingui-id: lndIq/
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid " billed annually"
+msgstr ""
+
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid " must be one of {ratingValues} values"
@@ -62,6 +68,11 @@ msgstr ": Geçmiş"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr ": Bugün"
+
+#. js-lingui-id: N/lIUf
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid ". The change will be applied the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -113,11 +124,6 @@ msgstr "{failedCount} dosya yükleme başarısız oldu"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} kayıttan {formattedRecordsToImportCount} kaydı aktarıldı."
 
-#. js-lingui-id: J2Vio9
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{nickname} - {price}$"
-msgstr "{nickname} - {price}$"
-
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -162,7 +168,7 @@ msgid "1. Type"
 msgstr "1. Tür"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "10,000 workflow node executions"
 msgstr "10.000 iş akışı düğüm çalıştırılması"
 
@@ -193,7 +199,7 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. {objectLabelPlural} izinlerini ayarlayın"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "20,000 workflow node executions"
 msgstr "20.000 iş akışı düğüm çalıştırılması"
 
@@ -431,11 +437,6 @@ msgstr "Yeni ekle"
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Add node"
-msgstr "Düğüm ekle"
-
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
 msgstr "Düğüm ekle"
 
 #. js-lingui-id: dEO3Zx
@@ -765,8 +766,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhook'lar"
 
@@ -1083,7 +1084,7 @@ msgid "Blocklist"
 msgstr "Engellenmiş Liste"
 
 #. js-lingui-id: 2yl5lQ
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Book a Call"
 msgstr "\"Twenty\"'yi kullanarak"
 
@@ -1211,13 +1212,43 @@ msgstr "Tarayamaz mısınız? Kopyalayın."
 msgid "Cancel"
 msgstr "İptal"
 
+#. js-lingui-id: dV4HC5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching"
+msgstr ""
+
+#. js-lingui-id: M5CqkG
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching?"
+msgstr ""
+
+#. js-lingui-id: /Dmw1h
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching"
+msgstr ""
+
+#. js-lingui-id: Q/chGD
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching?"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "Planı İptal Et"
 
+#. js-lingui-id: 8eSMLX
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching"
+msgstr ""
+
+#. js-lingui-id: f6KFEf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching?"
+msgstr ""
+
 #. js-lingui-id: N6gPiD
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Aboneliğinizi iptal edin"
 
@@ -1249,7 +1280,7 @@ msgid "Change Password"
 msgstr "Şifre Değiştir"
 
 #. js-lingui-id: wRtBJP
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Change Plan"
 msgstr "Planı Değiştir"
 
@@ -1258,10 +1289,20 @@ msgstr "Planı Değiştir"
 msgid "Change subdomain?"
 msgstr "Alt alan adını değiştirmek istiyor musunuz?"
 
+#. js-lingui-id: 9m7pJA
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Monthly?"
+msgstr ""
+
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Kuruluş Planına Geçilsin mi?"
+
+#. js-lingui-id: t7uUc+
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Pro Plan?"
+msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1303,11 +1344,6 @@ msgstr "Çince — Geleneksel"
 msgid "Choose a Workspace"
 msgstr "Bir Çalışma Alanı Seçin"
 
-#. js-lingui-id: ub6oFI
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Choose additional formatting preferences"
-msgstr ""
-
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -1334,7 +1370,7 @@ msgid "Choose the format used to display date value"
 msgstr "Tarih değerini görüntülemek için kullanılan formatı seçin"
 
 #. js-lingui-id: 9qP96p
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
 msgstr "Deneme Sürümünüzü Seçin"
 
@@ -1485,10 +1521,10 @@ msgstr "Takvim tercihlerinizi yapılandırın ve özelleştirin."
 msgid "Configure CalDAV settings to sync your calendar events."
 msgstr "CalDAV ayarlarını takvim etkinliklerinizi senkronize etmek için yapılandırın."
 
-#. js-lingui-id: aGwm+D
+#. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Configure how dates are displayed across the app"
-msgstr "Uygulama genelinde tarihlerin nasıl görüntüleneceğini yapılandırın"
+msgid "Configure date, time, number, timezone, and calendar start day"
+msgstr ""
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1527,13 +1563,33 @@ msgstr "E-posta ve takvim ayarlarınızı yapılandırın."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Onayla"
+
+#. js-lingui-id: qmnX/6
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm changing your current credit plan."
+msgstr ""
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "{roleName} rolünü silmeyi onaylıyor musunuz? Bu geri alınamaz. Tüm üyeler varsayılan role yeniden atanacak."
+
+#. js-lingui-id: kZkFSm
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm downgrade"
+msgstr ""
+
+#. js-lingui-id: DDbn3x
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm upgrade"
+msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1596,7 +1652,7 @@ msgstr "Bağlam"
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1883,6 +1939,11 @@ msgstr "Kredi Planı"
 msgid "Credit Usage"
 msgstr "Kredi Kullanımı"
 
+#. js-lingui-id: hdSacI
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credits by period"
+msgstr ""
+
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -1892,6 +1953,11 @@ msgstr "Kullanılan Krediler"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
 msgstr "para birimleri"
+
+#. js-lingui-id: Hp1l6f
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+msgid "Current"
+msgstr ""
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -1920,8 +1986,8 @@ msgid "Custom domain updated"
 msgstr "Özel alan adı güncellendi"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Custom objects"
 msgstr "Özel nesneler"
 
@@ -2029,11 +2095,6 @@ msgstr "Veritabanı yapılandırması şu anda devre dışı."
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Tarih"
-
-#. js-lingui-id: Ud9zHv
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Date and time"
-msgstr "Tarih ve saat"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -2216,11 +2277,6 @@ msgstr "Temsilciyi Sil"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
 msgstr "API anahtarını sil"
-
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "Dal sil"
 
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -2461,6 +2517,12 @@ msgstr "Team@ support@ noreply@... adreslerinden e-postaları senkronize etme...
 msgid "Dots and comma - {dotsAndCommaExample}"
 msgstr ""
 
+#. js-lingui-id: LE8J+K
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Downgrade"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2566,7 +2628,7 @@ msgid "Edit iFrame"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Ödeme yöntemini düzenleyin, faturalarınızı görün ve daha fazlası"
 
@@ -2617,8 +2679,8 @@ msgid "Email copied to clipboard"
 msgstr "E-posta panoya kopyalandı"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Email integration"
 msgstr "E-posta entegrasyonu"
 
@@ -2734,7 +2796,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "Parolanızla birlikte bir kod gerektirerek güvenliği artırır"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "{withCreditCardTrialPeriodDuration} gün süresince ücretsiz deneme süresinin tadını çıkarın"
 
@@ -2854,20 +2916,35 @@ msgstr "Rol güncellenirken hata oluştu"
 msgid "Error validating approved access domain"
 msgstr "Onaylı erişim alanı doğrulanırken hata oluştu"
 
+#. js-lingui-id: pt7mmi
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling interval switching."
+msgstr ""
+
+#. js-lingui-id: a1gs9Y
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling metered tier switching."
+msgstr ""
+
+#. js-lingui-id: FS6DQK
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling plan switching."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Deneme süresi sona erdirilirken hata oluştu. Lütfen Twenty ekibiyle iletişime geçin."
 
-#. js-lingui-id: JKNROf
+#. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Organization Plan."
-msgstr "Abonelik Kuruluş Planına değiştirilirken hata oluştu."
+msgid "Error while switching subscription to {oppositPlan} Plan."
+msgstr ""
 
-#. js-lingui-id: ENV7jU
+#. js-lingui-id: QPJi2W
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Yearly."
-msgstr "Abonelik yıllığa değiştirilirken hata."
+msgid "Error while switching subscription."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3237,6 +3314,11 @@ msgstr "İlk 5 satır"
 msgid "First Name"
 msgstr "İsim"
 
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
+
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
@@ -3262,6 +3344,11 @@ msgstr "Biçim"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Format örn. d-MMM-y (qqq''yy)"
 
+#. js-lingui-id: 4JsQoY
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Formats"
+msgstr ""
+
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
@@ -3273,8 +3360,8 @@ msgid "French"
 msgstr "Fransızca"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Tam erişim"
 
@@ -3312,7 +3399,7 @@ msgid "Get the most out of your workspace by inviting your team."
 msgstr "Ekibinizi davet ederek çalışma alanınızdan en iyi şekilde yararlanın."
 
 #. js-lingui-id: zSGbaR
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Get your subscription"
 msgstr "Aboneliğinizi alın"
 
@@ -3710,6 +3797,11 @@ msgstr "Entegrasyonlar - Ayarlar"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Çalışma alanı verileriyle etkileşim kurma"
+
+#. js-lingui-id: jyjroS
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Interval switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4124,7 +4216,7 @@ msgid "Loading..."
 msgstr "Yükleniyor..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
@@ -4166,7 +4258,7 @@ msgid "Manage API keys and webhooks"
 msgstr "API anahtarlarını ve webhook'ları yönetin"
 
 #. js-lingui-id: nvgUPq
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Fatura bilgilerini yönet"
 
@@ -4296,6 +4388,11 @@ msgstr "Meta veri"
 msgid "Metadata file generation failed"
 msgstr "Metadata dosyası oluşturulamadı"
 
+#. js-lingui-id: onCJJ6
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Metered tier switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4323,7 +4420,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "E-posta senkronizasyon işinizin yürütülmesini izleyin"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "ay"
 
@@ -4335,7 +4432,7 @@ msgid "Month"
 msgstr ""
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "aylık"
 
@@ -4564,6 +4661,7 @@ msgid "New SSO provider"
 msgstr "Yeni SSO sağlayıcısı"
 
 #. js-lingui-id: hXzOVo
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "Sonraki"
@@ -5029,7 +5127,8 @@ msgid "Or"
 msgstr "Veya"
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "Kuruluş"
 
@@ -5042,21 +5141,11 @@ msgstr "Kuruluş"
 msgid "Other"
 msgstr "Diğer"
 
-#. js-lingui-id: vPKFXl
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Other formats"
-msgstr ""
-
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "Diğer çalışma alanları"
-
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-msgid "Others"
-msgstr "Diğerleri"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -5193,6 +5282,11 @@ msgstr "Resim"
 msgid "Plan"
 msgstr "Plan"
 
+#. js-lingui-id: XduPHC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Plan switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -5292,7 +5386,8 @@ msgid "Privacy Policy"
 msgstr "Gizlilik Politikası"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Pro"
 
@@ -5489,11 +5584,6 @@ msgstr "Varsayılan olarak kaldır"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "Remove Deleted filter"
 msgstr "Silinmiş filtreyi kaldır"
-
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr "Filtreyi kaldır"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6341,7 +6431,7 @@ msgid "SSO"
 msgstr "Tek Oturum Açma"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -6450,15 +6540,20 @@ msgstr "Abonelik"
 msgid "Subscription activated."
 msgstr "Abonelik etkinleştirildi."
 
-#. js-lingui-id: KNMVB5
+#. js-lingui-id: gvXPJz
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription has been switched to Organization Plan."
-msgstr "Abonelik Kuruluş Planına geçirildi."
+msgid "Subscription has been switched to {oppositPlan} Plan."
+msgstr ""
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Abonelik yıllık olarak değiştirildi."
+
+#. js-lingui-id: nQcG+x
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6491,10 +6586,20 @@ msgstr "Destek"
 msgid "Swedish"
 msgstr "İsveççe"
 
+#. js-lingui-id: dpXnFC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Monthly"
+msgstr ""
+
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "Kuruluşa Geç"
+
+#. js-lingui-id: GPKudC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Pro"
+msgstr ""
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6801,6 +6906,16 @@ msgstr "Bu değer veritabanına kaydedilecek."
 msgid "This week"
 msgstr "Bu hafta"
 
+#. js-lingui-id: h4VeOo
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
+msgstr ""
+
+#. js-lingui-id: XpARoU
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
+msgstr ""
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -6861,7 +6976,7 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "{intervalLabel} iş akışı kredi tüketiminizi takip edin."
 
 #. js-lingui-id: lhkaAC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "Deneme"
 
@@ -6989,8 +7104,8 @@ msgid "Unknown error"
 msgstr "Bilinmeyen hata"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Unlimited contacts"
 msgstr "Sınırsız kişilerle iletişim"
 
@@ -7029,6 +7144,12 @@ msgstr "Temsilci bilgilerini güncelle"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Hesap yapılandırmanızı güncelleyin. Gerektiği şekilde IMAP, SMTP ve CalDAV'ın herhangi bir kombinasyonunu yapılandırın."
+
+#. js-lingui-id: kwkhPe
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Upgrade"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7191,7 +7312,7 @@ msgid "View"
 msgstr "Görünüm"
 
 #. js-lingui-id: KANz0G
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Fatura detaylarını görüntüle"
 
@@ -7427,12 +7548,12 @@ msgstr "Bu temsilci için bir açıklama yazın"
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "yıl"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "yıllık"
 
@@ -7482,20 +7603,30 @@ msgstr ""
 "Bağlantıyı düzenleyemezsiniz çünkü izlendiğini tablolara sahiptir.\n"
 "Değişiklik yapmanız gerekiyorsa, lütfen yeni bir bağlantı oluşturun veya önce tabloların eşzamanlılığını kaldırın."
 
-#. js-lingui-id: zEM7Ne
+#. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month billed annually."
-msgstr "Ödemeler yıllık olarak fatura edilir ve ${enterprisePrice} kullanıcı başına aylık ücret alınır."
+msgid "You have scheduled a metered tier change. Do you want to cancel it?"
+msgstr ""
 
-#. js-lingui-id: HM4D8s
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month."
-msgstr "Kullanıcı başına aylık ${enterprisePrice} ücret alınacaktır."
+#. js-lingui-id: z8eKS7
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "you will be charged ${enterprisePrice} per user per month"
+msgstr ""
 
-#. js-lingui-id: o4xIH4
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
-msgstr "Ödemeler yıllık olarak fatura edilir ve kullanıcı başına aylık ${yearlyPrice} ücret alınır. Mevcut aboneliğinizle orantılı bir ödeme uygulanacaktır."
+#. js-lingui-id: u3S6u8
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
+msgstr ""
+
+#. js-lingui-id: /T5zAB
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${proPrice} per user per month"
+msgstr ""
+
+#. js-lingui-id: W3k5LA
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -7532,6 +7663,16 @@ msgstr "Görüntülenecek adınız"
 msgid "Your name as it will be displayed on the app"
 msgstr "Uygulamada görüntülenecek adınız"
 
+#. js-lingui-id: QOd24n
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and "
+msgstr ""
+
+#. js-lingui-id: 2Fkd7s
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
+
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
@@ -7548,6 +7689,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "Çalışma alanınızın aktif bir aboneliği yok. Lütfen yöneticinizle iletişime geçin."
 
 #. js-lingui-id: RhNbPE
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "Çalışma alanınız devre dışı bırakılacak"
