@@ -20,7 +20,7 @@ const StyledFullScreenOverlay = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100vh;
-  z-index: ${RootStackingContextZIndices.Dialog};
+  z-index: ${RootStackingContextZIndices.RootModal};
 `;
 
 const StyledFullScreenHeader = styled(PageHeader)`

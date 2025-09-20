@@ -7,10 +7,10 @@ import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
-    IconBold,
-    IconItalic,
-    IconStrikethrough,
-    IconUnderline,
+  IconBold,
+  IconItalic,
+  IconStrikethrough,
+  IconUnderline,
 } from 'twenty-ui/display';
 
 export const StyledBubbleMenuContainer = styled.div`
