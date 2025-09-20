@@ -487,8 +487,8 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
-  AWSSeSSettings = 'AWSSeSSettings',
   AnalyticsConfig = 'AnalyticsConfig',
+  AwsSesSettings = 'AwsSesSettings',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -714,11 +714,6 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
-export type CreateOutboundMessageDomainInput = {
-  domain: Scalars['String'];
-  driver: OutboundMessageDomainDriver;
-};
-
 export type CreatePageLayoutInput = {
   name: Scalars['String'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -900,10 +895,6 @@ export type DeleteOneFieldInput = {
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
   id: Scalars['UUID'];
-};
-
-export type DeleteOutboundMessageDomainInput = {
-  id: Scalars['String'];
 };
 
 export type DeleteSsoInput = {
@@ -1725,7 +1716,8 @@ export type MutationCreateOneServerlessFunctionArgs = {
 
 
 export type MutationCreateOutboundMessageDomainArgs = {
-  input: CreateOutboundMessageDomainInput;
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
 };
 
 
@@ -1845,7 +1837,7 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 
 export type MutationDeleteOutboundMessageDomainArgs = {
-  input: DeleteOutboundMessageDomainInput;
+  id: Scalars['String'];
 };
 
 
@@ -2335,7 +2327,7 @@ export type MutationValidateApprovedAccessDomainArgs = {
 
 
 export type MutationVerifyOutboundMessageDomainArgs = {
-  input: VerifyOutboundMessageDomainInput;
+  id: Scalars['String'];
 };
 
 
@@ -3751,10 +3743,6 @@ export type VerificationRecord = {
   priority?: Maybe<Scalars['Float']>;
   type: Scalars['String'];
   value: Scalars['String'];
-};
-
-export type VerifyOutboundMessageDomainInput = {
-  id: Scalars['String'];
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {

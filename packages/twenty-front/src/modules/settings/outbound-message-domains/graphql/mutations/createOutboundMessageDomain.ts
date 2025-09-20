@@ -2,9 +2,10 @@ import { gql } from '@apollo/client';
 
 export const CREATE_OUTBOUND_MESSAGE_DOMAIN = gql`
   mutation CreateOutboundMessageDomain(
-    $input: CreateOutboundMessageDomainInput!
+    $domain: String!
+    $driver: OutboundMessageDomainDriver!
   ) {
-    createOutboundMessageDomain(input: $input) {
+    createOutboundMessageDomain(domain: $domain, driver: $driver) {
       id
       domain
       driver

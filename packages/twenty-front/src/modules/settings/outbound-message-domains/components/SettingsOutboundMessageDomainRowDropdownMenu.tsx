@@ -43,9 +43,7 @@ export const SettingsOutboundMessageDomainRowDropdownMenu = ({
     try {
       await deleteOutboundMessageDomainMutation({
         variables: {
-          input: {
-            id: outboundMessageDomain.id,
-          },
+          id: outboundMessageDomain.id,
         },
       });
 

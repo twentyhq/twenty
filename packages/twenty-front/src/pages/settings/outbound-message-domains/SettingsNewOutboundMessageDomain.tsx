@@ -82,10 +82,8 @@ export const SettingsNewOutboundMessageDomain = () => {
     try {
       await createOutboundMessageDomain({
         variables: {
-          input: {
-            domain: formValues.domain,
-            driver: formValues.driver,
-          },
+          domain: formValues.domain,
+          driver: formValues.driver,
         },
         onCompleted: (data) => {
           enqueueSuccessSnackBar({

@@ -487,8 +487,8 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
-  AWSSeSSettings = 'AWSSeSSettings',
   AnalyticsConfig = 'AnalyticsConfig',
+  AwsSesSettings = 'AwsSesSettings',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -742,11 +742,6 @@ export type CreateOneObjectInput = {
   object: CreateObjectInput;
 };
 
-export type CreateOutboundMessageDomainInput = {
-  domain: Scalars['String'];
-  driver: OutboundMessageDomainDriver;
-};
-
 export type CreatePageLayoutInput = {
   name: Scalars['String'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -936,10 +931,6 @@ export type DeleteOneFieldInput = {
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
   id: Scalars['UUID'];
-};
-
-export type DeleteOutboundMessageDomainInput = {
-  id: Scalars['String'];
 };
 
 export type DeleteSsoInput = {
@@ -1789,7 +1780,8 @@ export type MutationCreateOneServerlessFunctionArgs = {
 
 
 export type MutationCreateOutboundMessageDomainArgs = {
-  input: CreateOutboundMessageDomainInput;
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
 };
 
 
@@ -1914,7 +1906,7 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 
 export type MutationDeleteOutboundMessageDomainArgs = {
-  input: DeleteOutboundMessageDomainInput;
+  id: Scalars['String'];
 };
 
 
@@ -2424,7 +2416,7 @@ export type MutationValidateApprovedAccessDomainArgs = {
 
 
 export type MutationVerifyOutboundMessageDomainArgs = {
-  input: VerifyOutboundMessageDomainInput;
+  id: Scalars['String'];
 };
 
 
@@ -3925,10 +3917,6 @@ export type VerificationRecord = {
   value: Scalars['String'];
 };
 
-export type VerifyOutboundMessageDomainInput = {
-  id: Scalars['String'];
-};
-
 export type VerifyTwoFactorAuthenticationMethodOutput = {
   __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
   success: Scalars['Boolean'];
@@ -4956,21 +4944,22 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
 export type CreateOutboundMessageDomainMutationVariables = Exact<{
-  input: CreateOutboundMessageDomainInput;
+  domain: Scalars['String'];
+  driver: OutboundMessageDomainDriver;
 }>;
 
 
 export type CreateOutboundMessageDomainMutation = { __typename?: 'Mutation', createOutboundMessageDomain: { __typename?: 'OutboundMessageDomain', id: string, domain: string, driver: OutboundMessageDomainDriver, status: OutboundMessageDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, name: string, value: string, priority?: number | null }> | null } };
 
 export type DeleteOutboundMessageDomainMutationVariables = Exact<{
-  input: DeleteOutboundMessageDomainInput;
+  id: Scalars['String'];
 }>;
 
 
 export type DeleteOutboundMessageDomainMutation = { __typename?: 'Mutation', deleteOutboundMessageDomain: boolean };
 
 export type VerifyOutboundMessageDomainMutationVariables = Exact<{
-  input: VerifyOutboundMessageDomainInput;
+  id: Scalars['String'];
 }>;
 
 
@@ -10100,8 +10089,8 @@ export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof use
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 export const CreateOutboundMessageDomainDocument = gql`
-    mutation CreateOutboundMessageDomain($input: CreateOutboundMessageDomainInput!) {
-  createOutboundMessageDomain(input: $input) {
+    mutation CreateOutboundMessageDomain($domain: String!, $driver: OutboundMessageDomainDriver!) {
+  createOutboundMessageDomain(domain: $domain, driver: $driver) {
     id
     domain
     driver
@@ -10133,7 +10122,8 @@ export type CreateOutboundMessageDomainMutationFn = Apollo.MutationFunction<Crea
  * @example
  * const [createOutboundMessageDomainMutation, { data, loading, error }] = useCreateOutboundMessageDomainMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      domain: // value for 'domain'
+ *      driver: // value for 'driver'
  *   },
  * });
  */
@@ -10145,8 +10135,8 @@ export type CreateOutboundMessageDomainMutationHookResult = ReturnType<typeof us
 export type CreateOutboundMessageDomainMutationResult = Apollo.MutationResult<CreateOutboundMessageDomainMutation>;
 export type CreateOutboundMessageDomainMutationOptions = Apollo.BaseMutationOptions<CreateOutboundMessageDomainMutation, CreateOutboundMessageDomainMutationVariables>;
 export const DeleteOutboundMessageDomainDocument = gql`
-    mutation DeleteOutboundMessageDomain($input: DeleteOutboundMessageDomainInput!) {
-  deleteOutboundMessageDomain(input: $input)
+    mutation DeleteOutboundMessageDomain($id: String!) {
+  deleteOutboundMessageDomain(id: $id)
 }
     `;
 export type DeleteOutboundMessageDomainMutationFn = Apollo.MutationFunction<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>;
@@ -10164,7 +10154,7 @@ export type DeleteOutboundMessageDomainMutationFn = Apollo.MutationFunction<Dele
  * @example
  * const [deleteOutboundMessageDomainMutation, { data, loading, error }] = useDeleteOutboundMessageDomainMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -10176,8 +10166,8 @@ export type DeleteOutboundMessageDomainMutationHookResult = ReturnType<typeof us
 export type DeleteOutboundMessageDomainMutationResult = Apollo.MutationResult<DeleteOutboundMessageDomainMutation>;
 export type DeleteOutboundMessageDomainMutationOptions = Apollo.BaseMutationOptions<DeleteOutboundMessageDomainMutation, DeleteOutboundMessageDomainMutationVariables>;
 export const VerifyOutboundMessageDomainDocument = gql`
-    mutation VerifyOutboundMessageDomain($input: VerifyOutboundMessageDomainInput!) {
-  verifyOutboundMessageDomain(input: $input) {
+    mutation VerifyOutboundMessageDomain($id: String!) {
+  verifyOutboundMessageDomain(id: $id) {
     id
     domain
     driver
@@ -10203,7 +10193,7 @@ export type VerifyOutboundMessageDomainMutationFn = Apollo.MutationFunction<Veri
  * @example
  * const [verifyOutboundMessageDomainMutation, { data, loading, error }] = useVerifyOutboundMessageDomainMutation({
  *   variables: {
- *      input: // value for 'input'
+ *      id: // value for 'id'
  *   },
  * });
  */

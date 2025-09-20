@@ -4,8 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { OutboundMessageDomainDriverFactory } from 'src/engine/core-modules/outbound-message-domain/drivers/outbound-message-domain-driver.factory';
-import { OutboundMessageDomainStatus } from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
-import { CreateOutboundMessageDomainInput } from 'src/engine/core-modules/outbound-message-domain/dtos/create-outbound-message-domain.input';
+import {
+  OutboundMessageDomainDriver,
+  OutboundMessageDomainStatus,
+} from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
 import { OutboundMessageDomain } from 'src/engine/core-modules/outbound-message-domain/outbound-message-domain.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -18,12 +20,13 @@ export class OutboundMessageDomainService {
   ) {}
 
   async createOutboundMessageDomain(
-    createOutboundMessageDomainInput: CreateOutboundMessageDomainInput,
+    domain: string,
+    driver: OutboundMessageDomainDriver,
     workspace: Workspace,
   ): Promise<OutboundMessageDomain> {
     const existingDomain = await this.outboundMessageDomainRepository.findOneBy(
       {
-        domain: createOutboundMessageDomainInput.domain,
+        domain,
         workspaceId: workspace.id,
       },
     );
@@ -35,14 +38,15 @@ export class OutboundMessageDomainService {
     }
 
     const domainToCreate = {
-      domain: createOutboundMessageDomainInput.domain,
-      driver: createOutboundMessageDomainInput.driver,
+      domain,
+      driver: driver,
       status: OutboundMessageDomainStatus.PENDING,
       workspaceId: workspace.id,
     } as OutboundMessageDomain;
 
-    const driver = this.outboundMessageDomainDriverFactory.getCurrentDriver();
-    const verifiedDomain = await driver.verifyDomain(domainToCreate);
+    const driverInstance =
+      this.outboundMessageDomainDriverFactory.getCurrentDriver();
+    const verifiedDomain = await driverInstance.verifyDomain(domainToCreate);
 
     const savedDomain =
       await this.outboundMessageDomainRepository.save(verifiedDomain);

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
@@ -12,7 +12,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconMail, Status } from 'twenty-ui/display';
 import { useGetOutboundMessageDomainsQuery } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getColorByOutboundMessageDomainStatus } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusColor';
 import { getTextByOutboundMessageDomainStatus } from '~/pages/settings/outbound-message-domains/utils/getOutboundMessageDomainStatusText';
@@ -25,9 +24,10 @@ const StyledLink = styled(Link)`
 export const SettingsOutboundMessageDomains = () => {
   const { t } = useLingui();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
 
   const { data, loading: isLoading } = useGetOutboundMessageDomainsQuery();
+  const outboundMessageDomains = data?.getOutboundMessageDomains ?? [];
 
   const getItemDescription = (createdAt: string) => {
     const beautifyPastDateRelative = beautifyPastDateRelativeToNow(
@@ -37,22 +37,17 @@ export const SettingsOutboundMessageDomains = () => {
     return t`Added ${beautifyPastDateRelative}`;
   };
 
-  if (isLoading === true) {
-    return (
-      <StyledLink to={getSettingsPath(SettingsPath.NewOutboundMessageDomain)}>
-        <SettingsCard
-          title={t`Add Outbound Message Domain`}
-          description={t`Configure domains for sending outbound emails from this workspace.`}
-          Icon={<IconMail />}
-        />
-      </StyledLink>
-    );
-  }
-
-  return (
+  return isLoading || !outboundMessageDomains.length ? (
+    <StyledLink to={getSettingsPath(SettingsPath.NewOutboundMessageDomain)}>
+      <SettingsCard
+        title={t`Add Outbound Message Domain`}
+        Icon={<IconMail />}
+      />
+    </StyledLink>
+  ) : (
     <>
       <SettingsListCard
-        items={data?.getOutboundMessageDomains ?? []}
+        items={outboundMessageDomains}
         getItemLabel={({ domain }) => domain ?? ''}
         getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
         RowIcon={IconMail}
@@ -71,16 +66,11 @@ export const SettingsOutboundMessageDomains = () => {
             />
           </>
         )}
-        to={(outboundMessageDomain) =>
-          getSettingsPath(SettingsPath.OutboundMessageDomainDetail, {
-            domainId: outboundMessageDomain.id,
-          })
-        }
         hasFooter
         footerButtonLabel="Add Outbound Message Domain"
-        onFooterButtonClick={() => {
-          navigate(SettingsPath.NewOutboundMessageDomain);
-        }}
+        onFooterButtonClick={() =>
+          navigate(getSettingsPath(SettingsPath.NewOutboundMessageDomain))
+        }
       />
     </>
   );

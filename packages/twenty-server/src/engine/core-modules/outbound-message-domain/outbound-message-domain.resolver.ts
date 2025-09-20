@@ -2,6 +2,7 @@ import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { OutboundMessageDomainDriver } from 'src/engine/core-modules/outbound-message-domain/drivers/types/outbound-message-domain';
 import { OutboundMessageDomainDto } from 'src/engine/core-modules/outbound-message-domain/dtos/outbound-message-domain.dto';
 import { OutboundMessageDomainService } from 'src/engine/core-modules/outbound-message-domain/services/outbound-message-domain.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,11 +20,13 @@ export class OutboundMessageDomainResolver {
   @Mutation(() => OutboundMessageDomainDto)
   async createOutboundMessageDomain(
     @Args('domain') domain: string,
+    @Args('driver') driver: OutboundMessageDomainDriver,
     @AuthWorkspace() currentWorkspace: Workspace,
   ): Promise<OutboundMessageDomainDto> {
     const outboundMessageDomain =
       await this.outboundMessageDomainService.createOutboundMessageDomain(
-        { domain },
+        domain,
+        driver,
         currentWorkspace,
       );
 
