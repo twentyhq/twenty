@@ -2,6 +2,7 @@ import { ErrorStepRenderer } from '@/ai/components/ErrorStepRenderer';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import type { ParsedStep } from '@/ai/types/streamTypes';
+import { hasStructuredStreamData } from '@/ai/utils/hasStructuredStreamData';
 import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';
 
@@ -64,25 +65,15 @@ export const AIChatAssistantMessageRenderer = ({
   streamData: string;
 }) => {
   const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
-  const isStreaming =
-    Boolean(agentStreamingMessage) && streamData === agentStreamingMessage;
+  const isStreaming = streamData === agentStreamingMessage;
 
   if (!streamData) {
     return <LoadingDotsIcon />;
   }
 
-  const isPlainString =
-    !streamData.includes('\n') ||
-    !streamData.split('\n').some((line) => {
-      try {
-        JSON.parse(line);
-        return true;
-      } catch {
-        return false;
-      }
-    });
+  const hasStructuredData = hasStructuredStreamData(streamData);
 
-  if (isPlainString) {
+  if (!hasStructuredData) {
     return <LazyMarkdownRenderer text={streamData} />;
   }
 
