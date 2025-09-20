@@ -32,12 +32,12 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
+    key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
     metadata: {
-      label: 'Outbound Message Domain',
+      label: 'Emailing Domain',
       description: 'Send emails from your own domain',
       imagePath:
-        'https://twenty.com/images/lab/is-outbound-message-domain-enabled.png',
+        'https://twenty.com/images/lab/is-emailing-domain-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

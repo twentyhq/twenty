@@ -997,6 +997,29 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
+export type EmailingDomain = {
+  __typename?: 'EmailingDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
+  id: Scalars['UUID'];
+  status: EmailingDomainStatus;
+  updatedAt: Scalars['DateTime'];
+  verificationRecords?: Maybe<Array<VerificationRecord>>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum EmailingDomainDriver {
+  AWS_SES = 'AWS_SES'
+}
+
+export enum EmailingDomainStatus {
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
+  VERIFIED = 'VERIFIED'
+}
+
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1028,12 +1051,12 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
+  IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
-  IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED = 'IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
@@ -1433,6 +1456,7 @@ export type Mutation = {
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createEmailingDomain: EmailingDomain;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1442,7 +1466,6 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
-  createOutboundMessageDomain: OutboundMessageDomain;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1461,13 +1484,13 @@ export type Mutation = {
   deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
-  deleteOutboundMessageDomain: Scalars['Boolean'];
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
   deletePageLayoutWidget: PageLayoutWidget;
@@ -1565,7 +1588,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
-  verifyOutboundMessageDomain: OutboundMessageDomain;
+  verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1678,6 +1701,12 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateEmailingDomainArgs = {
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
+};
+
+
 export type MutationCreateFileArgs = {
   file: Scalars['Upload'];
 };
@@ -1713,12 +1742,6 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
-};
-
-
-export type MutationCreateOutboundMessageDomainArgs = {
-  domain: Scalars['String'];
-  driver: OutboundMessageDomainDriver;
 };
 
 
@@ -1807,6 +1830,11 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationDeleteEmailingDomainArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteFileArgs = {
   fileId: Scalars['UUID'];
 };
@@ -1834,11 +1862,6 @@ export type MutationDeleteOneRoleArgs = {
 
 export type MutationDeleteOneServerlessFunctionArgs = {
   input: ServerlessFunctionIdInput;
-};
-
-
-export type MutationDeleteOutboundMessageDomainArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -2327,7 +2350,7 @@ export type MutationValidateApprovedAccessDomainArgs = {
 };
 
 
-export type MutationVerifyOutboundMessageDomainArgs = {
+export type MutationVerifyEmailingDomainArgs = {
   id: Scalars['String'];
 };
 
@@ -2489,29 +2512,6 @@ export type OnboardingStepSuccess = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
-
-export type OutboundMessageDomain = {
-  __typename?: 'OutboundMessageDomain';
-  createdAt: Scalars['DateTime'];
-  domain: Scalars['String'];
-  driver: OutboundMessageDomainDriver;
-  id: Scalars['UUID'];
-  status: OutboundMessageDomainStatus;
-  updatedAt: Scalars['DateTime'];
-  verificationRecords?: Maybe<Array<VerificationRecord>>;
-  verifiedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export enum OutboundMessageDomainDriver {
-  AWS_SES = 'AWS_SES'
-}
-
-export enum OutboundMessageDomainStatus {
-  FAILED = 'FAILED',
-  PENDING = 'PENDING',
-  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
-  VERIFIED = 'VERIFIED'
-}
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -2684,9 +2684,9 @@ export type Query = {
   getCoreViewSorts: Array<CoreViewSort>;
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
+  getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
-  getOutboundMessageDomains: Array<OutboundMessageDomain>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;

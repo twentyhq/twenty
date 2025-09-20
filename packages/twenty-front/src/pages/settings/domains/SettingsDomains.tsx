@@ -13,7 +13,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { SettingsOutboundMessageDomains } from '~/pages/settings/outbound-message-domains/SettingsOutboundMessageDomains';
+import { SettingsEmailingDomains } from '~/pages/settings/emailing-domains/SettingsEmailingDomains';
 
 const StyledMainContent = styled.div`
   display: flex;
@@ -33,8 +33,8 @@ export const SettingsDomains = () => {
   const isPublicDomainEnabled =
     featureFlags[FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED];
 
-  const isOutboundMessageDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
+  const isEmailingDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
   );
 
   return (
@@ -64,13 +64,13 @@ export const SettingsDomains = () => {
             />
             <SettingsApprovedAccessDomainsListCard />
           </StyledSection>
-          {isOutboundMessageDomainsEnabled && (
+          {isEmailingDomainsEnabled && (
             <StyledSection>
               <H2Title
-                title={t`Outbound Message Domains`}
-                description={t`Configure and verify domains for sending outbound emails from this workspace.`}
+                title={t`Emailing Domains`}
+                description={t`Configure and verify domains for emailing from this workspace.`}
               />
-              <SettingsOutboundMessageDomains />
+              <SettingsEmailingDomains />
             </StyledSection>
           )}
           {isPublicDomainEnabled && (

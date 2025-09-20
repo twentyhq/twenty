@@ -1,12 +1,12 @@
 import {
-  type ApiConfig,
-  type AuthProviders,
-  type Billing,
-  type Captcha,
-  type ClientAiModelConfig,
-  type PublicFeatureFlag,
-  type Sentry,
-  type Support,
+    type ApiConfig,
+    type AuthProviders,
+    type Billing,
+    type Captcha,
+    type ClientAiModelConfig,
+    type PublicFeatureFlag,
+    type Sentry,
+    type Support,
 } from '~/generated-metadata/graphql';
 
 export type ClientConfig = {
@@ -32,7 +32,7 @@ export type ClientConfig = {
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
-  isOutboundMessageDomainsEnabled: boolean;
+  isEmailingDomainsEnabled: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

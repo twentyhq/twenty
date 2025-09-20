@@ -310,19 +310,19 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
-const SettingsNewOutboundMessageDomain = lazy(() =>
+const SettingsNewEmailingDomain = lazy(() =>
   import(
-    '~/pages/settings/outbound-message-domains/SettingsNewOutboundMessageDomain'
+    '~/pages/settings/emailing-domains/SettingsNewEmailingDomain'
   ).then((module) => ({
-    default: module.SettingsNewOutboundMessageDomain,
+    default: module.SettingsNewEmailingDomain,
   })),
 );
 
-const SettingsOutboundMessageDomainDetail = lazy(() =>
+const SettingsEmailingDomainDetail = lazy(() =>
   import(
-    '~/pages/settings/outbound-message-domains/SettingsOutboundMessageDomainDetail'
+    '~/pages/settings/emailing-domains/SettingsEmailingDomainDetail'
   ).then((module) => ({
-    default: module.SettingsOutboundMessageDomainDetail,
+    default: module.SettingsEmailingDomainDetail,
   })),
 );
 
@@ -446,12 +446,12 @@ export const SettingsRoutes = ({
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
-          path={SettingsPath.NewOutboundMessageDomain}
-          element={<SettingsNewOutboundMessageDomain />}
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
         />
         <Route
-          path={SettingsPath.OutboundMessageDomainDetail}
-          element={<SettingsOutboundMessageDomainDetail />}
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
         />
         <Route
           path={SettingsPath.PublicDomain}

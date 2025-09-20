@@ -20,6 +20,7 @@ import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.mo
 import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -35,7 +36,6 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
-import { OutboundMessageDomainModule } from 'src/engine/core-modules/outbound-message-domain/outbound-message-domain.module';
 import { PageLayoutModule } from 'src/engine/core-modules/page-layout/page-layout.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
@@ -83,7 +83,7 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
-    OutboundMessageDomainModule,
+    EmailingDomainModule,
     PublicDomainModule,
     CloudflareModule,
     DnsManagerModule,

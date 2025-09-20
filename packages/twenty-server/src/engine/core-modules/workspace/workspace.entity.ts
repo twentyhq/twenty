@@ -19,9 +19,9 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { EmailingDomain } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { OutboundMessageDomain } from 'src/engine/core-modules/outbound-message-domain/outbound-message-domain.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -117,11 +117,8 @@ export class Workspace {
   )
   approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
 
-  @OneToMany(
-    () => OutboundMessageDomain,
-    (outboundMessageDomain) => outboundMessageDomain.workspace,
-  )
-  outboundMessageDomains: Relation<OutboundMessageDomain[]>;
+  @OneToMany(() => EmailingDomain, (emailingDomain) => emailingDomain.workspace)
+  emailingDomains: Relation<EmailingDomain[]>;
 
   @OneToMany(() => PublicDomain, (publicDomain) => publicDomain.workspace)
   publicDomains: Relation<PublicDomain[]>;

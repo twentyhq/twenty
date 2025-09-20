@@ -86,7 +86,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_OUTBOUND_MESSAGE_DOMAIN_ENABLED,
+        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

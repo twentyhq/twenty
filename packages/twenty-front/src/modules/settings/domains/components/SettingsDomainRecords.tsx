@@ -1,22 +1,21 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type DomainRecord,
   type DomainValidRecords,
 } from '~/generated/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { capitalize } from 'twenty-shared/utils';
-import { useRecoilValue } from 'recoil';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { Status } from 'twenty-ui/display';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -51,7 +50,9 @@ export const SettingsDomainRecords = ({
 }: {
   records: DomainValidRecords['records'];
 }) => {
-  const { customDomainRecords } = useRecoilValue(customDomainRecordsState);
+  console.log('records', records);
+
+  // const { customDomainRecords } = useRecoilValue(customDomainRecordsState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { copyToClipboard } = useCopyToClipboard();
@@ -67,7 +68,7 @@ export const SettingsDomainRecords = ({
   ];
 
   const defaultValues: { status: string; color: ThemeColor } =
-    currentWorkspace?.customDomain === customDomainRecords?.domain
+    currentWorkspace?.customDomain
       ? {
           status: 'success',
           color: 'green',
