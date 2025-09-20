@@ -35,18 +35,10 @@ import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/se
 import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
-  const [firstPerson, secondPerson, thirdPerson] = [
+  const persons = [
     { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
     { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
     { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
-  ];
-
-  const [firstPet, secondPet] = [
-    { id: TEST_PET_ID_1, name: 'searchInput1' },
-    { id: TEST_PET_ID_2, name: 'searchInput2' },
-  ];
-
-  const [firstAccentPerson, secondAccentPerson] = [
     {
       id: TEST_PERSON_4_ID,
       name: { firstName: 'José', lastName: 'García' },
@@ -59,9 +51,6 @@ describe('SearchResolver', () => {
       jobTitle: 'Manager',
       emails: { primaryEmail: 'françois@naïve.com' },
     },
-  ];
-
-  const [firstNonAccentPerson, secondNonAccentPerson] = [
     {
       id: TEST_PERSON_6_ID,
       name: { firstName: 'Jose', lastName: 'Garcia' },
@@ -76,15 +65,21 @@ describe('SearchResolver', () => {
     },
   ];
 
-  const [firstAccentCompany, secondAccentCompany] = [
+  const companies = [
     { id: TEST_COMPANY_1_ID, name: 'Café Corp' },
     { id: TEST_COMPANY_2_ID, name: 'Naïve Solutions' },
   ];
 
-  const [firstAccentPet, secondAccentPet] = [
+  const pets = [
+    { id: TEST_PET_ID_1, name: 'searchInput1' },
+    { id: TEST_PET_ID_2, name: 'searchInput2' },
     { id: TEST_PET_ID_3, name: 'Café' },
     { id: TEST_PET_ID_4, name: 'Naïve' },
   ];
+
+  const [searchInput1Person, searchInput2Person, searchInput3Person, josePerson, francoisPerson, josePersonNoAccent, francoisPersonNoAccent] = persons;
+  const [cafeCorp, naiveCorp] = companies;
+  const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
   beforeAll(async () => {
     await deleteAllRecords('person');
@@ -103,24 +98,16 @@ describe('SearchResolver', () => {
         'pet',
         'pets',
         OBJECT_MODEL_COMMON_FIELDS,
-        [firstPet, secondPet, firstAccentPet, secondAccentPet],
+        pets,
       );
 
-      await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, [
-        firstPerson,
-        secondPerson,
-        thirdPerson,
-        firstAccentPerson,
-        secondAccentPerson,
-        firstNonAccentPerson,
-        secondNonAccentPerson,
-      ]);
+      await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, persons);
 
       await performCreateManyOperation(
         'company',
         'companies',
         COMPANY_GQL_FIELDS,
-        [firstAccentCompany, secondAccentCompany],
+        companies,
       );
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -150,28 +137,28 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstAccentPerson.id,
-            secondAccentPerson.id,
-            firstNonAccentPerson.id,
-            secondNonAccentPerson.id,
-            secondAccentCompany.id,
-            firstAccentCompany.id,
-            firstPet.id,
-            secondPet.id,
-            firstAccentPet.id,
-            secondAccentPet.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            josePerson.id,
+            francoisPerson.id,
+            josePersonNoAccent.id,
+            francoisPersonNoAccent.id,
+            naiveCorp.id,
+            cafeCorp.id,
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
           ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: secondNonAccentPerson.id,
-                company: firstAccentCompany.id,
-                pet: secondAccentPet.id,
+                person: francoisPersonNoAccent.id,
+                company: cafeCorp.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -187,14 +174,14 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, firstPet.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput1Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: firstPerson.id,
-                pet: firstPet.id,
+                person: searchInput1Person.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -211,13 +198,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPet.id, secondPet.id, firstAccentPet.id, secondAccentPet.id],
+          orderedRecordIds: [searchInput1Pet.id, searchInput2Pet.id, cafePet.id, naivePet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: secondAccentPet.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -233,14 +220,14 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [secondAccentCompany.id, firstAccentCompany.id, firstPet.id, secondPet.id, firstAccentPet.id, secondAccentPet.id],
+          orderedRecordIds: [naiveCorp.id, cafeCorp.id, searchInput1Pet.id, searchInput2Pet.id, cafePet.id, naivePet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                company: firstAccentCompany.id,
-                pet: secondAccentPet.id,
+                company: cafeCorp.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -253,17 +240,17 @@ describe('SearchResolver', () => {
         input: {
           searchInput: '',
           excludedObjectNameSingulars: ['workspaceMember'],
-          filter: { id: { eq: firstPet.id } },
+          filter: { id: { eq: searchInput1Pet.id } },
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPet.id],
+          orderedRecordIds: [searchInput1Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -280,17 +267,17 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstAccentPerson.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            josePerson.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: firstAccentPerson.id,
+                person: josePerson.id,
               },
             },
           },
@@ -306,13 +293,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput2Person.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: secondPerson.id,
+                person: searchInput2Person.id,
               },
             },
           },
@@ -328,19 +315,19 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0, tsRankCD: 0 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstAccentPerson.id],
+          orderedRecordIds: [searchInput3Person.id, josePerson.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: firstAccentPerson.id,
+                person: josePerson.id,
               },
             },
           },
@@ -357,18 +344,18 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstPet.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            searchInput1Pet.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                pet: searchInput1Pet.id,
+                person: searchInput3Person.id,
               },
             },
           },
@@ -384,13 +371,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput2Person.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: secondPerson.id,
+                person: searchInput2Person.id,
               },
             },
           },
@@ -407,20 +394,20 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstPet.id],
+          orderedRecordIds: [searchInput3Person.id, searchInput1Pet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                pet: searchInput1Pet.id,
+                person: searchInput3Person.id,
               },
             },
           },
@@ -437,21 +424,21 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
-          filter: { id: { neq: firstPet.id } },
+          filter: { id: { neq: searchInput1Pet.id } },
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, secondPet.id],
+          orderedRecordIds: [searchInput3Person.id, searchInput2Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: thirdPerson.id,
-                pet: secondPet.id,
+                person: searchInput3Person.id,
+                pet: searchInput2Pet.id,
               },
             },
           },
@@ -467,13 +454,13 @@ describe('SearchResolver', () => {
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [secondAccentCompany.id],
+          orderedRecordIds: [naiveCorp.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                company: secondAccentCompany.id,
+                company: naiveCorp.id,
               },
             },
           },
@@ -490,13 +477,13 @@ describe('SearchResolver', () => {
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [firstPet.id],
+          orderedRecordIds: [searchInput1Pet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -529,13 +516,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstAccentPerson.id, firstNonAccentPerson.id],
+          orderedRecordIds: [josePerson.id, josePersonNoAccent.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
               lastRecordIdsPerObject: {
-                person: firstNonAccentPerson.id,
+                person: josePersonNoAccent.id,
               },
             },
           },
@@ -551,13 +538,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstAccentPerson.id, firstNonAccentPerson.id],
+          orderedRecordIds: [josePerson.id, josePersonNoAccent.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: firstNonAccentPerson.id,
+                person: josePersonNoAccent.id,
               },
             },
           },
@@ -573,15 +560,15 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstAccentPerson.id, firstNonAccentPerson.id, firstAccentCompany.id, firstAccentPet.id],
+          orderedRecordIds: [josePerson.id, josePersonNoAccent.id, cafeCorp.id, cafePet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: firstNonAccentPerson.id,
-                company: firstAccentCompany.id,
-                pet: firstAccentPet.id,
+                person: josePersonNoAccent.id,
+                company: cafeCorp.id,
+                pet: cafePet.id,
               },
             },
           },
@@ -597,15 +584,15 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [secondAccentPerson.id, secondNonAccentPerson.id, secondAccentCompany.id, secondAccentPet.id],
+          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id, naiveCorp.id, naivePet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: secondNonAccentPerson.id,
-                company: secondAccentCompany.id,
-                pet: secondAccentPet.id,
+                person: francoisPersonNoAccent.id,
+                company: naiveCorp.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -621,13 +608,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [secondAccentPerson.id, secondNonAccentPerson.id],
+          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: secondNonAccentPerson.id,
+                person: francoisPersonNoAccent.id,
               },
             },
           },
@@ -643,13 +630,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [secondAccentPerson.id, secondNonAccentPerson.id],
+          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
               lastRecordIdsPerObject: {
-                person: secondNonAccentPerson.id,
+                person: francoisPersonNoAccent.id,
               },
             },
           },
@@ -703,7 +690,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: firstPerson.id,
+              person: searchInput1Person.id,
             },
           }),
         },
@@ -711,7 +698,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
         },
@@ -721,7 +708,7 @@ describe('SearchResolver', () => {
         endCursor: encodeCursorData({
           lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
           lastRecordIdsPerObject: {
-            person: secondPerson.id,
+            person: searchInput2Person.id,
           },
         }),
       },
@@ -745,7 +732,7 @@ describe('SearchResolver', () => {
       after: encodeCursorData({
         lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
         lastRecordIdsPerObject: {
-          person: secondPerson.id,
+          person: searchInput2Person.id,
         },
       }),
     });
@@ -758,7 +745,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: thirdPerson.id,
+              person: searchInput3Person.id,
             },
           }),
         },
@@ -766,8 +753,8 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: thirdPerson.id,
-              pet: firstPet.id,
+              person: searchInput3Person.id,
+              pet: searchInput1Pet.id,
             },
           }),
         },
@@ -777,8 +764,8 @@ describe('SearchResolver', () => {
         endCursor: encodeCursorData({
           lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
           lastRecordIdsPerObject: {
-            person: thirdPerson.id,
-            pet: firstPet.id,
+            person: searchInput3Person.id,
+            pet: searchInput1Pet.id,
           },
         }),
       },
