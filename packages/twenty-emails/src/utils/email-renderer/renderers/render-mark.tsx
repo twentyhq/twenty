@@ -1,10 +1,10 @@
 import { type JSONContent } from '@tiptap/core';
 import { type ReactNode } from 'react';
 import {
-    type TipTapMark,
-    type TipTapMarkType,
-    TIPTAP_MARKS_RENDER_ORDER,
-    TIPTAP_MARK_TYPES,
+  type TipTapMark,
+  type TipTapMarkType,
+  TIPTAP_MARKS_RENDER_ORDER,
+  TIPTAP_MARK_TYPES,
 } from 'twenty-shared/utils';
 import { bold } from '../marks/bold';
 import { italic } from '../marks/italic';
