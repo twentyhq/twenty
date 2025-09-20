@@ -41,7 +41,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
-  workflow: '20202020-8f3a-4e2d-9b1c-7e5f3a2b4c6d',
+  workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 

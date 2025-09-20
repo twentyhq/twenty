@@ -15,7 +15,7 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
     editor,
     selector: (ctx) => {
       return {
-        linkHref: ctx.editor.getAttributes('link').href,
+        linkHref: ctx.editor.getAttributes('link').href || '',
       };
     },
   });
@@ -47,13 +47,12 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
     >
       <StyledBubbleMenuContainer>
         <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
-        {menuActions.map(({ Icon, onClick }, index) => {
+        {menuActions.map(({ Icon, onClick }) => {
           return (
             <BubbleMenuIconButton
-              key={`bubble-menu-icon-button-${index}`}
+              key={Icon.name || Icon.displayName || 'unknown'}
               Icon={Icon}
               onClick={onClick}
-              size="medium"
             />
           );
         })}

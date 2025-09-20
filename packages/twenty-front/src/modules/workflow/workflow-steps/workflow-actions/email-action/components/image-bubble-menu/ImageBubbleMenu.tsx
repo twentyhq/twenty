@@ -4,10 +4,10 @@ import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
-  IconAlignCenter,
-  IconAlignLeft,
-  IconAlignRight,
-  IconTrash,
+    IconAlignCenter,
+    IconAlignLeft,
+    IconAlignRight,
+    IconTrash,
 } from 'twenty-ui/display';
 
 type ImageBubbleMenuProps = {
@@ -30,6 +30,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
 
   const alignmentActions = [
     {
+      align: 'left',
       Icon: IconAlignLeft,
       onClick: () =>
         editor
@@ -40,6 +41,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       isActive: state.align === 'left',
     },
     {
+      align: 'center',
       Icon: IconAlignCenter,
       onClick: () =>
         editor
@@ -50,6 +52,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       isActive: state.align === 'center',
     },
     {
+      align: 'right',
       Icon: IconAlignRight,
       onClick: () =>
         editor
@@ -73,20 +76,19 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
       updateDelay={0}
     >
       <StyledBubbleMenuContainer>
-        {alignmentActions.map(({ Icon, onClick, isActive }, index) => (
+        {alignmentActions.map(({ align, Icon, onClick, isActive }) => (
           <BubbleMenuIconButton
-            key={`image-bubble-menu-align-${index}`}
+            key={`image-align-${align}`}
             Icon={Icon}
             onClick={onClick}
             isActive={isActive}
-            size="medium"
           />
         ))}
         <BubbleMenuIconButton
+          key="image-delete"
           Icon={IconTrash}
           onClick={handleDelete}
           isActive={false}
-          size="medium"
         />
       </StyledBubbleMenuContainer>
     </BubbleMenu>

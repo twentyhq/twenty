@@ -40,17 +40,12 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
         const predicate = (node: Node) =>
           node.type.name === 'image' && node.attrs.src === placeholderSrc;
 
-        let found = false;
         view.state.doc.descendants((node, pos) => {
-          if (found) {
-            return false;
-          }
           if (predicate(node)) {
             updateTr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
               src: uploadedSrc,
             });
-            found = true;
             return false;
           }
         });
@@ -62,15 +57,10 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
         const predicate = (node: Node) =>
           node.type.name === 'image' && node.attrs.src === placeholderSrc;
 
-        let found = false;
         view.state.doc.descendants((node, pos) => {
-          if (found) {
-            return false;
-          }
           if (predicate(node)) {
             removeTr.delete(pos, pos + node.nodeSize);
-            found = true;
-            return false;
+            return false; // Stop traversal after finding the target
           }
         });
 

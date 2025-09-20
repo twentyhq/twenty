@@ -14,7 +14,7 @@ import { Text } from '@tiptap/extension-text';
 import { Underline } from '@tiptap/extension-underline';
 import { Dropcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
 import { type Editor, useEditor } from '@tiptap/react';
-import { type DependencyList } from 'react';
+import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseEmailEditorProps = {
@@ -41,37 +41,42 @@ export const useEmailEditor = (
   }: UseEmailEditorProps,
   dependencies?: DependencyList,
 ) => {
+  const extensions = useMemo(
+    () => [
+      Document,
+      Paragraph,
+      Text,
+      Placeholder.configure({
+        placeholder,
+      }),
+      VariableTag,
+      HardBreak.configure({
+        keepMarks: false,
+      }),
+      UndoRedo,
+      Bold,
+      Italic,
+      Strike,
+      Underline,
+      Heading.configure({
+        levels: [1, 2, 3],
+      }),
+      Link.configure({
+        openOnClick: false,
+      }),
+      ResizableImage,
+      Dropcursor,
+      UploadImageExtension.configure({
+        onImageUpload,
+        onImageUploadError,
+      }),
+    ],
+    [placeholder, onImageUpload, onImageUploadError],
+  );
+
   const editor = useEditor(
     {
-      extensions: [
-        Document,
-        Paragraph,
-        Text,
-        Placeholder.configure({
-          placeholder,
-        }),
-        VariableTag,
-        HardBreak.configure({
-          keepMarks: false,
-        }),
-        UndoRedo,
-        Bold,
-        Italic,
-        Strike,
-        Underline,
-        Heading.configure({
-          levels: [1, 2, 3],
-        }),
-        Link.configure({
-          openOnClick: false,
-        }),
-        ResizableImage,
-        Dropcursor,
-        UploadImageExtension.configure({
-          onImageUpload,
-          onImageUploadError,
-        }),
-      ],
+      extensions,
       content: isDefined(defaultValue)
         ? getInitialEmailEditorContent(defaultValue)
         : undefined,

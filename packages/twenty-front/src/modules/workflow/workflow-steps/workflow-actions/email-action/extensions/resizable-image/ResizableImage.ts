@@ -1,7 +1,7 @@
 import { ResizableImageView } from '@/workflow/workflow-steps/workflow-actions/email-action/extensions/resizable-image/ResizableImageView';
 import {
-  type ImageOptions,
-  Image as TiptapImage,
+    type ImageOptions,
+    Image as TiptapImage,
 } from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 
@@ -10,7 +10,7 @@ export const ResizableImage = TiptapImage.extend<ImageOptions>({
     return {
       ...this.parent?.(),
       align: {
-        default: null,
+        default: 'left',
       },
     };
   },

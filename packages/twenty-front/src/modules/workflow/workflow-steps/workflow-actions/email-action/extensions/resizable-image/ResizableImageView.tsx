@@ -57,12 +57,12 @@ const StyledImageHandle = styled.div<{ handle: 'left' | 'right' }>`
   ${({ handle, theme }) => {
     if (handle === 'left') {
       return css`
-        left: ${theme.betweenSiblingsGap};
+        left: ${theme.spacing(1)};
       `;
     }
 
     return css`
-      right: ${theme.betweenSiblingsGap};
+      right: ${theme.spacing(1)};
     `;
   }}
 `;

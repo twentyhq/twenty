@@ -7,10 +7,10 @@ import styled from '@emotion/styled';
 import { type Editor } from '@tiptap/core';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
-  IconBold,
-  IconItalic,
-  IconStrikethrough,
-  IconUnderline,
+    IconBold,
+    IconItalic,
+    IconStrikethrough,
+    IconUnderline,
 } from 'twenty-ui/display';
 
 export const StyledBubbleMenuContainer = styled.div`
@@ -70,14 +70,13 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
     >
       <StyledBubbleMenuContainer>
         <TurnIntoBlockDropdown editor={editor} />
-        {menuActions.map(({ Icon, onClick, isActive }, index) => {
+        {menuActions.map(({ Icon, onClick, isActive }) => {
           return (
             <BubbleMenuIconButton
-              key={`bubble-menu-icon-button-${index}`}
+              key={Icon.name || Icon.displayName || 'unknown'}
               Icon={Icon}
               onClick={onClick}
               isActive={isActive}
-              size="medium"
             />
           );
         })}
