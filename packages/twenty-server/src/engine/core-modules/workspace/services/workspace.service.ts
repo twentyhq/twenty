@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { t } from '@lingui/core/macro';
@@ -30,8 +30,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
+  WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -165,7 +165,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       id: payload.id,
     });
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.validateSecurityPermissions({
       payload,

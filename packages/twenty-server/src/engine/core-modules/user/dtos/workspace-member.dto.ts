@@ -7,6 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import {
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -58,4 +59,7 @@ export class WorkspaceMember {
 
   @Field(() => UUIDScalarType, { nullable: true })
   userWorkspaceId?: string;
+
+  @Field(() => WorkspaceMemberNumberFormatEnum, { nullable: true })
+  numberFormat?: WorkspaceMemberNumberFormatEnum;
 }

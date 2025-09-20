@@ -1,4 +1,3 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -31,7 +30,6 @@ import { type AgentChatMessage } from '~/generated/graphql';
 import { agentChatInputState } from '../states/agentChatInputState';
 import { agentChatMessagesComponentState } from '../states/agentChatMessagesComponentState';
 import { agentStreamingMessageState } from '../states/agentStreamingMessageState';
-import { parseAgentStreamingChunk } from '../utils/parseAgentStreamingChunk';
 
 type OptimisticMessage = AgentChatMessage & {
   isPending: boolean;
@@ -39,7 +37,6 @@ type OptimisticMessage = AgentChatMessage & {
 
 export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
   const apolloClient = useApolloClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
@@ -126,7 +123,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
       id: v4(),
       threadId: currentThreadId as string,
       role: AgentChatMessageRole.USER,
-      content,
+      rawContent: content,
       createdAt: new Date().toISOString(),
       isPending: true,
       files: agentChatUploadedFiles,
@@ -136,7 +133,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
       id: v4(),
       threadId: currentThreadId as string,
       role: AgentChatMessageRole.ASSISTANT,
-      content: '',
+      rawContent: '',
       createdAt: new Date().toISOString(),
       isPending: true,
       files: [],
@@ -180,27 +177,8 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
       },
       context: {
         onChunk: (chunk: string) => {
-          parseAgentStreamingChunk(chunk, {
-            onTextDelta: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                streamingText: prev.streamingText + message,
-              }));
-              scrollToBottom();
-            },
-            onToolCall: (message: string) => {
-              setAgentStreamingMessage((prev) => ({
-                ...prev,
-                toolCall: message,
-              }));
-              scrollToBottom();
-            },
-            onError: (message: string) => {
-              enqueueErrorSnackBar({
-                message,
-              });
-            },
-          });
+          setAgentStreamingMessage((prev) => prev + chunk);
+          scrollToBottom();
         },
       },
     });
@@ -225,10 +203,7 @@ export const useAgentChat = (agentId: string, records?: ObjectRecord[]) => {
     const { data } = await refetchMessages();
 
     setAgentChatMessages(data?.agentChatMessages);
-    setAgentStreamingMessage({
-      toolCall: '',
-      streamingText: '',
-    });
+    setAgentStreamingMessage('');
     scrollToBottom();
   };
 

@@ -1,39 +1,26 @@
 import { useCallback } from 'react';
 
-import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
-import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { CREATE_CORE_VIEW_SORT } from '@/views/graphql/mutations/createCoreViewSort';
 import { DESTROY_CORE_VIEW_SORT } from '@/views/graphql/mutations/destroyCoreViewSort';
 import { UPDATE_CORE_VIEW_SORT } from '@/views/graphql/mutations/updateCoreViewSort';
+import { useTriggerViewSortOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewSortOptimisticEffect';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { type ViewSort } from '@/views/types/ViewSort';
-import { convertViewSortDirectionToCore } from '@/views/utils/convertViewSortDirectionToCore';
 import { useApolloClient } from '@apollo/client';
-import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewSort } from '~/generated/graphql';
 
 export const usePersistViewSortRecords = () => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.ViewSort,
-  });
-
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.ViewSort,
-  });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloClient = useApolloClient();
 
+  const { triggerViewSortOptimisticEffect } =
+    useTriggerViewSortOptimisticEffect();
+
   const createCoreViewSortRecords = useCallback(
-    (viewSortsToCreate: ViewSort[], view: Pick<GraphQLView, 'id'>) => {
+    (
+      viewSortsToCreate: CoreViewSortEssential[],
+      view: Pick<GraphQLView, 'id'>,
+    ) => {
       if (!viewSortsToCreate.length) return;
       return Promise.all(
         viewSortsToCreate.map((viewSort) =>
@@ -44,35 +31,26 @@ export const usePersistViewSortRecords = () => {
                 id: viewSort.id,
                 fieldMetadataId: viewSort.fieldMetadataId,
                 viewId: view.id,
-                direction: convertViewSortDirectionToCore(viewSort.direction),
+                direction: viewSort.direction,
               } satisfies Partial<CoreViewSort>,
             },
-            update: (cache, { data }) => {
-              const record = data?.['createCoreViewSort'];
-              if (!isDefined(record)) return;
+            update: (_cache, { data }) => {
+              const createdViewSort = data?.createCoreViewSort;
+              if (!isDefined(createdViewSort)) return;
 
-              triggerCreateRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToCreate: [record],
-                objectMetadataItems,
-                objectPermissionsByObjectMetadataId,
+              triggerViewSortOptimisticEffect({
+                createdViewSorts: [createdViewSort],
               });
             },
           }),
         ),
       );
     },
-    [
-      apolloClient,
-      objectMetadataItem,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    ],
+    [apolloClient, triggerViewSortOptimisticEffect],
   );
 
   const updateCoreViewSortRecords = useCallback(
-    (viewSortsToUpdate: ViewSort[]) => {
+    (viewSortsToUpdate: CoreViewSortEssential[]) => {
       if (!viewSortsToUpdate.length) return;
       return Promise.all(
         viewSortsToUpdate.map((viewSort) =>
@@ -81,66 +59,44 @@ export const usePersistViewSortRecords = () => {
             variables: {
               id: viewSort.id,
               input: {
-                direction: convertViewSortDirectionToCore(viewSort.direction),
+                direction: viewSort.direction,
               } satisfies Partial<CoreViewSort>,
             },
-            update: (cache, { data }) => {
-              const record = data?.['updateCoreViewSort'];
-              if (!isDefined(record)) return;
+            update: (_cache, { data }) => {
+              const updatedViewSort = data?.updateCoreViewSort;
+              if (!isDefined(updatedViewSort)) return;
 
-              const cachedRecord = getRecordFromCache<ViewSort>(
-                record.id,
-                cache,
-              );
-              if (isNull(cachedRecord)) return;
-
-              triggerUpdateRecordOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                currentRecord: cachedRecord,
-                updatedRecord: record,
-                objectMetadataItems,
+              triggerViewSortOptimisticEffect({
+                updatedViewSorts: [updatedViewSort],
               });
             },
           }),
         ),
       );
     },
-    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+    [apolloClient, triggerViewSortOptimisticEffect],
   );
 
   const deleteCoreViewSortRecords = useCallback(
-    (viewSortIdsToDelete: string[]) => {
-      if (!viewSortIdsToDelete.length) return;
+    (viewSortsToDelete: Pick<CoreViewSortEssential, 'id' | 'viewId'>[]) => {
+      if (!viewSortsToDelete.length) return;
       return Promise.all(
-        viewSortIdsToDelete.map((viewSortId) =>
+        viewSortsToDelete.map((viewSort) =>
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_SORT,
             variables: {
-              id: viewSortId,
+              id: viewSort.id,
             },
-            update: (cache, { data }) => {
-              const record = data?.['destroyCoreViewSort'];
-              if (!isDefined(record)) return;
-
-              const cachedRecord = getRecordFromCache<ViewSort>(
-                record.id,
-                cache,
-              );
-              if (isNull(cachedRecord)) return;
-
-              triggerDestroyRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDestroy: [cachedRecord],
-                objectMetadataItems,
+            update: (_cache) => {
+              triggerViewSortOptimisticEffect({
+                deletedViewSorts: [viewSort],
               });
             },
           }),
         ),
       );
     },
-    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+    [apolloClient, triggerViewSortOptimisticEffect],
   );
 
   return {

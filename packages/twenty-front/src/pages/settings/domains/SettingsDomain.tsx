@@ -22,6 +22,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { useState } from 'react';
+import { getSubdomainValidationSchema } from '@/settings/domains/utils/get-subdomain-validation-schema';
+import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';
@@ -32,30 +34,8 @@ export const SettingsDomain = () => {
 
   const validationSchema = z
     .object({
-      subdomain: z
-        .string()
-        .min(3, { message: t`Subdomain can not be shorter than 3 characters` })
-        .max(30, { message: t`Subdomain can not be longer than 30 characters` })
-        .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
-          message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
-        }),
-      customDomain: z
-        .string()
-        .regex(
-          /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
-          {
-            message: t`Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com).`,
-          },
-        )
-        .regex(
-          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
-          {
-            message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
-          },
-        )
-        .max(256)
-        .optional()
-        .or(z.literal('')),
+      subdomain: getSubdomainValidationSchema(t),
+      customDomain: getDomainValidationSchema(t),
     })
     .required();
 

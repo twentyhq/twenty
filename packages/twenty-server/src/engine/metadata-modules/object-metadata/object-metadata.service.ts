@@ -401,6 +401,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
         queryRunner,
       );
+
       if (inputPayload.labelIdentifierFieldMetadataId) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
@@ -439,6 +440,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.objectMetadataRelatedRecordsService.updateObjectViews(
           updatedObject,
           workspaceId,
+        );
+      }
+
+      if (
+        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
+        inputPayload.labelIdentifierFieldMetadataId !==
+          existingObjectMetadata.labelIdentifierFieldMetadataId
+      ) {
+        const labelIdentifierFieldMetadata =
+          existingObjectMetadata.fieldsById[
+            inputPayload.labelIdentifierFieldMetadataId
+          ];
+
+        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
+          {
+            newLabelMetadataIdentifierFieldMetadata:
+              labelIdentifierFieldMetadata,
+          },
         );
       }
 

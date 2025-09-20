@@ -1,11 +1,29 @@
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
-import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { type PageLayoutTabWithData } from '../types/pageLayoutTypes';
-import { createEmptyTabLayout } from '../utils/createEmptyTabLayout';
+import { getEmptyTabLayout } from '../utils/getEmptyTabLayout';
 
-export const useCreatePageLayoutTab = () => {
+export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutId,
+  );
+
   const createPageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
       (title?: string): string => {
@@ -34,12 +52,12 @@ export const useCreatePageLayoutTab = () => {
         }));
 
         set(pageLayoutCurrentLayoutsState, (prev) =>
-          createEmptyTabLayout(prev, newTabId),
+          getEmptyTabLayout(prev, newTabId),
         );
 
         return newTabId;
       },
-    [],
+    [pageLayoutCurrentLayoutsState, pageLayoutDraftState],
   );
 
   return { createPageLayoutTab };

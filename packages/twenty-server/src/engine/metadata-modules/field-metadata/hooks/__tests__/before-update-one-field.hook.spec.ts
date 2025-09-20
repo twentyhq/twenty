@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { i18n } from '@lingui/core';
 import { type UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -16,12 +15,7 @@ import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-
-jest.mock('@lingui/core', () => ({
-  i18n: {
-    _: jest.fn().mockImplementation((messageId) => `translated:${messageId}`),
-  },
-}));
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 // Create a type that omits id and workspaceId from UpdateFieldInput
 type UpdateFieldInputForTest = Omit<UpdateFieldInput, 'id' | 'workspaceId'>;
@@ -48,6 +42,14 @@ describe('BeforeUpdateOneField', () => {
           provide: ObjectMetadataService,
           useValue: {
             findOneWithinWorkspace: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn().mockReturnValue({
+              _: jest.fn().mockReturnValue('mocked-translation'),
+            }),
           },
         },
       ],
@@ -482,9 +484,7 @@ describe('BeforeUpdateOneField', () => {
   });
 
   it('should reset locale-specific translations when they match translated defaults', async () => {
-    const translatedLabel = 'translated:msg-label';
-
-    (i18n._ as jest.Mock).mockImplementation(() => translatedLabel);
+    const translatedLabel = 'mocked-translation';
 
     const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
       id: mockFieldId,

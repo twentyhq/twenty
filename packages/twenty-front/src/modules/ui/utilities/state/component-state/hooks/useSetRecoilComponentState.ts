@@ -1,10 +1,15 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { type ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
 import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type SetterOrUpdater, useSetRecoilState } from 'recoil';
+import {
+  type RecoilState,
+  type SetterOrUpdater,
+  useSetRecoilState,
+} from 'recoil';
 
 export const useSetRecoilComponentState = <ValueType>(
-  componentState: ComponentState<ValueType>,
+  componentState: ComponentState<ValueType> | ComponentSelector<ValueType>,
   instanceIdFromProps?: string,
 ): SetterOrUpdater<ValueType> => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
@@ -22,5 +27,15 @@ export const useSetRecoilComponentState = <ValueType>(
     instanceIdFromProps,
   );
 
-  return useSetRecoilState(componentState.atomFamily({ instanceId }));
+  let state: RecoilState<ValueType>;
+
+  if (componentState.type === 'ComponentState') {
+    state = componentState.atomFamily({ instanceId });
+  } else if (componentState.type === 'ComponentSelector') {
+    state = componentState.selectorFamily({ instanceId });
+  } else {
+    throw new Error('Invalid component state type');
+  }
+
+  return useSetRecoilState(state);
 };

@@ -55,6 +55,7 @@ import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.modu
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -82,6 +83,7 @@ import { FileModule } from './file/file.module';
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
     PublicDomainModule,
+    CloudflareModule,
     DnsManagerModule,
     PostgresCredentialsModule,
     WorkflowApiModule,

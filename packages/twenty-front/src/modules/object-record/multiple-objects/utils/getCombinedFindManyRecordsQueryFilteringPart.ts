@@ -10,6 +10,5 @@ export const getCombinedFindManyRecordsQueryFilteringPart = (
   after: $after${capitalize(objectMetadataItem.nameSingular)},
   before: $before${capitalize(objectMetadataItem.nameSingular)},
   first: $first${capitalize(objectMetadataItem.nameSingular)},
-  last: $last${capitalize(objectMetadataItem.nameSingular)},
-  limit: $limit${capitalize(objectMetadataItem.nameSingular)})`;
+  last: $last${capitalize(objectMetadataItem.nameSingular)})`;
 };

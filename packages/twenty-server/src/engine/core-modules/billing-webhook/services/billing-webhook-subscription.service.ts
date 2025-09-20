@@ -29,6 +29,8 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -50,6 +52,8 @@ export class BillingWebhookSubscriptionService {
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
+    private readonly stripeBillingAlertService: StripeBillingAlertService,
   ) {}
 
   async processStripeEvent(
@@ -83,7 +87,12 @@ export class BillingWebhookSubscriptionService {
     );
 
     await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, data),
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        workspaceId,
+        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          data.object.id,
+        ),
+      ),
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
@@ -145,6 +154,15 @@ export class BillingWebhookSubscriptionService {
     if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
       await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
         updatedBillingSubscription.id,
+      );
+      const gte =
+        this.billingSubscriptionService.getTrialPeriodFreeWorkflowCredits(
+          updatedBillingSubscription,
+        );
+
+      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+        updatedBillingSubscription.stripeCustomerId,
+        gte,
       );
     }
 

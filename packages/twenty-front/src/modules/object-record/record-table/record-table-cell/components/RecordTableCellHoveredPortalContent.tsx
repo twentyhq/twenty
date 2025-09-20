@@ -1,6 +1,7 @@
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
@@ -30,7 +31,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
 
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   outline: ${({ theme, isReadOnly, isRowActive }) =>
     isRowActive

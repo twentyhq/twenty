@@ -16,6 +16,7 @@ import {
   ConfigSource,
   useGetConfigVariablesGroupedQuery,
 } from '~/generated-metadata/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 
 const StyledControlsContainer = styled.div`
@@ -75,9 +76,10 @@ export const SettingsAdminConfigVariables = () => {
     const hasSelectedSpecificGroup = configVariableGroupFilter !== 'all';
 
     return allVariables.filter((v) => {
+      const searchTerm = normalizeSearchText(search);
       const matchesSearch =
-        v.name.toLowerCase().includes(search.toLowerCase()) ||
-        (v.description?.toLowerCase() || '').includes(search.toLowerCase());
+        normalizeSearchText(v.name).includes(searchTerm) ||
+        normalizeSearchText(v.description).includes(searchTerm);
 
       if (isSearching && !matchesSearch) return false;
 

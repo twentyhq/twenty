@@ -21,7 +21,7 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
   display: flex;
 
   padding: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 
   padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;

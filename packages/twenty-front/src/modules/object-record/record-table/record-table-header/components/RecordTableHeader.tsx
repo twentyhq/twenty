@@ -4,13 +4,11 @@ import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/r
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
+import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell';
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
-import { RecordTableHeaderLabelIdentifierCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCell';
 import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
 import { filterOutByProperty } from 'twenty-shared/utils';
-
-export const FIRST_TH_WIDTH = '10px';
 
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -31,7 +29,7 @@ export const RecordTableHeader = () => {
     <>
       <RecordTableHeaderDragDropColumn />
       <RecordTableHeaderCheckboxColumn />
-      <RecordTableHeaderLabelIdentifierCell />
+      <RecordTableHeaderFirstCell />
       <RecordTableHeaderFirstScrollableCell />
       {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
         (recordField, index) => (

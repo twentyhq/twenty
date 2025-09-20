@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Readable } from 'stream';
-
 import {
   type CoreMessage,
   type CoreUserMessage,
@@ -31,6 +29,7 @@ import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { constructAssistantMessageContentFromStream } from 'src/engine/metadata-modules/agent/utils/constructAssistantMessageContentFromStream';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -115,6 +114,16 @@ export class AgentExecutionService {
         ...(messages && { messages }),
         ...(prompt && { prompt }),
         maxSteps: AGENT_CONFIG.MAX_STEPS,
+        ...(registeredModel.doesSupportThinking && {
+          providerOptions: {
+            anthropic: {
+              thinking: {
+                type: 'enabled',
+                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
+              },
+            },
+          },
+        }),
       };
     } catch (error) {
       this.logger.error(
@@ -233,7 +242,7 @@ export class AgentExecutionService {
       filename,
       file.workspaceId,
     );
-    const fileBuffer = await streamToBuffer(fileStream as Readable);
+    const fileBuffer = await streamToBuffer(fileStream);
 
     if (file.type.startsWith('image')) {
       return {
@@ -241,13 +250,33 @@ export class AgentExecutionService {
         image: fileBuffer,
         mimeType: file.type,
       };
-    } else {
-      return {
-        type: 'file',
-        data: fileBuffer,
-        mimeType: file.type,
-      };
     }
+
+    return {
+      type: 'file',
+      data: fileBuffer,
+      mimeType: file.type,
+    };
+  }
+
+  private mapMessagesToCoreMessages(
+    messages: AgentChatMessageEntity[],
+  ): CoreMessage[] {
+    return messages
+      .map(({ role, rawContent }): CoreMessage => {
+        if (role === AgentChatMessageRole.USER) {
+          return {
+            role: 'user',
+            content: rawContent ?? '',
+          };
+        }
+
+        return {
+          role: 'assistant',
+          content: constructAssistantMessageContentFromStream(rawContent ?? ''),
+        };
+      })
+      .filter((message) => message.content.length > 0);
   }
 
   async streamChatResponse({
@@ -271,10 +300,7 @@ export class AgentExecutionService {
       where: { id: agentId },
     });
 
-    const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
-      role,
-      content,
-    }));
+    const llmMessages: CoreMessage[] = this.mapMessagesToCoreMessages(messages);
 
     let contextString = '';
 

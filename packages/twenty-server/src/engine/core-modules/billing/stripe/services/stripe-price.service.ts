@@ -24,10 +24,17 @@ export class StripePriceService {
     );
   }
 
+  async getPriceByPriceId(priceId: string) {
+    return await this.stripe.prices.retrieve(priceId, {
+      expand: ['data.currency_options', 'data.tiers'],
+    });
+  }
+
   async getPricesByProductId(productId: string) {
     const prices = await this.stripe.prices.list({
       product: productId,
       type: 'recurring',
+      limit: 100,
       expand: ['data.currency_options', 'data.tiers'],
     });
 

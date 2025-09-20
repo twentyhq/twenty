@@ -1,7 +1,13 @@
 import styled from '@emotion/styled';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
+import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
+import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 import { useTheme } from '@emotion/react';
 import {
   filterOutByProperty,
@@ -10,37 +16,22 @@ import {
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 
-const StyledDragDropPlaceholderCell = styled.div`
-  min-width: 16px;
-  width: 16px;
-
-  position: sticky;
+const StyledDragDropPlaceholderCell = styled(
+  RecordTableDragAndDropPlaceholderCell,
+)`
   left: 0;
-`;
-
-const StyledPlusButtonPlaceholderCell = styled.div`
-  height: 32px;
-  min-width: 32px;
-  width: 32px;
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-  }
+  position: sticky;
 `;
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   min-width: ${({ widthOfFields }) => widthOfFields}px;
   width: ${({ widthOfFields }) => widthOfFields}px;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-  }
 `;
 
 const StyledRecordTableDraggableTr = styled.div`
   cursor: pointer;
-  transition: background-color ${({ theme }) => theme.animation.duration.fast}
-    ease-in-out;
+
   border: none;
   background: ${({ theme }) => theme.background.primary};
 
@@ -50,19 +41,12 @@ const StyledRecordTableDraggableTr = styled.div`
 
   &:hover {
     div:not(:first-of-type) {
-      background-color: ${({ theme }) => theme.background.transparent.light};
+      background-color: ${({ theme }) => theme.background.secondary};
     }
   }
 
-  div {
+  div:not(:first-of-type) {
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-    background-color: ${({ theme }) => theme.background.primary};
-    transition: background-color ${({ theme }) => theme.animation.duration.fast}
-      ease-in-out;
-
-    &:first-of-type {
-      border-bottom: 1px solid ${({ theme }) => theme.background.primary};
-    }
   }
 
   width: 100%;
@@ -74,24 +58,25 @@ const StyledIconContainer = styled.div`
   border-right: none;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
-  width: 32px;
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
-  left: 16px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 `;
 
-const StyledRecordTableTdTextContainer = styled.div<{ width: number }>`
+const StyledActionTextContainer = styled.div<{ width: number }>`
   align-items: center;
-  background-color: transparent;
+
   border-right: none;
   display: flex;
 
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: start;
 
-  left: 48px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   position: sticky;
   width: ${({ width }) => width}px;
 `;
@@ -147,18 +132,19 @@ export const RecordTableActionRow = ({
           color={theme.font.color.tertiary}
         />
       </StyledIconContainer>
-      <StyledRecordTableTdTextContainer
+      <StyledActionTextContainer
         width={labelIdentifierRecordField?.size ?? 104}
       >
         <StyledText>{text}</StyledText>
-      </StyledRecordTableTdTextContainer>
+      </StyledActionTextContainer>
       <StyledFieldPlaceholderCell
         widthOfFields={
           sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
           sumOfBorderWidthForFields
         }
       />
-      <StyledPlusButtonPlaceholderCell />
+      <RecordTableAddButtonPlaceholderCell />
+      <RecordTableGroupSectionLastDynamicFillingCell />
     </StyledRecordTableDraggableTr>
   );
 };

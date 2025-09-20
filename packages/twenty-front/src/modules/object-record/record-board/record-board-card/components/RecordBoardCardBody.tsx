@@ -1,10 +1,10 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
+import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
   FieldContext,
@@ -58,7 +58,7 @@ export const RecordBoardCardBody = () => {
   };
 
   return (
-    <RecordBoardCardBodyContainer>
+    <RecordCardBodyContainer>
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -105,6 +105,6 @@ export const RecordBoardCardBody = () => {
           </StopPropagationContainer>
         );
       })}
-    </RecordBoardCardBodyContainer>
+    </RecordCardBodyContainer>
   );
 };

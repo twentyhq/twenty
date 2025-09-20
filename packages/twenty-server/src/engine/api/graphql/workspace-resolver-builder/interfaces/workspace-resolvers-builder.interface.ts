@@ -3,6 +3,7 @@ import { type GraphQLFieldResolver } from 'graphql';
 import {
   type ObjectRecord,
   type ObjectRecordFilter,
+  type ObjectRecordGroupBy,
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -62,6 +63,13 @@ export interface CreateManyResolverArgs<
 > {
   data: Data[];
   upsert?: boolean;
+}
+
+export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
+  filter?: Filter;
+  groupBy: ObjectRecordGroupBy;
+  viewId?: string;
+  orderBy?: ObjectRecordOrderBy;
 }
 
 export interface UpdateOneResolverArgs<
@@ -131,6 +139,7 @@ export interface WorkspaceResolverBuilderMethods {
 export type ResolverArgs =
   | CreateManyResolverArgs
   | CreateOneResolverArgs
+  | GroupByResolverArgs
   | DeleteManyResolverArgs
   | DeleteOneResolverArgs
   | DestroyManyResolverArgs

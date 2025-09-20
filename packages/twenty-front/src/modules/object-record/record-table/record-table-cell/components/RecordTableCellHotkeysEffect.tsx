@@ -9,16 +9,18 @@ import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/us
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useListenToSidePanelOpening } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelOpening';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
-export const RecordTableCellHotkeysEffect = () => {
+export const RecordTableCellHotkeysEffect = ({
+  cellFocusId,
+}: {
+  cellFocusId: string;
+}) => {
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
-  const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
   const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const isFieldInputOnly = useIsFieldInputOnly();

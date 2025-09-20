@@ -21,7 +21,7 @@ export const RecordTableCellPortalWrapper = ({
   return (
     <>
       {createPortal(
-        <RecordTableCellPortalContexts>
+        <RecordTableCellPortalContexts position={position}>
           {children}
         </RecordTableCellPortalContexts>,
         tableCellAnchorElement,

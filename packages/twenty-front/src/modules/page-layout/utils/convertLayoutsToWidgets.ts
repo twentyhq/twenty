@@ -9,6 +9,7 @@ export const convertLayoutsToWidgets = (
 
   return widgets.map((widget) => {
     const layout = activeLayouts.find((l) => l.i === widget.id);
+
     return {
       ...widget,
       gridPosition: {

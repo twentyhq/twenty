@@ -526,6 +526,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+  numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

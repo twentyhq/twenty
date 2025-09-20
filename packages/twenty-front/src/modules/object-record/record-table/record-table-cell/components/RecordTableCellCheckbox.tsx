@@ -1,22 +1,23 @@
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/input';
 
-export const TABLE_CELL_CHECKBOX_MIN_WIDTH = '24px';
-
 const StyledContainer = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
-  min-width: ${TABLE_CELL_CHECKBOX_MIN_WIDTH};
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 

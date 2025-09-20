@@ -28,7 +28,7 @@ const StyledTitle = styled.span`
 `;
 
 type WidgetHeaderProps = {
-  displayDragHandle: boolean;
+  isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
   onRemove?: () => void;
@@ -36,15 +36,15 @@ type WidgetHeaderProps = {
 };
 
 export const WidgetHeader = ({
-  displayDragHandle = false,
   isEmpty = false,
+  isInEditMode = false,
   title,
   onEdit,
   onRemove,
 }: WidgetHeaderProps) => {
   return (
     <StyledHeader>
-      {displayDragHandle && (
+      {isInEditMode && (
         <StyledDragHandleButton
           Icon={IconGripVertical}
           className="drag-handle"
@@ -54,7 +54,7 @@ export const WidgetHeader = ({
         />
       )}
       <StyledTitle>{isEmpty ? 'Add Widget' : title}</StyledTitle>
-      {!isEmpty && onEdit && (
+      {!isEmpty && isInEditMode && onEdit && (
         <IconButton
           onClick={onEdit}
           Icon={IconPencil}
@@ -62,7 +62,7 @@ export const WidgetHeader = ({
           size="small"
         />
       )}
-      {!isEmpty && onRemove && (
+      {!isEmpty && isInEditMode && onRemove && (
         <IconButton
           onClick={onRemove}
           Icon={IconX}

@@ -12,7 +12,10 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     createdAt: z.string().datetime(),
     defaultValue: z.any().optional(),
     description: z.string().trim().nullable().optional(),
-    icon: z.string().startsWith('Icon').trim().nullable(),
+    icon: z
+      .union([z.string().startsWith('Icon').trim(), z.literal('')])
+      .nullable()
+      .optional(),
     id: z.string().uuid(),
     isActive: z.boolean(),
     isCustom: z.boolean(),

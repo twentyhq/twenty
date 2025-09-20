@@ -1,21 +1,24 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledResizeHandler = styled.div<{ isResizing: boolean }>`
+const StyledResizeHandler = styled.div<{
+  isResizing: boolean;
+  position: 'left' | 'right';
+}>`
   bottom: 0;
   cursor: col-resize;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
   position: absolute;
-  right: -9px;
+  ${({ position }) => (position === 'left' ? 'left: -1px;' : 'right: -1px;')}
   top: 0;
-  width: 3px;
+  width: 10px;
   z-index: 1;
 
-  ${({ isResizing, theme }) => {
+  ${({ isResizing, theme, position }) => {
     if (isResizing === true) {
       return `&:after {
         background-color: ${theme.color.blue};
@@ -23,7 +26,8 @@ const StyledResizeHandler = styled.div<{ isResizing: boolean }>`
         content: '';
         display: block;
         position: absolute;
-        right: 8px;
+        ${position === 'left' ? 'left: -1px;' : 'right: -1px;'}
+
         top: 0;
         width: 2px;
       }`;
@@ -32,10 +36,19 @@ const StyledResizeHandler = styled.div<{ isResizing: boolean }>`
 `;
 
 export const RecordTableHeaderResizeHandler = ({
-  recordField,
+  recordFieldIndex,
+  position,
 }: {
-  recordField: RecordField;
+  recordFieldIndex: number;
+  position: 'left' | 'right';
 }) => {
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+
+  const recordField: RecordField | undefined =
+    position === 'left'
+      ? visibleRecordFields[recordFieldIndex - 1]
+      : visibleRecordFields[recordFieldIndex];
+
   const isMobile = useIsMobile();
 
   const columnResizeDisabled = isMobile;
@@ -44,13 +57,13 @@ export const RecordTableHeaderResizeHandler = ({
     useRecoilComponentState(resizedFieldMetadataIdComponentState);
 
   const isResizing =
-    recordField.fieldMetadataItemId === resizedFieldMetadataItemId;
+    recordField?.fieldMetadataItemId === resizedFieldMetadataItemId;
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const handlePointerDown = () => {
     setDragSelectionStartEnabled(false);
-    setResizedFieldMetadataItemId(recordField.fieldMetadataItemId);
+    setResizedFieldMetadataItemId(recordField?.fieldMetadataItemId);
   };
 
   return (
@@ -60,6 +73,7 @@ export const RecordTableHeaderResizeHandler = ({
         role="separator"
         onPointerDown={handlePointerDown}
         isResizing={isResizing}
+        position={position}
       />
     )
   );

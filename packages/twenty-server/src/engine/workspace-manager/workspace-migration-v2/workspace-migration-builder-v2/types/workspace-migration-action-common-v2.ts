@@ -10,7 +10,6 @@ export type WorkspaceMigrationActionV2 =
   | WorkspaceMigrationIndexActionV2
   | WorkspaceMigrationViewActionV2
   | WorkspaceMigrationViewFieldActionV2;
-
 export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionV2['type'];
 
 export type ExtractAction<T extends WorkspaceMigrationActionTypeV2> = Extract<

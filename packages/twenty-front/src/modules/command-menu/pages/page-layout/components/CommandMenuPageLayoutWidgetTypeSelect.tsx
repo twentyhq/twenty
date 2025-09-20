@@ -1,9 +1,10 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { WidgetType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutDraggedAreaState } from '@/page-layout/states/pageLayoutDraggedAreaState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
 
@@ -50,27 +51,31 @@ const widgetTypeOptions = [
 ];
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
-  const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setPageLayoutDraggedArea = useSetRecoilState(
-    pageLayoutDraggedAreaState,
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const setPageLayoutDraggedArea = useSetRecoilComponentState(
+    pageLayoutDraggedAreaComponentState,
+    pageLayoutId,
   );
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleSelectWidget = (widgetType: WidgetType) => {
     switch (widgetType) {
-      case WidgetType.GRAPH:
-        navigateCommandMenu({
-          page: CommandMenuPages.PageLayoutGraphTypeSelect,
-          pageTitle: 'Select Graph Type',
-          pageIcon: IconChartPie,
+      case WidgetType.GRAPH: {
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
         });
+
         break;
-      case WidgetType.IFRAME:
-        navigateCommandMenu({
-          page: CommandMenuPages.PageLayoutIframeConfig,
-          pageTitle: 'Configure iFrame',
-          pageIcon: IconFrame,
+      }
+      case WidgetType.IFRAME: {
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
         });
+
         break;
+      }
       default:
         setPageLayoutDraggedArea(null);
         break;

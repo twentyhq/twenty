@@ -1,14 +1,15 @@
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
+import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
 import { type Widget as WidgetType } from '@/page-layout/widgets/types/Widget';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 type WidgetRendererProps = {
   widget: WidgetType;
-  displayDragHandle?: boolean;
-  onEdit?: () => void;
-  onRemove?: () => void;
 };
 
 const StyledContent = styled.div`
@@ -19,19 +20,23 @@ const StyledContent = styled.div`
   justify-content: center;
 `;
 
-export const WidgetRenderer = ({
-  widget,
-  displayDragHandle = false,
-  onEdit,
-  onRemove,
-}: WidgetRendererProps) => {
+export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
+  const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
+  const { handleEditWidget } = useEditPageLayoutWidget();
+
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
   return (
     <WidgetContainer>
       <WidgetHeader
-        displayDragHandle={displayDragHandle}
+        isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
-        onEdit={onEdit}
-        onRemove={onRemove}
+        onEdit={() =>
+          handleEditWidget({ widgetId: widget.id, widgetType: widget.type })
+        }
+        onRemove={() => deletePageLayoutWidget(widget.id)}
       />
       <StyledContent>
         <WidgetContentRenderer widget={widget} />

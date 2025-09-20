@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
@@ -25,6 +30,22 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     super();
   }
 
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateFieldAction>): Partial<AllFlatEntityMaps> {
+    const { flatObjectMetadataMaps } = allFlatEntityMaps;
+    const updatedFlatObjectMetadataMaps =
+      addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+        flatFieldMetadata: action.flatFieldMetadata,
+        flatObjectMetadataMaps,
+      });
+
+    return {
+      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+    };
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
@@ -36,14 +57,18 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { flatFieldMetadata } = action;
 
-    await fieldMetadataRepository.save(flatFieldMetadata);
+    await fieldMetadataRepository.insert(flatFieldMetadata);
   }
 
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
-      context;
+    const {
+      action,
+      queryRunner,
+      allFlatEntityMaps: { flatObjectMetadataMaps },
+      workspaceId,
+    } = context;
     const { flatFieldMetadata } = action;
 
     const flatObjectMetadataWithFlatFieldMaps =

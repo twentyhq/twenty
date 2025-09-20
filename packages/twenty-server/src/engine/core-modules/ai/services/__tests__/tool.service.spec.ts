@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
@@ -147,7 +147,7 @@ describe('ToolService', () => {
       );
 
       expect(result.success).toBe(true);
-      expect(result.record).toEqual(record);
+      expect(result.result).toEqual(record);
       expect(ormManager.getRepositoryForWorkspace).toHaveBeenCalledWith(
         workspaceId,
         'testObject',
@@ -189,8 +189,8 @@ describe('ToolService', () => {
       );
 
       expect(result.success).toBe(true);
-      expect(result.records).toEqual(records);
-      expect(result.count).toBe(2);
+      expect(result.result.records).toEqual(records);
+      expect(result.result.count).toBe(2);
       expect(mockRepo.find).toHaveBeenCalled();
     });
   });

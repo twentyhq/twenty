@@ -1,17 +1,18 @@
-import { type ViewSort } from '@/views/types/ViewSort';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
+import { ViewSortDirection } from '~/generated/graphql';
 import { getViewSortsToDelete } from '../getViewSortsToDelete';
 
 describe('getViewSortsToDelete', () => {
-  const baseSort: ViewSort = {
-    __typename: 'ViewSort',
+  const baseSort: CoreViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: 'field-1',
-    direction: 'asc',
+    direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should return empty array when current sorts array is empty', () => {
-    const currentViewSorts: ViewSort[] = [];
-    const newViewSorts: ViewSort[] = [baseSort];
+    const currentViewSorts: CoreViewSortEssential[] = [];
+    const newViewSorts: CoreViewSortEssential[] = [baseSort];
 
     const result = getViewSortsToDelete(currentViewSorts, newViewSorts);
 
@@ -20,8 +21,8 @@ describe('getViewSortsToDelete', () => {
 
   it('should return all current sorts when new sorts array is empty', () => {
     const existingSort = { ...baseSort };
-    const currentViewSorts: ViewSort[] = [existingSort];
-    const newViewSorts: ViewSort[] = [];
+    const currentViewSorts: CoreViewSortEssential[] = [existingSort];
+    const newViewSorts: CoreViewSortEssential[] = [];
 
     const result = getViewSortsToDelete(currentViewSorts, newViewSorts);
 
@@ -32,12 +33,15 @@ describe('getViewSortsToDelete', () => {
     const sortToDelete = { ...baseSort };
     const sortToKeep = {
       ...baseSort,
-      id: 'filter-2',
+      id: 'sort-2',
       fieldMetadataId: 'field-2',
-    } satisfies ViewSort;
+    };
 
-    const currentViewSorts: ViewSort[] = [sortToDelete, sortToKeep];
-    const newViewSorts: ViewSort[] = [sortToKeep];
+    const currentViewSorts: CoreViewSortEssential[] = [
+      sortToDelete,
+      sortToKeep,
+    ];
+    const newViewSorts: CoreViewSortEssential[] = [sortToKeep];
 
     const result = getViewSortsToDelete(currentViewSorts, newViewSorts);
 
@@ -45,8 +49,8 @@ describe('getViewSortsToDelete', () => {
   });
 
   it('should handle empty arrays for both inputs', () => {
-    const currentViewSorts: ViewSort[] = [];
-    const newViewSorts: ViewSort[] = [];
+    const currentViewSorts: CoreViewSortEssential[] = [];
+    const newViewSorts: CoreViewSortEssential[] = [];
 
     const result = getViewSortsToDelete(currentViewSorts, newViewSorts);
 
@@ -56,14 +60,14 @@ describe('getViewSortsToDelete', () => {
   it('should not delete sorts that match in both fieldMetadataId and direction', () => {
     const existingSort = { ...baseSort };
     const matchingSort = {
-      __typename: 'ViewSort',
       id: 'sort-2',
       fieldMetadataId: 'field-1',
-      direction: 'asc',
-    } satisfies ViewSort;
+      direction: ViewSortDirection.ASC,
+      viewId: 'view-1',
+    };
 
-    const currentViewSorts: ViewSort[] = [existingSort];
-    const newViewSorts: ViewSort[] = [matchingSort];
+    const currentViewSorts: CoreViewSortEssential[] = [existingSort];
+    const newViewSorts: CoreViewSortEssential[] = [matchingSort];
 
     const result = getViewSortsToDelete(currentViewSorts, newViewSorts);
 

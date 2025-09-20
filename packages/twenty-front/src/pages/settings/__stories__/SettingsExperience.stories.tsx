@@ -33,7 +33,7 @@ export const Default: Story = {
       timeout: 3000,
     });
 
-    await canvas.findByText('Date and time');
+    await canvas.findByText('Formats');
   },
 };
 
@@ -42,7 +42,7 @@ export const Default: Story = {
 //   play: async () => {
 //     const canvas = within(getCanvasElementForDropdownTesting());
 
-//     await canvas.findByText('Date and time');
+//     await canvas.findByText('Formats');
 
 //     const timeFormatSelect = await canvas.findByText('24h (05:30)');
 
@@ -61,7 +61,7 @@ export const Default: Story = {
 //   play: async () => {
 //     const canvas = within(getCanvasElementForDropdownTesting());
 
-//     await canvas.findByText('Date and time');
+//     await canvas.findByText('Formats');
 
 //     const timezoneSelect = await canvas.findByText(
 //       '(GMT-04:00) Eastern Daylight Time - New York',
@@ -84,7 +84,7 @@ export const Default: Story = {
 //   play: async () => {
 //     const canvas = within(getCanvasElementForDropdownTesting());
 
-//     await canvas.findByText('Date and time');
+//     await canvas.findByText('Formats');
 
 //     const timeFormatSelect = await canvas.findByText('12 Mar, 2024');
 

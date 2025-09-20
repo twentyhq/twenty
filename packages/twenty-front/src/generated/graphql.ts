@@ -68,10 +68,10 @@ export type Agent = {
 
 export type AgentChatMessage = {
   __typename?: 'AgentChatMessage';
-  content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
+  rawContent?: Maybe<Scalars['String']>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
 };
@@ -269,6 +269,24 @@ export type BillingEndTrialPeriodOutput = {
   status?: Maybe<SubscriptionStatus>;
 };
 
+export type BillingLicensedProduct = BillingProductDto & {
+  __typename?: 'BillingLicensedProduct';
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
+  prices?: Maybe<Array<BillingPriceLicensedDto>>;
+};
+
+export type BillingMeteredProduct = BillingProductDto & {
+  __typename?: 'BillingMeteredProduct';
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
+  prices?: Maybe<Array<BillingPriceMeteredDto>>;
+};
+
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
   grantedCredits: Scalars['Float'];
@@ -287,9 +305,8 @@ export enum BillingPlanKey {
 
 export type BillingPlanOutput = {
   __typename?: 'BillingPlanOutput';
-  baseProduct: BillingProduct;
-  meteredProducts: Array<BillingProduct>;
-  otherLicensedProducts: Array<BillingProduct>;
+  licensedProducts: Array<BillingLicensedProduct>;
+  meteredProducts: Array<BillingMeteredProduct>;
   planKey: BillingPlanKey;
 };
 
@@ -306,16 +323,7 @@ export type BillingPriceMeteredDto = {
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
-  tiers?: Maybe<Array<BillingPriceTierDto>>;
-  tiersMode?: Maybe<BillingPriceTiersMode>;
-};
-
-export type BillingPriceOutput = {
-  __typename?: 'BillingPriceOutput';
-  amount: Scalars['Float'];
-  nickname: Scalars['String'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String'];
+  tiers: Array<BillingPriceTierDto>;
 };
 
 export type BillingPriceTierDto = {
@@ -325,21 +333,19 @@ export type BillingPriceTierDto = {
   upTo?: Maybe<Scalars['Float']>;
 };
 
-/** The different billing price tiers modes */
-export enum BillingPriceTiersMode {
-  GRADUATED = 'GRADUATED',
-  VOLUME = 'VOLUME'
-}
-
-export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
-
 export type BillingProduct = {
   __typename?: 'BillingProduct';
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceUnionDto>>;
+};
+
+export type BillingProductDto = {
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
 };
 
 /** The different billing products available */
@@ -362,21 +368,35 @@ export type BillingSessionOutput = {
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
-  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
+  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItemDto>>;
   currentPeriodEnd?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
   metadata: Scalars['JSON'];
+  phases: Array<BillingSubscriptionSchedulePhase>;
   status: SubscriptionStatus;
 };
 
-export type BillingSubscriptionItem = {
-  __typename?: 'BillingSubscriptionItem';
-  billingProduct?: Maybe<BillingProduct>;
+export type BillingSubscriptionItemDto = {
+  __typename?: 'BillingSubscriptionItemDTO';
+  billingProduct: BillingProductDto;
   hasReachedCurrentPeriodCap: Scalars['Boolean'];
   id: Scalars['UUID'];
   quantity?: Maybe<Scalars['Float']>;
-  stripePriceId?: Maybe<Scalars['String']>;
+  stripePriceId: Scalars['String'];
+};
+
+export type BillingSubscriptionSchedulePhase = {
+  __typename?: 'BillingSubscriptionSchedulePhase';
+  end_date: Scalars['Float'];
+  items: Array<BillingSubscriptionSchedulePhaseItem>;
+  start_date: Scalars['Float'];
+};
+
+export type BillingSubscriptionSchedulePhaseItem = {
+  __typename?: 'BillingSubscriptionSchedulePhaseItem';
+  price: Scalars['String'];
+  quantity?: Maybe<Scalars['Float']>;
 };
 
 export type BillingTrialPeriodDto = {
@@ -387,8 +407,10 @@ export type BillingTrialPeriodDto = {
 
 export type BillingUpdateOutput = {
   __typename?: 'BillingUpdateOutput';
-  /** Boolean that confirms query was successful */
-  success: Scalars['Boolean'];
+  /** All billing subscriptions */
+  billingSubscriptions: Array<BillingSubscription>;
+  /** Current billing subscription */
+  currentBillingSubscription: BillingSubscription;
 };
 
 export enum BillingUsageType {
@@ -529,6 +551,8 @@ export type ConnectionParametersOutput = {
 export type CoreView = {
   __typename?: 'CoreView';
   anyFieldFilterValue?: Maybe<Scalars['String']>;
+  calendarFieldMetadataId?: Maybe<Scalars['UUID']>;
+  calendarLayout?: Maybe<ViewCalendarLayout>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon: Scalars['String'];
@@ -772,6 +796,8 @@ export type CreateViewGroupInput = {
 
 export type CreateViewInput = {
   anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
   icon: Scalars['String'];
   id?: InputMaybe<Scalars['UUID']>;
   isCompact?: InputMaybe<Scalars['Boolean']>;
@@ -996,15 +1022,19 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
+  IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
+  IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
   IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -1371,7 +1401,8 @@ export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
   OPENAI = 'OPENAI',
-  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE'
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
+  XAI = 'XAI'
 }
 
 export type Mutation = {
@@ -1381,7 +1412,11 @@ export type Mutation = {
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
+  cancelSwitchBillingInterval: BillingUpdateOutput;
+  cancelSwitchBillingPlan: BillingUpdateOutput;
+  cancelSwitchMeteredPrice: BillingUpdateOutput;
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
+  checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
@@ -1480,6 +1515,7 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
+  setMeteredSubscriptionPrice: BillingUpdateOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -1487,8 +1523,8 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
-  switchToEnterprisePlan: BillingUpdateOutput;
-  switchToYearlyInterval: BillingUpdateOutput;
+  switchBillingPlan: BillingUpdateOutput;
+  switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Application;
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
@@ -1509,7 +1545,6 @@ export type Mutation = {
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
   updatePasswordViaResetToken: InvalidatePassword;
-  updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1556,6 +1591,11 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
+};
+
+
+export type MutationCheckPublicDomainValidRecordsArgs = {
+  domain: Scalars['String'];
 };
 
 
@@ -2033,6 +2073,11 @@ export type MutationSendInvitationsArgs = {
 };
 
 
+export type MutationSetMeteredSubscriptionPriceArgs = {
+  priceId: Scalars['String'];
+};
+
+
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -2178,11 +2223,6 @@ export type MutationUpdatePageLayoutWidgetArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
-};
-
-
-export type MutationUpdateSubscriptionItemPriceArgs = {
-  priceId: Scalars['String'];
 };
 
 
@@ -2575,6 +2615,7 @@ export type Query = {
   findAgentHandoffTargets: Array<Agent>;
   findAgentHandoffs: Array<AgentHandoffDto>;
   findManyAgents: Array<Agent>;
+  findManyPublicDomains: Array<PublicDomain>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;
@@ -2622,10 +2663,9 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listAvailableMeteredBillingPrices: Array<BillingPriceOutput>;
+  listPlans: Array<BillingPlanOutput>;
   object: Object;
   objects: ObjectConnection;
-  plans: Array<BillingPlanOutput>;
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
@@ -3188,9 +3228,7 @@ export type SubscriptionOnDbEventArgs = {
 };
 
 export enum SubscriptionInterval {
-  Day = 'Day',
   Month = 'Month',
-  Week = 'Week',
   Year = 'Year'
 }
 
@@ -3492,6 +3530,8 @@ export type UpdateViewGroupInput = {
 
 export type UpdateViewInput = {
   anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
   isCompact?: InputMaybe<Scalars['Boolean']>;
@@ -3664,6 +3704,12 @@ export type VersionInfo = {
   latestVersion: Scalars['String'];
 };
 
+export enum ViewCalendarLayout {
+  DAY = 'DAY',
+  MONTH = 'MONTH',
+  WEEK = 'WEEK'
+}
+
 export enum ViewFilterGroupLogicalOperator {
   AND = 'AND',
   NOT = 'NOT',
@@ -3704,6 +3750,7 @@ export enum ViewSortDirection {
 }
 
 export enum ViewType {
+  CALENDAR = 'CALENDAR',
   KANBAN = 'KANBAN',
   TABLE = 'TABLE'
 }
@@ -3875,6 +3922,7 @@ export type WorkspaceMember = {
   id: Scalars['UUID'];
   locale?: Maybe<Scalars['String']>;
   name: FullName;
+  numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
@@ -3888,6 +3936,15 @@ export enum WorkspaceMemberDateFormatEnum {
   MONTH_FIRST = 'MONTH_FIRST',
   SYSTEM = 'SYSTEM',
   YEAR_FIRST = 'YEAR_FIRST'
+}
+
+/** Number format for displaying numbers */
+export enum WorkspaceMemberNumberFormatEnum {
+  APOSTROPHE_AND_DOT = 'APOSTROPHE_AND_DOT',
+  COMMAS_AND_DOT = 'COMMAS_AND_DOT',
+  DOTS_AND_COMMA = 'DOTS_AND_COMMA',
+  SPACES_AND_COMMA = 'SPACES_AND_COMMA',
+  SYSTEM = 'SYSTEM'
 }
 
 /** Time time as Military, Standard or system as default */
@@ -3940,7 +3997,7 @@ export type ViewFilterFragmentFragment = { __typename?: 'CoreViewFilter', id: an
 
 export type ViewFilterGroupFragmentFragment = { __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any };
 
-export type ViewFragmentFragment = { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> };
+export type ViewFragmentFragment = { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> };
 
 export type ViewGroupFragmentFragment = { __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any };
 
@@ -3951,7 +4008,7 @@ export type CreateCoreViewMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } };
+export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } };
 
 export type CreateCoreViewFieldMutationVariables = Exact<{
   input: CreateViewFieldInput;
@@ -4078,7 +4135,7 @@ export type UpdateCoreViewMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } };
+export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } };
 
 export type UpdateCoreViewFieldMutationVariables = Exact<{
   input: UpdateViewFieldInput;
@@ -4159,14 +4216,14 @@ export type FindManyCoreViewsQueryVariables = Exact<{
 }>;
 
 
-export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> }> };
+export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> }> };
 
 export type FindOneCoreViewQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } | null };
+export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, fieldMetadataId: any, isVisible: boolean, fieldValue: string, position: number, viewId: any }> } | null };
 
 export type FindOneCoreViewFieldQueryVariables = Exact<{
   id: Scalars['String'];
@@ -4270,6 +4327,8 @@ export const ViewFragmentFragmentDoc = gql`
   kanbanAggregateOperation
   kanbanAggregateOperationFieldMetadataId
   anyFieldFilterValue
+  calendarFieldMetadataId
+  calendarLayout
   viewFields {
     ...ViewFieldFragment
   }

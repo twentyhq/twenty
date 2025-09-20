@@ -10,6 +10,7 @@ import { type WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspac
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import {
+  type WorkspaceMemberNumberFormatEnum,
   type WorkspaceMemberDateFormatEnum,
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
@@ -61,6 +62,7 @@ export class WorkspaceMemberTranspiler {
       timeZone,
       dateFormat,
       calendarStartDay,
+      numberFormat,
     } = workspaceMemberEntity;
 
     const avatarUrl = this.generateSignedAvatarUrl({
@@ -86,6 +88,7 @@ export class WorkspaceMemberTranspiler {
       timeZone,
       roles,
       calendarStartDay,
+      numberFormat: numberFormat as WorkspaceMemberNumberFormatEnum,
     } satisfies WorkspaceMember;
   }
 

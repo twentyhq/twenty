@@ -10,7 +10,7 @@ import {
   ViewFieldException,
   ViewFieldExceptionCode,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-properties-to-compare.constant';
+import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/core-modules/view/flat-view/constants/flat-view-field-editable-properties.constant';
 import { type FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
@@ -39,12 +39,12 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   }
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateViewFieldInput.update,
-    FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE,
+    FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
   );
 
   return mergeUpdateInExistingRecord({
     existing: existingFlatViewFieldToUpdate,
-    properties: FLAT_VIEW_FIELD_PROPERTIES_TO_COMPARE,
+    properties: FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
     update: updatedEditableFieldProperties,
   });
 };

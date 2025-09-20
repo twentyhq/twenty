@@ -48,6 +48,7 @@ const meta: Meta = {
               objectNameSingular: CoreObjectNameSingular.Company,
               objectMetadataItem: companyObjectMetadataItem,
               recordIndexId: instanceId,
+              viewBarInstanceId: instanceId,
               fieldDefinitionByFieldMetadataItemId,
               fieldMetadataItemByFieldMetadataItemId,
               labelIdentifierFieldMetadataItem,

@@ -28,6 +28,7 @@ export const JestRecordIndexContextProviderWrapper = ({
         objectNameSingular: objectMetadataItem.nameSingular,
         objectMetadataItem: objectMetadataItem,
         recordIndexId: 'recordIndexId',
+        viewBarInstanceId: 'recordIndexId',
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,

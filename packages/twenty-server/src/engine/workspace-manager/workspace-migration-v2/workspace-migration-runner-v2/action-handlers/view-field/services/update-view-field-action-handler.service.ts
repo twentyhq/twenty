@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { UpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
@@ -15,6 +21,33 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     super();
   }
 
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateViewFieldAction>): Partial<AllFlatEntityMaps> {
+    const { flatViewFieldMaps } = allFlatEntityMaps;
+    const { viewFieldId } = action;
+
+    const existingViewField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: viewFieldId,
+      flatEntityMaps: flatViewFieldMaps,
+    });
+
+    const updatedViewField = {
+      ...existingViewField,
+      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
+    };
+
+    const updatedFlatViewFieldMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+      flatEntity: updatedViewField,
+      flatEntityMaps: flatViewFieldMaps,
+    });
+
+    return {
+      flatViewFieldMaps: updatedFlatViewFieldMaps,
+    };
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateViewFieldAction>,
   ): Promise<void> {
@@ -22,12 +55,11 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     const { viewFieldId } = action;
 
     const viewFieldRepository =
-      queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
+      queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
-    await viewFieldRepository.update(
-      viewFieldId,
-      fromWorkspaceMigrationUpdateActionToPartialEntity(action),
-    );
+    const update = fromWorkspaceMigrationUpdateActionToPartialEntity(action);
+
+    await viewFieldRepository.update(viewFieldId, update);
   }
 
   async executeForWorkspaceSchema(

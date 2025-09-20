@@ -311,7 +311,6 @@ export const LargeResponse: Story = {
             pagination: {
               totalCount: 500,
               page: 1,
-              limit: 50,
               totalPages: 10,
             },
           },

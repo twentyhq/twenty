@@ -12,11 +12,13 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
+import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ViewCalendarLayout } from '~/generated/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
@@ -27,6 +29,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
+
+  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
   const createViewGroupAssociatedWithKanbanField = useCallback(
     async (randomFieldForKanban: string, currentViewId: string) => {
@@ -129,7 +133,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             }
             return await updateCurrentView(updateCurrentViewParams);
           }
-          case ViewType.Table:
+          case ViewType.Table: {
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
               ...existingCoreViews.filter(
@@ -146,6 +150,36 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 viewTypeIconMapping(viewType).displayName;
             }
             return await updateCurrentView(updateCurrentViewParams);
+          }
+          case ViewType.Calendar: {
+            if (availableFieldsForCalendar.length === 0) {
+              throw new Error('No date fields for calendar');
+            }
+
+            const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+
+            setRecordIndexViewType(viewType);
+            set(coreViewsState, [
+              ...existingCoreViews.filter(
+                (coreView) => coreView.id !== currentView.id,
+              ),
+              {
+                ...currentCoreView,
+                type: convertViewTypeToCore(viewType),
+                calendarLayout: ViewCalendarLayout.MONTH,
+                calendarFieldMetadataId,
+              },
+            ]);
+
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
+            }
+            updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
+            updateCurrentViewParams.calendarFieldMetadataId =
+              calendarFieldMetadataId;
+            return await updateCurrentView(updateCurrentViewParams);
+          }
           default: {
             return assertUnreachable(viewType);
           }
@@ -158,6 +192,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       setRecordIndexViewType,
       createViewGroupAssociatedWithKanbanField,
       loadRecordIndexStates,
+      availableFieldsForCalendar,
     ],
   );
 
@@ -174,6 +209,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     if (
       oldViewType === ViewType.Table &&
       oldIcon === viewTypeIconMapping(ViewType.Table).displayName
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.Calendar &&
+      oldIcon === viewTypeIconMapping(ViewType.Calendar).displayName
     ) {
       return true;
     }

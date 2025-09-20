@@ -20,7 +20,6 @@ import {
   IconFunction,
   IconHierarchy2,
   IconKey,
-  IconLayout,
   IconLock,
   IconMail,
   IconRocket,
@@ -64,9 +63,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
   const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isPageLayoutEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-  );
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -143,15 +139,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconCurrencyDollar,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`Page Layouts`,
-          path: SettingsPath.PageLayout,
-          Icon: IconLayout,
-          isHidden:
-            !isPageLayoutEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-          isNew: true,
         },
         {
           label: t`APIs & Webhooks`,

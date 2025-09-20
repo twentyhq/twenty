@@ -29,6 +29,11 @@ export const addFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadataMapsOrThr
     }
 
     return {
+      idByUniversalIdentifier: {
+        ...flatObjectMetadataMaps.idByUniversalIdentifier,
+        [flatObjectMetadataWithFlatFieldMaps.universalIdentifier]:
+          flatObjectMetadataWithFlatFieldMaps.id,
+      },
       byId: {
         ...flatObjectMetadataMaps.byId,
         [flatObjectMetadataWithFlatFieldMaps.id]:

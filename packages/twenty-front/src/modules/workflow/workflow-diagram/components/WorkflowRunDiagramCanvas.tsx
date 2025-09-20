@@ -1,7 +1,6 @@
 import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeRun';
-import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeRun';
 
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { WorkflowRunDiagramStepNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowRunDiagramStepNode';
@@ -23,8 +22,7 @@ export const WorkflowRunDiagramCanvas = ({
           default: WorkflowRunDiagramStepNode,
         }}
         edgeTypes={{
-          'empty-filter--run': WorkflowDiagramDefaultEdgeRun,
-          'filter--run': WorkflowDiagramFilterEdgeRun,
+          run: WorkflowDiagramDefaultEdgeRun,
         }}
         tagContainerTestId="workflow-run-status"
         tagColor={tagProps.color}

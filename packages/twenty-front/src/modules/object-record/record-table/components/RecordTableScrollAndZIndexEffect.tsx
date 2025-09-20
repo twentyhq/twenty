@@ -1,25 +1,25 @@
+import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
+import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollAndZIndexEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
-    isRecordTableScrolledHorizontallyComponentState,
-  );
+  const [
+    isRecordTableScrolledHorizontally,
+    setIsRecordTableScrolledHorizontally,
+  ] = useRecoilComponentState(isRecordTableScrolledHorizontallyComponentState);
 
-  const setIsRecordTableScrolledVertically = useSetRecoilComponentState(
-    isRecordTableScrolledVerticallyComponentState,
-  );
-
-  const [isScrolledVertically, setIsScrolledVertically] = useState(false);
-  const [isScrolledHorizontally, setIsScrolledHorizontally] = useState(false);
+  const [isRecordTableScrolledVertically, setIsRecordTableScrolledVertically] =
+    useRecoilComponentState(isRecordTableScrolledVerticallyComponentState);
 
   useEffect(() => {
     if (!isDefined(scrollWrapperHTMLElement)) {
@@ -29,29 +29,35 @@ export const RecordTableScrollAndZIndexEffect = () => {
     const handleScroll = (event: any) => {
       const target = event.currentTarget;
 
-      let somethingHasChanged = false;
-
       const newIsScrolledVertically = target?.scrollTop > 0;
 
-      if (newIsScrolledVertically !== isScrolledVertically) {
-        setIsScrolledVertically(newIsScrolledVertically);
+      if (newIsScrolledVertically !== isRecordTableScrolledVertically) {
         setIsRecordTableScrolledVertically(newIsScrolledVertically);
-        somethingHasChanged = true;
+
+        const newVisibilityOfShadows = newIsScrolledVertically
+          ? 'visible'
+          : 'hidden';
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newVisibilityOfShadows,
+        );
       }
 
       const newIsScrolledHorizontally = target?.scrollLeft > 0;
 
-      if (newIsScrolledHorizontally !== isScrolledHorizontally) {
-        setIsScrolledHorizontally(newIsScrolledHorizontally);
+      if (newIsScrolledHorizontally !== isRecordTableScrolledHorizontally) {
         setIsRecordTableScrolledHorizontally(newIsScrolledHorizontally);
-        somethingHasChanged = true;
-      }
 
-      if (!somethingHasChanged) {
-        return;
-      }
+        const newVisibilityOfShadows = newIsScrolledHorizontally
+          ? 'visible'
+          : 'hidden';
 
-      // TODO: insert imperative CSS update here
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newVisibilityOfShadows,
+        );
+      }
     };
 
     scrollWrapperHTMLElement?.addEventListener('scroll', handleScroll);
@@ -61,8 +67,8 @@ export const RecordTableScrollAndZIndexEffect = () => {
     };
   }, [
     scrollWrapperHTMLElement,
-    isScrolledVertically,
-    isScrolledHorizontally,
+    isRecordTableScrolledVertically,
+    isRecordTableScrolledHorizontally,
     setIsRecordTableScrolledVertically,
     setIsRecordTableScrolledHorizontally,
   ]);

@@ -10,10 +10,9 @@ import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/worksp
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';
 
 import { workspaceFixers } from './fixer';
-
-import { WorkspaceFixService } from './services/workspace-fix.service';
 
 @Module({
   imports: [

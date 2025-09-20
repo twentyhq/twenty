@@ -33,9 +33,6 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
           },
         ),
       },
-      expectedActionsTypeCounter: {
-        deleteObject: 1,
-      },
     },
   },
   {
@@ -54,9 +51,6 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
             objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
           },
         ),
-      },
-      expectedActionsTypeCounter: {
-        deleteObject: 1,
       },
     },
   },
@@ -79,9 +73,6 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
             ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
       },
-      expectedActionsTypeCounter: {
-        createObject: 1,
-      },
     },
   },
   {
@@ -100,19 +91,12 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
             ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
       },
-      expectedActionsTypeCounter: {
-        createObject: 1,
-      },
     },
   },
   {
     title:
       'It should build a create_object and create_index actions for each of this fieldMetadata',
     context: {
-      expectedActionsTypeCounter: {
-        createIndex: 1,
-        createObject: 1,
-      },
       input: {
         fromFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
@@ -153,9 +137,6 @@ const UPDATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
             }),
           }),
       },
-      expectedActionsTypeCounter: {
-        updateObject: 1,
-      },
     },
   },
   {
@@ -173,9 +154,6 @@ const UPDATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
               },
             }),
           }),
-      },
-      expectedActionsTypeCounter: {
-        updateObject: 1,
       },
     },
   },

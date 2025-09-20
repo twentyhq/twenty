@@ -1,3 +1,4 @@
+import { forceRegisteredActionsByKeyComponentState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -100,6 +101,10 @@ export const useShouldActionBeRegisteredParams = ({
     [],
   );
 
+  const forceRegisteredActionsByKey = useRecoilComponentValue(
+    forceRegisteredActionsByKeyComponentState,
+  );
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -113,5 +118,6 @@ export const useShouldActionBeRegisteredParams = ({
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
+    forceRegisteredActionsByKey,
   };
 };

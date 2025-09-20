@@ -1,5 +1,6 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
@@ -25,20 +26,15 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   flex-grow: 1;
   max-width: 100%;
 
-  background: ${({ theme, isUnfolded }) =>
-    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+  cursor: pointer;
 
-  &:hover {
-    background: ${({ theme, isUnfolded }) =>
-      isUnfolded
-        ? theme.background.transparent.medium
-        : theme.background.transparent.light};
-  }
+  background: ${({ theme, isUnfolded }) =>
+    isUnfolded ? theme.background.tertiary : 'none'};
 
   ${({ isFirstCell, theme }) =>
     isFirstCell &&
     `
-    padding-left: calc(${TABLE_CELL_CHECKBOX_MIN_WIDTH} + ${theme.spacing(1)});
+    padding-left: calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH} + ${theme.spacing(1)});
   `}
 `;
 

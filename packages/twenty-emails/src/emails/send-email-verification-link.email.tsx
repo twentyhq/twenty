@@ -1,9 +1,9 @@
-import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
+import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 type SendEmailVerificationLinkEmailProps = {
@@ -15,6 +15,8 @@ export const SendEmailVerificationLinkEmail = ({
   link,
   locale,
 }: SendEmailVerificationLinkEmailProps) => {
+  const i18n = createI18nInstance(locale);
+
   return (
     <BaseEmail width={333} locale={locale}>
       <Title value={i18n._('Confirm your email address')} />

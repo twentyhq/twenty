@@ -1,5 +1,6 @@
 import { WorkflowFormFieldSettingsDate } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate';
 import { WorkflowFormFieldSettingsRecordPicker } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker';
+import { WorkflowFormFieldSettingsSelect } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -25,6 +26,10 @@ export const WorkflowFormFieldSettingsByType = ({
     case FieldMetadataType.DATE:
       return (
         <WorkflowFormFieldSettingsDate field={field} onChange={onChange} />
+      );
+    case FieldMetadataType.SELECT:
+      return (
+        <WorkflowFormFieldSettingsSelect field={field} onChange={onChange} />
       );
     case 'RECORD':
       return (

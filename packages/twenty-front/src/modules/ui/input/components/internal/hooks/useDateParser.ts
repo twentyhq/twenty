@@ -1,7 +1,6 @@
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useCallback, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { parseDateToString } from '../date/utils/parseDateToString';
 import { parseStringToDate } from '../date/utils/parseStringToDate';
 
@@ -10,7 +9,7 @@ type UseDateParserProps = {
 };
 
 export const useDateParser = ({ isDateTimeInput }: UseDateParserProps) => {
-  const { dateFormat } = useRecoilValue(dateTimeFormatState);
+  const { dateFormat } = useDateTimeFormat();
   const { timeZone } = useContext(UserContext);
 
   const parseToString = useCallback(

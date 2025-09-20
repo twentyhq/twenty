@@ -2,9 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useDebounce } from 'use-debounce';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -41,6 +42,8 @@ import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
@@ -102,6 +105,27 @@ export const SettingsWorkspaceMembers = () => {
     string | undefined
   >();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [searchFilter, setSearchFilter] = useState('');
+
+  const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
+
+  const searchServerFilter = useMemo(() => {
+    if (!debouncedSearchFilter?.trim()) return undefined;
+
+    const normalizedSearchTerm = normalizeSearchText(debouncedSearchFilter);
+    const nameFilters = generateILikeFiltersForCompositeFields(
+      normalizedSearchTerm,
+      'name',
+      ['firstName', 'lastName'],
+    );
+
+    return {
+      or: [
+        ...nameFilters,
+        { userEmail: { ilike: `%${normalizedSearchTerm}%` } },
+      ],
+    };
+  }, [debouncedSearchFilter]);
 
   const {
     records: workspaceMembers,
@@ -110,6 +134,7 @@ export const SettingsWorkspaceMembers = () => {
     loading,
   } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    filter: searchServerFilter,
   });
   const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -127,8 +152,6 @@ export const SettingsWorkspaceMembers = () => {
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
   const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
-
-  const [searchFilter, setSearchFilter] = useState('');
 
   const handleSearchChange = (text: string) => {
     setSearchFilter(text);
@@ -189,20 +212,29 @@ export const SettingsWorkspaceMembers = () => {
       : formatDistanceToNow(new Date(expiresAt));
   };
 
-  const filteredWorkspaceMembers = !searchFilter
-    ? workspaceMembers
-    : workspaceMembers.filter((member) => {
-        const searchTerm = searchFilter.toLowerCase();
-        const firstName = member.name.firstName?.toLowerCase() || '';
-        const lastName = member.name.lastName?.toLowerCase() || '';
-        const email = member.userEmail?.toLowerCase() || '';
+  const optimizedWorkspaceMembers = useMemo(() => {
+    if (!searchFilter.trim()) {
+      return workspaceMembers;
+    }
 
-        return (
-          firstName.includes(searchTerm) ||
-          lastName.includes(searchTerm) ||
-          email.includes(searchTerm)
-        );
-      });
+    const normalizedSearchTerm = normalizeSearchText(searchFilter);
+    const searchTerms = normalizedSearchTerm.split(/\s+/);
+
+    return workspaceMembers.filter((member) => {
+      const firstName = normalizeSearchText(member.name.firstName);
+      const lastName = normalizeSearchText(member.name.lastName);
+      const email = normalizeSearchText(member.userEmail);
+      const fullName = `${firstName} ${lastName}`.trim();
+
+      return searchTerms.every(
+        (term) =>
+          firstName.includes(term) ||
+          lastName.includes(term) ||
+          fullName.includes(term) ||
+          email.includes(term),
+      );
+    });
+  }, [workspaceMembers, searchFilter]);
 
   const { openModal } = useModal();
 
@@ -334,8 +366,8 @@ export const SettingsWorkspaceMembers = () => {
               <TableHeader align="right"></TableHeader>
             </TableRow>
             <StyledTableRows>
-              {filteredWorkspaceMembers.length > 0 ? (
-                filteredWorkspaceMembers.map((workspaceMember) => (
+              {optimizedWorkspaceMembers.length > 0 ? (
+                optimizedWorkspaceMembers.map((workspaceMember) => (
                   <TableRow
                     gridAutoColumns="150px 1fr 1fr"
                     mobileGridAutoColumns="100px 1fr 1fr"

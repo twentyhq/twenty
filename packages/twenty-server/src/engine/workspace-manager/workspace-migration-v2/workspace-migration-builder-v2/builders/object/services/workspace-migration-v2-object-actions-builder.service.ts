@@ -73,10 +73,13 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         );
 
       if (
-        validationErrors.fieldLevelErrors.length > 0 ||
-        validationErrors.objectLevelErrors.length > 0
+        validationErrors.fieldValidationResults.length > 0 ||
+        validationErrors.objectValidationResult.errors.length > 0
       ) {
-        validateAndBuildResult.failed.push(validationErrors);
+        validateAndBuildResult.failed.push(
+          validationErrors.objectValidationResult,
+          ...validationErrors.fieldValidationResults,
+        );
         continue;
       }
 
@@ -116,10 +119,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
           },
         );
 
-      if (
-        validationErrors.fieldLevelErrors.length > 0 ||
-        validationErrors.objectLevelErrors.length > 0
-      ) {
+      if (validationErrors.errors.length > 0) {
         validateAndBuildResult.failed.push(validationErrors);
         continue;
       }
@@ -160,10 +160,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
           },
         );
 
-      if (
-        validationErrors.fieldLevelErrors.length > 0 ||
-        validationErrors.objectLevelErrors.length > 0
-      ) {
+      if (validationErrors.errors.length > 0) {
         validateAndBuildResult.failed.push(validationErrors);
         continue;
       }

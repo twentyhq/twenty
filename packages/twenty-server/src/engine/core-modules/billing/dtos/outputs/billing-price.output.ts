@@ -6,8 +6,8 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 
 @ObjectType()
 export class BillingPriceOutput {
-  @Field(() => String)
-  nickname: string;
+  @Field(() => Number)
+  upTo: number;
 
   @Field(() => Number)
   amount: number;

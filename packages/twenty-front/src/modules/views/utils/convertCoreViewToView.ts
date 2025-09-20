@@ -6,7 +6,6 @@ import { convertCoreViewFilterToViewFilter } from '@/views/utils/convertCoreView
 import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGroupToViewGroup';
 import { convertCoreViewKeyToViewKey } from '@/views/utils/convertCoreViewKeyToViewKey';
 import { convertCoreViewOpenRecordInToViewOpenRecordIn } from '@/views/utils/convertCoreViewOpenRecordInToViewOpenRecordIn';
-import { convertCoreViewSortToViewSort } from '@/views/utils/convertCoreViewSortToViewSort';
 import { convertCoreViewTypeToViewType } from '@/views/utils/convertCoreViewTypeToViewType';
 
 export const convertCoreViewToView = (
@@ -37,13 +36,13 @@ export const convertCoreViewToView = (
     viewFilterGroups: coreView.viewFilterGroups?.map(
       convertCoreViewFilterGroupToViewFilterGroup,
     ),
-    viewSorts: coreView.viewSorts.map((viewSort) =>
-      convertCoreViewSortToViewSort(viewSort),
-    ),
+    viewSorts: coreView.viewSorts,
     kanbanFieldMetadataId: '',
     kanbanAggregateOperation: coreView.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       coreView.kanbanAggregateOperationFieldMetadataId ?? null,
+    calendarFieldMetadataId: coreView.calendarFieldMetadataId ?? null,
+    calendarLayout: coreView.calendarLayout ?? null,
     position: coreView.position,
     icon: coreView.icon,
     openRecordIn: convertedOpenRecordIn,

@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import { Repository } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -13,8 +14,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workspaceMember.updateOne`)
 export class WorkspaceMemberUpdateOnePreQueryHook
@@ -33,7 +34,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
   ): Promise<UpdateOneResolverArgs> {
     const workspace = authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {
