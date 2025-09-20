@@ -127,7 +127,7 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
   },
   [ConfigVariablesGroup.AwsSesSettings]: {
     position: 2100,
-    description: 'Configure AWS SES settings for outbound message domains',
+    description: 'Configure AWS SES settings for emailing domains',
     isHiddenOnLoad: true,
   },
 };

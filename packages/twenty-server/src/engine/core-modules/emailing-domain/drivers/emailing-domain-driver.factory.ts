@@ -32,7 +32,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
       return `aws-ses|${awsConfigHash}`;
     }
 
-    throw new Error(`Unsupported outbound message domain driver: ${driver}`);
+    throw new Error(`Unsupported emailing domain driver: ${driver}`);
   }
 
   protected createDriver(): EmailingDomainDriverInterface {
@@ -69,7 +69,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
       }
 
       default:
-        throw new Error(`Invalid outbound message domain driver: ${driver}`);
+        throw new Error(`Invalid emailing domain driver: ${driver}`);
     }
   }
 }
