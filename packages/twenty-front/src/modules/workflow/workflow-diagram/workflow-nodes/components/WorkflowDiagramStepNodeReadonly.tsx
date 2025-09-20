@@ -104,6 +104,16 @@ export const WorkflowDiagramStepNodeReadonly = ({
         position={Position.Bottom}
         disableHoverEffect
       />
+
+      {isDefined(data.rightHandleOptions) && (
+        <WorkflowDiagramHandleSource
+          id={data.rightHandleOptions.id}
+          type="source"
+          selected={selected}
+          position={Position.Right}
+          disableHoverEffect
+        />
+      )}
     </>
   );
 };
