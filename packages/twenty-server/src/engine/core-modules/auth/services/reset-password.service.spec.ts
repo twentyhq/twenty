@@ -18,6 +18,17 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 import { ResetPasswordService } from './reset-password.service';
 
+// To avoid dynamic import issues in Jest
+jest.mock('@react-email/render', () => ({
+  render: jest.fn().mockImplementation(async (template, options) => {
+    if (options?.plainText) {
+      return 'Plain Text Email';
+    }
+
+    return '<html><body>HTML email content</body></html>';
+  }),
+}));
+
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
   let userRepository: Repository<User>;
