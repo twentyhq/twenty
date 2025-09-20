@@ -8,6 +8,10 @@ export const getColorByOutboundMessageDomainStatus = (
       return 'turquoise';
     case OutboundMessageDomainStatus.PENDING:
       return 'orange';
+    case OutboundMessageDomainStatus.TEMPORARY_FAILURE:
+      return 'orange';
+    case OutboundMessageDomainStatus.FAILED:
+      return 'red';
     default:
       return 'gray';
   }

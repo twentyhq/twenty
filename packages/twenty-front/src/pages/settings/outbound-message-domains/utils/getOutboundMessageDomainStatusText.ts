@@ -9,6 +9,10 @@ export const getTextByOutboundMessageDomainStatus = (
       return t`Verified`;
     case OutboundMessageDomainStatus.PENDING:
       return t`Pending`;
+    case OutboundMessageDomainStatus.TEMPORARY_FAILURE:
+      return t`Temporary Failure`;
+    case OutboundMessageDomainStatus.FAILED:
+      return t`Failed`;
     default:
       return t`Unknown`;
   }
