@@ -12,7 +12,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ManageMembersDropdownMenu } from '@/settings/members/ManageMembersDropdownMenu';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -40,7 +42,10 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
+import {
+  useGetWorkspaceInvitationsQuery,
+  useImpersonateMutation,
+} from '~/generated-metadata/graphql';
 
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -105,6 +110,8 @@ export const SettingsWorkspaceMembers = () => {
     string | undefined
   >();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [impersonate] = useImpersonateMutation();
+  const { executeImpersonationAuth } = useImpersonationAuth();
   const [searchFilter, setSearchFilter] = useState('');
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
@@ -148,6 +155,35 @@ export const SettingsWorkspaceMembers = () => {
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
+    setWorkspaceMemberToDelete(undefined);
+  };
+
+  const handleImpersonate = async (targetWorkspaceMember: WorkspaceMember) => {
+    if (!targetWorkspaceMember.userId || !currentWorkspace?.id) {
+      enqueueErrorSnackBar({
+        message: t`Cannot impersonate selected user`,
+        options: { duration: 2000 },
+      });
+      return;
+    }
+
+    await impersonate({
+      variables: {
+        userId: targetWorkspaceMember.userId,
+        workspaceId: currentWorkspace.id,
+      },
+      onCompleted: async (data) => {
+        const { loginToken } = data.impersonate;
+        await executeImpersonationAuth(loginToken.token);
+        return;
+      },
+      onError: () => {
+        enqueueErrorSnackBar({
+          message: t`Cannot impersonate selected user`,
+          options: { duration: 2000 },
+        });
+      },
+    });
   };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
@@ -407,14 +443,14 @@ export const SettingsWorkspaceMembers = () => {
                     <TableCell align="right">
                       {currentWorkspaceMember?.id !== workspaceMember.id && (
                         <StyledButtonContainer>
-                          <IconButton
-                            onClick={() => {
+                          <ManageMembersDropdownMenu
+                            dropdownId={`workspace-member-actions-${workspaceMember.id}`}
+                            workspaceMember={workspaceMember}
+                            onImpersonate={handleImpersonate}
+                            onDelete={(id) => {
+                              setWorkspaceMemberToDelete(id);
                               openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
-                              setWorkspaceMemberToDelete(workspaceMember.id);
                             }}
-                            variant="tertiary"
-                            size="medium"
-                            Icon={IconTrash}
                           />
                         </StyledButtonContainer>
                       )}
