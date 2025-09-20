@@ -3,7 +3,7 @@ import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -23,8 +23,10 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
@@ -43,6 +45,7 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
+  const navigate = useNavigate();
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -59,6 +62,10 @@ export const SettingsObjectFieldEdit = () => {
 
   const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
     null,
+  );
+
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+    navigationMemorizedUrlState,
   );
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
@@ -106,7 +113,6 @@ export const SettingsObjectFieldEdit = () => {
   ) => {
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
-
     try {
       if (
         formValues.type === FieldMetadataType.RELATION &&
@@ -140,6 +146,12 @@ export const SettingsObjectFieldEdit = () => {
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
+
+        if (navigationMemorizedUrl.isAddingFieldOption === true) {
+          navigate(navigationMemorizedUrl.url, { replace: true });
+          setNavigationMemorizedUrl({ url: '/' });
+          return;
+        }
 
         navigateSettings(SettingsPath.ObjectDetail, {
           objectNamePlural,

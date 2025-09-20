@@ -1,5 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
+import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
 import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -14,6 +15,9 @@ import { type SelectOption } from 'twenty-ui/input';
 
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
+  const { onAddSelectOption } = useAddSelectOption(
+    fieldDefinition?.metadata?.fieldName,
+  );
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
 
@@ -82,6 +86,7 @@ export const SelectFieldInput = () => {
         fieldDefinition.metadata.isNullable ? handleClearField : undefined
       }
       clearLabel={fieldDefinition.label}
+      onAddSelectOption={onAddSelectOption}
     />
   );
 };

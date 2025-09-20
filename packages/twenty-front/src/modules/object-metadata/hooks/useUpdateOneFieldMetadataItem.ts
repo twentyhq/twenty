@@ -53,7 +53,6 @@ export const useUpdateOneFieldMetadataItem = () => {
 
     return result;
   };
-
   return {
     updateOneFieldMetadataItem,
   };
