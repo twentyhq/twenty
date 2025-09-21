@@ -17,4 +17,3 @@ export type { ToolEvent } from './types/ToolEvent';
 export type { ToolResultEvent } from './types/ToolResultEvent';
 export { parseStreamLine } from './utils/parseStreamLine';
 export { splitStreamIntoLines } from './utils/splitStreamIntoLines';
-
