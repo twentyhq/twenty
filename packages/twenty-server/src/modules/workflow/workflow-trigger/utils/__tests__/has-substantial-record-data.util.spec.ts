@@ -1,18 +1,21 @@
-import { hasSubstantialRecordData } from '../has-substantial-record-data.util';
+import { hasSubstantialRecordData } from 'src/modules/workflow/workflow-trigger/utils/has-substantial-record-data.util';
 
 describe('hasSubstantialRecordData', () => {
   it('should return false for null input', () => {
     const result = hasSubstantialRecordData(null as any);
+
     expect(result).toBe(false);
   });
 
   it('should return false for undefined input', () => {
     const result = hasSubstantialRecordData(undefined as any);
+
     expect(result).toBe(false);
   });
 
   it('should return false for non-object input', () => {
     const result = hasSubstantialRecordData('not an object' as any);
+
     expect(result).toBe(false);
   });
 
@@ -25,6 +28,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(false);
   });
 
@@ -39,6 +43,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(false);
   });
 
@@ -50,6 +55,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 
@@ -61,6 +67,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 
@@ -72,6 +79,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 
@@ -83,6 +91,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 
@@ -94,6 +103,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 
@@ -106,6 +116,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(false);
   });
 
@@ -121,6 +132,7 @@ describe('hasSubstantialRecordData', () => {
     };
 
     const result = hasSubstantialRecordData(recordData);
+
     expect(result).toBe(true);
   });
 });

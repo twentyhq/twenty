@@ -12,6 +12,7 @@ import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emit
 import { type ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -27,7 +28,6 @@ import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { hasSubstantialRecordData } from 'src/modules/workflow/workflow-trigger/utils/has-substantial-record-data.util';
 
 @Injectable()
 export class WorkflowDatabaseEventTriggerListener {
@@ -57,9 +57,6 @@ export class WorkflowDatabaseEventTriggerListener {
       payload: clonedPayload,
       action: DatabaseEventAction.CREATED,
     });
-
-    // Also trigger upsert event if record has substantial data
-    await this.handleUpsertEventForCreated(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
@@ -78,9 +75,6 @@ export class WorkflowDatabaseEventTriggerListener {
       payload: clonedPayload,
       action: DatabaseEventAction.UPDATED,
     });
-
-    // Also trigger upsert event for all updates
-    await this.handleUpsertEventForUpdated(clonedPayload);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
@@ -114,6 +108,22 @@ export class WorkflowDatabaseEventTriggerListener {
     await this.handleEvent({
       payload: clonedPayload,
       action: DatabaseEventAction.DESTROYED,
+    });
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPSERTED)
+  async handleObjectRecordUpsertEvent(
+    payload: WorkspaceEventBatch<ObjectRecordUpsertEvent>,
+  ) {
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.UPSERTED,
     });
   }
 
@@ -230,43 +240,6 @@ export class WorkflowDatabaseEventTriggerListener {
     }
   }
 
-  private async handleUpsertEventForCreated(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
-  ) {
-    // Check if any created records have substantial data
-    const recordsWithSubstantialData = payload.events.filter((event) => {
-      const recordData = event.properties.after;
-      return recordData && typeof recordData === 'object' 
-        ? hasSubstantialRecordData(recordData as Record<string, unknown>)
-        : false;
-    });
-
-    if (recordsWithSubstantialData.length === 0) {
-      return;
-    }
-
-    // Create a new payload with only records that have substantial data
-    const upsertPayload: WorkspaceEventBatch<ObjectRecordCreateEvent> = {
-      ...payload,
-      events: recordsWithSubstantialData,
-    };
-
-    await this.handleEvent({
-      payload: upsertPayload,
-      action: DatabaseEventAction.UPSERTED,
-    });
-  }
-
-  private async handleUpsertEventForUpdated(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
-  ) {
-    // All update events qualify as upsert events
-    await this.handleEvent({
-      payload,
-      action: DatabaseEventAction.UPSERTED,
-    });
-  }
-
   private async shouldIgnoreEvent(
     payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
   ) {
@@ -358,6 +331,24 @@ export class WorkflowDatabaseEventTriggerListener {
           updateEventPayload?.properties?.updatedFields?.includes(field),
         )
       );
+    }
+
+    if (action === DatabaseEventAction.UPSERTED) {
+      const settings = eventListener.settings as UpdateEventTriggerSettings;
+
+      if (!settings.fields || settings.fields.length === 0) {
+        return;
+      }
+
+      if ('updatedFields' in eventPayload.properties) {
+        const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
+
+        return settings.fields.some((field) =>
+          updateEventPayload?.properties?.updatedFields?.includes(field),
+        );
+      }
+
+      return;
     }
 
     return true;
