@@ -2,7 +2,7 @@ export type ToolCallEvent = {
   type: 'tool-call';
   toolCallId: string;
   toolName: string;
-  args: {
+  input: {
     loadingMessage: string;
     input: unknown;
   };

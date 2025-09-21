@@ -40,7 +40,7 @@ export const parseStream = (streamText: string): ParsedStep[] => {
               type: 'tool-call',
               toolCallId: event.toolCallId,
               toolName: event.toolName,
-              args: event.args,
+              input: event.input,
             },
           ] as ToolEvent[],
         });
@@ -62,7 +62,7 @@ export const parseStream = (streamText: string): ParsedStep[] => {
           type: 'tool-result',
           toolCallId: event.toolCallId,
           toolName: event.toolName,
-          result: event.result,
+          output: event.output,
           message: event.message,
         };
 
