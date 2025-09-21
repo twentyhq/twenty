@@ -9,7 +9,6 @@ import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import type { ToolCallEvent } from '@/ai/types/ToolCallEvent';
 import type { ToolEvent } from '@/ai/types/ToolEvent';
 import type { ToolResultEvent } from '@/ai/types/ToolResultEvent';
-import { extractErrorMessage } from '@/ai/utils/extractErrorMessage';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 
 const StyledContainer = styled.div`
@@ -72,32 +71,27 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const toolCall = events[0] as ToolCallEvent | undefined;
-  const toolResult = events.find(
+  const toolCallEvent = events[0] as ToolCallEvent | undefined;
+  const toolResultEvent = events.find(
     (event): event is ToolResultEvent => event.type === 'tool-result',
   );
 
-  if (!toolCall) {
+  if (!toolCallEvent) {
     return null;
   }
 
-  const toolOutput = toolResult?.result as ToolResultEvent['result'];
-  const isStandardizedFormat =
-    toolOutput && typeof toolOutput === 'object' && 'success' in toolOutput;
+  const toolOutput = toolResultEvent?.output
+    .result as ToolResultEvent['output'];
 
-  const hasResult = isStandardizedFormat
-    ? Boolean(toolOutput.result)
-    : Boolean(toolResult?.result);
-  const hasError = isStandardizedFormat ? Boolean(toolOutput.error) : false;
-  const isExpandable = hasResult || hasError;
+  const isExpandable = !!toolOutput;
 
-  if (!toolResult) {
+  if (!toolResultEvent) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
           <ShimmeringText>
             <StyledDisplayMessage>
-              {toolCall.args.loadingMessage}
+              {toolCallEvent.input.loadingMessage}
             </StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
@@ -106,13 +100,13 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
   }
 
   const displayMessage =
-    toolResult?.result &&
-    typeof toolResult.result === 'object' &&
-    'message' in toolResult.result
-      ? (toolResult.result as { message: string }).message
+    toolResultEvent?.output &&
+    typeof toolResultEvent.output === 'object' &&
+    'message' in toolResultEvent.output
+      ? (toolResultEvent.output as { message: string }).message
       : undefined;
 
-  const ToolIcon = getToolIcon(toolCall.toolName);
+  const ToolIcon = getToolIcon(toolCallEvent.toolName);
 
   return (
     <StyledContainer>
@@ -135,20 +129,9 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            {isStandardizedFormat ? (
-              <>
-                {hasError && <div>{extractErrorMessage(toolOutput.error)}</div>}
-                {hasResult && (
-                  <div>
-                    <StyledPre>
-                      {JSON.stringify(toolOutput.result, null, 2)}
-                    </StyledPre>
-                  </div>
-                )}
-              </>
-            ) : toolResult?.result ? (
-              JSON.stringify(toolResult.result, null, 2)
-            ) : undefined}
+            <StyledPre>
+              {JSON.stringify(toolOutput.error || toolOutput, null, 2)}
+            </StyledPre>
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}
