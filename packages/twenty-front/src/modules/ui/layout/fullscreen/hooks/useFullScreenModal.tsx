@@ -1,6 +1,5 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -31,11 +30,20 @@ const StyledFullScreenContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  height: calc(
-    100% - ${PAGE_BAR_MIN_HEIGHT}px - ${({ theme }) => theme.spacing(2 * 2 + 5)}
-  );
+  flex: 1;
+  min-height: 0;
   padding: ${({ theme }) =>
     `0 ${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(3)}`};
+
+  // Make the immediate child a flex column that grows, so nested components
+  // with height="100%" (e.g., editors) can size correctly.
+  > * {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    row-gap: ${({ theme }) => theme.spacing(5)};
+  }
 `;
 
 type UseFullScreenModalProps = {

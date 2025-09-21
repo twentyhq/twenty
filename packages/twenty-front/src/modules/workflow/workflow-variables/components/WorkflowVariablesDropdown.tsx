@@ -109,6 +109,7 @@ export const WorkflowVariablesDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
+      isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
           <StyledDropdownVariableButtonContainer
