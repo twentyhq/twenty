@@ -77,7 +77,15 @@ describe('SearchResolver', () => {
     { id: TEST_PET_ID_4, name: 'Naïve' },
   ];
 
-  const [searchInput1Person, searchInput2Person, searchInput3Person, josePerson, francoisPerson, josePersonNoAccent, francoisPersonNoAccent] = persons;
+  const [
+    searchInput1Person,
+    searchInput2Person,
+    searchInput3Person,
+    josePerson,
+    francoisPerson,
+    josePersonNoAccent,
+    francoisPersonNoAccent,
+  ] = persons;
   const [cafeCorp, naiveCorp] = companies;
   const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
@@ -101,7 +109,12 @@ describe('SearchResolver', () => {
         pets,
       );
 
-      await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, persons);
+      await performCreateManyOperation(
+        'person',
+        'people',
+        PERSON_GQL_FIELDS,
+        persons,
+      );
 
       await performCreateManyOperation(
         'company',
@@ -198,7 +211,12 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [searchInput1Pet.id, searchInput2Pet.id, cafePet.id, naivePet.id],
+          orderedRecordIds: [
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
@@ -220,7 +238,14 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [naiveCorp.id, cafeCorp.id, searchInput1Pet.id, searchInput2Pet.id, cafePet.id, naivePet.id],
+          orderedRecordIds: [
+            naiveCorp.id,
+            cafeCorp.id,
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
@@ -508,7 +533,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both "José" and "Jose" when searching for "jose" (bidirectional accent-insensitive)',
+      title:
+        'should find both "José" and "Jose" when searching for "jose" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'jose',
@@ -530,7 +556,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both "García" and "Garcia" when searching for "garcia" (bidirectional accent-insensitive)',
+      title:
+        'should find both "García" and "Garcia" when searching for "garcia" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'garcia',
@@ -552,7 +579,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both accented and non-accented "Café"/"Cafe" records when searching for "cafe" (bidirectional accent-insensitive)',
+      title:
+        'should find both accented and non-accented "Café"/"Cafe" records when searching for "cafe" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'cafe',
@@ -560,7 +588,12 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [josePerson.id, josePersonNoAccent.id, cafeCorp.id, cafePet.id],
+          orderedRecordIds: [
+            josePerson.id,
+            josePersonNoAccent.id,
+            cafeCorp.id,
+            cafePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
@@ -576,7 +609,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both accented and non-accented "Naïve"/"Naive" records when searching for "naive" (bidirectional accent-insensitive)',
+      title:
+        'should find both accented and non-accented "Naïve"/"Naive" records when searching for "naive" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'naive',
@@ -584,7 +618,12 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id, naiveCorp.id, naivePet.id],
+          orderedRecordIds: [
+            francoisPerson.id,
+            francoisPersonNoAccent.id,
+            naiveCorp.id,
+            naivePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
@@ -600,7 +639,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both "Müller" and "Muller" when searching for "muller" (bidirectional accent-insensitive)',
+      title:
+        'should find both "Müller" and "Muller" when searching for "muller" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'muller',
@@ -622,7 +662,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find both "François" and "Francois" when searching for "francois" (bidirectional accent-insensitive)',
+      title:
+        'should find both "François" and "Francois" when searching for "francois" (bidirectional accent-insensitive)',
       context: {
         input: {
           searchInput: 'francois',
