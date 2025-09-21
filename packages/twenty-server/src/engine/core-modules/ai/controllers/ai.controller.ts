@@ -64,7 +64,6 @@ export class AiController {
     }
 
     try {
-      // TODO: Add support for custom models
       const registeredModel = this.aiModelRegistryService.getDefaultModel();
 
       const result = this.aiService.streamText({
