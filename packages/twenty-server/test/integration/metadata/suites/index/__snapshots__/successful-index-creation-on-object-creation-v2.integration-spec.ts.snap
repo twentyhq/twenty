@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index metadata creation through object metadata creation v2 Should create an index on ts-search-vector standard field when creating a custom object 1`] = `
+{
+  "indexType": "GIN",
+  "isCustom": false,
+  "isUnique": false,
+  "name": "IDX_be6fe08944beb9886fb83dfbbf1",
+}
+`;

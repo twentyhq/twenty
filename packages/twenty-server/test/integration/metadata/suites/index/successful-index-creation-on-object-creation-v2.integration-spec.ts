@@ -4,12 +4,17 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-describe('Object metadata creation with index creation v2', () => {
+describe('Index metadata creation through object metadata creation v2', () => {
   let createdObjectId: string | undefined;
 
   beforeAll(async () => {
@@ -46,7 +51,7 @@ describe('Object metadata creation with index creation v2', () => {
     }
   });
 
-  it('should create unique index for unique field', async () => {
+  it('Should create an index on ts-search-vector standard field when creating a custom object', async () => {
     const {
       labelPlural,
       description,
@@ -87,6 +92,10 @@ describe('Object metadata creation with index creation v2', () => {
       gqlFields: `
         id
         nameSingular
+        fieldsList {
+          id
+          type
+        }
         indexMetadataList {
           name
           isUnique
@@ -103,31 +112,37 @@ describe('Object metadata creation with index creation v2', () => {
       `,
     });
 
-    const foundObject = objects.find((object) => object.id === createdObjectId);
+    const foundObject = objects.find(
+      (object) => object.id === createdObjectId,
+    ) as ObjectMetadataDTO & {
+      fieldsList: FieldMetadataDTO[];
+      indexMetadataList: Array<
+        IndexMetadataDTO & {
+          indexFieldMetadataList: IndexFieldMetadataDTO[];
+        }
+      >;
+    };
     jestExpectToBeDefined(foundObject);
     expect(foundObject.id).toBe(createdObjectId);
-    expect(foundObject).toMatchInlineSnapshot(`
-{
-  "id": "1ca77320-6164-4fa6-b0c3-31ff02732849",
-  "indexMetadataList": [
-    {
-      "indexFieldMetadataList": [
-        {
-          "createdAt": "2025-09-21T08:04:09.248Z",
-          "fieldMetadataId": "bc342ce2-963f-46b4-b784-5b68329f7574",
-          "id": "fbd0a075-715c-4d08-8928-edf567fe7cb9",
-          "order": 0,
-          "updatedAt": "2025-09-21T08:04:09.248Z",
-        },
-      ],
-      "indexType": "GIN",
-      "isCustom": false,
-      "isUnique": false,
-      "name": "IDX_be6fe08944beb9886fb83dfbbf1",
-    },
-  ],
-  "nameSingular": "dish",
-}
-`);
+
+    const tsVectorField = foundObject.fieldsList.find(
+      (field) => field.type === FieldMetadataType.TS_VECTOR,
+    );
+    jestExpectToBeDefined(tsVectorField);
+
+    expect(foundObject.indexMetadataList.length).toBe(1);
+    const { indexFieldMetadataList, ...index } =
+      foundObject.indexMetadataList[0];
+    foundObject.indexMetadataList;
+    expect(index);
+    expect(index).toMatchSnapshot();
+    expect(indexFieldMetadataList.length).toBe(1);
+    expect(indexFieldMetadataList).toMatchObject([
+      {
+        id: expect.any(String),
+        fieldMetadataId: tsVectorField.id,
+        order: 0,
+      },
+    ]);
   });
 });
