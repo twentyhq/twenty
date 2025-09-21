@@ -254,6 +254,8 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
   workflowFilterActionSchema,
+  workflowIteratorActionSchema,
+  workflowEmptyActionSchema,
 ]);
 
 export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
