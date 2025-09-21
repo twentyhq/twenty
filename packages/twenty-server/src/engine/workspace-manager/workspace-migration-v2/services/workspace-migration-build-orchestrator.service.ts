@@ -212,10 +212,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...orchestratorActionsReport.index.deleted,
           ...orchestratorActionsReport.objectMetadata.deleted,
           ...orchestratorActionsReport.objectMetadata.created,
-          ...orchestratorActionsReport.index.created,
           ...orchestratorActionsReport.objectMetadata.updated,
           ...orchestratorActionsReport.fieldMetadata.created,
           ...orchestratorActionsReport.fieldMetadata.updated,
+          ...orchestratorActionsReport.index.created,
           ...orchestratorActionsReport.index.updated,
           ///
 

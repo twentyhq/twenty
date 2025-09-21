@@ -135,8 +135,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createdAt,
         fieldMetadataId:
           relationCreationPayload.type === RelationType.MANY_TO_ONE
-            ? sourceFlatObjectMetadata.id
-            : targetFlatObjectMetadata.id,
+            ? sourceFlatFieldMetadata.id
+            : targetFlatFieldMetadata.id,
         id: v4(),
         indexMetadataId: indexId,
         order: 0,
@@ -168,7 +168,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     objectMetadataId:
       relationCreationPayload.type === RelationType.MANY_TO_ONE
         ? sourceFlatObjectMetadata.id
-        : targetFlatFieldMetadata.id,
+        : targetFlatObjectMetadata.id,
     universalIdentifier: indexId,
     updatedAt: createdAt,
     workspaceId,
