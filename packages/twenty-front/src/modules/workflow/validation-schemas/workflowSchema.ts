@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-// Base schemas
 export const objectRecordSchema = z.record(z.any());
 
 export const baseWorkflowActionSettingsSchema = z.object({

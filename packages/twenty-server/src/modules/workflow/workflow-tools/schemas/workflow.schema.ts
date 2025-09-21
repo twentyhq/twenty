@@ -6,7 +6,6 @@ import {
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod/v3';
 
-// Base schemas
 export const objectRecordSchema = z
   .record(z.any())
   .describe(
