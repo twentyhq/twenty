@@ -25,6 +25,7 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -182,6 +183,22 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
   })
   dashboardId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.workflow,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Workflow`,
+    description: msg`Attachment workflow`,
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  workflow: Relation<WorkflowWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workflow')
+  workflowId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
