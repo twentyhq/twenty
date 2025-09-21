@@ -6,10 +6,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Workspace]),
-    WorkspaceDataSourceModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Workspace]), WorkspaceDataSourceModule],
   providers: [RegeneratePersonSearchVectorWithPhonesCommand],
   exports: [RegeneratePersonSearchVectorWithPhonesCommand],
 })

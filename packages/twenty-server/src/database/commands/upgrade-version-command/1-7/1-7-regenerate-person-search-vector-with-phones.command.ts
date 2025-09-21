@@ -1,4 +1,5 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
 import { DataSource, Repository } from 'typeorm';
 
@@ -37,7 +38,6 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       `Regenerating person search vector for workspace ${workspaceId} in schema ${schemaName}`,
     );
 
-    // Check if person table exists
     const personTableExists = await this.coreDataSource.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables
@@ -47,11 +47,13 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
     `);
 
     if (!personTableExists[0]?.exists) {
-      this.logger.log(`Person table does not exist in workspace ${workspaceId}, skipping`);
+      this.logger.log(
+        `Person table does not exist in workspace ${workspaceId}, skipping`,
+      );
+
       return;
     }
 
-    // Check if searchVector column exists
     const searchVectorColumnExists = await this.coreDataSource.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.columns
@@ -62,12 +64,14 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
     `);
 
     if (!searchVectorColumnExists[0]?.exists) {
-      this.logger.log(`searchVector column does not exist in workspace ${workspaceId}, skipping`);
+      this.logger.log(
+        `searchVector column does not exist in workspace ${workspaceId}, skipping`,
+      );
+
       return;
     }
 
     try {
-      // Generate the new search vector expression with phone support
       const newSearchVectorExpression = getTsVectorColumnExpressionFromFields(
         SEARCH_FIELDS_FOR_PERSON,
       );
@@ -76,7 +80,6 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
         `Dropping existing searchVector column for workspace ${workspaceId}`,
       );
 
-      // Drop the existing searchVector column
       await this.coreDataSource.query(`
         ALTER TABLE "${schemaName}"."person"
         DROP COLUMN "searchVector"
@@ -86,7 +89,6 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
         `Creating new searchVector column with phone indexing for workspace ${workspaceId}`,
       );
 
-      // Create the new searchVector column with updated expression
       await this.coreDataSource.query(`
         ALTER TABLE "${schemaName}"."person"
         ADD COLUMN "searchVector" tsvector
@@ -97,7 +99,6 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
         `Recreating GIN index on searchVector for workspace ${workspaceId}`,
       );
 
-      // Recreate the GIN index for full-text search performance
       await this.coreDataSource.query(`
         CREATE INDEX "IDX_person_searchVector"
         ON "${schemaName}"."person"
@@ -107,7 +108,6 @@ export class RegeneratePersonSearchVectorWithPhonesCommand extends ActiveOrSuspe
       this.logger.log(
         `Successfully regenerated person search vector for workspace ${workspaceId}`,
       );
-
     } catch (error) {
       this.logger.error(
         `Failed to regenerate person search vector for workspace ${workspaceId}: ${error.message}`,
