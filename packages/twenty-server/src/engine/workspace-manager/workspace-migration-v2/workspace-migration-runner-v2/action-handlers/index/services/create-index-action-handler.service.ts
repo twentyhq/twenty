@@ -6,6 +6,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
+import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
@@ -13,6 +17,7 @@ import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
@@ -50,15 +55,33 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       queryRunner.manager.getRepository<IndexMetadataEntity>(
         IndexMetadataEntity,
       );
+    const indexFieldMetadataRepository =
+      queryRunner.manager.getRepository<IndexFieldMetadataEntity>(
+        IndexFieldMetadataEntity,
+      );
 
     const {
-      flatIndexMetadata: { flatIndexFieldMetadatas, ...rest },
+      flatIndexMetadata: { flatIndexFieldMetadatas, ...flatIndexMetadata },
     } = action;
 
-    await indexMetadataRepository.insert({
-      indexFieldMetadatas: flatIndexFieldMetadatas,
-      ...rest,
-    });
+    const indexInsertResult =
+      await indexMetadataRepository.insert(flatIndexMetadata);
+    if (indexInsertResult.identifiers.length !== 1) {
+      throw new WorkspaceQueryRunnerException(
+        'Failed to create index metadata',
+        WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+    const indexMetadataId = indexInsertResult.identifiers[0].id;
+
+    const indexFieldMetadataToInsert = flatIndexFieldMetadatas.map(
+      (flatIndexFieldMetadata) => ({
+        ...flatIndexFieldMetadata,
+        indexMetadataId,
+      }),
+    );
+
+    await indexFieldMetadataRepository.insert(indexFieldMetadataToInsert);
   }
 
   async executeForWorkspaceSchema(
@@ -91,7 +114,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
         if (!isDefined(flatFieldMetadata)) {
           throw new FlatEntityMapsException(
-            'Index field releated field metadata not found',
+            'Index field related field metadata not found',
             FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
           );
         }

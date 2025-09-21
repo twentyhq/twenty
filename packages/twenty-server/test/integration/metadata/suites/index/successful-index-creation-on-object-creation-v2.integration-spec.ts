@@ -1,13 +1,13 @@
 import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
-import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('Object metadata creation with index creation v2', () => {
   let createdObjectId: string | undefined;
@@ -45,6 +45,7 @@ describe('Object metadata creation with index creation v2', () => {
       });
     }
   });
+
   it('should create unique index for unique field', async () => {
     const {
       labelPlural,
@@ -107,9 +108,18 @@ describe('Object metadata creation with index creation v2', () => {
     expect(foundObject.id).toBe(createdObjectId);
     expect(foundObject).toMatchInlineSnapshot(`
 {
-  "id": "851cded3-68d4-47cc-b286-eaf19f2905f2",
+  "id": "1ca77320-6164-4fa6-b0c3-31ff02732849",
   "indexMetadataList": [
     {
+      "indexFieldMetadataList": [
+        {
+          "createdAt": "2025-09-21T08:04:09.248Z",
+          "fieldMetadataId": "bc342ce2-963f-46b4-b784-5b68329f7574",
+          "id": "fbd0a075-715c-4d08-8928-edf567fe7cb9",
+          "order": 0,
+          "updatedAt": "2025-09-21T08:04:09.248Z",
+        },
+      ],
       "indexType": "GIN",
       "isCustom": false,
       "isUnique": false,
