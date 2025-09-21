@@ -794,7 +794,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find multiple persons when phone search matches multiple records',
+      title:
+        'should find multiple persons when phone search matches multiple records',
       context: {
         input: {
           searchInput: '123456789',
@@ -816,7 +817,8 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should rank phone search results appropriately vs other field matches',
+      title:
+        'should rank phone search results appropriately vs other field matches',
       context: {
         input: {
           searchInput: 'searchInput1',

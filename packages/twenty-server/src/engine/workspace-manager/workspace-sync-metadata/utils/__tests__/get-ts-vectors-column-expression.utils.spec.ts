@@ -75,12 +75,8 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 
-    expect(result).toContain(
-      'COALESCE("phonesPrimaryPhoneNumber", \'\')',
-    );
-    expect(result).toContain(
-      'COALESCE("phonesPrimaryPhoneCallingCode", \'\')',
-    );
+    expect(result).toContain('COALESCE("phonesPrimaryPhoneNumber", \'\')');
+    expect(result).toContain('COALESCE("phonesPrimaryPhoneCallingCode", \'\')');
     expect(result).not.toContain('unaccent_immutable');
   });
 
@@ -92,7 +88,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
       'COALESCE("phonesPrimaryPhoneCallingCode" || "phonesPrimaryPhoneNumber", \'\')',
     );
     expect(result).toContain(
-      'COALESCE(REPLACE("phonesPrimaryPhoneCallingCode", \'+\', \'\') || "phonesPrimaryPhoneNumber", \'\')',
+      "COALESCE(REPLACE(\"phonesPrimaryPhoneCallingCode\", '+', '') || \"phonesPrimaryPhoneNumber\", '')",
     );
   });
 
