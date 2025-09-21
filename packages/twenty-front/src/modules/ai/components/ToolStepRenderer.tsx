@@ -9,6 +9,7 @@ import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import type { ToolEvent } from '@/ai/types/ToolEvent';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import type { ToolCallEvent, ToolResultEvent } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -79,10 +80,10 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
     return null;
   }
 
-  const toolOutput = toolResultEvent?.output
-    .result as ToolResultEvent['output'];
+  const toolOutput =
+    toolResultEvent?.output?.error ?? toolResultEvent?.output?.result;
 
-  const isExpandable = !!toolOutput;
+  const isExpandable = isDefined(toolOutput);
 
   if (!toolResultEvent) {
     return (
@@ -128,9 +129,7 @@ export const ToolStepRenderer = ({ events }: { events: ToolEvent[] }) => {
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            <StyledPre>
-              {JSON.stringify(toolOutput.error || toolOutput, null, 2)}
-            </StyledPre>
+            <StyledPre>{JSON.stringify(toolOutput, null, 2)}</StyledPre>
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}
