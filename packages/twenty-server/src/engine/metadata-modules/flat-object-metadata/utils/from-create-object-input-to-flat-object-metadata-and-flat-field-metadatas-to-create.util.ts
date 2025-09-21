@@ -58,7 +58,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       updatedAt: createdAt,
       duplicateCriteria: null,
       description: createObjectInput.description ?? null,
-      flatIndexMetadatas: [],
+      
       icon: createObjectInput.icon ?? null,
       id: objectMetadataId,
       imageIdentifierFieldMetadataId: null,
