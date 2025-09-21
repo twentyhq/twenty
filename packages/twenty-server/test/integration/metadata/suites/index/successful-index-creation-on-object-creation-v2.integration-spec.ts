@@ -1,95 +1,36 @@
-import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
-describe('Index metadata creation through object metadata creation v2', () => {
-  let createdObjectId: string | undefined;
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-    });
-  });
-
-  afterEach(async () => {
-    if (isDefined(createdObjectId)) {
-      await updateOneObjectMetadata({
-        input: {
-          idToUpdate: createdObjectId,
-          updatePayload: {
-            isActive: false,
-          },
-        },
-        expectToFail: false,
-      });
-      await deleteOneObjectMetadata({
-        expectToFail: false,
-        input: { idToDelete: createdObjectId },
-      });
-    }
-  });
-
-  it('Should create an index on ts-search-vector standard field when creating a custom object', async () => {
-    const {
-      labelPlural,
-      description,
-      labelSingular,
-      namePlural,
-      nameSingular,
-    } = CUSTOM_OBJECT_DISHES;
-
-    const { data } = await createOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        labelPlural,
-        description,
-        labelSingular,
-        namePlural,
-        nameSingular,
-        icon: 'IconTest',
-      },
-      gqlFields: `
-        id
-      `,
-    });
-
-    createdObjectId = data.createOneObject.id;
-
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {
-          id: {
-            eq: createdObjectId,
-          },
-        },
-        paging: {
-          first: 1,
+const findObjectWithIndex = async ({
+  objectMetadataId,
+}: {
+  objectMetadataId: string;
+}) => {
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
+    input: {
+      filter: {
+        id: {
+          eq: objectMetadataId,
         },
       },
-      gqlFields: `
+      paging: {
+        first: 1,
+      },
+    },
+    gqlFields: `
         id
         nameSingular
         fieldsList {
@@ -110,22 +51,91 @@ describe('Index metadata creation through object metadata creation v2', () => {
           }
         }
       `,
+  });
+
+  const foundObject = objects.find(
+    (object) => object.id === objectMetadataId,
+  ) as ObjectMetadataDTO & {
+    fieldsList: FieldMetadataDTO[];
+    indexMetadataList: Array<
+      IndexMetadataDTO & {
+        indexFieldMetadataList: IndexFieldMetadataDTO[];
+      }
+    >;
+  };
+
+  jestExpectToBeDefined(foundObject);
+  expect(foundObject.id).toBe(objectMetadataId);
+  return foundObject;
+};
+
+describe('Index metadata creation through object metadata creation v2', () => {
+  let createdObjectId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  beforeEach(async () => {
+    const {
+      labelPlural,
+      description,
+      labelSingular,
+      namePlural,
+      nameSingular,
+    } = CUSTOM_OBJECT_DISHES;
+
+    const { data } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        labelPlural,
+        description,
+        labelSingular,
+        namePlural,
+        nameSingular,
+        icon: 'IconTest',
+        isLabelSyncedWithName: false,
+      },
+      gqlFields: `
+        id
+      `,
     });
 
-    const foundObject = objects.find(
-      (object) => object.id === createdObjectId,
-    ) as ObjectMetadataDTO & {
-      fieldsList: FieldMetadataDTO[];
-      indexMetadataList: Array<
-        IndexMetadataDTO & {
-          indexFieldMetadataList: IndexFieldMetadataDTO[];
-        }
-      >;
-    };
+    createdObjectId = data.createOneObject.id;
+  });
 
-    jestExpectToBeDefined(foundObject);
-    expect(foundObject.id).toBe(createdObjectId);
+  afterEach(async () => {
+    await updateOneObjectMetadata({
+      input: {
+        idToUpdate: createdObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+      expectToFail: false,
+    });
+    await deleteOneObjectMetadata({
+      expectToFail: false,
+      input: { idToDelete: createdObjectId },
+    });
+  });
 
+  it('Should create an index on ts-search-vector standard field when creating a custom object', async () => {
+    const foundObject = await findObjectWithIndex({
+      objectMetadataId: createdObjectId,
+    });
     const tsVectorField = foundObject.fieldsList.find(
       (field) => field.type === FieldMetadataType.TS_VECTOR,
     );
@@ -136,8 +146,6 @@ describe('Index metadata creation through object metadata creation v2', () => {
     const { indexFieldMetadataList, ...index } =
       foundObject.indexMetadataList[0];
 
-    foundObject.indexMetadataList;
-    expect(index);
     expect(index).toMatchSnapshot();
     expect(indexFieldMetadataList.length).toBe(1);
     expect(indexFieldMetadataList).toMatchObject([
@@ -147,5 +155,40 @@ describe('Index metadata creation through object metadata creation v2', () => {
         order: 0,
       },
     ]);
+  });
+
+  it('Should update index on related object name singular update', async () => {
+    const foundObject = await findObjectWithIndex({
+      objectMetadataId: createdObjectId,
+    });
+
+    expect(foundObject.indexMetadataList.length).toBe(1);
+    const { indexFieldMetadataList, ...index } =
+      foundObject.indexMetadataList[0];
+
+    expect(index).toMatchSnapshot();
+    const fromIndexName = index.name;
+
+    await updateOneObjectMetadata({
+      input: {
+        idToUpdate: foundObject.id,
+        updatePayload: {
+          nameSingular: 'updatedName',
+        },
+      },
+    });
+
+    {
+      const foundObject = await findObjectWithIndex({
+        objectMetadataId: createdObjectId,
+      });
+
+      expect(foundObject.indexMetadataList.length).toBe(1);
+      const { indexFieldMetadataList, ...index } =
+        foundObject.indexMetadataList[0];
+
+      expect(index).toMatchSnapshot();
+      expect(fromIndexName).not.toBe(index.name);
+    }
   });
 });

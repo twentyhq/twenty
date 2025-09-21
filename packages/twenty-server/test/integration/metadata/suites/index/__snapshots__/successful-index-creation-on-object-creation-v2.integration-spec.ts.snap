@@ -8,3 +8,21 @@ exports[`Index metadata creation through object metadata creation v2 Should crea
   "name": "IDX_be6fe08944beb9886fb83dfbbf1",
 }
 `;
+
+exports[`Index metadata creation through object metadata creation v2 Should update index on related object name singular update 1`] = `
+{
+  "indexType": "GIN",
+  "isCustom": false,
+  "isUnique": false,
+  "name": "IDX_be6fe08944beb9886fb83dfbbf1",
+}
+`;
+
+exports[`Index metadata creation through object metadata creation v2 Should update index on related object name singular update 2`] = `
+{
+  "indexType": "GIN",
+  "isCustom": false,
+  "isUnique": false,
+  "name": "IDX_39dba450c07109c236de3828905",
+}
+`;
