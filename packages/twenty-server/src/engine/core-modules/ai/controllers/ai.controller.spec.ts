@@ -34,7 +34,7 @@ describe('AiController', () => {
     const mockAiModelRegistryService = {
       getDefaultModel: jest.fn().mockReturnValue({
         modelId: 'gpt-4o',
-        provider: 'openai',
+        provider: ModelProvider.OPENAI,
         model: openai('gpt-4o'),
       }),
     };
