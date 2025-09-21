@@ -1,20 +1,15 @@
+import { type ReasoningPart } from '@ai-sdk/provider-utils';
 import { type TextPart } from 'ai';
-
-type ReasoningPart = {
-  type: 'reasoning';
-  text: string;
-  isThinking: boolean;
-};
-
-type TextBlock =
-  | { type: 'reasoning'; content: string; isThinking: boolean }
-  | { type: 'text'; content: string }
-  | null;
+import {
+  parseStreamLine,
+  splitStreamIntoLines,
+  type TextBlock,
+} from 'twenty-shared/ai';
 
 export const constructAssistantMessageContentFromStream = (
   rawContent: string,
 ) => {
-  const lines = rawContent.trim().split('\n');
+  const lines = splitStreamIntoLines(rawContent);
 
   const output: Array<TextPart | ReasoningPart> = [];
   let currentTextBlock: TextBlock = null;
@@ -25,7 +20,6 @@ export const constructAssistantMessageContentFromStream = (
         output.push({
           type: 'reasoning',
           text: currentTextBlock.content,
-          isThinking: currentTextBlock.isThinking,
         });
       } else {
         output.push({
@@ -38,11 +32,9 @@ export const constructAssistantMessageContentFromStream = (
   };
 
   for (const line of lines) {
-    let event;
+    const event = parseStreamLine(line);
 
-    try {
-      event = JSON.parse(line);
-    } catch {
+    if (!event) {
       continue;
     }
 

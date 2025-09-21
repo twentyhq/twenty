@@ -1,47 +1,17 @@
+import {
+  parseStreamLine,
+  splitStreamIntoLines,
+  type ErrorEvent,
+  type ReasoningDeltaEvent,
+  type TextBlock,
+  type TextDeltaEvent,
+  type ToolCallEvent,
+  type ToolEvent,
+  type ToolResultEvent,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import type { ErrorEvent } from '@/ai/types/ErrorEvent';
 import type { ParsedStep } from '@/ai/types/ParsedStep';
-import type { ToolCallEvent } from '@/ai/types/ToolCallEvent';
-import type { ToolEvent } from '@/ai/types/ToolEvent';
-import type { ToolResultEvent } from '@/ai/types/ToolResultEvent';
-
-type TextBlock =
-  | { type: 'reasoning'; content: string; isThinking: boolean }
-  | { type: 'text'; content: string }
-  | null;
-
-type ReasoningDeltaEvent = {
-  type: 'reasoning-delta';
-  text: string;
-};
-
-type TextDeltaEvent = {
-  type: 'text-delta';
-  text: string;
-};
-
-export type StreamEvent =
-  | ToolCallEvent
-  | ToolResultEvent
-  | {
-      type: 'reasoning-start';
-    }
-  | {
-      type: 'reasoning-delta';
-      text: string;
-    }
-  | {
-      type: 'reasoning-end';
-    }
-  | {
-      type: 'text-delta';
-      text: string;
-    }
-  | {
-      type: 'step-finish';
-    }
-  | ErrorEvent;
 
 type ParseContext = {
   output: ParsedStep[];
@@ -136,7 +106,7 @@ const handleError = (event: ErrorEvent, context: ParseContext) => {
 };
 
 export const parseStream = (streamText: string): ParsedStep[] => {
-  const lines = streamText.trim().split('\n');
+  const lines = splitStreamIntoLines(streamText);
   const output: ParsedStep[] = [];
   let currentTextBlock: TextBlock = null;
 
@@ -154,10 +124,8 @@ export const parseStream = (streamText: string): ParsedStep[] => {
   };
 
   for (const line of lines) {
-    let event: StreamEvent;
-    try {
-      event = JSON.parse(line);
-    } catch {
+    const event = parseStreamLine(line);
+    if (!event) {
       continue;
     }
 

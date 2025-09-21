@@ -1,4 +1,3 @@
-import type { ToolCallEvent } from './ToolCallEvent';
-import type { ToolResultEvent } from './ToolResultEvent';
+import type { ToolEvent } from 'twenty-shared/ai';
 
-export type ToolEvent = ToolCallEvent | ToolResultEvent;
+export type { ToolEvent };

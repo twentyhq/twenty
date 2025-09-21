@@ -6,10 +6,9 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import type { ToolCallEvent } from '@/ai/types/ToolCallEvent';
 import type { ToolEvent } from '@/ai/types/ToolEvent';
-import type { ToolResultEvent } from '@/ai/types/ToolResultEvent';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import type { ToolCallEvent, ToolResultEvent } from 'twenty-shared/ai';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import type { ToolEvent } from './ToolEvent';
+import type { ToolEvent } from 'twenty-shared/ai';
 
 export type ParsedStep =
   | { type: 'tool'; events: ToolEvent[] }
