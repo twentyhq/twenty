@@ -13,12 +13,16 @@ const SYSTEM_FIELDS = new Set([
   'updatedBy',
 ]);
 
-export const hasSubstantialRecordData = (recordData: Record<string, unknown>): boolean => {
+export const hasSubstantialRecordData = (
+  recordData: Record<string, unknown>,
+): boolean => {
   if (!isDefined(recordData) || typeof recordData !== 'object') {
     return false;
   }
 
-  const userFields = Object.entries(recordData).filter(([key]) => !SYSTEM_FIELDS.has(key));
-  
+  const userFields = Object.entries(recordData).filter(
+    ([key]) => !SYSTEM_FIELDS.has(key),
+  );
+
   return userFields.some(([, value]) => !isEmptyValue(value));
 };

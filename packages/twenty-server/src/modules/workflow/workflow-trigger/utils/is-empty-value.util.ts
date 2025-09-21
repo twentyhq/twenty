@@ -12,7 +12,7 @@ export const isEmptyValue = (value: unknown) => {
   }
 
   if (value instanceof Date) {
-    return;
+    return false;
   }
 
   if (typeof value === 'object' && value !== null) {
