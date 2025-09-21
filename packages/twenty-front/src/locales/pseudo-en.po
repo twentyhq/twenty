@@ -2673,6 +2673,11 @@ msgstr ""
 msgid "Email copied to clipboard"
 msgstr ""
 
+#. js-lingui-id: GXLHVG
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Email Editor"
+msgstr ""
+
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -2818,6 +2823,11 @@ msgstr ""
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
+msgstr ""
+
+#. js-lingui-id: O6t21f
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
+msgid "Enter link"
 msgstr ""
 
 #. js-lingui-id: XJU8BD
@@ -3178,6 +3188,11 @@ msgstr ""
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
+msgstr ""
+
+#. js-lingui-id: wJb11y
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Failed to upload image: "
 msgstr ""
 
 #. js-lingui-id: ocUvR+
@@ -7115,6 +7130,7 @@ msgid "Untitled role"
 msgstr ""
 
 #. js-lingui-id: p1M9l4
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr ""
