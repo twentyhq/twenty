@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type GenerateDeterministicIndexNameArgs = {
@@ -23,6 +24,7 @@ export const generateDeterministicIndexNameV2 = ({
   const columnsNames = flatFieldMetadatas.map(
     (flatFieldMetadata) => flatFieldMetadata.name,
   );
+
   [tableName, ...columnsNames].forEach((column) => {
     hash.update(column);
   });

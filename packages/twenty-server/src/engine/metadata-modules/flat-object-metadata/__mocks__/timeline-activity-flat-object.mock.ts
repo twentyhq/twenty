@@ -24,6 +24,6 @@ export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   universalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
-  
+
   flatFieldMetadatas: Object.values(TIMELINEACTIVITY_FLAT_FIELDS_MOCK),
 });

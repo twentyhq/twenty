@@ -142,7 +142,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         flatIndexToValidate: toFlatIndex,
         optimisticFlatIndexMaps: deleteFlatEntityFromFlatEntityMapsOrThrow({
           entityToDeleteId: fromFlatIndex.id,
-          flatEntityMaps: optimisticFlatIndexMaps
+          flatEntityMaps: optimisticFlatIndexMaps,
         }),
       });
 

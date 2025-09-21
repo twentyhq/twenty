@@ -2,17 +2,17 @@ import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-me
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
-import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
+import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 describe('Index metadata creation through object metadata creation v2', () => {
   let createdObjectId: string | undefined;
@@ -122,17 +122,20 @@ describe('Index metadata creation through object metadata creation v2', () => {
         }
       >;
     };
+
     jestExpectToBeDefined(foundObject);
     expect(foundObject.id).toBe(createdObjectId);
 
     const tsVectorField = foundObject.fieldsList.find(
       (field) => field.type === FieldMetadataType.TS_VECTOR,
     );
+
     jestExpectToBeDefined(tsVectorField);
 
     expect(foundObject.indexMetadataList.length).toBe(1);
     const { indexFieldMetadataList, ...index } =
       foundObject.indexMetadataList[0];
+
     foundObject.indexMetadataList;
     expect(index);
     expect(index).toMatchSnapshot();

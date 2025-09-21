@@ -3,7 +3,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
   FieldMetadataException,
@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
@@ -66,6 +66,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   const allFlatIndexes = Object.values(existingFlatIndexMaps.byId).filter(
     isDefined,
   );
+
   for (const flatFieldMetadata of flatFieldMetadatasToDelete) {
     allFlatIndexes.forEach((flatIndex) => {
       const flatIndexFromMap = flatIndexMap.get(flatIndex.id);
@@ -76,10 +77,12 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
             (flatIndexField) =>
               flatIndexField.fieldMetadataId === flatFieldMetadata.id,
           );
+
         flatIndexMap.set(flatIndexFromMap.id, {
           ...flatIndexFromMap,
           flatIndexFieldMetadatas: updatedFlatIndexFields,
         });
+
         return;
       }
 
@@ -97,6 +100,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
         (flatIndexField) =>
           flatIndexField.fieldMetadataId === flatFieldMetadata.id,
       );
+
       flatIndexMap.set(flatIndex.id, {
         ...flatIndex,
         flatIndexFieldMetadatas: updatedFlatIndexFields,

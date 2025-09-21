@@ -4,25 +4,25 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
+import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type UpdatedFlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadata: FlatFieldMetadata;
@@ -74,12 +74,14 @@ const applyUpdatesToFlatFieldMetadata = ({
       }
 
       let newFlatIndexMetadataToUpdate: FlatIndexMetadata[] = [];
+
       if (property === 'name') {
         const flatObjectMetadata =
           findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
             flatObjectMetadataMaps,
             objectMetadataId: flatFieldMetadata.objectMetadataId,
           });
+
         newFlatIndexMetadataToUpdate =
           recomputeIndexOnFlatFieldMetadataNameUpdate({
             flatObjectMetadata,
@@ -110,6 +112,7 @@ const applyUpdatesToFlatFieldMetadata = ({
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatIndexMaps'>;
+
 type FlatFieldMetadataAndIndexToUdpate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
   flatIndexMetadatasToUpdate: FlatIndexMetadata[];

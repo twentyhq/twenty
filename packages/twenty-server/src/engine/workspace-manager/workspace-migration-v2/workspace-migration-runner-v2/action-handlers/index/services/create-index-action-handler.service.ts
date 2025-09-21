@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -23,7 +25,6 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/get-workspace-schema-context-for-migration.util';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -66,6 +67,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const indexInsertResult =
       await indexMetadataRepository.insert(flatIndexMetadata);
+
     if (indexInsertResult.identifiers.length !== 1) {
       throw new WorkspaceQueryRunnerException(
         'Failed to create index metadata',
