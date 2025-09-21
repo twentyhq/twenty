@@ -64,6 +64,7 @@ export const DeleteMultipleRecordsAction = () => {
     filter: graphqlFilter,
     limit: DEFAULT_QUERY_PAGE_SIZE,
     recordGqlFields: { id: true },
+    maximumRequests: Number.MAX_SAFE_INTEGER,
   });
 
   const handleDeleteClick = async () => {
