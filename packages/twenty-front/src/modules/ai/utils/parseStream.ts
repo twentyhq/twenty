@@ -13,24 +13,26 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ParsedStep } from '@/ai/types/ParsedStep';
 
-type ParseContext = {
-  output: ParsedStep[];
-  currentTextBlock: TextBlock;
-  flushTextBlock: () => void;
-};
-
-const handleToolCall = (event: ToolCallEvent, context: ParseContext) => {
-  context.flushTextBlock();
-  context.output.push({
+const handleToolCall = (
+  event: ToolCallEvent,
+  output: ParsedStep[],
+  flushTextBlock: () => void,
+) => {
+  flushTextBlock();
+  output.push({
     type: 'tool',
     events: [event],
   });
 };
 
-const handleToolResult = (event: ToolResultEvent, context: ParseContext) => {
-  context.flushTextBlock();
+const handleToolResult = (
+  event: ToolResultEvent,
+  output: ParsedStep[],
+  flushTextBlock: () => void,
+) => {
+  flushTextBlock();
 
-  const toolEntry = context.output.find(
+  const toolEntry = output.find(
     (item): item is { type: 'tool'; events: ToolEvent[] } =>
       item.type === 'tool' &&
       item.events.some(
@@ -41,16 +43,16 @@ const handleToolResult = (event: ToolResultEvent, context: ParseContext) => {
   if (isDefined(toolEntry)) {
     toolEntry.events.push(event);
   } else {
-    context.output.push({
+    output.push({
       type: 'tool',
       events: [event],
     });
   }
 };
 
-const handleReasoningStart = (context: ParseContext) => {
-  context.flushTextBlock();
-  context.currentTextBlock = {
+const handleReasoningStart = (flushTextBlock: () => void): TextBlock => {
+  flushTextBlock();
+  return {
     type: 'reasoning',
     content: '',
     isThinking: true,
@@ -59,46 +61,62 @@ const handleReasoningStart = (context: ParseContext) => {
 
 const handleReasoningDelta = (
   event: ReasoningDeltaEvent,
-  context: ParseContext,
-) => {
-  if (
-    !context.currentTextBlock ||
-    context.currentTextBlock.type !== 'reasoning'
-  ) {
-    context.flushTextBlock();
-    context.currentTextBlock = {
+  currentTextBlock: TextBlock,
+  flushTextBlock: () => void,
+): TextBlock => {
+  if (!currentTextBlock || currentTextBlock.type !== 'reasoning') {
+    flushTextBlock();
+    return {
       type: 'reasoning',
-      content: '',
+      content: event.text || '',
       isThinking: true,
     };
   }
-  context.currentTextBlock.content += event.text || '';
+  currentTextBlock.content += event.text || '';
+  return currentTextBlock;
 };
 
-const handleReasoningEnd = (context: ParseContext) => {
-  if (context.currentTextBlock?.type === 'reasoning') {
-    context.currentTextBlock.isThinking = false;
+const handleReasoningEnd = (currentTextBlock: TextBlock): TextBlock => {
+  if (currentTextBlock?.type === 'reasoning') {
+    return {
+      ...currentTextBlock,
+      isThinking: false,
+    };
   }
+  return currentTextBlock;
 };
 
-const handleTextDelta = (event: TextDeltaEvent, context: ParseContext) => {
-  if (!context.currentTextBlock || context.currentTextBlock.type !== 'text') {
-    context.flushTextBlock();
-    context.currentTextBlock = { type: 'text', content: '' };
+const handleTextDelta = (
+  event: TextDeltaEvent,
+  currentTextBlock: TextBlock,
+  flushTextBlock: () => void,
+): TextBlock => {
+  if (!currentTextBlock || currentTextBlock.type !== 'text') {
+    flushTextBlock();
+    return { type: 'text', content: event.text || '' };
   }
-  context.currentTextBlock.content += event.text || '';
+  currentTextBlock.content += event.text || '';
+  return currentTextBlock;
 };
 
-const handleStepFinish = (context: ParseContext) => {
-  if (context.currentTextBlock?.type === 'reasoning') {
-    context.currentTextBlock.isThinking = false;
+const handleStepFinish = (
+  currentTextBlock: TextBlock,
+  flushTextBlock: () => void,
+): TextBlock => {
+  if (currentTextBlock?.type === 'reasoning') {
+    currentTextBlock.isThinking = false;
   }
-  context.flushTextBlock();
+  flushTextBlock();
+  return null;
 };
 
-const handleError = (event: ErrorEvent, context: ParseContext) => {
-  context.flushTextBlock();
-  context.output.push({
+const handleError = (
+  event: ErrorEvent,
+  output: ParsedStep[],
+  flushTextBlock: () => void,
+) => {
+  flushTextBlock();
+  output.push({
     type: 'error',
     message: event.message || 'An error occurred',
     error: event.error,
@@ -117,55 +135,53 @@ export const parseStream = (streamText: string): ParsedStep[] => {
     }
   };
 
-  const context: ParseContext = {
-    output,
-    currentTextBlock,
-    flushTextBlock,
-  };
-
   for (const line of lines) {
     const event = parseStreamLine(line);
     if (!event) {
       continue;
     }
 
-    context.currentTextBlock = currentTextBlock;
-
     switch (event.type) {
       case 'tool-call':
-        handleToolCall(event, context);
+        handleToolCall(event, output, flushTextBlock);
         break;
 
       case 'tool-result':
-        handleToolResult(event, context);
+        handleToolResult(event, output, flushTextBlock);
         break;
 
       case 'reasoning-start':
-        handleReasoningStart(context);
+        currentTextBlock = handleReasoningStart(flushTextBlock);
         break;
 
       case 'reasoning-delta':
-        handleReasoningDelta(event, context);
+        currentTextBlock = handleReasoningDelta(
+          event,
+          currentTextBlock,
+          flushTextBlock,
+        );
         break;
 
       case 'reasoning-end':
-        handleReasoningEnd(context);
+        currentTextBlock = handleReasoningEnd(currentTextBlock);
         break;
 
       case 'text-delta':
-        handleTextDelta(event, context);
+        currentTextBlock = handleTextDelta(
+          event,
+          currentTextBlock,
+          flushTextBlock,
+        );
         break;
 
       case 'step-finish':
-        handleStepFinish(context);
+        currentTextBlock = handleStepFinish(currentTextBlock, flushTextBlock);
         break;
 
       case 'error':
-        handleError(event, context);
+        handleError(event, output, flushTextBlock);
         break;
     }
-
-    currentTextBlock = context.currentTextBlock;
   }
 
   flushTextBlock();
