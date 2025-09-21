@@ -5,13 +5,13 @@ import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -29,9 +29,10 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   sourceFlatObjectMetadata,
   workspaceId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
-  FieldInputTranspilationResult<
-    FlatFieldMetadata<MorphOrRelationFieldMetadataType>[]
-  >
+  FieldInputTranspilationResult<{
+    flatFieldMetadatas: FlatFieldMetadata[];
+    indexMetadatas: FlatIndexMetadata[];
+  }>
 > => {
   const rawMorphCreationPayload =
     createFieldInput.morphRelationsCreationPayload;
@@ -65,8 +66,8 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const morphRelationCreationPayload =
     morphRelationCreationPayloadValidation.result;
   const morphId = v4();
-  const flatFieldMetadatas = morphRelationCreationPayload.flatMap(
-    ({ relationCreationPayload, targetFlatObjectMetadata }) => {
+  const flatFieldMetadatas = morphRelationCreationPayload.reduce(
+    (acc, { relationCreationPayload, targetFlatObjectMetadata }) => {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: createFieldInput.name,
         relationType: relationCreationPayload.type,
@@ -77,18 +78,28 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           name: currentMorphRelationFieldName,
         });
 
-      return generateMorphOrRelationFlatFieldMetadataPair({
-        createFieldInput: {
-          ...createFieldInput,
-          relationCreationPayload,
-          name: currentMorphRelationFieldName,
-        },
-        sourceFlatObjectMetadataJoinColumnName,
-        sourceFlatObjectMetadata,
-        targetFlatObjectMetadata,
-        workspaceId,
-        morphId,
-      });
+      const { flatFieldMetadatas, indexMetadatas } =
+        generateMorphOrRelationFlatFieldMetadataPair({
+          createFieldInput: {
+            ...createFieldInput,
+            relationCreationPayload,
+            name: currentMorphRelationFieldName,
+          },
+          sourceFlatObjectMetadataJoinColumnName,
+          sourceFlatObjectMetadata,
+          targetFlatObjectMetadata,
+          workspaceId,
+          morphId,
+        });
+
+      return {
+        indexMetadatas: [...acc.indexMetadatas, ...indexMetadatas],
+        flatFieldMetadatas: [...acc.flatFieldMetadatas, ...flatFieldMetadatas],
+      };
+    },
+    {
+      indexMetadatas: [],
+      flatFieldMetadatas: [],
     },
   );
 

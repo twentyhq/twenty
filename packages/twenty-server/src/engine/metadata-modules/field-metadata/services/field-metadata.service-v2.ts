@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -273,15 +274,20 @@ export class FieldMetadataServiceV2 {
       return [];
     }
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatIndexMaps: existingFlatIndexMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatEntities: ['flatObjectMetadataMaps', 'flatIndexMaps'],
         },
       );
 
-    const allTranspiledTranspilationInputs = [];
+    const allTranspiledTranspilationInputs: Awaited<
+      ReturnType<typeof fromCreateFieldInputToFlatFieldMetadatasToCreate>
+    >[] = [];
 
     for (const createInput of createFieldInputs) {
       allTranspiledTranspilationInputs.push(
@@ -298,8 +304,18 @@ export class FieldMetadataServiceV2 {
       'Multiple validation errors occurred while creating field',
     );
 
-    const flatFieldMetadatasToCreate = allTranspiledTranspilationInputs.flatMap(
-      ({ result }) => result,
+    const {
+      flatFieldMetadatas: flatFieldMetadatasToCreate,
+      indexMetadatas: flatIndexMetadatasToCreate,
+    } = allTranspiledTranspilationInputs.reduce(
+      (acc, { result }) => ({
+        flatFieldMetadatas: [
+          ...acc.flatFieldMetadatas,
+          ...result.flatFieldMetadatas,
+        ],
+        indexMetadatas: [...acc.indexMetadatas, ...result.indexMetadatas],
+      }),
+      { flatFieldMetadatas: [], indexMetadatas: [] },
     );
 
     const impactedObjectMetadataIds = Array.from(
@@ -326,6 +342,15 @@ export class FieldMetadataServiceV2 {
       }),
     );
 
+    const toFlatIndexMaps = flatIndexMetadatasToCreate.reduce(
+      (flatIndexMaps, flatIndex) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatIndex,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -333,6 +358,10 @@ export class FieldMetadataServiceV2 {
             flatObjectMetadataMaps: {
               from: fromFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
@@ -354,7 +383,7 @@ export class FieldMetadataServiceV2 {
       where: {
         name: In(
           allTranspiledTranspilationInputs.map(
-            ({ result: flatFieldMetadatas }) => flatFieldMetadatas[0].name,
+            ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].name,
           ),
         ),
         workspaceId,

@@ -17,6 +17,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 
@@ -31,7 +32,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   workspaceId,
   existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
-  FieldInputTranspilationResult<FlatFieldMetadata[]>
+  FieldInputTranspilationResult<{
+    flatFieldMetadatas: FlatFieldMetadata[];
+    indexMetadatas: FlatIndexMetadata[];
+  }>
 > => {
   if (rawCreateFieldInput.isRemoteCreation) {
     return {
@@ -99,15 +103,18 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RATING: {
       return {
         status: 'success',
-        result: [
-          {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            settings: null,
-            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-            options: generateRatingOptions(),
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-        ],
+        result: {
+          flatFieldMetadatas: [
+            {
+              ...commonFlatFieldMetadata,
+              type: createFieldInput.type,
+              settings: null,
+              defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
+              options: generateRatingOptions(),
+            } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+          ],
+          indexMetadatas: [],
+        },
       };
     }
     case FieldMetadataType.SELECT:
@@ -124,15 +131,18 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
       return {
         status: 'success',
-        result: [
-          {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            options,
-            defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-            settings: null,
-          } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
-        ],
+        result: {
+          flatFieldMetadatas: [
+            {
+              ...commonFlatFieldMetadata,
+              type: createFieldInput.type,
+              options,
+              defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
+              settings: null,
+            } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+          ],
+          indexMetadatas: [],
+        },
       };
     }
     case FieldMetadataType.TS_VECTOR: {
@@ -165,12 +175,15 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.ARRAY: {
       return {
         status: 'success',
-        result: [
-          {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-          },
-        ],
+        result: {
+          indexMetadatas: [],
+          flatFieldMetadatas: [
+            {
+              ...commonFlatFieldMetadata,
+              type: createFieldInput.type,
+            },
+          ],
+        },
       };
     }
     default: {

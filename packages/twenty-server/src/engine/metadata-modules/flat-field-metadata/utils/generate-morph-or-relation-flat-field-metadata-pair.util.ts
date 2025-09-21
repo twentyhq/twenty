@@ -6,7 +6,10 @@ import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modul
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
@@ -42,6 +45,12 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   workspaceId: string;
   morphId?: string | null;
 };
+
+export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
+  flatFieldMetadatas: FlatFieldMetadata[];
+  indexMetadatas: FlatIndexMetadata[];
+};
+
 export const generateMorphOrRelationFlatFieldMetadataPair = ({
   createFieldInput,
   sourceFlatObjectMetadata,
@@ -49,7 +58,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   workspaceId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
-}: GenerateMorphOrRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>[] => {
+}: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =
@@ -117,11 +126,62 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       flatRelationTargetObjectMetadata: sourceFlatObjectMetadata,
     };
 
-  return [
-    {
-      ...sourceFlatFieldMetadata,
-      flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
-    },
-    targetFlatFieldMetadata,
-  ] satisfies FlatFieldMetadata<MorphOrRelationFieldMetadataType>[];
+  const indexId = v4();
+  const createdAt = new Date();
+  const indexMetadata: FlatIndexMetadata = {
+    createdAt,
+    flatIndexFieldMetadatas: [
+      {
+        createdAt,
+        fieldMetadataId:
+          relationCreationPayload.type === RelationType.MANY_TO_ONE
+            ? sourceFlatObjectMetadata.id
+            : targetFlatObjectMetadata.id,
+        id: v4(),
+        indexMetadataId: indexId,
+        order: 0,
+        updatedAt: createdAt,
+      },
+    ],
+    id: indexId,
+    indexType: IndexType.BTREE,
+    indexWhereClause: null,
+    isCustom: true,
+    isUnique: false,
+    name: generateDeterministicIndexNameV2({
+      flatObjectMetadata: {
+        isCustom: true,
+        nameSingular:
+          relationCreationPayload.type === RelationType.MANY_TO_ONE
+            ? sourceFlatObjectMetadata.nameSingular
+            : targetFlatObjectMetadata.nameSingular,
+      },
+      flatFieldMetadatas: [
+        {
+          name: (relationCreationPayload.type === RelationType.MANY_TO_ONE
+            ? sourceFlatFieldMetadataSettings.joinColumnName
+            : targetFlatFieldMetadataSettings.joinColumnName) as string,
+        },
+      ],
+      isUnique: false,
+    }),
+    objectMetadataId:
+      relationCreationPayload.type === RelationType.MANY_TO_ONE
+        ? sourceFlatObjectMetadata.id
+        : targetFlatFieldMetadata.id,
+    universalIdentifier: indexId,
+    updatedAt: createdAt,
+    workspaceId,
+  };
+
+  return {
+    flatFieldMetadatas: [
+      {
+        ...sourceFlatFieldMetadata,
+        flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
+      },
+      targetFlatFieldMetadata,
+    ],
+    indexMetadatas: [indexMetadata],
+  };
 };
