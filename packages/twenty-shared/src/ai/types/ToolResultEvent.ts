@@ -8,5 +8,4 @@ export type ToolResultEvent = {
     error?: string;
     message: string;
   };
-  message: string;
 };
