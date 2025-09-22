@@ -3,6 +3,8 @@ import { DiscoveryService, ModuleRef, createContextId } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
 import { type Module } from '@nestjs/core/injector/module';
 
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import {
@@ -22,7 +24,7 @@ import { type WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-que
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class WorkspaceQueryHookExplorer implements OnModuleInit {
@@ -92,7 +94,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
 
     const workspace = executeParams?.[0].workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (isRequestScoped) {
       const contextId = createContextId();
@@ -159,7 +161,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
 
     const workspace = executeParams?.[0].workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const transformedPayload = this.transformPayload(executeParams[2]);
 

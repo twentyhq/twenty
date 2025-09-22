@@ -39,12 +39,14 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
         interval: SubscriptionInterval.Month,
         status: SubscriptionStatus.Active,
         metadata: {},
+        phases: [],
       },
       billingSubscriptions: [
         {
           id: '1',
           status: SubscriptionStatus.Active,
           metadata: {},
+          phases: [],
         },
       ],
       isTwoFactorAuthenticationEnforced: false,

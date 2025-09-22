@@ -18,6 +18,12 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#. js-lingui-id: lndIq/
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid " billed annually"
+msgstr ""
+
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid " must be one of {ratingValues} values"
@@ -62,6 +68,11 @@ msgstr ": Παρελθόν"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr ": Σήμερα"
+
+#. js-lingui-id: N/lIUf
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid ". The change will be applied the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -113,11 +124,6 @@ msgstr "{failedCount} αρχείο(-α) απέτυχε να μεταφορτωθ
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} από {formattedRecordsToImportCount} εγγραφές εισήχθησαν."
 
-#. js-lingui-id: J2Vio9
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{nickname} - {price}$"
-msgstr "{nickname} - {price}$"
-
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -162,7 +168,7 @@ msgid "1. Type"
 msgstr "1. Τύπος"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "10,000 workflow node executions"
 msgstr "10.000 εκτελέσεις κόμβου ροής εργασιών"
 
@@ -193,7 +199,7 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. Ορίστε δικαιώματα {objectLabelPlural}"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "20,000 workflow node executions"
 msgstr "20.000 εκτελέσεις κόμβου ροής εργασιών"
 
@@ -760,8 +766,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -1078,7 +1084,7 @@ msgid "Blocklist"
 msgstr "Μαύρη λίστα"
 
 #. js-lingui-id: 2yl5lQ
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Book a Call"
 msgstr "Κλείστε ένα τηλεφώνημα"
 
@@ -1206,13 +1212,43 @@ msgstr "Δεν μπορείτε να σαρώσετε; Αντιγράψτε το
 msgid "Cancel"
 msgstr "Ακύρωση"
 
+#. js-lingui-id: dV4HC5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching"
+msgstr ""
+
+#. js-lingui-id: M5CqkG
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching?"
+msgstr ""
+
+#. js-lingui-id: /Dmw1h
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching"
+msgstr ""
+
+#. js-lingui-id: Q/chGD
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching?"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "Ακύρωση σχεδίου"
 
+#. js-lingui-id: 8eSMLX
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching"
+msgstr ""
+
+#. js-lingui-id: f6KFEf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching?"
+msgstr ""
+
 #. js-lingui-id: N6gPiD
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Ακύρωση της συνδρομής σας"
 
@@ -1244,7 +1280,7 @@ msgid "Change Password"
 msgstr "Αλλαγή Κωδικού"
 
 #. js-lingui-id: wRtBJP
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Change Plan"
 msgstr "Αλλαγή σχεδίου"
 
@@ -1253,10 +1289,20 @@ msgstr "Αλλαγή σχεδίου"
 msgid "Change subdomain?"
 msgstr "Αλλαγή υποτομέα;"
 
+#. js-lingui-id: 9m7pJA
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Monthly?"
+msgstr ""
+
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Αλλαγή σε οργανωτικό σχέδιο;"
+
+#. js-lingui-id: t7uUc+
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Pro Plan?"
+msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1298,11 +1344,6 @@ msgstr "Κινέζικα — Παραδοσιακά"
 msgid "Choose a Workspace"
 msgstr "Επιλέξτε έναν Χώρο Εργασίας"
 
-#. js-lingui-id: ub6oFI
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Choose additional formatting preferences"
-msgstr ""
-
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -1329,7 +1370,7 @@ msgid "Choose the format used to display date value"
 msgstr "Επιλέξτε τη μορφή που χρησιμοποιείται για την εμφάνιση της τιμής ημερομηνίας"
 
 #. js-lingui-id: 9qP96p
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
 msgstr "Επιλέξτε τη Δοκιμή σας"
 
@@ -1480,10 +1521,10 @@ msgstr "Ρυθμίστε και προσαρμόστε τις προτιμήσε
 msgid "Configure CalDAV settings to sync your calendar events."
 msgstr "Ρυθμίστε τις παραμέτρους του CalDAV για συγχρονισμό των γεγονότων του ημερολογίου σας."
 
-#. js-lingui-id: aGwm+D
+#. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Configure how dates are displayed across the app"
-msgstr "Ρυθμίστε πώς εμφανίζονται οι ημερομηνίες σε όλη την εφαρμογή"
+msgid "Configure date, time, number, timezone, and calendar start day"
+msgstr ""
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1522,13 +1563,33 @@ msgstr "Ρυθμίστε τις ρυθμίσεις email και ημερολογ
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
+
+#. js-lingui-id: qmnX/6
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm changing your current credit plan."
+msgstr ""
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "Επιβεβαιώστε την διαγραφή του ρόλου {roleName}; Αυτό δεν μπορεί να αναιρεθεί. Όλα τα μέλη θα επανατοποθετηθούν στον προεπιλεγμένο ρόλο."
+
+#. js-lingui-id: kZkFSm
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm downgrade"
+msgstr ""
+
+#. js-lingui-id: DDbn3x
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm upgrade"
+msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1591,7 +1652,7 @@ msgstr "Περιβάλλον"
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1878,6 +1939,11 @@ msgstr "Πρόγραμμα Πιστώσεων"
 msgid "Credit Usage"
 msgstr "Χρήση Πιστώσεων"
 
+#. js-lingui-id: hdSacI
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credits by period"
+msgstr ""
+
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -1887,6 +1953,11 @@ msgstr "Χρησιμοποιημένες Πιστώσεις"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
 msgstr "νομίσματα"
+
+#. js-lingui-id: Hp1l6f
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+msgid "Current"
+msgstr ""
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -1915,8 +1986,8 @@ msgid "Custom domain updated"
 msgstr "Προσαρμοσμένος τομέας ενημερώθηκε"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Custom objects"
 msgstr "Προσαρμοσμένα αντικείμενα"
 
@@ -2024,11 +2095,6 @@ msgstr "Η διαμόρφωση της βάσης δεδομένων είναι 
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Ημερομηνία"
-
-#. js-lingui-id: Ud9zHv
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Date and time"
-msgstr "Ημερομηνία και ώρα"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -2451,6 +2517,12 @@ msgstr "Μην συγχρονίζετε email από team@ support@ noreply@..."
 msgid "Dots and comma - {dotsAndCommaExample}"
 msgstr ""
 
+#. js-lingui-id: LE8J+K
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Downgrade"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2556,7 +2628,7 @@ msgid "Edit iFrame"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Επεξεργασία τρόπου πληρωμής, προβολή των τιμολογίων σου και άλλα"
 
@@ -2606,9 +2678,14 @@ msgstr "Το email δεν μπορεί να είναι κενό"
 msgid "Email copied to clipboard"
 msgstr "Το email αντιγράφηκε στο πρόχειρο"
 
+#. js-lingui-id: GXLHVG
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Email Editor"
+msgstr ""
+
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Email integration"
 msgstr "Ενσωμάτωση με email"
 
@@ -2724,7 +2801,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "Ενισχύει την ασφάλεια απαιτώντας έναν κωδικό μαζί με τον κωδικό πρόσβασής σας"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Απολαύστε μια δωρεάν δοκιμαστική περίοδο {withCreditCardTrialPeriodDuration} ημερών"
 
@@ -2752,6 +2829,11 @@ msgstr "Εισάγετε έναν πίνακα αντικειμένων ή μι�
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "Εισάγετε σε μορφή <0>Unicode</0>"
+
+#. js-lingui-id: O6t21f
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
+msgid "Enter link"
+msgstr ""
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2844,20 +2926,35 @@ msgstr "Σφάλμα κατά την ενημέρωση του ρόλου"
 msgid "Error validating approved access domain"
 msgstr "Σφάλμα κατά την επικύρωση του εγκεκριμένου domain πρόσβασης"
 
+#. js-lingui-id: pt7mmi
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling interval switching."
+msgstr ""
+
+#. js-lingui-id: a1gs9Y
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling metered tier switching."
+msgstr ""
+
+#. js-lingui-id: FS6DQK
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling plan switching."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Σφάλμα κατά τη λήξη της δοκιμαστικής περιόδου. Επικοινωνήστε με την ομάδα Twenty."
 
-#. js-lingui-id: JKNROf
+#. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Organization Plan."
-msgstr "Σφάλμα κατά την αλλαγή συνδρομής σε οργανωτικό σχέδιο."
+msgid "Error while switching subscription to {oppositPlan} Plan."
+msgstr ""
 
-#. js-lingui-id: ENV7jU
+#. js-lingui-id: QPJi2W
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Yearly."
-msgstr "Σφάλμα κατά την αλλαγή συνδρομής σε ετήσια."
+msgid "Error while switching subscription."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -3098,6 +3195,11 @@ msgstr "Αποτυχία ενημέρωσης μεταβλητής"
 msgid "Failed to upload file: {fileName}"
 msgstr "Απέτυχε η μεταφόρτωση αρχείου: {fileName}"
 
+#. js-lingui-id: wJb11y
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Failed to upload image: "
+msgstr ""
+
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -3257,6 +3359,11 @@ msgstr "Μορφή"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Μορφή π.χ. d-MMM-y (qqq''yy)"
 
+#. js-lingui-id: 4JsQoY
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Formats"
+msgstr ""
+
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
@@ -3268,8 +3375,8 @@ msgid "French"
 msgstr "Γαλλικά"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Πλήρης πρόσβαση"
 
@@ -3307,7 +3414,7 @@ msgid "Get the most out of your workspace by inviting your team."
 msgstr "Αξιοποιείστε τον χώρο εργασίας σας με τον καλύτερο τρόπο, καλώντας την ομάδα σας."
 
 #. js-lingui-id: zSGbaR
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Get your subscription"
 msgstr "Αποκτήστε τη συνδρομή σας"
 
@@ -3705,6 +3812,11 @@ msgstr "Ενσωματώσεις - Ρυθμίσεις"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Αλληλεπιδράστε με τα δεδομένα του χώρου εργασίας σας"
+
+#. js-lingui-id: jyjroS
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Interval switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4119,7 +4231,7 @@ msgid "Loading..."
 msgstr "Φόρτωση..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
@@ -4161,7 +4273,7 @@ msgid "Manage API keys and webhooks"
 msgstr "Διαχείριση κλειδιών API και webhooks"
 
 #. js-lingui-id: nvgUPq
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Διαχείριση πληροφοριών χρέωσης"
 
@@ -4291,6 +4403,11 @@ msgstr "Μεταδεδομένα"
 msgid "Metadata file generation failed"
 msgstr "Αποτυχία δημιουργίας αρχείου μεταδεδομένων"
 
+#. js-lingui-id: onCJJ6
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Metered tier switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4318,7 +4435,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "Παρακολούθηση της εκτέλεσης του συγχρονισμού των email σας"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "μήνας"
 
@@ -4330,7 +4447,7 @@ msgid "Month"
 msgstr ""
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "μηνιαία"
 
@@ -4559,6 +4676,7 @@ msgid "New SSO provider"
 msgstr "Νέος πάροχος SSO"
 
 #. js-lingui-id: hXzOVo
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "Επόμενο"
@@ -5024,7 +5142,8 @@ msgid "Or"
 msgstr "Ή"
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "Οργανωτικός"
 
@@ -5036,11 +5155,6 @@ msgstr "Οργανωτικός"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Άλλο"
-
-#. js-lingui-id: vPKFXl
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Other formats"
-msgstr ""
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -5183,6 +5297,11 @@ msgstr "Εικόνα"
 msgid "Plan"
 msgstr "Σχέδιο"
 
+#. js-lingui-id: XduPHC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Plan switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -5282,7 +5401,8 @@ msgid "Privacy Policy"
 msgstr "Πολιτική Απορρήτου"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Pro"
 
@@ -6328,7 +6448,7 @@ msgid "SSO"
 msgstr "Ενιαίο Σύστημα Εισόδου"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -6437,15 +6557,20 @@ msgstr "Συνδρομή"
 msgid "Subscription activated."
 msgstr "Η συνδρομή ενεργοποιήθηκε."
 
-#. js-lingui-id: KNMVB5
+#. js-lingui-id: gvXPJz
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription has been switched to Organization Plan."
-msgstr "Η συνδρομή έχει αλλάξει σε οργανωτικό σχέδιο."
+msgid "Subscription has been switched to {oppositPlan} Plan."
+msgstr ""
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Η συνδρομή έχει αλλάξει σε ετήσια."
+
+#. js-lingui-id: nQcG+x
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6478,10 +6603,20 @@ msgstr "Υποστήριξη"
 msgid "Swedish"
 msgstr "Σουηδικά"
 
+#. js-lingui-id: dpXnFC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Monthly"
+msgstr ""
+
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "Αλλαγή σε οργανωτικό"
+
+#. js-lingui-id: GPKudC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Pro"
+msgstr ""
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6788,6 +6923,16 @@ msgstr "Αυτή η τιμή θα αποθηκευτεί στη βάση δεδ�
 msgid "This week"
 msgstr "Αυτή την εβδομάδα"
 
+#. js-lingui-id: h4VeOo
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
+msgstr ""
+
+#. js-lingui-id: XpARoU
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
+msgstr ""
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -6848,7 +6993,7 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Παρακολουθήστε την κατανάλωση πιστώσεων της ροής εργασίας σας κατά το {intervalLabel}."
 
 #. js-lingui-id: lhkaAC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "Δοκιμή"
 
@@ -6976,8 +7121,8 @@ msgid "Unknown error"
 msgstr "Άγνωστο σφάλμα"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Unlimited contacts"
 msgstr "Απεριόριστες επαφές"
 
@@ -6992,6 +7137,7 @@ msgid "Untitled role"
 msgstr "Χωρίς τίτλο ρόλος"
 
 #. js-lingui-id: p1M9l4
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr "Άτιτλη Εργασία"
@@ -7016,6 +7162,12 @@ msgstr "Ενημέρωση πληροφοριών πράκτορα"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "Ενημερώστε τη ρύθμιση του λογαριασμού σας. Ρυθμίστε οποιονδήποτε συνδυασμό IMAP, SMTP και CalDAV ανάλογα με τις ανάγκες σας."
+
+#. js-lingui-id: kwkhPe
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Upgrade"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7178,7 +7330,7 @@ msgid "View"
 msgstr "Προβολή"
 
 #. js-lingui-id: KANz0G
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Προβολή λεπτομερειών χρέωσης"
 
@@ -7414,12 +7566,12 @@ msgstr "Γράψτε μια περιγραφή για αυτόν τον πράκ
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "έτος"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "ετήσια"
 
@@ -7467,20 +7619,30 @@ msgid ""
 "If you need to make changes, please create a new connection or unsync the tables first."
 msgstr "Δεν μπορείτε να επεξεργαστείτε αυτή τη σύνδεση γιατί έχει καταγεγραμμένους πίνακες. Αν χρειαστεί να κάνετε αλλαγές, δημιουργήστε μια νέα σύνδεση ή αποσυνδέστε πρώτα τους πίνακες."
 
-#. js-lingui-id: zEM7Ne
+#. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month billed annually."
-msgstr "Θα χρεωθείτε ${enterprisePrice} ανά χρήστη ανά μήνα, χρέωση ετησίως."
+msgid "You have scheduled a metered tier change. Do you want to cancel it?"
+msgstr ""
 
-#. js-lingui-id: HM4D8s
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month."
-msgstr "Θα χρεωθείτε ${enterprisePrice} ανά χρήστη ανά μήνα."
+#. js-lingui-id: z8eKS7
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "you will be charged ${enterprisePrice} per user per month"
+msgstr ""
 
-#. js-lingui-id: o4xIH4
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
-msgstr "Θα χρεωθείτε ${yearlyPrice} ανά χρήστη ανά μήνα, χρέωση ετησίως. Θα εφαρμοστεί προσαρμογή με την τρέχουσα συνδρομή σας."
+#. js-lingui-id: u3S6u8
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
+msgstr ""
+
+#. js-lingui-id: /T5zAB
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${proPrice} per user per month"
+msgstr ""
+
+#. js-lingui-id: W3k5LA
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -7517,6 +7679,16 @@ msgstr "Το όνομά σας όπως θα εμφανίζεται"
 msgid "Your name as it will be displayed on the app"
 msgstr "Το όνομά σας όπως θα εμφανίζεται στην εφαρμογή"
 
+#. js-lingui-id: QOd24n
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and "
+msgstr ""
+
+#. js-lingui-id: 2Fkd7s
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
+
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
@@ -7533,6 +7705,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "Ο χώρος εργασίας σας δεν διαθέτει ενεργή συνδρομή. Παρακαλώ επικοινωνήστε με τον διαχειριστή σας."
 
 #. js-lingui-id: RhNbPE
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "Ο χώρος εργασίας σας θα απενεργοποιηθεί"
