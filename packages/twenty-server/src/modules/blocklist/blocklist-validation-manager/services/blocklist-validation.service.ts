@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 import {
   type CreateManyResolverArgs,
@@ -53,9 +53,8 @@ export class BlocklistValidationService {
 
   public async validateSchema(blocklist: BlocklistItem[]) {
     const emailOrDomainSchema = z
-      .string()
-      .trim()
       .email('Invalid email or domain')
+      .trim()
       .or(
         z
           .string()
@@ -73,7 +72,7 @@ export class BlocklistValidationService {
       const result = emailOrDomainSchema.safeParse(handle);
 
       if (!result.success) {
-        throw new BadRequestException(result.error.errors[0].message);
+        throw new BadRequestException(result.error.issues[0].message);
       }
     }
   }

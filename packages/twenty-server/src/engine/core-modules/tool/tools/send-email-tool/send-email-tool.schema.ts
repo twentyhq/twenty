@@ -1,11 +1,10 @@
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 export const SendEmailInputZodSchema = z.object({
-  email: z.string().email().describe('The recipient email address'),
+  email: z.email().describe('The recipient email address'),
   subject: z.string().describe('The email subject line'),
   body: z.string().describe('The email body content (HTML or plain text)'),
   connectedAccountId: z
-    .string()
     .uuid()
     .describe(
       'The UUID of the connected account to send the email from. Provide this only if you have it; otherwise, leave blank.',

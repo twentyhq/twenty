@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';

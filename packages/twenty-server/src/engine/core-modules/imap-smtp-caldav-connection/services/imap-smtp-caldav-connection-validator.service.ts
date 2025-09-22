@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
@@ -9,7 +9,7 @@ import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-cal
 export class ImapSmtpCaldavValidatorService {
   private readonly protocolConnectionSchema = z.object({
     host: z.string().min(1, 'Host is required'),
-    port: z.number().int().positive('Port must be a positive number'),
+    port: z.int().positive('Port must be a positive number'),
     username: z.string().optional(),
     password: z.string().min(1, 'Password is required'),
     secure: z.boolean().optional(),
@@ -29,7 +29,7 @@ export class ImapSmtpCaldavValidatorService {
       return this.protocolConnectionSchema.parse(params);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors
+        const errorMessages = error.issues
           .map((err) => `${err.path.join('.')}: ${err.message}`)
           .join(', ');
 
