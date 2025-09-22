@@ -4,7 +4,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { StepStatus } from 'twenty-shared/workflow';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const objectRecordSchema = z
   .record(z.string(), z.any())

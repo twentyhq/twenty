@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const HttpRequestInputZodSchema = z.object({
   url: z.string().describe('The URL to make the request to'),
