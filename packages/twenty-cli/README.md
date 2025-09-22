@@ -55,7 +55,6 @@ twenty app dev [options]
   -p, --path <path>        Application directory path (default: current directory)
   -w, --workspace-id <id>  Workspace ID
   -d, --debounce <ms>      Debounce delay in milliseconds (default: 1000)
-  --verbose                Enable verbose logging
 
 # Deploy application
 twenty app deploy [options]
