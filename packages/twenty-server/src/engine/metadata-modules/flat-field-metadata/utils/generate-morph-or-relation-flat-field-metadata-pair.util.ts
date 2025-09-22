@@ -9,7 +9,7 @@ import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fi
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
@@ -128,51 +128,52 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const indexId = v4();
   const createdAt = new Date();
-  const indexMetadata: FlatIndexMetadata = {
-    createdAt,
-    flatIndexFieldMetadatas: [
-      {
-        createdAt,
-        fieldMetadataId:
-          relationCreationPayload.type === RelationType.MANY_TO_ONE
-            ? sourceFlatFieldMetadata.id
-            : targetFlatFieldMetadata.id,
-        id: v4(),
-        indexMetadataId: indexId,
-        order: 0,
-        updatedAt: createdAt,
-      },
-    ],
-    id: indexId,
-    indexType: IndexType.BTREE,
-    indexWhereClause: null,
-    isCustom: true,
-    isUnique: false,
-    name: generateDeterministicIndexNameV2({
-      flatObjectMetadata: {
-        isCustom: true,
-        nameSingular:
-          relationCreationPayload.type === RelationType.MANY_TO_ONE
-            ? sourceFlatObjectMetadata.nameSingular
-            : targetFlatObjectMetadata.nameSingular,
-      },
-      flatFieldMetadatas: [
+  const indexMetadata: FlatIndexMetadata = generateFlatIndexMetadataWithNameOrThrow({
+    flatIndex: {
+      createdAt,
+      flatIndexFieldMetadatas: [
         {
-          name: (relationCreationPayload.type === RelationType.MANY_TO_ONE
-            ? sourceFlatFieldMetadataSettings.joinColumnName
-            : targetFlatFieldMetadataSettings.joinColumnName) as string,
+          createdAt,
+          fieldMetadataId:
+            relationCreationPayload.type === RelationType.MANY_TO_ONE
+              ? sourceFlatFieldMetadata.id
+              : targetFlatFieldMetadata.id,
+          id: v4(),
+          indexMetadataId: indexId,
+          order: 0,
+          updatedAt: createdAt,
         },
       ],
+      id: indexId,
+      indexType: IndexType.BTREE,
+      indexWhereClause: null,
+      isCustom: true,
       isUnique: false,
-    }),
-    objectMetadataId:
-      relationCreationPayload.type === RelationType.MANY_TO_ONE
-        ? sourceFlatObjectMetadata.id
-        : targetFlatObjectMetadata.id,
-    universalIdentifier: indexId,
-    updatedAt: createdAt,
-    workspaceId,
-  };
+      objectMetadataId:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? sourceFlatObjectMetadata.id
+          : targetFlatObjectMetadata.id,
+      universalIdentifier: indexId,
+      updatedAt: createdAt,
+      workspaceId,
+    },
+    flatObjectMetadata: (relationCreationPayload.type ===
+    RelationType.MANY_TO_ONE
+      ? {
+          ...sourceFlatObjectMetadata,
+          flatFieldMetadatas: [
+            ...sourceFlatObjectMetadata.flatFieldMetadatas,
+            sourceFlatFieldMetadata,
+          ],
+        }
+      : {
+          ...targetFlatObjectMetadata,
+          flatFieldMetadatas: [
+            ...targetFlatObjectMetadata.flatFieldMetadatas,
+            targetFlatFieldMetadata,
+          ],
+        }) as FlatObjectMetadata,
+  });
 
   return {
     flatFieldMetadatas: [

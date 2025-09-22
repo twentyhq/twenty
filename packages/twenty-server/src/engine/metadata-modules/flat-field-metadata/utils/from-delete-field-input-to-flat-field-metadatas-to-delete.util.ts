@@ -14,8 +14,8 @@ import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/met
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
-import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -123,31 +123,19 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       }
 
       const flatObjectMetadata =
-        findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow({
+        findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           objectMetadataId: flatIndex.objectMetadataId,
         });
-      const newIndexName = generateDeterministicIndexNameV2({
-        flatFieldMetadatas: flatObjectMetadata.flatFieldMetadatas.filter(
-          (flatFieldMetadata) =>
-            flatIndex.flatIndexFieldMetadatas.some(
-              (flatIndexField) =>
-                flatIndexField.fieldMetadataId === flatFieldMetadata.id,
-            ),
-        ),
+
+      const newIndex = generateFlatIndexMetadataWithNameOrThrow({
         flatObjectMetadata,
-        isUnique: flatIndex.isUnique,
+        flatIndex,
       });
 
       return {
         ...acc,
-        flatIndexesToUpdate: [
-          ...acc.flatIndexesToUpdate,
-          {
-            ...flatIndex,
-            name: newIndexName,
-          },
-        ],
+        flatIndexesToUpdate: [...acc.flatIndexesToUpdate, newIndex],
       };
     },
     {

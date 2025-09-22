@@ -2,10 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
@@ -14,13 +11,14 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'id'>;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
 };
 
+export type DefaultFlatFieldForCustomObjectMaps = ReturnType<typeof buildDefaultFlatFieldMetadatasForCustomObject>
 // This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  flatObjectMetadata: { id: objectMetadataId, nameSingular },
+  flatObjectMetadata: { id: objectMetadataId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
@@ -283,37 +281,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   };
 
   const tsFlatVectorIndexId = v4();
-  const tsVectorFlatIndex: FlatIndexMetadata = {
-    createdAt,
-    flatIndexFieldMetadatas: [
-      {
-        createdAt,
-        fieldMetadataId: searchVectorField.id,
-        id: v4(),
-        indexMetadataId: tsFlatVectorIndexId,
-        order: 0,
-        updatedAt: createdAt,
-      },
-    ],
-    id: tsFlatVectorIndexId,
-    indexType: IndexType.GIN,
-    indexWhereClause: null,
-    isCustom: false,
-    isUnique: false,
-    name: generateDeterministicIndexNameV2({
-      flatObjectMetadata: {
-        isCustom: true,
-        nameSingular,
-      },
-      flatFieldMetadatas: [searchVectorField],
-      isUnique: false,
-    }),
-    objectMetadataId,
-    universalIdentifier: tsFlatVectorIndexId,
-    updatedAt: createdAt,
-    workspaceId,
-  };
-
   return {
     fields: {
       idField,
@@ -325,11 +292,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       positionField,
       searchVectorField,
     },
-    indexes: {
-      tsVectorFlatIndex,
-    },
   } as const satisfies {
     fields: Record<string, FlatFieldMetadata>;
-    indexes: Record<string, FlatIndexMetadata>;
   };
 };

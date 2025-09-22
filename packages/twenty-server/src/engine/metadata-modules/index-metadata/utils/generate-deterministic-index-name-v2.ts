@@ -1,17 +1,16 @@
 import { createHash } from 'crypto';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type GenerateDeterministicIndexNameArgs = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'isCustom'>;
-  flatFieldMetadatas: Pick<FlatFieldMetadata, 'name'>[];
   isUnique?: boolean;
+  relatedFieldNames: Pick<FlatFieldMetadata, 'name'>[];
 };
-// This method should sort on index field order TODO
 export const generateDeterministicIndexNameV2 = ({
-  flatFieldMetadatas,
+  relatedFieldNames,
   flatObjectMetadata,
   isUnique = false,
 }: GenerateDeterministicIndexNameArgs): string => {
@@ -21,7 +20,8 @@ export const generateDeterministicIndexNameV2 = ({
     flatObjectMetadata.nameSingular,
     flatObjectMetadata.isCustom,
   );
-  const columnsNames = flatFieldMetadatas.map(
+
+  const columnsNames = relatedFieldNames.map(
     (flatFieldMetadata) => flatFieldMetadata.name,
   );
 

@@ -4,15 +4,12 @@ import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 
 type RecomputeIndexOnFlatFieldMetadataNameUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   fromFlatFieldMetadata: FlatFieldMetadata;
-  toFlatFieldMetadata: {
-    name: string;
-    isUnique?: boolean;
-  };
+  toFlatFieldMetadata: Pick<FlatFieldMetadata, 'name'>;
 } & Pick<AllFlatEntityMaps, 'flatIndexMaps'>;
 
 export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
@@ -36,41 +33,28 @@ export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
     return [];
   }
 
-  return relatedFlatIndexMetadata.map<FlatIndexMetadata>(
-    (flatIndexMetadata) => {
-      const relatedFlatFieldMetadata =
-        flatObjectMetadata.flatFieldMetadatas.flatMap<
-          Pick<FlatFieldMetadata, 'name'>
-        >((flatFieldMetadata) => {
-          const isUnrelatedFieldMetadata =
-            !flatIndexMetadata.flatIndexFieldMetadatas.some(
-              (flatIndexField) =>
-                flatIndexField.fieldMetadataId === flatFieldMetadata.id,
-            );
-
-          if (isUnrelatedFieldMetadata) {
-            return [];
-          }
-
+  const optimisticFlatObjectMetadata = {
+    ...flatObjectMetadata,
+    flatFieldMetadatas: flatObjectMetadata.flatFieldMetadatas.map(
+      (flatFieldMetadata) => {
+        if (flatFieldMetadata.id === fromFlatFieldMetadata.id) {
           return {
-            name:
-              flatFieldMetadata.id === fromFlatFieldMetadata.id
-                ? toFlatFieldMetadata.name
-                : flatFieldMetadata.name,
+            ...flatFieldMetadata,
+            name: toFlatFieldMetadata.name,
           };
-        });
+        }
 
-      return {
-        ...flatIndexMetadata,
-        name: generateDeterministicIndexNameV2({
-          flatFieldMetadatas: relatedFlatFieldMetadata,
-          flatObjectMetadata,
-          isUnique:
-            toFlatFieldMetadata.isUnique ??
-            fromFlatFieldMetadata.isUnique ??
-            false,
-        }),
-      };
-    },
-  );
+        return flatFieldMetadata;
+      },
+    ),
+  };
+
+  return relatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
+    const newIndex = generateFlatIndexMetadataWithNameOrThrow({
+      flatObjectMetadata: optimisticFlatObjectMetadata,
+      flatIndex,
+    });
+
+    return newIndex;
+  });
 };

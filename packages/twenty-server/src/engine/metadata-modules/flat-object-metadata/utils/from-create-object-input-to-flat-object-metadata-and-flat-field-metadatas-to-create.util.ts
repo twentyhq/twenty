@@ -10,6 +10,7 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { buildDefaultIndexesForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-index-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
@@ -43,11 +44,10 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       );
 
     const objectMetadataId = v4();
-    const baseCustomFlatFieldMetadatas =
+    const defaultFlatFieldForCustomObjectMaps =
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
-          nameSingular: createObjectInput.nameSingular,
         },
         workspaceId,
       });
@@ -71,7 +71,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isUIReadOnly: false,
       isSystem: false,
       labelIdentifierFieldMetadataId:
-        baseCustomFlatFieldMetadatas.fields.nameField.id,
+        defaultFlatFieldForCustomObjectMaps.fields.nameField.id,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
       namePlural: createObjectInput.namePlural,
@@ -83,6 +83,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       targetTableName: 'DEPRECATED',
       workspaceId,
     };
+    const defaultIndexesForCustomObject = buildDefaultIndexesForCustomObject({
+      defaultFlatFieldForCustomObjectMaps,
+      flatObjectMetadata: flatObjectMetadataToCreate,
+      workspaceId,
+    });
     const {
       standardSourceFlatFieldMetadatas,
       standardTargetFlatFieldMetadatas,
@@ -93,7 +98,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     });
 
     flatObjectMetadataToCreate.flatFieldMetadatas = [
-      ...Object.values(baseCustomFlatFieldMetadatas.fields),
+      ...Object.values(defaultFlatFieldForCustomObjectMaps.fields),
       ...standardSourceFlatFieldMetadatas,
     ];
 
@@ -101,7 +106,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       flatObjectMetadataToCreate,
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
       flatIndexMetadataToCreate: Object.values(
-        baseCustomFlatFieldMetadatas.indexes,
+        defaultIndexesForCustomObject.indexes,
       ),
     };
   };
