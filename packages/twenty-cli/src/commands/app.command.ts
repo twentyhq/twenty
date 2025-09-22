@@ -24,7 +24,6 @@ export class AppCommand {
         'Application directory path (auto-detected if not specified)',
       )
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-      .option('--verbose', 'Enable verbose logging')
       .action(async (options) => {
         await this.devCommand.execute(options);
       });
