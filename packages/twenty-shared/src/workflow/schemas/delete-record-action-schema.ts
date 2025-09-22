@@ -1,10 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowDeleteRecordActionSettingsSchema } from './delete-record-action-settings-schema';
 
-export const workflowDeleteRecordActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      objectName: z.string(),
-      objectRecordId: z.string(),
-    }),
-  });
+export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('DELETE_RECORD'),
+  settings: workflowDeleteRecordActionSettingsSchema,
+});

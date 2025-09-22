@@ -1,13 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
-import { objectRecordSchema } from './object-record-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowUpdateRecordActionSettingsSchema } from './update-record-action-settings-schema';
 
-export const workflowUpdateRecordActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      objectName: z.string(),
-      objectRecord: objectRecordSchema,
-      objectRecordId: z.string(),
-      fieldsToUpdate: z.array(z.string()),
-    }),
-  });
+export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('UPDATE_RECORD'),
+  settings: workflowUpdateRecordActionSettingsSchema,
+});

@@ -1,10 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { workflowAiAgentActionSettingsSchema } from './ai-agent-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
 
-export const workflowAiAgentActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      agentId: z.string().optional(),
-      prompt: z.string().optional(),
-    }),
-  });
+export const workflowAiAgentActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('AI_AGENT'),
+  settings: workflowAiAgentActionSettingsSchema,
+});

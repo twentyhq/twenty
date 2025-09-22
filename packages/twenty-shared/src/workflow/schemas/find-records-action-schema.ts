@@ -1,17 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowFindRecordsActionSettingsSchema } from './find-records-action-settings-schema';
 
-export const workflowFindRecordsActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      objectName: z.string(),
-      limit: z.number().optional(),
-      filter: z
-        .object({
-          recordFilterGroups: z.array(z.any()).optional(),
-          recordFilters: z.array(z.any()).optional(),
-          gqlOperationFilter: z.any().optional().nullable(),
-        })
-        .optional(),
-    }),
-  });
+export const workflowFindRecordsActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('FIND_RECORDS'),
+  settings: workflowFindRecordsActionSettingsSchema,
+});

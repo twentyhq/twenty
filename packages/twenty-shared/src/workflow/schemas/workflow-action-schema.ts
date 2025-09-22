@@ -1,16 +1,16 @@
 import { z } from 'zod';
-import { workflowAiAgentActionSchema } from './ai-agent-action';
-import { workflowCodeActionSchema } from './code-action';
-import { workflowCreateRecordActionSchema } from './create-record-action';
-import { workflowDeleteRecordActionSchema } from './delete-record-action';
-import { workflowEmptyActionSchema } from './empty-action';
-import { workflowFilterActionSchema } from './filter-action';
-import { workflowFindRecordsActionSchema } from './find-records-action';
-import { workflowFormActionSchema } from './form-action';
-import { workflowHttpRequestActionSchema } from './http-request-action';
-import { workflowIteratorActionSchema } from './iterator-action';
-import { workflowSendEmailActionSchema } from './send-email-action';
-import { workflowUpdateRecordActionSchema } from './update-record-action';
+import { workflowAiAgentActionSchema } from './ai-agent-action-schema';
+import { workflowCodeActionSchema } from './code-action-schema';
+import { workflowCreateRecordActionSchema } from './create-record-action-schema';
+import { workflowDeleteRecordActionSchema } from './delete-record-action-schema';
+import { workflowEmptyActionSchema } from './empty-action-schema';
+import { workflowFilterActionSchema } from './filter-action-schema';
+import { workflowFindRecordsActionSchema } from './find-records-action-schema';
+import { workflowFormActionSchema } from './form-action-schema';
+import { workflowHttpRequestActionSchema } from './http-request-action-schema';
+import { workflowIteratorActionSchema } from './iterator-action-schema';
+import { workflowSendEmailActionSchema } from './send-email-action-schema';
+import { workflowUpdateRecordActionSchema } from './update-record-action-schema';
 
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,

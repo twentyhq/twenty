@@ -1,12 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowSendEmailActionSettingsSchema } from './send-email-action-settings-schema';
 
-export const workflowSendEmailActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      connectedAccountId: z.string(),
-      email: z.string(),
-      subject: z.string().optional(),
-      body: z.string().optional(),
-    }),
-  });
+export const workflowSendEmailActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('SEND_EMAIL'),
+  settings: workflowSendEmailActionSettingsSchema,
+});

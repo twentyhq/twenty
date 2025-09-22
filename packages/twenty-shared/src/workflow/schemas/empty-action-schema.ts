@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowEmptyActionSettingsSchema } from './empty-action-settings-schema';
 
-export const workflowEmptyActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({}),
-  });
+export const workflowEmptyActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('EMPTY'),
+  settings: workflowEmptyActionSettingsSchema,
+});

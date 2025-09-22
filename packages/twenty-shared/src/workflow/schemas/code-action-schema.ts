@@ -1,11 +1,8 @@
 import { z } from 'zod';
-import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { baseWorkflowActionSchema } from './base-workflow-action-schema';
+import { workflowCodeActionSettingsSchema } from './code-action-settings-schema';
 
-export const workflowCodeActionSettingsSchema =
-  baseWorkflowActionSettingsSchema.extend({
-    input: z.object({
-      serverlessFunctionId: z.string(),
-      serverlessFunctionVersion: z.string(),
-      serverlessFunctionInput: z.record(z.string(), z.any()),
-    }),
-  });
+export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('CODE'),
+  settings: workflowCodeActionSettingsSchema,
+});
