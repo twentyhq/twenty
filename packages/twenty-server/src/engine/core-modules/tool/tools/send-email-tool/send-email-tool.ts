@@ -91,7 +91,10 @@ export class SendEmailTool implements Tool {
     let { connectedAccountId } = parameters;
 
     try {
-      const emailSchema = z.email('Invalid email').trim();
+      const emailSchema = z
+        .string()
+        .trim()
+        .pipe(z.email({ error: 'Invalid email' }));
       const emailValidation = emailSchema.safeParse(email);
 
       if (!emailValidation.success) {
