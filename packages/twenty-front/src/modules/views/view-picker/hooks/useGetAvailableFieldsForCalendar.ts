@@ -35,7 +35,7 @@ export const useGetAvailableFieldsForCalendar = () => {
   const navigate = useNavigateSettings();
 
   const navigateToDateFieldSettings = useCallback(() => {
-    setNavigationMemorizedUrl({ url: location.pathname + location.search });
+    setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (isDefined(objectMetadataItem?.namePlural)) {
       navigate(

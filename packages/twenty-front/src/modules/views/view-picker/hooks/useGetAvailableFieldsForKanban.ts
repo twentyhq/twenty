@@ -33,7 +33,7 @@ export const useGetAvailableFieldsForKanban = () => {
   const navigate = useNavigateSettings();
 
   const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl({ url: location.pathname + location.search });
+    setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (isDefined(objectMetadataItem?.namePlural)) {
       navigate(

@@ -23,6 +23,7 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { navigateBackToViewOnSaveState } from '@/ui/navigation/states/navigateBackToViewOnSaveState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
@@ -45,8 +46,16 @@ export type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const navigate = useNavigate();
   const { t } = useLingui();
+
+  const navigate = useNavigate();
+
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+    navigationMemorizedUrlState,
+  );
+
+  const [navigateBackToViewOnSave, setNavigateBackToViewOnSave] =
+    useRecoilState(navigateBackToViewOnSaveState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -62,10 +71,6 @@ export const SettingsObjectFieldEdit = () => {
 
   const [newNameDuringSave, setNewNameDuringSave] = useState<string | null>(
     null,
-  );
-
-  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
-    navigationMemorizedUrlState,
   );
 
   const fieldMetadataItem = objectMetadataItem?.fields.find(
@@ -113,6 +118,7 @@ export const SettingsObjectFieldEdit = () => {
   ) => {
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
+
     try {
       if (
         formValues.type === FieldMetadataType.RELATION &&
@@ -147,9 +153,12 @@ export const SettingsObjectFieldEdit = () => {
           updatePayload: formattedInput,
         });
 
-        if (navigationMemorizedUrl.isAddingFieldOption === true) {
-          navigate(navigationMemorizedUrl.url, { replace: true });
-          setNavigationMemorizedUrl({ url: '/' });
+        if (navigateBackToViewOnSave && isDefined(navigationMemorizedUrl)) {
+          navigate(navigationMemorizedUrl, { replace: true });
+
+          setNavigateBackToViewOnSave(false);
+          setNavigationMemorizedUrl('/');
+
           return;
         }
 
@@ -162,6 +171,21 @@ export const SettingsObjectFieldEdit = () => {
         apolloError: error instanceof ApolloError ? error : undefined,
       });
     }
+  };
+
+  const handleCancel = () => {
+    if (navigateBackToViewOnSave && isDefined(navigationMemorizedUrl)) {
+      navigate(navigationMemorizedUrl, { replace: true });
+
+      setNavigateBackToViewOnSave(false);
+      setNavigationMemorizedUrl('/');
+
+      return;
+    }
+
+    navigateSettings(SettingsPath.ObjectDetail, {
+      objectNamePlural,
+    });
   };
 
   const handleDeactivate = async () => {
@@ -208,11 +232,7 @@ export const SettingsObjectFieldEdit = () => {
               isLoading={isSubmitting}
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={() =>
-                navigateSettings(SettingsPath.ObjectDetail, {
-                  objectNamePlural,
-                })
-              }
+              onCancel={handleCancel}
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }

@@ -60,9 +60,7 @@ export const MainNavigationDrawerFixedItems = () => {
           onClick={() => {
             setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
             setIsNavigationDrawerExpanded(true);
-            setNavigationMemorizedUrl({
-              url: location.pathname + location.search,
-            });
+            setNavigationMemorizedUrl(location.pathname + location.search);
             navigate(getSettingsPath(SettingsPath.ProfilePage));
           }}
           Icon={IconSettings}

@@ -1,11 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
-
-type NavigationMemorizedUrl = {
-  url: string;
-  isAddingFieldOption?: boolean;
-};
-
-export const navigationMemorizedUrlState = createState<NavigationMemorizedUrl>({
+export const navigationMemorizedUrlState = createState<string>({
   key: 'navigationMemorizedUrlState',
-  defaultValue: { url: '/' },
+  defaultValue: '/',
 });

@@ -148,9 +148,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         <UndecoratedLink
           to={newSelectFieldSettingsUrl}
           onClick={() => {
-            setNavigationMemorizedUrl({
-              url: location.pathname + location.search,
-            });
+            setNavigationMemorizedUrl(location.pathname + location.search);
             closeDropdown();
           }}
         >
