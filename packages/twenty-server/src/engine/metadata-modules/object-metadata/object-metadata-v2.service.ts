@@ -320,14 +320,14 @@ export class ObjectMetadataServiceV2 {
         workspaceId,
       );
 
-    let toFlatViewFieldMaps = existingFlatViewFieldMaps;
-
-    for (const flatViewField of flatDefaultViewFieldsToCreate) {
-      toFlatViewFieldMaps = addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: flatViewField,
-        flatEntityMaps: toFlatViewFieldMaps,
-      });
-    }
+    const toFlatViewFieldMaps = flatDefaultViewFieldsToCreate.reduce(
+      (acc, flatViewField) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatViewField,
+          flatEntityMaps: acc,
+        }),
+      existingFlatViewFieldMaps,
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
