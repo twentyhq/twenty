@@ -167,6 +167,7 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
+          beforeEntities: formattedBefore,
           authContext: this.authContext,
         });
       }
@@ -309,6 +310,7 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
+          beforeEntities: formattedBefore, // Pass before entities for field change calculation
           authContext: this.authContext,
         });
       }

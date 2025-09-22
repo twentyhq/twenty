@@ -144,13 +144,36 @@ export class WorkspaceEventEmitter {
         });
         break;
       case DatabaseEventAction.UPSERTED:
-        events = entityArray.map((after) => {
+        events = entityArray.map((after, index) => {
           const event = new ObjectRecordUpsertEvent<T>();
 
           event.userId = authContext?.user?.id;
           event.recordId = after.id;
           event.objectMetadata = { ...objectMetadataItem, fields };
-          event.properties = { after };
+
+          const before = beforeEntities
+            ? Array.isArray(beforeEntities)
+              ? beforeEntities[index]
+              : beforeEntities
+            : undefined;
+
+          let updatedFields;
+
+          if (before) {
+            const diff = objectRecordChangedValues(
+              before,
+              after,
+              objectMetadataItem,
+            );
+
+            updatedFields = Object.keys(diff);
+          }
+
+          event.properties = {
+            after,
+            ...(before && { before }),
+            ...(updatedFields && { updatedFields }),
+          };
 
           return event;
         });
