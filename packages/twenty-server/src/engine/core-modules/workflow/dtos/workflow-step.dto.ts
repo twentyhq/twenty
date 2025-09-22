@@ -1,10 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowStepPosition } from 'src/engine/core-modules/workflow/dtos/workflow-step-position.dto';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+
+registerEnumType(WorkflowActionType, {
+  name: 'WorkflowActionType',
+  description: 'Workflow Action Type',
+});
 
 @ObjectType('WorkflowAction')
 export class WorkflowActionDTO {
@@ -14,7 +19,7 @@ export class WorkflowActionDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => String)
+  @Field(() => WorkflowActionType)
   type: WorkflowActionType;
 
   @Field(() => graphqlTypeJson)
