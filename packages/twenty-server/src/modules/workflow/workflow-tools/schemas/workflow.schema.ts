@@ -98,7 +98,6 @@ export const baseTriggerSchema = z.object({
     ),
 });
 
-// Action settings schemas
 export const workflowCodeActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
@@ -267,7 +266,6 @@ export const workflowEmptyActionSettingsSchema =
     input: z.object({}),
   });
 
-// Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
   settings: workflowCodeActionSettingsSchema,
@@ -334,7 +332,6 @@ export const workflowEmptyActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowEmptyActionSettingsSchema,
 });
 
-// Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
   workflowSendEmailActionSchema,
@@ -346,9 +343,10 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
   workflowFilterActionSchema,
+  workflowIteratorActionSchema,
+  workflowEmptyActionSchema,
 ]);
 
-// Trigger schemas
 export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
   .extend({
     type: z.literal('DATABASE_EVENT'),
@@ -446,7 +444,6 @@ export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
   ]),
 });
 
-// Combined trigger schema
 export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowDatabaseEventTriggerSchema,
   workflowManualTriggerSchema,
