@@ -275,6 +275,7 @@ jobs:
 
       - name: Setup main branch database
         run: |
+          npx nx reset:env twenty-server
           # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
