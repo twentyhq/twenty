@@ -75,7 +75,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
         const updatedFlatIndexFields =
           flatIndexFromMap.flatIndexFieldMetadatas.filter(
             (flatIndexField) =>
-              flatIndexField.fieldMetadataId === flatFieldMetadata.id,
+              flatIndexField.fieldMetadataId !== flatFieldMetadata.id,
           );
 
         flatIndexMap.set(flatIndexFromMap.id, {
@@ -98,7 +98,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
 
       const updatedFlatIndexFields = flatIndex.flatIndexFieldMetadatas.filter(
         (flatIndexField) =>
-          flatIndexField.fieldMetadataId === flatFieldMetadata.id,
+          flatIndexField.fieldMetadataId !== flatFieldMetadata.id,
       );
 
       flatIndexMap.set(flatIndex.id, {

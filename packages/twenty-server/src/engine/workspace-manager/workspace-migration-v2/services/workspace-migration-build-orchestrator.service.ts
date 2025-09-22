@@ -208,8 +208,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
         relatedFlatEntityMapsKeys,
         actions: [
           // Object and fields
-          ...orchestratorActionsReport.fieldMetadata.deleted,
           ...orchestratorActionsReport.index.deleted,
+          ...orchestratorActionsReport.fieldMetadata.deleted,
           ...orchestratorActionsReport.objectMetadata.deleted,
           ...orchestratorActionsReport.objectMetadata.created,
           ...orchestratorActionsReport.objectMetadata.updated,
