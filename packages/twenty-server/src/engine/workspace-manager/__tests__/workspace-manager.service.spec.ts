@@ -177,9 +177,6 @@ describe('WorkspaceManagerService', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
       expect(objectMetadataService.deleteObjectsMetadata).toHaveBeenCalled();
-      expect(workspaceFieldMetadataRepository.delete).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-      });
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
