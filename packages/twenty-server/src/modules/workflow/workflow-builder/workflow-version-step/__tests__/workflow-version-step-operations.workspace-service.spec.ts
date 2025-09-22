@@ -191,7 +191,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workflowVersionId: 'workflow-version-id',
       });
 
-      expect(result.type).toBe(WorkflowActionType.CODE);
+      expect(result.builtStep.type).toBe(WorkflowActionType.CODE);
       const codeResult = result as unknown as {
         settings: {
           input: {
@@ -214,8 +214,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workflowVersionId: 'workflow-version-id',
       });
 
-      expect(result.type).toBe(WorkflowActionType.FORM);
-      expect(result.settings.input).toEqual([]);
+      expect(result.builtStep.type).toBe(WorkflowActionType.FORM);
+      expect(result.builtStep.settings.input).toEqual([]);
     });
   });
 
