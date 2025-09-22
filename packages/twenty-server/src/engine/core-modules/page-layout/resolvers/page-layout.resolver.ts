@@ -117,12 +117,12 @@ export class PageLayoutResolver {
       const transactionManager = queryRunner.manager;
 
       const result =
-        await this.pageLayoutUpdateService.updatePageLayoutWithTabs(
+        await this.pageLayoutUpdateService.updatePageLayoutWithTabs({
           id,
-          workspace.id,
+          workspaceId: workspace.id,
           input,
           transactionManager,
-        );
+        });
 
       await queryRunner.commitTransaction();
 
