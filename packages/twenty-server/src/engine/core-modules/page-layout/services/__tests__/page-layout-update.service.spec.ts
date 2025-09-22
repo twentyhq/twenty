@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type EntityManager } from 'typeorm';
+import { DataSource, type EntityManager } from 'typeorm';
 
 import { type UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { type UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
@@ -21,6 +21,7 @@ describe('PageLayoutUpdateService', () => {
   let pageLayoutTabService: PageLayoutTabService;
   let pageLayoutWidgetService: PageLayoutWidgetService;
   let mockTransactionManager: EntityManager;
+  let mockDataSource: DataSource;
 
   const mockPageLayout = {
     id: 'page-layout-id',
@@ -68,6 +69,16 @@ describe('PageLayoutUpdateService', () => {
     jest.clearAllMocks();
 
     mockTransactionManager = {} as EntityManager;
+    mockDataSource = {
+      createQueryRunner: jest.fn().mockReturnValue({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        release: jest.fn(),
+        manager: mockTransactionManager,
+      }),
+    } as unknown as DataSource;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -96,6 +107,10 @@ describe('PageLayoutUpdateService', () => {
             update: jest.fn(),
             delete: jest.fn(),
           },
+        },
+        {
+          provide: DataSource,
+          useValue: mockDataSource,
         },
       ],
     }).compile();
