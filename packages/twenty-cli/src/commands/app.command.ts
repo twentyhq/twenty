@@ -1,15 +1,11 @@
 import { Command } from 'commander';
-import { AppDeployCommand } from './app-deploy.command';
+import { AppSyncCommand } from './app-sync.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
-import { AppInstallCommand } from './app-install.command';
-import { AppListCommand } from './app-list.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
-  private deployCommand = new AppDeployCommand();
-  private installCommand = new AppInstallCommand();
-  private listCommand = new AppListCommand();
+  private syncCommand = new AppSyncCommand();
   private initCommand = new AppInitCommand();
 
   getCommand(): Command {
@@ -29,37 +25,14 @@ export class AppCommand {
       });
 
     appCommand
-      .command('deploy')
-      .description('Deploy application to Twenty')
+      .command('sync')
+      .description('Sync application to Twenty')
       .option(
         '-p, --path <path>',
         'Application directory path (auto-detected if not specified)',
       )
       .action(async (options) => {
-        await this.deployCommand.execute(options);
-      });
-
-    appCommand
-      .command('install')
-      .description('Install application from source')
-      .option(
-        '-s, --source <source>',
-        'Application source (git URL, local path, or marketplace ID)',
-      )
-      .option(
-        '-t, --type <type>',
-        'Source type (git, local, marketplace)',
-        'local',
-      )
-      .action(async (options) => {
-        await this.installCommand.execute(options);
-      });
-
-    appCommand
-      .command('list')
-      .description('List installed applications')
-      .action(async () => {
-        await this.listCommand.execute();
+        await this.syncCommand.execute(options);
       });
 
     appCommand
