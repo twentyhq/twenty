@@ -3,8 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
+import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
+import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { ViewFieldV2Service } from 'src/engine/core-modules/view/services/view-field-v2.service';
 import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
@@ -238,13 +242,20 @@ export class ObjectMetadataServiceV2 {
     createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
-        },
-      );
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatEntities: [
+          'flatObjectMetadataMaps',
+          'flatViewMaps',
+          'flatViewFieldMaps',
+        ],
+      },
+    );
 
     const { flatObjectMetadataToCreate, relationTargetFlatFieldMetadatas } =
       fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
@@ -296,6 +307,32 @@ export class ObjectMetadataServiceV2 {
       ],
     });
 
+    const flatDefaultViewToCreate = await this.createDefaultFlatView(
+      flatObjectMetadataToCreate,
+      workspaceId,
+    );
+
+    const toFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatDefaultViewToCreate,
+      flatEntityMaps: existingFlatViewMaps,
+    });
+
+    const flatDefaultViewFieldsToCreate =
+      await this.createDefaultFlatViewFields(
+        flatObjectMetadataToCreate,
+        flatDefaultViewToCreate.id,
+        workspaceId,
+      );
+
+    let toFlatViewFieldMaps = existingFlatViewFieldMaps;
+
+    for (const flatViewField of flatDefaultViewFieldsToCreate) {
+      toFlatViewFieldMaps = addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatViewField,
+        flatEntityMaps: toFlatViewFieldMaps,
+      });
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -303,6 +340,14 @@ export class ObjectMetadataServiceV2 {
             flatObjectMetadataMaps: {
               from: fromFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
+            },
+            flatViewMaps: {
+              from: existingFlatViewMaps,
+              to: toFlatViewMaps,
+            },
+            flatViewFieldMaps: {
+              from: existingFlatViewFieldMaps,
+              to: toFlatViewFieldMaps,
             },
           },
           buildOptions: {
@@ -339,14 +384,14 @@ export class ObjectMetadataServiceV2 {
     }
 
     await this.createObjectRelatedEntities(
-      createdFlatObjectMetadata,
+      flatDefaultViewToCreate,
       workspaceId,
     );
 
     return createdFlatObjectMetadata;
   }
 
-  private async createObjectRelatedEntities(
+  private async createDefaultFlatView(
     objectMetadata: FlatObjectMetadata,
     workspaceId: string,
   ) {
@@ -356,34 +401,44 @@ export class ObjectMetadataServiceV2 {
       key: ViewKey.INDEX,
       icon: 'IconList',
       type: ViewType.TABLE,
-      workspaceId: objectMetadata.workspaceId,
+      workspaceId: workspaceId,
     };
 
-    const view = await this.viewV2Service.createOne({
-      createViewInput: {
-        ...defaultViewInput,
-      },
+    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
+      createViewInput: defaultViewInput,
       workspaceId,
     });
 
+    return flatViewFromCreateInput;
+  }
+
+  private async createDefaultFlatViewFields(
+    objectMetadata: FlatObjectMetadata,
+    viewId: string,
+    workspaceId: string,
+  ) {
     const defaultViewFields = objectMetadata.flatFieldMetadatas
       .filter((field) => field.name !== 'id' && field.name !== 'deletedAt')
-      .map((field, index) => ({
-        fieldMetadataId: field.id,
-        position: index,
-        isVisible: true,
-        size: DEFAULT_VIEW_FIELD_SIZE,
-        viewId: view.id,
-        workspaceId: objectMetadata.workspaceId,
-      }));
+      .map((field, index) =>
+        fromCreateViewFieldInputToFlatViewFieldToCreate({
+          createViewFieldInput: {
+            fieldMetadataId: field.id,
+            position: index,
+            isVisible: true,
+            size: DEFAULT_VIEW_FIELD_SIZE,
+            viewId: viewId,
+          },
+          workspaceId: workspaceId,
+        }),
+      );
 
-    for (const viewField of defaultViewFields) {
-      await this.viewFieldV2Service.createOne({
-        createViewFieldInput: viewField,
-        workspaceId,
-      });
-    }
+    return defaultViewFields;
+  }
 
+  private async createObjectRelatedEntities(
+    view: FlatView,
+    workspaceId: string,
+  ) {
     const favoriteRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<FavoriteWorkspaceEntity>(
         workspaceId,
