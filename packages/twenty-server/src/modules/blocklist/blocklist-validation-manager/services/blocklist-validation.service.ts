@@ -53,8 +53,9 @@ export class BlocklistValidationService {
 
   public async validateSchema(blocklist: BlocklistItem[]) {
     const emailOrDomainSchema = z
-      .email('Invalid email or domain')
+      .string()
       .trim()
+      .pipe(z.email({ error: 'Invalid email or domain' }))
       .or(
         z
           .string()
