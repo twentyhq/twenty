@@ -325,6 +325,11 @@ describe('JwtAuthStrategy', () => {
         workspace: { id: validWorkspaceId },
       };
 
+      const mockWorkspace = new Workspace();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+
       userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
 
       strategy = new JwtAuthStrategy(
@@ -365,6 +370,10 @@ describe('JwtAuthStrategy', () => {
         user: { id: validUserId, lastName: 'lastNameDefault' },
         workspace: { id: validWorkspaceId },
       };
+      const mockWorkspace = new Workspace();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
 
       userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
 
@@ -406,6 +415,10 @@ describe('JwtAuthStrategy', () => {
         workspace: { id: validWorkspaceId },
       };
 
+      const mockWorkspace = new Workspace();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
       userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
       permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
         true,
