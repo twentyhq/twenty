@@ -158,15 +158,19 @@ export class WorkspaceManagerService {
     this.logger.log(`workspace ${workspaceId} role deleted`);
 
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
+
     this.logger.log(`workspace ${workspaceId} object metadata deleted`);
 
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
+
     this.logger.log(`workspace ${workspaceId} migration deleted`);
 
     await this.dataSourceService.delete(workspaceId);
+
     this.logger.log(`workspace ${workspaceId} data source deleted`);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+
     this.logger.log(`workspace ${workspaceId} schema deleted`);
   }
 

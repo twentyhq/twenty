@@ -639,9 +639,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
 
     for (const objectMetadata of objectsMetadata) {
-      await this.fieldMetadataRepository.delete({
-        objectMetadataId: objectMetadata.id,
-      });
       await this.objectMetadataRepository.delete({
         id: objectMetadata.id,
       });
