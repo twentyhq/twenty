@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
@@ -119,6 +120,16 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
             'Index field related field metadata not found',
             FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
           );
+        }
+
+        if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+          if (!isDefined(flatFieldMetadata.settings?.joinColumnName)) {
+            throw new FlatEntityMapsException(
+              'Join column name is not defined for relation field',
+              FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+            );
+          }
+          return `"${flatFieldMetadata.settings.joinColumnName}"`;
         }
 
         return `"${flatFieldMetadata.name}"`;

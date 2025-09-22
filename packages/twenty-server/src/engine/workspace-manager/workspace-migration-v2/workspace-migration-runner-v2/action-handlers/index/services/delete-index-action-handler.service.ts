@@ -73,9 +73,20 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       flatObjectMetadata,
     });
 
-    await queryRunner.dropIndex(
-      `${schemaName}.${tableName}`,
-      flatIndexMetadataToDelete.name,
-    );
+    try {
+      await queryRunner.dropIndex(
+        `${schemaName}.${tableName}`,
+        flatIndexMetadataToDelete.name,
+      );
+    } catch (error) {
+      // Ignore error if index does not exist
+      if (
+        error.message ===
+        `Supplied index ${flatIndexMetadataToDelete.name} was not found in table ${schemaName}.${tableName}`
+      ) {
+        return;
+      }
+      throw error;
+    }
   }
 }
