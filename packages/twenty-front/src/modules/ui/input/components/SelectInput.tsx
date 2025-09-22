@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type TagColor } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -53,16 +54,17 @@ export const SelectInput = ({
     SelectOption | undefined
   >(defaultOption);
 
-  const optionsToSelect = useMemo(
-    () =>
+  const optionsToSelect = useMemo(() => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return (
       options.filter((option) => {
         return (
           option.value !== selectedOption?.value &&
-          option.label.toLowerCase().includes(searchFilter.toLowerCase())
+          normalizeSearchText(option.label).includes(searchTerm)
         );
-      }) || [],
-    [options, searchFilter, selectedOption?.value],
-  );
+      }) || []
+    );
+  }, [options, searchFilter, selectedOption?.value]);
 
   const optionsInDropDown = useMemo(
     () =>

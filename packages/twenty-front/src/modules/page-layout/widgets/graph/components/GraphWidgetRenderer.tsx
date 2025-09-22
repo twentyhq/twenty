@@ -1,7 +1,7 @@
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { lazy, Suspense } from 'react';
 
@@ -30,11 +30,11 @@ const GraphWidgetPieChart = lazy(() =>
 );
 
 const GraphWidgetGaugeChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetGaugeChart').then(
-    (module) => ({
-      default: module.GraphWidgetGaugeChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart'
+  ).then((module) => ({
+    default: module.GraphWidgetGaugeChart,
+  })),
 );
 
 type GraphWidgetRendererProps = {

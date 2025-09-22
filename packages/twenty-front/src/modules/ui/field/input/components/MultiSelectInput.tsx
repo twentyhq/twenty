@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -19,6 +19,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -58,9 +59,12 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = options.filter((option) =>
-    option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-  );
+  const filteredOptionsInDropDown = useMemo(() => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return options.filter((option) => {
+      return normalizeSearchText(option.label).includes(searchTerm);
+    });
+  }, [options, searchFilter]);
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(

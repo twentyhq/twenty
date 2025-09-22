@@ -7,6 +7,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RemoteServerModule } from 'src/engine/metadata-modules/remote-server/remote-server.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
@@ -17,6 +18,7 @@ import { RouteModule } from 'src/engine/metadata-modules/route/route.module';
     DataSourceModule,
     FieldMetadataModule,
     ObjectMetadataModule,
+    SearchFieldMetadataModule,
     ServerlessFunctionModule,
     AgentModule,
     WorkspaceMetadataVersionModule,
@@ -31,6 +33,7 @@ import { RouteModule } from 'src/engine/metadata-modules/route/route.module';
     DataSourceModule,
     FieldMetadataModule,
     ObjectMetadataModule,
+    SearchFieldMetadataModule,
     ServerlessFunctionModule,
     AgentModule,
     RemoteServerModule,

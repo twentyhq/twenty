@@ -6,12 +6,14 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
 ): ValidationErrorResponse => {
   const emptyResponseError: ValidationErrorResponse = {
     summary: {
-      invalidObjectMetadatas: 0,
-      invalidViews: 0,
-      invalidViewFields: 0,
+      invalidObjectMetadata: 0,
+      invalidView: 0,
+      invalidViewField: 0,
+      invalidIndex: 0,
       totalErrors: 0,
     },
     errors: {
+      index: [],
       objectMetadata: [],
       view: [],
       viewField: [],

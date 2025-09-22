@@ -10,8 +10,9 @@ import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/com
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuEditRichTextPage } from '@/command-menu/pages/rich-text-page/components/CommandMenuEditRichTextPage';
 import { CommandMenuSearchRecordsPage } from '@/command-menu/pages/search/components/CommandMenuSearchRecordsPage';
-import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import { CommandMenuWorkflowCreateStep } from '@/command-menu/pages/workflow/step/create/components/CommandMenuWorkflowCreateStep';
 import { CommandMenuWorkflowEditStep } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStep';
+import { CommandMenuWorkflowEditStepType } from '@/command-menu/pages/workflow/step/edit/components/CommandMenuWorkflowEditStepType';
 import { CommandMenuWorkflowRunViewStep } from '@/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStep';
 import { CommandMenuWorkflowViewStep } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStep';
 import { CommandMenuWorkflowSelectTriggerType } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
@@ -31,10 +32,8 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
     CommandMenuPages.WorkflowStepSelectTriggerType,
     <CommandMenuWorkflowSelectTriggerType />,
   ],
-  [
-    CommandMenuPages.WorkflowStepSelectAction,
-    <CommandMenuWorkflowSelectAction />,
-  ],
+  [CommandMenuPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],
+  [CommandMenuPages.WorkflowStepEditType, <CommandMenuWorkflowEditStepType />],
   [CommandMenuPages.WorkflowStepEdit, <CommandMenuWorkflowEditStep />],
   [CommandMenuPages.WorkflowStepView, <CommandMenuWorkflowViewStep />],
   [CommandMenuPages.WorkflowRunStepView, <CommandMenuWorkflowRunViewStep />],

@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
+import { findOrThrow } from 'twenty-shared/utils';
 
 import {
   BillingException,
@@ -34,7 +35,7 @@ export class BillingPlanService {
     priceUsageBased: BillingUsageType;
     productKey: BillingProductKey;
   }): Promise<BillingProduct[]> {
-    const products = await this.billingProductRepository.find({
+    return await this.billingProductRepository.find({
       where: {
         metadata: JsonContains({
           priceUsageBased,
@@ -45,8 +46,6 @@ export class BillingPlanService {
       },
       relations: ['billingPrices'],
     });
-
-    return products;
   }
 
   async getPlanBaseProduct(planKey: BillingPlanKey): Promise<BillingProduct> {
@@ -59,66 +58,68 @@ export class BillingPlanService {
     return baseProduct;
   }
 
-  async getPlans(): Promise<BillingGetPlanResult[]> {
+  async listPlans(): Promise<BillingGetPlanResult[]> {
     const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
       where: {
         active: true,
+        billingPrices: {
+          active: true,
+        },
       },
       relations: ['billingPrices.billingProduct'],
     });
 
     return planKeys.map((planKey) => {
-      const planProducts = products
-        .filter((product) => product.metadata.planKey === planKey)
-        .map((product) => {
-          return {
-            ...product,
-            billingPrices: product.billingPrices.filter(
-              (price) => price.active,
-            ),
-          };
-        });
-      const baseProduct = planProducts.find(
-        (product) =>
-          product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+      const planProducts = products.filter(
+        (product) => product.metadata.planKey === planKey,
       );
-
-      if (!baseProduct) {
-        throw new BillingException(
-          'Base product not found, did you run the billing:sync-plans-data command?',
-          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-        );
-      }
 
       const meteredProducts = planProducts.filter(
         (product) =>
           product.metadata.priceUsageBased === BillingUsageType.METERED,
       );
-      const otherLicensedProducts = planProducts.filter(
+      const licensedProducts = planProducts.filter(
         (product) =>
-          product.metadata.priceUsageBased === BillingUsageType.LICENSED &&
-          product.metadata.productKey !== BillingProductKey.BASE_PRODUCT,
+          product.metadata.priceUsageBased === BillingUsageType.LICENSED,
       );
 
       return {
         planKey,
-        baseProduct,
         meteredProducts,
-        otherLicensedProducts,
+        licensedProducts,
       };
     });
   }
 
-  async getPricesPerPlan({
+  async getPlanByPriceId(stripePriceId: string) {
+    const plans = await this.listPlans();
+
+    return findOrThrow(plans, (plan) => {
+      return (
+        plan.meteredProducts.some((product) =>
+          product.billingPrices.some(
+            (price) => price.stripePriceId === stripePriceId,
+          ),
+        ) ||
+        plan.licensedProducts.some((product) =>
+          product.billingPrices.some(
+            (price) => price.stripePriceId === stripePriceId,
+          ),
+        )
+      );
+    });
+  }
+
+  async getPricesPerPlanByInterval({
     planKey,
     interval,
   }: {
     planKey: BillingPlanKey;
     interval: SubscriptionInterval;
   }): Promise<BillingGetPricesPerPlanResult> {
-    const plans = await this.getPlans();
+    const plans = await this.listPlans();
     const plan = plans.find((plan) => plan.planKey === planKey);
 
     if (!plan) {
@@ -127,33 +128,21 @@ export class BillingPlanService {
         BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
       );
     }
-    const { baseProduct, meteredProducts, otherLicensedProducts } = plan;
-    const baseProductPrice = baseProduct.billingPrices.find(
-      (price) => price.interval === interval && price.active,
-    );
+    const { meteredProducts, licensedProducts } = plan;
 
-    if (!baseProductPrice) {
-      throw new BillingException(
-        'Base product active price not found for given interval',
-        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-      );
-    }
     const filterPricesByInterval = (product: BillingProduct) =>
-      product.billingPrices.filter(
-        (price) => price.interval === interval && price.active,
-      );
+      product.billingPrices.filter((price) => price.interval === interval);
 
     const meteredProductsPrices = meteredProducts.flatMap(
       filterPricesByInterval,
     );
-    const otherLicensedProductsPrices = otherLicensedProducts.flatMap(
+    const licensedProductsPrices = licensedProducts.flatMap(
       filterPricesByInterval,
     );
 
     return {
-      baseProductPrice,
       meteredProductsPrices,
-      otherLicensedProductsPrices,
+      licensedProductsPrices,
     };
   }
 }
