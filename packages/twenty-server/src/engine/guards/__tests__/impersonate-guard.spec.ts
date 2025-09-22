@@ -110,7 +110,7 @@ describe('ImpersonateGuard', () => {
     await expect(guard.canActivate(mockExecutionContext)).rejects.toMatchObject(
       {
         userFriendlyMessage:
-          'You do not have permission to access this feature. Please contact your workspace administrator for access.',
+          'You do not have permission to impersonate users. Please contact your workspace administrator for access.',
       },
     );
   });
