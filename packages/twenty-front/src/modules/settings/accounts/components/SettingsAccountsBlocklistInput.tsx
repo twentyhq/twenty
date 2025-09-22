@@ -39,8 +39,9 @@ export const SettingsAccountsBlocklistInput = ({
     z
       .object({
         emailOrDomain: z
-          .email(t`Invalid email or domain`)
+          .string()
           .trim()
+          .pipe(z.email({ error: t`Invalid email or domain` }))
           .or(
             z.string().refine(
               (value) =>

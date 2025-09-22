@@ -17,14 +17,17 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
     .object({
       exist: z.boolean(),
-      email: z.email('Email must be a valid email').trim(),
+      email: z
+        .string()
+        .trim()
+        .pipe(z.email({ error: 'Email must be a valid email' })),
       password:
         signInUpStep === SignInUpStep.Password
           ? z
               .string()
               .regex(PASSWORD_REGEX, 'Password must be min. 8 characters')
           : z.string().optional(),
-      captchaToken: z.string().prefault(''),
+      captchaToken: z.string().default(''),
     })
     .required();
 
