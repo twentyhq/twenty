@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { indexMetadataItemSchema } from '@/object-metadata/validation-schemas/indexMetadataItemSchema';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
@@ -7,28 +8,28 @@ import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStrin
 
 export const objectMetadataItemSchema = z.object({
   __typename: z.literal('Object').optional(),
-  createdAt: z.iso.datetime(),
+  createdAt: z.string().datetime(),
   description: z.string().trim().nullable().optional(),
   fields: z.array(fieldMetadataItemSchema()),
   readableFields: z.array(fieldMetadataItemSchema()),
   updatableFields: z.array(fieldMetadataItemSchema()),
   indexMetadatas: z.array(indexMetadataItemSchema),
   icon: z.string().startsWith('Icon').trim(),
-  id: z.uuid(),
+  id: z.string().uuid(),
   duplicateCriteria: z.array(z.array(z.string())),
-  imageIdentifierFieldMetadataId: z.uuid().nullable(),
+  imageIdentifierFieldMetadataId: z.string().uuid().nullable(),
   isActive: z.boolean(),
   isCustom: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
   isUIReadOnly: z.boolean(),
   isSearchable: z.boolean(),
-  labelIdentifierFieldMetadataId: z.uuid(),
+  labelIdentifierFieldMetadataId: z.string().uuid(),
   labelPlural: metadataLabelSchema(),
   labelSingular: metadataLabelSchema(),
   namePlural: camelCaseStringSchema,
   nameSingular: camelCaseStringSchema,
-  updatedAt: z.iso.datetime(),
+  updatedAt: z.string().datetime(),
   shortcut: z.string().nullable().optional(),
   isLabelSyncedWithName: z.boolean(),
-});
+}) satisfies z.ZodType<ObjectMetadataItem>;

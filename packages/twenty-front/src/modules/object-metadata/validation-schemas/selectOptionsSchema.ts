@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { themeColorSchema } from 'twenty-ui/theme';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
@@ -21,9 +22,9 @@ const selectOptionSchema = z
       }
     },
     {
-      error: 'Label is not transliterable',
+      message: 'Label is not transliterable',
     },
-  );
+  ) satisfies z.ZodType<FieldMetadataItemOption>;
 
 export const selectOptionsSchema = z
   .array(selectOptionSchema)
@@ -34,7 +35,7 @@ export const selectOptionsSchema = z
       return new Set(optionIds).size === options.length;
     },
     {
-      error: 'Options must have unique ids',
+      message: 'Options must have unique ids',
     },
   )
   .refine(
@@ -43,13 +44,13 @@ export const selectOptionsSchema = z
       return new Set(optionValues).size === options.length;
     },
     {
-      error: 'Options must have unique values',
+      message: 'Options must have unique values',
     },
   )
   .refine(
     (options) =>
       [...options].sort().every((option, index) => option.position === index),
     {
-      error: 'Options positions must be sequential',
+      message: 'Options positions must be sequential',
     },
   );

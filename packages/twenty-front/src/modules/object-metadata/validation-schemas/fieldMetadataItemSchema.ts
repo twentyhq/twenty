@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { themeColorSchema } from 'twenty-ui/theme';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -8,14 +9,14 @@ import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStrin
 export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
   return z.object({
     __typename: z.literal('Field').optional(),
-    createdAt: z.iso.datetime(),
+    createdAt: z.string().datetime(),
     defaultValue: z.any().optional(),
     description: z.string().trim().nullable().optional(),
     icon: z
       .union([z.string().startsWith('Icon').trim(), z.literal('')])
       .nullable()
       .optional(),
-    id: z.uuid(),
+    id: z.string().uuid(),
     isActive: z.boolean(),
     isCustom: z.boolean(),
     isNullable: z.boolean(),
@@ -29,7 +30,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
       .array(
         z.object({
           color: themeColorSchema,
-          id: z.uuid(),
+          id: z.string().uuid(),
           label: z.string().trim().min(1),
           position: z.number(),
           value: z.string().trim().min(1),
@@ -41,33 +42,33 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     relation: z
       .object({
         __typename: z.literal('Relation').optional(),
-        type: z.enum(RelationType),
+        type: z.nativeEnum(RelationType),
         sourceFieldMetadata: z.object({
           __typename: z.literal('Field').optional(),
-          id: z.uuid(),
+          id: z.string().uuid(),
           name: z.string().trim().min(1),
         }),
         sourceObjectMetadata: z.object({
           __typename: z.literal('Object').optional(),
-          id: z.uuid(),
+          id: z.string().uuid(),
           namePlural: z.string().trim().min(1),
           nameSingular: z.string().trim().min(1),
         }),
         targetFieldMetadata: z.object({
           __typename: z.literal('Field').optional(),
-          id: z.uuid(),
+          id: z.string().uuid(),
           name: z.string().trim().min(1),
         }),
         targetObjectMetadata: z.object({
           __typename: z.literal('Object').optional(),
-          id: z.uuid(),
+          id: z.string().uuid(),
           namePlural: z.string().trim().min(1),
           nameSingular: z.string().trim().min(1),
         }),
       })
       .nullable()
       .optional(),
-    type: z.enum(FieldMetadataType),
-    updatedAt: z.iso.datetime(),
-  });
+    type: z.nativeEnum(FieldMetadataType),
+    updatedAt: z.string().datetime(),
+  }) satisfies z.ZodType<FieldMetadataItem>;
 };
