@@ -502,7 +502,6 @@ describe('Page Layout Widget Resolver', () => {
     let testPermissionPageLayoutTabId: string;
 
     beforeAll(async () => {
-      // Create two test objects
       const {
         data: {
           createOneObject: { id: objectWithAccess },
@@ -534,17 +533,14 @@ describe('Page Layout Widget Resolver', () => {
       objectWithPermissionId = objectWithAccess;
       objectWithoutPermissionId = objectWithoutAccess;
 
-      // Get member role ID
       memberRoleId = await getMemberRoleId();
 
-      // Set up permissions: member has access to objectWithAccess but not objectWithoutAccess
       await setupObjectPermissionsForWidget({
         roleId: memberRoleId,
         objectMetadataIdWithAccess: objectWithPermissionId,
         objectMetadataIdWithoutAccess: objectWithoutPermissionId,
       });
 
-      // Create page layout and tab for permission tests
       const permissionPageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Test Page Layout for Permissions',
         type: PageLayoutType.RECORD_PAGE,
@@ -579,7 +575,6 @@ describe('Page Layout Widget Resolver', () => {
     });
 
     it('should return widget without configuration when member lacks object permission', async () => {
-      // Admin creates widget with objectMetadataId that member doesn't have access to
       const widget = await createTestPageLayoutWidgetWithGraphQL({
         title: 'Restricted Widget',
         type: WidgetType.FIELDS,
@@ -589,7 +584,6 @@ describe('Page Layout Widget Resolver', () => {
         configuration: { sensitiveData: 'should not be visible' },
       });
 
-      // Member tries to get the widget
       const operation = findPageLayoutWidgetOperationFactory({
         pageLayoutWidgetId: widget.id,
       });
@@ -601,11 +595,10 @@ describe('Page Layout Widget Resolver', () => {
       expect(returnedWidget.id).toBe(widget.id);
       expect(returnedWidget.title).toBe('Restricted Widget');
       expect(returnedWidget.canReadWidget).toBe(false);
-      expect(returnedWidget.configuration).toBeNull(); // Configuration should be hidden
+      expect(returnedWidget.configuration).toBeNull();
     });
 
     it('should return widget with configuration when member has object permission', async () => {
-      // Admin creates widget with objectMetadataId that member has access to
       const widget = await createTestPageLayoutWidgetWithGraphQL({
         title: 'Accessible Widget',
         type: WidgetType.FIELDS,
@@ -615,7 +608,6 @@ describe('Page Layout Widget Resolver', () => {
         configuration: { visibleData: 'should be visible' },
       });
 
-      // Member tries to get the widget
       const operation = findPageLayoutWidgetOperationFactory({
         pageLayoutWidgetId: widget.id,
       });
@@ -629,7 +621,7 @@ describe('Page Layout Widget Resolver', () => {
       expect(returnedWidget.canReadWidget).toBe(true);
       expect(returnedWidget.configuration).toEqual({
         visibleData: 'should be visible',
-      }); // Configuration should be visible
+      });
     });
 
     it('should prevent member from creating widget with restricted objectMetadataId', async () => {
@@ -677,7 +669,6 @@ describe('Page Layout Widget Resolver', () => {
     });
 
     it('should prevent member from updating configuration without object permission', async () => {
-      // Admin creates widget with restricted object
       const widget = await createTestPageLayoutWidgetWithGraphQL({
         title: 'Widget to Update',
         type: WidgetType.FIELDS,
@@ -687,7 +678,6 @@ describe('Page Layout Widget Resolver', () => {
         configuration: { original: 'config' },
       });
 
-      // Member tries to update configuration
       const operation = updatePageLayoutWidgetOperationFactory({
         pageLayoutWidgetId: widget.id,
         data: {
@@ -706,7 +696,6 @@ describe('Page Layout Widget Resolver', () => {
     });
 
     it('should allow member to update layout properties regardless of object permission', async () => {
-      // Admin creates widget with restricted object
       const widget = await createTestPageLayoutWidgetWithGraphQL({
         title: 'Widget to Move',
         type: WidgetType.FIELDS,
@@ -715,7 +704,6 @@ describe('Page Layout Widget Resolver', () => {
         gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       });
 
-      // Member updates only layout properties (not configuration)
       const operation = updatePageLayoutWidgetOperationFactory({
         pageLayoutWidgetId: widget.id,
         data: {
@@ -734,7 +722,6 @@ describe('Page Layout Widget Resolver', () => {
     });
 
     it('should allow member to delete widget regardless of object permission', async () => {
-      // Admin creates widget with restricted object
       const widget = await createTestPageLayoutWidgetWithGraphQL({
         title: 'Widget to Delete',
         type: WidgetType.FIELDS,
@@ -743,7 +730,6 @@ describe('Page Layout Widget Resolver', () => {
         gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       });
 
-      // Member deletes the widget
       const operation = deletePageLayoutWidgetOperationFactory({
         pageLayoutWidgetId: widget.id,
       });
