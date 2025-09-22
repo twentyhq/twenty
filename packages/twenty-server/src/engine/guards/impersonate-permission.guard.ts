@@ -16,7 +16,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
-export class ImpersonateGuard implements CanActivate {
+export class ImpersonatePermissionGuard implements CanActivate {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

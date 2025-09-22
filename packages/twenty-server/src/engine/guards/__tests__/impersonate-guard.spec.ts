@@ -1,11 +1,11 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
+import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 describe('ImpersonateGuard', () => {
-  let guard: ImpersonateGuard;
+  let guard: ImpersonatePermissionGuard;
   let mockPermissionsService: jest.Mocked<PermissionsService>;
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('ImpersonateGuard', () => {
       userHasWorkspaceSettingPermission: jest.fn(),
     } as any;
 
-    guard = new ImpersonateGuard(mockPermissionsService);
+    guard = new ImpersonatePermissionGuard(mockPermissionsService);
   });
 
   it('should return true if user can impersonate', async () => {

@@ -7,7 +7,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
-export class StopImpersonationGuard implements CanActivate {
+export class NoImpersonationGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext().req as {
