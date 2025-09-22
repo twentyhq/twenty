@@ -62,6 +62,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -631,8 +633,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     });
 
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+      type: In([FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION]),
+    });
+
     for (const objectMetadata of objectsMetadata) {
-      await this.objectMetadataRepository.delete({ id: objectMetadata.id });
+      await this.fieldMetadataRepository.delete({
+        objectMetadataId: objectMetadata.id,
+      });
+      await this.objectMetadataRepository.delete({
+        id: objectMetadata.id,
+      });
     }
   }
 
