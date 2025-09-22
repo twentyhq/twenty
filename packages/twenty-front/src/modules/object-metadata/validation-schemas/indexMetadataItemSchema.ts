@@ -6,12 +6,12 @@ import { IndexType } from '~/generated-metadata/graphql';
 
 export const indexMetadataItemSchema = z.object({
   __typename: z.literal('Index'),
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   indexFieldMetadatas: z.array(indexFieldMetadataItemSchema),
   createdAt: z.string(),
   updatedAt: z.string(),
-  indexType: z.nativeEnum(IndexType),
+  indexType: z.enum(IndexType),
   indexWhereClause: z.string().nullable(),
   isUnique: z.boolean(),
   objectMetadata: z.any(),

@@ -2,11 +2,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-export const objectRecordSchema = z.record(z.any());
+export const objectRecordSchema = z.record(z.string(), z.any());
 
 export const baseWorkflowActionSettingsSchema = z.object({
-  input: z.object({}).passthrough(),
-  outputSchema: z.object({}).passthrough(),
+  input: z.looseObject({}),
+  outputSchema: z.looseObject({}),
   errorHandlingOptions: z.object({
     retryOnFailure: z.object({
       value: z.boolean(),
@@ -37,7 +37,7 @@ export const workflowCodeActionSettingsSchema =
     input: z.object({
       serverlessFunctionId: z.string(),
       serverlessFunctionVersion: z.string(),
-      serverlessFunctionInput: z.record(z.any()),
+      serverlessFunctionInput: z.record(z.string(), z.any()),
     }),
   });
 
@@ -107,7 +107,7 @@ export const workflowFormActionSettingsSchema =
           z.literal('RECORD'),
         ]),
         placeholder: z.string().optional(),
-        settings: z.record(z.any()).optional(),
+        settings: z.record(z.string(), z.any()).optional(),
         value: z.any().optional(),
       }),
     ),
@@ -118,9 +118,10 @@ export const workflowHttpRequestActionSettingsSchema =
     input: z.object({
       url: z.string(),
       method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-      headers: z.record(z.string()).optional(),
+      headers: z.record(z.string(), z.string()).optional(),
       body: z
         .record(
+          z.string(),
           z.union([
             z.string(),
             z.number(),
@@ -161,7 +162,7 @@ export const workflowIteratorActionSettingsSchema =
               z.number(),
               z.boolean(),
               z.null(),
-              z.record(z.any()),
+              z.record(z.string(), z.any()),
               z.any(),
             ]),
           ),
@@ -262,8 +263,8 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('DATABASE_EVENT'),
   settings: z.object({
     eventName: z.string(),
-    input: z.object({}).passthrough().optional(),
-    outputSchema: z.object({}).passthrough(),
+    input: z.looseObject({}).optional(),
+    outputSchema: z.looseObject({}),
     objectType: z.string().optional(),
     fields: z.array(z.string()).optional().nullable(),
   }),
@@ -275,8 +276,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema
     settings: z.object({
       objectType: z.string().optional(),
       outputSchema: z
-        .object({})
-        .passthrough()
+        .looseObject({})
         .describe(
           'Schema defining the output data structure. When a record is selected, it is accessible via {{trigger.record.fieldName}}. When no record is selected, no data is available.',
         ),
@@ -298,7 +298,7 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
         hour: z.number().min(0).max(23),
         minute: z.number().min(0).max(59),
       }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('HOURS'),
@@ -306,17 +306,17 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
         hour: z.number().min(1),
         minute: z.number().min(0).max(59),
       }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('MINUTES'),
       schedule: z.object({ minute: z.number().min(1) }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('CUSTOM'),
       pattern: z.string(),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
   ]),
 });
@@ -325,14 +325,14 @@ export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('WEBHOOK'),
   settings: z.discriminatedUnion('httpMethod', [
     z.object({
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
       httpMethod: z.literal('GET'),
       authentication: z.literal('API_KEY').nullable(),
     }),
     z.object({
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
       httpMethod: z.literal('POST'),
-      expectedBody: z.object({}).passthrough(),
+      expectedBody: z.looseObject({}),
       authentication: z.literal('API_KEY').nullable(),
     }),
   ]),
@@ -345,7 +345,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowWebhookTriggerSchema,
 ]);
 
-export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
+export const workflowRunStepStatusSchema = z.enum(StepStatus);
 
 export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
@@ -354,6 +354,7 @@ export const workflowRunStateStepInfoSchema = z.object({
 });
 
 export const workflowRunStateStepInfosSchema = z.record(
+  z.string(),
   workflowRunStateStepInfoSchema,
 );
 
@@ -374,17 +375,15 @@ export const workflowRunStatusSchema = z.enum([
   'ENQUEUED',
 ]);
 
-export const workflowRunSchema = z
-  .object({
-    __typename: z.literal('WorkflowRun'),
-    id: z.string(),
-    workflowVersionId: z.string(),
-    workflowId: z.string(),
-    state: workflowRunStateSchema.nullable(),
-    status: workflowRunStatusSchema,
-    createdAt: z.string(),
-    deletedAt: z.string().nullable(),
-    endedAt: z.string().nullable(),
-    name: z.string(),
-  })
-  .passthrough();
+export const workflowRunSchema = z.looseObject({
+  __typename: z.literal('WorkflowRun'),
+  id: z.string(),
+  workflowVersionId: z.string(),
+  workflowId: z.string(),
+  state: workflowRunStateSchema.nullable(),
+  status: workflowRunStatusSchema,
+  createdAt: z.string(),
+  deletedAt: z.string().nullable(),
+  endedAt: z.string().nullable(),
+  name: z.string(),
+});

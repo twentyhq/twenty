@@ -9,7 +9,7 @@ export const settingsAIAgentFormSchema = z.object({
   modelId: z.union([z.string().min(1, 'Model is required'), z.literal('auto')]),
   role: z.string().optional(),
   prompt: zodNonEmptyString,
-  isCustom: z.boolean().default(true),
+  isCustom: z.boolean().prefault(true),
 });
 
 export type SettingsAIAgentFormValues = z.infer<
