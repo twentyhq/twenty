@@ -40,6 +40,11 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
 
 const DUPLICATED_STEP_POSITION_OFFSET = 50;
 
+const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
+  x: 174,
+  y: 83,
+};
+
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
@@ -94,13 +99,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
-    position,
     workflowVersionId,
+    position,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
-    position?: WorkflowStepPositionInput;
     workflowVersionId: string;
+    position?: WorkflowStepPositionInput;
   }): Promise<WorkflowAction> {
     const newStepId = v4();
 
@@ -306,6 +311,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           iteratorStepId: baseStep.id,
           workflowVersionId,
           workspaceId,
+          iteratorPosition: position,
         });
 
         return {
@@ -452,10 +458,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     iteratorStepId,
     workflowVersionId,
     workspaceId,
+    iteratorPosition,
   }: {
     iteratorStepId: string;
     workflowVersionId: string;
     workspaceId: string;
+    iteratorPosition?: WorkflowStepPositionInput;
   }): Promise<WorkflowAction> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
@@ -488,6 +496,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       settings: {
         ...BASE_STEP_DEFINITION,
         input: {},
+      },
+      position: {
+        x: (iteratorPosition?.x ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
+        y: (iteratorPosition?.y ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
       },
     };
 

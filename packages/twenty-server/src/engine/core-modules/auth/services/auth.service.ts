@@ -3,14 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'node:crypto';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { t, msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -54,11 +53,11 @@ import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -87,6 +86,7 @@ export class AuthService {
     private readonly emailService: EmailService,
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
+    private readonly i18nService: I18nService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -282,7 +282,7 @@ export class AuthService {
       where: { email },
     });
 
-    userValidator.assertIsDefinedOrThrow(
+    assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
@@ -321,7 +321,7 @@ export class AuthService {
       email,
     });
 
-    const isUserExist = userValidator.isDefined(user);
+    const isUserExist = isDefined(user);
 
     return {
       exists: isUserExist,
@@ -482,17 +482,19 @@ export class AuthService {
       locale: firstUserWorkspace.locale,
     });
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
-    i18n.activate(firstUserWorkspace.locale);
+    const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
+    const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);
+    const subject = i18n._(passwordChangedMsg);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
-      subject: t`Your Password Has Been Successfully Changed`,
+      subject,
       text,
       html,
     });

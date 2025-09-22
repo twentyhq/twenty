@@ -42,7 +42,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
   );
 
   const isFocusPortalOnThisCell =
-    focusPosition.column === 0 && focusPosition.row === 0;
+    focusPosition?.column === 0 && focusPosition.row === 0;
 
   const isHoveredPortalOnThisCell =
     hoverPosition?.column === 0 && hoverPosition.row === 0;

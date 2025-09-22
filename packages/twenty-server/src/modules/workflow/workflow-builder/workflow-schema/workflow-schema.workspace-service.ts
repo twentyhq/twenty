@@ -78,10 +78,23 @@ export class WorkflowSchemaWorkspaceService {
         });
       case WorkflowActionType.ITERATOR: {
         return {
-          nextItemToProcess: {
+          currentItem: {
+            label: 'Current Item',
             isLeaf: true,
             type: 'unknown',
             value: generateFakeValue('unknown'),
+          },
+          currentItemIndex: {
+            label: 'Current Item Index',
+            isLeaf: true,
+            type: 'number',
+            value: generateFakeValue('number'),
+          },
+          hasProcessedAllItems: {
+            label: 'Has Processed All Items',
+            isLeaf: true,
+            type: 'boolean',
+            value: false,
           },
         };
       }

@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
@@ -9,17 +8,16 @@ import {
 
 export const resolveAppPath = async (
   providedPath?: string,
-  verbose = false,
 ): Promise<string> => {
   if (providedPath && path.isAbsolute(providedPath)) {
-    return validateAppPath(providedPath, verbose);
+    return validateAppPath(providedPath);
   }
 
   if (providedPath) {
     return resolveRelativePath(providedPath);
   }
 
-  return autoDetectAppPath(verbose);
+  return autoDetectAppPath();
 };
 
 const resolveRelativePath = async (providedPath: string): Promise<string> => {
@@ -43,16 +41,13 @@ const resolveRelativePath = async (providedPath: string): Promise<string> => {
 Please check the path or run from the correct directory.`);
 };
 
-const autoDetectAppPath = async (verbose = false): Promise<string> => {
+const autoDetectAppPath = async (): Promise<string> => {
   let currentDir = process.cwd();
   const maxDepth = 10;
   let depth = 0;
 
   while (depth < maxDepth) {
     if (await isValidAppPath(currentDir)) {
-      if (verbose) {
-        console.log(chalk.gray(`Auto-detected app path: ${currentDir}`));
-      }
       return currentDir;
     }
 
@@ -81,14 +76,7 @@ const autoDetectAppPath = async (verbose = false): Promise<string> => {
   throw new Error(errorMessage);
 };
 
-const validateAppPath = async (
-  appPath: string,
-  verbose = false,
-): Promise<string> => {
-  if (verbose) {
-    console.log(chalk.gray(`Checking app path: ${appPath}`));
-  }
-
+const validateAppPath = async (appPath: string): Promise<string> => {
   const jsoncManifestPath = path.join(appPath, 'twenty-app.jsonc');
   const jsonManifestPath = path.join(appPath, 'twenty-app.json');
 
