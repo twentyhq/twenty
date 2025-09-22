@@ -1,18 +1,16 @@
-import {
-  FieldMetadataType,
-  StepLogicalOperator,
-  ViewFilterOperand,
-} from 'twenty-shared/types';
-import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
+import { FieldMetadataType } from '../../types/FieldMetadataType';
+import { StepLogicalOperator } from '../../types/StepFilters';
+import { ViewFilterOperand } from '../../types/ViewFilterOperand';
+import { StepStatus } from '../types/WorkflowRunStateStepInfos';
 
 export const objectRecordSchema = z
   .record(z.string(), z.any())
   .describe(
     'Record data object. Use nested objects for relationships (e.g., "company": {"id": "{{reference}}"}). Common patterns:\n' +
-      '- Person: {"name": {"firstName": "John", "lastName": "Doe"}, "emails": {"primaryEmail": "john@example.com"}, "company": {"id": "{{trigger.object.id}}"}}\n' +
-      '- Company: {"name": "Acme Corp", "domainName": {"primaryLinkUrl": "https://acme.com"}}\n' +
-      '- Task: {"title": "Follow up", "status": "TODO", "assignee": {"id": "{{user.id}}"}}',
+    '- Person: {"name": {"firstName": "John", "lastName": "Doe"}, "emails": {"primaryEmail": "john@example.com"}, "company": {"id": "{{trigger.object.id}}"}}\n' +
+    '- Company: {"name": "Acme Corp", "domainName": {"primaryLinkUrl": "https://acme.com"}}\n' +
+    '- Task: {"title": "Follow up", "status": "TODO", "assignee": {"id": "{{user.id}}"}}',
   );
 
 export const baseWorkflowActionSettingsSchema = z.object({
@@ -31,9 +29,7 @@ export const baseWorkflowActionSettingsSchema = z.object({
       value: z.boolean().describe('Whether to retry the action if it fails.'),
     }),
     continueOnFailure: z.object({
-      value: z
-        .boolean()
-        .describe('Whether to continue to the next step if this action fails.'),
+      value: z.boolean().describe('Whether to continue to the next step if this action fails.'),
     }),
   }),
 });
@@ -41,26 +37,18 @@ export const baseWorkflowActionSettingsSchema = z.object({
 export const baseWorkflowActionSchema = z.object({
   id: z
     .string()
-    .describe(
-      'Unique identifier for the workflow step. Must be unique within the workflow.',
-    ),
+    .describe('Unique identifier for the workflow step. Must be unique within the workflow.'),
   name: z
     .string()
-    .describe(
-      'Human-readable name for the workflow step. Should clearly describe what the step does.',
-    ),
+    .describe('Human-readable name for the workflow step. Should clearly describe what the step does.'),
   valid: z
     .boolean()
-    .describe(
-      'Whether the step configuration is valid. Set to true when all required fields are properly configured.',
-    ),
+    .describe('Whether the step configuration is valid. Set to true when all required fields are properly configured.'),
   nextStepIds: z
     .array(z.string())
     .optional()
     .nullable()
-    .describe(
-      'Array of step IDs that this step connects to. Leave empty or null for the final step.',
-    ),
+    .describe('Array of step IDs that this step connects to. Leave empty or null for the final step.'),
   position: z
     .object({ x: z.number(), y: z.number() })
     .optional()
@@ -72,9 +60,7 @@ export const baseTriggerSchema = z.object({
   name: z
     .string()
     .optional()
-    .describe(
-      'Human-readable name for the trigger. Optional but recommended for clarity.',
-    ),
+    .describe('Human-readable name for the trigger. Optional but recommended for clarity.'),
   type: z
     .enum(['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'])
     .describe(
@@ -84,16 +70,12 @@ export const baseTriggerSchema = z.object({
     .object({ x: z.number(), y: z.number() })
     .optional()
     .nullable()
-    .describe(
-      'Position coordinates for the trigger in the workflow diagram. Use (0, 0) for the trigger step.',
-    ),
+    .describe('Position coordinates for the trigger in the workflow diagram. Use (0, 0) for the trigger step.'),
   nextStepIds: z
     .array(z.string())
     .optional()
     .nullable()
-    .describe(
-      'Array of step IDs that the trigger connects to. These are the first steps in the workflow.',
-    ),
+    .describe('Array of step IDs that the trigger connects to. These are the first steps in the workflow.'),
 });
 
 export const workflowCodeActionSettingsSchema =
@@ -123,7 +105,10 @@ export const workflowCreateRecordActionSettingsSchema =
         .describe(
           'The name of the object to create a record in. Must be lowercase (e.g., "person", "company", "task").',
         ),
-      objectRecord: objectRecordSchema.describe('The record data to create.'),
+      objectRecord: objectRecordSchema
+        .describe(
+          'The record data to create.',
+        )
     }),
   });
 
@@ -275,26 +260,20 @@ export const workflowSendEmailActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowSendEmailActionSettingsSchema,
 });
 
-export const workflowCreateRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('CREATE_RECORD'),
-    settings: workflowCreateRecordActionSettingsSchema,
-  },
-);
+export const workflowCreateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('CREATE_RECORD'),
+  settings: workflowCreateRecordActionSettingsSchema,
+});
 
-export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('UPDATE_RECORD'),
-    settings: workflowUpdateRecordActionSettingsSchema,
-  },
-);
+export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('UPDATE_RECORD'),
+  settings: workflowUpdateRecordActionSettingsSchema,
+});
 
-export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('DELETE_RECORD'),
-    settings: workflowDeleteRecordActionSettingsSchema,
-  },
-);
+export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('DELETE_RECORD'),
+  settings: workflowDeleteRecordActionSettingsSchema,
+});
 
 export const workflowFindRecordsActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('FIND_RECORDS'),
