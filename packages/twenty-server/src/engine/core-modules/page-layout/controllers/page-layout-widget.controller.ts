@@ -24,7 +24,9 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutWidgetRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-widget-rest-api-exception.filter';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -41,6 +43,7 @@ export class PageLayoutWidgetController {
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey: ApiKey | undefined,
     @Query('pageLayoutTabId') pageLayoutTabId: string,
   ): Promise<PageLayoutWidgetDTO[]> {
     if (!isDefined(pageLayoutTabId)) {
@@ -56,6 +59,7 @@ export class PageLayoutWidgetController {
       workspace.id,
       pageLayoutTabId,
       userWorkspaceId,
+      apiKey?.id,
     );
   }
 
@@ -64,11 +68,13 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey: ApiKey | undefined,
   ): Promise<PageLayoutWidgetDTO | null> {
     return this.pageLayoutWidgetService.findByIdOrThrowWithPermissions(
       id,
       workspace.id,
       userWorkspaceId,
+      apiKey?.id,
     );
   }
 
@@ -77,11 +83,13 @@ export class PageLayoutWidgetController {
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey: ApiKey | undefined,
   ): Promise<PageLayoutWidgetDTO> {
     return this.pageLayoutWidgetService.createWithPermissions(
       input,
       workspace.id,
       userWorkspaceId,
+      apiKey?.id,
     );
   }
 
@@ -91,12 +99,14 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey: ApiKey | undefined,
   ): Promise<PageLayoutWidgetDTO> {
     return this.pageLayoutWidgetService.updateWithPermissions(
       id,
       workspace.id,
       input,
       userWorkspaceId,
+      apiKey?.id,
     );
   }
 
@@ -105,11 +115,13 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApiKey() apiKey: ApiKey | undefined,
   ): Promise<PageLayoutWidgetDTO> {
     return this.pageLayoutWidgetService.deleteWithPermissions(
       id,
       workspace.id,
       userWorkspaceId,
+      apiKey?.id,
     );
   }
 }

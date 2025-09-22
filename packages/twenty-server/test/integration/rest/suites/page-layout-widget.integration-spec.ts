@@ -3,6 +3,7 @@ import { TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID } from 'test/integration/consta
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestAPIRequestWithMember } from 'test/integration/rest/utils/make-rest-api-request-with-member.util';
 import {
   createTestPageLayoutWithRestApi,
   deleteTestPageLayoutWithRestApi,
@@ -24,6 +25,10 @@ import {
   assertPageLayoutWidgetStructure,
   cleanupPageLayoutWidgetRecords,
 } from 'test/integration/utils/page-layout-widget-test.util';
+import {
+  setupObjectPermissionsForWidget,
+  getMemberRoleId,
+} from 'test/integration/graphql/utils/setup-object-permissions-for-widget.util';
 
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
@@ -488,6 +493,381 @@ describe('Page Layout Widget REST API', () => {
           TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID,
         ),
       );
+    });
+  });
+
+  describe('Page Layout Widget Permissions', () => {
+    let testObjectMetadataIdWithAccess: string;
+    let testObjectMetadataIdWithoutAccess: string;
+    let memberRoleId: string;
+    let testPageLayoutIdForPermissions: string;
+    let testPageLayoutTabIdForPermissions: string;
+
+    beforeAll(async () => {
+      // Create test objects
+      const {
+        data: {
+          createOneObject: { id: objectMetadataIdWithAccess },
+        },
+      } = await createOneObjectMetadata({
+        input: {
+          nameSingular: 'myPermissionsTestObjectWithAccess',
+          namePlural: 'myPermissionsTestObjectsWithAccess',
+          labelSingular: 'Permissions Test Object With Access',
+          labelPlural: 'Permissions Test Objects With Access',
+          icon: 'IconShield',
+        },
+      });
+
+      const {
+        data: {
+          createOneObject: { id: objectMetadataIdWithoutAccess },
+        },
+      } = await createOneObjectMetadata({
+        input: {
+          nameSingular: 'myPermissionsTestObjectWithoutAccess',
+          namePlural: 'myPermissionsTestObjectsWithoutAccess',
+          labelSingular: 'Permissions Test Object Without Access',
+          labelPlural: 'Permissions Test Objects Without Access',
+          icon: 'IconLock',
+        },
+      });
+
+      testObjectMetadataIdWithAccess = objectMetadataIdWithAccess;
+      testObjectMetadataIdWithoutAccess = objectMetadataIdWithoutAccess;
+
+      // Set up permissions for member role
+      memberRoleId = await getMemberRoleId();
+
+      await setupObjectPermissionsForWidget({
+        roleId: memberRoleId,
+        objectMetadataIdWithAccess: testObjectMetadataIdWithAccess,
+        objectMetadataIdWithoutAccess: testObjectMetadataIdWithoutAccess,
+      });
+
+      // Create test page layout and tab
+      const testPageLayout = await createTestPageLayoutWithRestApi({
+        name: 'Test Page Layout for Permission Tests',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: testObjectMetadataId,
+      });
+
+      testPageLayoutIdForPermissions = testPageLayout.id;
+
+      const testPageLayoutTab = await createTestPageLayoutTabWithRestApi({
+        title: 'Permission Test Tab',
+        pageLayoutId: testPageLayoutIdForPermissions,
+        position: 0,
+      });
+
+      testPageLayoutTabIdForPermissions = testPageLayoutTab.id;
+    });
+
+    afterAll(async () => {
+      await deleteTestPageLayoutTabWithRestApi(
+        testPageLayoutTabIdForPermissions,
+      );
+      await deleteTestPageLayoutWithRestApi(testPageLayoutIdForPermissions);
+      await deleteOneObjectMetadata({
+        input: { idToDelete: testObjectMetadataIdWithAccess },
+      });
+      await deleteOneObjectMetadata({
+        input: { idToDelete: testObjectMetadataIdWithoutAccess },
+      });
+    });
+
+    afterEach(async () => {
+      await cleanupPageLayoutWidgetRecords();
+    });
+
+    describe('GET /rest/metadata/page-layout-widgets - Member permissions', () => {
+      it('should return widgets with canReadWidget field based on permissions', async () => {
+        // Create widget with objectMetadataId the member has access to
+        const widgetWithAccess = await createTestPageLayoutWidgetWithRestApi({
+          title: 'Widget With Access',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        });
+
+        // Create widget with objectMetadataId the member doesn't have access to
+        const widgetWithoutAccess = await createTestPageLayoutWidgetWithRestApi(
+          {
+            title: 'Widget Without Access',
+            pageLayoutTabId: testPageLayoutTabIdForPermissions,
+            objectMetadataId: testObjectMetadataIdWithoutAccess,
+            type: WidgetType.VIEW,
+            gridPosition: {
+              row: 1,
+              column: 0,
+              rowSpan: 1,
+              columnSpan: 1,
+            },
+          },
+        );
+
+        // Member request
+        const response = await makeRestAPIRequestWithMember({
+          method: 'get',
+          path: `/metadata/page-layout-widgets?pageLayoutTabId=${testPageLayoutTabIdForPermissions}`,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        expect(Array.isArray(response.body)).toBe(true);
+
+        const widgetWithAccessFromResponse = response.body.find(
+          (w: { id: string }) => w.id === widgetWithAccess.id,
+        );
+        const widgetWithoutAccessFromResponse = response.body.find(
+          (w: { id: string }) => w.id === widgetWithoutAccess.id,
+        );
+
+        // Widget with access should have canReadWidget: true and configuration
+        expect(widgetWithAccessFromResponse).toBeDefined();
+        expect(widgetWithAccessFromResponse.canReadWidget).toBe(true);
+        expect(widgetWithAccessFromResponse.objectMetadataId).toBe(
+          testObjectMetadataIdWithAccess,
+        );
+
+        // Widget without access should have canReadWidget: false and null configuration
+        expect(widgetWithoutAccessFromResponse).toBeDefined();
+        expect(widgetWithoutAccessFromResponse.canReadWidget).toBe(false);
+        expect(widgetWithoutAccessFromResponse.configuration).toBeNull();
+        expect(widgetWithoutAccessFromResponse.objectMetadataId).toBe(
+          testObjectMetadataIdWithoutAccess,
+        );
+      });
+    });
+
+    describe('POST /rest/metadata/page-layout-widgets - Member permissions', () => {
+      it('should prevent member from creating widget with restricted objectMetadataId', async () => {
+        const widgetData = {
+          title: 'Restricted Widget',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithoutAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'post',
+          path: '/metadata/page-layout-widgets',
+          body: widgetData,
+        });
+
+        assertRestApiErrorResponse(
+          response,
+          403,
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.OBJECT_METADATA_ACCESS_FORBIDDEN,
+            testObjectMetadataIdWithoutAccess,
+          ),
+        );
+      });
+
+      it('should allow member to create widget with accessible objectMetadataId', async () => {
+        const widgetData = {
+          title: 'Accessible Widget',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'post',
+          path: '/metadata/page-layout-widgets',
+          body: widgetData,
+        });
+
+        assertRestApiSuccessfulResponse(response, 201);
+        assertPageLayoutWidgetStructure(response.body, widgetData);
+        expect(response.body.canReadWidget).toBe(true);
+
+        await deleteTestPageLayoutWidgetWithRestApi(response.body.id);
+      });
+
+      it('should allow member to create widget without objectMetadataId', async () => {
+        const widgetData = {
+          title: 'Widget Without Object',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          type: WidgetType.GRAPH,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'post',
+          path: '/metadata/page-layout-widgets',
+          body: widgetData,
+        });
+
+        assertRestApiSuccessfulResponse(response, 201);
+        assertPageLayoutWidgetStructure(response.body, {
+          ...widgetData,
+          objectMetadataId: null,
+        });
+        expect(response.body.canReadWidget).toBe(true);
+
+        await deleteTestPageLayoutWidgetWithRestApi(response.body.id);
+      });
+    });
+
+    describe('PATCH /rest/metadata/page-layout-widgets/:id - Member permissions', () => {
+      it('should prevent member from updating objectMetadataId to restricted one', async () => {
+        const widget = await createTestPageLayoutWidgetWithRestApi({
+          title: 'Widget to Update',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        });
+
+        const updateData = {
+          objectMetadataId: testObjectMetadataIdWithoutAccess,
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'patch',
+          path: `/metadata/page-layout-widgets/${widget.id}`,
+          body: updateData,
+        });
+
+        assertRestApiErrorResponse(
+          response,
+          403,
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.OBJECT_METADATA_ACCESS_FORBIDDEN,
+            testObjectMetadataIdWithoutAccess,
+          ),
+        );
+
+        await deleteTestPageLayoutWidgetWithRestApi(widget.id);
+      });
+
+      it('should prevent member from updating configuration of widget they cannot read', async () => {
+        const widget = await createTestPageLayoutWidgetWithRestApi({
+          title: 'Widget Without Access',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithoutAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        });
+
+        const updateData = {
+          configuration: { newConfig: 'value' },
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'patch',
+          path: `/metadata/page-layout-widgets/${widget.id}`,
+          body: updateData,
+        });
+
+        assertRestApiErrorResponse(
+          response,
+          403,
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.CONFIGURATION_UPDATE_FORBIDDEN,
+          ),
+        );
+
+        await deleteTestPageLayoutWidgetWithRestApi(widget.id);
+      });
+
+      it('should allow member to update layout properties regardless of permissions', async () => {
+        const widget = await createTestPageLayoutWidgetWithRestApi({
+          title: 'Widget to Move',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithoutAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        });
+
+        const updateData = {
+          title: 'Moved Widget',
+          gridPosition: {
+            row: 2,
+            column: 2,
+            rowSpan: 2,
+            columnSpan: 2,
+          },
+        };
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'patch',
+          path: `/metadata/page-layout-widgets/${widget.id}`,
+          body: updateData,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        expect(response.body.title).toBe('Moved Widget');
+        expect(response.body.gridPosition).toMatchObject(
+          updateData.gridPosition,
+        );
+
+        await deleteTestPageLayoutWidgetWithRestApi(widget.id);
+      });
+    });
+
+    describe('DELETE /rest/metadata/page-layout-widgets/:id - Member permissions', () => {
+      it('should allow member to delete widget regardless of permissions', async () => {
+        const widget = await createTestPageLayoutWidgetWithRestApi({
+          title: 'Widget to Delete',
+          pageLayoutTabId: testPageLayoutTabIdForPermissions,
+          objectMetadataId: testObjectMetadataIdWithoutAccess,
+          type: WidgetType.VIEW,
+          gridPosition: {
+            row: 0,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+        });
+
+        const response = await makeRestAPIRequestWithMember({
+          method: 'delete',
+          path: `/metadata/page-layout-widgets/${widget.id}`,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        assertPageLayoutWidgetStructure(response.body, widget);
+      });
     });
   });
 });

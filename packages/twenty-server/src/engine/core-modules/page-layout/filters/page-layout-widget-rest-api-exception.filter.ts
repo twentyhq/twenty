@@ -35,6 +35,12 @@ export class PageLayoutWidgetRestApiExceptionFilter implements ExceptionFilter {
           response,
           400,
         );
+      case PageLayoutWidgetExceptionCode.FORBIDDEN_OBJECT_METADATA_ACCESS:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          403,
+        );
       default:
         // TODO: change to 500 when we have input validation
         return this.httpExceptionHandlerService.handleError(

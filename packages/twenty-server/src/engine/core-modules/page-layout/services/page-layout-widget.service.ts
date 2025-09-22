@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
@@ -33,6 +34,7 @@ export class PageLayoutWidgetService {
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   private getPageLayoutWidgetRepository(
@@ -311,24 +313,49 @@ export class PageLayoutWidgetService {
   private async getUserPermissions(
     workspaceId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
   ) {
-    const [userRole] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
+    // Handle API key authentication
+    if (apiKeyId) {
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+        apiKeyId,
         workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+      );
 
-    if (!userRole) {
-      return null;
+      const { data: rolesPermissions } =
+        await this.workspacePermissionsCacheService.getRolesPermissionsFromCache(
+          {
+            workspaceId,
+          },
+        );
+
+      return rolesPermissions[roleId] ?? {};
     }
 
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
+    // Handle user authentication
+    if (userWorkspaceId) {
+      const [userRole] = await this.userRoleService
+        .getRolesByUserWorkspaces({
+          userWorkspaceIds: [userWorkspaceId],
+          workspaceId,
+        })
+        .then((roles) => roles?.get(userWorkspaceId) ?? []);
 
-    return rolesPermissions[userRole.id] ?? {};
+      if (!userRole) {
+        return null;
+      }
+
+      const { data: rolesPermissions } =
+        await this.workspacePermissionsCacheService.getRolesPermissionsFromCache(
+          {
+            workspaceId,
+          },
+        );
+
+      return rolesPermissions[userRole.id] ?? {};
+    }
+
+    return null;
   }
 
   private async validateObjectMetadataAccess(
@@ -382,23 +409,28 @@ export class PageLayoutWidgetService {
     userObjectPermissions: ObjectsPermissions | null,
   ): PageLayoutWidgetDTO {
     if (!userObjectPermissions) {
+      // No permissions at all - only widgets without objectMetadataId are readable
       return {
         ...widget,
-        configuration: null,
-        canReadWidget: false,
+        configuration: !widget.objectMetadataId ? widget.configuration : null,
+        canReadWidget: !widget.objectMetadataId,
       };
     }
 
-    return checkWidgetsPermissions(
-      [{ ...widget, canReadWidget: true }],
-      userObjectPermissions,
-    )[0];
+    // Cast widget to PageLayoutWidgetDTO for checkWidgetsPermissions
+    const widgetDTO = {
+      ...widget,
+      canReadWidget: false,
+    } as PageLayoutWidgetDTO;
+
+    return checkWidgetsPermissions([widgetDTO], userObjectPermissions)[0];
   }
 
   async findByPageLayoutTabIdWithPermissions(
     workspaceId: string,
     pageLayoutTabId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO[]> {
     const widgets = await this.findByPageLayoutTabId(
@@ -410,6 +442,7 @@ export class PageLayoutWidgetService {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Use formatWidgetWithPermissions for each widget
@@ -422,6 +455,7 @@ export class PageLayoutWidgetService {
     id: string,
     workspaceId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
     const widget = await this.findByIdOrThrow(
@@ -433,6 +467,7 @@ export class PageLayoutWidgetService {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Format response with permissions
@@ -443,11 +478,13 @@ export class PageLayoutWidgetService {
     pageLayoutWidgetData: CreatePageLayoutWidgetInput,
     workspaceId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Validate objectMetadataId access before creating
@@ -472,11 +509,13 @@ export class PageLayoutWidgetService {
     workspaceId: string,
     updateData: UpdatePageLayoutWidgetInput,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Get existing widget to check current objectMetadataId
@@ -517,6 +556,7 @@ export class PageLayoutWidgetService {
     id: string,
     workspaceId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
     // No validation needed - users can delete any widget
@@ -525,6 +565,7 @@ export class PageLayoutWidgetService {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Format response with permissions
@@ -535,6 +576,7 @@ export class PageLayoutWidgetService {
     id: string,
     workspaceId: string,
     userWorkspaceId: string,
+    apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
     // No validation needed - users can restore any widget
@@ -543,6 +585,7 @@ export class PageLayoutWidgetService {
     const userObjectPermissions = await this.getUserPermissions(
       workspaceId,
       userWorkspaceId,
+      apiKeyId,
     );
 
     // Format response with permissions

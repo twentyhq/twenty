@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { PageLayoutTabController } from 'src/engine/core-modules/page-layout/controllers/page-layout-tab.controller';
 import { PageLayoutWidgetController } from 'src/engine/core-modules/page-layout/controllers/page-layout-widget.controller';
 import { PageLayoutController } from 'src/engine/core-modules/page-layout/controllers/page-layout.controller';
@@ -27,6 +28,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
     TwentyORMModule,
     UserRoleModule,
     WorkspacePermissionsCacheModule,
+    ApiKeyModule,
   ],
   controllers: [
     PageLayoutController,

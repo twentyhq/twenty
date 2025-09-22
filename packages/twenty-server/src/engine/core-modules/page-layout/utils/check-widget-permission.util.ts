@@ -10,13 +10,18 @@ export const checkWidgetPermission = (
   widget: PageLayoutWidgetDTO,
   userObjectPermissions: ObjectsPermissions,
 ): WidgetWithPermission => {
-  let canReadWidget = true;
-
-  if (widget.objectMetadataId) {
-    const objectPermission = userObjectPermissions[widget.objectMetadataId];
-
-    canReadWidget = objectPermission?.canReadObjectRecords === true;
+  // If no objectMetadataId, no permission check needed - widget is readable
+  if (!widget.objectMetadataId) {
+    return {
+      ...widget,
+      configuration: widget.configuration,
+      canReadWidget: true, // No permission restriction
+    };
   }
+
+  // Check permissions for widgets with objectMetadataId
+  const objectPermission = userObjectPermissions[widget.objectMetadataId];
+  const canReadWidget = objectPermission?.canReadObjectRecords === true;
 
   return {
     ...widget,
