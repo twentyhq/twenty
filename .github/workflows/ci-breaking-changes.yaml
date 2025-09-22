@@ -257,13 +257,16 @@ jobs:
         run: |
           git stash
           git checkout origin/main
-          git clean -fd
+          git reset --hard
+          git clean -xfd -ff
+          rm -rf node_modules packages/*/node_modules packages/*/dist dist .nx/cache
 
       - name: Install dependencies for main branch
         uses: ./.github/workflows/actions/yarn-install
 
       - name: Build main branch dependencies
         run: |
+          npx nx reset
           npx nx build twenty-shared
           npx nx build twenty-emails
 
