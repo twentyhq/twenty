@@ -248,6 +248,14 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
+    description: 'Duration for which the impersonation refresh token is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  IMPERSONATION_REFRESH_TOKEN_EXPIRES_IN = '1d';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TokensDuration,
     description: 'Cooldown period for refreshing tokens',
     type: ConfigVariableType.STRING,
   })

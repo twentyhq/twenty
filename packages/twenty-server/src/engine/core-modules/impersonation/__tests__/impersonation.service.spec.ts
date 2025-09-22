@@ -349,7 +349,7 @@ describe('ImpersonationService', () => {
       ),
     ).rejects.toThrow(
       new AuthException(
-        'Impersonation not enabled for this workspace',
+        'Impersonation not enabled for the impersonator user or the target workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );

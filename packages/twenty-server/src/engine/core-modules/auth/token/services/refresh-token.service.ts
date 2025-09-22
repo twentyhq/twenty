@@ -111,12 +111,17 @@ export class RefreshTokenService {
 
   async generateRefreshToken(
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
+    isImpersonationToken: boolean = false,
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
       JwtTokenTypeEnum.REFRESH,
       payload.workspaceId ?? payload.userId,
     );
-    const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
+    const expiresIn = this.twentyConfigService.get(
+      isImpersonationToken
+        ? 'IMPERSONATION_REFRESH_TOKEN_EXPIRES_IN'
+        : 'REFRESH_TOKEN_EXPIRES_IN',
+    );
 
     if (!expiresIn) {
       throw new AuthException(

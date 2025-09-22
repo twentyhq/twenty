@@ -42,5 +42,4 @@ declare global {
   var dataSeedWorkspaceCommand: DataSeedWorkspaceCommand;
 }
 
-export { };
-
+export {};

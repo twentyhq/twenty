@@ -345,15 +345,18 @@ export class AuthService {
       impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId,
     });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken({
-      userId: impersonatedUserId,
-      workspaceId,
-      authProvider: AuthProviderEnum.Impersonation,
-      targetedTokenType: JwtTokenTypeEnum.ACCESS,
-      isImpersonating: true,
-      impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId,
-    });
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      {
+        userId: impersonatedUserId,
+        workspaceId,
+        authProvider: AuthProviderEnum.Impersonation,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        isImpersonating: true,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+      },
+      true,
+    );
 
     await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
