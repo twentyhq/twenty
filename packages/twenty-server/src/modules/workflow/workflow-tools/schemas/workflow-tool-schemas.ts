@@ -92,17 +92,7 @@ export const deactivateWorkflowVersionSchema = z.object({
 
 export const computeStepOutputSchemaSchema = z.object({
   step: z
-    .unknown()
-    .refine((data) => {
-      try {
-        return (
-          workflowTriggerSchema.safeParse(data).success ||
-          workflowActionSchema.safeParse(data).success
-        );
-      } catch {
-        return false;
-      }
-    }, 'Step must be either a valid trigger or action schema')
+    .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
 });
 
