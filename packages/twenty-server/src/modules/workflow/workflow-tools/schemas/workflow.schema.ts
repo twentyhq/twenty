@@ -4,10 +4,10 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { StepStatus } from 'twenty-shared/workflow';
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 export const objectRecordSchema = z
-  .record(z.any())
+  .record(z.string(), z.any())
   .describe(
     'Record data object. Use nested objects for relationships (e.g., "company": {"id": "{{reference}}"}). Common patterns:\n' +
       '- Person: {"name": {"firstName": "John", "lastName": "Doe"}, "emails": {"primaryEmail": "john@example.com"}, "company": {"id": "{{trigger.object.id}}"}}\n' +
@@ -17,14 +17,12 @@ export const objectRecordSchema = z
 
 export const baseWorkflowActionSettingsSchema = z.object({
   input: z
-    .object({})
-    .passthrough()
+    .looseObject({})
     .describe(
       'Input data for the workflow action. Structure depends on the action type.',
     ),
   outputSchema: z
-    .object({})
-    .passthrough()
+    .looseObject({})
     .describe(
       'Schema defining the output data structure. This data can be referenced in subsequent steps using {{stepId.fieldName}}.',
     ),
@@ -103,7 +101,7 @@ export const workflowCodeActionSettingsSchema =
     input: z.object({
       serverlessFunctionId: z.string(),
       serverlessFunctionVersion: z.string(),
-      serverlessFunctionInput: z.record(z.any()),
+      serverlessFunctionInput: z.record(z.string(), z.any()),
     }),
   });
 
@@ -177,7 +175,7 @@ export const workflowFormActionSettingsSchema =
           z.literal('RECORD'),
         ]),
         placeholder: z.string().optional(),
-        settings: z.record(z.any()).optional(),
+        settings: z.record(z.string(), z.any()).optional(),
         value: z.any().optional(),
       }),
     ),
@@ -188,9 +186,10 @@ export const workflowHttpRequestActionSettingsSchema =
     input: z.object({
       url: z.string(),
       method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-      headers: z.record(z.string()).optional(),
+      headers: z.record(z.string(), z.string()).optional(),
       body: z
         .record(
+          z.string(),
           z.union([
             z.string(),
             z.number(),
@@ -218,7 +217,7 @@ export const workflowFilterActionSettingsSchema =
       stepFilterGroups: z.array(
         z.object({
           id: z.string(),
-          logicalOperator: z.nativeEnum(StepLogicalOperator),
+          logicalOperator: z.enum(StepLogicalOperator),
           parentStepFilterGroupId: z.string().optional(),
           positionInStepFilterGroup: z.number().optional(),
         }),
@@ -228,7 +227,7 @@ export const workflowFilterActionSettingsSchema =
           id: z.string(),
           type: z.string(),
           stepOutputKey: z.string(),
-          operand: z.nativeEnum(ViewFilterOperand),
+          operand: z.enum(ViewFilterOperand),
           value: z.string(),
           stepFilterGroupId: z.string(),
           positionInStepFilterGroup: z.number().optional(),
@@ -250,7 +249,7 @@ export const workflowIteratorActionSettingsSchema =
               z.number(),
               z.boolean(),
               z.null(),
-              z.record(z.any()),
+              z.record(z.string(), z.any()),
               z.any(),
             ]),
           ),
@@ -360,10 +359,9 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
         .describe(
           'Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted"). Use lowercase object names.',
         ),
-      input: z.object({}).passthrough().optional(),
+      input: z.looseObject({}).optional(),
       outputSchema: z
-        .object({})
-        .passthrough()
+        .looseObject({})
         .describe(
           'Schema defining the output data structure. For database events, this includes the record that triggered the workflow accessible via {{trigger.object.fieldName}}.',
         ),
@@ -381,8 +379,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema
     settings: z.object({
       objectType: z.string().optional(),
       outputSchema: z
-        .object({})
-        .passthrough()
+        .looseObject({})
         .describe(
           'Schema defining the output data structure. When a record is selected, it is accessible via {{trigger.record.fieldName}}. When no record is selected, no data is available.',
         ),
@@ -404,7 +401,7 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
         hour: z.number().min(0).max(23),
         minute: z.number().min(0).max(59),
       }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('HOURS'),
@@ -412,17 +409,17 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
         hour: z.number().min(1),
         minute: z.number().min(0).max(59),
       }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('MINUTES'),
       schedule: z.object({ minute: z.number().min(1) }),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
     z.object({
       type: z.literal('CUSTOM'),
       pattern: z.string(),
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
     }),
   ]),
 });
@@ -431,14 +428,14 @@ export const workflowWebhookTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('WEBHOOK'),
   settings: z.discriminatedUnion('httpMethod', [
     z.object({
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
       httpMethod: z.literal('GET'),
       authentication: z.literal('API_KEY').nullable(),
     }),
     z.object({
-      outputSchema: z.object({}).passthrough(),
+      outputSchema: z.looseObject({}),
       httpMethod: z.literal('POST'),
-      expectedBody: z.object({}).passthrough(),
+      expectedBody: z.looseObject({}),
       authentication: z.literal('API_KEY').nullable(),
     }),
   ]),
@@ -451,7 +448,7 @@ export const workflowTriggerSchema = z.discriminatedUnion('type', [
   workflowWebhookTriggerSchema,
 ]);
 
-export const workflowRunStepStatusSchema = z.nativeEnum(StepStatus);
+export const workflowRunStepStatusSchema = z.enum(StepStatus);
 
 export const workflowRunStateStepInfoSchema = z.object({
   result: z.any().optional(),
@@ -460,6 +457,7 @@ export const workflowRunStateStepInfoSchema = z.object({
 });
 
 export const workflowRunStateStepInfosSchema = z.record(
+  z.string(),
   workflowRunStateStepInfoSchema,
 );
 
@@ -480,17 +478,15 @@ export const workflowRunStatusSchema = z.enum([
   'ENQUEUED',
 ]);
 
-export const workflowRunSchema = z
-  .object({
-    __typename: z.literal('WorkflowRun'),
-    id: z.string(),
-    workflowVersionId: z.string(),
-    workflowId: z.string(),
-    state: workflowRunStateSchema.nullable(),
-    status: workflowRunStatusSchema,
-    createdAt: z.string(),
-    deletedAt: z.string().nullable(),
-    endedAt: z.string().nullable(),
-    name: z.string(),
-  })
-  .passthrough();
+export const workflowRunSchema = z.looseObject({
+  __typename: z.literal('WorkflowRun'),
+  id: z.string(),
+  workflowVersionId: z.string(),
+  workflowId: z.string(),
+  state: workflowRunStateSchema.nullable(),
+  status: workflowRunStatusSchema,
+  createdAt: z.string(),
+  deletedAt: z.string().nullable(),
+  endedAt: z.string().nullable(),
+  name: z.string(),
+});

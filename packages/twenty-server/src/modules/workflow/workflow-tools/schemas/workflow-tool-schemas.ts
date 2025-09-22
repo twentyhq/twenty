@@ -1,4 +1,4 @@
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -33,17 +33,7 @@ export const updateWorkflowVersionStepSchema = z.object({
     .string()
     .describe('The ID of the workflow version containing the step'),
   step: z
-    .unknown()
-    .refine((data) => {
-      try {
-        return (
-          workflowTriggerSchema.safeParse(data).success ||
-          workflowActionSchema.safeParse(data).success
-        );
-      } catch {
-        return false;
-      }
-    }, 'Step must be either a valid trigger or action schema')
+    .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The updated step configuration'),
 });
 
