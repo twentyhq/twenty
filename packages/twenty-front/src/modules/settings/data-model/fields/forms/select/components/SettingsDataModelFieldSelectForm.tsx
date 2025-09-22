@@ -21,7 +21,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
@@ -118,7 +118,7 @@ export const SettingsDataModelFieldSelectForm = ({
     });
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const {
     control,
@@ -207,12 +207,12 @@ export const SettingsDataModelFieldSelectForm = ({
   };
 
   const mergedInitialOptions = useMemo(() => {
-    const newOptionValue = location.state?.createNewOption;
+    const newOptionValue = searchParams.get('newOption');
     if (!newOptionValue) return initialOptions;
 
     const newOption = generateNewSelectOption(initialOptions, newOptionValue);
     return [...initialOptions, newOption];
-  }, [initialOptions, location.state?.createNewOption]);
+  }, [initialOptions, searchParams]);
 
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');

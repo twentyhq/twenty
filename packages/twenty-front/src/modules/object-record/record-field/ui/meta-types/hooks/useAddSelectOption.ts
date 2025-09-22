@@ -35,8 +35,7 @@ export const useAddSelectOption = (fieldName: string | undefined) => {
       navigateSettings(
         SettingsPath.ObjectFieldEdit,
         { objectNamePlural, fieldName },
-        undefined,
-        { state: { createNewOption: optionName } },
+        { newOption: optionName },
       );
     },
     [
