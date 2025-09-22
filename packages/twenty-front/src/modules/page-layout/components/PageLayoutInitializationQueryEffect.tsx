@@ -3,7 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
-import { type TabLayouts } from '@/page-layout/types/tab-layouts';
+import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPersistedLayoutToTabLayouts';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useQuery } from '@apollo/client';
@@ -59,25 +59,8 @@ export const PageLayoutInitializationQueryEffect = ({
             tabs: layout.tabs,
           });
 
-          if (layout.tabs.length > 0) {
-            const tabLayouts: TabLayouts = {};
-            layout.tabs.forEach((tab) => {
-              const layouts = tab.widgets.map((w) => ({
-                i: w.id,
-                x: w.gridPosition.column,
-                y: w.gridPosition.row,
-                w: w.gridPosition.columnSpan,
-                h: w.gridPosition.rowSpan,
-              }));
-              tabLayouts[tab.id] = {
-                desktop: layouts,
-                mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
-              };
-            });
-            set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
-          } else {
-            set(pageLayoutCurrentLayoutsComponentCallbackState, {});
-          }
+          const tabLayouts = convertPageLayoutToTabLayouts(layout);
+          set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
         }
       },
     [
