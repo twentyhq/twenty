@@ -9,6 +9,15 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
+jest.mock('twenty-shared/utils', () => ({
+  ...jest.requireActual('twenty-shared/utils'),
+  assertIsDefinedOrThrow: jest.fn((value, error) => {
+    if (value === null || value === undefined) {
+      throw error;
+    }
+  }),
+}));
+
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let workspaceRepository: any;
@@ -310,6 +319,14 @@ describe('JwtAuthStrategy', () => {
         // Missing impersonatorUserWorkspaceId
       };
 
+      const mockUserWorkspace = {
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      };
+
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
@@ -343,6 +360,14 @@ describe('JwtAuthStrategy', () => {
         // Missing impersonatedUserWorkspaceId
       };
 
+      const mockUserWorkspace = {
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      };
+
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
@@ -375,6 +400,17 @@ describe('JwtAuthStrategy', () => {
         impersonatedUserWorkspaceId: validUserWorkspaceId, // Same as impersonator
       };
 
+      const mockUserWorkspace = {
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      };
+
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+        true,
+      );
+
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
         workspaceRepository,
@@ -386,7 +422,7 @@ describe('JwtAuthStrategy', () => {
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
-          'Invalid impersonation token: cannot impersonate self',
+          'User cannot impersonate themselves',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         ),
       );

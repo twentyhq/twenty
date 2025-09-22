@@ -182,6 +182,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     payload: AccessTokenJwtPayload,
     workspace: Workspace,
   ) {
+    // Validate required impersonation fields
+    if (
+      !payload.impersonatorUserWorkspaceId ||
+      !payload.impersonatedUserWorkspaceId
+    ) {
+      throw new AuthException(
+        'Invalid or missing user workspace ID in impersonation token',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
         where: { id: payload.impersonatorUserWorkspaceId },
