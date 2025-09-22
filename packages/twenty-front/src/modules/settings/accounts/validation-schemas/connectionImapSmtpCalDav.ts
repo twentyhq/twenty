@@ -4,11 +4,11 @@ import { type ConnectionParameters } from '~/generated/graphql';
 
 const connectionParameters = z
   .object({
-    host: z.string().prefault(''),
-    port: z.int().nullable().prefault(null),
+    host: z.string().default(''),
+    port: z.int().nullable().default(null),
     username: z.string().optional(),
-    password: z.string().prefault(''),
-    secure: z.boolean().prefault(true),
+    password: z.string().default(''),
+    secure: z.boolean().default(true),
   })
   .refine(
     (data) => {

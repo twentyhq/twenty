@@ -34,7 +34,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
-  isUnique: z.boolean().nullable().prefault(false),
+  isUnique: z.boolean().nullable().default(false),
 });
 
 const booleanFieldFormSchema = z
