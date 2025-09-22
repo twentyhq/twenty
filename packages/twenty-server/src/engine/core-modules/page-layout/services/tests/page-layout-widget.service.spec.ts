@@ -17,15 +17,13 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { PageLayoutPermissionService } from 'src/engine/core-modules/page-layout/services/page-layout-permission.service';
 
 describe('PageLayoutWidgetService', () => {
   let pageLayoutWidgetService: PageLayoutWidgetService;
   let pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>;
   let pageLayoutTabService: PageLayoutTabService;
-  let userRoleService: UserRoleService;
-  let workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  let pageLayoutPermissionService: PageLayoutPermissionService;
 
   const mockPageLayoutWidget = {
     id: 'page-layout-widget-id',
@@ -69,15 +67,12 @@ describe('PageLayoutWidgetService', () => {
           },
         },
         {
-          provide: UserRoleService,
+          provide: PageLayoutPermissionService,
           useValue: {
-            getRolesByUserWorkspaces: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspacePermissionsCacheService,
-          useValue: {
-            getRolesPermissionsFromCache: jest.fn(),
+            getUserPermissions: jest.fn(),
+            applyPermissionsToLayouts: jest.fn(),
+            applyPermissionsToTabs: jest.fn(),
+            applyPermissionsToWidgets: jest.fn(),
           },
         },
       ],
@@ -91,11 +86,9 @@ describe('PageLayoutWidgetService', () => {
     );
     pageLayoutTabService =
       module.get<PageLayoutTabService>(PageLayoutTabService);
-    userRoleService = module.get<UserRoleService>(UserRoleService);
-    workspacePermissionsCacheService =
-      module.get<WorkspacePermissionsCacheService>(
-        WorkspacePermissionsCacheService,
-      );
+    pageLayoutPermissionService = module.get<PageLayoutPermissionService>(
+      PageLayoutPermissionService,
+    );
   });
 
   it('should be defined', () => {
@@ -674,8 +667,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'find')
           .mockResolvedValue(widgets);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(new Map());
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue({});
 
         const result =
           await pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
@@ -718,16 +711,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'find')
           .mockResolvedValue(widgets);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsMixed);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsMixed.data[roleId]);
 
         const result =
           await pageLayoutWidgetService.findByPageLayoutTabIdWithPermissions(
@@ -760,16 +745,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'findOne')
           .mockResolvedValue(widget);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithAccess.data[roleId]);
 
         const result =
           await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
@@ -795,16 +772,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'findOne')
           .mockResolvedValue(widget);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         const result =
           await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
@@ -830,16 +799,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'findOne')
           .mockResolvedValue(widget);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockEmptyPermissions);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockEmptyPermissions.data[roleId]);
 
         const result =
           await pageLayoutWidgetService.findByIdOrThrowWithPermissions(
@@ -876,16 +837,8 @@ describe('PageLayoutWidgetService', () => {
           objectMetadataId: null,
         });
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockEmptyPermissions);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockEmptyPermissions.data[roleId]);
 
         const result = await pageLayoutWidgetService.createWithPermissions(
           widgetData,
@@ -916,16 +869,8 @@ describe('PageLayoutWidgetService', () => {
           objectMetadataId: objectWithPermission,
         });
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithAccess.data[roleId]);
 
         const result = await pageLayoutWidgetService.createWithPermissions(
           widgetData,
@@ -946,16 +891,8 @@ describe('PageLayoutWidgetService', () => {
         };
 
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         await expect(
           pageLayoutWidgetService.createWithPermissions(
@@ -998,16 +935,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'update')
           .mockResolvedValue({ affected: 1 } as any);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithAccess.data[roleId]);
 
         const result = await pageLayoutWidgetService.updateWithPermissions(
           id,
@@ -1036,16 +965,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'findOne')
           .mockResolvedValue(existingWidget);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         await expect(
           pageLayoutWidgetService.updateWithPermissions(
@@ -1091,16 +1012,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'update')
           .mockResolvedValue({ affected: 1 } as any);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         const result = await pageLayoutWidgetService.updateWithPermissions(
           id,
@@ -1129,16 +1042,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'findOne')
           .mockResolvedValue(existingWidget);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsMixed);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsMixed.data[roleId]);
 
         await expect(
           pageLayoutWidgetService.updateWithPermissions(
@@ -1180,16 +1085,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'softDelete')
           .mockResolvedValue({ affected: 1 } as any);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         const result = await pageLayoutWidgetService.deleteWithPermissions(
           id,
@@ -1222,16 +1119,8 @@ describe('PageLayoutWidgetService', () => {
           .spyOn(pageLayoutWidgetRepository, 'restore')
           .mockResolvedValue({ affected: 1 } as any);
         jest
-          .spyOn(userRoleService, 'getRolesByUserWorkspaces')
-          .mockResolvedValue(
-            new Map([[userWorkspaceId, [{ id: roleId } as any]]]),
-          );
-        jest
-          .spyOn(
-            workspacePermissionsCacheService,
-            'getRolesPermissionsFromCache',
-          )
-          .mockResolvedValue(mockPermissionsWithoutAccess);
+          .spyOn(pageLayoutPermissionService, 'getUserPermissions')
+          .mockResolvedValue(mockPermissionsWithoutAccess.data[roleId]);
 
         const result = await pageLayoutWidgetService.restoreWithPermissions(
           id,
