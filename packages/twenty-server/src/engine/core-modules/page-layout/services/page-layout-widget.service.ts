@@ -310,7 +310,7 @@ export class PageLayoutWidgetService {
     objectMetadataId: string | null | undefined,
     userObjectPermissions: ObjectsPermissions | null,
   ): Promise<void> {
-    if (!isDefined(objectMetadataId) || objectMetadataId === null) {
+    if (!isDefined(objectMetadataId)) {
       return;
     }
 

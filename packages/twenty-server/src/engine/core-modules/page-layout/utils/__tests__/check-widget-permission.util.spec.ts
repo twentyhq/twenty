@@ -21,7 +21,7 @@ const createMockWidget = (
   ...overrides,
 });
 
-describe('checkWidgetPermission', () => {
+describe('applyPermissionsToWidget', () => {
   const mockWidget = createMockWidget({
     id: 'widget-1',
     type: WidgetType.GRAPH,
@@ -122,7 +122,7 @@ describe('checkWidgetPermission', () => {
   });
 });
 
-describe('checkWidgetsPermissions', () => {
+describe('applyPermissionsToWidgets', () => {
   const mockWidgets = [
     createMockWidget({
       id: 'widget-1',
