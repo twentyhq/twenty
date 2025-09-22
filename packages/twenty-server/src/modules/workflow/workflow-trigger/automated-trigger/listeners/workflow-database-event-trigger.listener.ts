@@ -347,12 +347,7 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      const recordData = upsertEventPayload.properties.after;
-
-      return settings.fields.some(
-        (field) =>
-          recordData && typeof recordData === 'object' && field in recordData,
-      );
+      return false;
     }
 
     return true;
