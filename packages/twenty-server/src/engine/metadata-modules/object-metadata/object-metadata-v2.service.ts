@@ -9,8 +9,6 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
-import { ViewFieldV2Service } from 'src/engine/core-modules/view/services/view-field-v2.service';
-import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -45,8 +43,6 @@ export class ObjectMetadataServiceV2 {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly viewV2Service: ViewV2Service,
-    private readonly viewFieldV2Service: ViewFieldV2Service,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -383,7 +379,7 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    await this.createObjectRelatedEntities(
+    await this.createWorkspaceFavoriteForNewObjectDefaultView(
       flatDefaultViewToCreate,
       workspaceId,
     );
@@ -435,7 +431,7 @@ export class ObjectMetadataServiceV2 {
     return defaultViewFields;
   }
 
-  private async createObjectRelatedEntities(
+  private async createWorkspaceFavoriteForNewObjectDefaultView(
     view: FlatView,
     workspaceId: string,
   ) {
