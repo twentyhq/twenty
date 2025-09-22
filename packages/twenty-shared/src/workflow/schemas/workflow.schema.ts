@@ -124,6 +124,36 @@ export const workflowUpdateRecordActionSettingsSchema =
     }),
   });
 
+export const workflowCreateOrUpdateRecordActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      objectName: z
+        .string()
+        .describe(
+          'The name of the object to create or update a record in. Must be lowercase (e.g., "person", "company", "task").',
+        ),
+      objectRecord: objectRecordSchema
+        .describe(
+          'The record data to create or update.',
+        ),
+      upsertCriteria: z.object({
+        matchFields: z
+          .array(z.string())
+          .describe(
+            'Array of field names to match on for finding existing records. If a record is found with matching values for these fields, it will be updated; otherwise, a new record will be created.',
+          ),
+      }).describe(
+        'Criteria for determining whether to create or update a record.',
+      ),
+      fieldsToUpdate: z
+        .array(z.string())
+        .optional()
+        .describe(
+          'Optional array of field names to update if a matching record is found. If not specified, all provided fields will be updated.',
+        ),
+    }),
+  });
+
 export const workflowDeleteRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
@@ -253,6 +283,11 @@ export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend(
   settings: workflowUpdateRecordActionSettingsSchema,
 });
 
+export const workflowCreateOrUpdateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('CREATE_OR_UPDATE_RECORD'),
+  settings: workflowCreateOrUpdateRecordActionSettingsSchema,
+});
+
 export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('DELETE_RECORD'),
   settings: workflowDeleteRecordActionSettingsSchema,
@@ -300,6 +335,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCreateRecordActionSchema,
   workflowUpdateRecordActionSchema,
   workflowDeleteRecordActionSchema,
+  workflowCreateOrUpdateRecordActionSchema,
   workflowFindRecordsActionSchema,
   workflowFormActionSchema,
   workflowHttpRequestActionSchema,

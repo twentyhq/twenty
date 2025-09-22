@@ -12,6 +12,7 @@ import { EmptyWorkflowAction } from 'src/modules/workflow/workflow-executor/work
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
+import { CreateOrUpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-or-update-record.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
@@ -24,6 +25,7 @@ export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
+    private readonly createOrUpdateRecordWorkflowAction: CreateOrUpdateRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
     private readonly findRecordsWorkflowAction: FindRecordsWorkflowAction,
@@ -47,6 +49,8 @@ export class WorkflowActionFactory {
         return this.updateRecordWorkflowAction;
       case WorkflowActionType.DELETE_RECORD:
         return this.deleteRecordWorkflowAction;
+      case WorkflowActionType.CREATE_OR_UPDATE_RECORD:
+        return this.createOrUpdateRecordWorkflowAction;
       case WorkflowActionType.FIND_RECORDS:
         return this.findRecordsWorkflowAction;
       case WorkflowActionType.FORM:

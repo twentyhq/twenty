@@ -8,6 +8,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
+import { CreateOrUpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-or-update-record.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
@@ -24,12 +25,14 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
   providers: [
     ScopedWorkspaceContextFactory,
     CreateRecordWorkflowAction,
+    CreateOrUpdateRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,
   ],
   exports: [
     CreateRecordWorkflowAction,
+    CreateOrUpdateRecordWorkflowAction,
     UpdateRecordWorkflowAction,
     DeleteRecordWorkflowAction,
     FindRecordsWorkflowAction,

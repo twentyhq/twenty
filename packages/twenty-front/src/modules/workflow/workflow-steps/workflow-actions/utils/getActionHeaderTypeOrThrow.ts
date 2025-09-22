@@ -9,6 +9,7 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
+    case 'CREATE_OR_UPDATE_RECORD':
     case 'FIND_RECORDS':
     case 'FORM':
     case 'SEND_EMAIL':

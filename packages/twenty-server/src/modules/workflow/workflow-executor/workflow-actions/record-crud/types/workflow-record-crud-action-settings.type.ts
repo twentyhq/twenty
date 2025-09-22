@@ -1,4 +1,5 @@
 import {
+  type WorkflowCreateOrUpdateRecordActionInput,
   type WorkflowCreateRecordActionInput,
   type WorkflowDeleteRecordActionInput,
   type WorkflowFindRecordsActionInput,
@@ -20,4 +21,8 @@ export type WorkflowDeleteRecordActionSettings = BaseWorkflowActionSettings & {
 
 export type WorkflowFindRecordsActionSettings = BaseWorkflowActionSettings & {
   input: WorkflowFindRecordsActionInput;
+};
+
+export type WorkflowCreateOrUpdateRecordActionSettings = BaseWorkflowActionSettings & {
+  input: WorkflowCreateOrUpdateRecordActionInput;
 };
