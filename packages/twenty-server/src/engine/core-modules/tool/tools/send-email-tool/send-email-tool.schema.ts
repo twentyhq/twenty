@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export const SendEmailInputZodSchema = z.object({
   email: z.email().describe('The recipient email address'),

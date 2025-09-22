@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import semver from 'semver';
 import { Repository } from 'typeorm';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 import { type ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';

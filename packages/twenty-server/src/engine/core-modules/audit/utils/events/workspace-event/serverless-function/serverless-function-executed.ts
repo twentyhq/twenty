@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import { registerEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
 

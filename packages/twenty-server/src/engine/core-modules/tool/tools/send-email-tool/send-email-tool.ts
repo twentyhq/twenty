@@ -4,7 +4,7 @@ import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import {
   SendEmailToolException,

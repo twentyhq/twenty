@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ZodSafeParseResult } from 'zod/v4';
+import { type ZodSafeParseResult } from 'zod';
 
 import { type OTPAuthenticationStrategyInterface } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/interfaces/otp.strategy.interface';
 

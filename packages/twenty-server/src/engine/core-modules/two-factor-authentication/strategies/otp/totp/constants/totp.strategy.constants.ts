@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import { type OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 

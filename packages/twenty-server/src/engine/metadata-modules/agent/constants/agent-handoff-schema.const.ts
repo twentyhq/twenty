@@ -1,4 +1,4 @@
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export const AGENT_HANDOFF_SCHEMA = z.object({
   loadingMessage: z

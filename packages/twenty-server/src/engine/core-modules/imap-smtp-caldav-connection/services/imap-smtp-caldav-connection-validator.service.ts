@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
