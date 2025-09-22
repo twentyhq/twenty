@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { baseWorkflowActionSchema } from './base-workflow-action-schema';
-import { workflowFormActionSettingsSchema } from './form-action-schema';
+import { workflowFormActionSettingsSchema } from './form-action-settings';
 
 export const workflowFormActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('FORM'),
