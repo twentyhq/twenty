@@ -290,6 +290,9 @@ jobs:
           
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
           set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
+          set_env_var "REDIS_URL" "redis://localhost:6379"
+          set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
+          set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
           
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
