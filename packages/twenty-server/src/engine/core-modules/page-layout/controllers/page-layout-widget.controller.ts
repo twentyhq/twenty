@@ -13,6 +13,7 @@ import {
 
 import { isDefined } from 'class-validator';
 
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
@@ -24,7 +25,6 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutWidgetRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-widget-rest-api-exception.filter';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';

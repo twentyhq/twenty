@@ -31,6 +31,7 @@ export const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
     columnSpan
   }
   configuration
+  canReadWidget
   createdAt
   updatedAt
   deletedAt

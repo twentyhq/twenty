@@ -22,7 +22,7 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { checkWidgetsPermissions } from 'src/engine/core-modules/page-layout/utils/check-widget-permission.util';
+import { applyPermissionsToWidget } from 'src/engine/core-modules/page-layout/utils/apply-permissions-to-widget.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
@@ -315,7 +315,6 @@ export class PageLayoutWidgetService {
     userWorkspaceId: string,
     apiKeyId?: string,
   ) {
-    // Handle API key authentication
     if (apiKeyId) {
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKeyId,
@@ -332,7 +331,6 @@ export class PageLayoutWidgetService {
       return rolesPermissions[roleId] ?? {};
     }
 
-    // Handle user authentication
     if (userWorkspaceId) {
       const [userRole] = await this.userRoleService
         .getRolesByUserWorkspaces({
@@ -408,22 +406,33 @@ export class PageLayoutWidgetService {
     widget: PageLayoutWidgetEntity,
     userObjectPermissions: ObjectsPermissions | null,
   ): PageLayoutWidgetDTO {
+    const widgetWithPermission: PageLayoutWidgetDTO = {
+      id: widget.id,
+      pageLayoutTabId: widget.pageLayoutTabId,
+      title: widget.title,
+      type: widget.type,
+      objectMetadataId: widget.objectMetadataId,
+      gridPosition: widget.gridPosition,
+      configuration: widget.configuration,
+      createdAt: widget.createdAt,
+      updatedAt: widget.updatedAt,
+      deletedAt: widget.deletedAt,
+      canReadWidget: false,
+    };
+
     if (!userObjectPermissions) {
-      // No permissions at all - only widgets without objectMetadataId are readable
-      return {
-        ...widget,
-        configuration: !widget.objectMetadataId ? widget.configuration : null,
-        canReadWidget: !widget.objectMetadataId,
-      };
+      widgetWithPermission.canReadWidget = !widget.objectMetadataId;
+      widgetWithPermission.configuration = !widget.objectMetadataId
+        ? widget.configuration
+        : null;
+
+      return widgetWithPermission;
     }
 
-    // Cast widget to PageLayoutWidgetDTO for checkWidgetsPermissions
-    const widgetDTO = {
-      ...widget,
-      canReadWidget: false,
-    } as PageLayoutWidgetDTO;
-
-    return checkWidgetsPermissions([widgetDTO], userObjectPermissions)[0];
+    return applyPermissionsToWidget(
+      widgetWithPermission,
+      userObjectPermissions,
+    );
   }
 
   async findByPageLayoutTabIdWithPermissions(
@@ -445,7 +454,6 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Use formatWidgetWithPermissions for each widget
     return widgets.map((widget) =>
       this.formatWidgetWithPermissions(widget, userObjectPermissions),
     );
@@ -470,7 +478,6 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Format response with permissions
     return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 
@@ -487,20 +494,17 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Validate objectMetadataId access before creating
     await this.validateObjectMetadataAccess(
       pageLayoutWidgetData.objectMetadataId,
       userObjectPermissions,
     );
 
-    // Create widget (allowed since validation passed)
     const widget = await this.create(
       pageLayoutWidgetData,
       workspaceId,
       transactionManager,
     );
 
-    // Format response with permissions
     return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 
@@ -518,14 +522,12 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Get existing widget to check current objectMetadataId
     const existingWidget = await this.findByIdOrThrow(
       id,
       workspaceId,
       transactionManager,
     );
 
-    // If trying to change objectMetadataId, validate new one
     if (isDefined(updateData.objectMetadataId)) {
       await this.validateObjectMetadataAccess(
         updateData.objectMetadataId,
@@ -533,14 +535,12 @@ export class PageLayoutWidgetService {
       );
     }
 
-    // Validate configuration update permission
     this.validateConfigurationUpdate(
       updateData,
       existingWidget.objectMetadataId,
       userObjectPermissions,
     );
 
-    // Perform update
     const widget = await this.update(
       id,
       workspaceId,
@@ -548,7 +548,6 @@ export class PageLayoutWidgetService {
       transactionManager,
     );
 
-    // Format response with permissions
     return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 
@@ -559,7 +558,6 @@ export class PageLayoutWidgetService {
     apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
-    // No validation needed - users can delete any widget
     const widget = await this.delete(id, workspaceId, transactionManager);
 
     const userObjectPermissions = await this.getUserPermissions(
@@ -568,7 +566,6 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Format response with permissions
     return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 
@@ -579,7 +576,6 @@ export class PageLayoutWidgetService {
     apiKeyId?: string,
     transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetDTO> {
-    // No validation needed - users can restore any widget
     const widget = await this.restore(id, workspaceId, transactionManager);
 
     const userObjectPermissions = await this.getUserPermissions(
@@ -588,7 +584,6 @@ export class PageLayoutWidgetService {
       apiKeyId,
     );
 
-    // Format response with permissions
     return this.formatWidgetWithPermissions(widget, userObjectPermissions);
   }
 }

@@ -2,10 +2,8 @@ import type { ObjectsPermissions } from 'twenty-shared/types';
 
 import type { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-import {
-  checkWidgetPermission,
-  checkWidgetsPermissions,
-} from 'src/engine/core-modules/page-layout/utils/check-widget-permission.util';
+import { applyPermissionsToWidget } from 'src/engine/core-modules/page-layout/utils/apply-permissions-to-widget.util';
+import { applyPermissionsToWidgets } from 'src/engine/core-modules/page-layout/utils/apply-permissions-to-widgets.util';
 
 const createMockWidget = (
   overrides: Partial<PageLayoutWidgetDTO>,
@@ -57,7 +55,7 @@ describe('checkWidgetPermission', () => {
         configuration: { url: 'https://example.com' },
       });
 
-      const result = checkWidgetPermission(
+      const result = applyPermissionsToWidget(
         widgetWithoutObjectId,
         mockPermissions,
       );
@@ -69,7 +67,7 @@ describe('checkWidgetPermission', () => {
 
   describe('when user has read permission', () => {
     it('should grant access and preserve configuration', () => {
-      const result = checkWidgetPermission(mockWidget, mockPermissions);
+      const result = applyPermissionsToWidget(mockWidget, mockPermissions);
 
       expect(result.canReadWidget).toBe(true);
       expect(result.configuration).toEqual({ key: 'value' });
@@ -85,7 +83,10 @@ describe('checkWidgetPermission', () => {
         objectMetadataId: 'object-2',
       };
 
-      const result = checkWidgetPermission(widgetWithNoAccess, mockPermissions);
+      const result = applyPermissionsToWidget(
+        widgetWithNoAccess,
+        mockPermissions,
+      );
 
       expect(result.canReadWidget).toBe(false);
       expect(result.configuration).toBe(null);
@@ -101,7 +102,7 @@ describe('checkWidgetPermission', () => {
         objectMetadataId: 'object-unknown',
       };
 
-      const result = checkWidgetPermission(
+      const result = applyPermissionsToWidget(
         widgetWithUnknownObject,
         mockPermissions,
       );
@@ -113,7 +114,7 @@ describe('checkWidgetPermission', () => {
 
   describe('when permissions object is empty', () => {
     it('should deny access for widgets with objectMetadataId', () => {
-      const result = checkWidgetPermission(mockWidget, {});
+      const result = applyPermissionsToWidget(mockWidget, {});
 
       expect(result.canReadWidget).toBe(false);
       expect(result.configuration).toBe(null);
@@ -161,7 +162,7 @@ describe('checkWidgetsPermissions', () => {
   };
 
   it('should check permissions for multiple widgets', () => {
-    const results = checkWidgetsPermissions(mockWidgets, mockPermissions);
+    const results = applyPermissionsToWidgets(mockWidgets, mockPermissions);
 
     expect(results).toHaveLength(3);
 
@@ -176,7 +177,7 @@ describe('checkWidgetsPermissions', () => {
   });
 
   it('should handle empty widget array', () => {
-    const results = checkWidgetsPermissions([], mockPermissions);
+    const results = applyPermissionsToWidgets([], mockPermissions);
 
     expect(results).toEqual([]);
   });
@@ -195,7 +196,7 @@ describe('checkWidgetsPermissions', () => {
       }),
     ];
 
-    const results = checkWidgetsPermissions(
+    const results = applyPermissionsToWidgets(
       widgetsWithoutObjectIds,
       mockPermissions,
     );

@@ -1,9 +1,13 @@
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID } from 'test/integration/constants/test-page-layout-tab-ids.constants';
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID } from 'test/integration/constants/test-page-layout-widget-ids.constants';
+import {
+  getMemberRoleId,
+  setupObjectPermissionsForWidget,
+} from 'test/integration/graphql/utils/setup-object-permissions-for-widget.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { makeRestAPIRequestWithMember } from 'test/integration/rest/utils/make-rest-api-request-with-member.util';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   createTestPageLayoutWithRestApi,
   deleteTestPageLayoutWithRestApi,
@@ -25,10 +29,6 @@ import {
   assertPageLayoutWidgetStructure,
   cleanupPageLayoutWidgetRecords,
 } from 'test/integration/utils/page-layout-widget-test.util';
-import {
-  setupObjectPermissionsForWidget,
-  getMemberRoleId,
-} from 'test/integration/graphql/utils/setup-object-permissions-for-widget.util';
 
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
@@ -504,7 +504,6 @@ describe('Page Layout Widget REST API', () => {
     let testPageLayoutTabIdForPermissions: string;
 
     beforeAll(async () => {
-      // Create test objects
       const {
         data: {
           createOneObject: { id: objectMetadataIdWithAccess },
@@ -536,7 +535,6 @@ describe('Page Layout Widget REST API', () => {
       testObjectMetadataIdWithAccess = objectMetadataIdWithAccess;
       testObjectMetadataIdWithoutAccess = objectMetadataIdWithoutAccess;
 
-      // Set up permissions for member role
       memberRoleId = await getMemberRoleId();
 
       await setupObjectPermissionsForWidget({
@@ -545,7 +543,6 @@ describe('Page Layout Widget REST API', () => {
         objectMetadataIdWithoutAccess: testObjectMetadataIdWithoutAccess,
       });
 
-      // Create test page layout and tab
       const testPageLayout = await createTestPageLayoutWithRestApi({
         name: 'Test Page Layout for Permission Tests',
         type: PageLayoutType.RECORD_PAGE,
@@ -582,7 +579,6 @@ describe('Page Layout Widget REST API', () => {
 
     describe('GET /rest/metadata/page-layout-widgets - Member permissions', () => {
       it('should return widgets with canReadWidget field based on permissions', async () => {
-        // Create widget with objectMetadataId the member has access to
         const widgetWithAccess = await createTestPageLayoutWidgetWithRestApi({
           title: 'Widget With Access',
           pageLayoutTabId: testPageLayoutTabIdForPermissions,
@@ -596,7 +592,6 @@ describe('Page Layout Widget REST API', () => {
           },
         });
 
-        // Create widget with objectMetadataId the member doesn't have access to
         const widgetWithoutAccess = await createTestPageLayoutWidgetWithRestApi(
           {
             title: 'Widget Without Access',
@@ -612,7 +607,6 @@ describe('Page Layout Widget REST API', () => {
           },
         );
 
-        // Member request
         const response = await makeRestAPIRequestWithMember({
           method: 'get',
           path: `/metadata/page-layout-widgets?pageLayoutTabId=${testPageLayoutTabIdForPermissions}`,
@@ -628,14 +622,12 @@ describe('Page Layout Widget REST API', () => {
           (w: { id: string }) => w.id === widgetWithoutAccess.id,
         );
 
-        // Widget with access should have canReadWidget: true and configuration
         expect(widgetWithAccessFromResponse).toBeDefined();
         expect(widgetWithAccessFromResponse.canReadWidget).toBe(true);
         expect(widgetWithAccessFromResponse.objectMetadataId).toBe(
           testObjectMetadataIdWithAccess,
         );
 
-        // Widget without access should have canReadWidget: false and null configuration
         expect(widgetWithoutAccessFromResponse).toBeDefined();
         expect(widgetWithoutAccessFromResponse.canReadWidget).toBe(false);
         expect(widgetWithoutAccessFromResponse.configuration).toBeNull();
@@ -866,7 +858,8 @@ describe('Page Layout Widget REST API', () => {
         });
 
         assertRestApiSuccessfulResponse(response);
-        assertPageLayoutWidgetStructure(response.body, widget);
+        assertPageLayoutWidgetStructure(response.body);
+        expect(response.body.canReadWidget).toBe(false);
       });
     });
   });

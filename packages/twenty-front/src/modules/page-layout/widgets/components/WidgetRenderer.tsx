@@ -29,7 +29,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const showRestrictedContent = widget.canReadWidget === false;
+  const showRestrictedContent = widget.canReadWidget;
 
   return (
     <WidgetContainer isRestricted={showRestrictedContent}>
