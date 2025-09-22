@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
-import { isUUID } from 'class-validator';
 import { Strategy } from 'passport-jwt';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -110,23 +109,33 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateAccessToken(
     payload: AccessTokenJwtPayload,
   ): Promise<AuthContext> {
+    let user: User | null = null;
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const userId = payload.sub ?? payload.userId;
 
-    if (!payload.workspaceId || !isUUID(payload.workspaceId)) {
+    if (!userId) {
       throw new AuthException(
-        'Invalid token',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
       );
     }
 
-    if (!userId || !isUUID(userId)) {
-      throw new AuthException(
-        'Invalid token',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+    user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
 
-    if (!payload.userWorkspaceId || !isUUID(payload.userWorkspaceId)) {
+    if (!payload.userWorkspaceId) {
       throw new AuthException(
         'UserWorkspace not found',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
@@ -148,16 +157,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         },
       ),
     );
-
-    const workspace = userWorkspace.workspace;
-    const user = userWorkspace.user;
-
-    if (!workspace || workspace.id !== payload.workspaceId) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
 
     const context: AuthContext = {
       user,

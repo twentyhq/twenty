@@ -46,7 +46,7 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Mutation(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
