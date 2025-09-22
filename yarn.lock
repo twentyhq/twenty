@@ -51905,7 +51905,7 @@ __metadata:
     unzipper: "npm:^0.12.3"
     uuid: "npm:9.0.1"
     vite-tsconfig-paths: "npm:4.3.2"
-    zod: "npm:^4.1.9"
+    zod: "npm:^4.1.11"
     zod-to-json-schema: "npm:^3.23.1"
   languageName: unknown
   linkType: soft
@@ -55437,13 +55437,6 @@ __metadata:
   version: 4.1.11
   resolution: "zod@npm:4.1.11"
   checksum: 10c0/ce6a4c4acfbf51d7dd0f2669c82f207d62a1f00264eef608994b94eb99d86a74c99f59b0dd3e61ef82909ee136631378b709e0908f0a02a2d5c21d0c497de5db
-  languageName: node
-  linkType: hard
-
-"zod@npm:^4.1.9":
-  version: 4.1.9
-  resolution: "zod@npm:4.1.9"
-  checksum: 10c0/8aa2f240a3ccd153feb061f8ef17b9a4c2bcc98f1146c16655f8623c628c7376006fb70c5e1adcb655fc3585b848435eec307c5bf690cfedbdb220c567e62075
   languageName: node
   linkType: hard
 
