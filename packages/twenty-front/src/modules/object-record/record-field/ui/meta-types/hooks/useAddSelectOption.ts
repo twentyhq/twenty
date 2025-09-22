@@ -48,12 +48,10 @@ export const useAddSelectOption = (fieldName: string | undefined) => {
     ],
   );
 
-  if (!userHasPermissionToEditDataModel) {
-    return undefined;
-  }
-
   return {
     onAddSelectOption:
-      fieldName && objectNamePlural ? onAddSelectOption : undefined,
+      userHasPermissionToEditDataModel && fieldName && objectNamePlural
+        ? onAddSelectOption
+        : undefined,
   };
 };
