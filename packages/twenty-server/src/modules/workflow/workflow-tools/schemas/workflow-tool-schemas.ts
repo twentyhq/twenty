@@ -33,7 +33,17 @@ export const updateWorkflowVersionStepSchema = z.object({
     .string()
     .describe('The ID of the workflow version containing the step'),
   step: z
-    .union([workflowTriggerSchema, workflowActionSchema])
+    .unknown()
+    .refine((data) => {
+      try {
+        return (
+          workflowTriggerSchema.safeParse(data).success ||
+          workflowActionSchema.safeParse(data).success
+        );
+      } catch {
+        return false;
+      }
+    }, 'Step must be either a valid trigger or action schema')
     .describe('The updated step configuration'),
 });
 
@@ -92,7 +102,17 @@ export const deactivateWorkflowVersionSchema = z.object({
 
 export const computeStepOutputSchemaSchema = z.object({
   step: z
-    .union([workflowTriggerSchema, workflowActionSchema])
+    .unknown()
+    .refine((data) => {
+      try {
+        return (
+          workflowTriggerSchema.safeParse(data).success ||
+          workflowActionSchema.safeParse(data).success
+        );
+      } catch {
+        return false;
+      }
+    }, 'Step must be either a valid trigger or action schema')
     .describe('The workflow step configuration'),
 });
 
