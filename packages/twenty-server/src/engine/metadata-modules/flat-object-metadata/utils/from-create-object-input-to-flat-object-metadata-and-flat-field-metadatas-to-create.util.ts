@@ -102,6 +102,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       flatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
     });
+
     return {
       flatObjectMetadataToCreate,
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,

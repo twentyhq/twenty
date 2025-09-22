@@ -23,6 +23,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   ) {
     super();
   }
+
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps: { flatIndexMaps },
@@ -69,6 +70,7 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
+
     await this.workspaceSchemaManagerService.indexManager.dropIndex({
       indexName: flatIndexMetadataToDelete.name,
       queryRunner,

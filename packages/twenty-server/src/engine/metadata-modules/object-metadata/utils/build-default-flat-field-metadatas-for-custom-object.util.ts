@@ -14,7 +14,9 @@ type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
 };
 
-export type DefaultFlatFieldForCustomObjectMaps = ReturnType<typeof buildDefaultFlatFieldMetadatasForCustomObject>
+export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
+  typeof buildDefaultFlatFieldMetadatasForCustomObject
+>;
 // This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
@@ -280,7 +282,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     morphId: null,
   };
 
-  const tsFlatVectorIndexId = v4();
   return {
     fields: {
       idField,

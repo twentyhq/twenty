@@ -1,13 +1,13 @@
+import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const findObjectWithIndex = async ({
   objectMetadataId,
@@ -22,6 +22,7 @@ const findObjectWithIndex = async ({
 
   jestExpectToBeDefined(foundObject);
   expect(foundObject.id).toBe(objectMetadataId);
+
   return foundObject;
 };
 
@@ -119,7 +120,7 @@ describe('Index metadata creation through object metadata creation v2', () => {
     });
 
     expect(foundObject.indexMetadataList.length).toBe(1);
-    const { indexFieldMetadataList, ...index } =
+    const { indexFieldMetadataList: _, ...index } =
       foundObject.indexMetadataList[0];
 
     expect(index).toMatchSnapshot();
@@ -140,7 +141,7 @@ describe('Index metadata creation through object metadata creation v2', () => {
       });
 
       expect(foundObject.indexMetadataList.length).toBe(1);
-      const { indexFieldMetadataList, ...index } =
+      const { indexFieldMetadataList: _, ...index } =
         foundObject.indexMetadataList[0];
 
       expect(index).toMatchSnapshot();

@@ -2,8 +2,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -13,6 +11,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('Index metadata creation on relation field creation v2', () => {
   let createdObjectId: string;
@@ -130,6 +130,7 @@ describe('Index metadata creation on relation field creation v2', () => {
 
     const dishObject = objects.find((obj) => obj.id === createdObjectId);
     const foodObject = objects.find((obj) => obj.id === secondCreatedObjectId);
+
     jestExpectToBeDefined(dishObject);
     jestExpectToBeDefined(foodObject);
 
@@ -138,6 +139,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         field.type === FieldMetadataType.RELATION &&
         field.name === 'relationField',
     );
+
     jestExpectToBeDefined(dishRelationField?.relation);
     expect(dishRelationField.relation.targetObjectMetadata.id).toBe(
       secondCreatedObjectId,
@@ -148,6 +150,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         field.type === FieldMetadataType.RELATION &&
         field.id === dishRelationField.relation?.targetFieldMetadata.id,
     );
+
     jestExpectToBeDefined(foodRelationField);
 
     const dishRelationFieldIndex = dishObject.indexMetadataList.find((index) =>
@@ -155,6 +158,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         (indexField) => indexField.fieldMetadataId === dishRelationField.id,
       ),
     );
+
     jestExpectToBeDefined(dishRelationFieldIndex);
     expect(dishRelationFieldIndex).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny({ ...dishRelationFieldIndex }),
@@ -165,6 +169,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         (indexField) => indexField.fieldMetadataId === foodRelationField.id,
       ),
     );
+
     expect(foodRelationFieldIndex).toBeUndefined();
 
     await updateOneFieldMetadata({
@@ -192,6 +197,7 @@ describe('Index metadata creation on relation field creation v2', () => {
     const foodObjectAfterDeletion = objects.find(
       (obj) => obj.id === secondCreatedObjectId,
     );
+
     jestExpectToBeDefined(dishObjectAfterDeletion);
     jestExpectToBeDefined(foodObjectAfterDeletion);
 
@@ -201,6 +207,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           field.type === FieldMetadataType.RELATION &&
           field.name === 'relationField',
       );
+
     expect(dishRelationFieldAfterDeletion).toBeUndefined();
 
     const foodRelationFieldAfterDeletion =
@@ -209,6 +216,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           field.type === FieldMetadataType.RELATION &&
           field.id === dishRelationField?.relation?.targetFieldMetadata.id,
       );
+
     expect(foodRelationFieldAfterDeletion).toBeUndefined();
 
     const dishRelationFieldIndexAfterDeletion =
@@ -217,6 +225,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           (indexField) => indexField.fieldMetadataId === dishRelationField.id,
         ),
       );
+
     expect(dishRelationFieldIndexAfterDeletion).toBeUndefined();
   });
 
@@ -243,6 +252,7 @@ describe('Index metadata creation on relation field creation v2', () => {
 
     const dishObject = objects.find((obj) => obj.id === createdObjectId);
     const foodObject = objects.find((obj) => obj.id === secondCreatedObjectId);
+
     jestExpectToBeDefined(dishObject);
     jestExpectToBeDefined(foodObject);
 
@@ -251,6 +261,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         field.type === FieldMetadataType.RELATION &&
         field.name === 'relationField',
     );
+
     jestExpectToBeDefined(dishRelationField?.relation);
     expect(dishRelationField.relation.targetObjectMetadata.id).toBe(
       secondCreatedObjectId,
@@ -261,6 +272,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         field.type === FieldMetadataType.RELATION &&
         field.id === dishRelationField.relation?.targetFieldMetadata.id,
     );
+
     jestExpectToBeDefined(foodRelationField);
 
     const foodRelationFieldIndex = foodObject.indexMetadataList.find((index) =>
@@ -268,6 +280,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         (indexField) => indexField.fieldMetadataId === foodRelationField.id,
       ),
     );
+
     jestExpectToBeDefined(foodRelationFieldIndex);
     expect(foodRelationFieldIndex).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny({ ...foodRelationFieldIndex }),
@@ -278,6 +291,7 @@ describe('Index metadata creation on relation field creation v2', () => {
         (indexField) => indexField.fieldMetadataId === dishRelationField.id,
       ),
     );
+
     expect(dishRelationFieldIndex).toBeUndefined();
 
     await updateOneFieldMetadata({
@@ -305,6 +319,7 @@ describe('Index metadata creation on relation field creation v2', () => {
     const foodObjectAfterDeletion = objects.find(
       (obj) => obj.id === secondCreatedObjectId,
     );
+
     jestExpectToBeDefined(dishObjectAfterDeletion);
     jestExpectToBeDefined(foodObjectAfterDeletion);
 
@@ -314,6 +329,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           field.type === FieldMetadataType.RELATION &&
           field.name === 'relationField',
       );
+
     expect(dishRelationFieldAfterDeletion).toBeUndefined();
 
     const foodRelationFieldAfterDeletion =
@@ -322,6 +338,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           field.type === FieldMetadataType.RELATION &&
           field.id === dishRelationField?.relation?.targetFieldMetadata.id,
       );
+
     expect(foodRelationFieldAfterDeletion).toBeUndefined();
 
     const foodRelationFieldIndexAfterDeletion =
@@ -330,6 +347,7 @@ describe('Index metadata creation on relation field creation v2', () => {
           (indexField) => indexField.fieldMetadataId === dishRelationField.id,
         ),
       );
+
     expect(foodRelationFieldIndexAfterDeletion).toBeUndefined();
   });
 });

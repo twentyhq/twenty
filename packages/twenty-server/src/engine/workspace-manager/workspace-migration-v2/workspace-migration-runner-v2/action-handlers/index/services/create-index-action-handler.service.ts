@@ -129,6 +129,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
               FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
             );
           }
+
           return `"${flatFieldMetadata.settings.joinColumnName}"`;
         }
 
