@@ -1,68 +1,24 @@
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
-import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const findObjectWithIndex = async ({
   objectMetadataId,
 }: {
   objectMetadataId: string;
 }) => {
-  const { objects } = await findManyObjectMetadata({
+  const objects = await findManyObjectMetadataWithIndexes({
     expectToFail: false,
-    input: {
-      filter: {
-        id: {
-          eq: objectMetadataId,
-        },
-      },
-      paging: {
-        first: 1,
-      },
-    },
-    gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          type
-        }
-        indexMetadataList {
-          name
-          isUnique
-          isCustom
-          indexType
-          indexFieldMetadataList {
-            id
-            fieldMetadataId
-            createdAt
-            updatedAt
-            order
-          }
-        }
-      `,
   });
 
-  const foundObject = objects.find(
-    (object) => object.id === objectMetadataId,
-  ) as ObjectMetadataDTO & {
-    fieldsList: FieldMetadataDTO[];
-    indexMetadataList: Array<
-      IndexMetadataDTO & {
-        indexFieldMetadataList: IndexFieldMetadataDTO[];
-      }
-    >;
-  };
+  const foundObject = objects.find((object) => object.id === objectMetadataId);
 
   jestExpectToBeDefined(foundObject);
   expect(foundObject.id).toBe(objectMetadataId);
