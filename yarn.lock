@@ -52007,7 +52007,7 @@ __metadata:
     rimraf: "npm:^3.0.2"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
-    zod: "npm:3.23.8"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
@@ -55414,13 +55414,6 @@ __metadata:
   peerDependencies:
     zod: ^3.24.1
   checksum: 10c0/0745b94ba53e652d39f262641cdeb2f75d24339fb6076a38ce55bcf53d82dfaea63adf524ebc5f658681005401687f8e9551c4feca7c4c882e123e66091dfb90
-  languageName: node
-  linkType: hard
-
-"zod@npm:3.23.8":
-  version: 3.23.8
-  resolution: "zod@npm:3.23.8"
-  checksum: 10c0/8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
   languageName: node
   linkType: hard
 
