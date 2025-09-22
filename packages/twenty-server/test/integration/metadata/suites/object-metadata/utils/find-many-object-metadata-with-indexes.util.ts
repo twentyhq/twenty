@@ -1,4 +1,5 @@
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -14,7 +15,7 @@ export const findManyObjectMetadataWithIndexes = async ({
     input: {
       filter: {},
       paging: {
-        first: 1,
+        first: 100,
       },
     },
     gqlFields: `
@@ -23,6 +24,28 @@ export const findManyObjectMetadataWithIndexes = async ({
         fieldsList {
           id
           type
+          name
+          relation {
+            type
+            sourceObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            targetObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            sourceFieldMetadata {
+              id
+              name
+            }
+            targetFieldMetadata {
+              id
+              name
+            }
+          }
         }
         indexMetadataList {
           name
@@ -42,7 +65,7 @@ export const findManyObjectMetadataWithIndexes = async ({
 
   return objects as Array<
     ObjectMetadataDTO & {
-      fieldsList: FieldMetadataDTO[];
+      fieldsList: (FieldMetadataDTO & { relation: RelationDTO | null })[];
       indexMetadataList: Array<
         IndexMetadataDTO & {
           indexFieldMetadataList: IndexFieldMetadataDTO[];
