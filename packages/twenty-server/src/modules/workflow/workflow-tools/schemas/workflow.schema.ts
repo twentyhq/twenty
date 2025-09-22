@@ -346,8 +346,6 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
   workflowFilterActionSchema,
-  workflowIteratorActionSchema,
-  workflowEmptyActionSchema,
 ]);
 
 // Trigger schemas
