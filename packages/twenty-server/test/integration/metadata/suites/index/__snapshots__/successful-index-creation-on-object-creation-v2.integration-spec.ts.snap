@@ -23,6 +23,6 @@ exports[`Index metadata creation through object metadata creation v2 Should upda
   "indexType": "GIN",
   "isCustom": false,
   "isUnique": false,
-  "name": "IDX_26ca7684d3eb16c8cd69fff8136",
+  "name": "IDX_e1506c1b3612d7f73c39fcaae6e",
 }
 `;

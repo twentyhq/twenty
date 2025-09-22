@@ -58,7 +58,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       updatedAt: createdAt,
       duplicateCriteria: null,
       description: createObjectInput.description ?? null,
-
       icon: createObjectInput.icon ?? null,
       id: objectMetadataId,
       imageIdentifierFieldMetadataId: null,
@@ -83,11 +82,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       targetTableName: 'DEPRECATED',
       workspaceId,
     };
-    const defaultIndexesForCustomObject = buildDefaultIndexesForCustomObject({
-      defaultFlatFieldForCustomObjectMaps,
-      flatObjectMetadata: flatObjectMetadataToCreate,
-      workspaceId,
-    });
+
     const {
       standardSourceFlatFieldMetadatas,
       standardTargetFlatFieldMetadatas,
@@ -102,6 +97,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       ...standardSourceFlatFieldMetadatas,
     ];
 
+    const defaultIndexesForCustomObject = buildDefaultIndexesForCustomObject({
+      defaultFlatFieldForCustomObjectMaps,
+      flatObjectMetadata: flatObjectMetadataToCreate,
+      workspaceId,
+    });
     return {
       flatObjectMetadataToCreate,
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
