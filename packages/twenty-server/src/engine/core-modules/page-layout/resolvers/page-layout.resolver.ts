@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
@@ -24,7 +23,6 @@ export class PageLayoutResolver {
   constructor(
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutUpdateService: PageLayoutUpdateService,
-    private readonly dataSource: DataSource,
   ) {}
 
   @Query(() => [PageLayoutDTO])
@@ -108,30 +106,10 @@ export class PageLayoutResolver {
     @Args('input') input: UpdatePageLayoutWithTabsInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const transactionManager = queryRunner.manager;
-
-      const result =
-        await this.pageLayoutUpdateService.updatePageLayoutWithTabs({
-          id,
-          workspaceId: workspace.id,
-          input,
-          transactionManager,
-        });
-
-      await queryRunner.commitTransaction();
-
-      return result;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    return this.pageLayoutUpdateService.updatePageLayoutWithTabs({
+      id,
+      workspaceId: workspace.id,
+      input,
+    });
   }
 }

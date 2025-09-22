@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { computeDiffBetweenObjects } from 'twenty-shared/utils';
-import { EntityManager } from 'typeorm';
+import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
@@ -17,7 +17,7 @@ type UpdatePageLayoutWithTabsParams = {
   id: string;
   workspaceId: string;
   input: UpdatePageLayoutWithTabsInput;
-  transactionManager: EntityManager;
+  transactionManager?: EntityManager;
 };
 
 type UpdatePageLayoutTabsParams = {
@@ -40,6 +40,7 @@ export class PageLayoutUpdateService {
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async updatePageLayoutWithTabs({
@@ -48,6 +49,47 @@ export class PageLayoutUpdateService {
     input,
     transactionManager,
   }: UpdatePageLayoutWithTabsParams): Promise<PageLayoutEntity> {
+    if (!isDefined(transactionManager)) {
+      const queryRunner = this.dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const result = await this.updatePageLayoutWithTabsWithinTransaction({
+          id,
+          workspaceId,
+          input,
+          transactionManager: queryRunner.manager,
+        });
+
+        await queryRunner.commitTransaction();
+
+        return result;
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
+    }
+
+    return this.updatePageLayoutWithTabsWithinTransaction({
+      id,
+      workspaceId,
+      input,
+      transactionManager,
+    });
+  }
+
+  private async updatePageLayoutWithTabsWithinTransaction({
+    id,
+    workspaceId,
+    input,
+    transactionManager,
+  }: UpdatePageLayoutWithTabsParams & {
+    transactionManager: EntityManager;
+  }): Promise<PageLayoutEntity> {
     await this.pageLayoutService.findByIdOrThrow(
       id,
       workspaceId,
