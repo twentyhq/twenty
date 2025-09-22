@@ -51960,7 +51960,7 @@ __metadata:
     tsx: "npm:^4.19.3"
     twenty-shared: "workspace:*"
     vite-plugin-svgr: "npm:^4.3.0"
-    zod: "npm:3.23.8"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
