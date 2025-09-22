@@ -6,9 +6,12 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import type { ToolEvent } from '@/ai/types/ToolEvent';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import type { ToolCallEvent, ToolResultEvent } from 'twenty-shared/ai';
+import type {
+  ToolCallEvent,
+  ToolEvent,
+  ToolResultEvent,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`

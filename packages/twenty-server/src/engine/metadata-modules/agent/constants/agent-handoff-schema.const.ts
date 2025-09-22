@@ -26,24 +26,16 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
                   }),
                   z.object({
                     type: z.literal('image'),
-                    image: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.url(),
-                    ]),
+                    image: z
+                      .string()
+                      .describe('Base64 encoded image data or URL'),
                     mediaType: z.string().optional(),
                   }),
                   z.object({
                     type: z.literal('file'),
-                    data: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.url(),
-                    ]),
+                    data: z
+                      .string()
+                      .describe('Base64 encoded file data or URL'),
                     mediaType: z.string(),
                   }),
                 ]),
@@ -62,13 +54,9 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
                   }),
                   z.object({
                     type: z.literal('file'),
-                    data: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.url(),
-                    ]),
+                    data: z
+                      .string()
+                      .describe('Base64 encoded file data or URL'),
                     mediaType: z.string(),
                     filename: z.string().optional(),
                   }),

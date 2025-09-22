@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  CoreMessage,
-  type CoreUserMessage,
   type FilePart,
   type ImagePart,
   LanguageModelUsage,
@@ -11,6 +9,7 @@ import {
   streamText,
   ToolSet,
   type UserContent,
+  UserModelMessage,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -144,7 +143,7 @@ export class AgentExecutionService {
   private async buildUserMessage(
     userMessage: string,
     fileIds: string[],
-  ): Promise<CoreUserMessage> {
+  ): Promise<UserModelMessage> {
     const content: Exclude<UserContent, string> = [
       {
         type: 'text',
@@ -258,7 +257,7 @@ export class AgentExecutionService {
     messages: AgentChatMessageEntity[],
   ): ModelMessage[] {
     return messages
-      .map(({ role, rawContent }): CoreMessage => {
+      .map(({ role, rawContent }): ModelMessage => {
         if (role === AgentChatMessageRole.USER) {
           return {
             role: 'user',

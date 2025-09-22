@@ -18,6 +18,8 @@ import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-tabl
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
+import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -35,6 +37,7 @@ import {
 import { Tag } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrContainer = styled.div<{ shouldDisplayBorderBottom: boolean }>`
   cursor: pointer;
@@ -135,13 +138,16 @@ export const RecordTableRecordGroupSection = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const widthOfLabelIdentifierRecordField =
-    visibleRecordFields.find(
-      findByProperty(
-        'fieldMetadataItemId',
-        labelIdentifierFieldMetadataItem?.id ?? '',
-      ),
-    )?.size ?? null;
+  const isMobile = useIsMobile();
+
+  const widthOfLabelIdentifierRecordField = isMobile
+    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
+    : (visibleRecordFields.find(
+        findByProperty(
+          'fieldMetadataItemId',
+          labelIdentifierFieldMetadataItem?.id ?? '',
+        ),
+      )?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
 
   const [
     isRecordGroupTableSectionToggled,
@@ -226,7 +232,7 @@ export const RecordTableRecordGroupSection = () => {
       </StyledChevronContainer>
       <StyledRecordGroupSection
         className="disable-shadow"
-        width={widthOfLabelIdentifierRecordField ?? 104}
+        width={widthOfLabelIdentifierRecordField}
       >
         <StyledTag
           variant={
