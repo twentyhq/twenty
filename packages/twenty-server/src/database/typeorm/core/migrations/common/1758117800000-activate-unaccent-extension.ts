@@ -6,20 +6,31 @@ export class ActivateUnaccentExtension1758117800000
   name = 'ActivateUnaccentExtension1758117800000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "unaccent"`);
+    // SELF-HOSTED Users:
+    // If you are self-hosting Twenty, you will need to install the unaccent_immutable extension with the admin user
+    try {
+      await queryRunner.query(
+        `CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;`,
+      );
 
-    await queryRunner.query(
-      `CREATE OR REPLACE FUNCTION unaccent_immutable(text) RETURNS text AS $$
-        SELECT public.unaccent($1)
-      $$ LANGUAGE sql IMMUTABLE;`,
-    );
+      await queryRunner.query(
+        `CREATE OR REPLACE FUNCTION public.unaccent_immutable(input text)
+    RETURNS text
+    LANGUAGE sql
+    IMMUTABLE
+AS $$
+SELECT public.unaccent('public.unaccent'::regdictionary, input)
+$$;`,
+      );
+    } catch {
+      // Ignore error
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP FUNCTION IF EXISTS unaccent_immutable(text)`);
-
-    // Note: We don't drop the extension as it might be used by other parts
-    // Note: We don't drop the extension as it might be used by other parts
-    // of the application or other databases. Extensions are typically left in place.
+    await queryRunner.query(
+      `DROP FUNCTION IF EXISTS public.unaccent_immutable(text)`,
+    );
+    // Note: We don't drop the extension as it might be used elsewhere
   }
 }
