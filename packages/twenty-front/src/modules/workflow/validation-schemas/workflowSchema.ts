@@ -84,9 +84,9 @@ export const workflowFindRecordsActionSettingsSchema =
       limit: z.number().optional(),
       filter: z
         .object({
-          recordFilterGroups: z.array(z.object({})).optional(),
-          recordFilters: z.array(z.object({})).optional(),
-          gqlOperationFilter: z.object({}).optional().nullable(),
+          recordFilterGroups: z.array(z.any()).optional(),
+          recordFilters: z.array(z.any()).optional(),
+          gqlOperationFilter: z.any().optional().nullable(),
         })
         .optional(),
     }),
