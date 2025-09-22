@@ -153,18 +153,7 @@ export const SettingsObjectFieldEdit = () => {
           updatePayload: formattedInput,
         });
 
-        if (navigateBackToViewOnSave && isDefined(navigationMemorizedUrl)) {
-          navigate(navigationMemorizedUrl, { replace: true });
-
-          setNavigateBackToViewOnSave(false);
-          setNavigationMemorizedUrl('/');
-
-          return;
-        }
-
-        navigateSettings(SettingsPath.ObjectDetail, {
-          objectNamePlural,
-        });
+        navigateBackOrToSettings();
       }
     } catch (error) {
       enqueueErrorSnackBar({
@@ -173,7 +162,7 @@ export const SettingsObjectFieldEdit = () => {
     }
   };
 
-  const handleCancel = () => {
+  const navigateBackOrToSettings = () => {
     if (navigateBackToViewOnSave && isDefined(navigationMemorizedUrl)) {
       navigate(navigationMemorizedUrl, { replace: true });
 
@@ -232,7 +221,7 @@ export const SettingsObjectFieldEdit = () => {
               isLoading={isSubmitting}
               isSaveDisabled={!canSave}
               isCancelDisabled={isSubmitting}
-              onCancel={handleCancel}
+              onCancel={navigateBackOrToSettings}
               onSave={formConfig.handleSubmit(handleSave)}
             />
           }
