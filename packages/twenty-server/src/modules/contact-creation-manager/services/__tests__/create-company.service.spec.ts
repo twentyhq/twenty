@@ -199,6 +199,9 @@ describe('CreateCompanyService', () => {
         },
       ]);
       mockCompanyRepository.save.mockResolvedValue([]);
+      mockCompanyRepository.updateMany.mockResolvedValue({
+        raw: [],
+      });
     });
 
     it('should not create a company if it already exists', async () => {
@@ -208,7 +211,7 @@ describe('CreateCompanyService', () => {
       );
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).not.toHaveBeenCalled();
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
     });
   });
 
