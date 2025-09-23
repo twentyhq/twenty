@@ -11,6 +11,8 @@ type ArrayDeletionFn = () => void;
 // Symbol used to mark array elements for deletion
 const REMOVE_SYMBOL = Symbol('micropatch-delete');
 
+const FORBIDDEN_OBJECT_KEYS = ['__proto__', 'constructor', 'prototype'];
+
 export const applyDiff = <T>(obj: T, diffs: Difference[]): T => {
   if (!isDefined(obj)) {
     throw new Error('Cannot apply diff to null or undefined object');
@@ -112,6 +114,10 @@ const setValueAtPath = (
       throw new Error(`Cannot set array element at index ${pathElement}: ${error}. Array may be non-extensible.`);
     }
   } else if (isObject(container)) {
+    if (FORBIDDEN_OBJECT_KEYS.includes(pathElement as string)) {
+      throw new Error(`Refusing to set forbidden property key '${pathElement}' on object (prototype pollution protection)`);
+    }
+
     try {
       container[pathElement] = value;
     } catch (error) {
@@ -165,15 +171,10 @@ const handleObjectRemoval = (
   parentObject: ObjectType,
   key: string | number
 ): void => {
-  // Prevent prototype pollution
-  if (
-    key === '__proto__' ||
-    key === 'constructor' ||
-    key === 'prototype'
-  ) {
+  if (FORBIDDEN_OBJECT_KEYS.includes(key as string)) {
     return;
   }
-  
+
   delete parentObject[key];
 };
 
