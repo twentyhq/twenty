@@ -446,7 +446,6 @@ describe('JwtAuthStrategy', () => {
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
-      const impersonatedUserWorkspaceId = randomUUID();
 
       const payload = {
         sub: validUserId,
@@ -455,7 +454,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
+        impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
       const mockWorkspace = new Workspace();
@@ -478,7 +477,7 @@ describe('JwtAuthStrategy', () => {
         .mockResolvedValueOnce(null) // For impersonatorUserWorkspace lookup
         .mockResolvedValueOnce({
           // For impersonatedUserWorkspace lookup
-          id: impersonatedUserWorkspaceId,
+          id: validUserWorkspaceId,
           user: { id: randomUUID() },
           workspace: mockWorkspace,
         });
@@ -505,7 +504,6 @@ describe('JwtAuthStrategy', () => {
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
-      const impersonatedUserWorkspaceId = randomUUID();
 
       const payload = {
         sub: validUserId,
@@ -514,7 +512,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
+        impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
       const mockWorkspace = new Workspace();
@@ -534,12 +532,6 @@ describe('JwtAuthStrategy', () => {
       userRepository.findOne.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
         .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce({
-          // For impersonatorUserWorkspace lookup
-          id: impersonatorUserWorkspaceId,
-          user: { id: randomUUID(), canImpersonate: true },
-          workspace: mockWorkspace,
-        })
         .mockResolvedValueOnce(null); // For impersonatedUserWorkspace lookup
 
       strategy = new JwtAuthStrategy(
@@ -564,7 +556,6 @@ describe('JwtAuthStrategy', () => {
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
-      const impersonatedUserWorkspaceId = randomUUID();
       const differentWorkspaceId = randomUUID();
 
       const payload = {
@@ -574,7 +565,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
+        impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
       const mockWorkspace = new Workspace();
@@ -597,7 +588,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       const mockImpersonatedUserWorkspace = {
-        id: impersonatedUserWorkspaceId,
+        id: validUserWorkspaceId,
         user: { id: randomUUID() },
         workspace: mockWorkspace,
       };
@@ -635,7 +626,6 @@ describe('JwtAuthStrategy', () => {
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
-      const impersonatedUserWorkspaceId = randomUUID();
 
       const payload = {
         sub: validUserId,
@@ -644,7 +634,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
+        impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
       const mockWorkspace = new Workspace();
@@ -667,7 +657,7 @@ describe('JwtAuthStrategy', () => {
       };
 
       const mockImpersonatedUserWorkspace = {
-        id: impersonatedUserWorkspaceId,
+        id: validUserWorkspaceId,
         user: { id: randomUUID() },
         workspace: mockWorkspace,
       };
@@ -862,24 +852,24 @@ describe('JwtAuthStrategy', () => {
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
-
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
         user: { id: randomUUID(), canImpersonate: true }, // Server level permission
         workspace: { id: differentWorkspaceId }, // Different workspace
       };
 
+      const mockImpersonatedUserWorkspace = {
+        id: validUserWorkspaceId,
+        user: mockUser,
+        workspace: mockWorkspace,
+      };
+
       workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
       userRepository.findOne.mockResolvedValue(mockUser);
       userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
         .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockUserWorkspace); // For impersonatedUserWorkspace lookup (same as main)
+        .mockResolvedValueOnce(mockImpersonatedUserWorkspace) // For impersonatedUserWorkspace lookup
+        .mockResolvedValueOnce(mockImpersonatedUserWorkspace); // For access token lookup
 
       strategy = new JwtAuthStrategy(
         jwtWrapperService,
