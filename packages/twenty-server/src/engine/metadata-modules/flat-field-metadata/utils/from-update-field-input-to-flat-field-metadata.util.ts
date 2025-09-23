@@ -86,7 +86,6 @@ const applyUpdatesToFlatFieldMetadata = ({
             fromFlatFieldMetadata,
             toFlatFieldMetadata: {
               name: updatedFlatFieldMetadata.name,
-              isUnique: updatedEditableFieldProperties.isUnique,
             },
             flatIndexMaps,
           });
