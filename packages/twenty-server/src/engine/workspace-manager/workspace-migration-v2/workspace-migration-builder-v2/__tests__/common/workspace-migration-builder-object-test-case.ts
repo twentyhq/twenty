@@ -1,4 +1,3 @@
-import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
@@ -89,31 +88,6 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
             PET_FLAT_OBJECT_MOCK,
             ROCKET_FLAT_OBJECT_MOCK,
             ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
-          ]),
-      },
-    },
-  },
-  {
-    title:
-      'It should build a create_object and create_index actions for each of this fieldMetadata',
-    context: {
-      input: {
-        fromFlatObjectMetadataMaps:
-          fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
-          ]),
-        toFlatObjectMetadataMaps:
-          fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
-            {
-              ...ROCKET_FLAT_OBJECT_MOCK,
-              flatIndexMetadatas: [
-                getFlatIndexMetadataMock({
-                  objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-                  universalIdentifier: 'field-metadata-unique-identifier-1',
-                }),
-              ],
-            },
           ]),
       },
     },

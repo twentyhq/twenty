@@ -82,6 +82,7 @@ export class SyncMessageFoldersService {
           {
             name: folder.name,
             externalId: folder.externalId,
+            isSentFolder: folder.isSentFolder,
           },
           manager,
         );

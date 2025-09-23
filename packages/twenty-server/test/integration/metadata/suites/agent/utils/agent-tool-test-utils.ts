@@ -109,7 +109,7 @@ export const createAgentToolTestModule =
           provide: SendEmailTool,
           useValue: {
             description: 'mock',
-            parameters: {},
+            inputSchema: {},
             execute: jest.fn(),
           },
         },

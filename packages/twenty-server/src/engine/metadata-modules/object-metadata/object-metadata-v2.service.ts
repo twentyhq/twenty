@@ -4,6 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
@@ -53,20 +55,25 @@ export class ObjectMetadataServiceV2 {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
   }): Promise<ObjectMetadataDTO> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatIndexMaps: existingFlatIndexMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatEntities: ['flatObjectMetadataMaps', 'flatIndexMaps'],
         },
       );
 
     const {
       flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-      otherObjectFlatFieldMetadatas,
+      otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
+      flatIndexMetadataToUpdate,
     } = fromUpdateObjectInputToFlatObjectMetadata({
       existingFlatObjectMetadataMaps,
       updateObjectInput,
+      flatIndexMaps: existingFlatIndexMaps,
     });
 
     const impactedObjectMetadataIds = [
@@ -93,6 +100,15 @@ export class ObjectMetadataServiceV2 {
       }),
     );
 
+    const toFlatIndexMaps = flatIndexMetadataToUpdate.reduce(
+      (flatIndexMaps, flatIndexMetadata) =>
+        replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: flatIndexMetadata,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -100,6 +116,10 @@ export class ObjectMetadataServiceV2 {
             flatObjectMetadataMaps: {
               from: fromFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
@@ -155,19 +175,26 @@ export class ObjectMetadataServiceV2 {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
   }): Promise<ObjectMetadataDTO> {
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatIndexMaps: existingFlatIndexMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: ['flatObjectMetadataMaps'],
+          flatEntities: ['flatObjectMetadataMaps', 'flatIndexMaps'],
         },
       );
 
-    const { flatFieldMetadatasToDelete, flatObjectMetadataToDelete } =
-      fromDeleteObjectInputToFlatFieldMetadatasToDelete({
-        deleteObjectInput,
-        existingFlatObjectMetadataMaps,
-      });
+    const {
+      flatFieldMetadatasToDelete,
+      flatObjectMetadataToDelete,
+      flatIndexToDelete,
+    } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
+      existingFlatIndexMaps,
+      deleteObjectInput,
+      existingFlatObjectMetadataMaps,
+    });
     const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
 
     const impactedObjectMetadataIds = Array.from(
@@ -202,6 +229,15 @@ export class ObjectMetadataServiceV2 {
         }),
       );
 
+    const toFlatIndexMaps = flatIndexToDelete.reduce(
+      (flatIndexMaps, flatIndex) =>
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatIndex.id,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -209,6 +245,10 @@ export class ObjectMetadataServiceV2 {
             flatObjectMetadataMaps: {
               from: fromFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
@@ -242,6 +282,7 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatIndexMaps: existingFlatIndexMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -249,19 +290,23 @@ export class ObjectMetadataServiceV2 {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatViewFieldMaps',
+          'flatIndexMaps',
         ],
       },
     );
 
-    const { flatObjectMetadataToCreate, relationTargetFlatFieldMetadatas } =
-      fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-        createObjectInput,
-        workspaceId,
-        existingFlatObjectMetadataMaps,
-      });
+    const {
+      flatObjectMetadataToCreate,
+      relationTargetFlatFieldMetadataToCreate,
+      flatIndexMetadataToCreate,
+    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+      createObjectInput,
+      workspaceId,
+      existingFlatObjectMetadataMaps,
+    });
 
     const existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
-      relationTargetFlatFieldMetadatas.reduce(
+      relationTargetFlatFieldMetadataToCreate.reduce(
         (flatObjectMetadataMaps, flatFieldMetadata) =>
           addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
             flatFieldMetadata,
@@ -272,7 +317,7 @@ export class ObjectMetadataServiceV2 {
 
     const flatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
       getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow({
-        flatFieldMetadatas: relationTargetFlatFieldMetadatas,
+        flatFieldMetadatas: relationTargetFlatFieldMetadataToCreate,
         flatObjectMetadataMaps:
           existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas,
       });
@@ -286,7 +331,7 @@ export class ObjectMetadataServiceV2 {
 
     const impactedObjectMetadataIds = [
       ...new Set(
-        relationTargetFlatFieldMetadatas.map(
+        relationTargetFlatFieldMetadataToCreate.map(
           ({ objectMetadataId }) => objectMetadataId,
         ),
       ),
@@ -329,6 +374,15 @@ export class ObjectMetadataServiceV2 {
       existingFlatViewFieldMaps,
     );
 
+    const toFlatIndexMaps = flatIndexMetadataToCreate.reduce(
+      (flatIndexMaps, flatIndexMetadata) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatIndexMetadata,
+          flatEntityMaps: flatIndexMaps,
+        }),
+      existingFlatIndexMaps,
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -344,6 +398,10 @@ export class ObjectMetadataServiceV2 {
             flatViewFieldMaps: {
               from: existingFlatViewFieldMaps,
               to: toFlatViewFieldMaps,
+            },
+            flatIndexMaps: {
+              from: existingFlatIndexMaps,
+              to: toFlatIndexMaps,
             },
           },
           buildOptions: {
