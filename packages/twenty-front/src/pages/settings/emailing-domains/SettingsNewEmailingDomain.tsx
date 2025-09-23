@@ -110,7 +110,7 @@ export const SettingsNewEmailingDomain = () => {
 
   return (
     <SubMenuTopBarContainer
-      title="New Emailing Domain"
+      title={t`New Emailing Domain`}
       actionButton={
         <SaveAndCancelButtons
           onCancel={() => navigate(SettingsPath.Domains)}
