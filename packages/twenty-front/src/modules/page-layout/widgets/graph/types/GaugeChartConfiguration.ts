@@ -2,7 +2,7 @@ import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/Rec
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 
-export interface GaugeChartConfiguration {
+export type GaugeChartConfiguration = {
   graphType: GraphType.GAUGE;
   aggregateOperation: AggregateOperations;
   aggregateFieldMetadataId: string;
@@ -10,4 +10,4 @@ export interface GaugeChartConfiguration {
   aggregateFieldMetadataIdTotal: string;
   filter?: RecordGqlOperationFilter;
   description?: string;
-}
+};

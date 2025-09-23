@@ -1,8 +1,8 @@
-import { type BaseAggregateChartConfiguration } from '@/page-layout/widgets/graph/types/BaseAggregateChartConfiguration';
+import { type BaseGraphConfiguration } from '@/page-layout/widgets/graph/types/BaseGraphConfiguration';
 import { type GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 
-export interface BarChartConfiguration extends BaseAggregateChartConfiguration {
+export type BarChartConfiguration = BaseGraphConfiguration & {
   graphType: GraphType.BAR;
   groupByFieldMetadataIdX: string;
   orderByX: GraphOrderBy;
@@ -13,4 +13,4 @@ export interface BarChartConfiguration extends BaseAggregateChartConfiguration {
   yAxisName?: string;
   rangeMin?: number;
   rangeMax?: number;
-}
+};
