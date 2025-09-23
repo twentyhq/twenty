@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -22,13 +22,13 @@ import {
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
 
 @Injectable()
 export class AccessTokenService {
@@ -49,6 +49,9 @@ export class AccessTokenService {
     userId,
     workspaceId,
     authProvider,
+    isImpersonating,
+    impersonatorUserWorkspaceId,
+    impersonatedUserWorkspaceId,
   }: Omit<
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
@@ -106,6 +109,11 @@ export class AccessTokenService {
 
     assertIsDefinedOrThrow(userWorkspace, UserWorkspaceNotFoundDefaultError);
 
+    const payloadImpersonatorUserWorkspaceId =
+      isImpersonating === true ? impersonatorUserWorkspaceId : undefined;
+    const payloadOriginalUserWorkspaceId =
+      isImpersonating === true ? impersonatedUserWorkspaceId : undefined;
+
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
       userId: user.id,
@@ -114,6 +122,9 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
+      isImpersonating: isImpersonating === true,
+      impersonatorUserWorkspaceId: payloadImpersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
     return {
@@ -133,25 +144,9 @@ export class AccessTokenService {
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
-    const {
-      user,
-      apiKey,
-      workspace,
-      workspaceMemberId,
-      userWorkspace,
-      userWorkspaceId,
-      authProvider,
-    } = await this.jwtStrategy.validate(decoded);
+    const context = await this.jwtStrategy.validate(decoded);
 
-    return {
-      user,
-      apiKey,
-      workspace,
-      userWorkspace,
-      workspaceMemberId,
-      userWorkspaceId,
-      authProvider,
-    };
+    return context;
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {

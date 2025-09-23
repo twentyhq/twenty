@@ -42,6 +42,9 @@ export class RenewTokenService {
       token: { id, workspaceId },
       authProvider,
       targetedTokenType: targetedTokenTypeFromPayload,
+      isImpersonating,
+      impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId,
     } = await this.refreshTokenService.verifyRefreshToken(token);
 
     // Revoke old refresh token
@@ -58,8 +61,6 @@ export class RenewTokenService {
     const targetedTokenType =
       targetedTokenTypeFromPayload ?? JwtTokenTypeEnum.ACCESS;
 
-    // Support legacy tokens where authProvider might be undefined
-    // TODO: remove in November 2025
     const resolvedAuthProvider = authProvider ?? AuthProviderEnum.Password;
 
     const accessToken =
@@ -75,6 +76,9 @@ export class RenewTokenService {
             userId: user.id,
             workspaceId,
             authProvider: resolvedAuthProvider,
+            isImpersonating,
+            impersonatorUserWorkspaceId,
+            impersonatedUserWorkspaceId,
           });
 
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
@@ -82,6 +86,9 @@ export class RenewTokenService {
       workspaceId,
       authProvider: resolvedAuthProvider,
       targetedTokenType,
+      isImpersonating,
+      impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId,
     });
 
     return {
