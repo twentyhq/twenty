@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -14,7 +16,6 @@ import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service'
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
-import { Logger } from '@nestjs/common';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
