@@ -175,7 +175,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             targetHandle: targetHandleId,
           }}
           targetX={targetX}
-          targetY={targetY - 8}
+          targetY={targetY}
         />
       </EdgeLabelRenderer>
     </>
