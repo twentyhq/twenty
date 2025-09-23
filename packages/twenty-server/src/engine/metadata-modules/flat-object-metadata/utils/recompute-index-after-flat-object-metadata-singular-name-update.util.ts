@@ -14,13 +14,13 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
   flatIndexMaps,
   updatedSingularName,
 }: RecomputeIndexAfterFlatObjectMetadataSingularNameUpdateArgs): FlatIndexMetadata[] => {
-  const allReatedFlatIndexMetadata = Object.values(flatIndexMaps.byId).filter(
+  const allRelatedFlatIndexMetadata = Object.values(flatIndexMaps.byId).filter(
     (flatIndexMetadata): flatIndexMetadata is FlatIndexMetadata =>
       isDefined(flatIndexMetadata) &&
       flatIndexMetadata.objectMetadataId === existingFlatObjectMetadata.id,
   );
 
-  if (allReatedFlatIndexMetadata.length === 0) {
+  if (allRelatedFlatIndexMetadata.length === 0) {
     return [];
   }
 
@@ -29,7 +29,7 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
     nameSingular: updatedSingularName,
   };
 
-  return allReatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
+  return allRelatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
     const newIndex = generateFlatIndexMetadataWithNameOrThrow({
       flatIndex,
       flatObjectMetadata: optimisticFlatObjectMetadata,

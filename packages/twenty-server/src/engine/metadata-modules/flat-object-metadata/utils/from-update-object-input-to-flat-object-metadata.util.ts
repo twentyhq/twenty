@@ -145,8 +145,6 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
         [property]: updatedPropertyValue,
       };
 
-      // This should also return index for field that has been updated
-      // Wil handle once we do that for fields too
       const newUpdatedOtherObjectFlatFieldMetadatas =
         property === 'nameSingular' || property === 'namePlural'
           ? renameRelatedMorphFieldOnObjectNamesUpdate({

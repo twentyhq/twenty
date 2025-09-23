@@ -13,7 +13,6 @@ type GenerateFlatIndexArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   flatIndex: Omit<FlatIndexMetadata, 'name'>;
 };
-// TODO rename
 export const generateFlatIndexMetadataWithNameOrThrow = ({
   flatObjectMetadata,
   flatIndex,

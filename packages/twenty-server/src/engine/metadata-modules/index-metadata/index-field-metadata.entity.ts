@@ -48,7 +48,7 @@ export class IndexFieldMetadataEntity
   fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: false })
-  order: number; // Shoudl we sort them before generating the IDX name ?
+  order: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

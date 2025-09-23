@@ -110,7 +110,7 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatIndexMaps'>;
 
-type FlatFieldMetadataAndIndexToUdpate = {
+type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
   flatIndexMetadatasToUpdate: FlatIndexMetadata[];
 };
@@ -118,7 +118,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatIndexMaps,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
-}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUdpate> => {
+}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
       'objectMetadataId',
@@ -236,7 +236,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   ];
 
   const optimisticiallyUpdatedFlatFieldMetadatas =
-    flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUdpate>(
+    flatFieldMetadatasToUpdate.reduce<FlatFieldMetadataAndIndexToUpdate>(
       (acc, fromFlatFieldMetadata) => {
         const { flatFieldMetadata, flatIndexMetadataToUpdate } =
           applyUpdatesToFlatFieldMetadata({

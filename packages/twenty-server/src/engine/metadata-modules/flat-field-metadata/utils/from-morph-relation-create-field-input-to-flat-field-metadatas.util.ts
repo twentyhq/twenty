@@ -66,7 +66,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const morphRelationCreationPayload =
     morphRelationCreationPayloadValidation.result;
   const morphId = v4();
-  const flatFieldMetadatas = morphRelationCreationPayload.reduce(
+  const flatFieldsAndIndexes = morphRelationCreationPayload.reduce(
     (acc, { relationCreationPayload, targetFlatObjectMetadata }) => {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: createFieldInput.name,
@@ -105,6 +105,6 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
 
   return {
     status: 'success',
-    result: flatFieldMetadatas,
+    result: flatFieldsAndIndexes,
   };
 };

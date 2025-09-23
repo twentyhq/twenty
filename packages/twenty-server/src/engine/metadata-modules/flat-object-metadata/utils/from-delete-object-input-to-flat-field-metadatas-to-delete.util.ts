@@ -51,7 +51,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  // Should we compute any index update here too ? TODO prastoin
   const flatFieldMetadatasToDelete =
     flatObjectMetadataToDelete.flatFieldMetadatas.flatMap(
       (flatFieldMetadata) => {
@@ -70,7 +69,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     );
 
   // We should maintain a idsByObjectMetadataId maps in the index
-  // Too costy here
   const flatIndexMetadataToDelete = Object.values(
     existingFlatIndexMaps.byId,
   ).filter(

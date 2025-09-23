@@ -176,13 +176,13 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       return {
         status: 'success',
         result: {
-          indexMetadatas: [],
           flatFieldMetadatas: [
             {
               ...commonFlatFieldMetadata,
               type: createFieldInput.type,
             },
           ],
+          indexMetadatas: [],
         },
       };
     }
