@@ -12,6 +12,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import React, { Suspense } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 const LazyShowPageSubContainer = React.lazy(() =>
   import('@/ui/layout/show-page/components/ShowPageSubContainer').then(
@@ -29,6 +30,30 @@ type RecordShowContainerProps = {
   loading: boolean;
   isInRightDrawer?: boolean;
   isNewRightDrawerItemLoading?: boolean;
+};
+
+const StyledSkeletonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+`;
+
+const RecordShowSubcontainerSkeleton = () => {
+  return (
+    <StyledSkeletonWrapper>
+      <Skeleton height={28} width="35%" />
+
+      <div style={{ display: 'flex', gap: 12 }}>
+        <Skeleton height={32} width={70} />
+        <Skeleton height={32} width={70} />
+        <Skeleton height={32} width={70} />
+      </div>
+
+      <Skeleton height={160} width="100%" />
+      <Skeleton height={160} width="100%" />
+    </StyledSkeletonWrapper>
+  );
 };
 
 export const RecordShowContainer = ({
@@ -73,7 +98,7 @@ export const RecordShowContainer = ({
         </StyledShowPageBannerContainer>
       )}
       <ShowPageContainer>
-        <Suspense fallback={<div>Loading page...</div>}>
+        <Suspense fallback={<RecordShowSubcontainerSkeleton />}>
           <LazyShowPageSubContainer
             tabs={tabs}
             layout={layout}
