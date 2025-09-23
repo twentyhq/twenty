@@ -5,7 +5,6 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
-  getDefaultWidgetData,
   getWidgetSize,
   getWidgetTitle,
 } from '@/page-layout/utils/getDefaultWidgetData';
@@ -55,8 +54,6 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         if (!activeTabId) {
           return;
         }
-
-        const widgetData = getDefaultWidgetData(graphType);
 
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
