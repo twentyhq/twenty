@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { id } from 'date-fns/locale';
 import { Command } from 'nest-commander';
 import { IsNull, Not, Repository } from 'typeorm';
 
@@ -222,7 +221,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
             .execute();
         }
         this.logger.log(
-          `Updated person ${id} emailsPrimaryEmail from ${emailsPrimaryEmail} to ${newEmailsPrimaryEmail}`,
+          `Updated person ${softDeletedPerson.id} emailsPrimaryEmail from ${emailsPrimaryEmail} to ${newEmailsPrimaryEmail}`,
         );
       }
     }

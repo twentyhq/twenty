@@ -143,6 +143,10 @@ describe('CreateCompanyService', () => {
       mockCompanyRepository.find.mockResolvedValue([]);
       // it is useless to check results here, we can only check the input it was called with
       mockCompanyRepository.save.mockResolvedValue([]);
+
+      mockCompanyRepository.updateMany.mockResolvedValue({
+        raw: [],
+      });
     });
 
     it('should successfully create a company', async () => {
