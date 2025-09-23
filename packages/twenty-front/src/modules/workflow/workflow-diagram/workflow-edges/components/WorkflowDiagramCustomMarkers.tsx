@@ -48,6 +48,21 @@ export const WorkflowDiagramCustomMarkers = () => {
             fill={theme.background.primary}
           />
         </marker>
+
+        <marker
+          id={EDGE_BRANCH_ARROW_MARKER.Dragging.markerEnd}
+          markerHeight={12}
+          markerWidth={14}
+          refX={7}
+          refY={6}
+        >
+          <path
+            d="M2.5 2.5H11.5C12.05 2.5 12.35 3.15 12 3.6L7.5 10.4C7.2 10.8 6.8 10.8 6.5 10.4L2 3.6C1.65 3.15 1.95 2.5 2.5 2.5Z"
+            stroke={theme.color.blue}
+            strokeWidth={1.5}
+            fill={theme.background.primary}
+          />
+        </marker>
       </defs>
     </svg>
   );

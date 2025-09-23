@@ -15,6 +15,7 @@ import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diag
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramEdgeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { WorkflowDiagramArrowTipDraggable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramArrowTipDraggable';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
 import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
@@ -302,6 +303,17 @@ export const WorkflowDiagramFilterEdgeEditable = ({
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
+
+        <WorkflowDiagramArrowTipDraggable
+          edgeDescriptor={{
+            source,
+            target,
+            sourceHandle: sourceHandleId,
+            targetHandle: targetHandleId,
+          }}
+          targetX={targetX}
+          targetY={targetY}
+        />
       </EdgeLabelRenderer>
     </>
   );

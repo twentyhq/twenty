@@ -26,7 +26,7 @@ export const WorkflowDiagramBaseEdge = ({
 }: WorkflowDiagramBaseEdgeProps) => {
   const theme = useTheme();
 
-  const { isEdgeSelected, isEdgeHovered } = useEdgeState();
+  const { isEdgeSelected, isEdgeHovered, isEdgeDragging, isArrowTipHovered } = useEdgeState();
 
   const selected = isEdgeSelected({
     source,
@@ -42,7 +42,21 @@ export const WorkflowDiagramBaseEdge = ({
     targetHandle: targetHandleId,
   });
 
-  const stroke = selected
+  const isDragging = isEdgeDragging({
+    source,
+    target,
+    sourceHandle: sourceHandleId,
+    targetHandle: targetHandleId,
+  });
+
+  const isArrowTipHoveredState = isArrowTipHovered({
+    source,
+    target,
+    sourceHandle: sourceHandleId,
+    targetHandle: targetHandleId,
+  });
+
+  const stroke = selected || isDragging || isArrowTipHoveredState
     ? theme.color.blue
     : isHovered
       ? theme.font.color.light

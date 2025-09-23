@@ -2,6 +2,7 @@ enum EdgeBranchArrowState {
   Default = 'Default',
   Hover = 'Hover',
   Selected = 'Selected',
+  Dragging = 'Dragging',
 }
 
 export const EDGE_BRANCH_ARROW_MARKER: Record<
@@ -19,5 +20,9 @@ export const EDGE_BRANCH_ARROW_MARKER: Record<
   [EdgeBranchArrowState.Selected]: {
     markerEnd: 'edge-branch-arrow-selected',
     zIndex: 0,
+  },
+  [EdgeBranchArrowState.Dragging]: {
+    markerEnd: 'edge-branch-arrow-dragging',
+    zIndex: 1,
   },
 };

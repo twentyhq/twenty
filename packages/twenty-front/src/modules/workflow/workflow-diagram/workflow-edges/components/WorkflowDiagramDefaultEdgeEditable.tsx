@@ -2,6 +2,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { WorkflowDiagramArrowTipDraggable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramArrowTipDraggable';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
 import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
@@ -165,6 +166,17 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
+
+        <WorkflowDiagramArrowTipDraggable
+          edgeDescriptor={{
+            source,
+            target,
+            sourceHandle: sourceHandleId,
+            targetHandle: targetHandleId,
+          }}
+          targetX={targetX}
+          targetY={targetY - 8}
+        />
       </EdgeLabelRenderer>
     </>
   );
