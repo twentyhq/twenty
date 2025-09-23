@@ -1,3 +1,4 @@
+import { isDefined } from '@/utils/validation';
 import { isNumber, isObject, isString } from '@sniptt/guards';
 import { type Difference } from 'microdiff';
 
@@ -11,7 +12,7 @@ type ArrayDeletionFn = () => void;
 const REMOVE_SYMBOL = Symbol('micropatch-delete');
 
 export const applyDiff = <T>(obj: T, diffs: Difference[]): T => {
-  if (!obj) {
+  if (!isDefined(obj)) {
     throw new Error('Cannot apply diff to null or undefined object');
   }
 
@@ -110,12 +111,14 @@ const setValueAtPath = (
     } catch (error) {
       throw new Error(`Cannot set array element at index ${pathElement}: ${error}. Array may be non-extensible.`);
     }
-  } else {
+  } else if (isObject(container)) {
     try {
-      (container as ObjectType)[pathElement] = value;
+      container[pathElement] = value;
     } catch (error) {
       throw new Error(`Cannot set property '${String(pathElement)}': ${error}. Object may be non-extensible.`);
     }
+  } else {
+    throw new Error(`Expected object or array, got ${typeof container}`);
   }
 };
 
@@ -162,6 +165,15 @@ const handleObjectRemoval = (
   parentObject: ObjectType,
   key: string | number
 ): void => {
+  // Prevent prototype pollution
+  if (
+    key === '__proto__' ||
+    key === 'constructor' ||
+    key === 'prototype'
+  ) {
+    return;
+  }
+  
   delete parentObject[key];
 };
 

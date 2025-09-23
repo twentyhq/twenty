@@ -192,7 +192,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       });
 
       expect(result.builtStep.type).toBe(WorkflowActionType.CODE);
-      const codeResult = result as unknown as {
+      const codeResult = result.builtStep as unknown as {
         settings: {
           input: {
             serverlessFunctionId: string;
