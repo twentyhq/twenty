@@ -77,7 +77,7 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
             w.type === widgetType && w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
-        const widgetId = `widget-${uuidv4()}`;
+        const widgetId = uuidv4();
 
         const defaultSize = getWidgetSize(graphType);
         const position = getDefaultWidgetPosition(

@@ -58,7 +58,7 @@ export const useCreatePageLayoutIframeWidget = (
           return;
         }
 
-        const widgetId = `widget-${uuidv4()}`;
+        const widgetId = uuidv4();
         const defaultSize = { w: 6, h: 6 };
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,

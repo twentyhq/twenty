@@ -1,7 +1,7 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useRecoilValue } from 'recoil';
 
 export const SaveDashboardSingleRecordAction = () => {
@@ -11,12 +11,7 @@ export const SaveDashboardSingleRecordAction = () => {
 
   const pageLayoutId = selectedRecord?.pageLayoutId;
 
-  const { setIsDashboardInEditMode } =
-    useSetIsDashboardInEditMode(pageLayoutId);
+  const { savePageLayout } = useSavePageLayout(pageLayoutId);
 
-  const handleClick = async () => {
-    setIsDashboardInEditMode(false);
-  };
-
-  return <Action onClick={handleClick} />;
+  return <Action onClick={savePageLayout} />;
 };
