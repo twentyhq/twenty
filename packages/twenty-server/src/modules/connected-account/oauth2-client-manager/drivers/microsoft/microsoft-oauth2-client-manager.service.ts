@@ -35,8 +35,11 @@ export class MicrosoftOAuth2ClientManagerService {
         );
         urlData.append('grant_type', 'refresh_token');
 
+        const tenantId = this.twentyConfigService.get(
+          'AUTH_MICROSOFT_TENANT_ID',
+        );
         const res = await fetch(
-          `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
+          `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
           {
             method: 'POST',
             body: urlData,

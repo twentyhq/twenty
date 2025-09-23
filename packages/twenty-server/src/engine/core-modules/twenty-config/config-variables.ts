@@ -197,6 +197,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
+    isSensitive: false,
+    description:
+      'Microsoft tenant ID (use "common" for multi-tenant, or your tenant ID for single-tenant)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_MICROSOFT_TENANT_ID = 'common';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable the Microsoft messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })

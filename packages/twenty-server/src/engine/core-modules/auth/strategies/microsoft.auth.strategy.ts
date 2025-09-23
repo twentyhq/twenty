@@ -36,7 +36,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
-      tenant: 'common',
+      tenant: twentyConfigService.get('AUTH_MICROSOFT_TENANT_ID'),
       scope: ['user.read'],
       passReqToCallback: true,
     });
