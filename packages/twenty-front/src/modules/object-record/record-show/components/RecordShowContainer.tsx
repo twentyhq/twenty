@@ -12,7 +12,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import React, { Suspense } from 'react';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
 
 const LazyShowPageSubContainer = React.lazy(() =>
   import('@/ui/layout/show-page/components/ShowPageSubContainer').then(
@@ -32,26 +33,34 @@ type RecordShowContainerProps = {
   isNewRightDrawerItemLoading?: boolean;
 };
 
-const StyledSkeletonWrapper = styled.div`
+const StyledSkeletonWrapper = styled.div<{ theme: any }>`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const RecordShowSubcontainerSkeleton = () => {
+  const theme = useTheme();
+
   return (
-    <StyledSkeletonWrapper>
-      <Skeleton height={28} width="35%" />
+    <StyledSkeletonWrapper theme={theme}>
+      <SkeletonTheme
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
+        borderRadius={theme.border.radius.sm}
+      >
+        <Skeleton height={28} width="35%" />
 
-      <div style={{ display: 'flex', gap: 12 }}>
-        <Skeleton height={32} width={70} />
-        <Skeleton height={32} width={70} />
-        <Skeleton height={32} width={70} />
-      </div>
+        <div style={{ display: 'flex', gap: theme.spacing(3) }}>
+          <Skeleton height={32} width={70} />
+          <Skeleton height={32} width={70} />
+          <Skeleton height={32} width={70} />
+        </div>
 
-      <Skeleton height={160} width="100%" />
-      <Skeleton height={160} width="100%" />
+        <Skeleton height={160} width="100%" />
+        <Skeleton height={160} width="100%" />
+      </SkeletonTheme>
     </StyledSkeletonWrapper>
   );
 };
