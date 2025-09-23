@@ -62,6 +62,21 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'jsonb', nullable: true })
   errorDetails: Record<string, unknown> | null;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  sourceUrlUrl: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  sourceUrlDescription: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  sourceDocumentName: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  sourceDocumentContent: string | null;
+
+  @Column({ type: 'int', nullable: true })
+  sourceDocumentPage: number | null;
+
   @CreateDateColumn()
   createdAt: Date;
 }

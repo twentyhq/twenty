@@ -18,7 +18,6 @@ export class AgentChatMessagePartDTO {
   @Field()
   partType: string;
 
-  // Text fields
   @Field({ nullable: true })
   textContent?: string;
 
@@ -48,6 +47,21 @@ export class AgentChatMessagePartDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   errorDetails?: Record<string, unknown>;
+
+  @Field({ nullable: true })
+  sourceUrlUrl?: string;
+
+  @Field({ nullable: true })
+  sourceUrlDescription?: string;
+
+  @Field({ nullable: true })
+  sourceDocumentName?: string;
+
+  @Field({ nullable: true })
+  sourceDocumentContent?: string;
+
+  @Field(() => Int, { nullable: true })
+  sourceDocumentPage?: number;
 
   @Field()
   createdAt: Date;
