@@ -49,11 +49,12 @@ export const WorkflowDiagramBaseEdge = ({
     targetHandle: targetHandleId,
   });
 
-  const stroke = selected || isDragging
-    ? theme.color.blue
-    : isHovered
-      ? theme.font.color.light
-      : theme.border.color.strong;
+  const stroke =
+    selected || isDragging
+      ? theme.color.blue
+      : isHovered
+        ? theme.font.color.light
+        : theme.border.color.strong;
 
   return (
     <BaseEdge

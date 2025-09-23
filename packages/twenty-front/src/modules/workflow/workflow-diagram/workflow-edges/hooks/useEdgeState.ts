@@ -21,9 +21,8 @@ export const useEdgeState = () => {
     workflowDraggedEdgeComponentState,
   );
 
-  const [workflowArrowTipHoveredEdge, setWorkflowArrowTipHoveredEdge] = useRecoilComponentState(
-    workflowArrowTipHoveredEdgeComponentState,
-  );
+  const [workflowArrowTipHoveredEdge, setWorkflowArrowTipHoveredEdge] =
+    useRecoilComponentState(workflowArrowTipHoveredEdgeComponentState);
 
   const isSourceSelected = ({
     nodeId,
@@ -70,6 +69,9 @@ export const useEdgeState = () => {
     sourceHandle,
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
+    if (isArrowTipHovered({ source, target, sourceHandle, targetHandle })) {
+      return false;
+    }
     return (
       isSourceHovered({ nodeId: source, sourceHandle }) &&
       workflowHoveredEdge?.target === target &&
@@ -112,6 +114,10 @@ export const useEdgeState = () => {
     sourceHandle,
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
+    if (workflowArrowTipHoveredEdge) {
+      return;
+    }
+
     setWorkflowHoveredEdge({ source, target, sourceHandle, targetHandle });
 
     reactflow.setEdges((edges) =>
@@ -233,7 +239,9 @@ export const useEdgeState = () => {
     );
   };
 
-  const setArrowTipHovered = (edgeDescriptor: WorkflowDiagramEdgeDescriptor) => {
+  const setArrowTipHovered = (
+    edgeDescriptor: WorkflowDiagramEdgeDescriptor,
+  ) => {
     if (isArrowTipHovered(edgeDescriptor)) {
       return;
     }
@@ -260,15 +268,33 @@ export const useEdgeState = () => {
   };
 
   const clearArrowTipHovered = () => {
+    const previouslyHoveredTipEdge = workflowArrowTipHoveredEdge;
     setWorkflowArrowTipHoveredEdge(undefined);
+
+    if (!previouslyHoveredTipEdge) {
+      return;
+    }
 
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
-        if (edge.markerEnd === EDGE_BRANCH_ARROW_MARKER.Dragging.markerEnd) {
-          return {
-            ...edge,
-            ...EDGE_BRANCH_ARROW_MARKER.Default,
-          };
+        if (
+          edge.source === previouslyHoveredTipEdge.source &&
+          edge.sourceHandle === previouslyHoveredTipEdge.sourceHandle &&
+          edge.target === previouslyHoveredTipEdge.target &&
+          edge.targetHandle === previouslyHoveredTipEdge.targetHandle
+        ) {
+          const isCurrentlyDragging =
+            workflowDraggedEdge?.source === edge.source &&
+            workflowDraggedEdge.sourceHandle === edge.sourceHandle &&
+            workflowDraggedEdge.target === edge.target &&
+            workflowDraggedEdge.targetHandle === edge.targetHandle;
+
+          if (!isCurrentlyDragging) {
+            return {
+              ...edge,
+              ...EDGE_BRANCH_ARROW_MARKER.Default,
+            };
+          }
         }
 
         return edge;
