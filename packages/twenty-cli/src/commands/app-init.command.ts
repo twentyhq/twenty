@@ -4,7 +4,8 @@ import inquirer from 'inquirer';
 import * as path from 'path';
 import {
   createAgentManifest,
-  createManifest,
+  createBasePackageJson,
+  createGitignoreContent,
   createReadmeContent,
 } from '../utils/app-template';
 import { writeJsoncFile } from '../utils/jsonc-parser';
@@ -92,12 +93,12 @@ export class AppInitCommand {
     const agentsDir = path.join(appDir, 'agents');
     await fs.ensureDir(agentsDir);
 
-    // Create main manifest with agent references
-    const manifest = createManifest(appName);
-    const manifestPath = path.join(appDir, 'twenty-app.jsonc');
-    await writeJsoncFile(manifestPath, manifest);
+    // Create main basePackageJson with agent references
+    const basePackageJson = createBasePackageJson(appName);
+    const basePackageJsonPath = path.join(appDir, 'package.json');
+    await writeJsoncFile(basePackageJsonPath, basePackageJson);
 
-    // Create agent manifest file
+    // Create agent basePackageJson file
     const agentManifest = createAgentManifest(appName);
     const agentFileName = `${appName}-agent`;
     const agentPath = path.join(agentsDir, `${agentFileName}.jsonc`);
@@ -106,6 +107,13 @@ export class AppInitCommand {
     // Create README
     const readmeContent = createReadmeContent(appName, appDir);
     await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
+
+    // Create empty yarn.lock
+    await fs.writeFile(path.join(appDir, 'yarn.lock'), '');
+
+    // Create .gitignore
+    const gitignoreContent = createGitignoreContent();
+    await fs.writeFile(path.join(appDir, '.gitignore'), gitignoreContent);
   }
 
   private logSuccess(appDir: string): void {
