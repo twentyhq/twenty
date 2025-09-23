@@ -5,7 +5,38 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_4a59b92546a3dbf54abee51283a",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_247f630f4f88242063a98b01371",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -179,7 +210,23 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_c1add8eb2b51d67721916a3e5a9",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -227,7 +274,23 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_c84138bdf8bc3889ef56273281e",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -269,7 +332,23 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_e07d8240883043fcb1ad1ba0324",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -311,7 +390,23 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_c1add8eb2b51d67721916a3e5a9",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [

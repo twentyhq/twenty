@@ -87,7 +87,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         if (result.status !== 'success') {
           throw new Error('Should never occur, typecheck');
         }
-        expect(result.result.length).toBe(
+        expect(result.result.flatFieldMetadatas.length).toBe(
           input.rawCreateFieldInput.morphRelationsCreationPayload.length * 2,
         );
         expect(result).toMatchSnapshot(
