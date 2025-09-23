@@ -1,8 +1,3 @@
-import {
-    type FieldMetadataComplexOption,
-    type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { UPDATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/update-enum-field-metadata-test-cases';
 import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -15,6 +10,12 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',

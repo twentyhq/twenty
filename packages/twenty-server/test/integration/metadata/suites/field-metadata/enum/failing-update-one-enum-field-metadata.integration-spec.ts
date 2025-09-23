@@ -3,8 +3,8 @@ import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suite
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import {
-    LISTING_NAME_PLURAL,
-    LISTING_NAME_SINGULAR,
+  LISTING_NAME_PLURAL,
+  LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';

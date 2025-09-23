@@ -6,6 +6,7 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('updateOne', () => {
@@ -42,6 +43,15 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadata.createOneField.id;
     });
     afterEach(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: listingObjectId },
@@ -128,6 +138,15 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadata.createOneField.id;
     });
     afterAll(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: listingObjectId },

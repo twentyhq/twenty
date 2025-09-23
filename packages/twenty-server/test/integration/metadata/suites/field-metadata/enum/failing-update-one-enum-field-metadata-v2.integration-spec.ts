@@ -1,4 +1,3 @@
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { UPDATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/update-enum-field-metadata-test-cases';
 import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -10,6 +9,8 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
+
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Failing update field metadata %s tests suite v2',

@@ -26,7 +26,6 @@ const findObjectWithIndex = async ({
 describe('Index metadata creation through object metadata creation v2', () => {
   let createdObjectId: string;
 
-
   beforeEach(async () => {
     const {
       labelPlural,

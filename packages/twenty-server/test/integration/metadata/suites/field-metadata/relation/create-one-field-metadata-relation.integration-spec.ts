@@ -1,11 +1,12 @@
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -47,8 +48,27 @@ describe('createOne FieldMetadataService relation fields', () => {
     createdObjectMetadataOpportunityId = objectMetadataOpportunityId;
   });
   afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataPersonId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataPersonId },
+    });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataOpportunityId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
     });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataOpportunityId },

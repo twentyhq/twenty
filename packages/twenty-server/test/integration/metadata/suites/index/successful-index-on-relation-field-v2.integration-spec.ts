@@ -15,7 +15,6 @@ describe('Index metadata creation on relation field creation v2', () => {
   let createdObjectId: string;
   let secondCreatedObjectId: string;
 
-
   beforeEach(async () => {
     const {
       labelPlural,

@@ -12,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 describe('Handle same object sequential operations test suite', () => {
   let createdObjectMetadataId: string | undefined = undefined;
+
   afterEach(async () => {
     if (!isDefined(createdObjectMetadataId)) {
       return;

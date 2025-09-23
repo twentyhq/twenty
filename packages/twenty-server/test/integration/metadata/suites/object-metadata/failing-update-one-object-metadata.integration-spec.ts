@@ -69,6 +69,15 @@ describe('Object metadata update should fail', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: objectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: {
         idToDelete: objectMetadataId,

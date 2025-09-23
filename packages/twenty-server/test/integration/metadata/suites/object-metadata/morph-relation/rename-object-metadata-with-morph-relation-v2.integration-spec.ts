@@ -8,12 +8,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-
 describe('Rename an object metadata with morph relation should succeed', () => {
   let createdObjectMetadataPersonId: string;
   let createdObjectMetadataOpportunityId: string;
   let createdObjectMetadataCompanyId: string;
-
 
   beforeEach(async () => {
     const {

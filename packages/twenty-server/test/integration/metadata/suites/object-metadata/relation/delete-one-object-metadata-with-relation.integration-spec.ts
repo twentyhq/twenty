@@ -1,10 +1,11 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -99,8 +100,27 @@ describe('Delete Object metadata with relation should succeed', () => {
   });
 
   afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataPersonId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataPersonId },
+    });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataOpportunityId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
     });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataOpportunityId },
@@ -113,6 +133,15 @@ describe('Delete Object metadata with relation should succeed', () => {
       relationFieldId: globalTestContext.relationField.id,
     });
 
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: computedContext.objectMetadataIdToDelete,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: computedContext.objectMetadataIdToDelete },
     });
@@ -130,6 +159,15 @@ describe('Delete Object metadata with relation should succeed', () => {
       relationFieldId: globalTestContext.relationField.id,
     });
 
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: computedContext.objectMetadataIdToDelete,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: computedContext.objectMetadataIdToDelete },
     });

@@ -215,6 +215,16 @@ describe('Custom object renaming', () => {
   });
 
   it('4. should delete custom object', async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: listingObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,

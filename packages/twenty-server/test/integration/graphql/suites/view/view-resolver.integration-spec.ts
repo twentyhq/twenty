@@ -17,6 +17,7 @@ import {
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   assertViewStructure,
   cleanupViewRecords,
@@ -53,6 +54,15 @@ describe('View Resolver', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
@@ -134,6 +144,15 @@ describe('View Resolver', () => {
         name: object1ViewName,
       });
 
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadata2Id,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         input: { idToDelete: objectMetadata2Id },
       });
