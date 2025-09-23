@@ -33,18 +33,21 @@ export class EmailingDomainService {
       throw new Error('Emailing domain already exists for this workspace');
     }
 
+    const driverInstance = this.emailingDomainDriverFactory.getCurrentDriver();
+    const verificationResult = await driverInstance.verifyDomain({
+      domain,
+      workspaceId: workspace.id,
+    });
+
     const domainToCreate = {
       domain,
-      driver: driver,
-      status: EmailingDomainStatus.PENDING,
+      driver,
       workspaceId: workspace.id,
-    } as EmailingDomain;
-
-    const driverInstance = this.emailingDomainDriverFactory.getCurrentDriver();
-    const verifiedDomain = await driverInstance.verifyDomain(domainToCreate);
+      ...verificationResult,
+    };
 
     const savedDomain =
-      await this.emailingDomainRepository.save(verifiedDomain);
+      await this.emailingDomainRepository.save(domainToCreate);
 
     return savedDomain;
   }
@@ -106,10 +109,15 @@ export class EmailingDomainService {
     }
 
     const driver = this.emailingDomainDriverFactory.getCurrentDriver();
-    const verifiedDomain = await driver.verifyDomain(emailingDomain);
+    const verificationResult = await driver.verifyDomain({
+      domain: emailingDomain.domain,
+      workspaceId: emailingDomain.workspaceId,
+    });
 
-    const updatedDomain =
-      await this.emailingDomainRepository.save(verifiedDomain);
+    const updatedDomain = await this.emailingDomainRepository.save({
+      ...emailingDomain,
+      ...verificationResult,
+    });
 
     return updatedDomain;
   }
@@ -139,10 +147,15 @@ export class EmailingDomainService {
 
     try {
       const driver = this.emailingDomainDriverFactory.getCurrentDriver();
-      const syncedDomain = await driver.getDomainStatus(emailingDomain);
+      const statusResult = await driver.getDomainStatus({
+        domain: emailingDomain.domain,
+        workspaceId: emailingDomain.workspaceId,
+      });
 
-      const updatedDomain =
-        await this.emailingDomainRepository.save(syncedDomain);
+      const updatedDomain = await this.emailingDomainRepository.save({
+        ...emailingDomain,
+        ...statusResult,
+      });
 
       return updatedDomain;
     } catch (error) {

@@ -9,13 +9,17 @@ import {
 } from '@aws-sdk/client-sesv2';
 
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
-import { type EmailingDomainDriverInterface } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
+import {
+  type DomainStatusInput,
+  type DomainVerificationInput,
+  type EmailingDomainDriverInterface,
+  type EmailingDomainVerificationResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { type AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
-import { type EmailingDomain } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
 
 export class AwsSesDriver implements EmailingDomainDriverInterface {
   private readonly logger = new Logger(AwsSesDriver.name);
@@ -26,23 +30,24 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
   ) {}
 
-  async verifyDomain(domain: EmailingDomain): Promise<EmailingDomain> {
+  async verifyDomain(
+    input: DomainVerificationInput,
+  ): Promise<EmailingDomainVerificationResult> {
     try {
-      this.logger.log(`Starting domain verification for: ${domain.domain}`);
+      this.logger.log(`Starting domain verification for: ${input.domain}`);
 
-      const tenantName = this.generateTenantName(domain.workspaceId);
+      const tenantName = this.generateTenantName(input.workspaceId);
 
       await this.ensureTenantExists(tenantName);
 
       const { isVerified, verificationRecords } =
-        await this.createOrUpdateEmailIdentity(domain.domain, tenantName);
+        await this.createOrUpdateEmailIdentity(input.domain, tenantName);
 
       if (isVerified) {
-        await this.enableDkimSigning(domain.domain);
+        await this.enableDkimSigning(input.domain);
       }
 
       return {
-        ...domain,
         status: isVerified
           ? EmailingDomainStatus.VERIFIED
           : EmailingDomainStatus.PENDING,
@@ -50,36 +55,40 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         verificationRecords,
       };
     } catch (error) {
-      this.logger.error(`Failed to verify domain ${domain.domain}: ${error}`);
+      this.logger.error(`Failed to verify domain ${input.domain}: ${error}`);
       this.awsSesHandleErrorService.handleAwsSesError(error, 'verifyDomain');
     }
   }
 
-  async getDomainStatus(domain: EmailingDomain): Promise<EmailingDomain> {
+  async getDomainStatus(
+    input: DomainStatusInput,
+  ): Promise<EmailingDomainVerificationResult> {
     try {
-      this.logger.log(`Getting domain status for: ${domain.domain}`);
+      this.logger.log(`Getting domain status for: ${input.domain}`);
 
       const sesClient = this.awsSesClientProvider.getSESClient();
 
       const getIdentityCommand = new GetEmailIdentityCommand({
-        EmailIdentity: domain.domain,
+        EmailIdentity: input.domain,
       });
 
       const identityResponse = await sesClient.send(getIdentityCommand);
 
       const status = this.determineVerificationStatus(identityResponse);
       const isFullyVerified = status === EmailingDomainStatus.VERIFIED;
+      const verificationRecords = this.buildVerificationRecords(
+        input.domain,
+        identityResponse.DkimAttributes?.Tokens || [],
+      );
 
       return {
-        ...domain,
         status,
-        verifiedAt: isFullyVerified ? domain.verifiedAt || new Date() : null,
-        verificationRecords: domain.verificationRecords,
+        verifiedAt: isFullyVerified ? new Date() : null,
+        verificationRecords,
       };
     } catch (error) {
       if (error.name === 'NotFoundException') {
         return {
-          ...domain,
           status: EmailingDomainStatus.FAILED,
           verifiedAt: null,
           verificationRecords: [],
@@ -87,7 +96,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       }
 
       this.logger.error(
-        `Failed to get domain status ${domain.domain}: ${error}`,
+        `Failed to get domain status ${input.domain}: ${error}`,
       );
       this.awsSesHandleErrorService.handleAwsSesError(error, 'getDomainStatus');
     }
