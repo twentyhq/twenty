@@ -10,8 +10,10 @@
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
+export { findOrThrow } from './array/findOrThrow';
 export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
+export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
@@ -33,6 +35,17 @@ export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterV
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
+export type {
+  TipTapMarkType,
+  TipTapNodeType,
+  LinkMarkAttributes,
+  TipTapMark,
+} from './tiptap/tiptap-marks';
+export {
+  TIPTAP_MARK_TYPES,
+  TIPTAP_NODE_TYPES,
+  TIPTAP_MARKS_RENDER_ORDER,
+} from './tiptap/tiptap-marks';
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
@@ -46,6 +59,7 @@ export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
 export { lowercaseUrlOriginAndRemoveTrailingSlash } from './url/lowercaseUrlOriginAndRemoveTrailingSlash';
 export { uuidToBase36 } from './uuidToBase36';
+export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { isDefined } from './validation/isDefined';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export { isValidLocale } from './validation/isValidLocale';

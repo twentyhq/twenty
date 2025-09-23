@@ -375,7 +375,13 @@ msgstr "Attachment task"
 msgid "Attachment type"
 msgstr "Attachment type"
 
+#. js-lingui-id: tH6L3e
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment workflow"
+msgstr "Attachment workflow"
+
 #. js-lingui-id: w/Sphq
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -411,6 +417,11 @@ msgstr "Attachments linked to the dashboard"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "Attachments linked to the opportunity"
+
+#. js-lingui-id: 83l3Yd
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Attachments linked to the workflow"
+msgstr "Attachments linked to the workflow"
 
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2208,6 +2219,11 @@ msgstr "NoteTarget opportunity"
 msgid "NoteTarget person"
 msgstr "NoteTarget person"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr "Number format"
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -3209,6 +3225,11 @@ msgstr "User was not created with email/password"
 msgid "User's preferred date format"
 msgstr "User's preferred date format"
 
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr "User's preferred number format"
+
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
@@ -3622,6 +3643,7 @@ msgstr "Welcome to Twenty: Please Confirm Your Email"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflow"
 

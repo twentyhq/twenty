@@ -380,7 +380,13 @@ msgstr "Liitteen tehtävä"
 msgid "Attachment type"
 msgstr "Liitteen tyyppi"
 
+#. js-lingui-id: tH6L3e
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment workflow"
+msgstr ""
+
 #. js-lingui-id: w/Sphq
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -416,6 +422,11 @@ msgstr ""
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "Mahdollisuuteen liitetyt liitteet"
+
+#. js-lingui-id: 83l3Yd
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Attachments linked to the workflow"
+msgstr ""
 
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2213,6 +2224,11 @@ msgstr "Kohdemahdollisuus"
 msgid "NoteTarget person"
 msgstr "Kohdehenkilö"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -3214,6 +3230,11 @@ msgstr "Käyttäjää ei luotu sähköpostilla/salasanalla"
 msgid "User's preferred date format"
 msgstr "Käyttäjän suosima päivämäärämuoto"
 
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr ""
+
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
@@ -3627,6 +3648,7 @@ msgstr "Tervetuloa Twentyyn: Vahvista sähköpostisi"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "Työnkulku"
 

@@ -164,7 +164,7 @@ describe('getWorkflowVersionDiagram', () => {
       "sourceHandle": "default",
       "target": "step-1",
       "targetHandle": "default",
-      "type": "empty-filter--editable",
+      "type": "editable",
       "zIndex": -2,
     },
   ],

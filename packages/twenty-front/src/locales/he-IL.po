@@ -18,6 +18,12 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-front/src/locales/en.po\n"
 "X-Crowdin-File-ID: 29\n"
 
+#. js-lingui-id: lndIq/
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid " billed annually"
+msgstr ""
+
 #. js-lingui-id: /8h/VA
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid " must be one of {ratingValues} values"
@@ -62,6 +68,11 @@ msgstr ": עבר"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Today"
 msgstr ": היום"
+
+#. js-lingui-id: N/lIUf
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid ". The change will be applied the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -113,11 +124,6 @@ msgstr "{failedCount} קובץ(ים) לא הצליחו להיטען"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr ""
 
-#. js-lingui-id: J2Vio9
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{nickname} - {price}$"
-msgstr "{nickname} - {price}$"
-
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -162,13 +168,17 @@ msgid "1. Type"
 msgstr "1. סוג"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "10,000 workflow node executions"
 msgstr "10,000 הפעלות של צמתים בתהליכי עבודה"
 
+#. js-lingui-id: bM5lnW
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "12h - {hour12Label}"
+msgstr ""
+
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h ({hour12Label})"
 msgstr "12h ({hour12Label})"
 
@@ -189,13 +199,17 @@ msgid "2. Set {objectLabelPlural} permissions"
 msgstr "2. הגדר הרשאות עבור {objectLabelPlural}"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "20,000 workflow node executions"
 msgstr "20,000 הפעלות של צמתים בתהליכי עבודה"
 
+#. js-lingui-id: mwTnop
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+msgid "24h - {hour24Label}"
+msgstr ""
+
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "24h ({hour24Label})"
 msgstr "24h ({hour24Label})"
 
@@ -423,11 +437,6 @@ msgstr "הוסף חדש"
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Add node"
-msgstr "הוסף צומת"
-
-#. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Add Node"
 msgstr "הוסף צומת"
 
 #. js-lingui-id: dEO3Zx
@@ -732,6 +741,7 @@ msgstr "אירעה שגיאה."
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "אירעה שגיאה בלתי צפויה"
 
@@ -741,10 +751,10 @@ msgstr "אירעה שגיאה בלתי צפויה"
 msgid "and"
 msgstr "וגם"
 
-#. js-lingui-id: ggT/H4
+#. js-lingui-id: I8f+hC
 #: src/modules/views/components/AnyFieldSearchChip.tsx
-msgid "Any field :"
-msgstr "כל שדה :"
+msgid "Any field"
+msgstr ""
 
 #. js-lingui-id: xJR+Wq
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -757,8 +767,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "API & Webhooks"
 msgstr "API ו-Webhooks"
 
@@ -837,6 +847,11 @@ msgstr "APIים"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
 msgstr "API ו-Webhooks"
+
+#. js-lingui-id: BnUHmx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Apostrophe and dot - {apostropheAndDotExample}"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1070,7 +1085,7 @@ msgid "Blocklist"
 msgstr "רשימת חסומים"
 
 #. js-lingui-id: 2yl5lQ
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Book a Call"
 msgstr "תזמן שיחה"
 
@@ -1195,16 +1210,52 @@ msgstr "לא ניתן לסרוק? העתק את"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "בטל"
 
+#. js-lingui-id: HYLdMN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Cancel Edition"
+msgstr ""
+
+#. js-lingui-id: dV4HC5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching"
+msgstr ""
+
+#. js-lingui-id: M5CqkG
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel interval switching?"
+msgstr ""
+
+#. js-lingui-id: /Dmw1h
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching"
+msgstr ""
+
+#. js-lingui-id: Q/chGD
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel metered tier switching?"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "בטל תוכנית"
 
+#. js-lingui-id: 8eSMLX
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching"
+msgstr ""
+
+#. js-lingui-id: f6KFEf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel plan switching?"
+msgstr ""
+
 #. js-lingui-id: N6gPiD
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "בטל את המינוי שלך"
 
@@ -1236,7 +1287,7 @@ msgid "Change Password"
 msgstr "שנה סיסמה"
 
 #. js-lingui-id: wRtBJP
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Change Plan"
 msgstr "שנה תוכנית"
 
@@ -1245,10 +1296,20 @@ msgstr "שנה תוכנית"
 msgid "Change subdomain?"
 msgstr "לשנות תת-דומיין?"
 
+#. js-lingui-id: 9m7pJA
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Monthly?"
+msgstr ""
+
 #. js-lingui-id: C8G9Mq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "שינוי לתוכנית ארגונית?"
+
+#. js-lingui-id: t7uUc+
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Pro Plan?"
+msgstr ""
 
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1316,7 +1377,7 @@ msgid "Choose the format used to display date value"
 msgstr "בחר את הפורמט להצגת תאריך"
 
 #. js-lingui-id: 9qP96p
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
 msgstr "בחר את ניסיונך"
 
@@ -1418,6 +1479,11 @@ msgstr "עמודות שלא תואמו:"
 msgid "Command Icon"
 msgstr "אייקון פקודות"
 
+#. js-lingui-id: A9u+7N
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Commas and dot - {commasAndDotExample}"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -1462,10 +1528,10 @@ msgstr "הגדר והתאם אישית את העדפות לוח השנה שלך.
 msgid "Configure CalDAV settings to sync your calendar events."
 msgstr "הגדר את הגדרות CalDAV לסנכרון אירועי לוח השנה שלך."
 
-#. js-lingui-id: aGwm+D
+#. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Configure how dates are displayed across the app"
-msgstr "הגדר כיצד מוצגים תאריכים ברחבי האפליקציה"
+msgid "Configure date, time, number, timezone, and calendar start day"
+msgstr ""
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1504,13 +1570,33 @@ msgstr "הגדר את ההגדרות של האימיילים ולוח השנה �
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "אישור"
+
+#. js-lingui-id: qmnX/6
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm changing your current credit plan."
+msgstr ""
 
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "אישור מחיקת תפקיד {roleName}? לא ניתן לבטל זאת. כל החברים יוקצו לתפקיד ברירת המחדל."
+
+#. js-lingui-id: kZkFSm
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm downgrade"
+msgstr ""
+
+#. js-lingui-id: DDbn3x
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Confirm upgrade"
+msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1573,7 +1659,7 @@ msgstr "הקשר"
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
@@ -1860,6 +1946,11 @@ msgstr "תוכנית אשראי"
 msgid "Credit Usage"
 msgstr "שימוש באשראי"
 
+#. js-lingui-id: hdSacI
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credits by period"
+msgstr ""
+
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
@@ -1868,6 +1959,11 @@ msgstr "נקודות חינם בשימוש"
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
+msgstr ""
+
+#. js-lingui-id: Hp1l6f
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+msgid "Current"
 msgstr ""
 
 #. js-lingui-id: 6YzXhC
@@ -1897,8 +1993,8 @@ msgid "Custom domain updated"
 msgstr "הדומיין המותאם עודכן"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Custom objects"
 msgstr "עצמים מותאמים אישית"
 
@@ -2006,11 +2102,6 @@ msgstr "הגדרת בסיס הנתונים מושבתת כרגע."
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "תאריך"
-
-#. js-lingui-id: Ud9zHv
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Date and time"
-msgstr "תאריך ושעה"
 
 #. js-lingui-id: QIIAIQ
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -2194,10 +2285,10 @@ msgstr "מחק סוכן"
 msgid "Delete API key"
 msgstr "מחק מפתח API"
 
-#. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Delete branch"
-msgstr "מחק ענף"
+#. js-lingui-id: ikGfT5
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Delete dashboard"
+msgstr ""
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2428,6 +2519,17 @@ msgstr "אל תיצור אנשי קשר מג'ימייל, אימיילים של �
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "אל תסנכרן אימיילים מ-team@ support@ noreply@..."
 
+#. js-lingui-id: bd+DPX
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Dots and comma - {dotsAndCommaExample}"
+msgstr ""
+
+#. js-lingui-id: LE8J+K
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Downgrade"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2481,6 +2583,7 @@ msgstr "התאריך המוקדם ביותר"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "ערוך"
 
@@ -2510,6 +2613,11 @@ msgstr "ערוך חיבור"
 msgid "Edit CRM data structure and fields"
 msgstr "עריכת מבנה ותכונות נתונים ב-CRM"
 
+#. js-lingui-id: GpnfNN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Edit Dashboard"
+msgstr ""
+
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 msgid "Edit field values"
@@ -2527,7 +2635,7 @@ msgid "Edit iFrame"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "ערוך שיטת תשלום, צפה בחשבוניות שלך ועוד"
 
@@ -2577,9 +2685,14 @@ msgstr "דוא\"ל לא יכול להיות ריק"
 msgid "Email copied to clipboard"
 msgstr "האימייל הועתק ללוח הגזירים"
 
+#. js-lingui-id: GXLHVG
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Email Editor"
+msgstr ""
+
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Email integration"
 msgstr "אינטגרציית דוא\"ל"
 
@@ -2695,7 +2808,7 @@ msgid "Enhances security by requiring a code along with your password"
 msgstr "משפר את האבטחה על ידי דרישה לקוד יחד עם הסיסמה שלך"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "תהנה מתקופת ניסיון חינם של {withCreditCardTrialPeriodDuration} ימים"
 
@@ -2723,6 +2836,11 @@ msgstr "הזן מערך של פריטים או ביטוי משתנה"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "הכנס בפורמט <0>Unicode</0>"
+
+#. js-lingui-id: O6t21f
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
+msgid "Enter link"
+msgstr ""
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2764,6 +2882,11 @@ msgstr "מזהה ישות הועתק ללוח הגזירים"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Environment variable"
 msgstr "משתנה סביבתי"
+
+#. js-lingui-id: SlfejT
+#: src/modules/ai/components/ErrorStepRenderer.tsx
+msgid "Error"
+msgstr ""
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -2815,20 +2938,35 @@ msgstr "שגיאה בעדכון התפקיד"
 msgid "Error validating approved access domain"
 msgstr "שגיאה באימות הדומיין המאושר גישה"
 
+#. js-lingui-id: pt7mmi
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling interval switching."
+msgstr ""
+
+#. js-lingui-id: a1gs9Y
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling metered tier switching."
+msgstr ""
+
+#. js-lingui-id: FS6DQK
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling plan switching."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "שגיאה בעת סיום תקופת הניסיון. אנא פנה לצוות Twenty."
 
-#. js-lingui-id: JKNROf
+#. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Organization Plan."
-msgstr "שגיאה בעת החלפת המנוי לתוכנית ארגונית."
+msgid "Error while switching subscription to {oppositPlan} Plan."
+msgstr ""
 
-#. js-lingui-id: ENV7jU
+#. js-lingui-id: QPJi2W
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while switching subscription to Yearly."
-msgstr "שגיאה בעת החלפת המנוי לשנתי."
+msgid "Error while switching subscription."
+msgstr ""
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2964,6 +3102,11 @@ msgstr "יצוא"
 msgid "Export CSV"
 msgstr "ייצוא CSV"
 
+#. js-lingui-id: KVvnDa
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Export dashboard"
+msgstr ""
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -3063,6 +3206,11 @@ msgstr "העדכון של המשתנה נכשל"
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "לא הצליח להעלות קובץ: {fileName}"
+
+#. js-lingui-id: wJb11y
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+msgid "Failed to upload image: "
+msgstr ""
 
 #. js-lingui-id: ocUvR+
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
@@ -3193,6 +3341,11 @@ msgstr "5 השורות הראשונות"
 msgid "First Name"
 msgstr "שם פרטי"
 
+#. js-lingui-id: ylQd2j
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+msgid "Flow"
+msgstr ""
+
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
@@ -3218,6 +3371,11 @@ msgstr "פורמט"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "פורמט לדוגמה: d-MMM-y (qqq''yy)"
 
+#. js-lingui-id: 4JsQoY
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Formats"
+msgstr ""
+
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
@@ -3229,8 +3387,8 @@ msgid "French"
 msgstr "צרפתית"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "גישה מלאה"
 
@@ -3268,7 +3426,7 @@ msgid "Get the most out of your workspace by inviting your team."
 msgstr "נצלו את המרחב שלכם על ידי הזמנת הצוות שלכם."
 
 #. js-lingui-id: zSGbaR
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Get your subscription"
 msgstr "השיגו את המנוי שלכם"
 
@@ -3666,6 +3824,11 @@ msgstr "אינטגרציות - הגדרות"
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "אינטראקציה עם נתוני סביבת העבודה שלך"
+
+#. js-lingui-id: jyjroS
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Interval switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: ggS/0k
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4080,7 +4243,7 @@ msgid "Loading..."
 msgstr "טוען..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
@@ -4122,7 +4285,7 @@ msgid "Manage API keys and webhooks"
 msgstr "ניהול מפתחות API ו-Webhooks"
 
 #. js-lingui-id: nvgUPq
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "נהל מידע לתשלום"
 
@@ -4252,6 +4415,11 @@ msgstr "מטא-נתונים"
 msgid "Metadata file generation failed"
 msgstr "יצירת קובץ מטא נתונים נכשלה"
 
+#. js-lingui-id: onCJJ6
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Metered tier switching has been cancelled."
+msgstr ""
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4279,7 +4447,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "ניטור ביצוע סנכרון הדואר האלקטרוני שלך"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "חודש"
 
@@ -4291,7 +4459,7 @@ msgid "Month"
 msgstr ""
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "חודשי"
 
@@ -4394,6 +4562,11 @@ msgstr "שם המרחב העבודה שלך"
 msgid "Navbar"
 msgstr "סרגל עליון"
 
+#. js-lingui-id: dVQ33h
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to next dashboard"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4408,6 +4581,11 @@ msgstr "נווט לגרסה הבאה"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "נווט לזרימת עבודה הבאה"
+
+#. js-lingui-id: /Qu2VT
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Navigate to previous dashboard"
+msgstr ""
 
 #. js-lingui-id: 2tw9bo
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4510,6 +4688,7 @@ msgid "New SSO provider"
 msgstr "ספק SSO חדש"
 
 #. js-lingui-id: hXzOVo
+#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "הבא"
@@ -4841,6 +5020,11 @@ msgstr "עכשיו"
 msgid "Number"
 msgstr "מספר"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number of decimals"
@@ -4970,7 +5154,8 @@ msgid "Or"
 msgstr "או"
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "ארגון"
 
@@ -4988,11 +5173,6 @@ msgstr "אחר"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Other workspaces"
 msgstr "מרחבים אחרים"
-
-#. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-msgid "Others"
-msgstr "אחרים"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -5072,6 +5252,11 @@ msgstr "אחוז שאינו ריק"
 msgid "Percentage"
 msgstr "אחוזים"
 
+#. js-lingui-id: rDky0a
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Permanently destroy dashboard"
+msgstr ""
+
 #. js-lingui-id: Bv3y5w
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
@@ -5123,6 +5308,11 @@ msgstr "תמונה"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "תוכנית"
+
+#. js-lingui-id: XduPHC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Plan switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -5223,7 +5413,8 @@ msgid "Privacy Policy"
 msgstr "מדיניות הפרטיות"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "מקצועי"
 
@@ -5421,11 +5612,6 @@ msgstr "הסר כברירת מחדל"
 msgid "Remove Deleted filter"
 msgstr "הסר מסנן נמחקים"
 
-#. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
-msgid "Remove filter"
-msgstr ""
-
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5532,6 +5718,11 @@ msgstr "\"\""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore"
 msgstr "שחזור"
+
+#. js-lingui-id: XRAM5d
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Restore dashboard"
+msgstr ""
 
 #. js-lingui-id: y4Ib1n
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6251,6 +6442,11 @@ msgstr "\\"
 msgid "Source"
 msgstr "מקור"
 
+#. js-lingui-id: IEtmGM
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "Spaces and comma - {spacesAndCommaExample}"
+msgstr ""
+
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
@@ -6262,7 +6458,7 @@ msgid "SSO"
 msgstr "\\"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -6371,15 +6567,20 @@ msgstr "מנוי"
 msgid "Subscription activated."
 msgstr "המנוי הופעל."
 
-#. js-lingui-id: KNMVB5
+#. js-lingui-id: gvXPJz
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Subscription has been switched to Organization Plan."
-msgstr "המינוי הועבר לתוכנית ארגונית."
+msgid "Subscription has been switched to {oppositPlan} Plan."
+msgstr ""
 
 #. js-lingui-id: A5YO8f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "המינוי הועבר לשנתי."
+
+#. js-lingui-id: nQcG+x
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -6412,10 +6613,20 @@ msgstr "\\"
 msgid "Swedish"
 msgstr "שוודית"
 
+#. js-lingui-id: dpXnFC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Monthly"
+msgstr ""
+
 #. js-lingui-id: GCMizN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "העבר לארגון"
+
+#. js-lingui-id: GPKudC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Pro"
+msgstr ""
 
 #. js-lingui-id: eCX1DT
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6471,6 +6682,11 @@ msgstr "הגדרות מערכת"
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "הגדרות מערכת - {systemDateFormatLabel}"
+
+#. js-lingui-id: uKM6SP
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
+msgid "System Settings - {systemNumberFormatLabel}"
+msgstr ""
 
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6717,6 +6933,16 @@ msgstr "ערך זה יישמר בבסיס הנתונים."
 msgid "This week"
 msgstr "השבוע"
 
+#. js-lingui-id: h4VeOo
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
+msgstr ""
+
+#. js-lingui-id: XpARoU
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
+msgstr ""
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -6777,7 +7003,7 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "עקוב אחר צריכת נקודות העבודה שלך ב{intervalLabel}."
 
 #. js-lingui-id: lhkaAC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "ניסיון"
 
@@ -6905,8 +7131,8 @@ msgid "Unknown error"
 msgstr "שגיאה לא ידועה"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Unlimited contacts"
 msgstr "אין מגבלה על מספר אנשי הקשר"
 
@@ -6921,6 +7147,7 @@ msgid "Untitled role"
 msgstr "תפקיד ללא כותרת"
 
 #. js-lingui-id: p1M9l4
+#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr "תהליך עבודה ללא כותרת"
@@ -6945,6 +7172,12 @@ msgstr "עדכן מידע על הסוכן"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
 msgstr "עדכן את תצורת החשבון שלך. קבע תצורה של כל קומבינציה של IMAP, SMTP ו-CalDAV לפי הצורך."
+
+#. js-lingui-id: kwkhPe
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Upgrade"
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -7107,7 +7340,7 @@ msgid "View"
 msgstr "תצוגה"
 
 #. js-lingui-id: KANz0G
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "צפייה בפרטי החשבונית"
 
@@ -7343,12 +7576,12 @@ msgstr "כתוב תיאור עבור סוכן זה"
 
 #. js-lingui-id: 7qI8sJ
 #: src/utils/date-utils.ts
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "שנה"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/utils/subscriptionFlags.ts
+#: src/modules/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "שנתי"
 
@@ -7398,20 +7631,30 @@ msgstr ""
 "אינך יכול לערוך את החיבור הזה מכיוון שיש בו טבלאות במעקב.\n"
 "אם ברצונך לבצע שינויים, צור חיבור חדש או בטל את הסינכרון של הטבלאות תחילה."
 
-#. js-lingui-id: zEM7Ne
+#. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month billed annually."
-msgstr "תחויב ${enterprisePrice} למשתמש לחודש, מחויב שנתי."
+msgid "You have scheduled a metered tier change. Do you want to cancel it?"
+msgstr ""
 
-#. js-lingui-id: HM4D8s
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${enterprisePrice} per user per month."
-msgstr "תחויב ${enterprisePrice} למשתמש לחודש."
+#. js-lingui-id: z8eKS7
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "you will be charged ${enterprisePrice} per user per month"
+msgstr ""
 
-#. js-lingui-id: o4xIH4
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
-msgstr "תחויב ${yearlyPrice} למשתמש לחודש, מחויב שנתי. יחס שווה ערך על פי המנוי הנוכחי שלך ייושם."
+#. js-lingui-id: u3S6u8
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
+msgstr ""
+
+#. js-lingui-id: /T5zAB
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${proPrice} per user per month"
+msgstr ""
+
+#. js-lingui-id: W3k5LA
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
 
 #. js-lingui-id: C2d+Xk
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -7448,6 +7691,16 @@ msgstr "השם שלך כפי שיהיה מוצג"
 msgid "Your name as it will be displayed on the app"
 msgstr "השם שלך כפי שיהיה מוצג באפליקציה"
 
+#. js-lingui-id: QOd24n
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and "
+msgstr ""
+
+#. js-lingui-id: 2Fkd7s
+#: src/modules/billing/hooks/useBillingWording.ts
+msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
+msgstr ""
+
 #. js-lingui-id: YQK8fJ
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
@@ -7464,6 +7717,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "למקום העבודה שלך אין מנוי פעיל. אנא פנו למנהל שלכם."
 
 #. js-lingui-id: RhNbPE
-#: src/pages/settings/SettingsBilling.tsx
+#: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "המרחב האישי שלך יהפוך ללא פעיל"

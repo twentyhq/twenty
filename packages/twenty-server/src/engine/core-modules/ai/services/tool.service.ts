@@ -61,7 +61,7 @@ export class ToolService {
       if (objectPermission.canUpdate) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          parameters: getRecordInputSchema(objectMetadata),
+          inputSchema: getRecordInputSchema(objectMetadata),
           execute: async (parameters) => {
             return this.createRecord(
               objectMetadata.nameSingular,
@@ -74,7 +74,7 @@ export class ToolService {
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          parameters: getRecordInputSchema(objectMetadata),
+          inputSchema: getRecordInputSchema(objectMetadata),
           execute: async (parameters) => {
             return this.updateRecord(
               objectMetadata.nameSingular,
@@ -89,7 +89,7 @@ export class ToolService {
       if (objectPermission.canRead) {
         tools[`find_${objectMetadata.nameSingular}`] = {
           description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination. Returns an array of matching records with their full data.`,
-          parameters: generateFindToolSchema(objectMetadata),
+          inputSchema: generateFindToolSchema(objectMetadata),
           execute: async (parameters) => {
             return this.findRecords(
               objectMetadata.nameSingular,
@@ -102,7 +102,7 @@ export class ToolService {
 
         tools[`find_one_${objectMetadata.nameSingular}`] = {
           description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
-          parameters: generateFindOneToolSchema(),
+          inputSchema: generateFindOneToolSchema(),
           execute: async (parameters) => {
             return this.findOneRecord(
               objectMetadata.nameSingular,
@@ -117,7 +117,7 @@ export class ToolService {
       if (objectPermission.canSoftDelete) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
-          parameters: generateSoftDeleteToolSchema(),
+          inputSchema: generateSoftDeleteToolSchema(),
           execute: async (parameters) => {
             return this.softDeleteRecord(
               objectMetadata.nameSingular,
@@ -130,7 +130,7 @@ export class ToolService {
 
         tools[`soft_delete_many_${objectMetadata.nameSingular}`] = {
           description: `Soft delete multiple ${objectMetadata.labelSingular} records at once by providing an array of record IDs. All records are marked as deleted but remain in the database. This is efficient for bulk operations and preserves all data.`,
-          parameters: generateBulkDeleteToolSchema(),
+          inputSchema: generateBulkDeleteToolSchema(),
           execute: async (parameters) => {
             return this.softDeleteManyRecords(
               objectMetadata.nameSingular,

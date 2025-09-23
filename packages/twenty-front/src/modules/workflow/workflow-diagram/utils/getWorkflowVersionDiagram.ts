@@ -2,7 +2,6 @@ import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
-import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
@@ -21,15 +20,9 @@ export const getWorkflowVersionDiagram = ({
     return EMPTY_DIAGRAM;
   }
 
-  const diagram = generateWorkflowDiagram({
+  return generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    workflowContext,
-  });
-
-  return transformFilterNodesAsEdges({
-    nodes: diagram.nodes,
-    edges: diagram.edges,
     workflowContext,
   });
 };

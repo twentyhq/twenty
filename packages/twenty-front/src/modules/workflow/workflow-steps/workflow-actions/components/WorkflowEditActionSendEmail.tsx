@@ -14,6 +14,7 @@ import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -220,6 +221,7 @@ export const WorkflowEditActionSendEmail = ({
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
+
   return (
     !loading && (
       <>
@@ -283,7 +285,8 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <FormTextFieldInput
+          <WorkflowSendEmailBody
+            action={action}
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
@@ -292,7 +295,6 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
-            multiline
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}

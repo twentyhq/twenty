@@ -1,29 +1,39 @@
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-export const extractErrorMessage = (error: unknown): string => {
-  if (typeof error === 'string') {
-    return error;
-  }
+const isObjectWithMessage = (error: unknown): error is { message: string } => {
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  );
+};
 
-  if (!isDefined(error) || typeof error !== 'object') {
-    return 'An unexpected error occurred';
-  }
-
-  if ('message' in error && typeof error.message === 'string') {
-    return error.message;
-  }
-
-  if (
+const isErrorWithNestedError = (
+  error: unknown,
+): error is {
+  error: { message: string };
+} => {
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
     'error' in error &&
     isDefined(error.error) &&
     typeof error.error === 'object' &&
     'message' in error.error &&
     typeof error.error.message === 'string'
-  ) {
-    return error.error.message;
-  }
+  );
+};
 
-  if (
+const isDeepNestedError = (
+  error: unknown,
+): error is {
+  data: { error: { message: string } };
+} => {
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
     'data' in error &&
     isDefined(error.data) &&
     typeof error.data === 'object' &&
@@ -32,9 +42,25 @@ export const extractErrorMessage = (error: unknown): string => {
     typeof error.data.error === 'object' &&
     'message' in error.data.error &&
     typeof error.data.error.message === 'string'
-  ) {
+  );
+};
+
+export const extractErrorMessage = (error: unknown): string => {
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  if (isObjectWithMessage(error)) {
+    return error.message;
+  }
+
+  if (isErrorWithNestedError(error)) {
+    return error.error.message;
+  }
+
+  if (isDeepNestedError(error)) {
     return error.data.error.message;
   }
 
-  return 'An unexpected error occurred';
+  return t`An unexpected error occurred`;
 };
