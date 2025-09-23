@@ -48,13 +48,40 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
         const updatedPageLayout = data?.updatePageLayoutWithTabsAndWidgets;
 
         if (isDefined(updatedPageLayout)) {
-          set(
-            pageLayoutPersistedCallbackState,
-            updatedPageLayout as PageLayout,
-          );
+          const pageLayoutToPersist: PageLayout = {
+            id: updatedPageLayout.id,
+            name: updatedPageLayout.name,
+            type: updatedPageLayout.type,
+            objectMetadataId: updatedPageLayout.objectMetadataId,
+            tabs:
+              updatedPageLayout.tabs?.map((tab) => ({
+                id: tab.id,
+                title: tab.title,
+                position: tab.position,
+                pageLayoutId: tab.pageLayoutId,
+                createdAt: tab.createdAt,
+                updatedAt: tab.updatedAt,
+                widgets:
+                  tab.widgets?.map((widget) => ({
+                    id: widget.id,
+                    title: widget.title,
+                    type: widget.type,
+                    pageLayoutTabId: widget.pageLayoutTabId,
+                    objectMetadataId: widget.objectMetadataId,
+                    configuration: widget.configuration,
+                    gridPosition: widget.gridPosition,
+                    createdAt: widget.createdAt,
+                    updatedAt: widget.updatedAt,
+                  })) ?? [],
+              })) ?? [],
+            createdAt: updatedPageLayout.createdAt,
+            updatedAt: updatedPageLayout.updatedAt,
+          };
+
+          set(pageLayoutPersistedCallbackState, pageLayoutToPersist);
           set(
             pageLayoutCurrentLayoutsCallbackState,
-            convertPageLayoutToTabLayouts(updatedPageLayout as PageLayout),
+            convertPageLayoutToTabLayouts(pageLayoutToPersist),
           );
         }
       },

@@ -4021,7 +4021,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, pageLayoutTabId: any, objectMetadataId?: any | null, configuration?: any | null, gridPosition: { __typename?: 'GridPosition', row: number, column: number, rowSpan: number, columnSpan: number } }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, pageLayoutTabId: any, objectMetadataId?: any | null, configuration?: any | null, createdAt: string, updatedAt: string, gridPosition: { __typename?: 'GridPosition', row: number, column: number, rowSpan: number, columnSpan: number } }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -4478,7 +4478,11 @@ export const UpdatePageLayoutWithTabsAndWidgetsDocument = gql`
           columnSpan
         }
         configuration
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
     }
   }
 }

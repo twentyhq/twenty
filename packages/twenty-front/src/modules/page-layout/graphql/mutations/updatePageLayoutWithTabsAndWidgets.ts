@@ -31,7 +31,11 @@ export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
             columnSpan
           }
           configuration
+          createdAt
+          updatedAt
         }
+        createdAt
+        updatedAt
       }
     }
   }
