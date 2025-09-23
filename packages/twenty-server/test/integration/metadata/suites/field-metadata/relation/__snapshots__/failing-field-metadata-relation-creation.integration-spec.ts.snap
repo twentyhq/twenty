@@ -5,11 +5,41 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Name not available",
-      "userFriendlyMessage": "This name is not available as it is already used by another field.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "ec696380-7679-4f87-8768-fa9479049615",
+              "name": "fieldNameBisId",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -19,11 +49,41 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Name not available",
-      "userFriendlyMessage": "This name is not available as it is already used by another field.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+                "value": "fieldName",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "886be332-04ed-4b16-854d-1e93c3186cb8",
+              "name": "fieldName",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldName" is not available as it is already used by another field",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -33,11 +93,47 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Invalid label",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "6fd13106-8e10-4769-b840-fc9e24ab6c28",
+              "name": "",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Invalid label: "   "",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -47,11 +143,41 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Exceeds max length",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too long",
+                "userFriendlyMessage": "Name is too long",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "565a577a-e5fd-460d-93fe-72deb6d6a5c4",
+              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name is too long: it exceeds the 63 characters limit.",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -61,11 +187,47 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Input too short",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "a7d7c4fc-6326-4337-87d2-efc86aac6dfc",
+              "name": "",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Input is too short: """,
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -74,11 +236,43 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Object metadata relation target not found for relation creation payload",
+                "userFriendlyMessage": "Object targeted by field to create not found",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "ffc043e9-27fc-4a71-b387-f87f04aa6756",
+                  "type": "MANY_TO_ONE",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Object metadata relation target not found for relation creation payload",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -88,11 +282,42 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","type":"wrong","targetObjectMetadataId":"791ee8c1-38fb-4805-8740-5a51fe265a1b","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+                  "type": "wrong",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -102,11 +327,41 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","targetObjectMetadataId":"791ee8c1-38fb-4805-8740-5a51fe265a1b","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -116,11 +371,57 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "aa9bd898-5d8e-4883-a24b-73490fba6601",
+              "name": "IDX_747db609dd2bb7abe30d5d1926c",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "881549fa-ae27-42d9-87e9-9b94742e32d6",
+              "name": "fieldNameBisId",
+              "objectMetadataId": "ca8e526b-d282-4adc-8be8-789bfda96dd5",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -130,11 +431,42 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"Relation Name","type":"MANY_TO_ONE","targetObjectMetadataId":"","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "Relation Name",
+                  "targetObjectMetadataId": "",
+                  "type": "MANY_TO_ONE",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -144,11 +476,57 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Name not available",
-      "userFriendlyMessage": "This name is not available as it is already used by another field.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "fa1c4d13-f143-4ea4-a461-32c841297e7d",
+              "name": "IDX_28fc32819c3dc0ec7c8594219fc",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "85073dcd-329e-40f6-ae00-bea76bb5a4db",
+              "name": "fieldNameBisId",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -158,11 +536,57 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Name not available",
-      "userFriendlyMessage": "This name is not available as it is already used by another field.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "ecb360e5-5117-470c-a54a-edbd40dca4a7",
+              "name": "IDX_e19260dc9ba8bb2ac7c39c6fcfd",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+                "value": "fieldName",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "3fd429f4-744f-4ffe-bb8b-f76a66ec1702",
+              "name": "fieldName",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldName" is not available as it is already used by another field",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -172,11 +596,63 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Invalid label",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "f6766150-1c1e-4b62-a7dc-682429e42905",
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "56052430-b468-49fb-af2b-3ca57a5f0f04",
+              "name": "",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Invalid label: "   "",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -186,11 +662,57 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Exceeds max length",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "7e3277d2-d27d-4a89-8724-656f6550adf5",
+              "name": "IDX_94535ac037cc2cd5eb316e87a54",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too long",
+                "userFriendlyMessage": "Name is too long",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "fa99503c-a6e6-48a5-b5ff-f3ab59c05dda",
+              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name is too long: it exceeds the 63 characters limit.",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -200,11 +722,63 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "Input too short",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "768250cf-c0e5-4ea4-986d-bbf9be3389b4",
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+            },
+            "status": "fail",
+            "type": "create_index",
+          },
+        ],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "0ac61443-1e42-4eab-9b9f-401e6e4b9259",
+              "name": "",
+              "objectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Input is too short: """,
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -213,11 +787,43 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Object metadata relation target not found for relation creation payload",
+                "userFriendlyMessage": "Object targeted by field to create not found",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "ffc043e9-27fc-4a71-b387-f87f04aa6756",
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Object metadata relation target not found for relation creation payload",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -227,11 +833,42 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","type":"wrong","targetObjectMetadataId":"791ee8c1-38fb-4805-8740-5a51fe265a1b","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+                  "type": "wrong",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -241,11 +878,41 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","targetObjectMetadataId":"791ee8c1-38fb-4805-8740-5a51fe265a1b","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": "791ee8c1-38fb-4805-8740-5a51fe265a1b",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: type must be one of the following values: ONE_TO_MANY, MANY_TO_ONE",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -255,11 +922,41 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "Name is not available, it may be duplicating another field's name.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": "33d647e7-3b7a-4b8c-ba73-f606605b8747",
+              "name": "fieldNameBisId",
+              "objectMetadataId": "ca8e526b-d282-4adc-8be8-789bfda96dd5",
+            },
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name "fieldNameBisId" is not available, check that it is not duplicating another field's name.",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -269,11 +966,42 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid {"targetFieldLabel":"Relation Name","type":"ONE_TO_MANY","targetObjectMetadataId":"","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "Relation Name",
+                  "targetObjectMetadataId": "",
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {},
+            "type": "create_field",
+          },
+        ],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
   },
 ]
 `;
