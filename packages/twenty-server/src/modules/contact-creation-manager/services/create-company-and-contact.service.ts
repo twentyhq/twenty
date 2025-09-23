@@ -209,6 +209,8 @@ export class CreateCompanyAndContactService {
       })
       .filter(isDefined);
 
+    if (filteredContactsToRestore.length === 0) return [];
+
     const workDomainNamesToCreate = filteredContactsToRestore
       .filter(
         (participant) =>

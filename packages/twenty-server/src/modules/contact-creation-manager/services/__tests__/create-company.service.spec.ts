@@ -46,6 +46,13 @@ describe('CreateCompanyService', () => {
       provider: ConnectedAccountProvider.GOOGLE,
     },
   };
+  const companyToRestore: CompanyToCreate = {
+    domainName: 'soft-deleted-company.com',
+    createdBySource: FieldActorSource.MANUAL,
+    createdByContext: {
+      provider: ConnectedAccountProvider.GOOGLE,
+    },
+  };
   const inputForCompanyToCreate1 = {
     address: {
       addressCity: undefined,
@@ -89,6 +96,7 @@ describe('CreateCompanyService', () => {
       find: jest.fn(),
       save: jest.fn(),
       maximum: jest.fn().mockResolvedValue(0),
+      updateMany: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -197,6 +205,46 @@ describe('CreateCompanyService', () => {
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
       expect(mockCompanyRepository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('With existing companies and some deleted', () => {
+    beforeEach(() => {
+      mockCompanyRepository.find.mockResolvedValue([
+        {
+          id: 'soft-deleted-company-1',
+          domainName: { primaryLinkUrl: 'https://soft-deleted-company.com' },
+          deletedAt: new Date(),
+        },
+      ]);
+      mockCompanyRepository.save.mockResolvedValue([]);
+      mockCompanyRepository.updateMany.mockResolvedValue({
+        raw: [
+          {
+            id: 'soft-deleted-company-1',
+            domainNamePrimaryLinkUrl: 'https://soft-deleted-company.com',
+          },
+        ],
+      });
+    });
+
+    it('should restore the soft deleted company', async () => {
+      await service.createOrRestoreCompanies([companyToRestore], workspaceId);
+
+      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
+      expect(mockCompanyRepository.updateMany).toHaveBeenCalledWith(
+        [
+          {
+            criteria: 'soft-deleted-company-1',
+            partialEntity: {
+              deletedAt: null,
+            },
+          },
+        ],
+        undefined,
+        ['domainNamePrimaryLinkUrl', 'id'],
+      );
     });
   });
 });
