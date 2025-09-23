@@ -250,7 +250,7 @@ export const useEdgeState = () => {
         ) {
           return {
             ...edge,
-            ...EDGE_BRANCH_ARROW_MARKER.Dragging, // Use 12px dragging marker for arrow tip hover
+            ...EDGE_BRANCH_ARROW_MARKER.Dragging,
           };
         }
 
