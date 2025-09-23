@@ -837,6 +837,8 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -3861,10 +3863,8 @@ export type WorkflowVersion = {
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  createdStep?: Maybe<WorkflowAction>;
-  deletedStepIds?: Maybe<Array<Scalars['String']>>;
-  stepsNextStepIds?: Maybe<Scalars['JSON']>;
-  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type Workspace = {

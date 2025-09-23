@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { applyDiff } from './applyDiff';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
