@@ -26,6 +26,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 import { AuthService } from './auth.service';
 
@@ -132,6 +133,14 @@ describe('AuthService', () => {
           provide: AuthSsoService,
           useValue: {
             findWorkspaceFromWorkspaceIdOrAuthProvider: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn().mockReturnValue({
+              _: jest.fn().mockReturnValue('mocked-translation'),
+            }),
           },
         },
       ],

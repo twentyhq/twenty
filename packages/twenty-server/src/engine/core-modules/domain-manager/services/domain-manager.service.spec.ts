@@ -1,11 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 import { DomainManagerService } from './domain-manager.service';
 
@@ -62,6 +62,8 @@ describe('DomainManagerService', () => {
   });
   let domainManagerService: DomainManagerService;
   let twentyConfigService: TwentyConfigService;
+  let workspaceRepository: Repository<Workspace>;
+  let publicDomainRepository: Repository<PublicDomain>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -69,7 +71,16 @@ describe('DomainManagerService', () => {
         DomainManagerService,
         {
           provide: getRepositoryToken(Workspace),
-          useClass: Repository,
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(PublicDomain),
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: TwentyConfigService,
@@ -77,15 +88,15 @@ describe('DomainManagerService', () => {
             get: jest.fn(),
           },
         },
-        {
-          provide: AuditService,
-          useValue: {
-            createContext: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
+    workspaceRepository = module.get<Repository<Workspace>>(
+      getRepositoryToken(Workspace),
+    );
+    publicDomainRepository = module.get<Repository<PublicDomain>>(
+      getRepositoryToken(PublicDomain),
+    );
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
@@ -205,6 +216,172 @@ describe('DomainManagerService', () => {
 
       expect(result.searchParams.get('foo')).toBe('bar');
       expect(result.searchParams.get('baz')).toBe('123');
+    });
+  });
+
+  describe('getWorkspaceByOriginOrDefaultWorkspace', () => {
+    it('should return default workspace if IS_MULTIWORKSPACE_ENABLED=false', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: false,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'find').mockResolvedValueOnce([
+        {
+          id: 'workspace-id',
+        },
+      ] as unknown as Workspace[]);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://example.com',
+        );
+
+      expect(result?.id).toEqual('workspace-id');
+    });
+
+    it('should return 1st workspace if multiple workspaces when IS_MULTIWORKSPACE_ENABLED=false', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: false,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'find').mockResolvedValueOnce([
+        {
+          id: 'workspace-id1',
+        },
+        {
+          id: 'workspace-id2',
+        },
+      ] as unknown as Workspace[]);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://example.com',
+        );
+
+      expect(result?.id).toEqual('workspace-id1');
+    });
+
+    it('should return workspace by subdomain', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
+        id: 'workspace-id1',
+        subdomain: '123',
+      } as unknown as Promise<Workspace>);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://123.example.com',
+        );
+
+      expect(result?.id).toEqual('workspace-id1');
+    });
+
+    it('should return workspace by customDomain', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
+        id: 'workspace-id1',
+        customDomain: '123.custom.com',
+      } as unknown as Promise<Workspace>);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://123.custom.com',
+        );
+
+      expect(result?.id).toEqual('workspace-id1');
+    });
+
+    it('should return workspace by publicDomain', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce({
+        id: 'workspace-id1',
+      } as unknown as Promise<Workspace>);
+
+      jest.spyOn(publicDomainRepository, 'findOne').mockResolvedValueOnce({
+        domain: '123.custom.com',
+        workspaceId: 'workspace-id1',
+      } as unknown as Promise<PublicDomain>);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://123.custom.com',
+        );
+
+      expect(result?.id).toEqual('workspace-id1');
+    });
+
+    it('should return undefined if nothing found', async () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValueOnce(null);
+
+      jest.spyOn(publicDomainRepository, 'findOne').mockResolvedValueOnce(null);
+
+      const result =
+        await domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+          'https://123.custom.com',
+        );
+
+      expect(result).toEqual(undefined);
     });
   });
 });

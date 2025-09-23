@@ -258,6 +258,11 @@ msgstr "Příloha"
 msgid "An error occurred."
 msgstr "Došlo k chybě."
 
+#. js-lingui-id: +MvnxO
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "An index must contain at least one field"
+msgstr ""
+
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "An opportunity"
@@ -375,7 +380,13 @@ msgstr "Příloha úkolu"
 msgid "Attachment type"
 msgstr "Typ přílohy"
 
+#. js-lingui-id: tH6L3e
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment workflow"
+msgstr ""
+
 #. js-lingui-id: w/Sphq
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -411,6 +422,11 @@ msgstr ""
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "Přílohy spojené s obchodní příležitostí"
+
+#. js-lingui-id: 83l3Yd
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Attachments linked to the workflow"
+msgstr ""
 
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -761,6 +777,16 @@ msgstr "Účet/X/Twitter kontaktu"
 msgid "Could not find flat entity in maps"
 msgstr ""
 
+#. js-lingui-id: jBrX/g
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index field related field metadata"
+msgstr ""
+
+#. js-lingui-id: HVajHk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index related object metadata"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -964,7 +990,7 @@ msgid "End Date"
 msgstr "Datum ukončení"
 
 #. js-lingui-id: EzGlkq
-#: src/engine/core-modules/dns-manager/validator/cloudflare.validate.ts
+#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
 msgstr ""
 
@@ -1251,6 +1277,11 @@ msgstr "Oblíbené spojené s {label}"
 msgid "Field already exists"
 msgstr "Pole již existuje"
 
+#. js-lingui-id: ugu505
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field cannot be indexed as it belongs to a different object"
+msgstr ""
+
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
@@ -1265,6 +1296,16 @@ msgstr "Pole deklarované jako identifikátor obrázku nebylo nalezeno"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
 msgstr "Pole deklarované jako identifikátor štítku nebylo nalezeno"
+
+#. js-lingui-id: qelyBB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field does not belong to the indexed object"
+msgstr ""
+
+#. js-lingui-id: DXxcTd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field ID is already used in another index"
+msgstr ""
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1300,6 +1341,11 @@ msgstr "Metadata pole použitá pro agregátní operace"
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
 msgstr "Název pole není synchronizován se štítkem pole"
+
+#. js-lingui-id: S+y2Wg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field referenced in index does not exist"
+msgstr ""
 
 #. js-lingui-id: cK8ILP
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
@@ -1452,6 +1498,52 @@ msgstr "Ideální zákaznický profil: Udává, zda je společnost nejvýhodněj
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Je-li definována výchozí hodnota, musí obsahovat alespoň jednu hodnotu"
+
+#. js-lingui-id: Kfy/ML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index already exists"
+msgstr ""
+
+#. js-lingui-id: EwXumf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field has an invalid reference"
+msgstr ""
+
+#. js-lingui-id: +hk7cY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field ID already exists in another index"
+msgstr ""
+
+#. js-lingui-id: ITue4V
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field references incorrect index metadata"
+msgstr ""
+
+#. js-lingui-id: K1hWwv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index must have at least one field"
+msgstr ""
+
+#. js-lingui-id: Hl6cv2
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index related object not found"
+msgstr ""
+
+#. js-lingui-id: fY2zUQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index to delete not found"
+msgstr ""
+
+#. js-lingui-id: qgBN4Y
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same id already exists"
+msgstr ""
+
+#. js-lingui-id: a+k+8J
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same name already exists"
+msgstr ""
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -2132,6 +2224,11 @@ msgstr "NoteTarget příležitost"
 msgid "NoteTarget person"
 msgstr "NoteTarget osoba"
 
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr ""
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -2653,7 +2750,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Stav nelze nastavit ručně."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Krok není formulář"
 
@@ -3133,6 +3230,11 @@ msgstr "Uživatel nebyl vytvořen s e-mailem/heslem"
 msgid "User's preferred date format"
 msgstr "Preferovaný formát data uživatele"
 
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr ""
+
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
@@ -3143,10 +3245,10 @@ msgstr "Uživatelsky preferovaný začátek týdne"
 msgid "User's preferred time format"
 msgstr "Preferovaný časový formát uživatele"
 
-#. js-lingui-id: ckX/Ew
+#. js-lingui-id: xInMK/
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr "Ověření selhalo pro {invalidObjects} objekt(ů) a {invalidFields} pole(a)"
+msgid "Validation failed for 0 object(s) and 0 field(s)"
+msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3447,6 +3549,21 @@ msgstr "Cílový objekt pohledu"
 msgid "View to delete has not been soft deleted"
 msgstr ""
 
+#. js-lingui-id: toB/08
+#: src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+msgid "View to delete not found"
+msgstr ""
+
+#. js-lingui-id: NnD3Ti
+#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+msgid "View to destroy not found"
+msgstr ""
+
+#. js-lingui-id: 3+GbNY
+#: src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "View to update not found"
+msgstr ""
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
@@ -3531,6 +3648,7 @@ msgstr "Vítejte v Twenty: Prosím potvrďte svůj e-mail"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflowy"
 

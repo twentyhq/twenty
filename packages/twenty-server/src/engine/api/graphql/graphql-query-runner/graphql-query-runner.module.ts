@@ -13,6 +13,7 @@ import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/gr
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
 import { GraphqlQueryFindManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-many-resolver.service';
 import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
+import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-group-by-resolver.service';
 import { GraphqlQueryMergeManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-merge-many-resolver.service';
 import { GraphqlQueryRestoreManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-many-resolver.service';
 import { GraphqlQueryRestoreOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-one-resolver.service';
@@ -35,6 +36,7 @@ const graphqlQueryResolvers = [
   GraphqlQueryFindDuplicatesResolverService,
   GraphqlQueryFindManyResolverService,
   GraphqlQueryFindOneResolverService,
+  GraphqlQueryGroupByResolverService,
   GraphqlQueryMergeManyResolverService,
   GraphqlQueryRestoreManyResolverService,
   GraphqlQueryRestoreOneResolverService,

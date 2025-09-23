@@ -1,8 +1,10 @@
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import styled from '@emotion/styled';
 
 const StyledHeaderCell = styled.div<{
-  isFirstRowActiveOrFocused: boolean;
   zIndex?: number;
+  shouldDisplayBorderBottom: boolean;
+  isResizing: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
@@ -10,16 +12,23 @@ const StyledHeaderCell = styled.div<{
 
   position: relative;
 
-  height: 32px;
-  max-height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+    shouldDisplayBorderBottom
+      ? `1px solid ${theme.border.color.light}`
+      : 'none'};
 
   user-select: none;
-  ${({ theme }) => {
+  ${({ theme, isResizing }) => {
+    if (isResizing) {
+      return '';
+    }
+
     return `
     &:hover {
       background: ${theme.background.secondary};
@@ -29,6 +38,8 @@ const StyledHeaderCell = styled.div<{
     };
     `;
   }};
+
+  cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
 
   z-index: ${({ zIndex }) => zIndex ?? 'auto'};
 `;
