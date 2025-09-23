@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json",
+  "standardId": "b3728705-b0da-4383-b992-1c0f78add72d",
+  "label": "Linkedin to Twenty",
+  "description": "A tool to sync LinkedIn profiles to Twenty",
+  "icon": "🔗",
+  "version": "1.0.0"
+}
