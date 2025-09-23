@@ -26,24 +26,16 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
                   }),
                   z.object({
                     type: z.literal('image'),
-                    image: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.string().url(),
-                    ]),
+                    image: z
+                      .string()
+                      .describe('Base64 encoded image data or URL'),
                     mediaType: z.string().optional(),
                   }),
                   z.object({
                     type: z.literal('file'),
-                    data: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.string().url(),
-                    ]),
+                    data: z
+                      .string()
+                      .describe('Base64 encoded file data or URL'),
                     mediaType: z.string(),
                   }),
                 ]),
@@ -62,13 +54,9 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
                   }),
                   z.object({
                     type: z.literal('file'),
-                    data: z.union([
-                      z.string(),
-                      z.instanceof(Uint8Array),
-                      z.instanceof(Buffer),
-                      z.instanceof(ArrayBuffer),
-                      z.string().url(),
-                    ]),
+                    data: z
+                      .string()
+                      .describe('Base64 encoded file data or URL'),
                     mediaType: z.string(),
                     filename: z.string().optional(),
                   }),
@@ -80,7 +68,7 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
                     type: z.literal('tool-call'),
                     toolCallId: z.string(),
                     toolName: z.string(),
-                    input: z.record(z.any()),
+                    input: z.record(z.string(), z.any()),
                   }),
                 ]),
               ),
