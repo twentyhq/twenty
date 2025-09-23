@@ -18,6 +18,17 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
+// To avoid dynamic import issues in Jest
+jest.mock('@react-email/render', () => ({
+  render: jest.fn().mockImplementation(async (template, options) => {
+    if (options?.plainText) {
+      return 'Plain Text Email';
+    }
+
+    return '<html><body>HTML email content</body></html>';
+  }),
+}));
+
 describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
   let approvedAccessDomainRepository: Repository<ApprovedAccessDomain>;
