@@ -5,14 +5,14 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
 
   const edges = useEdges();
 
-  const isInProgressConnection = connection.inProgress;
+  const isConnectionInProgress = connection.inProgress;
 
-  const isConnectable = (nodeId: string) => {
+  const isConnectable = ({ nodeId }: { nodeId: string }) => {
     if (nodeType === 'trigger') {
       return false;
     }
 
-    if (!isInProgressConnection) {
+    if (!isConnectionInProgress) {
       return false;
     }
 
@@ -20,17 +20,29 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
       return false;
     }
 
-    return !edges.some(
+    const edgeAlreadyExists = edges.some(
       (edge) =>
-        edge.target === nodeId &&
-        connection.fromNode?.id &&
-        edge.source === connection.fromNode.id,
+        edge.source === connection.fromNode.id &&
+        edge.sourceHandle === connection.fromHandle.id &&
+        edge.target === nodeId,
+    );
+
+    return !edgeAlreadyExists;
+  };
+
+  const isConnectingSource = ({
+    nodeId,
+    sourceHandleId,
+  }: {
+    nodeId: string;
+    sourceHandleId: string;
+  }) => {
+    return (
+      connection.inProgress &&
+      connection.fromNode.id === nodeId &&
+      connection.fromHandle.id === sourceHandleId
     );
   };
 
-  const isSourceConnected = (nodeId: string) => {
-    return connection.inProgress && connection.fromNode.id === nodeId;
-  };
-
-  return { isConnectable, isSourceConnected, isInProgressConnection };
+  return { isConnectable, isConnectingSource, isConnectionInProgress };
 };

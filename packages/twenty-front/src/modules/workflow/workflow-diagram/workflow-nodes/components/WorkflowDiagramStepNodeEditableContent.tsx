@@ -74,10 +74,12 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { isConnectable, isSourceConnected, isInProgressConnection } =
+  const { isConnectable, isConnectingSource, isConnectionInProgress } =
     useConnectionState(data.nodeType);
 
   const { isSourceSelected, isSourceHovered } = useEdgeState();
+
+  const isNodeConnectable = isConnectable({ nodeId: id });
 
   const handleAddStepButtonContainerClick = (
     event: React.MouseEvent<HTMLDivElement>,
@@ -92,9 +94,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        isConnectable={isConnectable(id)}
+        isConnectable={isNodeConnectable}
       >
-        <WorkflowDiagramHandleTarget isConnectable={isConnectable(id)} />
+        <WorkflowDiagramHandleTarget isConnectable={isNodeConnectable} />
 
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
@@ -119,7 +121,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         )}
       </WorkflowNodeContainer>
 
-      {!data.hasNextStepIds && !isInProgressConnection && (
+      {!data.hasNextStepIds && !isConnectionInProgress && (
         <StyledAddStepButtonContainer
           shouldDisplay={
             isHovered ||
@@ -153,8 +155,11 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
           }) ||
           selected ||
-          isSourceConnected(id) ||
-          (isConnectable(id) && isHovered)
+          isConnectingSource({
+            nodeId: id,
+            sourceHandleId: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
+          }) ||
+          (isNodeConnectable && isHovered)
         }
         hovered={
           isSourceHovered({
@@ -175,8 +180,11 @@ export const WorkflowDiagramStepNodeEditableContent = ({
               sourceHandle: data.rightHandleOptions.id,
             }) ||
             selected ||
-            isSourceConnected(id) ||
-            (isConnectable(id) && isHovered)
+            isConnectingSource({
+              nodeId: id,
+              sourceHandleId: data.rightHandleOptions.id,
+            }) ||
+            (isNodeConnectable && isHovered)
           }
           hovered={
             isSourceHovered({
