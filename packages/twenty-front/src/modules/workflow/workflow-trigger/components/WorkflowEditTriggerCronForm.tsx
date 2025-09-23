@@ -108,45 +108,55 @@ export const WorkflowEditTriggerCronForm = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.type === 'CUSTOM' && (
-          <FormTextFieldInput
-            label={t`Expression`}
-            placeholder="0 */1 * * *"
-            error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
-            onBlur={onBlur}
-            hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
-            readonly={triggerOptions.readonly}
-            defaultValue={trigger.settings.pattern}
-            onChange={(newPattern: string) => {
-              if (triggerOptions.readonly === true) {
-                return;
-              }
+          <>
+            <div style={{ 
+              fontSize: '14px', 
+              color: '#8E8E93', 
+              marginBottom: '16px',
+              marginTop: '8px'
+            }}>
+              Cron will be triggered at UTC time
+            </div>
+            <FormTextFieldInput
+              label={t`Expression`}
+              placeholder="0 */1 * * *"
+              error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
+              onBlur={onBlur}
+              hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+              readonly={triggerOptions.readonly}
+              defaultValue={trigger.settings.pattern}
+              onChange={(newPattern: string) => {
+                if (triggerOptions.readonly === true) {
+                  return;
+                }
 
-              const cronValidator = cron(newPattern);
+                const cronValidator = cron(newPattern);
 
-              if (cronValidator.isError() === true) {
-                setErrorMessages({
-                  CUSTOM: `Invalid cron pattern, ${cronValidator
-                    .getError()[0]
-                    .replace(/\. \(Input cron:.*$/, '')}`,
+                if (cronValidator.isError() === true) {
+                  setErrorMessages({
+                    CUSTOM: `Invalid cron pattern, ${cronValidator
+                      .getError()[0]
+                      .replace(/\. \(Input cron:.*$/, '')}`,
+                  });
+                  return;
+                }
+
+                setErrorMessages((prev) => ({
+                  ...prev,
+                  CUSTOM: undefined,
+                }));
+
+                triggerOptions.onTriggerUpdate({
+                  ...trigger,
+                  settings: {
+                    ...trigger.settings,
+                    type: 'CUSTOM',
+                    pattern: newPattern,
+                  },
                 });
-                return;
-              }
-
-              setErrorMessages((prev) => ({
-                ...prev,
-                CUSTOM: undefined,
-              }));
-
-              triggerOptions.onTriggerUpdate({
-                ...trigger,
-                settings: {
-                  ...trigger.settings,
-                  type: 'CUSTOM',
-                  pattern: newPattern,
-                },
-              });
-            }}
-          />
+              }}
+            />
+          </>
         )}
         {trigger.settings.type === 'DAYS' && (
           <>
