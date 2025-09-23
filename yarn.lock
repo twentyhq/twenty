@@ -17944,6 +17944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@standard-schema/utils@npm:^0.3.0":
   version: 0.3.0
   resolution: "@standard-schema/utils@npm:0.3.0"
@@ -17951,6 +17952,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> main
 "@stitches/core@npm:^1.2.6":
   version: 1.2.8
   resolution: "@stitches/core@npm:1.2.8"
