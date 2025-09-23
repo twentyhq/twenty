@@ -117,11 +117,9 @@ export class RefreshTokenService {
       JwtTokenTypeEnum.REFRESH,
       payload.workspaceId ?? payload.userId,
     );
-    const expiresIn = this.twentyConfigService.get(
-      isImpersonationToken
-        ? 'IMPERSONATION_REFRESH_TOKEN_EXPIRES_IN'
-        : 'REFRESH_TOKEN_EXPIRES_IN',
-    );
+    const expiresIn = isImpersonationToken
+      ? '1d'
+      : this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
       throw new AuthException(
