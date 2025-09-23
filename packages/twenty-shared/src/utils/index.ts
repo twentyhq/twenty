@@ -13,6 +13,7 @@ export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
 export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
+export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';

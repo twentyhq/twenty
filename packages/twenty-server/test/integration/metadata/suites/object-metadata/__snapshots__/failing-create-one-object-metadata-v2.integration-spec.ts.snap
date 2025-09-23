@@ -5,7 +5,28 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -46,7 +67,28 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -87,7 +129,28 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -128,7 +191,28 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -169,7 +253,28 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -210,7 +315,28 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -251,7 +377,28 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -293,7 +440,28 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -335,7 +503,28 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_da4ca4dc0c441477f29e4a384b0",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -456,7 +645,28 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -497,7 +707,28 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -538,7 +769,28 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -584,7 +836,28 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ffebb98ec981552dbecc71223c8",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -630,7 +903,28 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_2e70d840ef39341865172574229",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -786,7 +1080,28 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_e0b8367f7f89bf39915991232b6",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -942,7 +1257,28 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_e895f7d7a9fc30bad070509afab",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -1063,7 +1399,28 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_00aaf7dba3ae2d70218bdebd383",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -1184,7 +1541,28 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_e0b8367f7f89bf39915991232b6",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -1340,7 +1718,28 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_17a51d4440e492a8ec4d594c445",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -1496,7 +1895,28 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_acbec9630e5330ad7c000993538",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
@@ -1538,7 +1958,28 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
-      "index": [],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_OBJECT_NOT_FOUND",
+              "message": "Could not find index related object metadata",
+              "userFriendlyMessage": "Index related object not found",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_acbec9630e5330ad7c000993538",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
       "objectMetadata": [
         {
           "errors": [
