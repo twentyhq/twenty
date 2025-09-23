@@ -4,7 +4,10 @@ import axios, { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
-import { lowercaseUrlOriginAndRemoveTrailingSlash } from 'twenty-shared/utils';
+import {
+  isDefined,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
+} from 'twenty-shared/utils';
 import { type DeepPartial, ILike } from 'typeorm';
 
 import { type FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -35,7 +38,7 @@ export class CreateCompanyService {
     });
   }
 
-  async createCompanies(
+  async createOrRestoreCompanies(
     companies: CompanyToCreate[],
     workspaceId: string,
   ): Promise<{
@@ -73,6 +76,7 @@ export class CreateCompanyService {
     // Find existing companies
     const existingCompanies = await companyRepository.find({
       where: conditions,
+      withDeleted: true,
     });
     const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
@@ -87,7 +91,12 @@ export class CreateCompanyService {
         ),
     );
 
-    if (newCompaniesToCreate.length === 0) {
+    const companiesToRestore = this.filterCompaniesToRestore(
+      uniqueCompanies,
+      existingCompanies,
+    );
+
+    if (newCompaniesToCreate.length === 0 && companiesToRestore.length === 0) {
       return existingCompanyIdsMap;
     }
 
@@ -103,12 +112,64 @@ export class CreateCompanyService {
     // Create new companies
     const createdCompanies = await companyRepository.save(newCompaniesData);
 
-    const createdCompanyIdsMap = this.createCompanyMap(createdCompanies);
+    const restoredCompanies = await companyRepository.updateMany(
+      companiesToRestore.map((company) => {
+        return {
+          criteria: company.id,
+          partialEntity: {
+            deletedAt: null,
+          },
+        };
+      }),
+      undefined,
+      ['domainNamePrimaryLinkUrl', 'id'],
+    );
+
+    //TODO : Fix updateMany method to return formatted records
+    const formattedRestoredCompanies = restoredCompanies.raw.map(
+      (row: { id: string; domainNamePrimaryLinkUrl: string }) => {
+        return {
+          id: row.id,
+          domainName: {
+            primaryLinkUrl: row.domainNamePrimaryLinkUrl,
+          },
+        };
+      },
+    );
 
     return {
       ...existingCompanyIdsMap,
-      ...createdCompanyIdsMap,
+      ...(createdCompanies.length > 0
+        ? this.createCompanyMap(createdCompanies)
+        : {}),
+      ...(formattedRestoredCompanies.length > 0
+        ? this.createCompanyMap(formattedRestoredCompanies)
+        : {}),
     };
+  }
+
+  private filterCompaniesToRestore(
+    uniqueCompanies: CompanyToCreate[],
+    existingCompanies: CompanyWorkspaceEntity[],
+  ) {
+    return uniqueCompanies
+      .map((company) => {
+        const existingCompany = existingCompanies.find(
+          (existingCompany) =>
+            existingCompany.domainName &&
+            extractDomainFromLink(existingCompany.domainName.primaryLinkUrl) ===
+              company.domainName,
+        );
+
+        return isDefined(existingCompany)
+          ? {
+              domainName: company.domainName,
+              id: existingCompany.id,
+              deletedAt: null,
+            }
+          : undefined;
+      })
+      .filter(isDefined);
   }
 
   private async prepareCompanyData(
@@ -142,7 +203,9 @@ export class CreateCompanyService {
     };
   }
 
-  private createCompanyMap(companies: DeepPartial<CompanyWorkspaceEntity>[]) {
+  private createCompanyMap(
+    companies: Pick<CompanyWorkspaceEntity, 'id' | 'domainName'>[],
+  ) {
     return companies.reduce(
       (acc, company) => {
         if (!company.domainName?.primaryLinkUrl || !company.id) {

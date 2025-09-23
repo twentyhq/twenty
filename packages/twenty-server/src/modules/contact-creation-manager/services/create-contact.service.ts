@@ -23,6 +23,11 @@ type ContactToCreate = {
   };
 };
 
+type ContactToRestore = {
+  id: string;
+  companyId?: string;
+};
+
 @Injectable()
 export class CreateContactService {
   constructor(
@@ -95,6 +100,36 @@ export class CreateContactService {
     );
 
     return personRepository.save(formattedContacts, undefined);
+  }
+
+  public async restorePeople(
+    contactsToRestore: ContactToRestore[],
+    workspaceId: string,
+  ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
+    if (contactsToRestore.length === 0) return [];
+
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const restoredContacts = await personRepository.updateMany(
+      contactsToRestore.map((contact) => ({
+        criteria: contact.id,
+        partialEntity: {
+          companyId: contact.companyId,
+          deletedAt: null,
+        },
+      })),
+      undefined,
+      ['companyId', 'id'],
+    );
+
+    return restoredContacts.raw;
   }
 
   private async getLastPersonPosition(

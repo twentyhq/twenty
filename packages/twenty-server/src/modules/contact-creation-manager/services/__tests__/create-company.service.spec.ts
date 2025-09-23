@@ -138,7 +138,7 @@ describe('CreateCompanyService', () => {
     });
 
     it('should successfully create a company', async () => {
-      await service.createCompanies([companyToCreate1], workspaceId);
+      await service.createOrRestoreCompanies([companyToCreate1], workspaceId);
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith([
@@ -147,7 +147,7 @@ describe('CreateCompanyService', () => {
     });
 
     it('should successfully two companies', async () => {
-      await service.createCompanies(
+      await service.createOrRestoreCompanies(
         [companyToCreate1, companyToCreate2],
         workspaceId,
       );
@@ -160,7 +160,7 @@ describe('CreateCompanyService', () => {
     });
 
     it('should create only one of example.com & example.com/ ', async () => {
-      await service.createCompanies(
+      await service.createOrRestoreCompanies(
         [companyToCreate1, companyToCreate1withSlash],
         workspaceId,
       );
@@ -190,7 +190,10 @@ describe('CreateCompanyService', () => {
     });
 
     it('should not create a company if it already exists', async () => {
-      await service.createCompanies([companyToCreateExisting], workspaceId);
+      await service.createOrRestoreCompanies(
+        [companyToCreateExisting],
+        workspaceId,
+      );
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
       expect(mockCompanyRepository.save).not.toHaveBeenCalled();

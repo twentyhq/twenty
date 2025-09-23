@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
+import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -141,10 +142,11 @@ export class CreateCompanyAndContactService {
       }),
     );
 
-    const companiesObject = await this.createCompaniesService.createCompanies(
-      workDomainNamesToCreateFormatted,
-      workspaceId,
-    );
+    const companiesObject =
+      await this.createCompaniesService.createOrRestoreCompanies(
+        workDomainNamesToCreateFormatted,
+        workspaceId,
+      );
 
     const formattedContactsToCreate =
       filteredContactsToCreateWithCompanyDomainNames.map((contact) => ({
@@ -160,8 +162,87 @@ export class CreateCompanyAndContactService {
         },
       }));
 
-    return this.createContactService.createPeople(
+    const restoredContacts =
+      await this.restorePeopleAndRestoreOrCreateCompanies(
+        alreadyCreatedContacts,
+        uniqueContacts,
+        workspaceId,
+        source,
+        connectedAccount,
+      );
+
+    const createdContacts = await this.createContactService.createPeople(
       formattedContactsToCreate,
+      workspaceId,
+    );
+
+    return [...restoredContacts, ...createdContacts];
+  }
+
+  async restorePeopleAndRestoreOrCreateCompanies(
+    alreadyCreatedContacts: PersonWorkspaceEntity[],
+    uniqueContacts: Contact[],
+    workspaceId: string,
+    source: FieldActorSource,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
+  ) {
+    const filteredContactsToRestore = uniqueContacts
+      .map((contact) => {
+        const softDeletedContact = alreadyCreatedContacts.find(
+          (person) =>
+            isDefined(person.deletedAt) &&
+            (person.emails.primaryEmail === contact.handle.toLowerCase() ||
+              (Array.isArray(person.emails?.additionalEmails) &&
+                person.emails.additionalEmails.includes(
+                  contact.handle.toLowerCase(),
+                ))),
+        );
+
+        return isDefined(softDeletedContact)
+          ? {
+              id: softDeletedContact.id,
+              companyDomainName: isWorkEmail(contact.handle)
+                ? getDomainNameFromHandle(contact.handle)
+                : undefined,
+            }
+          : undefined;
+      })
+      .filter(isDefined);
+
+    const workDomainNamesToCreate = filteredContactsToRestore
+      .filter(
+        (participant) =>
+          isDefined(participant.companyDomainName) &&
+          isWorkDomain(participant.companyDomainName),
+      )
+      .map((participant) => ({
+        domainName: participant.companyDomainName,
+        createdBySource: source,
+        createdByWorkspaceMember: connectedAccount.accountOwner,
+        createdByContext: {
+          provider: connectedAccount.provider,
+        },
+      }));
+
+    const companiesObject =
+      await this.createCompaniesService.createOrRestoreCompanies(
+        workDomainNamesToCreate,
+        workspaceId,
+      );
+
+    const formattedContactsToRestore = filteredContactsToRestore.map(
+      (contact) => {
+        return {
+          id: contact.id,
+          companyId: isNonEmptyString(contact.companyDomainName)
+            ? companiesObject[contact.companyDomainName]
+            : undefined,
+        };
+      },
+    );
+
+    return this.createContactService.restorePeople(
+      formattedContactsToRestore,
       workspaceId,
     );
   }
