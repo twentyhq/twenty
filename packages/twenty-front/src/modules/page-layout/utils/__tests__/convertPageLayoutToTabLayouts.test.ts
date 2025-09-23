@@ -1,5 +1,5 @@
 import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
-import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPersistedLayoutToTabLayouts';
+import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
@@ -23,8 +23,8 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
             },
             {
@@ -34,18 +34,18 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.GRAPH,
               gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
             },
           ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: '2025-01-01T00:00:00.000Z',
+          updatedAt: '2025-01-01T00:00:00.000Z',
           deletedAt: null,
         },
       ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
       deletedAt: null,
     };
 

@@ -3,7 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
-import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPersistedLayoutToTabLayouts';
+import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useQuery } from '@apollo/client';

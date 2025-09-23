@@ -1,6 +1,6 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useResetDraftPageLayoutToPersistedPageLayout } from '@/dashboards/hooks/useResetDraftPageLayoutToPageLayout';
+import { useResetDraftPageLayoutToPersistedPageLayout } from '@/dashboards/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
