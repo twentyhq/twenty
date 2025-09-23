@@ -1,3 +1,8 @@
+import {
+    type FieldMetadataComplexOption,
+    type FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { UPDATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/update-enum-field-metadata-test-cases';
 import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -7,17 +12,9 @@ import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-me
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
@@ -47,12 +44,6 @@ describe.each(fieldMetadataEnumTypes)(
     ];
 
     beforeAll(async () => {
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: true,
-      });
-
       const {
         labelPlural,
         description,
@@ -76,25 +67,17 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterAll(async () => {
-      try {
-        await updateOneObjectMetadata({
-          expectToFail: false,
-          input: {
-            idToUpdate: createdObjectMetadataId,
-            updatePayload: { isActive: false },
-          },
-        });
-        await deleteOneObjectMetadata({
-          expectToFail: false,
-          input: { idToDelete: createdObjectMetadataId },
-        });
-      } finally {
-        await updateFeatureFlag({
-          expectToFail: false,
-          featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-          value: false,
-        });
-      }
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: createdObjectMetadataId },
+      });
     });
 
     beforeEach(async () => {

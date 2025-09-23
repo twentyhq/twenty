@@ -1,39 +1,57 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
 import {
-  assertGraphQLErrorResponse,
-  assertGraphQLSuccessfulResponse,
+    assertGraphQLErrorResponse,
+    assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
-  createViewFieldData,
-  updateViewFieldData,
+    createViewFieldData,
+    updateViewFieldData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import {
-  assertViewFieldStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
-
 import {
-  generateViewFieldExceptionMessage,
-  ViewFieldExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-field.exception';
-import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+    assertViewFieldStructure,
+    cleanupViewRecords,
+} from 'test/integration/utils/view-test.util';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
+import {
+    generateViewFieldExceptionMessage,
+    ViewFieldExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
 
   beforeAll(async () => {
     const {

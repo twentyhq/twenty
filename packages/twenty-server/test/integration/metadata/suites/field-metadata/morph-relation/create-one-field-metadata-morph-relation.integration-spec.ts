@@ -1,18 +1,36 @@
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
-  eachTestingContextFilter,
-  type EachTestingContext,
+    eachTestingContextFilter,
+    type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('createOne FieldMetadataService morph relation fields', () => {
   let createdObjectMetadataPersonId = '';
   let createdObjectMetadataOpportunityId = '';
   let createdObjectMetadataCompanyId = '';
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
 
   beforeEach(async () => {
     const {
