@@ -181,7 +181,7 @@ describe('useCreatePageLayoutWidget', () => {
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
       expect(widget.configuration.graphType).toBe(graphType);
-      expect(widget.id).toBe('widget-mock-uuid');
+      expect(widget.id).toBe('mock-uuid');
     });
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
