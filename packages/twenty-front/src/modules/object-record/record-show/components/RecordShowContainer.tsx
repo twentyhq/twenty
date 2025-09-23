@@ -14,6 +14,7 @@ import { useRecoilValue } from 'recoil';
 import React, { Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 
 const LazyShowPageSubContainer = React.lazy(() =>
   import('@/ui/layout/show-page/components/ShowPageSubContainer').then(
@@ -50,16 +51,32 @@ const RecordShowSubcontainerSkeleton = () => {
         highlightColor={theme.background.transparent.lighter}
         borderRadius={theme.border.radius.sm}
       >
-        <Skeleton height={28} width="35%" />
-
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+          width="35%"
+        />
         <div style={{ display: 'flex', gap: theme.spacing(3) }}>
-          <Skeleton height={32} width={70} />
-          <Skeleton height={32} width={70} />
-          <Skeleton height={32} width={70} />
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
+          <Skeleton
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+            width={70}
+          />
         </div>
-
-        <Skeleton height={160} width="100%" />
-        <Skeleton height={160} width="100%" />
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.columns.m}
+          width="100%"
+        />
+        <Skeleton
+          height={SKELETON_LOADER_HEIGHT_SIZES.columns.m}
+          width="100%"
+        />
       </SkeletonTheme>
     </StyledSkeletonWrapper>
   );
