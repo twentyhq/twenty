@@ -8,6 +8,10 @@ import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 
 @Injectable()
 export class StripeSubscriptionScheduleService {
@@ -58,6 +62,13 @@ export class StripeSubscriptionScheduleService {
   }
 
   getEditablePhases(live: Stripe.SubscriptionSchedule) {
+    if (live.phases.length === 0) {
+      throw new BillingException(
+        `Subscription must have at least 1 phase to be editable`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND,
+      );
+    }
+
     const now = Math.floor(Date.now() / 1000);
 
     const currentEditable = (live.phases || []).find((p) => {
@@ -65,13 +76,18 @@ export class StripeSubscriptionScheduleService {
       const e = p.end_date ?? Infinity;
 
       return s <= now && now < e;
-    });
+    }) as Stripe.SubscriptionSchedule.Phase;
 
     const nextEditable = (live.phases || [])
       .filter((p) => (p.start_date ?? 0) > now)
-      .sort((a, b) => (a.start_date ?? 0) - (b.start_date ?? 0))[0];
+      .sort((a, b) => (a.start_date ?? 0) - (b.start_date ?? 0))[0] as
+      | Stripe.SubscriptionSchedule.Phase
+      | undefined;
 
-    return { currentEditable, nextEditable };
+    return {
+      currentEditable,
+      nextEditable,
+    };
   }
 
   async getSubscriptionWithSchedule(stripeSubscriptionId: string) {

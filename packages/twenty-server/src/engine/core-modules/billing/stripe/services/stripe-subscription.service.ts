@@ -92,12 +92,4 @@ export class StripeSubscriptionService {
       reset_billing_cycle_anchor: false,
     };
   }
-
-  async setYearlyThresholds(stripeSubscriptionId: string) {
-    return this.stripe.subscriptions.update(stripeSubscriptionId, {
-      billing_thresholds: this.getBillingThresholdsByInterval(
-        SubscriptionInterval.Year,
-      ),
-    });
-  }
 }

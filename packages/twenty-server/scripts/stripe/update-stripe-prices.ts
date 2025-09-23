@@ -173,31 +173,31 @@ const main = async () => {
     }
   }
 
-  console.log('\n--- Archiving old prices ---');
-  let hasMore = true;
-  let startingAfter = undefined;
-
-  while (hasMore) {
-    const { data, has_more }: { data: Array<Stripe.Price>; has_more: boolean } =
-      await stripe.prices.list({
-        product: productId,
-        limit: 100,
-        starting_after: startingAfter,
-      });
-
-    for (const price of data) {
-      if (price.nickname && !createdNicknames.includes(price.nickname)) {
-        if (price.active) {
-          await stripe.prices.update(price.id, { active: false });
-          console.log(`Archived: ${price.id} (${price.nickname})`);
-        }
-      }
-    }
-
-    if (has_more) {
-      startingAfter = data[data.length - 1].id;
-    }
-  }
+  // console.log('\n--- Archiving old prices ---');
+  // let hasMore = true;
+  // let startingAfter = undefined;
+  //
+  // while (hasMore) {
+  //   const { data, has_more }: { data: Array<Stripe.Price>; has_more: boolean } =
+  //     await stripe.prices.list({
+  //       product: productId,
+  //       limit: 100,
+  //       starting_after: startingAfter,
+  //     });
+  //
+  //   for (const price of data) {
+  //     if (price.nickname && !createdNicknames.includes(price.nickname)) {
+  //       if (price.active) {
+  //         await stripe.prices.update(price.id, { active: false });
+  //         console.log(`Archived: ${price.id} (${price.nickname})`);
+  //       }
+  //     }
+  //   }
+  //
+  //   if (has_more) {
+  //     startingAfter = data[data.length - 1].id;
+  //   }
+  // }
 
   console.log('\nDone.');
   process.exit(0);

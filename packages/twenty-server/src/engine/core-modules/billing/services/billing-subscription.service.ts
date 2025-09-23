@@ -3,8 +3,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import assert from 'assert';
-
 import { Not, Repository } from 'typeorm';
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { differenceInDays } from 'date-fns';
@@ -93,12 +91,21 @@ export class BillingSubscriptionService {
         ],
       });
 
-    assert(
-      notCanceledSubscriptions.length <= 1,
-      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
-    );
+    if (notCanceledSubscriptions.length > 1) {
+      throw new BillingException(
+        `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
+        BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND,
+      );
+    }
 
-    return notCanceledSubscriptions?.[0];
+    if (notCanceledSubscriptions.length === 0) {
+      throw new BillingException(
+        `No active subscription found for workspace ${criteria.workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    return notCanceledSubscriptions[0];
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -519,6 +526,7 @@ export class BillingSubscriptionService {
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
         stripeSubscriptionId,
       );
+
     const schedule =
       await this.stripeSubscriptionScheduleService.findOrCreateSubscriptionSchedule(
         subscription,
@@ -963,7 +971,7 @@ export class BillingSubscriptionService {
           updateType: 'interval',
         });
 
-      return this.upgradeIntervalNowWithReanchor(
+      await this.upgradeIntervalNowWithReanchor(
         billingSubscription.stripeSubscriptionId,
         {
           licensedPriceId: targetLicensedPrice.stripePriceId,
@@ -971,6 +979,53 @@ export class BillingSubscriptionService {
           seats,
         },
       );
+
+      const { currentEditable, nextEditable, subscription } =
+        await this.loadScheduleEditable(
+          billingSubscription.stripeSubscriptionId,
+        );
+
+      if (nextEditable && currentEditable) {
+        const reloadedNextDetails =
+          await this.billingSubscriptionPhaseService.getDetailsFromPhase(
+            nextEditable as BillingSubscriptionSchedulePhase,
+          );
+
+        const mappedNext = await this.resolvePrices({
+          interval: SubscriptionInterval.Year,
+          planKey: reloadedNextDetails.plan.planKey,
+          meteredPriceId: reloadedNextDetails.meteredPrice.stripePriceId,
+          updateType: 'interval',
+        });
+
+        const currentSnap =
+          this.billingSubscriptionPhaseService.toSnapshot(currentEditable);
+
+        const nextPhaseForYear =
+          this.billingSubscriptionPhaseService.buildSnapshot(
+            {
+              start_date: ensureFutureStartDate(
+                (currentSnap.end_date as number | undefined) ??
+                  subscription.current_period_end,
+              ),
+              items: currentSnap.items,
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+            mappedNext.targetLicensedPrice.stripePriceId,
+            reloadedNextDetails.quantity,
+            mappedNext.targetMeteredPrice.stripePriceId,
+            await this.getBillingThresholdsByPriceId(
+              mappedNext.targetLicensedPrice.stripePriceId,
+            ),
+          );
+
+        return await this.scheduleReplaceNext({
+          subscription,
+          scheduleId: subscription.schedule.id,
+          currentSnapshot: currentSnap,
+          nextPhase: nextPhaseForYear,
+        });
+      }
     }
 
     // Case C: Year -> Month
@@ -1217,7 +1272,7 @@ export class BillingSubscriptionService {
     currentSnapshot: Stripe.SubscriptionScheduleUpdateParams.Phase;
     nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
   }): Promise<void> {
-    const { scheduleId, currentSnapshot } = params;
+    const { scheduleId, currentSnapshot, subscription } = params;
     let { nextPhase } = params;
 
     if (
@@ -1239,8 +1294,7 @@ export class BillingSubscriptionService {
     );
     const refreshed =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-        (params.subscription as Stripe.Subscription).id ??
-          (params.subscription as SubscriptionWithSchedule).id,
+        subscription.id,
       );
     const workspaceId = (
       await this.billingSubscriptionRepository.findOneByOrFail({
