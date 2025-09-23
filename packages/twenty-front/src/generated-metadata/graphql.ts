@@ -3636,7 +3636,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
 
 export type UpdatePageLayoutWithTabsInput = {
   name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
 };

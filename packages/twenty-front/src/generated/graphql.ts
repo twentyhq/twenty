@@ -3482,7 +3482,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
 
 export type UpdatePageLayoutWithTabsInput = {
   name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
 };
@@ -4015,6 +4015,14 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
+export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
+  id: Scalars['String'];
+  input: UpdatePageLayoutWithTabsInput;
+}>;
+
+
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, pageLayoutTabId: any, objectMetadataId?: any | null, configuration?: any | null, gridPosition: { __typename?: 'GridPosition', row: number, column: number, rowSpan: number, columnSpan: number } }> | null }> | null } };
+
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
 }>;
@@ -4442,6 +4450,66 @@ export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sea
 export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
 export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
 export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
+export const UpdatePageLayoutWithTabsAndWidgetsDocument = gql`
+    mutation UpdatePageLayoutWithTabsAndWidgets($id: String!, $input: UpdatePageLayoutWithTabsInput!) {
+  updatePageLayoutWithTabsAndWidgets(id: $id, input: $input) {
+    id
+    name
+    type
+    objectMetadataId
+    createdAt
+    updatedAt
+    deletedAt
+    tabs {
+      id
+      title
+      position
+      pageLayoutId
+      widgets {
+        id
+        title
+        type
+        pageLayoutTabId
+        objectMetadataId
+        gridPosition {
+          row
+          column
+          rowSpan
+          columnSpan
+        }
+        configuration
+      }
+    }
+  }
+}
+    `;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationFn = Apollo.MutationFunction<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
+
+/**
+ * __useUpdatePageLayoutWithTabsAndWidgetsMutation__
+ *
+ * To run a mutation, you first call `useUpdatePageLayoutWithTabsAndWidgetsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePageLayoutWithTabsAndWidgetsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePageLayoutWithTabsAndWidgetsMutation, { data, loading, error }] = useUpdatePageLayoutWithTabsAndWidgetsMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdatePageLayoutWithTabsAndWidgetsMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>(UpdatePageLayoutWithTabsAndWidgetsDocument, options);
+      }
+export type UpdatePageLayoutWithTabsAndWidgetsMutationHookResult = ReturnType<typeof useUpdatePageLayoutWithTabsAndWidgetsMutation>;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationResult = Apollo.MutationResult<UpdatePageLayoutWithTabsAndWidgetsMutation>;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationOptions = Apollo.BaseMutationOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
 export const OnDbEventDocument = gql`
     subscription OnDbEvent($input: OnDbEventInput!) {
   onDbEvent(input: $input) {
