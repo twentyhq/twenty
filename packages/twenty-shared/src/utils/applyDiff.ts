@@ -197,54 +197,21 @@ const deepClone = (obj: MutableData): MutableData => {
     return obj;
   }
 
-  try {
-    return structuredClone(obj) as MutableData;
-  } catch {
+  if (typeof structuredClone !== 'undefined') {
     try {
-      return JSON.parse(JSON.stringify(obj)) as MutableData;
+      return structuredClone(obj) as MutableData;
     } catch {
-      return manualDeepClone(obj);
+      return deepCloneJson(obj);
     }
   }
+
+  return deepCloneJson(obj);
 };
 
-const manualDeepClone = (obj: MutableData): MutableData => {
-  if (obj === null || !isObject(obj)) {
-    return obj;
+const deepCloneJson = (obj: MutableData): MutableData => {
+  try {
+    return JSON.parse(JSON.stringify(obj)) as MutableData;
+  } catch {
+    throw new Error('Failed to clone object');
   }
-
-  if (obj instanceof Date) {
-    return new Date(obj.getTime()) as unknown as MutableData;
-  }
-
-  if (obj instanceof RegExp) {
-    return new RegExp(obj) as unknown as MutableData;
-  }
-
-  if (Array.isArray(obj)) {
-    const newArray: ArrayType = [];
-    for (let i = 0; i < obj.length; i++) {
-      const item = obj[i];
-      if (isObject(item)) {
-        newArray[i] = manualDeepClone(item as MutableData);
-      } else {
-        newArray[i] = item;
-      }
-    }
-    return newArray;
-  }
-
-  const cloned: ObjectType = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = (obj as ObjectType)[key];
-      if (isObject(value)) {
-        cloned[key] = manualDeepClone(value as MutableData);
-      } else {
-        cloned[key] = value;
-      }
-    }
-  }
-
-  return cloned;
 };

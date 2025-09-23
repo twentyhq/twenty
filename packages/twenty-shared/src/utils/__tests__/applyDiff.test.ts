@@ -326,6 +326,90 @@ describe('applyDiff', () => {
     });
   });
 
+  describe('FORBIDDEN_OBJECT_KEYS protection', () => {
+    it('should throw error when trying to CREATE forbidden property keys', () => {
+      const obj = { safe: 'value' };
+
+      const diffs: Difference[] = [
+        { type: 'CREATE', path: ['__proto__'], value: 'malicious' },
+      ];
+
+      expect(() => applyDiff(obj, diffs)).toThrow(
+        "Refusing to set forbidden property key '__proto__' on object (prototype pollution protection)"
+      );
+    });
+
+    it('should prevent Unicode escape bypasses of forbidden property keys', () => {
+      const obj = { safe: 'value' };
+
+      const unicodeBypassAttempts = [
+        // __proto__ with Unicode escapes
+        '__\u0070roto__',  // \u0070 = 'p'
+        '__\u{70}roto__',  // ES6 syntax
+        '__pr\u006fto__',  // \u006f = 'o'
+        '__proto\u005f\u005f', // \u005f = '_'
+
+        // constructor with Unicode escapes  
+        'construc\u0074or', // \u0074 = 't'
+        'constr\u0075ctor', // \u0075 = 'u'
+        '\u0063onstructor', // \u0063 = 'c'
+
+        // prototype with Unicode escapes
+        'proto\u0074ype',   // \u0074 = 't'
+        'prototy\u0070e',   // \u0070 = 'p'
+        '\u0070rototype',   // \u0070 = 'p'
+      ];
+
+      unicodeBypassAttempts.forEach((maliciousKey) => {
+        const diffs: Difference[] = [
+          { type: 'CREATE', path: [maliciousKey], value: 'malicious' },
+        ];
+
+        expect(() => applyDiff(obj, diffs)).toThrow(
+          new RegExp(`Refusing to set forbidden property key.*prototype pollution protection`)
+        );
+      });
+    });
+
+    it('should throw error when trying to CHANGE forbidden property keys', () => {
+      const obj = { safe: 'value' };
+
+      const diffs: Difference[] = [
+        { type: 'CHANGE', path: ['constructor'], oldValue: 'old', value: 'malicious' },
+      ];
+
+      expect(() => applyDiff(obj, diffs)).toThrow(
+        "Refusing to set forbidden property key 'constructor' on object (prototype pollution protection)"
+      );
+    });
+
+    it('should silently skip removal of forbidden property keys', () => {
+      const obj = {
+        safe: 'value',
+        normalProp: 'normal',
+      };
+
+      const diffs: Difference[] = [
+        // Try to remove forbidden keys (these should be silently skipped)
+        { type: 'REMOVE', path: ['__proto__'], oldValue: 'anything' },
+        { type: 'REMOVE', path: ['constructor'], oldValue: 'anything' },
+        { type: 'REMOVE', path: ['prototype'], oldValue: 'anything' },
+        // Remove a normal property (this should work)
+        { type: 'REMOVE', path: ['safe'], oldValue: 'value' },
+      ];
+
+      const result = applyDiff(obj, diffs);
+
+      // Only the safe property should be removed, normalProp should remain
+      expect(result).toEqual({
+        normalProp: 'normal',
+      });
+
+      // Verify safe property was actually removed
+      expect(result).not.toHaveProperty('safe');
+    });
+  });
+
   describe('immutability', () => {
     it('should not modify the original object', () => {
       const obj = { prop: 'value', nested: { deep: 'value' } };
