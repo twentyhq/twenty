@@ -32,19 +32,6 @@ describe('View Filter Group REST API', () => {
   let testObjectMetadataId: string;
 
   beforeAll(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: testObjectMetadataId,
-        updatePayload: {
-          isActive: false,
-        },
-      },
-    });
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-
     const {
       data: {
         createOneObject: { id: objectMetadataId },

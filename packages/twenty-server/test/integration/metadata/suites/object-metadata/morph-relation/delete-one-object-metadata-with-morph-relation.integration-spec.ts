@@ -7,9 +7,11 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('Delete Object metadata with morph relation should succeed', () => {
-  let opportunityId = '';
+  let opportunityId: undefined | string;
   let personId = '';
   let companyId = '';
   let morphRelationField: { id: string };
@@ -63,16 +65,19 @@ describe('Delete Object metadata with morph relation should succeed', () => {
   });
 
   afterEach(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: opportunityId,
-        updatePayload: {
-          isActive: false,
+    if (isDefined(opportunityId)) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: opportunityId,
+          updatePayload: {
+            isActive: false,
+          },
         },
-      },
-    });
-    await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
+      });
+      await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
+      opportunityId = undefined;
+    }
 
     await updateOneObjectMetadata({
       expectToFail: false,
@@ -98,6 +103,7 @@ describe('Delete Object metadata with morph relation should succeed', () => {
   });
 
   it('When deleting source object, the relation on the target should be deleted', async () => {
+    jestExpectToBeDefined(opportunityId);
     morphRelationField = await createMorphRelationBetweenObjects({
       objectMetadataId: opportunityId,
       firstTargetObjectMetadataId: personId,
@@ -121,6 +127,7 @@ describe('Delete Object metadata with morph relation should succeed', () => {
     });
 
     expect(fieldAfterDeletion).toBeUndefined();
+    opportunityId = undefined;
   });
 });
 

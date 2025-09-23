@@ -7,6 +7,7 @@ import {
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('updateOne', () => {
@@ -172,14 +173,14 @@ describe('updateOne', () => {
         expectToFail: true,
       });
 
-      // Assert
-      expect(errors[0].message).toBe(
-        'Name is not synced with label. Expected name: "testName", got newName',
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
       );
     });
 
     it('should throw if the field name is not available because of other field with the same name', async () => {
       await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
@@ -189,15 +190,15 @@ describe('updateOne', () => {
       });
 
       const { errors } = await updateOneFieldMetadata({
+        expectToFail: true,
         input: {
           idToUpdate: testFieldId,
-          updatePayload: { name: 'testName' },
+          updatePayload: { name: 'otherTestName' },
         },
       });
 
-      // Assert
-      expect(errors[0].message).toBe(
-        'Name "testName" is not available, check that it is not duplicating another field\'s name.',
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
       );
     });
   });

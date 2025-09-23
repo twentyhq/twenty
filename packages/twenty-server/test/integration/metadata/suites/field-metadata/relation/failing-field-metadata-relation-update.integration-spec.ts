@@ -8,6 +8,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type UpdateOneFieldMetadataTestingContext = EachTestingContext<{
   name: string;
@@ -114,7 +115,7 @@ describe('Field metadata relation update should fail', () => {
       });
 
       expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
+      expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
     },
   );
 });

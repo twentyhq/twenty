@@ -1,4 +1,3 @@
-import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
@@ -162,10 +161,6 @@ describe('createOne FieldMetadataService relation fields', () => {
     } else {
       expect(opportunityFieldOnPerson.settings?.joinColumnName).toBeUndefined();
     }
-
-    await deleteOneFieldMetadata({
-      input: { idToDelete: createdField.id },
-    }).catch();
   });
 });
 
