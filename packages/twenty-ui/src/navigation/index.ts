@@ -36,6 +36,8 @@ export { MenuItemMultiSelectAvatar } from './menu-item/components/MenuItemMultiS
 export { MenuItemMultiSelectTag } from './menu-item/components/MenuItemMultiSelectTag';
 export type { MenuItemNavigateProps } from './menu-item/components/MenuItemNavigate';
 export { MenuItemNavigate } from './menu-item/components/MenuItemNavigate';
+export type { MenuItemPickerProps } from './menu-item/components/MenuItemPicker';
+export { MenuItemPicker } from './menu-item/components/MenuItemPicker';
 export {
   StyledMenuItemSelect,
   MenuItemSelect,
