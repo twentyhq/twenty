@@ -390,6 +390,11 @@ msgstr "הוסף דומיין עם גישה מאושרת"
 msgid "Add Block"
 msgstr "הוסף בלוק"
 
+#. js-lingui-id: 3O3+7h
+#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
+msgid "Add Emailing Domain"
+msgstr ""
+
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -479,6 +484,11 @@ msgstr "הוסף כלל"
 msgid "Add SSO Identity Provider"
 msgstr "הוסף ספק זיהוי של SSO"
 
+#. js-lingui-id: FQArA8
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Add these records to verify your domain."
+msgstr ""
+
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
@@ -519,6 +529,7 @@ msgid "Added {beautifiedCreatedAt}"
 msgstr "נוסף ב-{beautifiedCreatedAt}"
 
 #. js-lingui-id: jEHeq+
+#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
 msgstr "נוסף ב-{beautifyPastDateRelative}"
@@ -1332,6 +1343,11 @@ msgstr "שינויי גרסה"
 msgid "Chat"
 msgstr "שיחה"
 
+#. js-lingui-id: h5C4B4
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Check verification"
+msgstr ""
+
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -1528,6 +1544,11 @@ msgstr "הגדר חיבור SSO"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure and customize your calendar preferences."
 msgstr "הגדר והתאם אישית את העדפות לוח השנה שלך."
+
+#. js-lingui-id: 5i71HM
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Configure and verify domains for emailing from this workspace."
+msgstr ""
 
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2250,6 +2271,7 @@ msgstr "מחק"
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/members/ManageMembersDropdownMenu.tsx
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2472,6 +2494,11 @@ msgstr "פורמט תצוגה"
 msgid "Display text on multiple lines"
 msgstr "הצג טקסט במספר שורות"
 
+#. js-lingui-id: RDL+lZ
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "DNS Records"
+msgstr ""
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -2491,13 +2518,20 @@ msgstr "לא כולל"
 
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "תחום"
 
+#. js-lingui-id: OjtVhh
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Domain not found"
+msgstr ""
+
 #. js-lingui-id: AZ4xlc
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -2737,6 +2771,23 @@ msgstr "הדוא\"ל אומת."
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Email/Domain"
 msgstr "דוא\"ל/דומיין"
+
+#. js-lingui-id: H2lcB9
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "Emailing domain created successfully. Please verify the domain to start using it."
+msgstr ""
+
+#. js-lingui-id: XDpopO
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
+msgid "Emailing domain deleted successfully"
+msgstr ""
+
+#. js-lingui-id: axQccV
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Emailing Domains"
+msgstr ""
 
 #. js-lingui-id: BXEcos
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -3173,6 +3224,11 @@ msgstr "ביטוי"
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Extra Credits Used"
 msgstr "קרדיטים נוספים שנוצלו"
+
+#. js-lingui-id: 7Bj3x9
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Failed"
+msgstr ""
 
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4090,6 +4146,11 @@ msgstr "הצטרף לצוות {workspaceName}"
 msgid "Kanban"
 msgstr "קנבן"
 
+#. js-lingui-id: 7sMeHQ
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "Key"
+msgstr ""
+
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Korean"
@@ -4661,6 +4722,12 @@ msgstr "סוכן חדש"
 msgid "New Approved Access Domain"
 msgstr "דומיין גישה חדש מאושר"
 
+#. js-lingui-id: wqoYqp
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "New Emailing Domain"
+msgstr ""
+
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -5228,6 +5295,11 @@ msgstr "קישור לאיפוס הסיסמה נשלח לדוא\"ל"
 msgid "Paste the code below"
 msgstr "הדבק את הקוד למטה"
 
+#. js-lingui-id: UbRKMZ
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Pending"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5420,6 +5492,11 @@ msgstr "המחיר עודכן."
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
 msgid "Primary Email"
 msgstr "אימייל ראשי"
+
+#. js-lingui-id: 1hKEom
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "Priority"
+msgstr ""
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -6496,6 +6573,11 @@ msgstr "התחל שיחה עם הסוכן האינטליגנטי לקבלת תו
 msgid "Start Your Subscription"
 msgstr "התחל את המנוי שלך"
 
+#. js-lingui-id: hTX65V
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Started verification process"
+msgstr ""
+
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "State"
@@ -6503,6 +6585,7 @@ msgstr "מצב"
 
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
@@ -6740,6 +6823,11 @@ msgstr "סוכן יעד"
 msgid "Tasks"
 msgstr "משימות"
 
+#. js-lingui-id: lKXcJz
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Temporary Failure"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -6785,6 +6873,11 @@ msgstr "מדינת ברירת המחדל לכתובות חדשות"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "\\"
+
+#. js-lingui-id: HUoA4b
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "The domain name you want to use for emailing"
+msgstr ""
 
 #. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
@@ -7076,6 +7169,11 @@ msgstr "נסו את אזורי המשחק של API מסוג REST או GraphQL."
 msgid "Try with another email"
 msgstr "נסה עם דוא\"ל אחר"
 
+#. js-lingui-id: ouRvqq
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "TTL"
+msgstr ""
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -7109,6 +7207,7 @@ msgstr "הגדרת האימות הדו-שלבי הושלמה בהצלחה!"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Type"
 msgstr "סוג"
 
@@ -7135,6 +7234,7 @@ msgid "Unique"
 msgstr "ייחודי"
 
 #. js-lingui-id: Ef7StM
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "לא ידוע"
@@ -7290,6 +7390,7 @@ msgstr "אמת נתונים"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
@@ -7322,6 +7423,11 @@ msgstr "משתנה לא נמצא"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
 msgstr "המשתנה עודכן בהצלחה."
+
+#. js-lingui-id: QDEWii
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Verified"
+msgstr ""
 
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts
@@ -7513,6 +7619,8 @@ msgstr "זרימות עבודה"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
