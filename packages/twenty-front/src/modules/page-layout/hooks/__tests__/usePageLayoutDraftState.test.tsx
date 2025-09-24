@@ -96,7 +96,6 @@ describe('usePageLayoutDraftState', () => {
                 type: WidgetType.GRAPH,
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
                 configuration: { graphType: GraphType.BAR },
-                data: {},
                 objectMetadataId: null,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),

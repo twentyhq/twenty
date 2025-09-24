@@ -181,12 +181,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1', 'step-3'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [
+            {
+              path: ['trigger', 'nextStepIds', 1],
+              type: 'CREATE',
+              value: 'step-3',
+            },
+          ],
+          stepsDiff: [],
         });
       });
 
@@ -203,12 +205,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [],
+          stepsDiff: [],
         });
       });
     });
@@ -272,13 +270,21 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2'],
-            },
+            stepsDiff: [
+              {
+                path: [
+                  'steps',
+                  3,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  1,
+                ],
+                type: 'CREATE',
+                value: 'step-3',
+              },
+            ],
+            triggerDiff: [],
           });
         });
 
@@ -301,13 +307,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           ).not.toHaveBeenCalled();
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2'],
-            },
+            stepsDiff: [],
+            triggerDiff: [],
           });
         });
 
@@ -357,13 +358,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2', 'step-3'],
-            },
+            stepsDiff: [
+              {
+                path: ['steps', 3, 'nextStepIds', 1],
+                type: 'CREATE',
+                value: 'step-3',
+              },
+            ],
+            triggerDiff: [],
           });
         });
       });
@@ -392,12 +394,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': ['step-3'],
-            'step-3': [],
-          },
+          stepsDiff: [
+            {
+              path: ['steps', 1, 'nextStepIds', 0],
+              type: 'CREATE',
+              value: 'step-3',
+            },
+          ],
+          triggerDiff: [],
         });
       });
 
@@ -414,12 +418,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
 
@@ -480,12 +480,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: [],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [
+            {
+              oldValue: 'step-1',
+              path: ['trigger', 'nextStepIds', 0],
+              type: 'REMOVE',
+            },
+          ],
+          stepsDiff: [],
         });
       });
 
@@ -509,12 +511,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
     });
@@ -544,12 +542,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': [],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [
+            {
+              oldValue: 'step-2',
+              path: ['steps', 0, 'nextStepIds', 0],
+              type: 'REMOVE',
+            },
+          ],
+          triggerDiff: [],
         });
       });
 
@@ -566,12 +566,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalledWith();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
 
@@ -670,13 +666,34 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': ['step-1'],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [
+              {
+                oldValue: 'step-2',
+                path: [
+                  'steps',
+                  0,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  0,
+                ],
+                type: 'CHANGE',
+                value: 'step-3',
+              },
+              {
+                oldValue: 'step-3',
+                path: [
+                  'steps',
+                  0,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  1,
+                ],
+                type: 'REMOVE',
+              },
+            ],
+            triggerDiff: [],
           });
         });
 
@@ -699,13 +716,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           ).not.toHaveBeenCalled();
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': ['step-1'],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [],
+            triggerDiff: [],
           });
         });
 
@@ -735,13 +747,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': [],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [
+              {
+                oldValue: 'step-1',
+                path: ['steps', 0, 'nextStepIds', 0],
+                type: 'REMOVE',
+              },
+            ],
+            triggerDiff: [],
           });
         });
       });
