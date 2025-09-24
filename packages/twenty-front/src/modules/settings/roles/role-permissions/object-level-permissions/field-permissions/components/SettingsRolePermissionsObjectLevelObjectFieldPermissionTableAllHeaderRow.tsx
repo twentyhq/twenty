@@ -20,6 +20,7 @@ const StyledSectionHeader = styled.div`
   display: grid;
   grid-template-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
   padding-left: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow =
