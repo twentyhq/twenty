@@ -4,7 +4,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
-import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -58,23 +57,6 @@ export class StripeSubscriptionService {
       return;
     }
     await this.stripe.invoices.pay(latestInvoice.id);
-  }
-
-  async updateSubscriptionItems(
-    stripeSubscriptionId: string,
-    billingSubscriptionItems: BillingSubscriptionItem[],
-  ) {
-    const stripeSubscriptionItemsToUpdate = billingSubscriptionItems.map(
-      (item) => ({
-        id: item.stripeSubscriptionItemId,
-        price: item.stripePriceId,
-        quantity: item.quantity === null ? undefined : item.quantity,
-      }),
-    );
-
-    await this.stripe.subscriptions.update(stripeSubscriptionId, {
-      items: stripeSubscriptionItemsToUpdate,
-    });
   }
 
   async updateSubscription(

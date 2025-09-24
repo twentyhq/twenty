@@ -4,7 +4,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Not, Repository } from 'typeorm';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  findOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 import { differenceInDays } from 'date-fns';
 
 import type Stripe from 'stripe';
@@ -386,6 +390,8 @@ export class BillingSubscriptionService {
   }
 
   async getMeteredBillingPriceByPriceId(stripePriceId: string) {
+    assertIsDefinedOrThrow(stripePriceId);
+
     const currentMeteredBillingPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: {
@@ -980,7 +986,7 @@ export class BillingSubscriptionService {
         },
       );
 
-      const { currentEditable, nextEditable, subscription } =
+      const { currentEditable, nextEditable, subscription, schedule } =
         await this.loadScheduleEditable(
           billingSubscription.stripeSubscriptionId,
         );
@@ -1005,7 +1011,7 @@ export class BillingSubscriptionService {
           this.billingSubscriptionPhaseService.buildSnapshot(
             {
               start_date: ensureFutureStartDate(
-                (currentSnap.end_date as number | undefined) ??
+                (currentSnap?.end_date as number | undefined) ??
                   subscription.current_period_end,
               ),
               items: currentSnap.items,
@@ -1021,11 +1027,13 @@ export class BillingSubscriptionService {
 
         return await this.scheduleReplaceNext({
           subscription,
-          scheduleId: subscription.schedule.id,
+          scheduleId: schedule.id,
           currentSnapshot: currentSnap,
           nextPhase: nextPhaseForYear,
         });
       }
+
+      return;
     }
 
     // Case C: Year -> Month
@@ -1152,7 +1160,7 @@ export class BillingSubscriptionService {
       const { targetLicensedPrice, targetMeteredPrice } =
         await this.resolvePrices({
           interval,
-          planKey: BillingPlanKey.ENTERPRISE,
+          planKey: targetPlanKey,
           meteredPriceId: currentMeteredPriceId,
           updateType: 'plan',
         });
@@ -1161,7 +1169,7 @@ export class BillingSubscriptionService {
         licensedPriceId: targetLicensedPrice.stripePriceId,
         meteredPriceId: targetMeteredPrice.stripePriceId,
         seats,
-        planMeta: BillingPlanKey.ENTERPRISE,
+        planMeta: targetPlanKey,
       });
 
       return;
@@ -1193,7 +1201,7 @@ export class BillingSubscriptionService {
 
       const nextPrices = await this.resolvePrices({
         interval: preservedNextInterval,
-        planKey: BillingPlanKey.PRO,
+        planKey: targetPlanKey,
         meteredPriceId: preservedNextMeteredId,
         updateType: 'plan',
       });
@@ -1307,38 +1315,46 @@ export class BillingSubscriptionService {
 
   private async upgradePlanNow(
     stripeSubscriptionId: string,
-    prices: {
+    newPrices: {
       licensedPriceId: string;
       meteredPriceId: string;
       seats: number;
       planMeta?: BillingPlanKey;
     },
   ): Promise<void> {
-    const sub = await this.billingSubscriptionRepository.findOneOrFail({
-      where: { stripeSubscriptionId },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-      ],
-    });
+    const currentSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { stripeSubscriptionId },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
+      });
 
-    const licensed = this.getCurrentLicensedBillingSubscriptionItemOrThrow(sub);
-    const metered = this.getCurrentMeteredBillingSubscriptionItemOrThrow(sub);
+    const currentLicenseSubsciptionItem =
+      this.getCurrentLicensedBillingSubscriptionItemOrThrow(
+        currentSubscription,
+      );
+    const currentMeteredSubsciptionItem =
+      this.getCurrentMeteredBillingSubscriptionItemOrThrow(currentSubscription);
 
     const updatedSubscription = await this.updateSubscription({
       stripeSubscriptionId,
-      licensedItemId: licensed.stripeSubscriptionItemId,
-      meteredItemId: metered.stripeSubscriptionItemId,
-      licensedPriceId: prices.licensedPriceId,
-      meteredPriceId: prices.meteredPriceId,
-      seats: prices.seats,
+      licensedItemId: currentLicenseSubsciptionItem.stripeSubscriptionItemId,
+      meteredItemId: currentMeteredSubsciptionItem.stripeSubscriptionItemId,
+      licensedPriceId: newPrices.licensedPriceId,
+      meteredPriceId: newPrices.meteredPriceId,
+      seats: newPrices.seats,
       proration: 'create_prorations',
-      metadata: prices.planMeta
-        ? { ...(sub?.metadata || {}), plan: prices.planMeta }
+      metadata: newPrices.planMeta
+        ? { ...(currentSubscription?.metadata || {}), plan: newPrices.planMeta }
         : undefined,
     });
 
-    await this.syncSubscriptionToDatabase(sub.workspaceId, updatedSubscription);
+    await this.syncSubscriptionToDatabase(
+      currentSubscription.workspaceId,
+      updatedSubscription,
+    );
   }
 
   private async upgradeIntervalNowWithReanchor(
