@@ -11,6 +11,7 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -105,6 +106,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsImapSmtpCaldavEnabled = useSetRecoilState(
     isImapSmtpCaldavEnabledState,
   );
+  const setIsEmailingDomainsEnabled = useSetRecoilState(
+    isEmailingDomainsEnabledState,
+  );
 
   const setAppVersion = useSetRecoilState(appVersionState);
 
@@ -179,6 +183,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
+      setIsEmailingDomainsEnabled(clientConfig?.isEmailingDomainsEnabled);
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -211,6 +216,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
+    setIsEmailingDomainsEnabled,
     setLabPublicFeatureFlags,
     setMicrosoftCalendarEnabled,
     setMicrosoftMessagingEnabled,
