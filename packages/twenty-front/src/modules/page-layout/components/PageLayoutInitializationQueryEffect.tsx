@@ -2,7 +2,7 @@ import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLa
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -14,7 +14,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
-  onInitialized: (pageLayout: PageLayoutWithData) => void;
+  onInitialized: (pageLayout: PageLayout) => void;
 };
 
 export const PageLayoutInitializationQueryEffect = ({
@@ -29,7 +29,7 @@ export const PageLayoutInitializationQueryEffect = ({
     },
   });
 
-  const pageLayout: PageLayoutWithData | undefined = data?.getPageLayout;
+  const pageLayout: PageLayout | undefined = data?.getPageLayout;
 
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
@@ -43,7 +43,7 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
-      (layout: PageLayoutWithData) => {
+      (layout: PageLayout) => {
         const currentPersisted = getSnapshotValue(
           snapshot,
           pageLayoutPersistedComponentCallbackState,
