@@ -1,3 +1,6 @@
+import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
@@ -5,10 +8,9 @@ import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { IconArrowsSort, IconDatabase, IconFilters } from 'twenty-ui/display';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledCommandMenuList = styled(CommandMenuList)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -25,12 +27,49 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         headerType={GraphTypeInfo[currentGraphType].label}
         onTitleChange={() => {}}
       />
-      <StyledContainer>
+
+      <StyledCommandMenuList
+        commandGroups={[]}
+        selectableItemIds={[
+          'data-on-display-x',
+          'sort-by-x',
+          'data-on-display-y',
+          'group-by-y',
+        ]}
+      >
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
           setCurrentGraphType={setCurrentGraphType}
         />
-      </StyledContainer>
+        <CommandGroup heading="X axis">
+          <CommandMenuItem
+            Icon={IconDatabase}
+            label="Data on display"
+            id="data-on-display-x"
+            onClick={() => {}}
+          />
+          <CommandMenuItem
+            Icon={IconArrowsSort}
+            label="Sort by"
+            id="sort-by"
+            onClick={() => {}}
+          />
+        </CommandGroup>
+        <CommandGroup heading="Y axis">
+          <CommandMenuItem
+            Icon={IconDatabase}
+            label="Data on display"
+            id="data-on-display-y"
+            onClick={() => {}}
+          />
+          <CommandMenuItem
+            Icon={IconFilters}
+            label="Group by"
+            id="group-by-y"
+            onClick={() => {}}
+          />
+        </CommandGroup>
+      </StyledCommandMenuList>
     </>
   );
 };
