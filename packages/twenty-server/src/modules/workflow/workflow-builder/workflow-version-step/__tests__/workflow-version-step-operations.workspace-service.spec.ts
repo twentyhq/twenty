@@ -191,8 +191,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workflowVersionId: 'workflow-version-id',
       });
 
-      expect(result.type).toBe(WorkflowActionType.CODE);
-      const codeResult = result as unknown as {
+      expect(result.builtStep.type).toBe(WorkflowActionType.CODE);
+      const codeResult = result.builtStep as unknown as {
         settings: {
           input: {
             serverlessFunctionId: string;
@@ -214,8 +214,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workflowVersionId: 'workflow-version-id',
       });
 
-      expect(result.type).toBe(WorkflowActionType.FORM);
-      expect(result.settings.input).toEqual([]);
+      expect(result.builtStep.type).toBe(WorkflowActionType.FORM);
+      expect(result.builtStep.settings.input).toEqual([]);
     });
   });
 

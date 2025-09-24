@@ -488,6 +488,7 @@ export enum ConfigVariableType {
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
+  AwsSesSettings = 'AwsSesSettings',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -837,6 +838,8 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -996,6 +999,29 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
+export type EmailingDomain = {
+  __typename?: 'EmailingDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
+  id: Scalars['UUID'];
+  status: EmailingDomainStatus;
+  updatedAt: Scalars['DateTime'];
+  verificationRecords?: Maybe<Array<VerificationRecord>>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum EmailingDomainDriver {
+  AWS_SES = 'AWS_SES'
+}
+
+export enum EmailingDomainStatus {
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
+  VERIFIED = 'VERIFIED'
+}
+
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1027,6 +1053,7 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
+  IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -1431,6 +1458,7 @@ export type Mutation = {
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createEmailingDomain: EmailingDomain;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1458,6 +1486,7 @@ export type Mutation = {
   deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
   deleteOneField: Field;
@@ -1562,6 +1591,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1671,6 +1701,12 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateEmailingDomainArgs = {
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
 };
 
 
@@ -1794,6 +1830,11 @@ export type MutationDeleteCoreViewSortArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteEmailingDomainArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2318,6 +2359,11 @@ export type MutationValidateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationVerifyEmailingDomainArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
 };
@@ -2648,6 +2694,7 @@ export type Query = {
   getCoreViewSorts: Array<CoreViewSort>;
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
+  getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
@@ -3483,7 +3530,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
 
 export type UpdatePageLayoutWithTabsInput = {
   name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
 };
@@ -3725,6 +3772,14 @@ export type ValidatePasswordResetToken = {
   id: Scalars['UUID'];
 };
 
+export type VerificationRecord = {
+  __typename?: 'VerificationRecord';
+  key: Scalars['String'];
+  priority?: Maybe<Scalars['Float']>;
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type VerifyTwoFactorAuthenticationMethodOutput = {
   __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
   success: Scalars['Boolean'];
@@ -3861,10 +3916,8 @@ export type WorkflowVersion = {
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  createdStep?: Maybe<WorkflowAction>;
-  deletedStepIds?: Maybe<Array<Scalars['String']>>;
-  stepsNextStepIds?: Maybe<Scalars['JSON']>;
-  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type Workspace = {
@@ -4015,6 +4068,14 @@ export type SearchQueryVariables = Exact<{
 
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+
+export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
+  id: Scalars['String'];
+  input: UpdatePageLayoutWithTabsInput;
+}>;
+
+
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, pageLayoutTabId: any, objectMetadataId?: any | null, configuration?: any | null, createdAt: string, updatedAt: string, gridPosition: { __typename?: 'GridPosition', row: number, column: number, rowSpan: number, columnSpan: number } }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -4443,6 +4504,70 @@ export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sea
 export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
 export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
 export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
+export const UpdatePageLayoutWithTabsAndWidgetsDocument = gql`
+    mutation UpdatePageLayoutWithTabsAndWidgets($id: String!, $input: UpdatePageLayoutWithTabsInput!) {
+  updatePageLayoutWithTabsAndWidgets(id: $id, input: $input) {
+    id
+    name
+    type
+    objectMetadataId
+    createdAt
+    updatedAt
+    deletedAt
+    tabs {
+      id
+      title
+      position
+      pageLayoutId
+      widgets {
+        id
+        title
+        type
+        pageLayoutTabId
+        objectMetadataId
+        gridPosition {
+          row
+          column
+          rowSpan
+          columnSpan
+        }
+        configuration
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationFn = Apollo.MutationFunction<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
+
+/**
+ * __useUpdatePageLayoutWithTabsAndWidgetsMutation__
+ *
+ * To run a mutation, you first call `useUpdatePageLayoutWithTabsAndWidgetsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePageLayoutWithTabsAndWidgetsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePageLayoutWithTabsAndWidgetsMutation, { data, loading, error }] = useUpdatePageLayoutWithTabsAndWidgetsMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdatePageLayoutWithTabsAndWidgetsMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>(UpdatePageLayoutWithTabsAndWidgetsDocument, options);
+      }
+export type UpdatePageLayoutWithTabsAndWidgetsMutationHookResult = ReturnType<typeof useUpdatePageLayoutWithTabsAndWidgetsMutation>;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationResult = Apollo.MutationResult<UpdatePageLayoutWithTabsAndWidgetsMutation>;
+export type UpdatePageLayoutWithTabsAndWidgetsMutationOptions = Apollo.BaseMutationOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
 export const OnDbEventDocument = gql`
     subscription OnDbEvent($input: OnDbEventInput!) {
   onDbEvent(input: $input) {

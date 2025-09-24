@@ -20,6 +20,7 @@ import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.mo
 import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -83,6 +84,7 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     ApprovedAccessDomainModule,
+    EmailingDomainModule,
     PublicDomainModule,
     CloudflareModule,
     DnsManagerModule,

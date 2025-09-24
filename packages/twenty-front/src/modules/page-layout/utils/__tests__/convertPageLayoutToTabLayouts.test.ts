@@ -1,10 +1,10 @@
-import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {
-    const pageLayout: PageLayoutWithData = {
+    const pageLayout: PageLayout = {
       id: 'page-layout-1',
       name: 'Page Layout 1',
       type: PageLayoutType.RECORD_PAGE,

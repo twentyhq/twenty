@@ -1,8 +1,8 @@
-import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 
 export const convertPageLayoutToTabLayouts = (
-  pageLayout: PageLayoutWithData,
+  pageLayout: PageLayout,
 ): TabLayouts => {
   if (pageLayout.tabs.length === 0) {
     return {};

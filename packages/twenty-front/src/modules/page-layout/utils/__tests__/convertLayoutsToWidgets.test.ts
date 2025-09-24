@@ -1,9 +1,9 @@
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { GraphType, WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
-  const mockWidgets: PageLayoutWidgetWithData[] = [
+  const mockWidgets: PageLayoutWidget[] = [
     {
       id: 'widget-1',
       pageLayoutTabId: 'tab-1',
@@ -19,7 +19,6 @@ describe('convertLayoutsToWidgets', () => {
       configuration: {
         graphType: GraphType.NUMBER,
       },
-      data: { value: 100 },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -39,7 +38,6 @@ describe('convertLayoutsToWidgets', () => {
       configuration: {
         graphType: GraphType.PIE,
       },
-      data: { items: [] },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,

@@ -41,7 +41,7 @@
     "@graphiql/plugin-explorer": "^1.0.2",
     "@graphiql/react": "^0.23.0",
     "@hello-pangea/dnd": "^16.2.0",
-    "@hookform/resolvers": "^3.1.1",
+    "@hookform/resolvers": "^5.2.2",
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
