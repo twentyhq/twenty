@@ -1,3 +1,4 @@
+import { selectOrdinal } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const formatCronTime = (
@@ -23,6 +24,37 @@ export const formatCronTime = (
     const displayHour =
       hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
     return `${displayHour}:${minuteNum.toString().padStart(2, '0')} ${period}`;
+  }
+};
+
+export const getOrdinalNumber = (num: number): string => {
+  try {
+    return selectOrdinal(num, {
+      one: `${num}st`,
+      two: `${num}nd`,
+      few: `${num}rd`,
+      other: `${num}th`,
+    });
+  } catch {
+    // TODO: remove after extract?
+    // Fallback for test environment - basic English ordinals
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+      return `${num}th`;
+    }
+
+    switch (lastDigit) {
+      case 1:
+        return `${num}st`;
+      case 2:
+        return `${num}nd`;
+      case 3:
+        return `${num}rd`;
+      default:
+        return `${num}th`;
+    }
   }
 };
 

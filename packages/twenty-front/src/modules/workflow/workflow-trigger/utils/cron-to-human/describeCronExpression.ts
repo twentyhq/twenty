@@ -28,25 +28,48 @@ export const describeCronExpression = (
 
     const descriptions: string[] = [];
 
-    // Prioritize minutes over hours for step values like */5
-    const minutesDescription = getMinutesDescription(
-      parts.minutes,
-      mergedOptions,
-    );
+    // Smart priority: Use hours description when we have specific hours,
+    // otherwise use minutes description for patterns like */5
     const hoursDescription = getHoursDescription(
       parts.hours,
       parts.minutes,
       mergedOptions,
     );
+    const minutesDescription = getMinutesDescription(
+      parts.minutes,
+      mergedOptions,
+    );
 
-    if (
-      isDefined(minutesDescription) &&
-      minutesDescription !== '' &&
-      parts.minutes !== '0'
+    // Smart logic for time descriptions
+    if (parts.minutes.includes('/') && parts.hours.includes('-')) {
+      // Special case: minute intervals with hour ranges (e.g., "*/15 9-17")
+      if (isDefined(minutesDescription) && minutesDescription !== '') {
+        descriptions.push(minutesDescription);
+      }
+      if (isDefined(hoursDescription) && hoursDescription !== '') {
+        // Remove "at" prefix from hours description when combining
+        const cleanHoursDesc = hoursDescription.replace(/^at\s+/, '');
+        descriptions.push(cleanHoursDesc);
+      }
+    } else if (
+      parts.hours === '*' &&
+      (parts.minutes.includes('/') ||
+        parts.minutes.includes('-') ||
+        parts.minutes === '*')
     ) {
-      descriptions.push(minutesDescription);
+      // Pattern like "*/5 * * * *", "15-45 * * * *", or "* * * * *" - prioritize minutes
+      if (isDefined(minutesDescription) && minutesDescription !== '') {
+        descriptions.push(minutesDescription);
+      }
+    } else if (parts.hours === '*' && parts.minutes === '0') {
+      // Pattern like "0 * * * *" - should be "every hour", not "at the top of the hour"
+      descriptions.push(t`every hour`);
     } else if (isDefined(hoursDescription) && hoursDescription !== '') {
+      // Use hours description for specific hours or hour patterns
       descriptions.push(hoursDescription);
+    } else if (isDefined(minutesDescription) && minutesDescription !== '') {
+      // Fallback to minutes description
+      descriptions.push(minutesDescription);
     }
     const dayOfMonthDesc = getDayOfMonthDescription(
       parts.dayOfMonth,

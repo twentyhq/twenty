@@ -86,7 +86,7 @@ describe('describeCronExpression', () => {
   describe('complex expressions', () => {
     it('should describe business hours every 15 minutes on weekdays', () => {
       expect(describeCronExpression('*/15 9-17 * * 1-5')).toBe(
-        'every 15 minutes, between 09:00 and 17:00 on weekdays',
+        'every 15 minutes between 09:00 and 17:00 on weekdays',
       );
     });
 
@@ -124,7 +124,7 @@ describe('describeCronExpression', () => {
   describe('real-world complex expressions', () => {
     it('should describe business hours every 15 minutes on weekdays', () => {
       expect(describeCronExpression('*/15 9-17 * * 1-5')).toBe(
-        'between 09:00 and 17:00 on weekdays',
+        'every 15 minutes between 09:00 and 17:00 on weekdays',
       );
     });
 
@@ -165,7 +165,7 @@ describe('describeCronExpression', () => {
 
     it('should handle expression with too many fields', () => {
       expect(() => describeCronExpression('0 0 0 0 0 0 0 0')).toThrow(
-        'Invalid cron expression format',
+        'Failed to describe cron expression',
       );
     });
   });

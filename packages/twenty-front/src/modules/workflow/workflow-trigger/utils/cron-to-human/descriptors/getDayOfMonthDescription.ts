@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CronDescriptionOptions } from '../types/cronDescriptionOptions';
 import {
+  getOrdinalNumber,
   isListValue,
   isNumericRange,
   isStepValue,
@@ -31,8 +32,8 @@ export const getDayOfMonthDescription = (
     const day = dayOfMonth.replace('W', '');
     const dayNum = parseInt(day, 10);
     if (!isNaN(dayNum)) {
-      const dayNumStr = dayNum.toString();
-      return t`on the weekday closest to day ${dayNumStr} of the month`;
+      const ordinalDay = getOrdinalNumber(dayNum);
+      return t`on the weekday closest to the ${ordinalDay} of the month`;
     }
     return t`on weekdays only`;
   }
@@ -54,9 +55,9 @@ export const getDayOfMonthDescription = (
     if (range.includes('-')) {
       const [start, end] = range.split('-');
       const stepNumStr = stepNum.toString();
-      const startDay = start;
-      const endDay = end;
-      return t`every ${stepNumStr} days, between day ${startDay} and ${endDay} of the month`;
+      const startOrdinal = getOrdinalNumber(parseInt(start, 10));
+      const endOrdinal = getOrdinalNumber(parseInt(end, 10));
+      return t`every ${stepNumStr} days, between the ${startOrdinal} and ${endOrdinal} of the month`;
     }
 
     const stepNumStr = stepNum.toString();
@@ -68,29 +69,34 @@ export const getDayOfMonthDescription = (
     const [start, end] = dayOfMonth.split('-');
     const startNum = parseInt(start, 10);
     const endNum = parseInt(end, 10);
-    const startDay = startNum.toString();
-    const endDay = endNum.toString();
-    return t`between day ${startDay} and ${endDay} of the month`;
+    const startOrdinal = getOrdinalNumber(startNum);
+    const endOrdinal = getOrdinalNumber(endNum);
+    return t`between the ${startOrdinal} and ${endOrdinal} of the month`;
   }
 
   // List values (e.g., "1,15,30")
   if (isListValue(dayOfMonth)) {
     const values = dayOfMonth.split(',').map((v) => v.trim());
-    if (values.length === 2) {
-      const firstDay = values[0];
-      const secondDay = values[1];
-      return t`on day ${firstDay} and ${secondDay} of the month`;
+    const ordinalDays = values.map((day) => {
+      const dayNum = parseInt(day, 10);
+      return !isNaN(dayNum) ? getOrdinalNumber(dayNum) : day;
+    });
+
+    if (ordinalDays.length === 2) {
+      const firstDay = ordinalDays[0];
+      const secondDay = ordinalDays[1];
+      return t`on the ${firstDay} and ${secondDay} of the month`;
     }
-    const lastDay = values.pop();
-    const remainingDays = values.join(', ');
-    return t`on day ${remainingDays} and ${lastDay} of the month`;
+    const lastDay = ordinalDays.pop();
+    const remainingDays = ordinalDays.join(', ');
+    return t`on the ${remainingDays} and ${lastDay} of the month`;
   }
 
   // Single day value
   const dayNum = parseInt(dayOfMonth, 10);
   if (!isNaN(dayNum)) {
-    const dayNumStr = dayNum.toString();
-    return t`on day ${dayNumStr} of the month`;
+    const ordinalDay = getOrdinalNumber(dayNum);
+    return t`on the ${ordinalDay} of the month`;
   }
 
   return dayOfMonth;
