@@ -83,15 +83,7 @@ export class ApiService {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest) {
-            id
-            standardId
-            label
-            description
-            version
-            createdAt
-            updatedAt
-          }
+          syncApplication(manifest: $manifest)
         }
       `;
 

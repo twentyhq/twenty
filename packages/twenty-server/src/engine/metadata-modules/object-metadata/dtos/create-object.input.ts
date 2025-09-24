@@ -56,6 +56,12 @@ export class CreateObjectInput {
   @HideField()
   workspaceId: string;
 
+  @HideField()
+  applicationId?: string;
+
+  @HideField()
+  standardId?: string;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
