@@ -1,3 +1,4 @@
+import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -7,7 +8,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { PageLayoutType } from '~/generated/graphql';
-import { useCreatePageLayoutWidget } from '../useCreatePageLayoutWidget';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -17,7 +17,7 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mock-uuid'),
 }));
 
-describe('useCreatePageLayoutWidget', () => {
+describe('useCreatePageLayoutGraphWidget', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -43,7 +43,7 @@ describe('useCreatePageLayoutWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget(
+        const createWidget = useCreatePageLayoutGraphWidget(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         return {
@@ -119,7 +119,7 @@ describe('useCreatePageLayoutWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget(
+        const createWidget = useCreatePageLayoutGraphWidget(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         return {
@@ -207,7 +207,7 @@ describe('useCreatePageLayoutWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutWidget(
+        const createWidget = useCreatePageLayoutGraphWidget(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         return { allWidgets, pageLayoutCurrentLayouts, createWidget };

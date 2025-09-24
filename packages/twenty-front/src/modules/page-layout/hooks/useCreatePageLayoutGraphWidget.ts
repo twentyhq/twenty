@@ -18,7 +18,9 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
 
-export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+export const useCreatePageLayoutGraphWidget = (
+  pageLayoutIdFromProps?: string,
+) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
