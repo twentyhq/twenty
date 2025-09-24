@@ -14,7 +14,7 @@ export const useDeleteStep = () => {
   const deleteStep = async (stepId: string) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const workflowVersionStepChanges = await deleteWorkflowVersionStep({
+    await deleteWorkflowVersionStep({
       workflowVersionId,
       stepId,
     });
@@ -22,7 +22,7 @@ export const useDeleteStep = () => {
     closeCommandMenu();
 
     deleteStepsOutputSchema({
-      stepIds: workflowVersionStepChanges?.deletedStepIds ?? [],
+      stepIds: [stepId],
       workflowVersionId,
     });
   };

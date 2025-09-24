@@ -1,4 +1,4 @@
-import { type Role, type WorkspaceMember } from '~/generated/graphql';
+import { type Role, type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type PartialWorkspaceMember = Omit<
   WorkspaceMember,

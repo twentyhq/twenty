@@ -837,6 +837,8 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -1544,6 +1546,7 @@ export type Mutation = {
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
+  updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
@@ -2220,6 +2223,12 @@ export type MutationUpdatePageLayoutWidgetArgs = {
 };
 
 
+export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutWithTabsInput;
+};
+
+
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
@@ -2537,6 +2546,7 @@ export enum PermissionFlagType {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   EXPORT_CSV = 'EXPORT_CSV',
+  IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
@@ -3448,12 +3458,36 @@ export type UpdatePageLayoutTabInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdatePageLayoutTabWithWidgetsInput = {
+  id: Scalars['UUID'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
+  widgets: Array<UpdatePageLayoutWidgetWithIdInput>;
+};
+
 export type UpdatePageLayoutWidgetInput = {
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<WidgetType>;
+};
+
+export type UpdatePageLayoutWidgetWithIdInput = {
+  configuration: Scalars['JSON'];
+  gridPosition: GridPositionInput;
+  id: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type: WidgetType;
+};
+
+export type UpdatePageLayoutWithTabsInput = {
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
+  type: PageLayoutType;
 };
 
 export type UpdateRoleInput = {
@@ -3829,10 +3863,8 @@ export type WorkflowVersion = {
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  createdStep?: Maybe<WorkflowAction>;
-  deletedStepIds?: Maybe<Array<Scalars['String']>>;
-  stepsNextStepIds?: Maybe<Scalars['JSON']>;
-  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type Workspace = {

@@ -42,7 +42,7 @@ export class ToolAdapterService {
   private createToolSet(tool: Tool) {
     return {
       description: tool.description,
-      parameters: tool.parameters,
+      inputSchema: tool.inputSchema,
       execute: async (parameters: { input: ToolInput }) =>
         tool.execute(parameters.input),
     };

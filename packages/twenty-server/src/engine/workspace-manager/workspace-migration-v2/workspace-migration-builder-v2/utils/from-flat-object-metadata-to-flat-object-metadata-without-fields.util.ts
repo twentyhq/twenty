@@ -5,6 +5,5 @@ import {
 
 export const fromFlatObjectMetadataToFlatObjectMetadataWithoutFields = ({
   flatFieldMetadatas: _flatFieldMetadatas,
-  flatIndexMetadatas: _flatIndexMetadatas,
   ...rest
 }: FlatObjectMetadata): FlatObjectMetadataWithoutFields => rest;

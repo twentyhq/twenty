@@ -26,7 +26,7 @@ export class SendEmailTool implements Tool {
 
   description =
     'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
-  parameters = SendEmailToolParametersZodSchema;
+  inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -91,7 +91,10 @@ export class SendEmailTool implements Tool {
     let { connectedAccountId } = parameters;
 
     try {
-      const emailSchema = z.string().trim().email('Invalid email');
+      const emailSchema = z
+        .string()
+        .trim()
+        .pipe(z.email({ error: 'Invalid email' }));
       const emailValidation = emailSchema.safeParse(email);
 
       if (!emailValidation.success) {

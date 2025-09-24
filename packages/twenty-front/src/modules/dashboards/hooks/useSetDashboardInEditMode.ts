@@ -28,6 +28,7 @@ export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
         set(forceRegisteredActionsByKeyState, (prev) => ({
           ...prev,
           [DashboardSingleRecordActionKeys.EDIT_DASHBOARD]: !value,
+          [DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION]: value,
         }));
       },
     [forceRegisteredActionsByKeyState, isPageLayoutInEditModeState],

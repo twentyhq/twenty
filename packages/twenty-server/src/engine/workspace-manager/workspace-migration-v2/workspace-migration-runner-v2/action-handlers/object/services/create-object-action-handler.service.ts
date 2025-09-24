@@ -48,7 +48,6 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: {
           ...flatObjectMetadataWithoutFields,
-          flatIndexMetadatas: [],
           flatFieldMetadatas,
         },
         flatObjectMetadataMaps,

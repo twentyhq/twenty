@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CoreMessage, generateText } from 'ai';
+import { ModelMessage, generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -15,7 +15,7 @@ export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
-  messages?: CoreMessage[];
+  messages: ModelMessage[];
 };
 
 @Injectable()

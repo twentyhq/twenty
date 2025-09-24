@@ -741,6 +741,7 @@ msgstr "Παρουσιάστηκε σφάλμα."
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
+#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "Παρουσιάστηκε ένα απρόβλεπτο σφάλμα"
 
@@ -1209,8 +1210,14 @@ msgstr "Δεν μπορείτε να σαρώσετε; Αντιγράψτε το
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "Ακύρωση"
+
+#. js-lingui-id: HYLdMN
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Cancel Edition"
+msgstr ""
 
 #. js-lingui-id: dV4HC5
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -1251,6 +1258,12 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Ακύρωση της συνδρομής σας"
+
+#. js-lingui-id: W3MumH
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Cannot impersonate selected user"
+msgstr ""
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2236,6 +2249,7 @@ msgstr "διαγραφή"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2875,6 +2889,11 @@ msgstr "Το Αναγνωριστικό Οντότητας αντιγράφηκ�
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Environment variable"
 msgstr "Μεταβλητή Περιβάλλοντος"
+
+#. js-lingui-id: SlfejT
+#: src/modules/ai/components/ErrorStepRenderer.tsx
+msgid "Error"
+msgstr ""
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -3706,9 +3725,16 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "Μίμηση"
+
+#. js-lingui-id: n3ohBy
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Impersonate workspace users"
+msgstr ""
 
 #. js-lingui-id: l3s5ri
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx

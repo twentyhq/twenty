@@ -101,16 +101,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId,
     workflowVersionId,
     position,
+    id,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     workflowVersionId: string;
     position?: WorkflowStepPositionInput;
-  }): Promise<WorkflowAction> {
-    const newStepId = v4();
-
+    id?: string;
+  }): Promise<{
+    builtStep: WorkflowAction;
+    additionalCreatedSteps?: WorkflowAction[];
+  }> {
     const baseStep = {
-      id: newStepId,
+      id: id || v4(),
       position,
       valid: false,
       nextStepIds: [],
@@ -135,40 +138,44 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         }
 
         return {
-          ...baseStep,
-          name: 'Code - Serverless Function',
-          type: WorkflowActionType.CODE,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            outputSchema: {
-              link: {
-                isLeaf: true,
-                icon: 'IconVariable',
-                tab: 'test',
-                label: 'Generate Function Output',
+          builtStep: {
+            ...baseStep,
+            name: 'Code - Serverless Function',
+            type: WorkflowActionType.CODE,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              outputSchema: {
+                link: {
+                  isLeaf: true,
+                  icon: 'IconVariable',
+                  tab: 'test',
+                  label: 'Generate Function Output',
+                },
+                _outputSchemaType: 'LINK',
               },
-              _outputSchemaType: 'LINK',
-            },
-            input: {
-              serverlessFunctionId: newServerlessFunction.id,
-              serverlessFunctionVersion: 'draft',
-              serverlessFunctionInput: BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA,
+              input: {
+                serverlessFunctionId: newServerlessFunction.id,
+                serverlessFunctionVersion: 'draft',
+                serverlessFunctionInput: BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA,
+              },
             },
           },
         };
       }
       case WorkflowActionType.SEND_EMAIL: {
         return {
-          ...baseStep,
-          name: 'Send Email',
-          type: WorkflowActionType.SEND_EMAIL,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              connectedAccountId: '',
-              email: '',
-              subject: '',
-              body: '',
+          builtStep: {
+            ...baseStep,
+            name: 'Send Email',
+            type: WorkflowActionType.SEND_EMAIL,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                connectedAccountId: '',
+                email: '',
+                subject: '',
+                body: '',
+              },
             },
           },
         };
@@ -180,14 +187,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           });
 
         return {
-          ...baseStep,
-          name: 'Create Record',
-          type: WorkflowActionType.CREATE_RECORD,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              objectName: activeObjectMetadataItem?.nameSingular || '',
-              objectRecord: {},
+          builtStep: {
+            ...baseStep,
+            name: 'Create Record',
+            type: WorkflowActionType.CREATE_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecord: {},
+              },
             },
           },
         };
@@ -199,16 +208,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           });
 
         return {
-          ...baseStep,
-          name: 'Update Record',
-          type: WorkflowActionType.UPDATE_RECORD,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              objectName: activeObjectMetadataItem?.nameSingular || '',
-              objectRecord: {},
-              objectRecordId: '',
-              fieldsToUpdate: [],
+          builtStep: {
+            ...baseStep,
+            name: 'Update Record',
+            type: WorkflowActionType.UPDATE_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecord: {},
+                objectRecordId: '',
+                fieldsToUpdate: [],
+              },
             },
           },
         };
@@ -220,14 +231,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           });
 
         return {
-          ...baseStep,
-          name: 'Delete Record',
-          type: WorkflowActionType.DELETE_RECORD,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              objectName: activeObjectMetadataItem?.nameSingular || '',
-              objectRecordId: '',
+          builtStep: {
+            ...baseStep,
+            name: 'Delete Record',
+            type: WorkflowActionType.DELETE_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecordId: '',
+              },
             },
           },
         };
@@ -239,69 +252,79 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           });
 
         return {
-          ...baseStep,
-          name: 'Search Records',
-          type: WorkflowActionType.FIND_RECORDS,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              objectName: activeObjectMetadataItem?.nameSingular || '',
-              limit: 1,
+          builtStep: {
+            ...baseStep,
+            name: 'Search Records',
+            type: WorkflowActionType.FIND_RECORDS,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                limit: 1,
+              },
             },
           },
         };
       }
       case WorkflowActionType.FORM: {
         return {
-          ...baseStep,
-          name: 'Form',
-          type: WorkflowActionType.FORM,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: [],
+          builtStep: {
+            ...baseStep,
+            name: 'Form',
+            type: WorkflowActionType.FORM,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: [],
+            },
           },
         };
       }
       case WorkflowActionType.FILTER: {
         return {
-          ...baseStep,
-          name: 'Filter',
-          type: WorkflowActionType.FILTER,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              stepFilterGroups: [],
-              stepFilters: [],
+          builtStep: {
+            ...baseStep,
+            name: 'Filter',
+            type: WorkflowActionType.FILTER,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                stepFilterGroups: [],
+                stepFilters: [],
+              },
             },
           },
         };
       }
       case WorkflowActionType.HTTP_REQUEST: {
         return {
-          ...baseStep,
-          name: 'HTTP Request',
-          type: WorkflowActionType.HTTP_REQUEST,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              url: '',
-              method: 'GET',
-              headers: {},
-              body: {},
+          builtStep: {
+            ...baseStep,
+            name: 'HTTP Request',
+            type: WorkflowActionType.HTTP_REQUEST,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                url: '',
+                method: 'GET',
+                headers: {},
+                body: {},
+              },
             },
           },
         };
       }
       case WorkflowActionType.AI_AGENT: {
         return {
-          ...baseStep,
-          name: 'AI Agent',
-          type: WorkflowActionType.AI_AGENT,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              agentId: '',
-              prompt: '',
+          builtStep: {
+            ...baseStep,
+            name: 'AI Agent',
+            type: WorkflowActionType.AI_AGENT,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                agentId: '',
+                prompt: '',
+              },
             },
           },
         };
@@ -315,16 +338,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         return {
-          ...baseStep,
-          name: 'Iterator',
-          type: WorkflowActionType.ITERATOR,
-          settings: {
-            ...BASE_STEP_DEFINITION,
-            input: {
-              items: [],
-              initialLoopStepIds: [emptyNodeStep.id],
+          builtStep: {
+            ...baseStep,
+            name: 'Iterator',
+            type: WorkflowActionType.ITERATOR,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                items: [],
+                initialLoopStepIds: [emptyNodeStep.id],
+              },
             },
           },
+          additionalCreatedSteps: [emptyNodeStep],
         };
       }
       default:

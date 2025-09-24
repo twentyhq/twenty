@@ -6,7 +6,7 @@ export const HttpRequestInputZodSchema = z.object({
     .enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     .describe('The HTTP method to use'),
   headers: z
-    .record(z.string())
+    .record(z.string(), z.string())
     .optional()
     .describe('HTTP headers to include in the request'),
   body: z

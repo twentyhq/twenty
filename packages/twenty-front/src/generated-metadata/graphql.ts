@@ -873,6 +873,8 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -1593,6 +1595,7 @@ export type Mutation = {
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
+  updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
@@ -2309,6 +2312,12 @@ export type MutationUpdatePageLayoutWidgetArgs = {
 };
 
 
+export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutWithTabsInput;
+};
+
+
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
@@ -2626,6 +2635,7 @@ export enum PermissionFlagType {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   EXPORT_CSV = 'EXPORT_CSV',
+  IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
@@ -3602,12 +3612,36 @@ export type UpdatePageLayoutTabInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdatePageLayoutTabWithWidgetsInput = {
+  id: Scalars['UUID'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
+  widgets: Array<UpdatePageLayoutWidgetWithIdInput>;
+};
+
 export type UpdatePageLayoutWidgetInput = {
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<WidgetType>;
+};
+
+export type UpdatePageLayoutWidgetWithIdInput = {
+  configuration: Scalars['JSON'];
+  gridPosition: GridPositionInput;
+  id: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type: WidgetType;
+};
+
+export type UpdatePageLayoutWithTabsInput = {
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
+  type: PageLayoutType;
 };
 
 export type UpdateRemoteServerInput = {
@@ -4001,10 +4035,8 @@ export type WorkflowVersion = {
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  createdStep?: Maybe<WorkflowAction>;
-  deletedStepIds?: Maybe<Array<Scalars['String']>>;
-  stepsNextStepIds?: Maybe<Scalars['JSON']>;
-  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type Workspace = {
@@ -5379,6 +5411,8 @@ export type FindOneCoreViewSortQueryVariables = Exact<{
 
 export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } | null };
 
+export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
+
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
 }>;
@@ -5405,14 +5439,14 @@ export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
 }>;
 
 
-export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
 }>;
 
 
-export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
+export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
@@ -5426,21 +5460,21 @@ export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
 }>;
 
 
-export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeleteWorkflowVersionStepMutationVariables = Exact<{
   input: DeleteWorkflowVersionStepInput;
 }>;
 
 
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, deletedStepIds?: Array<string> | null } };
+export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
 }>;
 
 
-export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
+export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -6030,6 +6064,12 @@ ${BillingSubscriptionFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
 ${ViewFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
+export const WorkflowDiffFragmentFragmentDoc = gql`
+    fragment WorkflowDiffFragment on WorkflowVersionStepChanges {
+  triggerDiff
+  stepsDiff
+}
+    `;
 export const AssignRoleToAgentDocument = gql`
     mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
   assignRoleToAgent(agentId: $agentId, roleId: $roleId)
@@ -12362,11 +12402,10 @@ export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationO
 export const CreateWorkflowVersionEdgeDocument = gql`
     mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   createWorkflowVersionEdge(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type CreateWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
 
 /**
@@ -12396,23 +12435,10 @@ export type CreateWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOption
 export const CreateWorkflowVersionStepDocument = gql`
     mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
   createWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    createdStep {
-      id
-      name
-      type
-      settings
-      valid
-      nextStepIds
-      position {
-        x
-        y
-      }
-    }
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
 
 /**
@@ -12473,11 +12499,10 @@ export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOption
 export const DeleteWorkflowVersionEdgeDocument = gql`
     mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   deleteWorkflowVersionEdge(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DeleteWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
 
 /**
@@ -12507,12 +12532,10 @@ export type DeleteWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOption
 export const DeleteWorkflowVersionStepDocument = gql`
     mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
   deleteWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    deletedStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
 
 /**
@@ -12542,23 +12565,10 @@ export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOption
 export const DuplicateWorkflowVersionStepDocument = gql`
     mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
   duplicateWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    createdStep {
-      id
-      name
-      type
-      settings
-      valid
-      nextStepIds
-      position {
-        x
-        y
-      }
-    }
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DuplicateWorkflowVersionStepMutationFn = Apollo.MutationFunction<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
 
 /**

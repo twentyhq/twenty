@@ -356,6 +356,7 @@ export {
   IconSortDescending,
   IconSortZA,
   IconSparkles,
+  IconSpy,
   IconSql,
   IconSquare,
   IconSquareKey,
