@@ -258,22 +258,49 @@ export class WorkflowRunWorkspaceService {
     stepInfos,
     workflowRunId,
     workspaceId,
+    shouldKeepHistory = false,
   }: {
     stepInfos: Record<string, WorkflowRunStepInfo>;
     workflowRunId: string;
     workspaceId: string;
+    shouldKeepHistory?: boolean;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
     });
 
+    const stepInfosEnrichedWithHistory: Record<string, WorkflowRunStepInfo> =
+      shouldKeepHistory
+        ? Object.entries(stepInfos).reduce((acc, [stepId, stepInfo]) => {
+            const previousStepInfo =
+              workflowRunToUpdate.state?.stepInfos[stepId];
+
+            const updatedHistory = [
+              ...(previousStepInfo?.history ?? []),
+              {
+                result: previousStepInfo?.result,
+                error: previousStepInfo?.error,
+                status: previousStepInfo?.status,
+              },
+            ];
+
+            return {
+              ...acc,
+              [stepId]: {
+                ...stepInfo,
+                history: updatedHistory,
+              },
+            };
+          }, {})
+        : stepInfos;
+
     const partialUpdate = {
       state: {
         ...workflowRunToUpdate.state,
         stepInfos: {
           ...workflowRunToUpdate.state?.stepInfos,
-          ...stepInfos,
+          ...stepInfosEnrichedWithHistory,
         },
       },
     };

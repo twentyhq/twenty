@@ -105,7 +105,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       hasProcessedAllItems,
     };
 
-    if (!hasProcessedAllItems) {
+    if (!hasProcessedAllItems && currentItemIndex > 0) {
       await this.resetStepsInLoop({
         iteratorStepId,
         initialLoopStepIds,
@@ -155,6 +155,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       ),
       workflowRunId,
       workspaceId,
+      shouldKeepHistory: true,
     });
   }
 }
