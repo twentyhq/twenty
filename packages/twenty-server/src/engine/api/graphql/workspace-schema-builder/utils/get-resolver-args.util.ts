@@ -169,7 +169,7 @@ export const getResolverArgs = (
           isNullable: true,
         },
         orderBy: {
-          kind: GqlInputTypeDefinitionKind.OrderBy,
+          kind: GqlInputTypeDefinitionKind.OrderByWithGroupBy,
           isNullable: true,
           isArray: true,
         },
