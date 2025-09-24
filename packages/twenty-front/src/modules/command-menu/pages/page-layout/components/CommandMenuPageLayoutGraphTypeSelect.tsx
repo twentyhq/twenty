@@ -8,7 +8,14 @@ import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconArrowsSort, IconDatabase, IconFilters } from 'twenty-ui/display';
+import {
+  IconArrowsSort,
+  IconAxisX,
+  IconColorSwatch,
+  IconDatabase,
+  IconFilters,
+  IconTag,
+} from 'twenty-ui/display';
 
 const StyledCommandMenuList = styled(CommandMenuList)`
   padding: ${({ theme }) => theme.spacing(2)};
@@ -32,9 +39,12 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         commandGroups={[]}
         selectableItemIds={[
           'data-on-display-x',
-          'sort-by-x',
+          'sort-by',
           'data-on-display-y',
           'group-by-y',
+          'colors',
+          'axis-name',
+          'data-labels',
         ]}
       >
         <ChartTypeSelectionSection
@@ -66,6 +76,26 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
             Icon={IconFilters}
             label="Group by"
             id="group-by-y"
+            onClick={() => {}}
+          />
+        </CommandGroup>
+        <CommandGroup heading="Style">
+          <CommandMenuItem
+            Icon={IconColorSwatch}
+            label="Colors"
+            id="colors"
+            onClick={() => {}}
+          />
+          <CommandMenuItem
+            Icon={IconAxisX}
+            label="Axis name"
+            id="axis-name"
+            onClick={() => {}}
+          />
+          <CommandMenuItem
+            Icon={IconTag}
+            label="Data labels"
+            id="data-labels"
             onClick={() => {}}
           />
         </CommandGroup>
