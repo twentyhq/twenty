@@ -12,9 +12,7 @@ export const isSearchableSubfield = (
     case FieldMetadataType.RICH_TEXT_V2:
       return ['markdown'].includes(subFieldName);
     case FieldMetadataType.PHONES:
-      return ['primaryPhoneNumber', 'primaryPhoneCallingCode'].includes(
-        subFieldName,
-      );
+      return ['primaryPhoneNumber'].includes(subFieldName);
     default:
       return true;
   }

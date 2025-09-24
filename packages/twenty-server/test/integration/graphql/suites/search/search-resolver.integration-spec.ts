@@ -728,10 +728,10 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find person by international phone number with plus',
+      title: 'should find person by trunk prefix phone number (UK)',
       context: {
         input: {
-          searchInput: '+442071234567',
+          searchInput: '02071234567',
           excludedObjectNameSingulars: ['workspaceMember'],
           limit: 50,
         },
@@ -750,21 +750,43 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find person by international phone number without plus',
+      title: 'should find person by trunk prefix phone number (France)',
       context: {
         input: {
-          searchInput: '442071234567',
+          searchInput: '0123456789',
           excludedObjectNameSingulars: ['workspaceMember'],
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [searchInput1Person.id],
+          orderedRecordIds: [josePerson.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: searchInput1Person.id,
+                person: josePerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by US phone number (no trunk prefix)',
+      context: {
+        input: {
+          searchInput: '5551234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput2Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput2Person.id,
               },
             },
           },
