@@ -9,10 +9,18 @@ import { ApplicationSyncAgentService } from 'src/engine/core-modules/application
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, AgentEntity, Workspace]),
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMigrationV2Module,
+    ObjectMetadataModule,
+    DataSourceModule,
   ],
   providers: [
     ApplicationResolver,
