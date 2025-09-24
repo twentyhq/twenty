@@ -2,6 +2,7 @@ import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTyp
 import { validatePageLayoutWidget } from '@/page-layout/utils/validatePageLayoutWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
+import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated/graphql';
 
 type WidgetContentRendererProps = {
@@ -13,7 +14,7 @@ export const WidgetContentRenderer = ({
 }: WidgetContentRendererProps) => {
   const validatedWidget = validatePageLayoutWidget(widget);
 
-  if (!validatedWidget) {
+  if (!isDefined(validatedWidget)) {
     console.log('Invalid widget configuration', JSON.stringify(widget));
     return null;
   }

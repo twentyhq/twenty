@@ -9,7 +9,11 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
+import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
+import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
+import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -72,6 +76,19 @@ export class DevSeederService {
     });
 
     await this.devSeederPermissionsService.initPermissions(workspaceId);
+
+    // Now seed page layouts with the actual object metadata IDs
+    const schemaNameCore = 'core';
+    await seedPageLayouts(this.coreDataSource, schemaNameCore, workspaceId);
+    await seedPageLayoutTabs(this.coreDataSource, schemaNameCore, workspaceId);
+
+    // Get object metadata to pass to widget seeding
+    const objectMetadataRepository = this.coreDataSource.getRepository(ObjectMetadataEntity);
+    const objectMetadataItems = await objectMetadataRepository.find({
+      where: { workspaceId },
+    });
+
+    await seedPageLayoutWidgets(this.coreDataSource, schemaNameCore, workspaceId, objectMetadataItems);
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,
