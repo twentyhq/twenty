@@ -50,6 +50,12 @@ export class CreateAuditLogFromInternalEvent {
           recordId: eventData.recordId,
           objectMetadataId: eventData.objectMetadata.id,
         });
+      } else if (workspaceEventBatch.name.endsWith('.upserted')) {
+        auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+          ...eventProperties,
+          recordId: eventData.recordId,
+          objectMetadataId: eventData.objectMetadata.id,
+        });
       }
     }
   }

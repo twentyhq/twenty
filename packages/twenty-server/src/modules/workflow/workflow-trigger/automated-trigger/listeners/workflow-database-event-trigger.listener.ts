@@ -12,6 +12,7 @@ import { type ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emit
 import { type ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { type ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { type ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -107,6 +108,22 @@ export class WorkflowDatabaseEventTriggerListener {
     await this.handleEvent({
       payload: clonedPayload,
       action: DatabaseEventAction.DESTROYED,
+    });
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPSERTED)
+  async handleObjectRecordUpsertEvent(
+    payload: WorkspaceEventBatch<ObjectRecordUpsertEvent>,
+  ) {
+    if (await this.shouldIgnoreEvent(payload)) {
+      return;
+    }
+
+    const clonedPayload = structuredClone(payload);
+
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.UPSERTED,
     });
   }
 
@@ -314,6 +331,24 @@ export class WorkflowDatabaseEventTriggerListener {
           updateEventPayload?.properties?.updatedFields?.includes(field),
         )
       );
+    }
+
+    if (action === DatabaseEventAction.UPSERTED) {
+      const settings = eventListener.settings as UpdateEventTriggerSettings;
+
+      if (!settings.fields || settings.fields.length === 0) {
+        return;
+      }
+
+      if ('updatedFields' in eventPayload.properties) {
+        const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
+
+        return settings.fields.some((field) =>
+          updateEventPayload?.properties?.updatedFields?.includes(field),
+        );
+      }
+
+      return;
     }
 
     return true;

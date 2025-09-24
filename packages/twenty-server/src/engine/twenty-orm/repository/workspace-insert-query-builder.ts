@@ -30,6 +30,7 @@ import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { hasSubstantialRecordData } from 'src/modules/workflow/workflow-trigger/utils/has-substantial-record-data.util';
 
 export class WorkspaceInsertQueryBuilder<
   T extends ObjectLiteral,
@@ -167,6 +168,20 @@ export class WorkspaceInsertQueryBuilder<
         entities: formattedResultForEvent,
         authContext: this.authContext,
       });
+
+      const isEntitiesWithSufficientData = formattedResultForEvent.filter(
+        (entity) => hasSubstantialRecordData(entity as Record<string, unknown>),
+      );
+
+      if (isEntitiesWithSufficientData.length > 0) {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: isEntitiesWithSufficientData,
+          authContext: this.authContext,
+        });
+      }
 
       // TypeORM returns all entity columns for insertions
       const resultWithoutInsertionExtraColumns = !isDefined(result.raw)
