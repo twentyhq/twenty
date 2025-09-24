@@ -9,10 +9,16 @@ export const parseCronExpression = (
     throw new Error('Cron expression is required');
   }
 
+  const parts = expression.trim().split(/\s+/);
+
+  if (parts.length < 4 || parts.length > 6) {
+    throw new Error(
+      `Invalid cron expression format. Expected 4, 5, or 6 fields, got ${parts.length}`,
+    );
+  }
+
   try {
     CronExpressionParser.parse(expression, { tz: 'UTC' });
-
-    const parts = expression.trim().split(/\s+/);
 
     // Handle different cron formats that cron-parser accepts
     if (parts.length === 4) {
@@ -45,11 +51,9 @@ export const parseCronExpression = (
         month: parts[4],
         dayOfWeek: parts[5],
       };
-    } else {
-      throw new Error(
-        `Invalid cron expression format. Expected 4, 5, or 6 fields, got ${parts.length}`,
-      );
     }
+
+    throw new Error('Unexpected error in cron expression parsing');
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';

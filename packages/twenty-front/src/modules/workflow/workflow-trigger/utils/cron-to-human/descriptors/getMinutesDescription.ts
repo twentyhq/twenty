@@ -1,12 +1,10 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isListValue } from '~/utils/validation/isListValue';
+import { isNumericRange } from '~/utils/validation/isNumericRange';
+import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '../types/cronDescriptionOptions';
-import {
-  isListValue,
-  isNumericRange,
-  isStepValue,
-} from '../utils/cronStringUtilities';
 
 export const getMinutesDescription = (
   minutes: string,

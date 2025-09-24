@@ -1,13 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { formatTime as formatCronTime } from '~/utils/format/formatTime';
+import { isListValue } from '~/utils/validation/isListValue';
+import { isNumericRange } from '~/utils/validation/isNumericRange';
+import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '../types/cronDescriptionOptions';
-import {
-  formatCronTime,
-  isListValue,
-  isNumericRange,
-  isStepValue,
-} from '../utils/cronStringUtilities';
 
 export const getHoursDescription = (
   hours: string,

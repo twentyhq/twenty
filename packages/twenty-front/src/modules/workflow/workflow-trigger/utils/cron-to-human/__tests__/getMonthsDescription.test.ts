@@ -70,7 +70,17 @@ describe('getMonthsDescription', () => {
     // Note: These tests would need a mock locale catalog to test properly
     // For now, we test that the function doesn't crash with locale
     it('should handle locale catalog without crashing', () => {
-      const mockLocale = {} as any; // Mock locale
+      // Create a proper mock locale with the required properties for date-fns
+      const mockLocale = {
+        localize: {
+          month: () => 'MockMonth',
+        },
+        formatLong: {
+          date: () => 'P',
+          time: () => 'p',
+          dateTime: () => 'Pp',
+        },
+      } as any;
       expect(() =>
         getMonthsDescription('1', options, mockLocale),
       ).not.toThrow();
