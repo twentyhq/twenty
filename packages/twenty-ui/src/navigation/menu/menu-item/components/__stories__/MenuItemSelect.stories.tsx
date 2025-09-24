@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { IconBell } from '@ui/display';
 import {
   CatalogDecorator,
   type CatalogDimension,
@@ -8,25 +7,30 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemToggle } from '../MenuItemToggle';
+import { MenuItemSelect } from '../MenuItemSelect';
 
-const meta: Meta<typeof MenuItemToggle> = {
-  title: 'UI/Navigation/MenuItem/MenuItemToggle',
-  component: MenuItemToggle,
+import { IconBell } from '@ui/display';
+const meta: Meta<typeof MenuItemSelect> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemSelect',
+  component: MenuItemSelect,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemToggle>;
+type Story = StoryObj<typeof MenuItemSelect>;
 
 export const Default: Story = {
   args: {
     text: 'First option',
+    LeftIcon: IconBell,
+  },
+  argTypes: {
+    className: { control: false },
   },
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
+export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
   args: { LeftIcon: IconBell, text: 'Menu item' },
   argTypes: {
     className: { control: false },
@@ -45,31 +49,29 @@ export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
-          name: 'toggled',
-          values: [true, false],
-          props: (toggled: boolean) => ({ toggled }),
-          labels: (toggled: boolean) => (toggled ? 'Toggled' : 'Not toggled'),
-        },
-        {
           name: 'states',
-          values: ['default', 'hover'],
+          values: ['default', 'hover', 'focused', 'hover+focused'],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
-                return { className: state };
+                return { className: 'hover' };
+              case 'focused':
+                return { focused: true };
+              case 'hover+focused':
+                return { className: 'hover', focused: true };
               default:
                 return {};
             }
           },
         },
-      ] satisfies CatalogDimension[],
+      ] as CatalogDimension[],
       options: {
         elementContainer: {
           width: 200,
         },
-      } satisfies CatalogOptions,
+      } as CatalogOptions,
     },
   },
   decorators: [CatalogDecorator],

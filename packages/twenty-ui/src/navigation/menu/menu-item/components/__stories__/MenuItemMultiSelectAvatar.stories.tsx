@@ -10,28 +10,26 @@ import {
   ComponentDecorator,
   RecoilRootDecorator,
 } from '@ui/testing';
-import { MenuItemSelectAvatar } from '../MenuItemSelectAvatar';
+import { MenuItemMultiSelectAvatar } from '../MenuItemMultiSelectAvatar';
 
-const meta: Meta<typeof MenuItemSelectAvatar> = {
-  title: 'UI/Navigation/MenuItem/MenuItemSelectAvatar',
-  component: MenuItemSelectAvatar,
+const meta: Meta<typeof MenuItemMultiSelectAvatar> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemMultiSelectAvatar',
+  component: MenuItemMultiSelectAvatar,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemSelectAvatar>;
+type Story = StoryObj<typeof MenuItemMultiSelectAvatar>;
+
 export const Default: Story = {
   args: {
     text: 'First option',
     avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
   },
-  argTypes: {
-    className: { control: false },
-  },
   decorators: [ComponentDecorator, RecoilRootDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
+export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
   args: { text: 'Menu item' },
   argTypes: {
     className: { control: false },
@@ -54,27 +52,21 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
             withAvatar ? 'With avatar' : 'Without avatar',
         },
         {
+          name: 'selected',
+          values: [true, false],
+          props: (selected: boolean) => ({ selected }),
+          labels: (selected: boolean) =>
+            selected ? 'Selected' : 'Not selected',
+        },
+        {
           name: 'states',
-          values: [
-            'default',
-            'hover',
-            'disabled',
-            'selected',
-            'hover+selected',
-          ],
+          values: ['default', 'hover'],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
-                return { className: 'hover' };
-              case 'disabled':
-                return { disabled: true };
-              case 'selected':
-                return { selected: true };
-
-              case 'hover+selected':
-                return { className: 'hover', selected: true };
+                return { className: state };
               default:
                 return {};
             }

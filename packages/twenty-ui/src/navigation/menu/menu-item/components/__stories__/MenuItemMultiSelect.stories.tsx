@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { IconBell } from '@ui/display';
 import {
   CatalogDecorator,
   type CatalogDimension,
@@ -7,30 +8,25 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemSelect } from '../MenuItemSelect';
+import { MenuItemMultiSelect } from '../MenuItemMultiSelect';
 
-import { IconBell } from '@ui/display';
-const meta: Meta<typeof MenuItemSelect> = {
-  title: 'UI/Navigation/MenuItem/MenuItemSelect',
-  component: MenuItemSelect,
+const meta: Meta<typeof MenuItemMultiSelect> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemMultiSelect',
+  component: MenuItemMultiSelect,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemSelect>;
+type Story = StoryObj<typeof MenuItemMultiSelect>;
 
 export const Default: Story = {
   args: {
     text: 'First option',
-    LeftIcon: IconBell,
-  },
-  argTypes: {
-    className: { control: false },
   },
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
+export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelect> = {
   args: { LeftIcon: IconBell, text: 'Menu item' },
   argTypes: {
     className: { control: false },
@@ -49,18 +45,21 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'selected',
+          values: [true, false],
+          props: (selected: boolean) => ({ selected }),
+          labels: (selected: boolean) =>
+            selected ? 'Selected' : 'Not selected',
+        },
+        {
           name: 'states',
-          values: ['default', 'hover', 'focused', 'hover+focused'],
+          values: ['default', 'hover'],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
-                return { className: 'hover' };
-              case 'focused':
-                return { focused: true };
-              case 'hover+focused':
-                return { className: 'hover', focused: true };
+                return { className: state };
               default:
                 return {};
             }

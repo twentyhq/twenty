@@ -1,3 +1,4 @@
+export * from '../../components/MenuPicker';
 export * from './MenuItem';
 export * from './MenuItemAvatar';
 export * from './MenuItemCommand';

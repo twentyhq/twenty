@@ -11,7 +11,7 @@ import { type MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';
 
 const meta: Meta<typeof MenuItem> = {
-  title: 'UI/Navigation/MenuItem/MenuItem',
+  title: 'UI/Navigation/Menu/MenuItem/MenuItem',
   component: MenuItem,
 };
 

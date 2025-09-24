@@ -11,7 +11,7 @@ import { type ThemeColor } from '@ui/theme';
 import { MenuItemSelectTag } from '../MenuItemSelectTag';
 
 const meta: Meta<typeof MenuItemSelectTag> = {
-  title: 'UI/Navigation/MenuItem/MenuItemSelectTag',
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemSelectTag',
   component: MenuItemSelectTag,
 };
 
