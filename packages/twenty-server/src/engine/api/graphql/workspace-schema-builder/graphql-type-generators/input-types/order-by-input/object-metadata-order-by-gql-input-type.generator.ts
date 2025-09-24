@@ -17,6 +17,7 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
+import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -34,16 +35,26 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore({
+    objectMetadata,
+    isGroupBy,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+    isGroupBy: boolean;
+  }) {
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
+      name: isGroupBy
+        ? `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}Input`
+        : `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
       description: objectMetadata.description,
-      fields: () => this.generateFields(objectMetadata),
+      fields: () => this.generateFields(objectMetadata, isGroupBy),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
       objectMetadata.nameSingular,
-      GqlInputTypeDefinitionKind.OrderBy,
+      isGroupBy
+        ? GqlInputTypeDefinitionKind.OrderByWithGroupBy
+        : GqlInputTypeDefinitionKind.OrderBy,
     );
 
     this.gqlTypesStorage.addGqlType(key, inputType);
@@ -51,6 +62,7 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
 
   private generateFields(
     objectMetadata: ObjectMetadataEntity,
+    isGroupBy: boolean,
   ): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
@@ -76,11 +88,13 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
         generatedFields = this.generateCompositeFieldOrderByInputType(
           fieldMetadata,
           typeOptions,
+          isGroupBy,
         );
       } else {
         generatedFields = this.generateAtomicFieldOrderByInputType(
           fieldMetadata,
           typeOptions,
+          isGroupBy,
         );
       }
 
@@ -93,6 +107,7 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
   private generateCompositeFieldOrderByInputType(
     fieldMetadata: FieldMetadataEntity,
     typeOptions: TypeOptions,
+    isGroupBy: boolean,
   ) {
     const key = computeCompositeFieldInputTypeKey(
       fieldMetadata.type,
@@ -111,17 +126,25 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    return {
-      [fieldMetadata.name]: {
-        type: compositeType,
-        description: fieldMetadata.description,
-      },
-    };
+    if (isGroupBy) {
+      const aggregations =
+        this.generateAggregateFieldOrderByInputType(fieldMetadata);
+
+      return aggregations;
+    } else {
+      return {
+        [fieldMetadata.name]: {
+          type: compositeType,
+          description: fieldMetadata.description,
+        },
+      };
+    }
   }
 
   private generateAtomicFieldOrderByInputType(
     fieldMetadata: FieldMetadataEntity,
     typeOptions: TypeOptions,
+    isGroupBy: boolean,
   ) {
     const orderByType = this.typeMapperService.mapToOrderByType(
       fieldMetadata.type,
@@ -137,11 +160,53 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    return {
-      [fieldMetadata.name]: {
-        type: orderByType,
-        description: fieldMetadata.description,
-      },
-    };
+    if (isGroupBy) {
+      const aggregations =
+        this.generateAggregateFieldOrderByInputType(fieldMetadata);
+
+      return aggregations;
+    } else {
+      return {
+        [fieldMetadata.name]: {
+          type: orderByType,
+          description: fieldMetadata.description,
+        },
+      };
+    }
+  }
+
+  private generateAggregateFieldOrderByInputType(
+    fieldMetadata: FieldMetadataEntity,
+  ) {
+    const aggregations = getAvailableAggregationsFromObjectFields([
+      fieldMetadata,
+    ]);
+
+    let result: GraphQLInputFieldConfigMap = {};
+
+    for (const [aggregationKey, aggregationDetails] of Object.entries(
+      aggregations,
+    )) {
+      const orderByWithGroupByType =
+        this.typeMapperService.mapToOrderByWithGroupByType(
+          aggregations[aggregationKey].aggregateOperation,
+        );
+
+      if (!isDefined(orderByWithGroupByType)) {
+        const message = `Could not find a GraphQL input type for ${aggregations.type} aggregation`;
+
+        this.logger.error(message, {
+          aggregations,
+        });
+        throw new Error(message);
+      }
+
+      result[aggregationKey] = {
+        type: orderByWithGroupByType,
+        description: aggregationDetails.description,
+      };
+    }
+
+    return result;
   }
 }

@@ -27,9 +27,14 @@ export class ObjectMetadataGqlInputTypeGenerator {
     this.objectMetadataFilterGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );
-    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore(
+    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore({
       objectMetadata,
-    );
+      isGroupBy: true,
+    });
+    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore({
+      objectMetadata,
+      isGroupBy: false,
+    });
     this.objectMetadataGroupByGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );
