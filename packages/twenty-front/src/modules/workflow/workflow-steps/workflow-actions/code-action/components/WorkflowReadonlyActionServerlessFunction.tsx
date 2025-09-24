@@ -1,7 +1,7 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -70,7 +70,7 @@ export const WorkflowReadonlyActionServerlessFunction = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}
         initialTitle={headerTitle}

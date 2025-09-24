@@ -1,8 +1,8 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
@@ -79,7 +79,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         disabled
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}

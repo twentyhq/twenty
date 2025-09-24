@@ -3,11 +3,11 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { IconPlus } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { THEME_LIGHT } from 'twenty-ui/theme';
-import { WorkflowStepHeader } from '../WorkflowStepHeader';
+import { SidePanelHeader } from '../../../../command-menu/components/SidePanelHeader';
 
-const meta: Meta<typeof WorkflowStepHeader> = {
+const meta: Meta<typeof SidePanelHeader> = {
   title: 'Modules/Workflow/WorkflowStepHeader',
-  component: WorkflowStepHeader,
+  component: SidePanelHeader,
   args: {
     onTitleChange: fn(),
   },
@@ -20,7 +20,7 @@ const meta: Meta<typeof WorkflowStepHeader> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowStepHeader>;
+type Story = StoryObj<typeof SidePanelHeader>;
 
 export const Default: Story = {
   args: {

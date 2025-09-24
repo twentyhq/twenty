@@ -1,40 +1,15 @@
+import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
-import {
-  IconChartBar,
-  IconChartLine,
-  IconChartPie,
-  IconGauge,
-  IconNumber,
-} from 'twenty-ui/display';
+
 import { MenuPicker } from 'twenty-ui/navigation';
 
 const graphTypeOptions = [
-  {
-    type: GraphType.BAR,
-    icon: IconChartBar,
-    title: 'Bar Chart',
-  },
-  {
-    type: GraphType.PIE,
-    icon: IconChartPie,
-    title: 'Pie Chart',
-  },
-  {
-    type: GraphType.LINE,
-    icon: IconChartLine,
-    title: 'Line Chart',
-  },
-  {
-    type: GraphType.NUMBER,
-    icon: IconNumber,
-    title: 'Number',
-  },
-  {
-    type: GraphType.GAUGE,
-    icon: IconGauge,
-    title: 'Gauge',
-  },
+  GraphType.BAR,
+  GraphType.PIE,
+  GraphType.LINE,
+  GraphType.NUMBER,
+  GraphType.GAUGE,
 ];
 
 const StyledChartTypeSelectionContainer = styled.div`
@@ -43,15 +18,26 @@ const StyledChartTypeSelectionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ChartTypeSelectionSection = () => {
+type ChartTypeSelectionSectionProps = {
+  currentGraphType: GraphType;
+  setCurrentGraphType: (graphType: GraphType) => void;
+};
+
+export const ChartTypeSelectionSection = ({
+  currentGraphType,
+  setCurrentGraphType,
+}: ChartTypeSelectionSectionProps) => {
   return (
     <StyledChartTypeSelectionContainer>
-      {graphTypeOptions.map((option) => (
+      {graphTypeOptions.map((graphType) => (
         <MenuPicker
-          key={option.type}
-          icon={option.icon}
-          onClick={() => {}}
-          label={option.title}
+          selected={currentGraphType === graphType}
+          key={GraphTypeInfo[graphType].label}
+          icon={GraphTypeInfo[graphType].icon}
+          onClick={() => {
+            setCurrentGraphType(graphType);
+          }}
+          label={GraphTypeInfo[graphType].label}
           showLabel={false}
         />
       ))}

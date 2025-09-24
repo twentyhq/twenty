@@ -3,6 +3,7 @@ import { Select } from '@/ui/input/components/Select';
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useEffect, useState } from 'react';
 
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -11,7 +12,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -159,7 +159,7 @@ export const WorkflowEditActionUpdateRecord = ({
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
