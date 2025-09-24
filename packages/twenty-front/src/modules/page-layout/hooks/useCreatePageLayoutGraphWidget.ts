@@ -3,10 +3,8 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
-  getDefaultWidgetData,
   getWidgetSize,
   getWidgetTitle,
 } from '@/page-layout/utils/getDefaultWidgetData';
@@ -18,9 +16,11 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
 
-export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
+export const useCreatePageLayoutGraphWidget = (
+  pageLayoutIdFromProps?: string,
+) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -57,8 +57,6 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           return;
         }
 
-        const widgetData = getDefaultWidgetData(graphType);
-
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
@@ -77,7 +75,7 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
             w.type === widgetType && w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
-        const widgetId = `widget-${uuidv4()}`;
+        const widgetId = uuidv4();
 
         const defaultSize = getWidgetSize(graphType);
         const position = getDefaultWidgetPosition(
@@ -85,7 +83,7 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidgetWithData = {
+        const newWidget: PageLayoutWidget = {
           id: widgetId,
           pageLayoutTabId: activeTabId,
           title,
@@ -99,7 +97,6 @@ export const useCreatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           configuration: {
             graphType,
           },
-          data: widgetData as Record<string, unknown>,
           objectMetadataId: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

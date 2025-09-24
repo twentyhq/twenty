@@ -1,5 +1,5 @@
 import { DashboardSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/types/DashboardSingleRecordActionKeys';
-import { forceRegisteredActionsByKeyComponentState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
+import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -17,10 +17,6 @@ export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutId,
   );
 
-  const forceRegisteredActionsByKeyState = useRecoilComponentCallbackState(
-    forceRegisteredActionsByKeyComponentState,
-  );
-
   const setIsDashboardInEditMode = useRecoilCallback(
     ({ set }) =>
       (value: boolean) => {
@@ -28,10 +24,11 @@ export const useSetIsDashboardInEditMode = (pageLayoutIdFromProps: string) => {
         set(forceRegisteredActionsByKeyState, (prev) => ({
           ...prev,
           [DashboardSingleRecordActionKeys.EDIT_DASHBOARD]: !value,
+          [DashboardSingleRecordActionKeys.SAVE_DASHBOARD]: value,
           [DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION]: value,
         }));
       },
-    [forceRegisteredActionsByKeyState, isPageLayoutInEditModeState],
+    [isPageLayoutInEditModeState],
   );
 
   return { setIsDashboardInEditMode };
