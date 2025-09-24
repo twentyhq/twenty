@@ -1,12 +1,16 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
-import { isDefined } from 'twenty-shared/utils';
 
-const StyledMenuItemPicker = styled.div<{
+const StyledMenuItemPicker = styled.button<{
   selected: boolean;
   disabled: boolean;
 }>`
+  box-sizing: border-box;
+  background: none;
+  font: inherit;
+  outline: inherit;
+  color: inherit;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -15,7 +19,7 @@ const StyledMenuItemPicker = styled.div<{
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  min-height: 48px;
+  min-height: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => `${theme.spacing(1.5)} ${theme.spacing(1)}`};
   transition: all ${({ theme }) => theme.animation.duration.instant}s ease;
   user-select: none;
@@ -124,20 +128,13 @@ export const MenuPicker = ({
 }: MenuPickerProps) => {
   const theme = useTheme();
 
-  const handleClick = () => {
-    if (!disabled && isDefined(onClick)) {
-      onClick();
-    }
-  };
-
   return (
     <StyledMenuItemPicker
       selected={selected}
       disabled={disabled}
-      onClick={handleClick}
+      onClick={onClick}
       className={className}
       data-testid={testId}
-      role="button"
       aria-pressed={selected}
       aria-disabled={disabled}
     >
