@@ -23,6 +23,21 @@ type SyncMessageFoldersInput = {
   manager: WorkspaceEntityManager;
 };
 
+type MessageFolderToInsert = Pick<
+  MessageFolderWorkspaceEntity,
+  | 'id'
+  | 'messageChannelId'
+  | 'name'
+  | 'syncCursor'
+  | 'isSynced'
+  | 'isSentFolder'
+  | 'externalId'
+>;
+
+type MessageFolderToUpdate = Partial<
+  Pick<MessageFolderWorkspaceEntity, 'name' | 'externalId' | 'isSentFolder'>
+>;
+
 @Injectable()
 export class SyncMessageFoldersService {
   constructor(
@@ -67,8 +82,8 @@ export class SyncMessageFoldersService {
       messageFolderRepository,
     });
 
-    const inserts: MessageFolderWorkspaceEntity[] = [];
-    const updates: [string, Partial<MessageFolderWorkspaceEntity>][] = [];
+    const inserts: MessageFolderToInsert[] = [];
+    const updates: [string, MessageFolderToUpdate][] = [];
     const deletes: string[] = [];
 
     const discoveredExternalIds = new Set(
@@ -112,11 +127,11 @@ export class SyncMessageFoldersService {
         isSynced: folder.isSynced,
         isSentFolder: folder.isSentFolder,
         externalId: folder.externalId,
-      } as MessageFolderWorkspaceEntity);
+      });
     }
 
     if (inserts.length > 0) {
-      await messageFolderRepository.save(inserts, {}, manager);
+      await messageFolderRepository.insert(inserts, manager);
     }
 
     if (updates.length > 0) {
