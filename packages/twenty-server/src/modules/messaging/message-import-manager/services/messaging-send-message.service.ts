@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import MailComposer from 'nodemailer/lib/mail-composer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -11,9 +12,10 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
+import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
-import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
+import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
@@ -29,6 +31,7 @@ export class MessagingSendMessageService {
     private readonly oAuth2ClientProvider: OAuth2ClientProvider,
     private readonly microsoftClientProvider: MicrosoftClientProvider,
     private readonly smtpClientProvider: SmtpClientProvider,
+    private readonly imapClientProvider: ImapClientProvider,
   ) {}
 
   public async sendMessage(
@@ -122,15 +125,38 @@ export class MessagingSendMessageService {
         break;
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
-        const smtpClient =
-          await this.smtpClientProvider.getSmtpClient(connectedAccount);
+        const [smtpClient, imapClient] = await Promise.all([
+          this.smtpClientProvider.getSmtpClient(connectedAccount),
+          this.imapClientProvider.getClient(connectedAccount),
+        ]);
 
-        await smtpClient.sendMail({
+        const mail = new MailComposer({
           from: connectedAccount.handle,
           to: sendMessageInput.to,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
         });
+
+        const messageBuffer = await mail.compile().build();
+
+        await smtpClient.sendMail({
+          from: connectedAccount.handle,
+          to: [sendMessageInput.to],
+          raw: messageBuffer,
+        });
+
+        const sentFolder = await imapClient
+          .list()
+          .then((folders) =>
+            folders.find((folder) => folder.specialUse === '\\Sent'),
+          );
+
+        if (isDefined(sentFolder)) {
+          await imapClient.append(sentFolder.path, messageBuffer);
+        }
+
+        await this.imapClientProvider.closeClient(imapClient);
+
         break;
       }
       default:
