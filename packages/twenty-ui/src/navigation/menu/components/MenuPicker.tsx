@@ -101,7 +101,7 @@ const StyledLabel = styled.div<{
   }}
 `;
 
-export type MenuItemPickerProps = {
+export type MenuPickerProps = {
   className?: string;
   disabled?: boolean;
   icon: IconComponent;
@@ -112,7 +112,7 @@ export type MenuItemPickerProps = {
   testId?: string;
 };
 
-export const MenuItemPicker = ({
+export const MenuPicker = ({
   icon: Icon,
   label,
   selected = false,
@@ -121,7 +121,7 @@ export const MenuItemPicker = ({
   onClick,
   className,
   testId,
-}: MenuItemPickerProps) => {
+}: MenuPickerProps) => {
   const theme = useTheme();
 
   const handleClick = () => {

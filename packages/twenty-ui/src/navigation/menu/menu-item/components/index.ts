@@ -1,3 +1,4 @@
+export * from '../../components/MenuPicker';
 export * from './MenuItem';
 export * from './MenuItemAvatar';
 export * from './MenuItemCommand';
@@ -7,10 +8,10 @@ export * from './MenuItemMultiSelect';
 export * from './MenuItemMultiSelectAvatar';
 export * from './MenuItemMultiSelectTag';
 export * from './MenuItemNavigate';
-export * from './MenuItemPicker';
 export * from './MenuItemSelect';
 export * from './MenuItemSelectAvatar';
 export * from './MenuItemSelectColor';
 export * from './MenuItemSelectTag';
 export * from './MenuItemSuggestion';
 export * from './MenuItemToggle';
+

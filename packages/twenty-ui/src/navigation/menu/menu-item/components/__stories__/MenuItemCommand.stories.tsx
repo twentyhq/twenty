@@ -3,36 +3,57 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { IconBell } from '@ui/display';
 import {
   CatalogDecorator,
-  type CatalogDimension,
-  type CatalogOptions,
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemMultiSelect } from '../MenuItemMultiSelect';
+import { MenuItemCommand } from '../MenuItemCommand';
 
-const meta: Meta<typeof MenuItemMultiSelect> = {
-  title: 'UI/Navigation/MenuItem/MenuItemMultiSelect',
-  component: MenuItemMultiSelect,
+const meta: Meta<typeof MenuItemCommand> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemCommand',
+  component: MenuItemCommand,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemMultiSelect>;
+type Story = StoryObj<typeof MenuItemCommand>;
 
 export const Default: Story = {
   args: {
     text: 'First option',
+    hotKeys: ['⌘', '1'],
+  },
+  render: (props) => (
+    <MenuItemCommand
+      LeftIcon={props.LeftIcon}
+      text={props.text}
+      hotKeys={props.hotKeys}
+      className={props.className}
+      onClick={props.onClick}
+      isSelected={false}
+    ></MenuItemCommand>
+  ),
+  decorators: [ComponentDecorator],
+};
+
+export const WithDescription: Story = {
+  args: {
+    text: 'Menu item',
+    hotKeys: ['⌘', '1'],
+    description: 'Description',
   },
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelect> = {
-  args: { LeftIcon: IconBell, text: 'Menu item' },
+export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
+  args: {
+    text: 'Menu item',
+    hotKeys: ['⌘', '1'],
+  },
   argTypes: {
     className: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    pseudo: { hover: ['.hover'] },
     catalog: {
       dimensions: [
         {
@@ -43,13 +64,6 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelect> = {
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
-        },
-        {
-          name: 'selected',
-          values: [true, false],
-          props: (selected: boolean) => ({ selected }),
-          labels: (selected: boolean) =>
-            selected ? 'Selected' : 'Not selected',
         },
         {
           name: 'states',
@@ -65,13 +79,23 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelect> = {
             }
           },
         },
-      ] as CatalogDimension[],
+      ],
       options: {
         elementContainer: {
           width: 200,
         },
-      } as CatalogOptions,
+      },
     },
   },
+  render: (props) => (
+    <MenuItemCommand
+      LeftIcon={props.LeftIcon}
+      text={props.text}
+      hotKeys={props.hotKeys}
+      className={props.className}
+      onClick={props.onClick}
+      isSelected={false}
+    ></MenuItemCommand>
+  ),
   decorators: [CatalogDecorator],
 };

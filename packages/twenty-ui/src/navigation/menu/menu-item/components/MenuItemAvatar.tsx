@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import { Avatar, type AvatarProps, IconChevronRight } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
-import { type MenuItemIconButton } from '@ui/navigation/menu-item/components/MenuItem';
-import { MenuItemLeftContent } from '@ui/navigation/menu-item/internals/components/MenuItemLeftContent';
+import { type MenuItemIconButton } from '@ui/navigation/menu/menu-item/components/MenuItem';
+import { MenuItemLeftContent } from '@ui/navigation/menu/menu-item/internals/components/MenuItemLeftContent';
 import { type MouseEvent, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {

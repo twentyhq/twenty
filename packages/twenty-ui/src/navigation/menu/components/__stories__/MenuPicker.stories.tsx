@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { IconChartPie } from '@ui/display';
-import { MenuItemPicker } from '@ui/navigation/menu-item/components/MenuItemPicker';
+import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
 
-const meta: Meta<typeof MenuItemPicker> = {
-  title: 'UI/Navigation/MenuItem/MenuPicker',
-  component: MenuItemPicker,
+const meta: Meta<typeof MenuPicker> = {
+  title: 'UI/Navigation/Menu/MenuPicker',
+  component: MenuPicker,
   decorators: [ComponentDecorator],
   args: {
     icon: IconChartPie,
@@ -26,7 +26,7 @@ const meta: Meta<typeof MenuItemPicker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof MenuItemPicker>;
+type Story = StoryObj<typeof MenuPicker>;
 
 export const Default: Story = {};
 
@@ -67,23 +67,19 @@ export const AllStates: Story = {
     >
       <div>
         <StyledTitle>Default</StyledTitle>
-        <MenuItemPicker icon={IconChartPie} label="Default" />
+        <MenuPicker icon={IconChartPie} label="Default" />
       </div>
       <div>
         <StyledTitle>Selected</StyledTitle>
-        <MenuItemPicker icon={IconChartPie} label="Selected" selected />
+        <MenuPicker icon={IconChartPie} label="Selected" selected />
       </div>
       <div>
         <StyledTitle>Disabled</StyledTitle>
-        <MenuItemPicker icon={IconChartPie} label="Disabled" disabled />
+        <MenuPicker icon={IconChartPie} label="Disabled" disabled />
       </div>
       <div>
         <StyledTitle>No Label</StyledTitle>
-        <MenuItemPicker
-          icon={IconChartPie}
-          label="No Label"
-          showLabel={false}
-        />
+        <MenuPicker icon={IconChartPie} label="No Label" showLabel={false} />
       </div>
     </div>
   ),

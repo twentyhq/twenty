@@ -3,57 +3,36 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { IconBell } from '@ui/display';
 import {
   CatalogDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemCommand } from '../MenuItemCommand';
+import { MenuItemToggle } from '../MenuItemToggle';
 
-const meta: Meta<typeof MenuItemCommand> = {
-  title: 'UI/Navigation/MenuItem/MenuItemCommand',
-  component: MenuItemCommand,
+const meta: Meta<typeof MenuItemToggle> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemToggle',
+  component: MenuItemToggle,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemCommand>;
+type Story = StoryObj<typeof MenuItemToggle>;
 
 export const Default: Story = {
   args: {
     text: 'First option',
-    hotKeys: ['⌘', '1'],
-  },
-  render: (props) => (
-    <MenuItemCommand
-      LeftIcon={props.LeftIcon}
-      text={props.text}
-      hotKeys={props.hotKeys}
-      className={props.className}
-      onClick={props.onClick}
-      isSelected={false}
-    ></MenuItemCommand>
-  ),
-  decorators: [ComponentDecorator],
-};
-
-export const WithDescription: Story = {
-  args: {
-    text: 'Menu item',
-    hotKeys: ['⌘', '1'],
-    description: 'Description',
   },
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
-  args: {
-    text: 'Menu item',
-    hotKeys: ['⌘', '1'],
-  },
+export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
+  args: { LeftIcon: IconBell, text: 'Menu item' },
   argTypes: {
     className: { control: false },
   },
   parameters: {
-    pseudo: { hover: ['.hover'] },
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
@@ -64,6 +43,12 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
+        },
+        {
+          name: 'toggled',
+          values: [true, false],
+          props: (toggled: boolean) => ({ toggled }),
+          labels: (toggled: boolean) => (toggled ? 'Toggled' : 'Not toggled'),
         },
         {
           name: 'states',
@@ -79,23 +64,13 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
             }
           },
         },
-      ],
+      ] satisfies CatalogDimension[],
       options: {
         elementContainer: {
           width: 200,
         },
-      },
+      } satisfies CatalogOptions,
     },
   },
-  render: (props) => (
-    <MenuItemCommand
-      LeftIcon={props.LeftIcon}
-      text={props.text}
-      hotKeys={props.hotKeys}
-      className={props.className}
-      onClick={props.onClick}
-      isSelected={false}
-    ></MenuItemCommand>
-  ),
   decorators: [CatalogDecorator],
 };

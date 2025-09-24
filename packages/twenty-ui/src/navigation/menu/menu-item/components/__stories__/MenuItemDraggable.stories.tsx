@@ -12,7 +12,7 @@ import { type MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItemDraggable } from '../MenuItemDraggable';
 
 const meta: Meta<typeof MenuItemDraggable> = {
-  title: 'ui/Navigation/MenuItem/MenuItemDraggable',
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemDraggable',
   component: MenuItemDraggable,
 };
 

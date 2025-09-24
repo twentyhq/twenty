@@ -12,7 +12,7 @@ import {
 } from '@ui/testing';
 
 const meta: Meta<typeof MenuItemNavigate> = {
-  title: 'UI/Navigation/MenuItem/MenuItemNavigate',
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemNavigate',
   component: MenuItemNavigate,
 };
 
