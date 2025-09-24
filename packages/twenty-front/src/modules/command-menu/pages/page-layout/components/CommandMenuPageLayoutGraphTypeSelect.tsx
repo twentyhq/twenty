@@ -46,8 +46,8 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
       <CommandMenuList
         commandGroups={[]}
         selectableItemIds={[
-          'object',
-          'filters',
+          'source',
+          'filter',
           'data-on-display-x',
           'sort-by',
           'data-on-display-y',
@@ -61,17 +61,17 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
           currentGraphType={currentGraphType}
           setCurrentGraphType={handleGraphTypeChange}
         />
-        <CommandGroup heading="Data source">
+        <CommandGroup heading="Data">
           <CommandMenuItem
             Icon={IconDatabase}
-            label="Object"
-            id="object"
+            label="Source"
+            id="source"
             onClick={() => {}}
           />
           <CommandMenuItem
             Icon={IconFilter}
-            label="Filters"
-            id="filters"
+            label="Filter"
+            id="filter"
             onClick={() => {}}
           />
         </CommandGroup>
