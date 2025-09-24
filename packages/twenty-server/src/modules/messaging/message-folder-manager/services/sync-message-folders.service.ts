@@ -77,16 +77,18 @@ export class SyncMessageFoldersService {
       );
 
       if (existingFolder) {
-        await messageFolderRepository.update(
-          existingFolder.id,
-          {
-            name: folder.name,
-            externalId: folder.externalId,
-            isSentFolder: folder.isSentFolder,
-          },
-          manager,
-        );
+        // TODO: this code should be refactored to use the updateMany method and only on folders that need to be updated
+        // await messageFolderRepository.update(
+        //   existingFolder.id,
+        //   {
+        //     name: folder.name,
+        //     externalId: folder.externalId,
+        //     isSentFolder: folder.isSentFolder,
+        //   },
+        //   manager,
+        // );
       } else {
+        // TODO: this code should be refactored to use the create (many)
         await messageFolderRepository.save(
           {
             id: v4(),
