@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 
 import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -28,7 +27,6 @@ type SyncMessageFoldersInput = {
 export class SyncMessageFoldersService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly gmailGetAllFoldersService: GmailGetAllFoldersService,
     private readonly microsoftGetAllFoldersService: MicrosoftGetAllFoldersService,
     private readonly imapGetAllFoldersService: ImapGetAllFoldersService,
@@ -69,7 +67,25 @@ export class SyncMessageFoldersService {
       messageFolderRepository,
     });
 
-    // TODO: we should delete folders that are not in the list anymore
+    const inserts: MessageFolderWorkspaceEntity[] = [];
+    const updates: [string, Partial<MessageFolderWorkspaceEntity>][] = [];
+    const deletes: string[] = [];
+
+    const discoveredExternalIds = new Set(
+      folders
+        .filter((folder) => folder.externalId)
+        .map((folder) => folder.externalId!),
+    );
+
+    for (const existingFolder of existingFolderMap.values()) {
+      if (
+        existingFolder.externalId &&
+        !discoveredExternalIds.has(existingFolder.externalId)
+      ) {
+        deletes.push(existingFolder.id);
+      }
+    }
+
     for (const folder of folders) {
       const existingFolder = this.findExistingFolderInMap(
         existingFolderMap,
@@ -77,30 +93,44 @@ export class SyncMessageFoldersService {
       );
 
       if (existingFolder) {
-        await messageFolderRepository.update(
+        updates.push([
           existingFolder.id,
           {
             name: folder.name,
             externalId: folder.externalId,
             isSentFolder: folder.isSentFolder,
           },
-          manager,
-        );
-      } else {
-        await messageFolderRepository.save(
-          {
-            id: v4(),
-            messageChannelId,
-            name: folder.name,
-            syncCursor: '',
-            isSynced: folder.isSynced,
-            isSentFolder: folder.isSentFolder,
-            externalId: folder.externalId,
-          },
-          {},
-          manager,
-        );
+        ]);
+        continue;
       }
+
+      inserts.push({
+        id: v4(),
+        messageChannelId,
+        name: folder.name,
+        syncCursor: '',
+        isSynced: folder.isSynced,
+        isSentFolder: folder.isSentFolder,
+        externalId: folder.externalId,
+      } as MessageFolderWorkspaceEntity);
+    }
+
+    if (inserts.length > 0) {
+      await messageFolderRepository.save(inserts, {}, manager);
+    }
+
+    if (updates.length > 0) {
+      await messageFolderRepository.updateMany(
+        updates.map(([id, data]) => ({
+          criteria: id,
+          partialEntity: data,
+        })),
+        manager,
+      );
+    }
+
+    if (deletes.length > 0) {
+      await messageFolderRepository.delete(deletes, manager);
     }
   }
 
