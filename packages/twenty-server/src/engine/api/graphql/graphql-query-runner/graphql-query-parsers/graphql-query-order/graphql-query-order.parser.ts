@@ -110,7 +110,9 @@ export class GraphqlQueryOrderFieldParser {
           availableAggregations[aggregatedOrderByCondition];
 
         if (!selectedAggregation) {
-          continue;
+          throw new InternalServerErrorException(
+            `Selected aggregation not found for ${aggregatedOrderByCondition}`,
+          );
         }
 
         const expression = ProcessAggregateHelper.getAggregateExpression(

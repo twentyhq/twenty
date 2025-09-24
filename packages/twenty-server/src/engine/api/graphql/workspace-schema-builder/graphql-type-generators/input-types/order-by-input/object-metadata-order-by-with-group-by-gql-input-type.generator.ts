@@ -17,6 +17,7 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
+import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -24,9 +25,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
-export class ObjectMetadataOrderByGqlInputTypeGenerator {
+export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   private readonly logger = new Logger(
-    ObjectMetadataOrderByGqlInputTypeGenerator.name,
+    ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator.name,
   );
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
@@ -40,14 +41,14 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
     objectMetadata: ObjectMetadataEntity;
   }) {
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
+      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}Input`,
       description: objectMetadata.description,
       fields: () => this.generateFields(objectMetadata),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
       objectMetadata.nameSingular,
-      GqlInputTypeDefinitionKind.OrderBy,
+      GqlInputTypeDefinitionKind.OrderByWithGroupBy,
     );
 
     this.gqlTypesStorage.addGqlType(key, inputType);
@@ -115,12 +116,10 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    return {
-      [fieldMetadata.name]: {
-        type: compositeType,
-        description: fieldMetadata.description,
-      },
-    };
+    const aggregations =
+      this.generateAggregateFieldOrderByInputType(fieldMetadata);
+
+    return aggregations;
   }
 
   private generateAtomicFieldOrderByInputType(
@@ -141,11 +140,44 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    return {
-      [fieldMetadata.name]: {
-        type: orderByType,
-        description: fieldMetadata.description,
-      },
-    };
+    const aggregations =
+      this.generateAggregateFieldOrderByInputType(fieldMetadata);
+
+    return aggregations;
+  }
+
+  private generateAggregateFieldOrderByInputType(
+    fieldMetadata: FieldMetadataEntity,
+  ) {
+    const aggregations = getAvailableAggregationsFromObjectFields([
+      fieldMetadata,
+    ]);
+
+    let result: GraphQLInputFieldConfigMap = {};
+
+    for (const [aggregationKey, aggregationDetails] of Object.entries(
+      aggregations,
+    )) {
+      const orderByWithGroupByType =
+        this.typeMapperService.mapToOrderByWithGroupByType(
+          aggregations[aggregationKey].aggregateOperation,
+        );
+
+      if (!isDefined(orderByWithGroupByType)) {
+        const message = `Could not find a GraphQL input type for ${aggregations.type} aggregation`;
+
+        this.logger.error(message, {
+          aggregations,
+        });
+        throw new Error(message);
+      }
+
+      result[aggregationKey] = {
+        type: orderByWithGroupByType,
+        description: aggregationDetails.description,
+      };
+    }
+
+    return result;
   }
 }
