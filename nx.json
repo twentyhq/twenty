@@ -84,7 +84,7 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "NODE_OPTIONS=\"--max-old-space-size=8192\" tsc -b tsconfig.json --incremental"
       },
       "configurations": {
         "watch": {
