@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
@@ -12,10 +12,9 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
-  AggregationField,
+  type AggregationField,
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -29,10 +28,8 @@ type OrderByCondition = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-@Injectable()
 export class GraphqlQueryOrderFieldParser {
   private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
-  private aggregateParser: GraphqlQuerySelectedFieldsAggregateParser;
 
   constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
     this.objectMetadataMapItem = objectMetadataMapItem;
