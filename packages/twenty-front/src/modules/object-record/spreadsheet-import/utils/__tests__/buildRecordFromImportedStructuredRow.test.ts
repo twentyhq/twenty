@@ -502,7 +502,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     });
   });
 
-  it('should not erase the record if the imported value is not defined', () => {
+  it('should return empty record for empty imported row', () => {
     const importedStructuredRow: ImportedStructuredRow = {};
 
     const spreadsheetImportFields = [
