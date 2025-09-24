@@ -1,8 +1,7 @@
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
-import { type WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
 
-export type GraphWidget = PageLayoutWidgetWithData & {
+export type GraphWidget = PageLayoutWidget & {
   type: WidgetType.GRAPH;
   configuration: {
     graphType: GraphType;
