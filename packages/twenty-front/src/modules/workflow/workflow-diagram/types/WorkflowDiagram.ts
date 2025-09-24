@@ -3,8 +3,6 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type WorkflowDiagramIteratorEmptyActionNodeData } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowDiagramIteratorEmptyActionNodeData';
-import { type FilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { type MessageDescriptor } from '@lingui/core';
 import {
   type Connection,
@@ -94,8 +92,7 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
 
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData
-  | WorkflowDiagramIteratorEmptyActionNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
@@ -107,36 +104,19 @@ export type WorkflowDiagramEdgeLabelOptions = {
   label: MessageDescriptor;
 };
 
-export type WorkflowDiagramFilterEdgeData = {
-  edgeType: 'filter';
-  stepId: string;
-  filterSettings: FilterSettings;
-  name: string;
-  runStatus?: WorkflowRunStepStatus;
-  edgeExecutionStatus?: StepStatus;
-  labelOptions?: WorkflowDiagramEdgeLabelOptions;
-};
+export type WorkflowDiagramEdgePathStrategy =
+  | 'smooth-step-path-to-target'
+  | 'bypass-source-node-on-right-side';
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
   edgeExecutionStatus?: StepStatus;
   labelOptions?: WorkflowDiagramEdgeLabelOptions;
+  edgePathStrategy?: WorkflowDiagramEdgePathStrategy;
 };
 
-export type WorkflowDiagramEdgeData =
-  | WorkflowDiagramFilterEdgeData
-  | WorkflowDiagramDefaultEdgeData;
+export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType =
-  | 'default'
-  | 'empty-trigger'
-  | 'iterator-empty-action';
+export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
-export type WorkflowDiagramEdgeType =
-  | 'blank'
-  | 'empty-filter--editable'
-  | 'empty-filter--readonly'
-  | 'empty-filter--run'
-  | 'filter--editable'
-  | 'filter--readonly'
-  | 'filter--run';
+export type WorkflowDiagramEdgeType = 'blank' | 'editable' | 'readonly';

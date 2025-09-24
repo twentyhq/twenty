@@ -145,6 +145,7 @@ const InternalTableContextProviders = ({
         objectMetadataItem: objectMetadataItem,
         objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
+        viewBarInstanceId: 'viewBarInstanceId',
         labelIdentifierFieldMetadataItem,
         recordFieldByFieldMetadataItemId,
         fieldDefinitionByFieldMetadataItemId,
@@ -168,7 +169,6 @@ const InternalTableContextProviders = ({
       >
         <RecordTableBodyContextProvider
           value={{
-            onCellMouseEnter: () => {},
             onCloseTableCell: () => {},
             onOpenTableCell: () => {},
             onActionMenuDropdownOpened: () => {},

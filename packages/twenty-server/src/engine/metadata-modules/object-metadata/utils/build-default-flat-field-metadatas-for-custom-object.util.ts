@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
@@ -10,12 +11,16 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  objectMetadataId: string;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
 };
 
+export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
+  typeof buildDefaultFlatFieldMetadatasForCustomObject
+>;
+// This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  objectMetadataId,
+  flatObjectMetadata: { id: objectMetadataId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
@@ -278,13 +283,17 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   };
 
   return {
-    idField,
-    nameField,
-    createdAtField,
-    updatedAtField,
-    deletedAtField,
-    createdByField,
-    positionField,
-    searchVectorField,
-  } as const;
+    fields: {
+      idField,
+      nameField,
+      createdAtField,
+      updatedAtField,
+      deletedAtField,
+      createdByField,
+      positionField,
+      searchVectorField,
+    },
+  } as const satisfies {
+    fields: Record<string, FlatFieldMetadata>;
+  };
 };

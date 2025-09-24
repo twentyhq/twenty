@@ -32,7 +32,7 @@
     "jsonc-parser": "^3.2.0",
     "ora": "^8.0.0",
     "yaml": "^2.4.0",
-    "zod": "^3.22.0"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.0",

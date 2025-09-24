@@ -1,24 +1,28 @@
-import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { isDefined } from 'class-validator';
+import diff, { type Difference } from 'microdiff';
+
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const computeWorkflowVersionStepChanges = ({
-  trigger,
-  steps,
-  createdStep,
-  deletedStepIds,
+  existingTrigger,
+  existingSteps,
+  updatedTrigger,
+  updatedSteps,
 }: {
-  trigger: WorkflowTrigger | null;
-  steps: WorkflowAction[] | null;
-  createdStep?: WorkflowAction;
-  deletedStepIds?: string[];
-}): WorkflowVersionStepChangesDTO => {
-  return {
-    triggerNextStepIds: trigger?.nextStepIds,
-    stepsNextStepIds: Object.fromEntries(
-      (steps || []).map((step) => [step.id, step.nextStepIds]),
-    ),
-    createdStep,
-    deletedStepIds,
-  };
+  existingTrigger: WorkflowTrigger | null;
+  existingSteps: WorkflowAction[] | null;
+  updatedTrigger?: WorkflowTrigger | null;
+  updatedSteps?: WorkflowAction[] | null;
+}) => {
+  const triggerDiff: Difference[] =
+    updatedTrigger !== undefined
+      ? diff({ trigger: existingTrigger }, { trigger: updatedTrigger })
+      : [];
+
+  const stepsDiff: Difference[] = isDefined(updatedSteps)
+    ? diff({ steps: existingSteps }, { steps: updatedSteps })
+    : [];
+
+  return { triggerDiff, stepsDiff };
 };

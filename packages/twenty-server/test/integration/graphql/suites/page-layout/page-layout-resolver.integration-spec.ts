@@ -422,10 +422,10 @@ describe('Page Layout Resolver', () => {
       assertGraphQLSuccessfulResponse(destroyResponse);
       expect(destroyResponse.body.data.destroyPageLayout).toBe(true);
 
-      expect(findOneDashboardResponseAfterDestroy.body.errors).toBeDefined();
-      expect(
-        findOneDashboardResponseAfterDestroy.body.errors[0].extensions.code,
-      ).toBe(ErrorCode.NOT_FOUND);
+      assertGraphQLErrorResponse(
+        findOneDashboardResponseAfterDestroy,
+        ErrorCode.NOT_FOUND,
+      );
     });
   });
 

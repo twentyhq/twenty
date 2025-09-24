@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
@@ -10,17 +10,17 @@ import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/ut
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class DomainManagerService {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(PublicDomain)
+    private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly auditService: AuditService,
   ) {}
 
   getFrontUrl() {
@@ -100,7 +100,7 @@ export class DomainManagerService {
     return url;
   }
 
-  getSubdomainAndCustomDomainFromUrl = (url: string) => {
+  getSubdomainAndDomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
@@ -114,7 +114,7 @@ export class DomainManagerService {
         isFrontdomain && !this.isDefaultSubdomain(subdomain)
           ? subdomain
           : undefined,
-      customDomain: isFrontdomain ? null : originHostname,
+      domain: isFrontdomain ? null : originHostname,
     };
   };
 
@@ -158,7 +158,7 @@ export class DomainManagerService {
 
     const foundWorkspace = workspaces[0];
 
-    workspaceValidator.assertIsDefinedOrThrow(foundWorkspace);
+    assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 
     return foundWorkspace;
   }
@@ -168,19 +168,31 @@ export class DomainManagerService {
       return this.getDefaultWorkspace();
     }
 
-    const { subdomain, customDomain } =
-      this.getSubdomainAndCustomDomainFromUrl(origin);
+    const { subdomain, domain } = this.getSubdomainAndDomainFromUrl(origin);
 
-    if (!customDomain && !subdomain) return;
+    if (!domain && !subdomain) return;
 
-    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
+    const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
 
-    return (
+    const workspaceFromCustomDomainOrSubdomain =
       (await this.workspaceRepository.findOne({
         where,
         relations: ['workspaceSSOIdentityProviders'],
-      })) ?? undefined
-    );
+      })) ?? undefined;
+
+    if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
+      return workspaceFromCustomDomainOrSubdomain;
+    }
+
+    const publicDomainFromCustomDomain =
+      await this.publicDomainRepository.findOne({
+        where: {
+          domain,
+        },
+        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+      });
+
+    return publicDomainFromCustomDomain?.workspace;
   }
 
   private extractSubdomain(params?: { email?: string; displayName?: string }) {
@@ -254,46 +266,5 @@ export class DomainManagerService {
           : undefined,
       subdomainUrl: this.getTwentyWorkspaceUrl(subdomain),
     };
-  }
-
-  async handleCustomDomainActivation({
-    customDomain,
-    isCustomDomainWorking,
-  }: {
-    customDomain: string;
-    isCustomDomainWorking: boolean;
-  }) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      customDomain,
-    });
-
-    if (!workspace) return;
-
-    const analytics = this.auditService.createContext({
-      workspaceId: workspace.id,
-    });
-
-    const workspaceUpdated: Partial<Workspace> = {
-      customDomain: workspace.customDomain,
-    };
-
-    if (!isCustomDomainWorking) {
-      workspaceUpdated.customDomain = null;
-    }
-
-    workspaceUpdated.isCustomDomainEnabled = isCustomDomainWorking;
-
-    if (
-      workspaceUpdated.isCustomDomainEnabled !==
-        workspace.isCustomDomainEnabled ||
-      workspaceUpdated.customDomain !== workspace.customDomain
-    ) {
-      await this.workspaceRepository.save({
-        ...workspace,
-        ...workspaceUpdated,
-      });
-
-      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
-    }
   }
 }

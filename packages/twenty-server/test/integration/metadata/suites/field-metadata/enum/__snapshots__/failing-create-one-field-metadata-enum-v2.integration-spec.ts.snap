@@ -6,7 +6,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -16,21 +17,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "invalid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -44,7 +50,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -54,21 +61,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "'OPTION_424242'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -82,7 +94,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -91,21 +104,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "Option ,1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -119,7 +137,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -143,21 +162,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -171,7 +195,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -195,21 +220,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -223,7 +253,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -247,21 +278,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -275,7 +311,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -299,21 +336,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -327,7 +369,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -336,21 +379,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -364,7 +412,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -374,21 +423,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -402,7 +456,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -416,21 +471,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -444,7 +504,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -453,21 +514,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -481,7 +547,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -491,21 +558,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -519,7 +591,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -528,21 +601,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -556,7 +634,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -580,21 +659,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "format",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -608,7 +692,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -617,21 +702,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "not a uuid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -645,7 +735,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -654,21 +745,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "Option 1 and some other things, /",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -682,7 +778,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -692,21 +789,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "Option_1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -720,7 +822,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -730,21 +833,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -758,7 +866,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -767,21 +876,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -795,7 +909,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -805,21 +920,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -833,7 +953,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -842,21 +963,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -870,7 +996,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -884,21 +1011,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": null,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -912,7 +1044,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -921,21 +1054,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -949,7 +1087,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -959,21 +1098,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -987,7 +1131,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -996,21 +1141,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1024,7 +1174,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1038,21 +1189,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1066,7 +1222,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1075,21 +1232,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1103,7 +1265,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1113,21 +1276,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1141,7 +1309,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1150,21 +1319,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1178,7 +1352,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1192,21 +1367,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1220,7 +1400,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1229,21 +1410,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1257,7 +1443,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1266,21 +1453,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1294,7 +1486,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1308,21 +1501,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1336,7 +1534,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1345,21 +1544,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1373,7 +1577,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1382,21 +1587,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1410,7 +1620,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1420,21 +1631,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1448,7 +1664,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1457,21 +1674,26 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "value": "'UNKNOWN_OPTION'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1485,7 +1707,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1499,21 +1722,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "invalid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1527,7 +1755,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1536,21 +1765,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "'OPTION_424242'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1564,7 +1798,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1573,21 +1808,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "Option ,1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1601,7 +1841,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1625,21 +1866,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1653,7 +1899,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1677,21 +1924,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1705,7 +1957,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1729,21 +1982,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1757,7 +2015,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1781,21 +2040,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1809,7 +2073,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1819,21 +2084,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1847,7 +2117,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1861,21 +2132,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1889,7 +2165,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1898,21 +2175,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1926,7 +2208,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1936,21 +2219,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -1964,7 +2252,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1973,21 +2262,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2001,7 +2295,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2010,21 +2305,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "not a uuid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2038,7 +2338,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2047,21 +2348,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "Option 1 and some other things, /",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2075,7 +2381,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2085,21 +2392,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2113,7 +2425,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2122,21 +2435,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2150,7 +2468,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2160,21 +2479,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2188,7 +2512,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2197,21 +2522,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2225,7 +2555,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2239,21 +2570,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": null,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2267,7 +2603,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2276,21 +2613,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2304,7 +2646,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2314,21 +2657,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2342,7 +2690,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2351,21 +2700,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2379,7 +2733,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2393,21 +2748,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2421,7 +2781,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2430,21 +2791,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2458,7 +2824,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2468,21 +2835,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2496,7 +2868,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2505,21 +2878,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2533,7 +2911,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2547,21 +2926,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2575,7 +2959,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2584,21 +2969,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2612,7 +3002,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2621,21 +3012,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2649,7 +3045,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2663,21 +3060,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2691,7 +3093,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2700,21 +3103,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2728,7 +3136,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2737,21 +3146,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
@@ -2765,7 +3179,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2775,21 +3190,26 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "create_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",

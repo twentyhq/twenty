@@ -13,7 +13,7 @@ import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 export class HttpTool implements Tool {
   description =
     'Make an HTTP request to any URL with configurable method, headers, and body.';
-  parameters = HttpToolParametersZodSchema;
+  inputSchema = HttpToolParametersZodSchema;
 
   async execute(parameters: ToolInput): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
@@ -38,15 +38,23 @@ export class HttpTool implements Tool {
 
       const response = await axios(axiosConfig);
 
-      return { result: response.data };
+      return {
+        success: true,
+        message: `HTTP ${method} request to ${url} completed successfully`,
+        result: response.data,
+      };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         return {
+          success: false,
+          message: `HTTP ${method} request to ${url} failed`,
           error: error.response?.data || error.message || 'HTTP request failed',
         };
       }
 
       return {
+        success: false,
+        message: `HTTP ${method} request to ${url} failed`,
         error: error instanceof Error ? error.message : 'HTTP request failed',
       };
     }

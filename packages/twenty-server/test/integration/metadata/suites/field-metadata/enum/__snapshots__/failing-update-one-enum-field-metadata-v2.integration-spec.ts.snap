@@ -6,7 +6,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -16,21 +17,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "invalid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -44,7 +50,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -54,21 +61,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "'OPTION_424242'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -82,7 +94,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -91,21 +104,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "Option ,1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -119,7 +137,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -143,21 +162,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -171,7 +195,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -195,21 +220,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -223,7 +253,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -247,21 +278,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -275,7 +311,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -299,21 +336,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -327,7 +369,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -336,21 +379,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -364,7 +412,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -374,21 +423,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -402,7 +456,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -416,21 +471,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -444,7 +504,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -453,21 +514,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -481,7 +547,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -491,21 +558,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -519,7 +591,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -528,21 +601,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -556,7 +634,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -580,21 +659,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "format",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -608,7 +692,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -617,21 +702,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "not a uuid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -645,7 +735,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -654,21 +745,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "Option 1 and some other things, /",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -682,7 +778,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -692,21 +789,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "Option_1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -720,7 +822,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -730,21 +833,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -758,7 +866,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -767,21 +876,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -795,7 +909,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -805,21 +920,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -833,7 +953,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -842,21 +963,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -870,7 +996,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -884,21 +1011,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": null,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -912,7 +1044,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -921,21 +1054,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -949,7 +1087,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -958,21 +1097,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -986,7 +1130,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1000,21 +1145,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1028,7 +1178,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1037,21 +1188,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1065,7 +1221,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1075,21 +1232,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1103,7 +1265,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1112,21 +1275,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1140,7 +1308,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1154,21 +1323,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1182,7 +1356,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1191,21 +1366,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1219,7 +1399,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1228,21 +1409,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1256,7 +1442,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1270,21 +1457,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1298,7 +1490,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1307,21 +1500,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1335,7 +1533,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1344,21 +1543,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1372,7 +1576,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1381,21 +1586,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "'OPTION_42'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1409,7 +1619,8 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1418,21 +1629,26 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
                 "value": "'UNKNOWN_OPTION'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1446,7 +1662,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1460,21 +1677,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "invalid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1488,7 +1710,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1497,21 +1720,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "'OPTION_424242'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1525,7 +1753,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1534,21 +1763,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "Option ,1",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1562,7 +1796,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1586,21 +1821,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1614,7 +1854,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1638,21 +1879,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1666,7 +1912,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1690,21 +1937,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1718,7 +1970,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1742,21 +1995,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 ],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1770,7 +2028,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1780,21 +2039,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": [],
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1808,7 +2072,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1822,21 +2087,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1850,7 +2120,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1859,21 +2130,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1887,7 +2163,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1897,21 +2174,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1925,7 +2207,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1934,21 +2217,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1962,7 +2250,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -1971,21 +2260,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "not a uuid",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -1999,7 +2293,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2008,21 +2303,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "Option 1 and some other things, /",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2036,7 +2336,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2046,21 +2347,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2074,7 +2380,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2083,21 +2390,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2111,7 +2423,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2121,21 +2434,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": 22222,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2149,7 +2467,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2158,21 +2477,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2186,7 +2510,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2200,21 +2525,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": null,
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2228,7 +2558,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2237,21 +2568,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2265,7 +2601,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2274,21 +2611,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2302,7 +2644,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2316,21 +2659,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2344,7 +2692,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2353,21 +2702,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2381,7 +2735,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2391,21 +2746,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2419,7 +2779,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2428,21 +2789,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2456,7 +2822,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2470,21 +2837,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2498,7 +2870,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2507,21 +2880,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2535,7 +2913,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2544,21 +2923,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2572,7 +2956,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2586,21 +2971,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2614,7 +3004,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2623,21 +3014,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option label is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2651,7 +3047,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2660,21 +3057,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "userFriendlyMessage": "Option value is required",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
@@ -2688,7 +3090,8 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
     "extensions": {
       "code": "BAD_USER_INPUT",
       "errors": {
-        "fieldMetadata": [
+        "index": [],
+        "objectMetadata": [
           {
             "errors": [
               {
@@ -2697,21 +3100,26 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
                 "value": "'OPTION_42'",
               },
             ],
-            "id": Any<String>,
-            "name": "testField",
-            "objectMetadataId": Any<String>,
-            "operation": "update_field",
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "testField",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
           },
         ],
-        "objectMetadata": [],
+        "view": [],
+        "viewField": [],
       },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",

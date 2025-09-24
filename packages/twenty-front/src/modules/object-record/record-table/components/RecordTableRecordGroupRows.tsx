@@ -53,6 +53,7 @@ export const RecordTableRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndexInGroup}
+            isFirstRowOfGroup={rowIndexInGroup === 0}
           />
         );
       })}

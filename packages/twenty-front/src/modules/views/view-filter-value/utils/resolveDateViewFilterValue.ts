@@ -53,7 +53,7 @@ export const variableDateViewFilterValuePartsSchema = z
     unit: variableDateViewFilterValueUnitSchema,
   })
   .refine((data) => !(data.amount === undefined && data.direction !== 'THIS'), {
-    message: "Amount cannot be 'undefined' unless direction is 'THIS'",
+    error: "Amount cannot be 'undefined' unless direction is 'THIS'",
   });
 
 const variableDateViewFilterValueSchema = z.string().transform((value) => {
