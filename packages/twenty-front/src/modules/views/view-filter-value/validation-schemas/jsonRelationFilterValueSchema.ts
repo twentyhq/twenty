@@ -12,7 +12,7 @@ export const jsonRelationFilterValueSchema = z
       return JSON.parse(value);
     } catch (error) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: (error as Error).message,
       });
       return z.NEVER;
