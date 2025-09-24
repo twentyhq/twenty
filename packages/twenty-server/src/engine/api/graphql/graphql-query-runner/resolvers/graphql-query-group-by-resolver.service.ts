@@ -115,7 +115,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       IEdge<ObjectRecord>
     >[] = [];
 
-    result.map((group) => {
+    result.forEach((group) => {
       let dimensionValues = [];
 
       for (const groupByColumn of groupByColumnsWithQuotes) {

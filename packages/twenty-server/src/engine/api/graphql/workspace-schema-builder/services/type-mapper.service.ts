@@ -185,14 +185,6 @@ export class TypeMapperService {
       [AggregateOperations.MIN, OrderByDirectionType],
       [AggregateOperations.MAX, OrderByDirectionType],
       [AggregateOperations.AVG, OrderByDirectionType],
-      [AggregateOperations.SUM, OrderByDirectionType],
-      [AggregateOperations.COUNT_UNIQUE_VALUES, OrderByDirectionType],
-      [AggregateOperations.COUNT_EMPTY, OrderByDirectionType],
-      [AggregateOperations.COUNT_NOT_EMPTY, OrderByDirectionType],
-      [AggregateOperations.COUNT_TRUE, OrderByDirectionType],
-      [AggregateOperations.COUNT_FALSE, OrderByDirectionType],
-      [AggregateOperations.PERCENTAGE_EMPTY, OrderByDirectionType],
-      [AggregateOperations.PERCENTAGE_NOT_EMPTY, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(aggregationType);
