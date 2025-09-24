@@ -7,6 +7,8 @@ import { useRestrictReadOnAllFieldsOfObject } from '@/settings/roles/role-permis
 import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictUpdateOnAllFieldsOfObject';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -18,16 +20,7 @@ const StyledSectionHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: grid;
   grid-template-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
-
-  height: ${({ theme }) => theme.spacing(6)};
-
   padding-left: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledCheckboxContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow =
@@ -105,24 +98,24 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
           <>
             {shouldShowEmptyTableHeader && <div />}
             {shouldShowSeeTableHeader && (
-              <StyledCheckboxContainer>
+              <TableCell>
                 <OverridableCheckbox
                   disabled={false}
                   checked={true}
                   onChange={handleReadAllChange}
                   type={hasAnyRestrictionOnRead ? 'override' : 'default'}
                 />
-              </StyledCheckboxContainer>
+              </TableCell>
             )}
             {shouldShowUpdateTableHeader && (
-              <StyledCheckboxContainer>
+              <TableCell>
                 <OverridableCheckbox
                   disabled={false}
                   checked={true}
                   onChange={handleUpdateAllChange}
                   type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
                 />
-              </StyledCheckboxContainer>
+              </TableCell>
             )}
           </>
         </StyledSectionHeader>
