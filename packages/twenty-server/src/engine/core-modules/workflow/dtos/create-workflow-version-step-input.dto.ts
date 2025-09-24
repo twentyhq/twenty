@@ -45,4 +45,10 @@ export class CreateWorkflowVersionStepInput {
     nullable: true,
   })
   position?: WorkflowStepPositionInput;
+
+  @Field(() => String, {
+    description: 'Step ID',
+    nullable: true,
+  })
+  id?: string;
 }

@@ -5,7 +5,7 @@ import { registerEvent } from 'src/engine/core-modules/audit/utils/events/worksp
 export const OBJECT_RECORD_CREATED_EVENT = 'Object Record Created' as const;
 export const objectRecordCreatedSchema = z.object({
   event: z.literal(OBJECT_RECORD_CREATED_EVENT),
-  properties: z.object({}).passthrough(),
+  properties: z.looseObject({}),
 });
 
 export type ObjectRecordCreatedTrackEvent = z.infer<

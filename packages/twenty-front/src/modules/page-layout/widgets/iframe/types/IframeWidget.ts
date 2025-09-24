@@ -1,7 +1,6 @@
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
-import { type WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
 
-export type IframeWidget = PageLayoutWidgetWithData & {
+export type IframeWidget = PageLayoutWidget & {
   type: WidgetType.IFRAME;
   configuration: {
     url: string;

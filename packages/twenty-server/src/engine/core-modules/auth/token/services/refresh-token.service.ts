@@ -14,13 +14,13 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import {
   type RefreshTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class RefreshTokenService {
@@ -103,17 +103,23 @@ export class RefreshTokenService {
       token,
       authProvider: jwtPayload.authProvider,
       targetedTokenType: jwtPayload.targetedTokenType,
+      isImpersonating: jwtPayload.isImpersonating,
+      impersonatorUserWorkspaceId: jwtPayload.impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: jwtPayload.impersonatedUserWorkspaceId,
     };
   }
 
   async generateRefreshToken(
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
+    isImpersonationToken: boolean = false,
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
       JwtTokenTypeEnum.REFRESH,
       payload.workspaceId ?? payload.userId,
     );
-    const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
+    const expiresIn = isImpersonationToken
+      ? '1d'
+      : this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
       throw new AuthException(

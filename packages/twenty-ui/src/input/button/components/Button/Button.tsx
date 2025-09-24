@@ -88,16 +88,20 @@ const StyledButton = styled('button', {
                   ? theme.font.color.secondary
                   : theme.font.color.extraLight
                 : theme.font.color.secondary};
-              &:hover {
-                background: ${!inverted
-                  ? theme.background.tertiary
-                  : theme.background.secondary};
-              }
-              &:active {
-                background: ${!inverted
-                  ? theme.background.quaternary
-                  : theme.background.tertiary};
-              }
+              ${disabled
+                ? ''
+                : css`
+                    &:hover {
+                      background: ${!inverted
+                        ? theme.background.tertiary
+                        : theme.background.secondary};
+                    }
+                    &:active {
+                      background: ${!inverted
+                        ? theme.background.quaternary
+                        : theme.background.tertiary};
+                    }
+                  `}
             `;
           case 'blue':
             return css`

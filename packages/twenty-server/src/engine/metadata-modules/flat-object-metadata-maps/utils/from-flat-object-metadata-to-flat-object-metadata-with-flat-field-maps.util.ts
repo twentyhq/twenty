@@ -24,6 +24,15 @@ export const fromObjectMetadataMapsToFlatObjectMetadataMaps = (
     }, initialAccumulator);
 
   return {
+    idByUniversalIdentifier: Object.values(objectMetadataMaps.byId)
+      .filter(isDefined)
+      .reduce(
+        (acc, objectMetadata) => ({
+          ...acc,
+          [objectMetadata.standardId ?? objectMetadata.id]: objectMetadata.id,
+        }),
+        {},
+      ),
     idByNameSingular: objectMetadataMaps.idByNameSingular,
     byId,
   };

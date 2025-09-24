@@ -7,7 +7,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
-import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';

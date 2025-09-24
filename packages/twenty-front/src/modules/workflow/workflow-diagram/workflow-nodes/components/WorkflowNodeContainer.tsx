@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { css } from '@emotion/react';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 
 const StyledNodeContainer = styled.div<{
   runStatus?: WorkflowRunStepStatus;
@@ -44,7 +44,7 @@ const StyledNodeContainer = styled.div<{
 
       .selected & {
         background-color: ${colors.selected.background};
-        border: 1px solid ${colors.selected.borderColor};
+        border-color: ${colors.selected.borderColor};
       }
     `;
   }}

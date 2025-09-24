@@ -1,3 +1,5 @@
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconReload, IconX } from 'twenty-ui/display';
@@ -10,7 +12,8 @@ const StyledOverridableCheckboxContainer = styled.div`
   align-items: center;
   display: inline-flex;
   justify-content: flex-start;
-  width: 48px;
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 `;
 
 const StyledOverridableCheckboxContainerItem = styled.div`

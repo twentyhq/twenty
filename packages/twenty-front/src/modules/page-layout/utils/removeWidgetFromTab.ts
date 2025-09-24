@@ -1,10 +1,10 @@
-import { type PageLayoutTabWithData } from '../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../types/pageLayoutTypes';
 
 export const removeWidgetFromTab = (
-  tabs: PageLayoutTabWithData[],
+  tabs: PageLayoutTab[],
   tabId: string,
   widgetId: string,
-): PageLayoutTabWithData[] => {
+): PageLayoutTab[] => {
   return tabs.map((tab) => {
     if (tab.id === tabId) {
       return {

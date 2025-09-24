@@ -12,6 +12,18 @@ export type ObjectRecordFilter = Partial<{
   [Property in keyof ObjectRecord]: any;
 }>;
 
+export type ObjectRecordGroupBy = Array<
+  ObjectRecordGroupByForAtomicField | ObjectRecordGroupByForCompositeField
+>;
+
+export type ObjectRecordGroupByForAtomicField = Partial<{
+  [Property in keyof ObjectRecord]: boolean;
+}>;
+
+export type ObjectRecordGroupByForCompositeField = Partial<{
+  [Property in keyof ObjectRecord]: Record<string, boolean>;
+}>;
+
 export enum OrderByDirection {
   AscNullsFirst = 'AscNullsFirst',
   AscNullsLast = 'AscNullsLast',

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { read, type WorkBook } from 'xlsx-ugnis';
 
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
@@ -10,7 +11,6 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
-import { formatNumber } from '~/utils/format/number';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -109,6 +109,7 @@ type DropZoneProps = {
 
 export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   const { maxFileSize, dateFormat, parseRaw } = useSpreadsheetImportInternal();
+  const { formatNumber } = useNumberFormat();
 
   const [loading, setLoading] = useState(false);
 

@@ -3,6 +3,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
+import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -31,6 +32,11 @@ export const useCreateViewFromCurrentState = () => {
   const viewPickerKanbanFieldMetadataIdCallbackState =
     useRecoilComponentCallbackState(
       viewPickerKanbanFieldMetadataIdComponentState,
+    );
+
+  const viewPickerCalendarFieldMetadataIdCallbackState =
+    useRecoilComponentCallbackState(
+      viewPickerCalendarFieldMetadataIdComponentState,
     );
 
   const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
@@ -64,7 +70,10 @@ export const useCreateViewFromCurrentState = () => {
           snapshot,
           viewPickerKanbanFieldMetadataIdCallbackState,
         );
-
+        const calendarFieldMetadataId = getSnapshotValue(
+          snapshot,
+          viewPickerCalendarFieldMetadataIdCallbackState,
+        );
         const viewPickerMode = getSnapshotValue(
           snapshot,
           viewPickerModeCallbackState,
@@ -82,6 +91,7 @@ export const useCreateViewFromCurrentState = () => {
             icon: iconKey,
             type,
             kanbanFieldMetadataId,
+            calendarFieldMetadataId,
           },
           shouldCopyFiltersAndSortsAndAggregate,
         );
@@ -99,6 +109,7 @@ export const useCreateViewFromCurrentState = () => {
       viewPickerIsDirtyCallbackState,
       viewPickerIsPersistingCallbackState,
       viewPickerKanbanFieldMetadataIdCallbackState,
+      viewPickerCalendarFieldMetadataIdCallbackState,
       viewPickerSelectedIconCallbackState,
       viewPickerTypeCallbackState,
       viewPickerModeCallbackState,

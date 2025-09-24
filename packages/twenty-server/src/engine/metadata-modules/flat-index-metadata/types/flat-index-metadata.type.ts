@@ -1,18 +1,26 @@
+import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
-import { type FlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-index-field-metadata';
 import { type MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
 
-type IndexMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
-  IndexMetadataEntity,
-  MetadataEntitiesRelationTarget
+export type IndexMetadataRelationProperties =
+  ExtractRecordTypeOrmRelationProperties<
+    IndexMetadataEntity,
+    MetadataEntitiesRelationTarget
+  >;
+
+export type FlatIndexFieldMetadata = Omit<
+  IndexFieldMetadataEntity,
+  ExtractRecordTypeOrmRelationProperties<
+    IndexFieldMetadataEntity,
+    MetadataEntitiesRelationTarget
+  >
 >;
 
-// TODO prastoin refactor FlatIndexMetadata to not be a Partial extension of IndexMetadataEntity
-export type FlatIndexMetadata = Partial<
-  Omit<IndexMetadataEntity, IndexMetadataRelationProperties>
+export type FlatIndexMetadata = Omit<
+  IndexMetadataEntity,
+  IndexMetadataRelationProperties
 > & {
-  id: string;
-  flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
   universalIdentifier: string;
+  flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
 };

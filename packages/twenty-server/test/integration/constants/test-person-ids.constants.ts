@@ -3,5 +3,7 @@ export const TEST_PERSON_2_ID = '777a8457-eb2d-40ac-a707-551b615b6981';
 export const TEST_PERSON_3_ID = '777a8457-eb2d-40ac-a707-551b615b6982';
 export const TEST_PERSON_4_ID = '777a8457-eb2d-40ac-a707-551b615b6983';
 export const TEST_PERSON_5_ID = '777a8457-eb2d-40ac-a707-551b615b6984';
+export const TEST_PERSON_6_ID = '777a8457-eb2d-40ac-a707-551b615b6985';
+export const TEST_PERSON_7_ID = '777a8457-eb2d-40ac-a707-551b615b6986';
 export const NOT_EXISTING_TEST_PERSON_ID =
   '777a8457-eb2d-40ac-a707-551b615b6990';

@@ -10,3 +10,8 @@ export enum WorkspaceExceptionCode {
   WORKSPACE_CUSTOM_DOMAIN_DISABLED = 'WORKSPACE_CUSTOM_DOMAIN_DISABLED',
   ENVIRONMENT_VAR_NOT_ENABLED = 'ENVIRONMENT_VAR_NOT_ENABLED',
 }
+
+export const WorkspaceNotFoundDefaultError = new WorkspaceException(
+  'Workspace not found',
+  WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+);

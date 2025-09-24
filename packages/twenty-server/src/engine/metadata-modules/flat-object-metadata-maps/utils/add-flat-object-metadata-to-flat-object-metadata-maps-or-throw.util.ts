@@ -24,6 +24,10 @@ export const addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow = ({
   }
 
   return {
+    idByUniversalIdentifier: {
+      ...flatObjectMetadataMaps.idByUniversalIdentifier,
+      [flatObjectMetadata.universalIdentifier]: flatObjectMetadata.id,
+    },
     byId: {
       ...flatObjectMetadataMaps.byId,
       [flatObjectMetadata.id]:

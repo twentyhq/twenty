@@ -77,14 +77,6 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
       )
       .join(', ');
 
-  const limitPerMetadataItemArray =
-    queryOperationSignatureWithObjectMetadataItemArray
-      .map(
-        ({ objectMetadataItem }) =>
-          `$limit${capitalize(objectMetadataItem.nameSingular)}: Int`,
-      )
-      .join(', ');
-
   if (isEmpty(queryOperationSignatureWithObjectMetadataItemArray)) {
     return null;
   }
@@ -93,8 +85,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     query CombinedFindManyRecords(
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
-      ${cursorFilteringPerMetadataItemArray}, 
-      ${limitPerMetadataItemArray}
+      ${cursorFilteringPerMetadataItemArray},
     ) {
       ${queryOperationSignatureWithObjectMetadataItemArray
         .map(

@@ -14,7 +14,7 @@ export const SSOIdentitiesProvidersSAMLParamsSchema = z
   .object({
     type: z.literal('SAML'),
     id: z.string().nonempty(),
-    ssoURL: z.string().url().nonempty(),
+    ssoURL: z.url().nonempty(),
     certificate: z.string().nonempty(),
   })
   .required();
@@ -28,7 +28,7 @@ export const SSOIdentitiesProvidersParamsSchema = z
     z
       .object({
         name: z.string().nonempty(),
-        issuer: z.string().url().nonempty(),
+        issuer: z.url().nonempty(),
       })
       .required(),
   );

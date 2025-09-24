@@ -1,8 +1,4 @@
-import {
-  type FindOptionsWhere,
-  type ObjectLiteral,
-  type OrderByCondition,
-} from 'typeorm';
+import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
 import {
   type ObjectRecordFilter,
@@ -104,15 +100,35 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
+    isGroupBy = false,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
     const parsedOrderBys = this.orderFieldParser.parse(
       orderBy,
       objectNameSingular,
       isForwardPagination,
+      isGroupBy,
     );
 
-    return queryBuilder.orderBy(parsedOrderBys as OrderByCondition);
+    if (isGroupBy) {
+      Object.entries(parsedOrderBys).forEach(
+        ([expression, direction], index) => {
+          if (index === 0) {
+            queryBuilder.orderBy(expression, direction.order, direction.nulls);
+          } else {
+            queryBuilder.addOrderBy(
+              expression,
+              direction.order,
+              direction.nulls,
+            );
+          }
+        },
+      );
+
+      return queryBuilder;
+    }
+
+    return queryBuilder.orderBy(parsedOrderBys);
   }
 
   public parseSelectedFields(

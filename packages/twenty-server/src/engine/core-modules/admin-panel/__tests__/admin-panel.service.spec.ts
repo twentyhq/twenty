@@ -5,10 +5,6 @@ import axios from 'axios';
 
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -94,85 +90,6 @@ describe('AdminPanelService', () => {
 
   it('should be defined', async () => {
     expect(service).toBeDefined();
-  });
-
-  it('should impersonate a user and return workspace and loginToken on success', async () => {
-    const mockUser = {
-      id: 'user-id',
-      email: 'user@example.com',
-      userWorkspaces: [
-        {
-          workspace: {
-            id: 'workspace-id',
-            allowImpersonation: true,
-            subdomain: 'example-subdomain',
-          },
-        },
-      ],
-    };
-
-    UserFindOneMock.mockReturnValueOnce(mockUser);
-    LoginTokenServiceGenerateLoginTokenMock.mockReturnValueOnce({
-      token: 'mock-login-token',
-      expiresAt: new Date(),
-    });
-
-    const result = await service.impersonate(
-      'user-id',
-      'workspace-id',
-      'user-id',
-    );
-
-    expect(UserFindOneMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          id: 'user-id',
-          userWorkspaces: {
-            workspaceId: 'workspace-id',
-            workspace: { allowImpersonation: true },
-          },
-        }),
-        relations: { userWorkspaces: { workspace: true } },
-      }),
-    );
-
-    expect(LoginTokenServiceGenerateLoginTokenMock).toHaveBeenCalledWith(
-      'user@example.com',
-      'workspace-id',
-      'impersonation',
-      { impersonatorUserId: 'user-id' },
-    );
-
-    expect(result).toEqual(
-      expect.objectContaining({
-        workspace: {
-          id: 'workspace-id',
-          workspaceUrls: {
-            customUrl: undefined,
-            subdomainUrl: 'https://twenty.twenty.com',
-          },
-        },
-        loginToken: expect.objectContaining({
-          token: 'mock-login-token',
-          expiresAt: expect.any(Date),
-        }),
-      }),
-    );
-  });
-
-  it('should throw an error when user is not found', async () => {
-    UserFindOneMock.mockReturnValueOnce(null);
-
-    await expect(
-      service.impersonate('invalid-user-id', 'workspace-id', 'user-id'),
-    ).rejects.toThrow(
-      new AuthException(
-        'User not found in workspace or impersonation not enabled',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-      ),
-    );
-
-    expect(UserFindOneMock).toHaveBeenCalled();
   });
 
   describe('getConfigVariablesGrouped', () => {

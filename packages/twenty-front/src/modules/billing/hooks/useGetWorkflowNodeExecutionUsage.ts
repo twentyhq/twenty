@@ -2,26 +2,39 @@ import {
   BillingProductKey,
   useGetMeteredProductsUsageQuery,
 } from '~/generated-metadata/graphql';
+import { findOrThrow } from 'twenty-shared/utils';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
-  const { data, loading } = useGetMeteredProductsUsageQuery();
+  const { data, loading, refetch } = useGetMeteredProductsUsageQuery();
 
-  const workflowUsage = data?.getMeteredProductsUsage.find(
-    (productUsage) =>
-      productUsage.productKey === BillingProductKey.WORKFLOW_NODE_EXECUTION,
-  );
+  const refetchMeteredProductsUsage = () => {
+    refetch();
+  };
 
-  if (loading === true || !workflowUsage) {
-    return {
-      usedCredits: 0,
-      grantedCredits: 10000,
-      unitPriceCents: 0,
-    };
-  }
+  const isGetMeteredProductsUsageQueryLoaded = () => {
+    return data?.getMeteredProductsUsage && !loading;
+  };
+
+  const getMeteredProductUsage = () => {
+    if (!data) {
+      throw new Error('getMeteredProductUsage was not loaded');
+    }
+
+    return data.getMeteredProductsUsage;
+  };
+
+  const getWorkflowNodeExecutionUsage = () => {
+    return findOrThrow(
+      getMeteredProductUsage(),
+      (productUsage) =>
+        productUsage.productKey === BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+  };
 
   return {
-    usedCredits: workflowUsage.usedCredits,
-    grantedCredits: workflowUsage.grantedCredits,
-    unitPriceCents: workflowUsage.unitPriceCents,
+    refetchMeteredProductsUsage,
+    isGetMeteredProductsUsageQueryLoaded:
+      isGetMeteredProductsUsageQueryLoaded(),
+    getWorkflowNodeExecutionUsage,
   };
 };

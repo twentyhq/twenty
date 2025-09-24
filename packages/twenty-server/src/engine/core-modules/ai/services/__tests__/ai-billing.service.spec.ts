@@ -11,8 +11,8 @@ describe('AIBillingService', () => {
   let mockWorkspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
 
   const mockTokenUsage = {
-    promptTokens: 1000,
-    completionTokens: 500,
+    inputTokens: 1000,
+    outputTokens: 500,
     totalTokens: 1500,
   };
 
@@ -63,8 +63,8 @@ describe('AIBillingService', () => {
 
     it('should calculate cost correctly with different token usage', async () => {
       const differentTokenUsage = {
-        promptTokens: 2000,
-        completionTokens: 1000,
+        inputTokens: 2000,
+        outputTokens: 1000,
         totalTokens: 3000,
       };
 
@@ -94,7 +94,7 @@ describe('AIBillingService', () => {
         [
           {
             eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 8,
+            value: 7500,
           },
         ],
         'workspace-1',

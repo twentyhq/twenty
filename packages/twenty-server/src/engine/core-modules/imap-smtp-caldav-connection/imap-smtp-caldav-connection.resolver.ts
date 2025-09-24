@@ -103,7 +103,7 @@ export class ImapSmtpCaldavResolver {
       handle,
     );
 
-    await this.imapSmtpCaldavApisService.setupCompleteAccount({
+    await this.imapSmtpCaldavApisService.processAccount({
       handle,
       workspaceMemberId: accountOwnerId,
       workspaceId: workspace.id,

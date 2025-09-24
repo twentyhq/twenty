@@ -13,7 +13,7 @@ import {
   DnsManagerExceptionCode,
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/cloudflare.validate';
+import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 

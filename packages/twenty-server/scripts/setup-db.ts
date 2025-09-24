@@ -21,6 +21,18 @@ rawDataSource
       'create extension "uuid-ossp"',
     );
 
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "unaccent"',
+      'create extension "unaccent"',
+    );
+
+    await performQuery(
+      `CREATE OR REPLACE FUNCTION unaccent_immutable(text) RETURNS text AS $$
+        SELECT public.unaccent($1)
+      $$ LANGUAGE sql IMMUTABLE;`,
+      'create immutable unaccent wrapper function',
+    );
+
     // We paused the work on FDW
     if (process.env.IS_FDW_ENABLED !== 'true') {
       return;

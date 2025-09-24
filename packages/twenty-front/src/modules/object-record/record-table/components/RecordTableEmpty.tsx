@@ -1,3 +1,4 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
 import { RecordTableStyleWrapper } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
@@ -12,9 +13,11 @@ import { RecordTableHeader } from '@/object-record/record-table/record-table-hea
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { isDefined, sumByProperty } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
   height: 100%;
@@ -43,23 +46,25 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
+  const isMobile = useIsMobile();
+
   const resizeOffsetToAddOnlyIfItMakesTableContainerGrow = isResizing
     ? resizeFieldOffset > 0
       ? resizeFieldOffset
       : 0
     : 0;
 
-  const totalWidthOfRecordFieldColumns = visibleRecordFields.reduce(
-    sumByProperty('size'),
-    0,
-  );
-
   const totalColumnsBorderWidth = visibleRecordFields.length;
+
+  const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
+    isMobile,
+    visibleRecordFields,
+  });
 
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
   const emptyTableContainerComputedWidth =
-    totalWidthOfRecordFieldColumns +
+    visibleRecordFieldsWidth +
     RECORD_TABLE_COLUMN_CHECKBOX_WIDTH +
     RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
     RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH +
@@ -71,6 +76,10 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     emptyTableContainerComputedWidth,
   );
 
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
   return (
     <StyledEmptyStateContainer width={tableContainerWidth}>
       <RecordTableStyleWrapper
@@ -78,6 +87,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         visibleRecordFields={visibleRecordFields}
         lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
+        hasRecordGroups={hasRecordGroups}
       >
         <RecordTableHeader />
       </RecordTableStyleWrapper>

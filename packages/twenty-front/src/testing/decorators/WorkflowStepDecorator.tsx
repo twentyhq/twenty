@@ -1,3 +1,5 @@
+import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -59,6 +61,12 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
             steps: workflowVersion.steps,
           },
         );
+        set(
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          getWorkflowMock().id,
+        );
         populateStepsOutputSchema(workflowVersion);
         setReady(true);
       },
@@ -70,12 +78,18 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   }, [handleMount]);
 
   return (
-    <WorkflowVisualizerComponentInstanceContext.Provider
+    <CommandMenuPageComponentInstanceContext.Provider
       value={{
         instanceId: workflowVisualizerComponentInstanceId,
       }}
     >
-      {ready && <Story />}
-    </WorkflowVisualizerComponentInstanceContext.Provider>
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: workflowVisualizerComponentInstanceId,
+        }}
+      >
+        {ready && <Story />}
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    </CommandMenuPageComponentInstanceContext.Provider>
   );
 };

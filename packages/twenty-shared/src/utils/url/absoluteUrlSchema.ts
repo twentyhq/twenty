@@ -16,7 +16,7 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
     // if the hostname is a number, it's not a valid url
     // if we let URL() parse it, it will throw cast an IP address and we lose the information
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: 'domain is not a valid url',
     });
 
@@ -28,14 +28,14 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
       return absoluteUrl;
     }
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: 'domain is not a valid url',
     });
 
     return z.NEVER;
   } catch {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: 'domain is not a valid url',
     });
 

@@ -1,5 +1,6 @@
 import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
+import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
   TRIGGER_STEP_ID,
@@ -19,7 +20,16 @@ export const getWorkflowRunStepContext = ({
     return [];
   }
 
-  const previousSteps = getPreviousSteps(flow.steps, stepId);
+  const currentStep = flow.steps.find((step) => step.id === stepId);
+
+  if (!isDefined(currentStep)) {
+    return [];
+  }
+
+  const previousSteps = getPreviousSteps({
+    steps: flow.steps,
+    currentStep,
+  });
 
   const context = getWorkflowRunContext(stepInfos);
 

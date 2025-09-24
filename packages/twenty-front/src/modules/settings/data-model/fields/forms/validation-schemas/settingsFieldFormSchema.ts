@@ -7,8 +7,10 @@ import { settingsDataModelFieldTypeFormSchema } from '~/pages/settings/data-mode
 export const settingsFieldFormSchema = (existingOtherLabels?: string[]) => {
   return z
     .object({})
-    .merge(settingsDataModelFieldIconLabelFormSchema(existingOtherLabels))
-    .merge(settingsDataModelFieldDescriptionFormSchema())
-    .merge(settingsDataModelFieldTypeFormSchema)
+    .extend(
+      settingsDataModelFieldIconLabelFormSchema(existingOtherLabels).shape,
+    )
+    .extend(settingsDataModelFieldDescriptionFormSchema().shape)
+    .extend(settingsDataModelFieldTypeFormSchema.shape)
     .and(settingsDataModelFieldSettingsFormSchema);
 };

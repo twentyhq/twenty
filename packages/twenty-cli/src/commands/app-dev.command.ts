@@ -7,24 +7,16 @@ import { syncApp } from '../utils/app-sync';
 export class AppDevCommand {
   private apiService = new ApiService();
 
-  async execute(options: {
-    path?: string;
-    debounce: string;
-    verbose?: boolean;
-  }): Promise<void> {
+  async execute(options: { path?: string; debounce: string }): Promise<void> {
     try {
-      const appPath = await resolveAppPath(options.path, options.verbose);
+      const appPath = await resolveAppPath(options.path);
       const debounceMs = parseInt(options.debounce, 10);
 
-      this.logStartupInfo(appPath, debounceMs, options.verbose);
+      this.logStartupInfo(appPath, debounceMs);
 
       await syncApp(appPath, this.apiService);
 
-      const watcher = this.setupFileWatcher(
-        appPath,
-        debounceMs,
-        options.verbose,
-      );
+      const watcher = this.setupFileWatcher(appPath, debounceMs);
 
       this.setupGracefulShutdown(watcher);
     } catch (error) {
@@ -36,22 +28,16 @@ export class AppDevCommand {
     }
   }
 
-  private logStartupInfo(
-    appPath: string,
-    debounceMs: number,
-    verbose?: boolean,
-  ): void {
+  private logStartupInfo(appPath: string, debounceMs: number): void {
     console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
     console.log(chalk.gray(`📁 App Path: ${appPath}`));
     console.log(chalk.gray(`⏱️  Debounce: ${debounceMs}ms`));
-    console.log(chalk.gray(`🔧 Verbose: ${verbose ? 'On' : 'Off'}`));
     console.log('');
   }
 
   private setupFileWatcher(
     appPath: string,
     debounceMs: number,
-    verbose?: boolean,
   ): chokidar.FSWatcher {
     const watcher = chokidar.watch(appPath, {
       ignored: /node_modules|\.git/,
@@ -74,10 +60,7 @@ export class AppDevCommand {
       }, debounceMs);
     };
 
-    watcher.on('change', (filePath) => {
-      if (verbose) {
-        console.log(chalk.gray(`📝 ${filePath} changed`));
-      }
+    watcher.on('change', () => {
       debouncedSync();
     });
 

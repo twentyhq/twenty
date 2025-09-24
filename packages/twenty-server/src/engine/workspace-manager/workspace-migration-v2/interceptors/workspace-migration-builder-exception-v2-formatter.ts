@@ -13,14 +13,11 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
   const { errors, summary } =
     fromWorkspaceMigrationBuilderExceptionToValidationResponseError(error);
 
-  const invalidObjects = summary.invalidObjects;
-  const invalidFields = summary.invalidFields;
-
   throw new BaseGraphQLError(error.message, ErrorCode.BAD_USER_INPUT, {
     code: 'METADATA_VALIDATION_ERROR',
     errors,
     summary,
-    message: `Validation failed for ${invalidObjects} object(s) and ${invalidFields} field(s)`,
-    userFriendlyMessage: t`Validation failed for ${invalidObjects} object(s) and ${invalidFields} field(s)`,
+    message: `Validation failed for 0 object(s) and 0 field(s)`,
+    userFriendlyMessage: t`Validation failed for 0 object(s) and 0 field(s)`,
   });
 };

@@ -128,6 +128,7 @@ export class WorkflowStatusesUpdateJob {
       where: {
         id: workflowId,
       },
+      withDeleted: true,
     });
 
     if (isEqual(newWorkflowStatuses, previousWorkflow.statuses)) {

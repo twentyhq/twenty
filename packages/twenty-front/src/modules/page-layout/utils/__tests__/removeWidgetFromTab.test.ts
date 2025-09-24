@@ -1,9 +1,9 @@
 import { WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutTabWithData } from '../../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../../types/pageLayoutTypes';
 import { removeWidgetFromTab } from '../removeWidgetFromTab';
 
 describe('removeWidgetFromTab', () => {
-  const mockTabs: PageLayoutTabWithData[] = [
+  const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
       title: 'Tab 1',

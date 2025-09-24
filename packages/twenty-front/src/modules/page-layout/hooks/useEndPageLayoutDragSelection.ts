@@ -1,14 +1,32 @@
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAppWindow } from 'twenty-ui/display';
-import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
+import { pageLayoutSelectedCellsComponentState } from '../states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
 
-export const useEndPageLayoutDragSelection = () => {
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+export const useEndPageLayoutDragSelection = (
+  pageLayoutIdFromProps?: string,
+) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
+    pageLayoutSelectedCellsComponentState,
+    pageLayoutId,
+  );
+  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+    pageLayoutDraggedAreaComponentState,
+    pageLayoutId,
+  );
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const endPageLayoutDragSelection = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -25,18 +43,19 @@ export const useEndPageLayoutDragSelection = () => {
           if (isDefined(draggedBounds)) {
             set(pageLayoutDraggedAreaState, draggedBounds);
 
-            navigateCommandMenu({
-              page: CommandMenuPages.PageLayoutWidgetTypeSelect,
-              pageTitle: 'Add Widget',
-              pageIcon: IconAppWindow,
-              resetNavigationStack: true,
+            navigatePageLayoutCommandMenu({
+              commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
             });
-
-            set(pageLayoutSelectedCellsState, new Set());
           }
         }
+
+        set(pageLayoutSelectedCellsState, new Set());
       },
-    [navigateCommandMenu],
+    [
+      navigatePageLayoutCommandMenu,
+      pageLayoutDraggedAreaState,
+      pageLayoutSelectedCellsState,
+    ],
   );
 
   return { endPageLayoutDragSelection };

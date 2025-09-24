@@ -1,20 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import graphqlTypeJson from 'graphql-type-json';
-
-import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import GraphQLJSON from 'graphql-type-json';
+import { Difference } from 'microdiff';
 
 @ObjectType('WorkflowVersionStepChanges')
 export class WorkflowVersionStepChangesDTO {
-  @Field(() => [String], { nullable: true })
-  triggerNextStepIds?: string[];
+  @Field(() => GraphQLJSON, { nullable: true })
+  triggerDiff?: Difference[];
 
-  @Field(() => graphqlTypeJson, { nullable: true })
-  stepsNextStepIds?: Record<string, string[] | undefined>;
-
-  @Field(() => WorkflowActionDTO, { nullable: true })
-  createdStep?: WorkflowActionDTO;
-
-  @Field(() => [String], { nullable: true })
-  deletedStepIds?: string[];
+  @Field(() => GraphQLJSON, { nullable: true })
+  stepsDiff?: Difference[];
 }

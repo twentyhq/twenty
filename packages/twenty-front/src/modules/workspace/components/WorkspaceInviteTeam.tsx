@@ -25,7 +25,7 @@ const StyledLinkContainer = styled.div`
 `;
 
 const emailValidationSchema = (email: string) =>
-  z.string().email(`Invalid email '${email}'`);
+  z.email(`Invalid email '${email}'`);
 
 const validationSchema = () =>
   z
@@ -37,9 +37,8 @@ const validationSchema = () =>
         const emails = sanitizeEmailList(value.split(','));
         if (emails.length === 0) {
           ctx.addIssue({
-            code: z.ZodIssueCode.invalid_string,
+            code: 'custom',
             message: 'Emails should not be empty',
-            validation: 'email',
           });
         }
         const invalidEmails: string[] = [];
@@ -51,12 +50,11 @@ const validationSchema = () =>
         }
         if (invalidEmails.length > 0) {
           ctx.addIssue({
-            code: z.ZodIssueCode.invalid_string,
+            code: 'custom',
             message:
               invalidEmails.length > 1
                 ? 'Emails "' + invalidEmails.join('", "') + '" are invalid'
                 : 'Email "' + invalidEmails.join('", "') + '" is invalid',
-            validation: 'email',
           });
         }
       }),

@@ -6,7 +6,15 @@ import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-di
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockDuplicateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: {
-    duplicateWorkflowVersionStep: { createdStep: { id: '2', type: 'CODE' } },
+    duplicateWorkflowVersionStep: {
+      stepsDiff: [
+        {
+          type: 'CREATE',
+          path: ['steps', 0],
+          value: { id: '2', type: 'CODE' },
+        },
+      ],
+    },
   },
 });
 

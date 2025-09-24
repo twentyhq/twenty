@@ -84,6 +84,22 @@ export class ViewService {
     return view || null;
   }
 
+  async findByIdWithRelatedObjectMetadata(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+      relations: ['workspace', 'objectMetadata', 'viewFields'],
+    });
+
+    return view || null;
+  }
+
   async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(

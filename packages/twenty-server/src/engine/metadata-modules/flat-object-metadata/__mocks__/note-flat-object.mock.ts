@@ -24,6 +24,6 @@ export const NOTE_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   universalIdentifier: '20202020-0b00-45cd-b6f6-6cd806fc6804',
-  flatIndexMetadatas: [],
+
   flatFieldMetadatas: Object.values(NOTE_FLAT_FIELDS_MOCK),
 });

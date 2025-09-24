@@ -10,5 +10,6 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
     widgets {
       ...PageLayoutWidgetFragment
     }
+    pageLayoutId
   }
 `;

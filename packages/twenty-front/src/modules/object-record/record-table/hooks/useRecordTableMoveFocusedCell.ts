@@ -8,6 +8,7 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
   const { focusRecordTableCell } = useFocusRecordTableCell(recordTableId);
@@ -26,6 +27,10 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
     ({ snapshot }) =>
       () => {
         const focusPosition = getSnapshotValue(snapshot, focusPositionState);
+
+        if (!isDefined(focusPosition)) {
+          return;
+        }
 
         let newRowIndex = focusPosition.row - 1;
 
@@ -49,6 +54,10 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
           recordIndexAllRecordIdsSelector,
         );
         const focusPosition = getSnapshotValue(snapshot, focusPositionState);
+
+        if (!isDefined(focusPosition)) {
+          return;
+        }
 
         let newRowIndex = focusPosition.row + 1;
 
@@ -76,7 +85,12 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
           snapshot,
           recordIndexAllRecordIdsSelector,
         );
+
         const focusPosition = getSnapshotValue(snapshot, focusPositionState);
+
+        if (!isDefined(focusPosition)) {
+          return;
+        }
 
         const numberOfRecordFields = getSnapshotValue(
           snapshot,
@@ -124,6 +138,10 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
     ({ snapshot }) =>
       () => {
         const focusPosition = getSnapshotValue(snapshot, focusPositionState);
+
+        if (!isDefined(focusPosition)) {
+          return;
+        }
 
         const numberOfRecordFields = getSnapshotValue(
           snapshot,

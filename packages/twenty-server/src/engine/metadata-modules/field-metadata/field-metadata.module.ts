@@ -9,6 +9,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -66,6 +67,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
         WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
+        WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

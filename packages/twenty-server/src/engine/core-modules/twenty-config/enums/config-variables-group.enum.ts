@@ -19,4 +19,5 @@ export enum ConfigVariablesGroup {
   AnalyticsConfig = 'audit-config',
   TokensDuration = 'tokens-duration',
   TwoFactorAuthentication = 'two-factor-authentication',
+  AwsSesSettings = 'aws-ses-settings',
 }

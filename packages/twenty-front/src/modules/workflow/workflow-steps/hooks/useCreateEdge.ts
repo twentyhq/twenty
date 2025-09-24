@@ -1,7 +1,15 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { useCreateWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
 import { useState } from 'react';
+
+type CreateEdgeParams = Pick<
+  WorkflowDiagramEdgeDescriptor,
+  'source' | 'target'
+> & {
+  connectionOptions?: WorkflowStepConnectionOptions;
+};
 
 export const useCreateEdge = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +22,8 @@ export const useCreateEdge = () => {
   const createEdge = async ({
     source,
     target,
-  }: WorkflowDiagramEdgeDescriptor) => {
+    connectionOptions,
+  }: CreateEdgeParams) => {
     if (isLoading) {
       return;
     }
@@ -29,6 +38,7 @@ export const useCreateEdge = () => {
           workflowVersionId,
           source,
           target,
+          sourceConnectionOptions: connectionOptions,
         })
       )?.data?.createWorkflowVersionEdge;
 

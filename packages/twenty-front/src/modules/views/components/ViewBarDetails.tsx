@@ -54,7 +54,6 @@ const StyledBar = styled.div`
   min-height: 32px;
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
   z-index: 4;
 `;
 

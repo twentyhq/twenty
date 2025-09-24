@@ -9,14 +9,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 type RecordIndexTableContainerProps = {
   recordTableId: string;
-  viewBarId: string;
 };
 
 export const RecordIndexTableContainer = ({
   recordTableId,
-  viewBarId,
 }: RecordIndexTableContainerProps) => {
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { objectNameSingular, viewBarInstanceId } =
+    useRecordIndexContextOrThrow();
 
   const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
@@ -39,7 +38,7 @@ export const RecordIndexTableContainer = ({
       <RecordTableWithWrappers
         recordTableId={recordTableId}
         objectNameSingular={objectNameSingular}
-        viewBarId={viewBarId}
+        viewBarId={viewBarInstanceId}
         updateRecordMutation={updateEntity}
       />
       {isRecordIndexRemoveSortingModalOpened && (

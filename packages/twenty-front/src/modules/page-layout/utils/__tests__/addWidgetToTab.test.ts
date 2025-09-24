@@ -1,12 +1,10 @@
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { WidgetType } from '../../mocks/mockWidgets';
-import {
-  type PageLayoutTabWithData,
-  type PageLayoutWidgetWithData,
-} from '../../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../../types/pageLayoutTypes';
 import { addWidgetToTab } from '../addWidgetToTab';
 
 describe('addWidgetToTab', () => {
-  const mockWidget: PageLayoutWidgetWithData = {
+  const mockWidget: PageLayoutWidget = {
     id: 'widget-1',
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
@@ -18,7 +16,7 @@ describe('addWidgetToTab', () => {
     deletedAt: null,
   };
 
-  const mockTabs: PageLayoutTabWithData[] = [
+  const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
       title: 'Tab 1',
@@ -45,7 +43,7 @@ describe('addWidgetToTab', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
     expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets[0]).toEqual(mockWidget);
+    expect(result[0].widgets?.[0]).toEqual(mockWidget);
     expect(result[1].widgets).toHaveLength(0);
   });
 
@@ -65,7 +63,7 @@ describe('addWidgetToTab', () => {
   });
 
   it('should add multiple widgets to the same tab', () => {
-    const secondWidget: PageLayoutWidgetWithData = {
+    const secondWidget: PageLayoutWidget = {
       ...mockWidget,
       id: 'widget-2',
       title: 'Second Widget',
@@ -75,8 +73,8 @@ describe('addWidgetToTab', () => {
     result = addWidgetToTab(result, 'tab-1', secondWidget);
 
     expect(result[0].widgets).toHaveLength(2);
-    expect(result[0].widgets[0]).toEqual(mockWidget);
-    expect(result[0].widgets[1]).toEqual(secondWidget);
+    expect(result[0].widgets?.[0]).toEqual(mockWidget);
+    expect(result[0].widgets?.[1]).toEqual(secondWidget);
   });
 
   it('should return a new array without mutating the original', () => {

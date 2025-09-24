@@ -2,7 +2,7 @@ import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 
@@ -13,20 +13,19 @@ describe('getResolverArgs', () => {
       last: { type: GraphQLInt, isNullable: true },
       before: { type: GraphQLString, isNullable: true },
       after: { type: GraphQLString, isNullable: true },
-      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: true },
+      filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: true },
       orderBy: {
-        kind: InputTypeDefinitionKind.OrderBy,
+        kind: GqlInputTypeDefinitionKind.OrderBy,
         isNullable: true,
         isArray: true,
       },
-      limit: { type: GraphQLInt, isNullable: true },
     },
     findOne: {
-      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
+      filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: false },
     },
     createMany: {
       data: {
-        kind: InputTypeDefinitionKind.Create,
+        kind: GqlInputTypeDefinitionKind.Create,
         isNullable: false,
         isArray: true,
       },
@@ -37,7 +36,7 @@ describe('getResolverArgs', () => {
       },
     },
     createOne: {
-      data: { kind: InputTypeDefinitionKind.Create, isNullable: false },
+      data: { kind: GqlInputTypeDefinitionKind.Create, isNullable: false },
       upsert: {
         isArray: false,
         isNullable: true,
@@ -46,16 +45,16 @@ describe('getResolverArgs', () => {
     },
     updateOne: {
       id: { type: UUIDScalarType, isNullable: false },
-      data: { kind: InputTypeDefinitionKind.Update, isNullable: false },
+      data: { kind: GqlInputTypeDefinitionKind.Update, isNullable: false },
     },
     deleteOne: {
       id: { type: UUIDScalarType, isNullable: false },
     },
     restoreMany: {
-      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
+      filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: false },
     },
     destroyMany: {
-      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
+      filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: false },
     },
   };
 

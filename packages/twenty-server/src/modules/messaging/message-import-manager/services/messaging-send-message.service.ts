@@ -12,14 +12,15 @@ import {
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
-import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
+import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
+  html: string;
 }
 
 @Injectable()
@@ -46,26 +47,37 @@ export class MessagingSendMessageService {
         const { data } = await oAuth2Client.userinfo.get();
 
         const fromEmail = data.email;
-
         const fromName = data.name;
+        const boundary = `boundary_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         const headers: string[] = [];
 
         if (isDefined(fromName)) {
           headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
+        } else {
+          headers.push(`From: ${fromEmail}`);
         }
 
         headers.push(
           `To: ${sendMessageInput.to}`,
           `Subject: ${mimeEncode(sendMessageInput.subject)}`,
           'MIME-Version: 1.0',
+          `Content-Type: multipart/alternative; boundary="${boundary}"`,
+          '',
+          `--${boundary}`,
           'Content-Type: text/plain; charset="UTF-8"',
           '',
           sendMessageInput.body,
+          '',
+          `--${boundary}`,
+          'Content-Type: text/html; charset="UTF-8"',
+          '',
+          sendMessageInput.html,
+          '',
+          `--${boundary}--`,
         );
 
         const message = headers.join('\n');
-
         const encodedMessage = Buffer.from(message).toString('base64');
 
         await gmailClient.users.messages.send({
@@ -85,8 +97,8 @@ export class MessagingSendMessageService {
         const message = {
           subject: sendMessageInput.subject,
           body: {
-            contentType: 'Text',
-            content: sendMessageInput.body,
+            contentType: 'HTML',
+            content: sendMessageInput.html,
           },
           toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
         };
@@ -130,6 +142,7 @@ export class MessagingSendMessageService {
           to: sendMessageInput.to,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
+          html: sendMessageInput.html,
         });
         break;
       }

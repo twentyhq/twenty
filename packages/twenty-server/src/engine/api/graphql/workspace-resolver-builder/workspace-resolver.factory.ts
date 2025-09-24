@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { GroupByResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/group-by-resolver.factory';
 import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
@@ -16,8 +17,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
@@ -54,6 +56,7 @@ export class WorkspaceResolverFactory {
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
     private readonly mergeManyResolverFactory: MergeManyResolverFactory,
+    private readonly groupByResolverFactory: GroupByResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -81,6 +84,7 @@ export class WorkspaceResolverFactory {
       ['restoreOne', this.restoreOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
+      ['groupBy', this.groupByResolverFactory],
     ]);
     const resolvers: IResolvers = {
       Query: {},
@@ -112,8 +116,15 @@ export class WorkspaceResolverFactory {
         continue;
       }
 
+      const isGroupByEnabled =
+        workspaceFeatureFlagsMap[FeatureFlagKey.IS_GROUP_BY_ENABLED];
+
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
+        if (methodName === 'groupBy' && !isGroupByEnabled) {
+          continue;
+        }
+
         const resolverName = getResolverName(objectMetadata, methodName);
         const resolverFactory = factories.get(methodName);
 

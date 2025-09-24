@@ -1,16 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Readable } from 'stream';
-
 import {
-  type CoreMessage,
-  type CoreUserMessage,
   type FilePart,
   type ImagePart,
+  LanguageModelUsage,
+  type ModelMessage,
   streamText,
   ToolSet,
   type UserContent,
+  UserModelMessage,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -31,6 +30,7 @@ import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { constructAssistantMessageContentFromStream } from 'src/engine/metadata-modules/agent/utils/constructAssistantMessageContentFromStream';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -41,11 +41,7 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 
 export interface AgentExecutionResult {
   result: object;
-  usage: {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-  };
+  usage: LanguageModelUsage;
 }
 
 @Injectable()
@@ -69,14 +65,12 @@ export class AgentExecutionService {
 
   async prepareAIRequestConfig({
     messages,
-    prompt,
     system,
     agent,
   }: {
     system: string;
     agent: AgentEntity | null;
-    prompt?: string;
-    messages?: CoreMessage[];
+    messages: ModelMessage[];
   }) {
     try {
       if (agent) {
@@ -112,9 +106,18 @@ export class AgentExecutionService {
         system,
         tools,
         model: registeredModel.model,
-        ...(messages && { messages }),
-        ...(prompt && { prompt }),
+        messages,
         maxSteps: AGENT_CONFIG.MAX_STEPS,
+        ...(registeredModel.doesSupportThinking && {
+          providerOptions: {
+            anthropic: {
+              thinking: {
+                type: 'enabled',
+                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
+              },
+            },
+          },
+        }),
       };
     } catch (error) {
       this.logger.error(
@@ -140,7 +143,7 @@ export class AgentExecutionService {
   private async buildUserMessage(
     userMessage: string,
     fileIds: string[],
-  ): Promise<CoreUserMessage> {
+  ): Promise<UserModelMessage> {
     const content: Exclude<UserContent, string> = [
       {
         type: 'text',
@@ -233,21 +236,41 @@ export class AgentExecutionService {
       filename,
       file.workspaceId,
     );
-    const fileBuffer = await streamToBuffer(fileStream as Readable);
+    const fileBuffer = await streamToBuffer(fileStream);
 
     if (file.type.startsWith('image')) {
       return {
         type: 'image',
         image: fileBuffer,
-        mimeType: file.type,
-      };
-    } else {
-      return {
-        type: 'file',
-        data: fileBuffer,
-        mimeType: file.type,
+        mediaType: file.type,
       };
     }
+
+    return {
+      type: 'file',
+      data: fileBuffer,
+      mediaType: file.type,
+    };
+  }
+
+  private mapMessagesToCoreMessages(
+    messages: AgentChatMessageEntity[],
+  ): ModelMessage[] {
+    return messages
+      .map(({ role, rawContent }): ModelMessage => {
+        if (role === AgentChatMessageRole.USER) {
+          return {
+            role: 'user',
+            content: rawContent ?? '',
+          };
+        }
+
+        return {
+          role: 'assistant',
+          content: constructAssistantMessageContentFromStream(rawContent ?? ''),
+        };
+      })
+      .filter((message) => message.content.length > 0);
   }
 
   async streamChatResponse({
@@ -271,10 +294,8 @@ export class AgentExecutionService {
       where: { id: agentId },
     });
 
-    const llmMessages: CoreMessage[] = messages.map(({ role, content }) => ({
-      role,
-      content,
-    }));
+    const llmMessages: ModelMessage[] =
+      this.mapMessagesToCoreMessages(messages);
 
     let contextString = '';
 

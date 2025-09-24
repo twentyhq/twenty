@@ -28,7 +28,7 @@ export const useEndSubscriptionTrialPeriod = () => {
           message: t`No payment method found. Please update your billing details.`,
         });
 
-        return;
+        return { success: false };
       }
 
       const updatedSubscriptionStatus = endTrialPeriodOutput?.status;
@@ -48,10 +48,13 @@ export const useEndSubscriptionTrialPeriod = () => {
       enqueueSuccessSnackBar({
         message: t`Subscription activated.`,
       });
+
+      return { success: true };
     } catch {
       enqueueErrorSnackBar({
         message: t`Error while ending trial period. Please contact Twenty team.`,
       });
+      return { success: false };
     } finally {
       setIsLoading(false);
     }

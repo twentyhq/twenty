@@ -14,8 +14,20 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 import { ResetPasswordService } from './reset-password.service';
+
+// To avoid dynamic import issues in Jest
+jest.mock('@react-email/render', () => ({
+  render: jest.fn().mockImplementation(async (template, options) => {
+    if (options?.plainText) {
+      return 'Plain Text Email';
+    }
+
+    return '<html><body>HTML email content</body></html>';
+  }),
+}));
 
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
@@ -65,6 +77,14 @@ describe('ResetPasswordService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn().mockReturnValue({
+              _: jest.fn().mockReturnValue('mocked-translation'),
+            }),
           },
         },
       ],

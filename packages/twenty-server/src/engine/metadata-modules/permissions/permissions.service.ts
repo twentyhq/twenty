@@ -103,6 +103,7 @@ export class PermissionsService {
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
+        [PermissionFlagType.IMPERSONATE]: false,
       },
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;

@@ -8,15 +8,18 @@ import {
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 
+export type FindFlatEntityByIdInFlatEntityMapsOrThrowArgs<
+  T extends FlatEntity,
+> = {
+  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityId: string;
+};
 export const findFlatEntityByIdInFlatEntityMapsOrThrow = <
   T extends FlatEntity,
 >({
   flatEntityMaps,
   flatEntityId,
-}: {
-  flatEntityMaps: FlatEntityMaps<T>;
-  flatEntityId: string;
-}): T => {
+}: FindFlatEntityByIdInFlatEntityMapsOrThrowArgs<T>): T => {
   const flatEntity = flatEntityMaps.byId[flatEntityId];
 
   if (!isDefined(flatEntity)) {

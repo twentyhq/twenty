@@ -9,10 +9,10 @@ import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/r
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -58,9 +58,9 @@ export const RecordBoardColumnCardsContainer = ({
 
   const numberOfFields = visibleRecordFields.length;
 
-  const isCompactModeActive = useRecoilComponentValue(
-    isRecordBoardCompactModeActiveComponentState,
-  );
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isCompactModeActive = currentView?.isCompact ?? false;
 
   return (
     <StyledColumnCardsContainer

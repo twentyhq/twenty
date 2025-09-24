@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CoreMessage, generateText } from 'ai';
+import { ModelMessage, generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -15,7 +15,7 @@ export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
-  messages?: CoreMessage[];
+  messages: ModelMessage[];
 };
 
 @Injectable()
@@ -86,7 +86,14 @@ export class AgentHandoffExecutorService {
         `Successfully executed handoff to agent ${toAgentId} with response length: ${textResponse.text.length}`,
       );
 
-      return textResponse.text;
+      return {
+        success: true,
+        message: `Successfully executed handoff to agent ${targetAgent.name}`,
+        result: {
+          response: textResponse.text,
+          targetAgentName: targetAgent.name,
+        },
+      };
     } catch (error) {
       this.logger.error(
         `Handoff execution failed: ${error.message}`,
@@ -95,8 +102,7 @@ export class AgentHandoffExecutorService {
 
       return {
         success: false,
-        newAgentId: handoffRequest.toAgentId,
-        newAgentName: 'Unknown',
+        message: `Failed to execute handoff to agent ${handoffRequest.toAgentId}`,
         error: error.message,
       };
     }

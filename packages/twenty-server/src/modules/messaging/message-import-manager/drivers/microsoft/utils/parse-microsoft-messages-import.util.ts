@@ -7,7 +7,7 @@ export const parseMicrosoftMessagesImportError = (error: {
   statusCode: number;
   message?: string;
   code?: string;
-}): MessageImportDriverException | undefined => {
+}): MessageImportDriverException => {
   if (error.statusCode === 401) {
     return new MessageImportDriverException(
       'Unauthorized access to Microsoft Graph API',
@@ -51,5 +51,8 @@ export const parseMicrosoftMessagesImportError = (error: {
     );
   }
 
-  return undefined;
+  return new MessageImportDriverException(
+    `Microsoft Graph API unknown error: ${error} with status code ${error.statusCode}`,
+    MessageImportDriverExceptionCode.UNKNOWN,
+  );
 };

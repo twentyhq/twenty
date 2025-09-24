@@ -39,7 +39,7 @@
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
-    "zod": "3.23.8"
+    "zod": "^4.1.11"
   },
   "scripts": {
     "build": "npx vite build"

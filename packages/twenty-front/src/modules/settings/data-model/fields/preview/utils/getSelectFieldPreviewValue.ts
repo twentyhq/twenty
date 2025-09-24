@@ -26,7 +26,7 @@ export const getSelectFieldPreviewValue = ({
 
   return selectFieldDefaultValueSchema(fieldMetadataItem.options)
     .refine(isDefined)
-    .transform(stripSimpleQuotesFromString)
+    .transform((value) => stripSimpleQuotesFromString(value ?? ''))
     .refine(isNonEmptyString)
     .catch(firstOptionValue)
     .parse(fieldMetadataItem.defaultValue);

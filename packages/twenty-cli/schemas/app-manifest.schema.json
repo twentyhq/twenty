@@ -36,6 +36,16 @@
       "description": "Semantic version of the application",
       "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9-]+)?$"
     },
+    "dependencies": {
+      "type": "object",
+      "title": "The extension's source dependencies",
+      "description": "Source dependencies following the npm package.json dependency format."
+    },
+    "devDependencies": {
+      "type": "object",
+      "title": "The extension's source devDependencies",
+      "description": "Dev dependencies following the npm package.json dependency format."
+    },
     "agents": {
       "type": "array",
       "description": "Optional inline agent definitions (agents are typically discovered from the agents/ folder)",
@@ -46,7 +56,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "examples": [
     {
       "standardId": "550e8400-e29b-41d4-a716-446655440000",

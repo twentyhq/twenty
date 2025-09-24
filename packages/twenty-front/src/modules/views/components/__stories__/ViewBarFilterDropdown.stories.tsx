@@ -93,6 +93,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             objectNameSingular: CoreObjectNameSingular.Company,
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            viewBarInstanceId: instanceId,
             labelIdentifierFieldMetadataItem,
             recordFieldByFieldMetadataItemId,
             fieldDefinitionByFieldMetadataItemId,

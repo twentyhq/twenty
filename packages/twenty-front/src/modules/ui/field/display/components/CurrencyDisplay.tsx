@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldCurrencyMetadata,
@@ -8,8 +9,7 @@ import {
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { formatAmount } from '~/utils/format/formatAmount';
-import { formatNumber } from '~/utils/format/number';
+import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {
@@ -34,6 +34,7 @@ export const CurrencyDisplay = ({
     : currencyValue?.amountMicros / 1000000;
 
   const format = fieldDefinition.metadata.settings?.format;
+  const { formatNumber } = useNumberFormat();
 
   if (!shouldDisplayCurrency) {
     return <EllipsisDisplay>{0}</EllipsisDisplay>;
@@ -52,7 +53,7 @@ export const CurrencyDisplay = ({
       )}
       {amountToDisplay !== null
         ? !isDefined(format) || format === 'short'
-          ? formatAmount(amountToDisplay)
+          ? formatToShortNumber(amountToDisplay)
           : formatNumber(amountToDisplay)
         : null}
     </EllipsisDisplay>

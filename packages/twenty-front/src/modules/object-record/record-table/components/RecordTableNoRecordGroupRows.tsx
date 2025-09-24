@@ -19,6 +19,7 @@ export const RecordTableNoRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndex}
+            isFirstRowOfGroup={rowIndex === 0}
           />
         );
       })}

@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -24,7 +28,6 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -36,6 +39,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -85,7 +89,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const workspace = authContext.workspace;
 
-      workspaceValidator.assertIsDefinedOrThrow(workspace);
+      assertIsDefinedOrThrow(workspace);
 
       await this.validate(args, options);
 
@@ -214,7 +218,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
     const workspace = authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (
       Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(

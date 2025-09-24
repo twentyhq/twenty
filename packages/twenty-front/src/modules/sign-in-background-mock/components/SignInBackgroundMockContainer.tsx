@@ -56,6 +56,7 @@ export const SignInBackgroundMockContainer = () => {
         value={{
           objectPermissionsByObjectMetadataId: {},
           recordIndexId,
+          viewBarInstanceId: recordIndexId,
           objectNamePlural,
           objectNameSingular,
           objectMetadataItem: objectMetadataItem ?? objectMetadataItems[0],

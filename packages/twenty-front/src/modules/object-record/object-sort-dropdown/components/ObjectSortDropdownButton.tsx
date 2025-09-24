@@ -10,10 +10,6 @@ import { selectedRecordSortDirectionComponentState } from '@/object-record/objec
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
-import {
-  RECORD_SORT_DIRECTIONS,
-  type RecordSortDirection,
-} from '@/object-record/record-sort/types/RecordSortDirection';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -38,6 +34,7 @@ import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
+import { ViewSortDirection } from '~/generated/graphql';
 
 export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
@@ -136,7 +133,7 @@ export const ObjectSortDropdownButton = () => {
     isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
-  const handleSortDirectionClick = (sortDirection: RecordSortDirection) => {
+  const handleSortDirectionClick = (sortDirection: ViewSortDirection) => {
     setSelectedRecordSortDirection(sortDirection);
     setIsRecordSortDirectionMenuUnfolded(false);
   };
@@ -190,21 +187,24 @@ export const ObjectSortDropdownButton = () => {
           </DropdownMenuHeader>
           <DropdownMenuInnerSelect
             dropdownId="record-sort-direction-dropdown"
-            options={RECORD_SORT_DIRECTIONS.map((sortDirection) => ({
-              value: sortDirection,
-              label: sortDirection === 'asc' ? t`Ascending` : t`Descending`,
-            }))}
+            options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
+              (sortDirection) => ({
+                value: sortDirection,
+                label:
+                  sortDirection === ViewSortDirection.ASC
+                    ? t`Ascending`
+                    : t`Descending`,
+              }),
+            )}
             selectedOption={{
               value: selectedRecordSortDirection,
               label:
-                selectedRecordSortDirection === 'asc'
+                selectedRecordSortDirection === ViewSortDirection.ASC
                   ? t`Ascending`
                   : t`Descending`,
             }}
             onChange={(sortDirection) =>
-              handleSortDirectionClick(
-                sortDirection.value as RecordSortDirection,
-              )
+              handleSortDirectionClick(sortDirection.value as ViewSortDirection)
             }
             widthInPixels={GenericDropdownContentWidth.ExtraLarge}
           />

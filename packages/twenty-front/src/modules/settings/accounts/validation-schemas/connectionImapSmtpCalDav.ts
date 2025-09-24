@@ -5,7 +5,7 @@ import { type ConnectionParameters } from '~/generated/graphql';
 const connectionParameters = z
   .object({
     host: z.string().default(''),
-    port: z.number().int().nullable().default(null),
+    port: z.int().nullable().default(null),
     username: z.string().optional(),
     password: z.string().default(''),
     secure: z.boolean().default(true),
@@ -18,14 +18,14 @@ const connectionParameters = z
       return true;
     },
     {
-      message: 'Port must be a positive number when configuring this protocol',
       path: ['port'],
+      error: 'Port must be a positive number when configuring this protocol',
     },
   );
 
 export const connectionImapSmtpCalDav = z
   .object({
-    handle: z.string().email('Invalid email address'),
+    handle: z.email('Invalid email address'),
     IMAP: connectionParameters.optional(),
     SMTP: connectionParameters.optional(),
     CALDAV: connectionParameters.optional(),
@@ -37,9 +37,9 @@ export const connectionImapSmtpCalDav = z
       );
     },
     {
-      message:
-        'At least one account type (IMAP, SMTP, or CalDAV) must be completely configured',
       path: ['handle'],
+      error:
+        'At least one account type (IMAP, SMTP, or CalDAV) must be completely configured',
     },
   );
 

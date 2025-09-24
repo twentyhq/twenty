@@ -47,7 +47,7 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesM
           workspaceId,
         );
 
-      if (stripeCustomerId) {
+      if (typeof stripeCustomerId === 'string') {
         await this.billingCustomerRepository.upsert(
           {
             stripeCustomerId,

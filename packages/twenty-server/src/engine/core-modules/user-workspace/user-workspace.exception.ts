@@ -5,3 +5,8 @@ export class UserWorkspaceException extends CustomException<UserWorkspaceExcepti
 export enum UserWorkspaceExceptionCode {
   USER_WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
 }
+
+export const UserWorkspaceNotFoundDefaultError = new UserWorkspaceException(
+  'User Workspace not found',
+  UserWorkspaceExceptionCode.USER_WORKSPACE_NOT_FOUND,
+);

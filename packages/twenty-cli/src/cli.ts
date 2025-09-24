@@ -13,13 +13,11 @@ program
   .description('CLI for Twenty application development')
   .version('0.1.0');
 
-program
-  .option('-v, --verbose', 'Enable verbose logging')
-  .option(
-    '--api-url <url>',
-    'Twenty API URL',
-    process.env.TWENTY_API_URL || 'http://localhost:3000',
-  );
+program.option(
+  '--api-url <url>',
+  'Twenty API URL',
+  process.env.TWENTY_API_URL || 'http://localhost:3000',
+);
 
 program.addCommand(new AuthCommand().getCommand());
 program.addCommand(new AppCommand().getCommand());

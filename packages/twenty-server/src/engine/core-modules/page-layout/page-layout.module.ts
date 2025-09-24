@@ -11,6 +11,7 @@ import { PageLayoutTabResolver } from 'src/engine/core-modules/page-layout/resol
 import { PageLayoutWidgetResolver } from 'src/engine/core-modules/page-layout/resolvers/page-layout-widget.resolver';
 import { PageLayoutResolver } from 'src/engine/core-modules/page-layout/resolvers/page-layout.resolver';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
+import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -36,6 +37,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
     PageLayoutResolver,
     PageLayoutTabResolver,
     PageLayoutWidgetResolver,
+    PageLayoutUpdateService,
   ],
   exports: [PageLayoutService, PageLayoutTabService, PageLayoutWidgetService],
 })

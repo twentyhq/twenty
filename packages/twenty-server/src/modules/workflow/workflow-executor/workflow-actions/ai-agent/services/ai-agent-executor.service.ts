@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateObject, generateText, ToolSet } from 'ai';
+import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -98,7 +98,7 @@ export class AiAgentExecutorService {
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
-        maxSteps: AGENT_CONFIG.MAX_STEPS,
+        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       });
 
       if (Object.keys(schema).length === 0) {
@@ -121,12 +121,12 @@ export class AiAgentExecutorService {
       return {
         result: output.object,
         usage: {
-          promptTokens:
-            (textResponse.usage?.promptTokens ?? 0) +
-            (output.usage?.promptTokens ?? 0),
-          completionTokens:
-            (textResponse.usage?.completionTokens ?? 0) +
-            (output.usage?.completionTokens ?? 0),
+          inputTokens:
+            (textResponse.usage?.inputTokens ?? 0) +
+            (output.usage?.inputTokens ?? 0),
+          outputTokens:
+            (textResponse.usage?.outputTokens ?? 0) +
+            (output.usage?.outputTokens ?? 0),
           totalTokens:
             (textResponse.usage?.totalTokens ?? 0) +
             (output.usage?.totalTokens ?? 0),

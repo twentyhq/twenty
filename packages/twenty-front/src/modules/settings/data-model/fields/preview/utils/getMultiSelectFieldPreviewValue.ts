@@ -27,8 +27,9 @@ export const getMultiSelectFieldPreviewValue = ({
 
   return multiSelectFieldDefaultValueSchema(fieldMetadataItem.options)
     .refine(isDefined)
-    .transform((value) =>
-      value.map(stripSimpleQuotesFromString).filter(isNonEmptyString),
+    .transform(
+      (value) =>
+        value?.map(stripSimpleQuotesFromString).filter(isNonEmptyString) ?? [],
     )
     .refine(isNonEmptyArray)
     .catch(allOptionValues)

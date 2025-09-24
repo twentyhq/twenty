@@ -125,4 +125,9 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
       'These have been set to sensible default so you probably don’t need to change them unless you have a specific use-case.',
     isHiddenOnLoad: true,
   },
+  [ConfigVariablesGroup.AwsSesSettings]: {
+    position: 2100,
+    description: 'Configure AWS SES settings for emailing domains',
+    isHiddenOnLoad: true,
+  },
 };

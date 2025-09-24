@@ -73,7 +73,7 @@ export const WorkflowVariablesDropdownStepItems = ({
     onSelect(
       getVariableTemplateFromPath({
         stepId: step.id,
-        path: [...currentPath, 'id'],
+        path: [...currentPath, currentSubStep.object.fieldIdName ?? 'id'],
       }),
     );
   };
@@ -93,10 +93,9 @@ export const WorkflowVariablesDropdownStepItems = ({
         .includes(searchInputValue.toLowerCase())
     : true;
 
+  const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
   const shouldDisplaySubStepObject =
     shouldDisplayRecordObjects && isObjectFoundThroughSearch;
-
-  const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>

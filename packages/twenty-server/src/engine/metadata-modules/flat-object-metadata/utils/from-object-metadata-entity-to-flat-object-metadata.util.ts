@@ -17,7 +17,6 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
 
   return {
     ...objectMetadataEntityWithoutRelations,
-    flatIndexMetadatas: [], // TODO prastoin handle indexes
     universalIdentifier:
       objectMetadataEntityWithoutRelations.standardId ??
       objectMetadataEntityWithoutRelations.id,

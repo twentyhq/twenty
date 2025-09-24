@@ -31,6 +31,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 @Controller('rest/metadata/views')
@@ -40,6 +41,7 @@ export class ViewController {
   constructor(
     private readonly viewService: ViewService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly i18nService: I18nService,
   ) {}
 
   @Get()
@@ -163,6 +165,7 @@ export class ViewController {
         const objectMetadata = objectMetadataMaps.byId[view.objectMetadataId];
 
         if (objectMetadata) {
+          const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
           const translatedObjectLabel = resolveObjectMetadataStandardOverride(
             {
               labelPlural: objectMetadata.labelPlural,
@@ -174,6 +177,7 @@ export class ViewController {
             },
             'labelPlural',
             locale,
+            i18n,
           );
 
           processedName = this.viewService.processViewNameWithTemplate(

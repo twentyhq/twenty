@@ -1,6 +1,6 @@
 import {
   createAgentManifest,
-  createManifest,
+  createBasePackageJson,
   createReadmeContent,
 } from '../app-template';
 
@@ -10,43 +10,42 @@ jest.mock('crypto', () => ({
 }));
 
 describe('app-template', () => {
-  describe('createManifest', () => {
-    it('should create a valid app manifest with correct structure', () => {
+  describe('createBasePackageJson', () => {
+    it('should create a valid app package.json with correct structure', () => {
       const appName = 'my-test-app';
-      const manifest = createManifest(appName);
+      const basePackageJson = createBasePackageJson(appName);
 
-      expect(manifest).toEqual({
+      expect(basePackageJson).toEqual({
         $schema:
           'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
         standardId: 'mocked-uuid-12345',
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
-        version: '1.0.0',
-        // agents will be discovered from the agents/ folder
+        version: '0.0.1',
       });
     });
 
     it('should handle single word app names', () => {
       const appName = 'calculator';
-      const manifest = createManifest(appName);
+      const basePackageJson = createBasePackageJson(appName);
 
-      expect(manifest.label).toBe('Calculator');
-      expect(manifest.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.label).toBe('Calculator');
+      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
     });
 
     it('should handle kebab-case app names correctly', () => {
       const appName = 'user-management-system';
-      const manifest = createManifest(appName);
+      const basePackageJson = createBasePackageJson(appName);
 
-      expect(manifest.label).toBe('User Management System');
-      expect(manifest.standardId).toBe('mocked-uuid-12345');
+      expect(basePackageJson.label).toBe('User Management System');
+      expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
     });
 
     it('should generate unique standardIds', () => {
-      const manifest = createManifest('test-app');
+      const basePackageJson = createBasePackageJson('test-app');
 
-      expect(manifest.standardId).toBeDefined();
-      expect(typeof manifest.standardId).toBe('string');
+      expect(basePackageJson.standardId).toBeDefined();
+      expect(typeof basePackageJson.standardId).toBe('string');
     });
   });
 

@@ -1,18 +1,13 @@
 import {
-  type PageLayout,
-  type PageLayoutTab,
+  type PageLayout as PageLayoutGenerated,
+  type PageLayoutTab as PageLayoutTabGenerated,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 
-// TODO: Remove this once we query the data from the database
-export type PageLayoutWidgetWithData = PageLayoutWidget & {
-  data?: Record<string, any>;
+export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
+  widgets: PageLayoutWidget[];
 };
 
-export type PageLayoutTabWithData = Omit<PageLayoutTab, 'widgets'> & {
-  widgets: PageLayoutWidgetWithData[];
-};
-
-export type PageLayoutWithData = Omit<PageLayout, 'tabs'> & {
-  tabs: PageLayoutTabWithData[];
+export type PageLayout = Omit<PageLayoutGenerated, 'tabs'> & {
+  tabs: PageLayoutTab[];
 };

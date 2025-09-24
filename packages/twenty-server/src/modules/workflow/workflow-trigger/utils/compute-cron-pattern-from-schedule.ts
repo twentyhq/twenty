@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import cron from 'cron-validate';
+import { CronExpressionParser } from 'cron-parser';
 
 import {
   WorkflowTriggerException,
@@ -8,11 +8,11 @@ import {
 import { type WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const validatePattern = (pattern: string) => {
-  const cronValidator = cron(pattern);
-
-  if (cronValidator.isError()) {
+  try {
+    CronExpressionParser.parse(pattern);
+  } catch (error) {
     throw new WorkflowTriggerException(
-      `Cron pattern '${pattern}' is invalid`,
+      `Cron pattern '${pattern}' is invalid: ${error.message}`,
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
         userFriendlyMessage: t`Cron pattern '${pattern}' is invalid`,

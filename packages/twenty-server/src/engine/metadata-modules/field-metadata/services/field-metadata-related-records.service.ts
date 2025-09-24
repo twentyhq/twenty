@@ -22,6 +22,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { type SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 
 type Differences<T> = {
   created: T[];
@@ -376,7 +377,7 @@ export class FieldMetadataRelatedRecordsService {
         fieldMetadataId: createdFieldMetadata.id,
         position: lastPosition + 1,
         isVisible,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
         viewId: indexView.id,
         workspaceId: createdFieldMetadata.workspaceId,
       });

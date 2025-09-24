@@ -1,8 +1,9 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreatePageLayoutTabInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
 import { PageLayoutTabDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-tab.dto';
@@ -15,6 +16,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @Resolver(() => PageLayoutTabDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
+@UsePipes(ResolverValidationPipe)
 export class PageLayoutTabResolver {
   constructor(private readonly pageLayoutTabService: PageLayoutTabService) {}
 

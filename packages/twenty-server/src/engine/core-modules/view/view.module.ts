@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
-import { ViewCacheModule } from 'src/engine/core-modules/view/cache/services/view-cache.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
 import { ViewFilterController } from 'src/engine/core-modules/view/controllers/view-filter.controller';
@@ -50,8 +50,8 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
     WorkspaceMigrationV2Module,
-    ViewCacheModule,
     FlatViewModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   controllers: [
     ViewController,

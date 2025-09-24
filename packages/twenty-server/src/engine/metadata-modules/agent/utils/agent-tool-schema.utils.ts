@@ -17,7 +17,7 @@ const createToolSchema = (
   return jsonSchema({
     type: 'object',
     properties: {
-      toolDescription: {
+      loadingMessage: {
         type: 'string',
         description:
           'A clear, human-readable description of the action being performed. Explain what operation you are executing and with what parameters in natural language.',

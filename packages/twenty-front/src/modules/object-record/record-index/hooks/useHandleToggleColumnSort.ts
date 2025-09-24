@@ -6,6 +6,7 @@ import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsert
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { ViewSortDirection } from '~/generated/graphql';
 
 type UseHandleToggleColumnSortProps = {
   objectMetadataItemId: string;
@@ -35,7 +36,7 @@ export const useHandleToggleColumnSort = ({
       const newSort: RecordSort = {
         id: v4(),
         fieldMetadataId,
-        direction: 'asc',
+        direction: ViewSortDirection.ASC,
       };
 
       upsertRecordSort(newSort);

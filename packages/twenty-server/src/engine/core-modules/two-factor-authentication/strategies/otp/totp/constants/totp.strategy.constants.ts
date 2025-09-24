@@ -33,33 +33,28 @@ export type TOTPStrategyConfig = z.infer<typeof TOTP_STRATEGY_CONFIG_SCHEMA>;
 
 export const TOTP_STRATEGY_CONFIG_SCHEMA = z.object({
   algorithm: z
-    .nativeEnum(TOTPHashAlgorithms, {
-      errorMap: () => ({
-        message:
-          'Invalid algorithm specified. Must be SHA1, SHA256, or SHA512.',
-      }),
+    .enum(TOTPHashAlgorithms, {
+      error: () =>
+        'Invalid algorithm specified. Must be SHA1, SHA256, or SHA512.',
     })
     .optional(),
   digits: z
-    .number({
-      invalid_type_error: 'Digits must be a number.',
+    .int({
+      error: 'Digits must be a whole number.',
     })
-    .int({ message: 'Digits must be a whole number.' })
-    .min(6, { message: 'Digits must be at least 6.' })
-    .max(8, { message: 'Digits cannot be more than 8.' })
+    .min(6, {
+      error: 'Digits must be at least 6.',
+    })
+    .max(8, {
+      error: 'Digits cannot be more than 8.',
+    })
     .optional(),
   encodings: z
-    .nativeEnum(TOTPKeyEncodings, {
-      errorMap: () => ({ message: 'Invalid encoding specified.' }),
+    .enum(TOTPKeyEncodings, {
+      error: () => 'Invalid encoding specified.',
     })
     .optional(),
-  window: z.number().int().min(0).optional(),
-  step: z
-    .number({
-      invalid_type_error: 'Step must be a number.',
-    })
-    .int()
-    .min(1)
-    .optional(),
-  epoch: z.number().int().min(0).optional(),
+  window: z.int().min(0).optional(),
+  step: z.int().min(1).optional(),
+  epoch: z.int().min(0).optional(),
 });

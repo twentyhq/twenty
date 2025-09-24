@@ -25,15 +25,15 @@ export const settingsDataModelFieldRelationFormSchema = z.object({
         label: true,
       })
       // NOT SURE IF THIS IS CORRECT
-      .merge(
+      .extend(
         fieldMetadataItemSchema()
           .pick({
             name: true,
             isLabelSyncedWithName: true,
           })
-          .partial(),
+          .partial().shape,
       ),
-    objectMetadataId: z.string().uuid(),
+    objectMetadataId: z.uuid(),
     type: z.enum(
       Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
     ),

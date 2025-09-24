@@ -6,7 +6,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,7 +44,7 @@ export const ViewBarRecordSortEffect = () => {
       }
 
       if (isDefined(currentView)) {
-        setCurrentRecordSorts(mapViewSortsToSorts(currentView.viewSorts));
+        setCurrentRecordSorts(currentView.viewSorts);
         setHasInitializedCurrentRecordSorts(true);
       }
     }

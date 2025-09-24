@@ -10,6 +10,8 @@ export interface AppManifest {
   description?: string;
   icon?: string;
   version: string;
+  dependencies?: object;
+  devDependencies?: object;
   agents: AgentManifest[];
 }
 

@@ -36,6 +36,17 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
           objectName: 'company',
         },
       };
+    case FieldMetadataType.SELECT:
+      return {
+        id: v4(),
+        name: 'select',
+        label: 'Select',
+        placeholder: 'Choose a value',
+        settings: {
+          selectType: 'EXISTING_FIELD',
+          selectedFieldId: undefined,
+        },
+      };
     default:
       assertUnreachable(type);
   }

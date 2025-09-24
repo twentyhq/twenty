@@ -6,7 +6,15 @@ import { useCreateStep } from '../useCreateStep';
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: {
-    createWorkflowVersionStep: { createdStep: { id: '1', type: 'CODE' } },
+    createWorkflowVersionStep: {
+      stepsDiff: [
+        {
+          type: 'CREATE',
+          path: ['steps', 0],
+          value: { id: 'step-id', type: 'CODE' },
+        },
+      ],
+    },
   },
 });
 
@@ -24,6 +32,8 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
+
+jest.mock('uuid', () => ({ v4: () => 'step-id' }));
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   const workflowVisualizerComponentInstanceId =
@@ -65,6 +75,7 @@ describe('useCreateStep', () => {
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
     expect(mockCreateWorkflowVersionStep).toHaveBeenCalledWith({
+      id: 'step-id',
       workflowVersionId: mockWorkflowVersionId,
       stepType: 'CODE',
       parentStepId: 'parent-step-id',

@@ -3,6 +3,7 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useDuplicateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep';
+import { type Difference } from 'microdiff';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,16 +37,17 @@ export const useDuplicateStep = () => {
         })
       )?.data?.duplicateWorkflowVersionStep;
 
-      const createdStep = workflowVersionStepChanges?.createdStep;
+      const stepsDiff = workflowVersionStepChanges?.stepsDiff as Difference[];
+      const createdStepDiff = stepsDiff?.find((diff) => diff.type === 'CREATE');
 
-      if (!isDefined(createdStep)) {
+      if (!isDefined(createdStepDiff)) {
         throw new Error("Couldn't duplicate step");
       }
 
-      setWorkflowSelectedNode(createdStep.id);
-      setWorkflowLastCreatedStepId(createdStep.id);
+      setWorkflowSelectedNode(createdStepDiff.value.id);
+      setWorkflowLastCreatedStepId(createdStepDiff.value.id);
 
-      return createdStep;
+      return createdStepDiff.value;
     } finally {
       setIsLoading(false);
     }

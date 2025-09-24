@@ -1,5 +1,5 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 
 export const useUpdateStep = () => {
@@ -7,13 +7,17 @@ export const useUpdateStep = () => {
     useGetUpdatableWorkflowVersionOrThrow();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
 
-  const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
+  const updateStep = async (updatedStep: WorkflowAction) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    await updateWorkflowVersionStep({
+    const result = await updateWorkflowVersionStep({
       workflowVersionId,
       step: updatedStep,
     });
+
+    return {
+      updatedStep: result?.data?.updateWorkflowVersionStep,
+    };
   };
 
   return {

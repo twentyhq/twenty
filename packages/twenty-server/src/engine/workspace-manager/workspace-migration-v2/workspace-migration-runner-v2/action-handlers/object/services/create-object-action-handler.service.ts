@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import {
+  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
+  WorkspaceMigrationRunnerActionHandler,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -25,9 +29,33 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super();
+  }
+
+  optimisticallyApplyActionOnAllFlatEntityMaps({
+    action,
+    allFlatEntityMaps,
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateObjectAction>): Partial<AllFlatEntityMaps> {
+    const { flatObjectMetadataMaps } = allFlatEntityMaps;
+    const { flatObjectMetadataWithoutFields, createFieldActions } = action;
+
+    const flatFieldMetadatas = createFieldActions.map(
+      (createFieldAction) => createFieldAction.flatFieldMetadata,
+    );
+
+    const updatedFlatObjectMetadataMaps =
+      addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadata: {
+          ...flatObjectMetadataWithoutFields,
+          flatFieldMetadatas,
+        },
+        flatObjectMetadataMaps,
+      });
+
+    return {
+      flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
+    };
   }
 
   async executeForMetadata(
@@ -51,7 +79,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       order: { createdAt: 'DESC' },
     });
 
-    await objectMetadataRepository.save({
+    await objectMetadataRepository.insert({
       ...flatObjectMetadataWithoutFields,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',

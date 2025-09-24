@@ -1,3 +1,4 @@
 export const AGENT_CONFIG = {
   MAX_STEPS: 10,
+  REASONING_BUDGET_TOKENS: 12000,
 };

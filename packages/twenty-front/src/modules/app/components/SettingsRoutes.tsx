@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated/graphql';
 
@@ -287,20 +288,6 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsPageLayouts = lazy(() =>
-  import('~/pages/settings/page-layout/SettingsPageLayouts').then((module) => ({
-    default: module.SettingsPageLayouts,
-  })),
-);
-
-const SettingsPageLayoutEdit = lazy(() =>
-  import('~/pages/settings/page-layout/SettingsPageLayoutEdit').then(
-    (module) => ({
-      default: module.SettingsPageLayoutEdit,
-    }),
-  ),
-);
-
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -319,6 +306,22 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   import('~/pages/settings/security/SettingsSecurityApprovedAccessDomain').then(
     (module) => ({
       default: module.SettingsSecurityApprovedAccessDomain,
+    }),
+  ),
+);
+
+const SettingsNewEmailingDomain = lazy(() =>
+  import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
+    (module) => ({
+      default: module.SettingsNewEmailingDomain,
+    }),
+  ),
+);
+
+const SettingsEmailingDomainDetail = lazy(() =>
+  import('~/pages/settings/emailing-domains/SettingsEmailingDomainDetail').then(
+    (module) => ({
+      default: module.SettingsEmailingDomainDetail,
     }),
   ),
 );
@@ -386,13 +389,11 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
-  isPageLayoutFeatureFlagEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
-  isPageLayoutFeatureFlagEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -444,6 +445,18 @@ export const SettingsRoutes = ({
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
+        />
+        <Route
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
+        />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
       </Route>
       <Route
         element={
@@ -614,22 +627,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      {isPageLayoutFeatureFlagEnabled && (
-        <>
-          <Route
-            path={SettingsPath.PageLayout}
-            element={<SettingsPageLayouts />}
-          />
-          <Route
-            path={SettingsPath.PageLayoutNew}
-            element={<SettingsPageLayoutEdit />}
-          />
-          <Route
-            path={SettingsPath.PageLayoutEdit}
-            element={<SettingsPageLayoutEdit />}
-          />
-        </>
-      )}
+
       <Route
         element={
           <SettingsProtectedRouteWrapper

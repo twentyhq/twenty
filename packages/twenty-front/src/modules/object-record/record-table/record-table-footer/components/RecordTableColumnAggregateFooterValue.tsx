@@ -1,3 +1,4 @@
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
@@ -33,7 +34,7 @@ const StyledValueContainer = styled(StyledScrollableContainer)`
   align-items: center;
   display: flex;
   gap: 4px;
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: flex-end;
   padding: 0 8px;
 `;

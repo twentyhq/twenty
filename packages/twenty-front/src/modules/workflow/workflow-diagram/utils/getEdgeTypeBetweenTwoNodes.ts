@@ -8,11 +8,11 @@ export const getEdgeTypeBetweenTwoNodes = ({
 }): WorkflowDiagramEdgeType => {
   switch (workflowContext) {
     case 'workflow': {
-      return 'empty-filter--editable';
+      return 'editable';
     }
     case 'workflow-version':
     case 'workflow-run': {
-      return 'empty-filter--readonly';
+      return 'readonly';
     }
   }
 };

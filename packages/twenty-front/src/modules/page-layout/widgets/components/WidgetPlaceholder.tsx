@@ -16,7 +16,7 @@ type WidgetPlaceholderProps = {
 export const WidgetPlaceholder = ({ onClick }: WidgetPlaceholderProps) => {
   return (
     <WidgetContainer onClick={onClick}>
-      <WidgetHeader displayDragHandle={true} title="Add Widget" isEmpty />
+      <WidgetHeader isInEditMode={true} title="Add Widget" isEmpty />
       <AnimatedPlaceholderEmptyContainer
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}

@@ -71,7 +71,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 - Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.`,
-      parameters: createCompleteWorkflowSchema,
+      inputSchema: createCompleteWorkflowSchema,
       execute: async (parameters: {
         name: string;
         description?: string;
@@ -137,18 +137,21 @@ This is the most efficient way for AI to create workflows as it handles all the 
           }
 
           return {
-            workflowId,
-            workflowVersionId,
-            name: parameters.name,
-            trigger: parameters.trigger,
-            steps: parameters.steps,
+            success: true,
             message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
+            result: {
+              workflowId,
+              workflowVersionId,
+              name: parameters.name,
+              trigger: parameters.trigger,
+              steps: parameters.steps,
+            },
           };
         } catch (error) {
           return {
             success: false,
-            error: error.message,
             message: `Failed to create workflow "${parameters.name}": ${error.message}`,
+            error: error.message,
           };
         }
       },
@@ -157,7 +160,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.create_workflow_version_step = {
       description:
         'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration.',
-      parameters: createWorkflowVersionStepSchema,
+      inputSchema: createWorkflowVersionStepSchema,
       execute: async (parameters: CreateWorkflowVersionStepInput) => {
         try {
           return await this.workflowVersionStepService.createWorkflowVersionStep(
@@ -179,7 +182,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.update_workflow_version_step = {
       description:
         'Update an existing step in a workflow version. This modifies the step configuration.',
-      parameters: updateWorkflowVersionStepSchema,
+      inputSchema: updateWorkflowVersionStepSchema,
       execute: async (parameters: UpdateWorkflowVersionStepInput) => {
         try {
           return await this.workflowVersionStepService.updateWorkflowVersionStep(
@@ -202,7 +205,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.delete_workflow_version_step = {
       description:
         'Delete a step from a workflow version. This removes the step and updates the workflow structure.',
-      parameters: deleteWorkflowVersionStepSchema,
+      inputSchema: deleteWorkflowVersionStepSchema,
       execute: async (parameters: {
         workflowVersionId: string;
         stepId: string;
@@ -228,7 +231,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.create_workflow_version_edge = {
       description:
         'Create a connection (edge) between two workflow steps. This defines the flow between steps.',
-      parameters: createWorkflowVersionEdgeSchema,
+      inputSchema: createWorkflowVersionEdgeSchema,
       execute: async (parameters: {
         workflowVersionId: string;
         source: string;
@@ -255,7 +258,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
 
     tools.delete_workflow_version_edge = {
       description: 'Delete a connection (edge) between workflow steps.',
-      parameters: deleteWorkflowVersionEdgeSchema,
+      inputSchema: deleteWorkflowVersionEdgeSchema,
       execute: async (parameters: {
         workflowVersionId: string;
         source: string;
@@ -283,7 +286,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.create_draft_from_workflow_version = {
       description:
         'Create a new draft workflow version from an existing one. This allows for iterative workflow development.',
-      parameters: createDraftFromWorkflowVersionSchema,
+      inputSchema: createDraftFromWorkflowVersionSchema,
       execute: async (parameters: {
         workflowId: string;
         workflowVersionIdToCopy: string;
@@ -309,7 +312,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.update_workflow_version_positions = {
       description:
         'Update the positions of multiple workflow steps. This is useful for reorganizing the workflow layout.',
-      parameters: updateWorkflowVersionPositionsSchema,
+      inputSchema: updateWorkflowVersionPositionsSchema,
       execute: async (parameters: UpdateWorkflowVersionPositionsInput) => {
         try {
           return await this.workflowVersionService.updateWorkflowVersionPositions(
@@ -332,7 +335,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.activate_workflow_version = {
       description:
         'Activate a workflow version. This makes the workflow version active and available for execution.',
-      parameters: activateWorkflowVersionSchema,
+      inputSchema: activateWorkflowVersionSchema,
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
           return await this.workflowTriggerService.activateWorkflowVersion(
@@ -351,7 +354,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.deactivate_workflow_version = {
       description:
         'Deactivate a workflow version. This makes the workflow version inactive and unavailable for execution.',
-      parameters: deactivateWorkflowVersionSchema,
+      inputSchema: deactivateWorkflowVersionSchema,
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
           return await this.workflowTriggerService.deactivateWorkflowVersion(
@@ -370,7 +373,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
     tools.compute_step_output_schema = {
       description:
         'Compute the output schema for a workflow step. This determines what data the step produces. The step parameter must be a valid WorkflowTrigger or WorkflowAction with the correct settings structure for its type.',
-      parameters: computeStepOutputSchemaSchema,
+      inputSchema: computeStepOutputSchemaSchema,
       execute: async (parameters: {
         step: WorkflowTrigger | WorkflowAction;
       }) => {

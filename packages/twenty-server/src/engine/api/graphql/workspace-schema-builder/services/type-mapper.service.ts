@@ -16,11 +16,13 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
   type FieldMetadataSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
   ArrayFilterType,
@@ -45,12 +47,11 @@ import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-buil
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface TypeOptions<T = any> {
+export interface TypeOptions {
   nullable?: boolean;
   isArray?: boolean;
   arrayDepth?: number;
-  defaultValue?: T;
+  defaultValue?: FieldMetadataDefaultValue<FieldMetadataType>;
   settings?: FieldMetadataSettings<FieldMetadataType>;
   isIdField?: boolean;
   isRelationConnectField?: boolean;
@@ -62,11 +63,10 @@ const StringArrayScalarType = new GraphQLList(GraphQLString);
 export class TypeMapperService {
   mapToScalarType(
     fieldMetadataType: FieldMetadataType,
-    settings?: FieldMetadataSettings<FieldMetadataType>,
-    isIdField?: boolean,
+    typeOptions?: TypeOptions,
   ): GraphQLScalarType | undefined {
     if (
-      isIdField ||
+      typeOptions?.isIdField ||
       fieldMetadataType === FieldMetadataType.RELATION ||
       fieldMetadataType === FieldMetadataType.MORPH_RELATION
     ) {
@@ -81,8 +81,9 @@ export class TypeMapperService {
       [
         FieldMetadataType.NUMBER,
         getNumberScalarType(
-          (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.dataType ?? NumberDataType.FLOAT,
+          (
+            typeOptions?.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>
+          )?.dataType ?? NumberDataType.FLOAT,
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
@@ -101,11 +102,10 @@ export class TypeMapperService {
 
   mapToFilterType(
     fieldMetadataType: FieldMetadataType,
-    settings?: FieldMetadataSettings<FieldMetadataType>,
-    isIdField?: boolean,
+    typeOptions?: TypeOptions,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
     if (
-      isIdField ||
+      typeOptions?.isIdField ||
       fieldMetadataType === FieldMetadataType.RELATION ||
       fieldMetadataType === FieldMetadataType.MORPH_RELATION
     ) {
@@ -124,8 +124,9 @@ export class TypeMapperService {
       [
         FieldMetadataType.NUMBER,
         getNumberFilterType(
-          (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.dataType,
+          (
+            typeOptions?.settings as FieldMetadataSettings<FieldMetadataType.NUMBER>
+          )?.dataType,
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
@@ -168,7 +169,28 @@ export class TypeMapperService {
     return typeOrderByMapping.get(fieldMetadataType);
   }
 
-  mapToGqlType<T extends GraphQLType = GraphQLType>(
+  mapToOrderByWithGroupByType(
+    aggregationType: AggregateOperations,
+  ): GraphQLInputType | undefined {
+    const typeOrderByMapping = new Map<AggregateOperations, GraphQLInputType>([
+      [AggregateOperations.SUM, OrderByDirectionType],
+      [AggregateOperations.COUNT, OrderByDirectionType],
+      [AggregateOperations.COUNT_UNIQUE_VALUES, OrderByDirectionType],
+      [AggregateOperations.COUNT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.COUNT_NOT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.COUNT_TRUE, OrderByDirectionType],
+      [AggregateOperations.COUNT_FALSE, OrderByDirectionType],
+      [AggregateOperations.PERCENTAGE_EMPTY, OrderByDirectionType],
+      [AggregateOperations.PERCENTAGE_NOT_EMPTY, OrderByDirectionType],
+      [AggregateOperations.MIN, OrderByDirectionType],
+      [AggregateOperations.MAX, OrderByDirectionType],
+      [AggregateOperations.AVG, OrderByDirectionType],
+    ]);
+
+    return typeOrderByMapping.get(aggregationType);
+  }
+
+  applyTypeOptions<T extends GraphQLType = GraphQLType>(
     typeRef: T,
     options: TypeOptions,
   ): T {

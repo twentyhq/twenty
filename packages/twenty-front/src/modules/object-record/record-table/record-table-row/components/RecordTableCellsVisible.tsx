@@ -1,3 +1,4 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
@@ -6,6 +7,8 @@ import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
@@ -15,6 +18,10 @@ export const RecordTableCellsVisible = () => {
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
+  const hasRecordGroups = useRecoilComponentValue(
+    hasRecordGroupsComponentSelector,
+  );
+
   if (!isNonEmptyArray(visibleRecordFields)) {
     return null;
   }
@@ -23,13 +30,19 @@ export const RecordTableCellsVisible = () => {
 
   const isFirstRow = rowIndex === 0;
 
+  const firstRecordField = visibleRecordFields[0];
+
+  if (!isDefined(firstRecordField)) {
+    return null;
+  }
+
   return (
     <>
       <RecordTableCellWrapper
-        recordField={visibleRecordFields[0]}
+        recordField={firstRecordField}
         recordFieldIndex={0}
       >
-        {isFirstRow ? (
+        {isFirstRow && !hasRecordGroups ? (
           <RecordTableCellFirstRowFirstColumn
             isSelected={isSelected}
             isDragging={isDragging}
