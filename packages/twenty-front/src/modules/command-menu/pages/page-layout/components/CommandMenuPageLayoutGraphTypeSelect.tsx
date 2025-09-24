@@ -6,20 +6,18 @@ import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/comp
 import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
   IconArrowsSort,
   IconAxisX,
+  IconAxisY,
   IconColorSwatch,
   IconDatabase,
+  IconFilter,
   IconFilters,
+  IconMathXy,
   IconTag,
 } from 'twenty-ui/display';
-
-const StyledCommandMenuList = styled(CommandMenuList)`
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const [currentGraphType, setCurrentGraphType] = useState(GraphType.BAR);
@@ -35,9 +33,11 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         onTitleChange={() => {}}
       />
 
-      <StyledCommandMenuList
+      <CommandMenuList
         commandGroups={[]}
         selectableItemIds={[
+          'object',
+          'filters',
           'data-on-display-x',
           'sort-by',
           'data-on-display-y',
@@ -51,9 +51,23 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
           currentGraphType={currentGraphType}
           setCurrentGraphType={setCurrentGraphType}
         />
-        <CommandGroup heading="X axis">
+        <CommandGroup heading="Data source">
           <CommandMenuItem
             Icon={IconDatabase}
+            label="Object"
+            id="object"
+            onClick={() => {}}
+          />
+          <CommandMenuItem
+            Icon={IconFilter}
+            label="Filters"
+            id="filters"
+            onClick={() => {}}
+          />
+        </CommandGroup>
+        <CommandGroup heading="X axis">
+          <CommandMenuItem
+            Icon={IconAxisX}
             label="Data on display"
             id="data-on-display-x"
             onClick={() => {}}
@@ -67,7 +81,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         </CommandGroup>
         <CommandGroup heading="Y axis">
           <CommandMenuItem
-            Icon={IconDatabase}
+            Icon={IconAxisY}
             label="Data on display"
             id="data-on-display-y"
             onClick={() => {}}
@@ -87,7 +101,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
             onClick={() => {}}
           />
           <CommandMenuItem
-            Icon={IconAxisX}
+            Icon={IconMathXy}
             label="Axis name"
             id="axis-name"
             onClick={() => {}}
@@ -99,7 +113,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
             onClick={() => {}}
           />
         </CommandGroup>
-      </StyledCommandMenuList>
+      </CommandMenuList>
     </>
   );
 };
