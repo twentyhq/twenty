@@ -27,15 +27,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     builderArgs: WorkspaceMigrationOrchestratorBuildArgs,
   ): Promise<WorkspaceMigrationOrchestratorFailedResult | undefined> {
     const validateAndBuildResult =
-      await this.workspaceMigrationBuildOrchestratorService
-        .buildWorkspaceMigration(builderArgs)
-        .catch((error) => {
-          this.logger.error(error);
-          throw new WorkspaceMigrationV2Exception(
-            WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
-            error.message,
-          );
-        });
+      await this.workspaceMigrationBuildOrchestratorService.buildWorkspaceMigration(
+        builderArgs,
+      );
 
     if (validateAndBuildResult.status === 'fail') {
       return validateAndBuildResult;
