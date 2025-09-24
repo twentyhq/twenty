@@ -2,19 +2,18 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
+import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
+import { type Locale } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
-// TODO: Move these to separate utility files when implementing full cron-to-human feature
 const convertScheduleToCronExpression = (
   trigger: WorkflowCronTrigger,
 ): string | null => {
-  // User enters time in UTC, cron expressions execute in UTC
-  // Only the "Upcoming execution times" display is shown in user's timezone for clarity
   switch (trigger.settings.type) {
     case 'CUSTOM':
       return trigger.settings.pattern;
@@ -31,19 +30,24 @@ const convertScheduleToCronExpression = (
 
 const getTriggerScheduleDescription = (
   trigger: WorkflowCronTrigger,
+  localeCatalog?: Locale,
 ): string | null => {
-  // TODO: Generate human-readable descriptions using cronstrue or similar
-  switch (trigger.settings.type) {
-    case 'CUSTOM':
-      return `Custom schedule: ${trigger.settings.pattern}`;
-    case 'DAYS':
-      return `Every ${trigger.settings.schedule.day} day(s) at ${String(trigger.settings.schedule.hour).padStart(2, '0')}:${String(trigger.settings.schedule.minute).padStart(2, '0')} UTC`;
-    case 'HOURS':
-      return `Every ${trigger.settings.schedule.hour} hour(s) at minute ${trigger.settings.schedule.minute} UTC`;
-    case 'MINUTES':
-      return `Every ${trigger.settings.schedule.minute} minute(s)`;
-    default:
-      return null;
+  const cronExpression = convertScheduleToCronExpression(trigger);
+
+  if (!cronExpression) {
+    return null;
+  }
+
+  try {
+    return describeCronExpression(
+      cronExpression,
+      { use24HourTimeFormat: true },
+      localeCatalog,
+    );
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : t`Invalid cron expression`;
+    return errorMessage;
   }
 };
 
@@ -106,7 +110,10 @@ export const CronExpressionHelper = ({
   }
 
   const cronExpression = convertScheduleToCronExpression(trigger);
-  const customDescription = getTriggerScheduleDescription(trigger);
+  const customDescription = getTriggerScheduleDescription(
+    trigger,
+    dateLocale.localeCatalog,
+  );
 
   if (!cronExpression) {
     return null;

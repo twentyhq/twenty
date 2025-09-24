@@ -114,7 +114,7 @@ export const WorkflowEditTriggerCronForm = ({
               placeholder="0 */1 * * *"
               error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
               onBlur={onBlur}
-              hint="Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+              hint={t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
               readonly={triggerOptions.readonly}
               defaultValue={trigger.settings.pattern}
               onChange={async (newPattern: string) => {
@@ -202,7 +202,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number greater than 1"
+              placeholder={t`Enter number greater than 1`}
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
@@ -222,7 +222,7 @@ export const WorkflowEditTriggerCronForm = ({
                 if (!isNumber(newHour) || newHour < 0 || newHour > 23) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    DAYS_hour: `Invalid hour value '${newHour}'. Should be integer between 0 and 23`,
+                    DAYS_hour: t`Invalid hour value '${newHour}'. Should be integer between 0 and 23`,
                   }));
                   return;
                 }
@@ -251,7 +251,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number between 0 and 23"
+              placeholder={t`Enter number between 0 and 23`}
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
@@ -273,7 +273,7 @@ export const WorkflowEditTriggerCronForm = ({
                 if (!isNumber(newMinute) || newMinute < 0 || newMinute > 59) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    DAYS_minute: `Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
+                    DAYS_minute: t`Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
                   }));
                   return;
                 }
@@ -302,7 +302,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number between 0 and 59"
+              placeholder={t`Enter number between 0 and 59`}
               readonly={triggerOptions.readonly}
             />
             <CronExpressionHelperLazy
@@ -336,7 +336,7 @@ export const WorkflowEditTriggerCronForm = ({
                 if (!isNumber(newHour) || newHour <= 0) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    HOURS_hour: `Invalid hour value '${newHour}'. Should be integer greater than 1`,
+                    HOURS_hour: t`Invalid hour value '${newHour}'. Should be integer greater than 1`,
                   }));
                   return;
                 }
@@ -361,7 +361,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number greater than 1"
+              placeholder={t`Enter number greater than 1`}
               readonly={triggerOptions.readonly}
             />
             <FormNumberFieldInput
@@ -383,7 +383,7 @@ export const WorkflowEditTriggerCronForm = ({
                 if (!isNumber(newMinute) || newMinute < 0 || newMinute > 59) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    HOURS_minute: `Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
+                    HOURS_minute: t`Invalid minute value '${newMinute}'. Should be integer between 0 and 59`,
                   }));
                   return;
                 }
@@ -408,7 +408,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number between 0 and 59"
+              placeholder={t`Enter number between 0 and 59`}
               readonly={triggerOptions.readonly}
             />
             <CronExpressionHelperLazy
@@ -437,7 +437,7 @@ export const WorkflowEditTriggerCronForm = ({
 
                 if (!isNumber(newMinute) || newMinute <= 0) {
                   setErrorMessages({
-                    MINUTES: `Invalid minute value '${newMinute}'. Should be integer greater than 1`,
+                    MINUTES: t`Invalid minute value '${newMinute}'. Should be integer greater than 1`,
                   });
                   return;
                 }
@@ -458,7 +458,7 @@ export const WorkflowEditTriggerCronForm = ({
                   },
                 });
               }}
-              placeholder="Enter number greater than 1"
+              placeholder={t`Enter number greater than 1`}
               readonly={triggerOptions.readonly}
             />
             <CronExpressionHelperLazy
