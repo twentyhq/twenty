@@ -8,7 +8,6 @@ import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-perm
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
