@@ -187,8 +187,11 @@ export const WorkflowDiagramArrowTipDraggable = ({
           }
         }
 
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        const cleanupEventListeners = () => {
+          document.removeEventListener('mousemove', handleMouseMove);
+          document.removeEventListener('mouseup', handleMouseUp);
+        };
+        cleanupEventListeners();
       };
 
       document.addEventListener('mousemove', handleMouseMove);
