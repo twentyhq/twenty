@@ -169,16 +169,12 @@ export const WorkflowDiagramArrowTipDraggable = ({
           try {
             await deleteEdge({
               source: edgeDescriptor.source,
-              sourceHandle: edgeDescriptor.sourceHandle,
               target: edgeDescriptor.target,
-              targetHandle: edgeDescriptor.targetHandle,
             });
 
             await createEdge({
               source: edgeDescriptor.source,
-              sourceHandle: edgeDescriptor.sourceHandle,
               target: targetNode.id,
-              targetHandle: 'left',
             });
           } catch (error) {
             enqueueErrorSnackBar({
