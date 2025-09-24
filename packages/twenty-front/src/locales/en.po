@@ -119,6 +119,11 @@ msgstr "{failedCount} file(s) failed to upload"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 
+#. js-lingui-id: g9mDO3
+#: src/utils/format/getOrdinalNumber.ts
+msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
+msgstr "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
+
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -980,6 +985,31 @@ msgstr "Assigned to"
 msgid "Assignment"
 msgstr "Assignment"
 
+#. js-lingui-id: UHs3Ds
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {firstTime} and {secondTime}"
+msgstr "at {firstTime} and {secondTime}"
+
+#. js-lingui-id: FpXNVu
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {formattedTime}"
+msgstr "at {formattedTime}"
+
+#. js-lingui-id: EbOhpt
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at {minuteNumStr} minutes past the hour"
+msgstr "at {minuteNumStr} minutes past the hour"
+
+#. js-lingui-id: B4LoNY
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {remainingTimes} and {lastTime}"
+msgstr "at {remainingTimes} and {lastTime}"
+
+#. js-lingui-id: MTsGe4
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at 1 minute past the hour"
+msgstr "at 1 minute past the hour"
+
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
@@ -989,6 +1019,21 @@ msgstr "At least 8 characters long."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "At least one authentication method must be enabled"
+
+#. js-lingui-id: tqMllA
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at minutes {firstValue} and {secondValue}"
+msgstr "at minutes {firstValue} and {secondValue}"
+
+#. js-lingui-id: r+gFlA
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at minutes {remainingValues} and {lastValue}"
+msgstr "at minutes {remainingValues} and {lastValue}"
+
+#. js-lingui-id: PuQ8VT
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at the top of the hour"
+msgstr "at the top of the hour"
 
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1072,6 +1117,26 @@ msgstr "Back"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Back to content"
+
+#. js-lingui-id: NgFKo1
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "between {startMonth} and {endMonth}"
+msgstr "between {startMonth} and {endMonth}"
+
+#. js-lingui-id: N7WQ1K
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "between {startTime} and {endTime}"
+msgstr "between {startTime} and {endTime}"
+
+#. js-lingui-id: FE1Mq4
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "between minute {start} and {end}"
+msgstr "between minute {start} and {end}"
+
+#. js-lingui-id: cQ8mjx
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "between the {startOrdinal} and {endOrdinal} of the month"
+msgstr "between the {startOrdinal} and {endOrdinal} of the month"
 
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
@@ -2895,6 +2960,24 @@ msgstr "Enter in <0>Unicode</0> format"
 msgid "Enter link"
 msgstr "Enter link"
 
+#. js-lingui-id: O0qPMN
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 0 and 23"
+msgstr "Enter number between 0 and 23"
+
+#. js-lingui-id: Y2uwqs
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 0 and 59"
+msgstr "Enter number between 0 and 59"
+
+#. js-lingui-id: ahwn7G
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number greater than 1"
+msgstr "Enter number greater than 1"
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
@@ -3036,6 +3119,77 @@ msgstr "Event visibility"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
 msgstr "Events you participated in are displayed in red."
+
+#. js-lingui-id: lbS/kF
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "every {stepNum} days"
+msgstr "every {stepNum} days"
+
+#. js-lingui-id: HzFFPM
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every {stepNumStr} days"
+msgstr "every {stepNumStr} days"
+
+#. js-lingui-id: iRozlI
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every {stepNumStr} days, between the {startOrdinal} and {endOrdinal} of the month"
+msgstr "every {stepNumStr} days, between the {startOrdinal} and {endOrdinal} of the month"
+
+#. js-lingui-id: iCnbJU
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every {stepNumStr} hours"
+msgstr "every {stepNumStr} hours"
+
+#. js-lingui-id: rMowgz
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every {stepNumStr} hours, between {startTime} and {endTime}"
+msgstr "every {stepNumStr} hours, between {startTime} and {endTime}"
+
+#. js-lingui-id: Yw2okP
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every {stepNumStr} minutes"
+msgstr "every {stepNumStr} minutes"
+
+#. js-lingui-id: wl8cvK
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every {stepNumStr} minutes, between minute {start} and {end}"
+msgstr "every {stepNumStr} minutes, between minute {start} and {end}"
+
+#. js-lingui-id: hBdF6X
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "every {stepNumStr} months"
+msgstr "every {stepNumStr} months"
+
+#. js-lingui-id: 3dpG6g
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
+msgstr "every {stepNumStr} months, between {startMonth} and {endMonth}"
+
+#. js-lingui-id: LhmFKG
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every day"
+msgstr "every day"
+
+#. js-lingui-id: XWj/lX
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every hour"
+msgstr "every hour"
+
+#. js-lingui-id: a9EHxw
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every minute"
+msgstr "every minute"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -3333,6 +3487,11 @@ msgstr "Fields Count"
 msgid "Fields Permissions"
 msgstr "Fields Permissions"
 
+#. js-lingui-id: hT0Flb
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "fifth"
+msgstr "fifth"
+
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fifth"
@@ -3372,6 +3531,11 @@ msgstr "Finished thinking"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
 msgstr "Finnish"
+
+#. js-lingui-id: hy+Mfg
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "first"
+msgstr "first"
 
 #. js-lingui-id: syyeb9
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3429,10 +3593,20 @@ msgstr "Format"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Format e.g. d-MMM-y (qqq''yy)"
 
+#. js-lingui-id: xMJhWJ
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+msgstr "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+
 #. js-lingui-id: 4JsQoY
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Formats"
 msgstr "Formats"
+
+#. js-lingui-id: 1hxId5
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "fourth"
+msgstr "fourth"
 
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3443,6 +3617,11 @@ msgstr "Fourth"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "French"
+
+#. js-lingui-id: qR8gT9
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "from {startDay} to {endDay}"
+msgstr "from {startDay} to {endDay}"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -3910,6 +4089,11 @@ msgstr "Invalid API key"
 msgid "Invalid auth provider"
 msgstr "Invalid auth provider"
 
+#. js-lingui-id: ER/0YT
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Invalid cron expression"
+msgstr "Invalid cron expression"
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -3936,6 +4120,27 @@ msgstr "Invalid File"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Invalid form values"
+
+#. js-lingui-id: 04zLGG
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+
+#. js-lingui-id: fLMLtY
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Invalid hour value '{newHour}'. Should be integer greater than 1"
+
+#. js-lingui-id: +Yi3bs
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+
+#. js-lingui-id: 942L1w
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Invalid minute value '{newMinute}'. Should be integer greater than 1"
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -5155,6 +5360,52 @@ msgstr "Objects and fields permissions settings"
 msgid "Off the beaten path"
 msgstr "Off the beaten path"
 
+#. js-lingui-id: jcwJgk
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {firstDay} and {secondDay} of the month"
+msgstr "on the {firstDay} and {secondDay} of the month"
+
+#. js-lingui-id: GSNAUy
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on the {ordinal} {dayName} of the month"
+msgstr "on the {ordinal} {dayName} of the month"
+
+#. js-lingui-id: s+rd/k
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {ordinalDay} of the month"
+msgstr "on the {ordinalDay} of the month"
+
+#. js-lingui-id: Q4spp9
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {remainingDays} and {lastDay} of the month"
+msgstr "on the {remainingDays} and {lastDay} of the month"
+
+#. js-lingui-id: aJ++Ko
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on the last {dayName} of the month"
+msgstr "on the last {dayName} of the month"
+
+#. js-lingui-id: MhQi70
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the last day of the month"
+msgstr "on the last day of the month"
+
+#. js-lingui-id: irOZkJ
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the weekday closest to the {ordinalDay} of the month"
+msgstr "on the weekday closest to the {ordinalDay} of the month"
+
+#. js-lingui-id: qF20Rl
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on weekdays"
+msgstr "on weekdays"
+
+#. js-lingui-id: gLM6bK
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on weekdays only"
+msgstr "on weekdays only"
+
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "On which object(s) should this trigger be available"
@@ -5164,6 +5415,38 @@ msgstr "On which object(s) should this trigger be available"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Only date & participants will be shared with your team."
+
+#. js-lingui-id: Ecstfp
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {firstMonth} and {secondMonth}"
+msgstr "only in {firstMonth} and {secondMonth}"
+
+#. js-lingui-id: scO7qS
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {monthName}"
+msgstr "only in {monthName}"
+
+#. js-lingui-id: nZ4jBc
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {remainingMonths} and {lastMonth}"
+msgstr "only in {remainingMonths} and {lastMonth}"
+
+#. js-lingui-id: G+ijJ2
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {dayName}"
+msgstr "only on {dayName}"
+
+#. js-lingui-id: rPnv5P
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {firstDay} and {secondDay}"
+msgstr "only on {firstDay} and {secondDay}"
+
+#. js-lingui-id: pYaMbU
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "only on {remainingDays} and {lastDay}"
 
 #. js-lingui-id: 50ETCF
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -5394,6 +5677,11 @@ msgstr "Plan"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan switching has been cancelled."
 msgstr "Plan switching has been cancelled."
+
+#. js-lingui-id: VUi6Nf
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Please check your cron expression syntax."
+msgstr "Please check your cron expression syntax."
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -5911,6 +6199,16 @@ msgstr "Save as new view"
 msgid "Save Dashboard"
 msgstr "Save Dashboard"
 
+#. js-lingui-id: gmB6oO
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Schedule"
+msgstr "Schedule"
+
+#. js-lingui-id: Qp0P63
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Schedule runs in UTC timezone."
+msgstr "Schedule runs in UTC timezone."
+
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
@@ -6060,6 +6358,11 @@ msgstr "seat / month - billed yearly"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Seats"
 msgstr "Seats"
+
+#. js-lingui-id: ZuduiH
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "second"
+msgstr "second"
 
 #. js-lingui-id: ku//5b
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6976,6 +7279,11 @@ msgstr "There was an error while updating password."
 msgid "Thinking..."
 msgstr "Thinking..."
 
+#. js-lingui-id: 9ItHLu
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "third"
+msgstr "third"
+
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Third"
@@ -7131,16 +7439,16 @@ msgstr "Trial expired. Please update your billing details."
 msgid "Trigger"
 msgstr "Trigger"
 
-#. js-lingui-id: EfDzVR
+#. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Trigger at hour"
-msgstr "Trigger at hour"
+msgid "Trigger at hour (UTC)"
+msgstr "Trigger at hour (UTC)"
 
-#. js-lingui-id: gV4kml
+#. js-lingui-id: 4QBmLn
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Trigger at minute"
-msgstr "Trigger at minute"
+msgid "Trigger at minute (UTC)"
+msgstr "Trigger at minute (UTC)"
 
 #. js-lingui-id: jGYsS/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7242,6 +7550,7 @@ msgstr "Unknown"
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Unknown error"
 msgstr "Unknown error"
 
@@ -7266,6 +7575,11 @@ msgstr "Untitled role"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr "Untitled Workflow"
+
+#. js-lingui-id: b26MvX
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Upcoming execution times ({timeZone})"
+msgstr "Upcoming execution times ({timeZone})"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
