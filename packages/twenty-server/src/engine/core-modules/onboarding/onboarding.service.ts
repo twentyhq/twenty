@@ -85,6 +85,22 @@ export class OnboardingService {
     }
 
     if (isBookOnboardingPending) {
+      const calendarBookingPageId = this.twentyConfigService.get(
+        'CALENDAR_BOOKING_PAGE_ID',
+      );
+      const isBookingConfigured =
+        isDefined(calendarBookingPageId) &&
+        isNonEmptyString(calendarBookingPageId);
+
+      if (!isBookingConfigured) {
+        await this.userVarsService.delete({
+          workspaceId: workspace.id,
+          key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
+        });
+
+        return OnboardingStatus.COMPLETED;
+      }
+
       return OnboardingStatus.BOOK_ONBOARDING;
     }
 
