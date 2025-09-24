@@ -85,7 +85,7 @@ export const WorkflowEditTriggerCronForm = ({
         <Select
           dropdownId="workflow-edit-cron-trigger-interval"
           label={t`Trigger interval`}
-          description={t`Cron will be triggered at UTC time`}
+          description={trigger.settings.type === 'CUSTOM' ? t`Cron will be triggered at UTC time` : undefined}
           fullWidth
           disabled={triggerOptions.readonly}
           value={trigger.settings.type}
