@@ -114,10 +114,6 @@ export const useEdgeState = () => {
     sourceHandle,
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
-    if (workflowArrowTipHoveredEdge) {
-      return;
-    }
-
     setWorkflowHoveredEdge({ source, target, sourceHandle, targetHandle });
 
     reactflow.setEdges((edges) =>
