@@ -2,6 +2,7 @@ import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
+import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
@@ -22,6 +23,15 @@ import {
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
   const [currentGraphType, setCurrentGraphType] = useState(GraphType.BAR);
   const theme = useTheme();
+
+  const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
+  const handleGraphTypeChange = (graphType: GraphType) => {
+    setCurrentGraphType(graphType);
+    updateCommandMenuPageInfo({
+      pageIcon: GraphTypeInfo[graphType].icon,
+    });
+  };
 
   return (
     <>
@@ -49,7 +59,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
       >
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
-          setCurrentGraphType={setCurrentGraphType}
+          setCurrentGraphType={handleGraphTypeChange}
         />
         <CommandGroup heading="Data source">
           <CommandMenuItem
