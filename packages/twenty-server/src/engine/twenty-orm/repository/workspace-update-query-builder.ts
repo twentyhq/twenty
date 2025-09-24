@@ -161,6 +161,16 @@ export class WorkspaceUpdateQueryBuilder<
         authContext: this.authContext,
       });
 
+      if (formattedAfter.length > 0) {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          authContext: this.authContext,
+        });
+      }
+
       const formattedResult = formatResult<T[]>(
         result.raw,
         objectMetadata,
@@ -292,6 +302,16 @@ export class WorkspaceUpdateQueryBuilder<
         beforeEntities: formattedBefore,
         authContext: this.authContext,
       });
+
+      if (formattedAfter.length > 0) {
+        await this.internalContext.eventEmitterService.emitMutationEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          authContext: this.authContext,
+        });
+      }
 
       const formattedResults = formatResult<T[]>(
         results.flatMap((result) => result.raw),

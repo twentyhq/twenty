@@ -25,4 +25,10 @@ export const DATABASE_TRIGGER_TYPES: Array<{
     icon: 'IconTrash',
     event: 'deleted',
   },
+  {
+    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED_OR_UPDATED,
+    type: 'DATABASE_EVENT',
+    icon: 'IconPencilPlus',
+    event: 'upserted',
+  },
 ];
