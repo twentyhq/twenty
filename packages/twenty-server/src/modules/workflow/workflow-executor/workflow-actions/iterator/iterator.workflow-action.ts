@@ -140,6 +140,14 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       steps,
     });
 
+    const workflowRunToUpdate =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    const stepInfos = workflowRunToUpdate.state.stepInfos;
+
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
       stepInfos: stepIdsToReset.reduce(
         (acc, stepId) => {
@@ -147,6 +155,14 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
             status: StepStatus.NOT_STARTED,
             result: undefined,
             error: undefined,
+            history: [
+              ...(stepInfos[stepId]?.history ?? []),
+              {
+                result: stepInfos[stepId]?.result,
+                error: stepInfos[stepId]?.error,
+                status: stepInfos[stepId]?.status,
+              },
+            ],
           };
 
           return acc;
@@ -155,7 +171,6 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       ),
       workflowRunId,
       workspaceId,
-      shouldKeepHistory: true,
     });
   }
 }
