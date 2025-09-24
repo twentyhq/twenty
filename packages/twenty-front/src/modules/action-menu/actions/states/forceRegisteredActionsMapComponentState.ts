@@ -1,10 +1,8 @@
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createState } from 'twenty-ui/utilities';
 
-export const forceRegisteredActionsByKeyComponentState = createComponentState<
+export const forceRegisteredActionsByKeyState = createState<
   Record<string, boolean | undefined>
 >({
   key: 'forceRegisteredActionsByKeyComponentState',
   defaultValue: {},
-  componentInstanceContext: ActionMenuComponentInstanceContext,
 });

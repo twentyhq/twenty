@@ -53,12 +53,12 @@ export const findNearbyApps = async (startDir: string): Promise<string[]> => {
 
         for (const item of items) {
           if (item.isDirectory()) {
-            const manifestPath = path.join(
+            const packageJsonPath = path.join(
               searchPath,
               item.name,
-              'twenty-app.json',
+              'package.json',
             );
-            if (await fs.pathExists(manifestPath)) {
+            if (await fs.pathExists(packageJsonPath)) {
               apps.push(path.join(searchPath, item.name));
             }
           }
@@ -73,6 +73,5 @@ export const findNearbyApps = async (startDir: string): Promise<string[]> => {
 };
 
 export const isValidAppPath = async (appPath: string): Promise<boolean> => {
-  const manifestPath = path.join(appPath, 'twenty-app.json');
-  return fs.pathExists(manifestPath);
+  return fs.pathExists(path.join(appPath, 'package.json'));
 };
