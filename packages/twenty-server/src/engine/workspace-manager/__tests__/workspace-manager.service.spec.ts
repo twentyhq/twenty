@@ -29,7 +29,6 @@ describe('WorkspaceManagerService', () => {
   let objectMetadataService: ObjectMetadataService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
-  let workspaceFieldMetadataRepository: Repository<FieldMetadataEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
@@ -155,9 +154,6 @@ describe('WorkspaceManagerService', () => {
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
       getRepositoryToken(DataSourceEntity),
     );
-    workspaceFieldMetadataRepository = module.get<
-      Repository<FieldMetadataEntity>
-    >(getRepositoryToken(FieldMetadataEntity));
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
