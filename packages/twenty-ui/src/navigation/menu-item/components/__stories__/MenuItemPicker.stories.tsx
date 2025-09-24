@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { IconChartPie } from '@ui/display';
@@ -56,9 +55,8 @@ const StyledTitle = styled.h4`
   margin-bottom: 8px;
 `;
 
-const AllStatesComponent = () => {
-  const theme = useTheme();
-  return (
+export const AllStates: Story = {
+  render: () => (
     <div
       style={{
         display: 'grid',
@@ -88,9 +86,5 @@ const AllStatesComponent = () => {
         />
       </div>
     </div>
-  );
-};
-
-export const AllStates: Story = {
-  render: () => <AllStatesComponent />,
+  ),
 };
