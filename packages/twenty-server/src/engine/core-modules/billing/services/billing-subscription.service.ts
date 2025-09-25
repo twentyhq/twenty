@@ -1206,7 +1206,7 @@ export class BillingSubscriptionService {
         updateType: 'plan',
       });
 
-      await this.downgradeDeferred(stripeSubscriptionId, {
+      return await this.downgradeDeferred(stripeSubscriptionId, {
         current: {
           licensedPriceId: currentPrices.targetLicensedPrice.stripePriceId,
           meteredPriceId: currentMeteredPriceId,
@@ -1219,8 +1219,6 @@ export class BillingSubscriptionService {
           planKey: BillingPlanKey.PRO,
         },
       });
-
-      return;
     }
 
     throw new BillingException(
