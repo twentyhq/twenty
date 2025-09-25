@@ -193,3 +193,31 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
   },
   decorators: [CatalogDecorator],
 };
+
+export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with contextual text',
+    contextualText: 'Very very very very long contextual text',
+  },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'contextualTextPosition',
+          values: ['left', 'right'],
+          props: (contextualTextPosition: 'left' | 'right') => ({
+            contextualTextPosition,
+          }),
+          labels: (contextualTextPosition: 'left' | 'right') =>
+            contextualTextPosition === 'left' ? 'Left' : 'Right',
+        },
+      ],
+      options: {
+        elementContainer: {
+          style: { width: '400px', overflow: 'hidden' },
+        },
+      },
+    },
+  },
+};

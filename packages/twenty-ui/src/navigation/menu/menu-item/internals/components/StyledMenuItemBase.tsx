@@ -108,11 +108,9 @@ export const StyledMenuItemLeftContent = styled.div`
 
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
-  width: 100%;
+  max-width: 100%;
 
-  & > svg {
-    flex-shrink: 0;
-  }
+  flex-shrink: 0;
 `;
 
 export const StyledMenuItemRightContent = styled.div`
@@ -169,4 +167,14 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
 export const StyledMenuItemIconCheck = styled(IconCheck)`
   flex-shrink: 0;
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+export const StyledMenuItemContextualText = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 1;
+  overflow: hidden;
 `;

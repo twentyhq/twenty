@@ -1,5 +1,9 @@
 import { useTheme } from '@emotion/react';
-import { IconChevronRight, type IconComponent } from '@ui/display';
+import {
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+  type IconComponent,
+} from '@ui/display';
 import { type LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
 import {
@@ -9,10 +13,13 @@ import {
   type ReactNode,
 } from 'react';
 
+import { isString } from '@sniptt/guards';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
+  StyledMenuItemContextualText,
+  StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
@@ -40,6 +47,7 @@ export type MenuItemProps = {
   testId?: string;
   disabled?: boolean;
   text: ReactNode;
+  contextualTextPosition?: 'left' | 'right';
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
   focused?: boolean;
@@ -60,6 +68,7 @@ export const MenuItem = ({
   onMouseLeave,
   testId,
   text,
+  contextualTextPosition = 'left',
   contextualText,
   hasSubMenu = false,
   disabled = false,
@@ -95,10 +104,23 @@ export const MenuItem = ({
           LeftComponent={LeftComponent}
           withIconContainer={withIconContainer}
           text={text}
-          contextualText={contextualText}
+          contextualText={
+            contextualTextPosition === 'left' ? contextualText : null
+          }
           disabled={disabled}
         />
       </StyledMenuItemLeftContent>
+      {contextualTextPosition === 'right' && (
+        <StyledMenuItemLabel>
+          {isString(contextualText) ? (
+            <StyledMenuItemContextualText>
+              <OverflowingTextWithTooltip text={contextualText} />
+            </StyledMenuItemContextualText>
+          ) : (
+            contextualText
+          )}
+        </StyledMenuItemLabel>
+      )}
       <div className="hoverable-buttons">
         {showIconButtons && (
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />

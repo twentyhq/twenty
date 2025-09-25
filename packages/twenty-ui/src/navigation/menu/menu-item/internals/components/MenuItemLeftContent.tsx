@@ -10,6 +10,7 @@ import {
 } from '@ui/display';
 import {
   StyledDraggableItem,
+  StyledMenuItemContextualText,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
@@ -20,19 +21,6 @@ const StyledMainText = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-`;
-
-const StyledContextualText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  flex-shrink: 1;
 `;
 
 const StyledIconContainer = styled.div`
@@ -98,7 +86,9 @@ export const MenuItemLeftContent = ({
           text
         )}
         {isString(contextualText) ? (
-          <StyledContextualText>{`· ${contextualText}`}</StyledContextualText>
+          <StyledMenuItemContextualText>
+            <OverflowingTextWithTooltip text={`· ${contextualText}`} />
+          </StyledMenuItemContextualText>
         ) : (
           contextualText
         )}
