@@ -68,6 +68,19 @@ const getColumnExpressionsFromField = (
         return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
       });
 
+    if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
+      const phoneNumberColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneNumber"`;
+      const callingCodeColumn = `"${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode"`;
+
+      const internationalFormats = [
+        `COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
+        `COALESCE(REPLACE(${callingCodeColumn}, '+', '') || ${phoneNumberColumn}, '')`,
+        `COALESCE('0' || ${phoneNumberColumn}, '')`,
+      ];
+
+      return [...baseExpressions, ...internationalFormats];
+    }
+
     return baseExpressions;
   }
   const columnName = computeColumnName(fieldMetadataTypeAndName.name);
@@ -88,7 +101,7 @@ const getColumnExpression = (
       COALESCE(public.unaccent_immutable(SPLIT_PART(${quotedColumnName}, '@', 2)), '')`;
 
     case FieldMetadataType.PHONES:
-      return `COALESCE(${quotedColumnName}, '') || ' ' || COALESCE('0' || ${quotedColumnName}, '')`;
+      return `COALESCE(${quotedColumnName}, '')`;
 
     default:
       return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;

@@ -728,6 +728,50 @@ describe('SearchResolver', () => {
       },
     },
     {
+      title: 'should find person by international phone number with plus',
+      context: {
+        input: {
+          searchInput: '+442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by international phone number without plus',
+      context: {
+        input: {
+          searchInput: '442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
       title: 'should find person by trunk prefix phone number (UK)',
       context: {
         input: {
@@ -772,7 +816,7 @@ describe('SearchResolver', () => {
       },
     },
     {
-      title: 'should find person by US phone number (no trunk prefix)',
+      title: 'should find person by US phone number (raw national)',
       context: {
         input: {
           searchInput: '5551234567',
