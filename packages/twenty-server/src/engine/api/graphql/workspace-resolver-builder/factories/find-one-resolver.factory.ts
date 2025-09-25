@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import graphqlFields from 'graphql-fields';
+
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   type FindOneResolverArgs,
   type Resolver,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
+import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
+import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
@@ -18,7 +22,7 @@ export class FindOneResolverFactory
   public static methodName = RESOLVER_METHOD_NAMES.FIND_ONE;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryFindOneResolverService,
+    private readonly commonQueryRunnerService: CommonFindOneQueryRunnerService,
   ) {}
 
   create(
@@ -35,10 +39,23 @@ export class FindOneResolverFactory
           internalContext.objectMetadataItemWithFieldMaps,
       };
 
-      return await this.graphqlQueryRunnerService.execute(
-        args,
+      const graphqlQueryParser = new GraphqlQueryParser(
+        internalContext.objectMetadataItemWithFieldMaps,
+        internalContext.objectMetadataMaps,
+      );
+
+      const selectedFields = graphqlFields(options.info);
+
+      const selectedFieldsResult = graphqlQueryParser.parseSelectedFields(
+        internalContext.objectMetadataItemWithFieldMaps,
+        selectedFields,
+        internalContext.objectMetadataMaps,
+      );
+
+      return await this.commonQueryRunnerService.execute(
+        { ...args, selectedFieldsResult },
         options,
-        FindOneResolverFactory.methodName,
+        CommonQueryNames.findOne,
       );
     };
   }

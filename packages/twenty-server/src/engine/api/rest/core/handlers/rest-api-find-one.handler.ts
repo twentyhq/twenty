@@ -5,11 +5,40 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
+import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 
 @Injectable()
 export class RestApiFindOneHandler extends RestApiBaseHandler {
+  constructor(
+    private readonly commonFindOneQueryRunnerService: CommonFindOneQueryRunnerService,
+  ) {
+    super();
+  }
+
   async handle(request: Request) {
+    const { args, options } =
+      await this.buildCommonArgsAndOptionsFromRestRequest(request);
+
+    const record = await this.commonFindOneQueryRunnerService.execute(
+      args,
+      options,
+      CommonQueryNames.findOne,
+    );
+
+    if (!isDefined(record)) {
+      throw new BadRequestException('Record not found');
+    }
+
+    return this.formatResult({
+      operation: CommonQueryNames.findOne,
+      objectNameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
+      data: record,
+    });
+  }
+
+  private async buildCommonArgsAndOptionsFromRestRequest(request: Request) {
     const { id: recordId } = parseCorePath(request);
 
     if (!isDefined(recordId)) {
@@ -19,31 +48,36 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     }
 
     const {
-      repository,
       objectMetadata,
       objectMetadataItemWithFieldsMaps,
-      restrictedFields,
+      authContext,
+      objectsPermissions,
     } = await this.getRepositoryAndMetadataOrFail(request);
 
-    const { records } = await this.findRecords({
-      request,
+    const selectedFieldsResult =
+      this.computeSelectedFieldsService.computeSelectedFields({
+        objectsPermissions,
+        objectsMetadataMaps: objectMetadata.objectMetadataMaps,
+        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        depth: this.depthInputFactory.create(request),
+      });
+
+    const { filter } = this.getVariablesFactory.create(
       recordId,
-      repository,
+      request,
       objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-      restrictedFields,
-    });
+    );
 
-    const record = records?.[0];
-
-    if (!isDefined(record)) {
-      throw new BadRequestException('Record not found');
-    }
-
-    return this.formatResult({
-      operation: 'findOne',
-      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
-      data: record,
-    });
+    return {
+      args: {
+        selectedFieldsResult,
+        filter,
+      },
+      options: {
+        authContext: authContext,
+        objectMetadataItemWithFieldMaps: objectMetadataItemWithFieldsMaps,
+        objectMetadataMaps: objectMetadata.objectMetadataMaps,
+      },
+    };
   }
 }
