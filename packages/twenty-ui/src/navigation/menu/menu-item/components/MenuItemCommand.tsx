@@ -9,7 +9,7 @@ import {
 import { type IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 import { type ReactNode } from 'react';
-import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
+import { MenuItemHotKeys } from './MenuItemHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`
   color: ${({ theme }) => theme.font.color.primary};
@@ -125,7 +125,7 @@ export const MenuItemCommand = ({
         </StyledTextContainer>
         {RightComponent}
       </StyledMenuItemLeftContent>
-      {!isMobile && <MenuItemCommandHotKeys hotKeys={hotKeys} />}
+      {!isMobile && <MenuItemHotKeys hotKeys={hotKeys} />}
     </StyledMenuItemCommandContainer>
   );
 };

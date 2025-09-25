@@ -29,10 +29,10 @@ export type { MenuItemAvatarProps } from './menu/menu-item/components/MenuItemAv
 export { MenuItemAvatar } from './menu/menu-item/components/MenuItemAvatar';
 export type { MenuItemCommandProps } from './menu/menu-item/components/MenuItemCommand';
 export { MenuItemCommand } from './menu/menu-item/components/MenuItemCommand';
-export type { MenuItemCommandHotKeysProps } from './menu/menu-item/components/MenuItemCommandHotKeys';
-export { MenuItemCommandHotKeys } from './menu/menu-item/components/MenuItemCommandHotKeys';
 export type { MenuItemDraggableProps } from './menu/menu-item/components/MenuItemDraggable';
 export { MenuItemDraggable } from './menu/menu-item/components/MenuItemDraggable';
+export type { MenuItemHotKeysProps } from './menu/menu-item/components/MenuItemHotKeys';
+export { MenuItemHotKeys } from './menu/menu-item/components/MenuItemHotKeys';
 export { MenuItemMultiSelect } from './menu/menu-item/components/MenuItemMultiSelect';
 export { MenuItemMultiSelectAvatar } from './menu/menu-item/components/MenuItemMultiSelectAvatar';
 export { MenuItemMultiSelectTag } from './menu/menu-item/components/MenuItemMultiSelectTag';

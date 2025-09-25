@@ -124,3 +124,72 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
   },
   decorators: [CatalogDecorator],
 };
+
+export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with hotkeys',
+    LeftIcon: IconBell,
+    hotKeys: ['⌘', 'K'],
+  },
+  argTypes: {
+    className: { control: false },
+    iconButtons: { control: false },
+  },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'hotKeyTypes',
+          values: ['no hotkeys', 'single key', 'modifier + key'],
+          props: (choice: string) => {
+            switch (choice) {
+              case 'no hotkeys':
+                return { hotKeys: undefined };
+              case 'single key':
+                return { hotKeys: ['K'] };
+              case 'modifier + key':
+                return { hotKeys: ['⌘', 'K'] };
+              default:
+                return {};
+            }
+          },
+          labels: (choice: string) => {
+            switch (choice) {
+              case 'no hotkeys':
+                return 'No hotkeys';
+              case 'single key':
+                return 'Single key (K)';
+              case 'modifier + key':
+                return 'Modifier + key (⌘K)';
+              default:
+                return choice;
+            }
+          },
+        },
+        {
+          name: 'states',
+          values: ['default', 'hover', 'active'],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+                return { className: 'hover' };
+              case 'active':
+                return { className: 'pressed' };
+              default:
+                return {};
+            }
+          },
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 300,
+        },
+      },
+    },
+  },
+  decorators: [CatalogDecorator],
+};

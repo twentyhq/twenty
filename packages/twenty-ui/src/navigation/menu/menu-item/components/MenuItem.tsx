@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 
+import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
@@ -42,6 +43,7 @@ export type MenuItemProps = {
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
   focused?: boolean;
+  hotKeys?: string[];
 };
 
 export const MenuItem = ({
@@ -62,6 +64,7 @@ export const MenuItem = ({
   hasSubMenu = false,
   disabled = false,
   focused = false,
+  hotKeys,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -101,6 +104,7 @@ export const MenuItem = ({
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
+      {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
       {RightIcon && (
         <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
