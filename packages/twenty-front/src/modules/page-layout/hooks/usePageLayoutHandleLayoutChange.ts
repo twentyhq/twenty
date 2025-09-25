@@ -81,7 +81,6 @@ export const usePageLayoutHandleLayoutChange = (
                     objectMetadataId: null,
                     gridPosition: widget.gridPosition,
                     configuration: widget.configuration || undefined,
-                    data: widget.data,
                     createdAt:
                       tab.widgets.find((w) => w.id === widget.id)?.createdAt ||
                       new Date().toISOString(),

@@ -72,7 +72,7 @@ export class MessagingRelaunchFailedMessageChannelsCommand extends ActiveOrSuspe
       }
 
       this.logger.log(
-        `${options.dryRun ? ' (DRY RUN): ' : ''}Relaunched ${failedMessageChannels.length} failed message channels`,
+        `${options.dryRun ? ' (DRY RUN) ' : ''}Relaunched ${failedMessageChannels.length} failed message channels`,
       );
     } catch (error) {
       this.logger.error(

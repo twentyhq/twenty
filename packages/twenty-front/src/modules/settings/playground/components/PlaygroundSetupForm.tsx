@@ -19,8 +19,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const playgroundSetupFormSchema = z.object({
   apiKeyForPlayground: z.string(),
-  schema: z.nativeEnum(PlaygroundSchemas),
-  playgroundType: z.nativeEnum(PlaygroundTypes),
+  schema: z.enum(PlaygroundSchemas),
+  playgroundType: z.enum(PlaygroundTypes),
 });
 
 type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;

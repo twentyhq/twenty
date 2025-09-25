@@ -80,8 +80,8 @@ export class ApprovedAccessDomainService {
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       locale: sender.locale,
     });
-    const html = render(emailTemplate);
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 

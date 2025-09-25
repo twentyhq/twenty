@@ -15,6 +15,13 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
+jest.mock(
+  'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util',
+  () => ({
+    computeWorkflowVersionStepChanges: jest.fn(),
+  }),
+);
+
 type MockWorkspaceRepository = Partial<
   WorkspaceRepository<WorkflowVersionWorkspaceEntity>
 > & {
@@ -78,8 +85,16 @@ describe('WorkflowVersionStepWorkspaceService', () => {
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let service: WorkflowVersionStepWorkspaceService;
   let mockWorkflowVersionWorkspaceRepository: MockWorkspaceRepository;
+  let mockComputeWorkflowVersionStepChanges: jest.Mock;
 
   beforeEach(async () => {
+    const {
+      computeWorkflowVersionStepChanges,
+    } = require('src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util');
+
+    mockComputeWorkflowVersionStepChanges =
+      computeWorkflowVersionStepChanges as jest.Mock;
+
     mockWorkflowVersionWorkspaceRepository = {
       findOne: jest.fn(),
       update: jest.fn(),
@@ -116,10 +131,13 @@ describe('WorkflowVersionStepWorkspaceService', () => {
             runStepCreationSideEffectsAndBuildStep: jest
               .fn()
               .mockImplementation(({ type }) => ({
-                id: 'new-step-id',
-                type,
-                settings: {},
-                nextStepIds: [],
+                builtStep: {
+                  id: 'new-step-id',
+                  type,
+                  settings: {},
+                  nextStepIds: [],
+                },
+                additionalCreatedSteps: [],
               })),
             runWorkflowVersionStepDeletionSideEffects: jest.fn(),
           },
@@ -140,6 +158,25 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
   describe('createWorkflowVersionStep', () => {
     it('should create a step linked to trigger', async () => {
+      const mockChanges = {
+        triggerDiff: [
+          {
+            type: 'CHANGE',
+            path: ['nextStepIds'],
+            value: ['step-1', 'new-step-id'],
+          },
+        ],
+        stepsDiff: [
+          {
+            type: 'CREATE',
+            path: [],
+            value: { id: 'new-step-id', type: 'FORM' },
+          },
+        ],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
@@ -151,20 +188,33 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       });
 
       expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result.createdStep).toBeDefined();
-
-      const createdStepId = result.createdStep?.id;
-
-      expect(result.triggerNextStepIds).toEqual(['step-1', createdStepId]);
-      expect(result.stepsNextStepIds).toEqual({
-        'step-1': ['step-2'],
-        'step-2': [],
-        'step-3': [],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
 
     it('should create a step between a trigger and a step', async () => {
+      const mockChanges = {
+        triggerDiff: [
+          { type: 'CHANGE', path: ['nextStepIds'], value: ['new-step-id'] },
+        ],
+        stepsDiff: [
+          {
+            type: 'CREATE',
+            path: [],
+            value: {
+              id: 'new-step-id',
+              type: 'FORM',
+              nextStepIds: ['step-1'],
+            },
+          },
+        ],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
@@ -176,21 +226,32 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       });
 
       expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result.createdStep).toBeDefined();
-
-      const createdStepId = result.createdStep?.id as string;
-
-      expect(result.triggerNextStepIds).toEqual([createdStepId]);
-      expect(result.stepsNextStepIds).toEqual({
-        [createdStepId]: ['step-1'],
-        'step-1': ['step-2'],
-        'step-2': [],
-        'step-3': [],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
 
     it('should create a step between two steps', async () => {
+      const mockChanges = {
+        triggerDiff: [],
+        stepsDiff: [
+          { type: 'CHANGE', path: [0, 'nextStepIds'], value: ['new-step-id'] },
+          {
+            type: 'CREATE',
+            path: [],
+            value: {
+              id: 'new-step-id',
+              type: 'FORM',
+              nextStepIds: ['step-2'],
+            },
+          },
+        ],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
@@ -202,21 +263,27 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       });
 
       expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result.createdStep).toBeDefined();
-
-      const createdStepId = result.createdStep?.id as string;
-
-      expect(result.triggerNextStepIds).toEqual(['step-1']);
-      expect(result.stepsNextStepIds).toEqual({
-        'step-1': [createdStepId],
-        [createdStepId]: ['step-2'],
-        'step-2': [],
-        'step-3': [],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
 
     it('should create a step without parent or children', async () => {
+      const mockChanges = {
+        triggerDiff: [],
+        stepsDiff: [
+          {
+            type: 'CREATE',
+            path: [],
+            value: { id: 'new-step-id', type: 'FORM' },
+          },
+        ],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
@@ -228,65 +295,59 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       });
 
       expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result.createdStep).toBeDefined();
-
-      expect(result.triggerNextStepIds).toEqual(['step-1']);
-      expect(result.stepsNextStepIds).toEqual({
-        'step-1': ['step-2'],
-        'step-2': [],
-        'step-3': [],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
   });
 
   describe('deleteWorkflowVersionStep', () => {
     it('should delete step linked to trigger', async () => {
+      const mockChanges = {
+        triggerDiff: [
+          { type: 'CHANGE', path: ['nextStepIds'], value: ['step-2'] },
+        ],
+        stepsDiff: [{ type: 'REMOVE', path: [0] }],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.deleteWorkflowVersionStep({
         stepIdToDelete: 'step-1',
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(
-        mockWorkflowVersionWorkspaceRepository.update,
-      ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-        trigger: { ...mockTrigger, nextStepIds: ['step-2'] },
-        steps: mockSteps.filter((step) => step.id !== 'step-1'),
-      });
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result).toEqual({
-        triggerNextStepIds: ['step-2'],
-        stepsNextStepIds: {
-          'step-2': [],
-          'step-3': [],
-        },
-        deletedStepIds: ['step-1'],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
 
     it('should delete trigger', async () => {
+      const mockChanges = {
+        triggerDiff: [{ type: 'REMOVE', path: [] }],
+        stepsDiff: [],
+      };
+
+      mockComputeWorkflowVersionStepChanges.mockReturnValue(mockChanges);
+
       const result = await service.deleteWorkflowVersionStep({
         stepIdToDelete: TRIGGER_STEP_ID,
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(
-        mockWorkflowVersionWorkspaceRepository.update,
-      ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-        trigger: null,
-        steps: mockSteps,
-      });
+      expect(mockWorkflowVersionWorkspaceRepository.update).toHaveBeenCalled();
+      expect(mockComputeWorkflowVersionStepChanges).toHaveBeenCalled();
 
-      expect(result).toEqual({
-        stepsNextStepIds: {
-          'step-1': ['step-2'],
-          'step-2': [],
-          'step-3': [],
-        },
-        deletedStepIds: [TRIGGER_STEP_ID],
-      });
+      expect(result).toEqual(mockChanges);
+      expect(result.triggerDiff).toBeDefined();
+      expect(result.stepsDiff).toBeDefined();
     });
   });
 });

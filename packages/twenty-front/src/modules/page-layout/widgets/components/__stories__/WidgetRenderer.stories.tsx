@@ -46,10 +46,6 @@ export const WithNumberChart: Story = {
       pageLayoutTabId: 'tab-overview',
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
-      data: {
-        value: '1,234',
-        trendPercentage: 12.5,
-      },
     },
   },
   render: (args) => (
@@ -66,12 +62,6 @@ export const WithGaugeChart: Story = {
       type: WidgetType.GRAPH,
       configuration: {
         graphType: GraphType.GAUGE,
-      },
-      data: {
-        value: 0.5,
-        min: 0,
-        max: 1,
-        label: 'Conversion rate',
       },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
@@ -100,40 +90,6 @@ export const WithPieChart: Story = {
       configuration: {
         graphType: GraphType.PIE,
       },
-      data: {
-        items: [
-          {
-            id: 'qualified',
-            value: 35,
-            label: 'Qualified',
-            to: '/leads/qualified',
-          },
-          {
-            id: 'contacted',
-            value: 25,
-            label: 'Contacted',
-            to: '/leads/contacted',
-          },
-          {
-            id: 'unqualified',
-            value: 20,
-            label: 'Unqualified',
-            to: '/leads/unqualified',
-          },
-          {
-            id: 'proposal',
-            value: 15,
-            label: 'Proposal',
-            to: '/leads/proposal',
-          },
-          {
-            id: 'negotiation',
-            value: 5,
-            label: 'Negotiation',
-            to: '/leads/negotiation',
-          },
-        ],
-      },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
         row: 0,
@@ -160,10 +116,6 @@ export const SmallWidget: Story = {
       type: WidgetType.GRAPH,
       configuration: {
         graphType: GraphType.NUMBER,
-      },
-      data: {
-        value: '42',
-        trendPercentage: 5,
       },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
@@ -199,12 +151,6 @@ export const MediumWidget: Story = {
       configuration: {
         graphType: GraphType.GAUGE,
       },
-      data: {
-        value: 0.75,
-        min: 0,
-        max: 1,
-        label: 'Progress',
-      },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
         row: 0,
@@ -238,14 +184,6 @@ export const LargeWidget: Story = {
       type: WidgetType.GRAPH,
       configuration: {
         graphType: GraphType.PIE,
-      },
-      data: {
-        items: [
-          { id: 'a', value: 40, label: 'Category A', to: '/a' },
-          { id: 'b', value: 30, label: 'Category B', to: '/b' },
-          { id: 'c', value: 20, label: 'Category C', to: '/c' },
-          { id: 'd', value: 10, label: 'Category D', to: '/d' },
-        ],
       },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
@@ -281,10 +219,6 @@ export const WideWidget: Story = {
       configuration: {
         graphType: GraphType.NUMBER,
       },
-      data: {
-        value: '1,234,567',
-        trendPercentage: 23.4,
-      },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {
         row: 0,
@@ -318,12 +252,6 @@ export const TallWidget: Story = {
       type: WidgetType.GRAPH,
       configuration: {
         graphType: GraphType.GAUGE,
-      },
-      data: {
-        value: 0.33,
-        min: 0,
-        max: 1,
-        label: 'Utilization',
       },
       createdAt: '2024-01-01T00:00:00Z',
       gridPosition: {

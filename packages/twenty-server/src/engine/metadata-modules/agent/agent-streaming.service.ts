@@ -25,6 +25,16 @@ export type StreamAgentChatOptions = {
   res: Response;
 };
 
+const CLIENT_FORWARDED_EVENT_TYPES = [
+  'text-delta',
+  'reasoning',
+  'reasoning-delta',
+  'tool-call',
+  'tool-input-delta',
+  'tool-result',
+  'error',
+];
+
 @Injectable()
 export class AgentStreamingService {
   private readonly logger = new Logger(AgentStreamingService.name);
@@ -81,14 +91,7 @@ export class AgentStreamingService {
 
         this.sendStreamEvent(
           res,
-          [
-            'text-delta',
-            'reasoning',
-            'reasoning-signature',
-            'tool-call',
-            'tool-result',
-            'error',
-          ].includes(chunk.type)
+          CLIENT_FORWARDED_EVENT_TYPES.includes(chunk.type)
             ? chunk
             : { type: chunk.type },
         );

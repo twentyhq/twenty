@@ -2,16 +2,18 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { SettingsEmailingDomains } from '~/pages/settings/emailing-domains/SettingsEmailingDomains';
 
 const StyledMainContent = styled.div`
   display: flex;
@@ -30,6 +32,10 @@ export const SettingsDomains = () => {
 
   const isPublicDomainEnabled =
     featureFlags[FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED];
+
+  const isEmailingDomainsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
+  );
 
   return (
     <SubMenuTopBarContainer
@@ -58,6 +64,15 @@ export const SettingsDomains = () => {
             />
             <SettingsApprovedAccessDomainsListCard />
           </StyledSection>
+          {isEmailingDomainsEnabled && (
+            <StyledSection>
+              <H2Title
+                title={t`Emailing Domains`}
+                description={t`Configure and verify domains for emailing from this workspace.`}
+              />
+              <SettingsEmailingDomains />
+            </StyledSection>
+          )}
           {isPublicDomainEnabled && (
             <StyledSection>
               <H2Title

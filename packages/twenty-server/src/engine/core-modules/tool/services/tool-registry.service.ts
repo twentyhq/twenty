@@ -18,7 +18,7 @@ export class ToolRegistryService {
         ToolType.SEND_EMAIL,
         () => ({
           description: this.sendEmailTool.description,
-          parameters: this.sendEmailTool.parameters,
+          inputSchema: this.sendEmailTool.inputSchema,
           execute: (params) =>
             this.sendEmailTool.execute(params as SendEmailInput),
           flag: PermissionFlagType.SEND_EMAIL_TOOL,
