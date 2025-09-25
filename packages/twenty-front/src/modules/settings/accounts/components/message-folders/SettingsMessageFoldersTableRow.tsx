@@ -23,7 +23,7 @@ const StyledCheckboxCell = styled(TableCell)`
 
 type SettingsMessageFoldersTableRowProps = {
   folder: MessageFolder;
-  onSyncToggle: (value: boolean) => void;
+  onSyncToggle: () => void;
 };
 
 export const SettingsMessageFoldersTableRow = ({
@@ -41,7 +41,7 @@ export const SettingsMessageFoldersTableRow = ({
       <StyledCheckboxCell>
         <Checkbox
           checked={folder.isSynced}
-          onChange={() => onSyncToggle(folder.isSynced)}
+          onChange={onSyncToggle}
           size={CheckboxSize.Small}
         />
       </StyledCheckboxCell>
