@@ -1,5 +1,6 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType, WidgetType } from '../../mocks/mockWidgets';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { type PageLayoutTab } from '../../types/PageLayoutTab';
 import { type GraphWidget } from '../../widgets/graph/types/GraphWidget';
 import { addWidgetToTab } from '../addWidgetToTab';

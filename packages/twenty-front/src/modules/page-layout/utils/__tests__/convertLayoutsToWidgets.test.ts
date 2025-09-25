@@ -1,5 +1,6 @@
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
-import { GraphType, WidgetType } from '../../mocks/mockWidgets';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {

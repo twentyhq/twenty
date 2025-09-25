@@ -1,5 +1,6 @@
-import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { act, renderHook } from '@testing-library/react';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';
 import {

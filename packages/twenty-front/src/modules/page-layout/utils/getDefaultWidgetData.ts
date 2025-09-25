@@ -1,4 +1,4 @@
-import { GraphType } from '../mocks/mockWidgets';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 
 export const getDefaultWidgetData = (graphType: GraphType) => {
   switch (graphType) {

@@ -1,6 +1,6 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { type GraphWidgetConfiguration } from '@/page-layout/widgets/graph/types/GraphWidgetConfiguration';
 import { type GridPosition, WidgetType } from '~/generated/graphql';

@@ -1,6 +1,6 @@
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { WidgetType } from '~/generated/graphql';

@@ -1,6 +1,6 @@
 import { type BaseGraphConfiguration } from '@/page-layout/widgets/graph/types/BaseGraphConfiguration';
 import { type GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
-import { type GraphType } from '@/page-layout/mocks/mockWidgets';
+import { type GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 
 export type LineChartConfiguration = BaseGraphConfiguration & {
   graphType: GraphType.LINE;

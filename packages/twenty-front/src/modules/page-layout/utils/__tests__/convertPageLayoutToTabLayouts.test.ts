@@ -1,10 +1,10 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
+import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {

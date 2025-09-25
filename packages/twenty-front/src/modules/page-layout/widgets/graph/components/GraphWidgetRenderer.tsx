@@ -1,7 +1,7 @@
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { lazy, Suspense } from 'react';
 

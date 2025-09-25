@@ -1,9 +1,9 @@
 import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { type BarChartConfiguration } from '@/page-layout/widgets/graph/types/BarChartConfiguration';
 import { type GaugeChartConfiguration } from '@/page-layout/widgets/graph/types/GaugeChartConfiguration';
 import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
+import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
 import { type GraphWidgetConfiguration } from '@/page-layout/widgets/graph/types/GraphWidgetConfiguration';
 import { type LineChartConfiguration } from '@/page-layout/widgets/graph/types/LineChartConfiguration';
 import { type NumberChartConfiguration } from '@/page-layout/widgets/graph/types/NumberChartConfiguration';
