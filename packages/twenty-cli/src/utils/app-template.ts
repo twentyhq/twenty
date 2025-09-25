@@ -2,7 +2,10 @@ import { randomUUID } from 'crypto';
 import { AgentManifest, PackageJson } from '../types/config.types';
 import { getSchemaUrls } from './schema-validator';
 
-export const createBasePackageJson = (appName: string): PackageJson => {
+export const createBasePackageJson = (
+  appName: string,
+  description: string,
+): PackageJson => {
   const schemas = getSchemaUrls();
 
   return {
@@ -12,7 +15,7 @@ export const createBasePackageJson = (appName: string): PackageJson => {
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' '),
-    description: `A Twenty application for ${appName}`,
+    description,
     version: '0.0.1',
   };
 };
