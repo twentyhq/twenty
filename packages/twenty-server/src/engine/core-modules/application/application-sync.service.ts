@@ -13,6 +13,10 @@ import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-mo
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -181,9 +185,9 @@ export class ApplicationSyncService {
       );
 
       if (!objectToSync) {
-        // TODO add proper error handling for service
-        throw new Error(
+        throw new ApplicationException(
           `Failed to find object to sync with standardId ${objectToUpdate.standardId}`,
+          ApplicationExceptionCode.OBJECT_NOT_FOUND,
         );
       }
 
