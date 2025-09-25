@@ -41,6 +41,7 @@ export type MenuItemProps = {
   LeftIcon?: IconComponent | null;
   LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
+  RightComponent?: ReactNode;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -63,6 +64,7 @@ export const MenuItem = ({
   LeftIcon,
   LeftComponent,
   RightIcon,
+  RightComponent,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -130,6 +132,7 @@ export const MenuItem = ({
       {RightIcon && (
         <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
+      {RightComponent}
       {hasSubMenu && !disabled && (
         <IconChevronRight
           size={theme.icon.size.sm}

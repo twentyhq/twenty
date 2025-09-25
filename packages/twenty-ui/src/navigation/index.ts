@@ -62,6 +62,7 @@ export {
   StyledDraggableItem,
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
+  StyledMenuItemContextualText,
 } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export type { MenuItemAccent } from './menu/menu-item/types/MenuItemAccent';
 export { NavigationBar } from './navigation-bar/components/NavigationBar';
