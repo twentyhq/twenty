@@ -9,9 +9,9 @@ import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/com
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 
-export type CalendarCreateCompanyAndContactAfterSyncJobData = {
+export type CalendarCreateCompanyAndPersonAfterSyncJobData = {
   workspaceId: string;
   calendarChannelId: string;
 };
@@ -20,15 +20,15 @@ export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class CalendarCreateCompanyAndContactAfterSyncJob {
+export class CalendarCreateCompanyAndPersonAfterSyncJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly createCompanyAndContactService: CreateCompanyAndContactService,
+    private readonly createCompanyAndPersonService: CreateCompanyAndPersonService,
   ) {}
 
-  @Process(CalendarCreateCompanyAndContactAfterSyncJob.name)
+  @Process(CalendarCreateCompanyAndPersonAfterSyncJob.name)
   async handle(
-    data: CalendarCreateCompanyAndContactAfterSyncJobData,
+    data: CalendarCreateCompanyAndPersonAfterSyncJobData,
   ): Promise<void> {
     const { workspaceId, calendarChannelId } = data;
 
@@ -87,7 +87,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
         ],
       });
 
-    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
+    await this.createCompanyAndPersonService.createCompaniesAndPeopleAndUpdateParticipants(
       connectedAccount,
       calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,

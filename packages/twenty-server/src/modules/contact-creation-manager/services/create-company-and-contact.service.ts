@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -12,7 +11,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
-import { CreateContactService } from 'src/modules/contact-creation-manager/services/create-contact.service';
+import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
@@ -23,9 +22,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
-export class CreateCompanyAndContactService {
+export class CreateCompanyAndPersonService {
   constructor(
-    private readonly createContactService: CreateContactService,
+    private readonly createPersonService: CreatePersonService,
     private readonly createCompaniesService: CreateCompanyService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -58,7 +57,7 @@ export class CreateCompanyAndContactService {
 
     const workspaceMembers = await workspaceMemberRepository.find();
 
-    const contactsToCreateFromOtherCompanies =
+    const peopleToCreateFromOtherCompanies =
       filterOutSelfAndContactsFromCompanyOrWorkspace(
         contactsToCreate,
         connectedAccount,
@@ -66,7 +65,7 @@ export class CreateCompanyAndContactService {
       );
 
     const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
-      contactsToCreateFromOtherCompanies,
+      peopleToCreateFromOtherCompanies,
     );
 
     if (uniqueHandles.length === 0) {
@@ -142,7 +141,7 @@ export class CreateCompanyAndContactService {
       }),
     );
 
-    const companiesObject =
+    const companies =
       await this.createCompaniesService.createOrRestoreCompanies(
         workDomainNamesToCreateFormatted,
         workspaceId,
@@ -153,7 +152,7 @@ export class CreateCompanyAndContactService {
         handle: contact.handle,
         displayName: contact.displayName,
         companyId: isNonEmptyString(contact.companyDomainName)
-          ? companiesObject[contact.companyDomainName]
+          ? companies[contact.companyDomainName]
           : undefined,
         createdBySource: source,
         createdByWorkspaceMember: connectedAccount.accountOwner,
@@ -162,105 +161,23 @@ export class CreateCompanyAndContactService {
         },
       }));
 
-    const restoredContacts =
-      await this.restorePeopleAndRestoreOrCreateCompanies(
-        alreadyCreatedContacts,
-        uniqueContacts,
-        workspaceId,
-        source,
-        connectedAccount,
-      );
-
-    const createdContacts = await this.createContactService.createPeople(
-      formattedContactsToCreate,
-      workspaceId,
-    );
-
-    return [...restoredContacts, ...createdContacts];
-  }
-
-  async restorePeopleAndRestoreOrCreateCompanies(
-    alreadyCreatedContacts: PersonWorkspaceEntity[],
-    uniqueContacts: Contact[],
-    workspaceId: string,
-    source: FieldActorSource,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-  ) {
-    const filteredContactsToRestore = uniqueContacts
-      .map((contact) => {
-        const softDeletedContact = alreadyCreatedContacts.find(
-          (person) =>
-            isDefined(person.deletedAt) &&
-            (person.emails.primaryEmail === contact.handle.toLowerCase() ||
-              (Array.isArray(person.emails?.additionalEmails) &&
-                person.emails.additionalEmails.includes(
-                  contact.handle.toLowerCase(),
-                ))),
-        );
-
-        return isDefined(softDeletedContact)
-          ? {
-              id: softDeletedContact.id,
-              companyDomainName: isWorkEmail(contact.handle)
-                ? getDomainNameFromHandle(contact.handle)
-                : undefined,
-            }
-          : undefined;
-      })
-      .filter(isDefined);
-
-    if (filteredContactsToRestore.length === 0) return [];
-
-    const workDomainNamesToCreate = filteredContactsToRestore
-      .filter(
-        (participant) =>
-          isDefined(participant.companyDomainName) &&
-          isWorkDomain(participant.companyDomainName),
-      )
-      .map((participant) => ({
-        domainName: participant.companyDomainName,
-        createdBySource: source,
-        createdByWorkspaceMember: connectedAccount.accountOwner,
-        createdByContext: {
-          provider: connectedAccount.provider,
-        },
-      }));
-
-    const companiesObject =
-      await this.createCompaniesService.createOrRestoreCompanies(
-        workDomainNamesToCreate,
+    const createdOrRestoredPeople =
+      await this.createPersonService.createOrRestorePeople(
+        formattedContactsToCreate,
         workspaceId,
       );
 
-    const formattedContactsToRestore = filteredContactsToRestore.map(
-      (contact) => {
-        return {
-          id: contact.id,
-          companyId: isNonEmptyString(contact.companyDomainName)
-            ? companiesObject[contact.companyDomainName]
-            : undefined,
-        };
-      },
-    );
-
-    return this.createContactService.restorePeople(
-      formattedContactsToRestore,
-      workspaceId,
-    );
+    return createdOrRestoredPeople;
   }
 
-  async createCompaniesAndContactsAndUpdateParticipants(
+  async createCompaniesAndPeopleAndUpdateParticipants(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
   ) {
-    const contactsBatches = chunk(
-      contactsToCreate,
-      CONTACTS_CREATION_BATCH_SIZE,
-    );
+    const peopleBatches = chunk(contactsToCreate, CONTACTS_CREATION_BATCH_SIZE);
 
-    // In some jobs the accountOwner is not populated
     if (!connectedAccount.accountOwner) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -283,11 +200,11 @@ export class CreateCompanyAndContactService {
       connectedAccount.accountOwner = workspaceMember;
     }
 
-    for (const contactsBatch of contactsBatches) {
+    for (const peopleBatch of peopleBatches) {
       try {
         await this.createCompaniesAndPeople(
           connectedAccount,
-          contactsBatch,
+          peopleBatch,
           workspaceId,
           source,
         );

@@ -57,7 +57,6 @@ export class CreateCompanyService {
         },
       );
 
-    // Remove trailing slash from domain names
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
       domainName: company.domainName
@@ -65,7 +64,6 @@ export class CreateCompanyService {
         : undefined,
     }));
 
-    // Avoid creating duplicate companies, e.g. example.com and example.com/
     const uniqueCompanies = uniqBy(companiesWithoutTrailingSlash, 'domainName');
     const conditions = uniqueCompanies.map((companyToCreate) => ({
       domainName: {
@@ -73,14 +71,12 @@ export class CreateCompanyService {
       },
     }));
 
-    // Find existing companies
     const existingCompanies = await companyRepository.find({
       where: conditions,
       withDeleted: true,
     });
     const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
-    // Filter out companies that already exist
     const newCompaniesToCreate = uniqueCompanies.filter(
       (company) =>
         !existingCompanies.some(
@@ -100,7 +96,6 @@ export class CreateCompanyService {
       return existingCompanyIdsMap;
     }
 
-    // Retrieve the last company position
     let lastCompanyPosition =
       await this.getLastCompanyPosition(companyRepository);
     const newCompaniesData = await Promise.all(
@@ -109,7 +104,6 @@ export class CreateCompanyService {
       ),
     );
 
-    // Create new companies
     const createdCompanies = await companyRepository.save(newCompaniesData);
 
     const restoredCompanies = await companyRepository.updateMany(
@@ -125,7 +119,6 @@ export class CreateCompanyService {
       ['domainNamePrimaryLinkUrl', 'id'],
     );
 
-    //TODO : Fix updateMany method to return formatted records
     const formattedRestoredCompanies = restoredCompanies.raw.map(
       (row: { id: string; domainNamePrimaryLinkUrl: string }) => {
         return {

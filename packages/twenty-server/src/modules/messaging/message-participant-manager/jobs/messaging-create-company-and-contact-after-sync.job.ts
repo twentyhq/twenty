@@ -8,7 +8,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
   MessageChannelContactAutoCreationPolicy,
@@ -27,7 +27,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
-    private readonly createCompanyAndContactService: CreateCompanyAndContactService,
+    private readonly createCompanyAndPersonService: CreateCompanyAndPersonService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -36,7 +36,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {
     this.logger.log(
-      `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,
+      `create people and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,
     );
     const { workspaceId, messageChannelId } = data;
 
@@ -100,7 +100,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       },
     });
 
-    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
+    await this.createCompanyAndPersonService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,
       contactsToCreate,
       workspaceId,
