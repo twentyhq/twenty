@@ -161,60 +161,6 @@ describe('upsert (createMany with upsert:true)', () => {
     });
   });
 
-  it('should update soft-deleted records', async () => {
-    // Create a record
-    const createResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'softDeletedRecord',
-            secondUniqueTestField: 'softDeletedSecondField',
-            name: 'originalRecord',
-          },
-        ],
-        upsert: false,
-      },
-    });
-
-    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
-
-    // Soft delete the record
-    await makeGraphqlAPIRequest({
-      query: deleteRecordsQuery,
-      variables: {
-        filter: {
-          id: {
-            eq: createdRecord.id,
-          },
-        },
-      },
-    });
-
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'softDeletedRecord',
-            name: 'restoredRecord',
-          },
-        ],
-        upsert: true,
-      },
-    });
-
-    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
-
-    expect(upsertedRecord).toEqual({
-      id: createdRecord.id,
-      firstUniqueTestField: 'softDeletedRecord',
-      secondUniqueTestField: 'softDeletedSecondField',
-      name: 'restoredRecord',
-      deletedAt: expect.any(String),
-    });
-  });
-
   it('should throw an error when multiple records with the same unique field values are found', async () => {
     await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -255,6 +201,49 @@ describe('upsert (createMany with upsert:true)', () => {
     );
     expect(upsertResponse.body.errors[0].extensions.code).toBe(
       'BAD_USER_INPUT',
+    );
+  });
+
+  it('should update and restore updated soft-deleted record', async () => {
+    const createResponse = await makeGraphqlAPIRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [
+          {
+            firstUniqueTestField: 'softDeletedRecord',
+            secondUniqueTestField: 'softDeletedSecondField',
+            name: 'originalRecord',
+          },
+        ],
+        upsert: false,
+      },
+    });
+
+    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+
+    const deleteResponse = await makeGraphqlAPIRequest({
+      query: deleteRecordsQuery,
+      variables: {
+        filter: { id: { eq: createdRecord.id } },
+      },
+    });
+
+    const updateResponse = await makeGraphqlAPIRequest({
+      query: createRecordsQuery,
+      variables: {
+        data: [{ id: createdRecord.id, name: 'updatedRecord' }],
+        upsert: true,
+      },
+    });
+
+    expect(
+      deleteResponse.body.data.deleteTestRecordObjects[0].deletedAt,
+    ).toEqual(expect.any(String));
+    expect(
+      updateResponse.body.data.createTestRecordObjects[0].deletedAt,
+    ).toBeNull();
+    expect(updateResponse.body.data.createTestRecordObjects[0].id).toEqual(
+      createdRecord.id,
     );
   });
 });
