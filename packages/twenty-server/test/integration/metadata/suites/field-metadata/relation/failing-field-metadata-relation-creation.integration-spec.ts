@@ -10,6 +10,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type GlobalTestContext = {
   objectMetadataIds: {
@@ -283,7 +284,9 @@ describe('Field metadata relation creation should fail', () => {
       });
 
       expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
+      );
     },
   );
 
@@ -320,7 +323,9 @@ describe('Field metadata relation creation should fail', () => {
       });
 
       expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
+      );
     },
   );
 });

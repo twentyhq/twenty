@@ -74,6 +74,7 @@ export class WorkspaceMigrationRunnerV2Service {
 
       await queryRunner.commitTransaction();
 
+      console.log("RUNNER", flatEntityMapsToInvalidate);
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
         flatEntities: flatEntityMapsToInvalidate,

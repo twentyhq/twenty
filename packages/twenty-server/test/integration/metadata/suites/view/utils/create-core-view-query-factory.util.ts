@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+  import gql from 'graphql-tag';
 import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 

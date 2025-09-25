@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Resolver deleteCoreView should throw an error when deleting non-existent view 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View to delete not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Resolver destroyCoreView should throw an error when destroying non-existent view 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View to destroy not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`View Resolver updateCoreView should throw error when updating non-existent view 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View to update not found",
+  "name": "NotFoundError",
+}
+`;
