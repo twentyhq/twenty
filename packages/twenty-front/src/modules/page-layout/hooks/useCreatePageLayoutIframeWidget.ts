@@ -2,7 +2,6 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -13,7 +12,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,
@@ -58,14 +57,14 @@ export const useCreatePageLayoutIframeWidget = (
           return;
         }
 
-        const widgetId = `widget-${uuidv4()}`;
+        const widgetId = uuidv4();
         const defaultSize = { w: 6, h: 6 };
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidgetWithData = {
+        const newWidget: PageLayoutWidget = {
           id: widgetId,
           pageLayoutTabId: activeTabId,
           title,
@@ -79,7 +78,6 @@ export const useCreatePageLayoutIframeWidget = (
           configuration: {
             url,
           },
-          data: {},
           objectMetadataId: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

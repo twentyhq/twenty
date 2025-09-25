@@ -54,6 +54,15 @@
         "description": "Inline agent definition",
         "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json"
       }
+    },
+    "objects": {
+      "type": "array",
+      "description": "Optional inline object definitions (objects are typically discovered from the objects/ folder)",
+      "items": {
+        "type": "object",
+        "description": "Inline object definition",
+        "$ref": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/object.schema.json"
+      }
     }
   },
   "examples": [

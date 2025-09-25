@@ -19,6 +19,8 @@ module.exports = {
     './src/modules/prefetch/graphql/**/*.{ts,tsx}',
     './src/modules/subscription/graphql/**/*.{ts,tsx}',
 
+    './src/modules/page-layout/graphql/**/*.{ts,tsx}',
+
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',

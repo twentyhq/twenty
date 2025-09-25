@@ -1,18 +1,9 @@
 import { randomUUID } from 'crypto';
-import { AgentManifest, AppManifest } from '../types/config.types';
-import { SchemaValidator } from './schema-validator';
+import { AgentManifest, PackageJson } from '../types/config.types';
+import { getSchemaUrls } from './schema-validator';
 
-export type AppManifestTemplate = Omit<AppManifest, 'agents'> & {
-  $schema?: string;
-  // agents will be discovered from the agents/ folder
-};
-
-export type AgentManifestTemplate = AgentManifest & {
-  $schema?: string;
-};
-
-export const createBasePackageJson = (appName: string): AppManifestTemplate => {
-  const schemas = SchemaValidator.getSchemaUrls();
+export const createBasePackageJson = (appName: string): PackageJson => {
+  const schemas = getSchemaUrls();
 
   return {
     $schema: schemas.appManifest,
@@ -26,8 +17,8 @@ export const createBasePackageJson = (appName: string): AppManifestTemplate => {
   };
 };
 
-export const createAgentManifest = (appName: string): AgentManifestTemplate => {
-  const schemas = SchemaValidator.getSchemaUrls();
+export const createAgentManifest = (appName: string): AgentManifest => {
+  const schemas = getSchemaUrls();
 
   return {
     $schema: schemas.agent,

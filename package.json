@@ -71,7 +71,7 @@
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
-    "zod": "3.23.8"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
