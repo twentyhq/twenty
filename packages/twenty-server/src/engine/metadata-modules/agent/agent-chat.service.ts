@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import type { UIMessage, UIMessagePart } from 'ai';
+
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
   AgentChatMessageEntity,
   type AgentChatMessageRole,
@@ -13,6 +16,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/agent/utils/mapUIMessagePartsToDBParts';
 
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
@@ -23,6 +27,8 @@ export class AgentChatService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     @InjectRepository(AgentChatMessageEntity)
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
+    @InjectRepository(AgentChatMessagePartEntity)
+    private readonly messagePartRepository: Repository<AgentChatMessagePartEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
@@ -67,22 +73,29 @@ export class AgentChatService {
 
   async addMessage({
     threadId,
-    role,
-    rawContent,
+    uiMessage,
     fileIds,
   }: {
     threadId: string;
-    role: AgentChatMessageRole;
-    rawContent: string | null;
+    uiMessage: Omit<UIMessage, 'id'>;
+    uiMessageParts?: UIMessagePart<never, never>[];
     fileIds?: string[];
   }) {
     const message = this.messageRepository.create({
       threadId,
-      role,
-      rawContent,
+      role: uiMessage.role as AgentChatMessageRole,
     });
 
     const savedMessage = await this.messageRepository.save(message);
+
+    if (uiMessage.parts && uiMessage.parts.length > 0) {
+      const dbParts = mapUIMessagePartsToDBParts(
+        uiMessage.parts as UIMessagePart<never, never>[],
+        savedMessage.id,
+      );
+
+      await this.messagePartRepository.save(dbParts);
+    }
 
     if (fileIds && fileIds.length > 0) {
       for (const fileId of fileIds) {
@@ -92,7 +105,10 @@ export class AgentChatService {
       }
     }
 
-    this.generateTitleIfNeeded(threadId, rawContent);
+    this.generateTitleIfNeeded(
+      threadId,
+      uiMessage.parts.find((part) => part.type === 'text')?.text,
+    );
 
     return savedMessage;
   }
@@ -115,13 +131,13 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
-      relations: ['files'],
+      relations: ['parts', 'files'],
     });
   }
 
   private async generateTitleIfNeeded(
     threadId: string,
-    messageContent: string | null,
+    messageContent?: string | null,
   ) {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
