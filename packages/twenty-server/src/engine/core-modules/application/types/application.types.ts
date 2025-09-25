@@ -1,9 +1,3 @@
-export interface TwentyConfig {
-  apiUrl: string;
-  apiKey?: string;
-  defaultApp?: string;
-}
-
 export type PackageJson = {
   $schema?: string;
   standardId: string;
@@ -20,8 +14,6 @@ export type AppManifest = PackageJson & {
   objects: ObjectManifest[];
 };
 
-export type CoreEntityManifest = AgentManifest | ObjectManifest;
-
 export type ObjectManifest = {
   $schema?: string;
   standardId: string;
@@ -32,6 +24,11 @@ export type ObjectManifest = {
   description?: string;
   icon?: string;
 };
+
+interface AgentResponseFormat {
+  type: 'json' | 'text';
+  schema?: Record<string, unknown>;
+}
 
 export type AgentManifest = {
   $schema?: string;
@@ -44,15 +41,3 @@ export type AgentManifest = {
   modelId: string;
   responseFormat?: AgentResponseFormat;
 };
-
-export interface AgentResponseFormat {
-  type: 'json' | 'text';
-  schema?: Record<string, unknown>;
-}
-
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
