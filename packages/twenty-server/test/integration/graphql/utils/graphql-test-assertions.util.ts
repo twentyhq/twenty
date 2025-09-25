@@ -34,6 +34,24 @@ export const assertGraphQLErrorResponse = <T extends Record<string, unknown>>(
   expectedErrorMessage?: string,
 ) => {
   expect(response.status).toBe(200);
+  expect(response.body.errors).toBeDefined();
+  expect(response.body.errors).toHaveLength(1);
+
+  if (expectedErrorCode && response.body.errors) {
+    expect(response.body.errors[0].extensions?.code).toBe(expectedErrorCode);
+  }
+
+  if (expectedErrorMessage && response.body.errors) {
+    expect(response.body.errors[0].message).toBe(expectedErrorMessage);
+  }
+};
+
+export const assertGraphQLErrorResponseWithSnapshot = <
+  T extends Record<string, unknown>,
+>(
+  response: GraphQLResponse<T>,
+) => {
+  expect(response.status).toBe(200);
   jestExpectToBeDefined(response.body.errors);
   expect(response.body.errors).toHaveLength(1);
 

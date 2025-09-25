@@ -2,8 +2,8 @@ import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-
 import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
 import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
 import {
-    assertGraphQLErrorResponse,
-    assertGraphQLSuccessfulResponse,
+  assertGraphQLErrorResponseWithSnapshot,
+  assertGraphQLSuccessfulResponse
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -11,13 +11,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import {
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-} from 'src/engine/core-modules/view/exceptions/view.exception';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 
 describe('Delete core view', () => {
   let testObjectMetadataId: string;
@@ -83,8 +77,7 @@ describe('Delete core view', () => {
     const getOperation = findViewOperationFactory({ viewId: view.id });
     const getResponse = await makeGraphqlAPIRequest(getOperation);
 
-    expect(getResponse.body.data.getCoreView).toMatchInlineSnapshot(`null`);
-    jestExpectToBeDefined(getResponse.body.data.getCoreView.deletedAt);
+    expect(getResponse.body.data.getCoreView).toBeNull();
   });
 
   it('should throw an error when deleting non-existent view', async () => {
@@ -93,13 +86,8 @@ describe('Delete core view', () => {
     });
     const response = await makeGraphqlAPIRequest(operation);
 
-    assertGraphQLErrorResponse(
+    assertGraphQLErrorResponseWithSnapshot(
       response,
-      ErrorCode.NOT_FOUND,
-      generateViewExceptionMessage(
-        ViewExceptionMessageKey.VIEW_NOT_FOUND,
-        TEST_NOT_EXISTING_VIEW_ID,
-      ),
     );
   });
 });
