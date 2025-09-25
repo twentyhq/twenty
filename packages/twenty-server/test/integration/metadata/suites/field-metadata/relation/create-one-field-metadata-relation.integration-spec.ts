@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-// THIS IS FLAKY
 describe('createOne FieldMetadataService relation fields', () => {
   let createdObjectMetadataPersonId: string
   let createdObjectMetadataOpportunityId: string;
