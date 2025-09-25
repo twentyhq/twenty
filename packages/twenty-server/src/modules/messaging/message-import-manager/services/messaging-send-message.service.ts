@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -26,6 +26,7 @@ interface SendMessageInput {
 
 @Injectable()
 export class MessagingSendMessageService {
+  private readonly logger = new Logger(MessagingSendMessageService.name);
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly oAuth2ClientProvider: OAuth2ClientProvider,
@@ -125,10 +126,8 @@ export class MessagingSendMessageService {
         break;
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
-        const [smtpClient, imapClient] = await Promise.all([
-          this.smtpClientProvider.getSmtpClient(connectedAccount),
-          this.imapClientProvider.getClient(connectedAccount),
-        ]);
+        const smtpClient =
+          await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
         const mail = new MailComposer({
           from: connectedAccount.handle,
@@ -145,17 +144,31 @@ export class MessagingSendMessageService {
           raw: messageBuffer,
         });
 
-        const sentFolder = await imapClient
-          .list()
-          .then((folders) =>
-            folders.find((folder) => folder.specialUse === '\\Sent'),
+        try {
+          const imapClient =
+            await this.imapClientProvider.getClient(connectedAccount);
+
+          const messageChannel = connectedAccount.messageChannels.find(
+            (channel) => channel.handle === connectedAccount.handle,
           );
 
-        if (isDefined(sentFolder)) {
-          await imapClient.append(sentFolder.path, messageBuffer);
-        }
+          const sentFolder = messageChannel?.messageFolders.find(
+            (messageFolder) => messageFolder.isSentFolder,
+          );
 
-        await this.imapClientProvider.closeClient(imapClient);
+          if (isDefined(sentFolder)) {
+            await imapClient.append(sentFolder.name, messageBuffer);
+          }
+
+          await this.imapClientProvider.closeClient(imapClient);
+        } catch (error) {
+          this.logger.warn(
+            `Could not append sent message to IMAP folder for ${
+              connectedAccount.handle
+            }. It's possible that IMAP is not configured for this account.`,
+            error,
+          );
+        }
 
         break;
       }
