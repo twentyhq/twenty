@@ -140,7 +140,7 @@ export const MenuItem = ({
         {hasSubMenu && !disabled && (
           <IconChevronRight
             size={theme.icon.size.sm}
-            color={theme.font.color.tertiary}
+            color={theme.font.color.light}
           />
         )}
       </StyledMenuItemRightContent>
