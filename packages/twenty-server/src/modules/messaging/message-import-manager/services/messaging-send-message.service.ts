@@ -38,7 +38,10 @@ export class MessagingSendMessageService {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
-    switch (connectedAccount.provider) {
+    const { handle, connectionParameters, messageChannels, provider } =
+      connectedAccount;
+
+    switch (provider) {
       case ConnectedAccountProvider.GOOGLE: {
         const gmailClient =
           await this.gmailClientProvider.getGmailClient(connectedAccount);
@@ -128,27 +131,29 @@ export class MessagingSendMessageService {
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
+        const { to, subject, body } = sendMessageInput;
+
         const mail = new MailComposer({
-          from: connectedAccount.handle,
-          to: sendMessageInput.to,
-          subject: sendMessageInput.subject,
-          text: sendMessageInput.body,
+          from: handle,
+          to,
+          subject,
+          text: body,
         });
 
         const messageBuffer = await mail.compile().build();
 
         await smtpClient.sendMail({
-          from: connectedAccount.handle,
-          to: [sendMessageInput.to],
+          from: handle,
+          to,
           raw: messageBuffer,
         });
 
-        if (isDefined(connectedAccount.connectionParameters?.IMAP)) {
+        if (isDefined(connectionParameters?.IMAP)) {
           const imapClient =
             await this.imapClientProvider.getClient(connectedAccount);
 
-          const messageChannel = connectedAccount.messageChannels.find(
-            (channel) => channel.handle === connectedAccount.handle,
+          const messageChannel = messageChannels.find(
+            (channel) => channel.handle === handle,
           );
 
           const sentFolder = messageChannel?.messageFolders.find(
@@ -166,8 +171,8 @@ export class MessagingSendMessageService {
       }
       default:
         assertUnreachable(
-          connectedAccount.provider,
-          `Provider ${connectedAccount.provider} not supported for sending messages`,
+          provider,
+          `Provider ${provider} not supported for sending messages`,
         );
     }
   }
