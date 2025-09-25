@@ -7,7 +7,6 @@ export const GET_AGENT_CHAT_MESSAGES = gql`
       threadId
       role
       createdAt
-      rawContent
       files {
         id
         name
