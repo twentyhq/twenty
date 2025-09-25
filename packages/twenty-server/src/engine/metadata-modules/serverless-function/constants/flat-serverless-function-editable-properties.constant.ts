@@ -5,4 +5,5 @@ export const FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES = [
   'description',
   'timeoutSeconds',
   'checksum',
+  'code',
 ] as const satisfies (keyof FlatServerlessFunction)[];

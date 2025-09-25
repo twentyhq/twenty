@@ -42,14 +42,6 @@ export class FlatServerlessFunctionValidatorService {
       });
     }
 
-    if (!isDefined(updatedFlatServerlessFunction.code)) {
-      errors.push({
-        code: ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CODE_UNCHANGED,
-        message: t`Serverless function code unchanged`,
-        userFriendlyMessage: t`Serverless function code unchanged`,
-      });
-    }
-
     return {
       type: 'update_serverless_function',
       errors,

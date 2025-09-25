@@ -152,7 +152,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       type: 'update_serverless_function',
       serverlessFunctionId: toFlatServerlessFunction.id,
       updates: serverlessFunctionUpdatedProperties,
-      code: toFlatServerlessFunction.code!,
+      code: toFlatServerlessFunction.code,
     };
 
     return {
