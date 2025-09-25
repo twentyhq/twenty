@@ -34,6 +34,9 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @Column({ nullable: true, type: 'uuid' })
   standardId: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
 

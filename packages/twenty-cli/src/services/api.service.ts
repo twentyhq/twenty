@@ -83,15 +83,7 @@ export class ApiService {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest) {
-            id
-            standardId
-            label
-            description
-            version
-            createdAt
-            updatedAt
-          }
+          syncApplication(manifest: $manifest)
         }
       `;
 
@@ -126,126 +118,6 @@ export class ApiService {
         success: true,
         data: response.data.data.syncApplication,
         message: `Successfully synced application: ${manifest.label}`,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-      throw error;
-    }
-  }
-
-  async installApplication(
-    source: string,
-    sourceType: 'git' | 'local' | 'marketplace' = 'local',
-  ): Promise<ApiResponse> {
-    // For now, installation is the same as syncing a local manifest
-    // In the future, this could handle different source types
-    try {
-      if (sourceType === 'local') {
-        // Try to load manifest using the new loader
-        try {
-          const { loadAppManifest } = await import(
-            '../utils/app-manifest-loader'
-          );
-          const manifest = await loadAppManifest(source);
-          return this.syncApplication(manifest);
-        } catch (manifestError) {
-          return {
-            success: false,
-            error: `Failed to load manifest: ${manifestError instanceof Error ? manifestError.message : 'Unknown error'}`,
-          };
-        }
-      }
-
-      return {
-        success: false,
-        error: `Source type "${sourceType}" not yet supported`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Installation failed',
-      };
-    }
-  }
-
-  async listApplications(): Promise<ApiResponse> {
-    try {
-      const query = `
-        query FindManyAgents {
-          findManyAgents {
-            id
-            name
-            label
-            description
-            isCustom
-            createdAt
-            updatedAt
-          }
-        }
-      `;
-
-      const response: AxiosResponse = await this.client.post('/metadata', {
-        query,
-      });
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0]?.message || 'Failed to fetch agents',
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.findManyAgents,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-      throw error;
-    }
-  }
-
-  async getWorkspaces(): Promise<ApiResponse> {
-    try {
-      const query = `
-        query CurrentUser {
-          currentUser {
-            id
-            email
-            currentWorkspace {
-              id
-              displayName
-            }
-          }
-        }
-      `;
-
-      const response: AxiosResponse = await this.client.post('/metadata', {
-        query,
-      });
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to fetch workspace',
-        };
-      }
-
-      const workspace = response.data.data.currentUser?.currentWorkspace;
-      return {
-        success: true,
-        data: workspace ? [workspace] : [],
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
