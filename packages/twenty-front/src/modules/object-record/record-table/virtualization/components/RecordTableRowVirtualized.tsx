@@ -14,7 +14,9 @@ import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
-import { recordIdPerRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdPerRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+
+import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
@@ -34,6 +36,10 @@ export const RecordTableRowVirtualized = ({
     objectNameSingular,
   });
 
+  const maxRealIndex =
+    useRecoilComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ??
+    0;
+
   const realIndex = useRecoilComponentFamilyValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
@@ -49,15 +55,16 @@ export const RecordTableRowVirtualized = ({
   );
 
   const recordId = useRecoilComponentFamilyValue(
-    recordIdPerRealIndexComponentFamilyState,
-    realIndex ?? 0,
+    recordIdByRealIndexComponentFamilySelector,
+    { realIndex },
   );
 
-  if (!realIndex) {
+  if (!isDefined(realIndex) || realIndex >= maxRealIndex) {
     return null;
   }
 
-  const pixelsFromTop = realIndex * (RECORD_TABLE_ROW_HEIGHT + 1);
+  const pixelsFromTop =
+    realIndex * (RECORD_TABLE_ROW_HEIGHT + 1) + (RECORD_TABLE_ROW_HEIGHT + 1);
 
   if (!isDefined(realIndex) || !isDefined(recordId)) {
     return (

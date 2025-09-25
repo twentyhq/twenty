@@ -6,7 +6,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
-import { recordIdPerRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdPerRealIndexComponentFamilyState';
+
+import { useAppendRecordTableData } from '@/object-record/record-table/hooks/internal/useAppendRecordTableData';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -26,6 +27,8 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     lastRealIndexSetComponentState,
   );
 
+  const appendRecordTableData = useAppendRecordTableData();
+
   const [hasAlreadyFetchedUpToRealIndex] = useRecoilComponentState(
     hasAlreadyFetchedUpToRealIndexComponentState,
   );
@@ -39,9 +42,6 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     useRecoilComponentCallbackState(
       hasRecordTableFetchedAllRecordsComponentState,
     );
-
-  const recordIdPerRealIndexFamilyCallbackState =
-    useRecoilComponentCallbackState(recordIdPerRealIndexComponentFamilyState);
 
   // TODO: Those parameters allow the UI to not freeze while it can take time to fetch data.
   // We should work on two additional optimization rounds :
@@ -98,15 +98,10 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
 
                 for (
                   let realIndexToSet = startingRealIndexInThisPage;
-                  realIndexToSet < endingRealIndexInThisPage;
+                  realIndexToSet <= endingRealIndexInThisPage;
                   realIndexToSet++
                 ) {
                   if (isDefined(records[indexOfCurrentRecordBatch])) {
-                    set(
-                      recordIdPerRealIndexFamilyCallbackState(realIndexToSet),
-                      records[indexOfCurrentRecordBatch].id,
-                    );
-
                     set(
                       recordStoreFamilyState(
                         records[indexOfCurrentRecordBatch].id,
@@ -119,16 +114,16 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
                 }
               }
 
-              set(
-                hasAlreadyFetchedUpToRealIndexCallbackState,
-                startingRealIndex + records.length,
-              );
+              // set(
+              //   hasAlreadyFetchedUpToRealIndexCallbackState,
+              //   startingRealIndex + records.length,
+              // );
             }
 
-            set(
-              hasRecordTableFetchedAllRecordsCallbackState,
-              result?.data?.pageInfo.hasNextPage === false,
-            );
+            // set(
+            //   hasRecordTableFetchedAllRecordsCallbackState,
+            //   result?.data?.pageInfo.hasNextPage === false,
+            // );
           }
 
           set(isFetchingMoreRecordsFamilyState(recordTableId), false);
@@ -137,8 +132,7 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     [
       fetchMoreRecordsLazy,
       hasAlreadyFetchedUpToRealIndexCallbackState,
-      hasRecordTableFetchedAllRecordsCallbackState,
-      recordIdPerRealIndexFamilyCallbackState,
+      // hasRecordTableFetchedAllRecordsCallbackState,
       recordTableId,
     ],
   );

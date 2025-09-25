@@ -14,10 +14,7 @@ export const RecordTableNoRecordGroupRows = () => {
   );
 
   const numberOfRows = isDefined(totalNumberOfRecordsToVirtualize)
-    ? Math.max(
-        totalNumberOfRecordsToVirtualize ?? 0,
-        NUMBER_OF_VIRTUALIZED_ROWS,
-      )
+    ? Math.min(totalNumberOfRecordsToVirtualize, NUMBER_OF_VIRTUALIZED_ROWS)
     : 0;
 
   const virtualRowIndexes = getRange(0, numberOfRows);
@@ -34,7 +31,6 @@ export const RecordTableNoRecordGroupRows = () => {
         );
       })}
       <RecordTableVirtualizedFetchMoreEffect />
-      {/* <RecordTableBodyFetchMoreLoader /> */}
       <RecordTableBodyDroppablePlaceholder />
       <RecordTableAddNew />
     </>

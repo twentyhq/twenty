@@ -4,10 +4,13 @@ import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/use
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
+import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { useInitializeRowVirtualization } from '@/object-record/record-table/virtualization/hooks/useInitializeRowVirtualization';
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular, recordTableId } = useRecordTableContextOrThrow();
 
-  const { records, loading, totalCount } =
+  const { records, loading, totalCount, hasNextPage, queryIdentifier } =
     useRecordIndexTableQuery(objectNameSingular);
 
   const setRecordTableData = useSetRecordTableData({
@@ -29,27 +32,45 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const [isRecordTableInitialLoading, setIsRecordTableInitialLoading] =
     useRecoilComponentState(isRecordTableInitialLoadingComponentState);
 
-  const setTotalNumberOfRecordsToVirtualize = useSetRecoilComponentState(
+  const [, setTotalNumberOfRecordsToVirtualize] = useRecoilComponentState(
     totalNumberOfRecordsToVirtualizeComponentState,
+  );
+
+  const setHasRecordTableFetchedAllRecords = useSetRecoilComponentState(
+    hasRecordTableFetchedAllRecordsComponentState,
   );
 
   const { initializeRowsVirtualization } = useInitializeRowVirtualization();
 
+  const { scrollToPosition } = useScrollToPosition();
+
   useEffect(() => {
-    if (isRecordTableInitialLoading && !loading) {
+    if (!loading) {
       setRecordTableData({
         records,
       });
 
-      if (isDefined(totalCount)) {
-        setTotalNumberOfRecordsToVirtualize(totalCount);
-      }
-
-      initializeRowsVirtualization(records);
+      console.log({ queryIdentifier });
 
       setHasAlreadyFetchedUpToRealIndex(records.length);
 
-      setIsRecordTableInitialLoading(false);
+      setHasRecordTableFetchedAllRecords(records.length === totalCount);
+
+      if (isDefined(totalCount)) {
+        if (totalCount > NUMBER_OF_VIRTUALIZED_ROWS) {
+          setTotalNumberOfRecordsToVirtualize(totalCount);
+        } else {
+          setTotalNumberOfRecordsToVirtualize(records.length);
+        }
+      }
+
+      if (isRecordTableInitialLoading) {
+        initializeRowsVirtualization();
+
+        scrollToPosition(0);
+
+        setIsRecordTableInitialLoading(false);
+      }
     }
   }, [
     isRecordTableInitialLoading,
@@ -61,12 +82,12 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     setTotalNumberOfRecordsToVirtualize,
     initializeRowsVirtualization,
     setHasAlreadyFetchedUpToRealIndex,
+    scrollToPosition,
+    setHasRecordTableFetchedAllRecords,
+    hasNextPage,
   ]);
 
   // useEffect(() => {
-  //   if (hasInitializedScroll) {
-  //     return;
-  //   }
 
   //   if (isNonEmptyString(lastShowPageRecordId)) {
   //     const isRecordAlreadyFetched = records.some(
