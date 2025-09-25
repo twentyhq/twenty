@@ -43,6 +43,9 @@ export const getPageLayoutWidgetDataSeeds = (
   const taskObject = objectMetadataItems.find(
     (obj) => obj.standardId === STANDARD_OBJECT_IDS.task,
   );
+  const rocketObject = objectMetadataItems.find(
+    (obj) => obj.nameSingular === 'rocket',
+  );
 
   return [
     // Sales Overview Tab Widgets
@@ -84,7 +87,7 @@ export const getPageLayoutWidgetDataSeeds = (
         aggregateFieldMetadataIdTotal: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
         aggregateOperationTotal: AggregateOperations.MAX,
       },
-      objectMetadataId: opportunityObject?.id ?? null,
+      objectMetadataId: rocketObject?.id ?? null,
     },
     {
       id: generateSeedId(
@@ -149,7 +152,7 @@ export const getPageLayoutWidgetDataSeeds = (
         groupByFieldMetadataId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
         orderBy: 'VALUE_DESC',
       },
-      objectMetadataId: opportunityObject?.id ?? null,
+      objectMetadataId: rocketObject?.id ?? null,
     },
     {
       id: generateSeedId(
