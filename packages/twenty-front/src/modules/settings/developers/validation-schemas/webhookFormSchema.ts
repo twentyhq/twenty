@@ -7,7 +7,7 @@ export const webhookFormSchema = z.object({
     .trim()
     .min(1, 'URL is required')
     .refine((url) => isValidUrl(url), {
-      message: 'Please enter a valid URL',
+      error: 'Please enter a valid URL',
     }),
   description: z.string().optional(),
   operations: z
@@ -22,7 +22,7 @@ export const webhookFormSchema = z.object({
       (operations) =>
         operations.some((op) => op.object !== null && op.action !== null),
       {
-        message: 'At least one complete operation is required',
+        error: 'At least one complete operation is required',
       },
     ),
   secret: z.string().optional(),

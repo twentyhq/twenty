@@ -6,6 +6,7 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -27,8 +28,9 @@ export class UpdatePageLayoutWithTabsInput {
   @IsNotEmpty()
   type: PageLayoutType;
 
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
+  @IsOptional()
   objectMetadataId: string | null;
 
   @Field(() => [UpdatePageLayoutTabWithWidgetsInput])

@@ -1,5 +1,6 @@
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
+import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/SaveDashboardSingleRecordAction';
 import { DashboardSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/types/DashboardSingleRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
@@ -8,7 +9,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPencil, IconX } from 'twenty-ui/display';
+import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
@@ -17,7 +18,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
-      position: 1,
+      position: 0,
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -28,6 +29,23 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         isDefined(selectedRecord?.pageLayoutId),
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
+    },
+    [DashboardSingleRecordActionKeys.SAVE_DASHBOARD]: {
+      key: DashboardSingleRecordActionKeys.SAVE_DASHBOARD,
+      label: msg`Save Dashboard`,
+      shortLabel: msg`Save`,
+      isPinned: true,
+      position: 1,
+      Icon: IconDeviceFloppy,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord }) =>
+        isDefined(selectedRecord) &&
+        !selectedRecord?.isRemote &&
+        !isDefined(selectedRecord?.deletedAt) &&
+        isDefined(selectedRecord?.pageLayoutId),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <SaveDashboardSingleRecordAction />,
     },
     [DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION]: {
       key: DashboardSingleRecordActionKeys.CANCEL_DASHBOARD_EDITION,

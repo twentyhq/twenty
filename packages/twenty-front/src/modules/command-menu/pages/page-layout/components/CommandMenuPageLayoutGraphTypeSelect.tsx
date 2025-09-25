@@ -1,6 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useCreatePageLayoutWidget } from '@/page-layout/hooks/useCreatePageLayoutWidget';
+import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
 
@@ -61,7 +61,8 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const { createPageLayoutWidget } = useCreatePageLayoutWidget(pageLayoutId);
+  const { createPageLayoutWidget } =
+    useCreatePageLayoutGraphWidget(pageLayoutId);
 
   const handleSelectGraphType = (graphType: GraphType) => {
     createPageLayoutWidget(WidgetType.GRAPH, graphType);
