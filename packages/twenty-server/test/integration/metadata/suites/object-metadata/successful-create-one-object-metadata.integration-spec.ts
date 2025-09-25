@@ -42,6 +42,7 @@ describe('Object metadata creation should succeed', () => {
       },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectId },
     });
   });

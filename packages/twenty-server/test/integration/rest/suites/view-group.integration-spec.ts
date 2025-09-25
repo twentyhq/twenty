@@ -35,24 +35,12 @@ describe('View Group REST API', () => {
   let testFieldMetadataId: string;
 
   beforeAll(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: testObjectMetadataId,
-        updatePayload: {
-          isActive: false,
-        },
-      },
-    });
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-
     const {
       data: {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myTestObject',
         namePlural: 'myTestObjects',
