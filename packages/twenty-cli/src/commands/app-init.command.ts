@@ -3,7 +3,6 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
 import {
-  createAgentManifest,
   createBasePackageJson,
   createGitignoreContent,
   createReadmeContent,
@@ -88,10 +87,6 @@ export class AppInitCommand {
     appName: string,
   ): Promise<void> {
     await fs.ensureDir(appDir);
-
-    // Create agents directory
-    const agentsDir = path.join(appDir, 'agents');
-    await fs.ensureDir(agentsDir);
 
     // Create main basePackageJson with agent references
     const basePackageJson = createBasePackageJson(appName);
