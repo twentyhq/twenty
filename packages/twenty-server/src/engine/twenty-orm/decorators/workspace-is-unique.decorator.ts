@@ -19,7 +19,7 @@ export function WorkspaceIsUnique(): PropertyDecorator {
     const columns = [propertyKey.toString()];
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_UNIQUE_${generateDeterministicIndexName([
+      name: `IDX_${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.constructor.name),
         ...columns,
       ])}`,

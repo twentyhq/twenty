@@ -269,7 +269,10 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity;
+    objectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id'
+    >;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     queryRunner?: QueryRunner;
   }) {

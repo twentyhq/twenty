@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
@@ -8,8 +9,23 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
+import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import {
+  WorkspaceMigrationIndexAction,
+  WorkspaceMigrationIndexActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Command({
   name: 'upgrade:1-7:deduplicate-unique-fields',
@@ -17,10 +33,18 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
     'Deduplicate unique fields for workspaceMembers, companies and people because we changed the unique constraint',
 })
 export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  protected readonly logger = new Logger(DeduplicateUniqueFieldsCommand.name);
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly indexMetadataService: IndexMetadataService,
+    protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    protected readonly workspaceMigrationService: WorkspaceMigrationService,
+    @InjectRepository(ObjectMetadataEntity)
+    protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(IndexMetadataEntity)
+    protected readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -48,6 +72,110 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
       dataSource,
       dryRun: options.dryRun ?? false,
     });
+
+    if (!options.dryRun) {
+      await this.updateExistingIndexedFields({
+        workspaceId,
+        objectMetadataNameSingular: 'workspaceMember',
+        columnName: 'userEmail',
+      });
+      await this.updateExistingIndexedFields({
+        workspaceId,
+        objectMetadataNameSingular: 'company',
+        columnName: 'domainNamePrimaryLinkUrl',
+      });
+      await this.updateExistingIndexedFields({
+        workspaceId,
+        objectMetadataNameSingular: 'person',
+        columnName: 'emailsPrimaryEmail',
+      });
+    }
+  }
+
+  private computeExistingUniqueIndexName({
+    objectMetadata,
+    fieldMetadataToIndex,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
+  }) {
+    const tableName = computeObjectTargetTable(objectMetadata);
+    const columnNames: string[] = fieldMetadataToIndex.map(
+      (fieldMetadata) => fieldMetadata.name as string,
+    );
+
+    return `IDX_UNIQUE_${generateDeterministicIndexName([tableName, ...columnNames])}`;
+  }
+
+  private async computeExistingIndexDeletionMigration({
+    objectMetadata,
+    fieldMetadataToIndex,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
+  }) {
+    const tableName = computeObjectTargetTable(objectMetadata);
+
+    const indexName = this.computeExistingUniqueIndexName({
+      objectMetadata,
+      fieldMetadataToIndex,
+    });
+
+    return {
+      name: tableName,
+      action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
+      indexes: [
+        {
+          action: WorkspaceMigrationIndexActionType.DROP,
+          name: indexName,
+          columns: [],
+          isUnique: true,
+        } satisfies WorkspaceMigrationIndexAction,
+      ],
+    } satisfies WorkspaceMigrationTableAction;
+  }
+
+  private async updateExistingIndexedFields({
+    workspaceId,
+    objectMetadataNameSingular,
+    columnName,
+  }: {
+    workspaceId: string;
+    objectMetadataNameSingular: string;
+    columnName: string;
+  }) {
+    this.logger.log(
+      `Updating existing indexed fields for workspace members for workspace ${workspaceId}`,
+    );
+
+    const workspaceMemberObjectMetadata =
+      await this.objectMetadataRepository.findOneByOrFail({
+        nameSingular: objectMetadataNameSingular,
+      });
+
+    await this.indexMetadataRepository.delete({
+      workspaceId,
+      name: this.computeExistingUniqueIndexName({
+        objectMetadata: workspaceMemberObjectMetadata,
+        fieldMetadataToIndex: [{ name: columnName }],
+      }),
+    });
+
+    const indexDeletionMigration =
+      await this.computeExistingIndexDeletionMigration({
+        objectMetadata: workspaceMemberObjectMetadata,
+        fieldMetadataToIndex: [{ name: columnName }],
+      });
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`delete-${objectMetadataNameSingular}-index`),
+      workspaceId,
+      [indexDeletionMigration],
+    );
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
   }
 
   private async deduplicateUniqueUserEmailFieldForWorkspaceMembers({
