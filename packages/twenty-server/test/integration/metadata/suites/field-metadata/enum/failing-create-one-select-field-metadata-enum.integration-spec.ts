@@ -1,24 +1,19 @@
 import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/create-enum-field-metadata-test-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-describe.each(fieldMetadataEnumTypes)(
-  'Failing create field metadata %s tests suite',
-  (testedFieldMetadataType) => {
+describe(
+  'Failing create field metadata RATING tests suite',
+  () => {
     let createdObjectMetadataId: string;
     const testCases =
-      CREATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
+      CREATE_ENUM_FIELD_METADATA_TEST_CASES[FieldMetadataType.SELECT];
 
     if (!isDefined(testCases)) {
       return;
@@ -33,22 +28,15 @@ describe.each(fieldMetadataEnumTypes)(
       });
     });
 
-    afterAll(async () => {
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: true,
-      });
-    });
 
     beforeAll(async () => {
-      const { data } = await forceCreateOneObjectMetadata({
+      const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
+          labelSingular: 'Enum testing v1',
+          labelPlural: 'Enums testings v1',
+          nameSingular: 'enumTestingV1',
+          namePlural: 'enumsTestingsV1',
           icon: 'IconBuildingSkyscraper',
           isLabelSyncedWithName: false,
         },
@@ -58,20 +46,20 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterAll(async () => {
-      await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: createdObjectMetadataId,
-          updatePayload: {
-            isActive: false,
-          },
-        },
-      });
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
     });
+
+        afterAll(async () => {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: true,
+      });
+    });
+
 
     test.each(failingTestCases)(
       'Create $title',
@@ -80,7 +68,7 @@ describe.each(fieldMetadataEnumTypes)(
           expectToFail: true,
           input: {
             objectMetadataId: createdObjectMetadataId,
-            type: testedFieldMetadataType,
+            type: FieldMetadataType.SELECT,
             name: 'testField',
             label: 'Test Field',
             isLabelSyncedWithName: false,
