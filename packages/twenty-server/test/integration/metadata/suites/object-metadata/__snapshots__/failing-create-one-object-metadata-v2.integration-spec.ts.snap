@@ -14,6 +14,11 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -42,6 +47,86 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -325,6 +410,11 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -353,6 +443,86 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -636,6 +806,11 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -664,6 +839,86 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -947,6 +1202,11 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -975,6 +1235,86 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -1258,6 +1598,11 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -1286,6 +1631,86 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -1569,6 +1994,11 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -1597,6 +2027,86 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -1880,6 +2390,11 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -1909,6 +2424,86 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -2192,6 +2787,11 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -2221,6 +2821,86 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -2895,6 +3575,11 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -2923,6 +3608,86 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -3206,6 +3971,11 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -3234,6 +4004,86 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -3517,6 +4367,11 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -3550,6 +4405,86 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
@@ -3833,6 +4768,11 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
               "userFriendlyMessage": "Index related object not found",
             },
             {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
               "code": "INDEX_FIELD_NOT_FOUND",
               "message": "Could not find index field related field metadata",
               "userFriendlyMessage": "Field referenced in index does not exist",
@@ -3866,6 +4806,86 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
             "nameSingular": "listinga",
           },
           "type": "create_object",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "listinga" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "listinga" is not available as it is already used by another field",
+              "value": "listinga",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "listinga",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
         },
       ],
       "serverlessFunction": [],
