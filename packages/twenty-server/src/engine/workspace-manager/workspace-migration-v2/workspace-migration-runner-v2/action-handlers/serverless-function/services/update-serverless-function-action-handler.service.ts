@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { basename, dirname, join } from 'path';
+
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -8,6 +10,8 @@ import {
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -17,7 +21,7 @@ import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/wo
 export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update_serverless_function',
 ) {
-  constructor() {
+  constructor(private readonly fileStorageService: FileStorageService) {
     super();
   }
 
@@ -54,7 +58,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     context: WorkspaceMigrationActionRunnerArgs<UpdateServerlessFunctionAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
-    const { serverlessFunctionId } = action;
+    const { serverlessFunctionId, code } = action;
 
     const serverlessFunctionRepository =
       queryRunner.manager.getRepository<ServerlessFunctionEntity>(
@@ -65,6 +69,34 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
       serverlessFunctionId,
       fromWorkspaceMigrationUpdateActionToPartialEntity(action),
     );
+
+    const checksumUpdate = action.updates.find(
+      (update) => update.property === 'checksum',
+    );
+
+    if (!checksumUpdate) {
+      return;
+    }
+
+    const serverlessFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: serverlessFunctionId,
+      flatEntityMaps: context.allFlatEntityMaps.flatServerlessFunctionMaps,
+    });
+
+    const fileFolder = getServerlessFolder({
+      serverlessFunction,
+      version: 'draft',
+    });
+
+    for (const key of Object.keys(code)) {
+      await this.fileStorageService.write({
+        // @ts-expect-error legacy noImplicitAny
+        file: code[key],
+        name: basename(key),
+        mimeType: undefined,
+        folder: join(fileFolder, dirname(key)),
+      });
+    }
   }
 
   async executeForWorkspaceSchema(

@@ -45,9 +45,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     const validationResult =
       await this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionCreation(
         {
-          dependencyOptimisticFlatEntityMaps,
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
+          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -83,9 +83,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionDeletion(
         {
-          dependencyOptimisticFlatEntityMaps,
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
+          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -135,9 +135,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     const validationResult =
       this.flatServerlessFunctionValidatorService.validateFlatServerlessFunctionUpdate(
         {
-          dependencyOptimisticFlatEntityMaps,
           flatServerlessFunctionToValidate: toFlatServerlessFunction,
           optimisticFlatServerlessFunctionMaps,
+          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -152,6 +152,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       type: 'update_serverless_function',
       serverlessFunctionId: toFlatServerlessFunction.id,
       updates: serverlessFunctionUpdatedProperties,
+      code: toFlatServerlessFunction.code!,
     };
 
     return {

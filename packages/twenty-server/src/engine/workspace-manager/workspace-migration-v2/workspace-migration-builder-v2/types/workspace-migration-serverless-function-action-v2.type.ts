@@ -18,6 +18,7 @@ export type CreateServerlessFunctionAction = {
 export type UpdateServerlessFunctionAction = {
   type: 'update_serverless_function';
   serverlessFunctionId: string;
+  code: JSON;
   updates: Array<
     {
       [P in FlatServerlessFunctionPropertiesToCompare]: FlatServerlessFunctionPropertyUpdate<P>;

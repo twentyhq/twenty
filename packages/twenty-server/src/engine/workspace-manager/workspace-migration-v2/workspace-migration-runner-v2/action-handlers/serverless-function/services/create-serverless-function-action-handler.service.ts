@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { join } from 'path';
+
 import {
   OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
   WorkspaceMigrationRunnerActionHandler,
@@ -7,6 +9,9 @@ import {
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
+import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { CreateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -15,7 +20,7 @@ import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager
 export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create_serverless_function',
 ) {
-  constructor() {
+  constructor(private readonly fileStorageService: FileStorageService) {
     super();
   }
 
@@ -52,6 +57,20 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
       ...serverlessFunction,
       workspaceId,
     });
+
+    const draftFileFolder = getServerlessFolder({
+      serverlessFunction,
+      version: 'draft',
+    });
+
+    for (const file of await getBaseTypescriptProjectFiles) {
+      await this.fileStorageService.write({
+        file: file.content,
+        name: file.name,
+        mimeType: undefined,
+        folder: join(draftFileFolder, file.path),
+      });
+    }
   }
 
   async executeForWorkspaceSchema(
