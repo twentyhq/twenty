@@ -30,7 +30,7 @@ export class AppAddCommand {
       const appExists = await fs.pathExists(appPath);
 
       if (!appExists) {
-        console.error(chalk.red('App does not exists'));
+        console.error(chalk.red('App does not exist'));
         process.exit(1);
       }
 
