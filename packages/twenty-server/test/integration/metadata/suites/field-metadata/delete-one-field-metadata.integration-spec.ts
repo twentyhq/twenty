@@ -1,10 +1,6 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -29,8 +25,8 @@ describe('deleteOne', () => {
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
+          nameSingular: 'listingv2',
+          namePlural: 'listingsv2',
           labelSingular: 'Listing',
           labelPlural: 'Listings',
           icon: 'IconBuildingSkyscraper',
@@ -76,6 +72,7 @@ describe('deleteOne', () => {
         input: { idToDelete: listingObjectId },
       });
     });
+    //TODO
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 
@@ -89,6 +86,7 @@ describe('deleteOne', () => {
       expect(viewThatShouldBeUpdated.kanbanAggregateOperation).toBe('MAX');
 
       await updateOneFieldMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: testFieldId,
           updatePayload: { isActive: false },
@@ -100,6 +98,7 @@ describe('deleteOne', () => {
       });
 
       const { data } = await deleteOneFieldMetadata({
+        expectToFail: false,
         input: { idToDelete: testFieldId },
       });
 

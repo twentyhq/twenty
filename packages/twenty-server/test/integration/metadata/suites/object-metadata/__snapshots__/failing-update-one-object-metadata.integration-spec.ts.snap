@@ -17,7 +17,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": "86607ac4-a7f2-4d56-9213-aee8c23300d8",
+              "id": Any<String>,
               "namePlural": "listingas",
               "nameSingular": "listinga",
             },
