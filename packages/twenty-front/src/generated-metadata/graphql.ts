@@ -71,9 +71,38 @@ export type AgentChatMessage = {
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
-  rawContent?: Maybe<Scalars['String']>;
+  parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
+};
+
+export type AgentChatMessagePart = {
+  __typename?: 'AgentChatMessagePart';
+  createdAt: Scalars['DateTime'];
+  errorDetails?: Maybe<Scalars['JSON']>;
+  errorMessage?: Maybe<Scalars['String']>;
+  fileFilename?: Maybe<Scalars['String']>;
+  fileMediaType?: Maybe<Scalars['String']>;
+  fileUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  messageId: Scalars['UUID'];
+  orderIndex: Scalars['Int'];
+  providerMetadata?: Maybe<Scalars['JSON']>;
+  reasoningContent?: Maybe<Scalars['String']>;
+  sourceDocumentFilename?: Maybe<Scalars['String']>;
+  sourceDocumentMediaType?: Maybe<Scalars['String']>;
+  sourceDocumentSourceId?: Maybe<Scalars['String']>;
+  sourceDocumentTitle?: Maybe<Scalars['String']>;
+  sourceUrlSourceId?: Maybe<Scalars['String']>;
+  sourceUrlTitle?: Maybe<Scalars['String']>;
+  sourceUrlUrl?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
+  toolCallId?: Maybe<Scalars['String']>;
+  toolInput?: Maybe<Scalars['JSON']>;
+  toolName?: Maybe<Scalars['String']>;
+  toolOutput?: Maybe<Scalars['JSON']>;
+  toolState?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
 };
 
 export type AgentChatThread = {
@@ -4319,7 +4348,7 @@ export type GetAgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, rawContent?: string | null, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6579,7 +6608,6 @@ export const GetAgentChatMessagesDocument = gql`
     threadId
     role
     createdAt
-    rawContent
     files {
       id
       name
