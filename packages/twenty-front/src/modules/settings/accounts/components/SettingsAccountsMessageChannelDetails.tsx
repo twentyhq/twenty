@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 import {
-    type MessageChannel,
-    type MessageChannelContactAutoCreationPolicy,
-    type MessageFolderImportPolicy,
+  type MessageChannel,
+  type MessageChannelContactAutoCreationPolicy,
+  type MessageFolderImportPolicy,
 } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -16,8 +16,8 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-    FeatureFlagKey,
-    type MessageChannelVisibility,
+  FeatureFlagKey,
+  type MessageChannelVisibility,
 } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
