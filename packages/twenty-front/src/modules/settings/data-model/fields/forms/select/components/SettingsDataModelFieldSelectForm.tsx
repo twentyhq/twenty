@@ -20,9 +20,10 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
@@ -127,6 +128,18 @@ export const SettingsDataModelFieldSelectForm = ({
     getValues,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
+  const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
+
+  useEffect(() => {
+    const newOptionValue = searchParams.get('newOption');
+    if (isDefined(newOptionValue) && !hasAppliedNewOption) {
+      const newOption = generateNewSelectOption(initialOptions, newOptionValue);
+      const optionsWithNew = [...initialOptions, newOption];
+      setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setHasAppliedNewOption(true);
+    }
+  }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
+
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
     result: DropResult,
@@ -206,14 +219,6 @@ export const SettingsDataModelFieldSelectForm = ({
     }
   };
 
-  const mergedInitialOptions = useMemo(() => {
-    const newOptionValue = searchParams.get('newOption');
-    if (!newOptionValue) return initialOptions;
-
-    const newOption = generateNewSelectOption(initialOptions, newOptionValue);
-    return [...initialOptions, newOption];
-  }, [initialOptions, searchParams]);
-
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');
 
@@ -248,7 +253,7 @@ export const SettingsDataModelFieldSelectForm = ({
       <Controller
         name="options"
         control={control}
-        defaultValue={mergedInitialOptions}
+        defaultValue={initialOptions}
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
