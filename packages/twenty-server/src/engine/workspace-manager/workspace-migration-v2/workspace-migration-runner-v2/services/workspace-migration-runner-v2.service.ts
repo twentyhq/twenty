@@ -81,7 +81,7 @@ export class WorkspaceMigrationRunnerV2Service {
         flatEntities: flatEntityMapsToInvalidate,
       });
 
-      throw new Error('test');
+      return allFlatEntityMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         try {
