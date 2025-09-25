@@ -68,6 +68,9 @@ export class ServerlessFunctionEntity
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId: string | null;
+
   @OneToMany(
     () => CronTrigger,
     (cronTrigger) => cronTrigger.serverlessFunction,
