@@ -27,8 +27,6 @@ export type {
 export { MenuItem } from './menu/menu-item/components/MenuItem';
 export type { MenuItemAvatarProps } from './menu/menu-item/components/MenuItemAvatar';
 export { MenuItemAvatar } from './menu/menu-item/components/MenuItemAvatar';
-export type { MenuItemCommandProps } from './menu/menu-item/components/MenuItemCommand';
-export { MenuItemCommand } from './menu/menu-item/components/MenuItemCommand';
 export type { MenuItemDraggableProps } from './menu/menu-item/components/MenuItemDraggable';
 export { MenuItemDraggable } from './menu/menu-item/components/MenuItemDraggable';
 export type { MenuItemHotKeysProps } from './menu/menu-item/components/MenuItemHotKeys';
@@ -62,7 +60,7 @@ export {
   StyledDraggableItem,
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
-  StyledMenuItemContextualText,
+  MenuItemContextualText,
 } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export type { MenuItemAccent } from './menu/menu-item/types/MenuItemAccent';
 export { NavigationBar } from './navigation-bar/components/NavigationBar';

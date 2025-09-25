@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 
 import styled from '@emotion/styled';
@@ -9,8 +9,8 @@ import {
   OverflowingTextWithTooltip,
 } from '@ui/display';
 import {
+  MenuItemContextualText,
   StyledDraggableItem,
-  StyledMenuItemContextualText,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
@@ -86,9 +86,13 @@ export const MenuItemLeftContent = ({
           text
         )}
         {isString(contextualText) ? (
-          <StyledMenuItemContextualText>
-            <OverflowingTextWithTooltip text={`· ${contextualText}`} />
-          </StyledMenuItemContextualText>
+          <>
+            {isNonEmptyString(contextualText) && (
+              <MenuItemContextualText>
+                <OverflowingTextWithTooltip text={`· ${contextualText}`} />
+              </MenuItemContextualText>
+            )}
+          </>
         ) : (
           contextualText
         )}

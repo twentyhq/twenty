@@ -117,6 +117,7 @@ export const StyledMenuItemRightContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  overflow: hidden;
 `;
 
 export const StyledDraggableItem = styled.div`
@@ -169,7 +170,7 @@ export const StyledMenuItemIconCheck = styled(IconCheck)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledMenuItemContextualText = styled.div`
+const StyledMenuItemContextualText = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-family: inherit;
   font-size: inherit;
@@ -178,3 +179,5 @@ export const StyledMenuItemContextualText = styled.div`
   flex-shrink: 1;
   overflow: hidden;
 `;
+
+export { StyledMenuItemContextualText as MenuItemContextualText };

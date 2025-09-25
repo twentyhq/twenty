@@ -13,14 +13,16 @@ import {
   type ReactNode,
 } from 'react';
 
+import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
+  MenuItemContextualText,
   StyledHoverableMenuItemBase,
-  StyledMenuItemContextualText,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
+  StyledMenuItemRightContent,
 } from '../internals/components/StyledMenuItemBase';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
 
@@ -54,6 +56,12 @@ export type MenuItemProps = {
   focused?: boolean;
   hotKeys?: string[];
 };
+
+const StyledRightMenuItemContextualText = styled(MenuItemContextualText)`
+  display: flex;
+  text-align: right;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
 
 export const MenuItem = ({
   accent = 'default',
@@ -112,33 +120,37 @@ export const MenuItem = ({
           disabled={disabled}
         />
       </StyledMenuItemLeftContent>
-      {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabel>
-          {isString(contextualText) ? (
-            <StyledMenuItemContextualText>
-              <OverflowingTextWithTooltip text={contextualText} />
-            </StyledMenuItemContextualText>
-          ) : (
-            contextualText
-          )}
-        </StyledMenuItemLabel>
-      )}
-      <div className="hoverable-buttons">
-        {showIconButtons && (
-          <LightIconButtonGroup iconButtons={iconButtons} size="small" />
+      <StyledMenuItemRightContent>
+        {contextualTextPosition === 'right' && (
+          <StyledMenuItemLabel>
+            {isString(contextualText) ? (
+              <StyledRightMenuItemContextualText>
+                <OverflowingTextWithTooltip text={contextualText} />
+              </StyledRightMenuItemContextualText>
+            ) : (
+              contextualText
+            )}
+          </StyledMenuItemLabel>
         )}
-      </div>
-      {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
-      {RightIcon && (
-        <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-      )}
-      {RightComponent}
-      {hasSubMenu && !disabled && (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          color={theme.font.color.tertiary}
-        />
-      )}
+        {iconButtons && (
+          <div className="hoverable-buttons">
+            {showIconButtons && (
+              <LightIconButtonGroup iconButtons={iconButtons} size="small" />
+            )}
+          </div>
+        )}
+        {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
+        {RightIcon && (
+          <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
+        {RightComponent}
+        {hasSubMenu && !disabled && (
+          <IconChevronRight
+            size={theme.icon.size.sm}
+            color={theme.font.color.tertiary}
+          />
+        )}
+      </StyledMenuItemRightContent>
     </StyledHoverableMenuItemBase>
   );
 };

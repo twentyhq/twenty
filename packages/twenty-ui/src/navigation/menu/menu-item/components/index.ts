@@ -1,7 +1,6 @@
 export * from '../../components/MenuPicker';
 export * from './MenuItem';
 export * from './MenuItemAvatar';
-export * from './MenuItemCommand';
 export * from './MenuItemDraggable';
 export * from './MenuItemHotKeys';
 export * from './MenuItemMultiSelect';
@@ -14,4 +13,3 @@ export * from './MenuItemSelectColor';
 export * from './MenuItemSelectTag';
 export * from './MenuItemSuggestion';
 export * from './MenuItemToggle';
-
