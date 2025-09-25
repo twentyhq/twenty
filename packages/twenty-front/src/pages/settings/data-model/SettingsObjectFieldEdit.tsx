@@ -23,7 +23,7 @@ import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/vali
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { navigateBackToViewOnSaveState } from '@/ui/navigation/states/navigateBackToViewOnSaveState';
+import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
@@ -54,8 +54,10 @@ export const SettingsObjectFieldEdit = () => {
     navigationMemorizedUrlState,
   );
 
-  const [navigateBackToViewOnSave, setNavigateBackToViewOnSave] =
-    useRecoilState(navigateBackToViewOnSaveState);
+  const [
+    shouldNavigateBackToMemorizedUrlOnSave,
+    setShouldNavigateBackToMemorizedUrlOnSave,
+  ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -163,10 +165,13 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const navigateBackOrToSettings = () => {
-    if (navigateBackToViewOnSave && isDefined(navigationMemorizedUrl)) {
+    if (
+      shouldNavigateBackToMemorizedUrlOnSave &&
+      isDefined(navigationMemorizedUrl)
+    ) {
       navigate(navigationMemorizedUrl, { replace: true });
 
-      setNavigateBackToViewOnSave(false);
+      setShouldNavigateBackToMemorizedUrlOnSave(false);
       setNavigationMemorizedUrl('/');
 
       return;

@@ -10,7 +10,7 @@ import { useContext } from 'react';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
-  const { onAddSelectOption } = useAddSelectOption(
+  const { navigateToFieldOption } = useAddSelectOption(
     fieldDefinition?.metadata?.fieldName,
   );
 
@@ -28,6 +28,12 @@ export const MultiSelectFieldInput = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
+  const handleAddSelectOption = navigateToFieldOption
+    ? (optionName: string) => {
+        navigateToFieldOption(optionName);
+      }
+    : undefined;
+
   return (
     <MultiSelectInput
       selectableListComponentInstanceId={
@@ -38,7 +44,7 @@ export const MultiSelectFieldInput = () => {
       onCancel={handleCancel}
       onOptionSelected={handleOptionSelected}
       values={draftValue}
-      onAddSelectOption={onAddSelectOption}
+      onAddSelectOption={handleAddSelectOption}
     />
   );
 };

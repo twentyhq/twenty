@@ -1,5 +1,5 @@
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { navigateBackToViewOnSaveState } from '@/ui/navigation/states/navigateBackToViewOnSaveState';
+import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -15,22 +15,22 @@ export const useAddSelectOption = (fieldName: string | undefined) => {
     navigationMemorizedUrlState,
   );
 
-  const setNavigateBackToViewOnSave = useSetRecoilState(
-    navigateBackToViewOnSaveState,
+  const setShouldNavigateBackToMemorizedUrlOnSave = useSetRecoilState(
+    shouldNavigateBackToMemorizedUrlOnSaveState,
   );
 
   const userHasPermissionToEditDataModel = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
   );
 
-  const onAddSelectOption = useCallback(
+  const navigateToFieldOption = useCallback(
     (optionName: string) => {
       if (!fieldName || !objectNamePlural) return;
 
       setNavigationMemorizedUrl(
         window.location.pathname + window.location.search,
       );
-      setNavigateBackToViewOnSave(true);
+      setShouldNavigateBackToMemorizedUrlOnSave(true);
 
       navigateSettings(
         SettingsPath.ObjectFieldEdit,
@@ -43,14 +43,17 @@ export const useAddSelectOption = (fieldName: string | undefined) => {
       objectNamePlural,
       navigateSettings,
       setNavigationMemorizedUrl,
-      setNavigateBackToViewOnSave,
+      setShouldNavigateBackToMemorizedUrlOnSave,
     ],
   );
 
+  const canAddSelectOption =
+    userHasPermissionToEditDataModel && fieldName && objectNamePlural;
+
   return {
-    onAddSelectOption:
-      userHasPermissionToEditDataModel && fieldName && objectNamePlural
-        ? onAddSelectOption
-        : undefined,
+    navigateToFieldOption: canAddSelectOption
+      ? navigateToFieldOption
+      : undefined,
+    canAddSelectOption,
   };
 };
