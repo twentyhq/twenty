@@ -69,6 +69,7 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
+
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);

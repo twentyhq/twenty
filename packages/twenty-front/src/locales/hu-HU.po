@@ -124,6 +124,11 @@ msgstr "{failedCount} fájl feltöltése nem sikerült"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} a(z) {formattedRecordsToImportCount} rekordból importálva."
 
+#. js-lingui-id: g9mDO3
+#: src/utils/format/getOrdinalNumber.ts
+msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
+msgstr ""
+
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
@@ -390,6 +395,11 @@ msgstr "Jóváhagyott hozzáférési tartomány hozzáadása"
 msgid "Add Block"
 msgstr "Blokk hozzáadása"
 
+#. js-lingui-id: 3O3+7h
+#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
+msgid "Add Emailing Domain"
+msgstr ""
+
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -479,6 +489,11 @@ msgstr "Szabály hozzáadása"
 msgid "Add SSO Identity Provider"
 msgstr "SSO Identitásszolgáltató hozzáadása"
 
+#. js-lingui-id: FQArA8
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Add these records to verify your domain."
+msgstr ""
+
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
@@ -519,6 +534,7 @@ msgid "Added {beautifiedCreatedAt}"
 msgstr "Hozzáadva {beautifiedCreatedAt}"
 
 #. js-lingui-id: jEHeq+
+#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
 msgstr "Hozzáadva {beautifyPastDateRelative}"
@@ -974,6 +990,31 @@ msgstr "Hozzárendelve"
 msgid "Assignment"
 msgstr "Hozzárendelés"
 
+#. js-lingui-id: UHs3Ds
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {firstTime} and {secondTime}"
+msgstr ""
+
+#. js-lingui-id: FpXNVu
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {formattedTime}"
+msgstr ""
+
+#. js-lingui-id: EbOhpt
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at {minuteNumStr} minutes past the hour"
+msgstr ""
+
+#. js-lingui-id: B4LoNY
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "at {remainingTimes} and {lastTime}"
+msgstr ""
+
+#. js-lingui-id: MTsGe4
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at 1 minute past the hour"
+msgstr ""
+
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
@@ -983,6 +1024,21 @@ msgstr "Legalább 8 karakter hosszú."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "Legalább egy hitelesítési módszert engedélyezni kell"
+
+#. js-lingui-id: tqMllA
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at minutes {firstValue} and {secondValue}"
+msgstr ""
+
+#. js-lingui-id: r+gFlA
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at minutes {remainingValues} and {lastValue}"
+msgstr ""
+
+#. js-lingui-id: PuQ8VT
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "at the top of the hour"
+msgstr ""
 
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1066,6 +1122,26 @@ msgstr "Vissza"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Vissza a tartalomhoz"
+
+#. js-lingui-id: NgFKo1
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "between {startMonth} and {endMonth}"
+msgstr ""
+
+#. js-lingui-id: N7WQ1K
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "between {startTime} and {endTime}"
+msgstr ""
+
+#. js-lingui-id: FE1Mq4
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "between minute {start} and {end}"
+msgstr ""
+
+#. js-lingui-id: cQ8mjx
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "between the {startOrdinal} and {endOrdinal} of the month"
+msgstr ""
 
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
@@ -1259,6 +1335,12 @@ msgstr ""
 msgid "Cancel your subscription"
 msgstr "Előfizetése lemondása"
 
+#. js-lingui-id: W3MumH
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Cannot impersonate selected user"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
@@ -1325,6 +1407,11 @@ msgstr "Változásnapló"
 #: src/modules/ai/components/AIChatEmptyState.tsx
 msgid "Chat"
 msgstr "Beszélgetés"
+
+#. js-lingui-id: h5C4B4
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Check verification"
+msgstr ""
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1522,6 +1609,11 @@ msgstr "SSO kapcsolat beállítása"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure and customize your calendar preferences."
 msgstr "Állítsa be és szabja személyre a naptári beállításokat."
+
+#. js-lingui-id: 5i71HM
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Configure and verify domains for emailing from this workspace."
+msgstr ""
 
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -2243,6 +2335,8 @@ msgstr "törlés"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2465,6 +2559,11 @@ msgstr "Megjelenítési formátum"
 msgid "Display text on multiple lines"
 msgstr "Szöveg megjelenítése több sorban"
 
+#. js-lingui-id: RDL+lZ
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "DNS Records"
+msgstr ""
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -2484,13 +2583,20 @@ msgstr "Nem tartalmazza"
 
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Domain"
 
+#. js-lingui-id: OjtVhh
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Domain not found"
+msgstr ""
+
 #. js-lingui-id: AZ4xlc
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -2731,6 +2837,23 @@ msgstr "Email hitelesítve."
 msgid "Email/Domain"
 msgstr "Email/Tartomány"
 
+#. js-lingui-id: H2lcB9
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "Emailing domain created successfully. Please verify the domain to start using it."
+msgstr ""
+
+#. js-lingui-id: XDpopO
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
+msgid "Emailing domain deleted successfully"
+msgstr ""
+
+#. js-lingui-id: axQccV
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Emailing Domains"
+msgstr ""
+
 #. js-lingui-id: BXEcos
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
@@ -2840,6 +2963,24 @@ msgstr "Adja meg <0>Unicode</0> formátumban"
 #. js-lingui-id: O6t21f
 #: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
 msgid "Enter link"
+msgstr ""
+
+#. js-lingui-id: O0qPMN
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 0 and 23"
+msgstr ""
+
+#. js-lingui-id: Y2uwqs
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number between 0 and 59"
+msgstr ""
+
+#. js-lingui-id: ahwn7G
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Enter number greater than 1"
 msgstr ""
 
 #. js-lingui-id: XJU8BD
@@ -2983,6 +3124,77 @@ msgstr "Esemény láthatóság"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Events you participated in are displayed in red."
 msgstr "Az Ön által részt vett események piros színnel jelennek meg."
+
+#. js-lingui-id: lbS/kF
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "every {stepNum} days"
+msgstr ""
+
+#. js-lingui-id: HzFFPM
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every {stepNumStr} days"
+msgstr ""
+
+#. js-lingui-id: iRozlI
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every {stepNumStr} days, between the {startOrdinal} and {endOrdinal} of the month"
+msgstr ""
+
+#. js-lingui-id: iCnbJU
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every {stepNumStr} hours"
+msgstr ""
+
+#. js-lingui-id: rMowgz
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every {stepNumStr} hours, between {startTime} and {endTime}"
+msgstr ""
+
+#. js-lingui-id: Yw2okP
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every {stepNumStr} minutes"
+msgstr ""
+
+#. js-lingui-id: wl8cvK
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every {stepNumStr} minutes, between minute {start} and {end}"
+msgstr ""
+
+#. js-lingui-id: hBdF6X
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "every {stepNumStr} months"
+msgstr ""
+
+#. js-lingui-id: 3dpG6g
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
+msgstr ""
+
+#. js-lingui-id: LhmFKG
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "every day"
+msgstr ""
+
+#. js-lingui-id: XWj/lX
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
+msgid "every hour"
+msgstr ""
+
+#. js-lingui-id: a9EHxw
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
+msgid "every minute"
+msgstr ""
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -3167,6 +3379,11 @@ msgstr "Kifejezés"
 msgid "Extra Credits Used"
 msgstr "Felhasznált extra kreditek"
 
+#. js-lingui-id: 7Bj3x9
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Failed"
+msgstr ""
+
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
@@ -3275,6 +3492,11 @@ msgstr "Mezők száma"
 msgid "Fields Permissions"
 msgstr "Mezők Jogosultságai"
 
+#. js-lingui-id: hT0Flb
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "fifth"
+msgstr ""
+
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fifth"
@@ -3314,6 +3536,11 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Finnish"
 msgstr "Finn"
+
+#. js-lingui-id: hy+Mfg
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "first"
+msgstr ""
 
 #. js-lingui-id: syyeb9
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3371,9 +3598,19 @@ msgstr "Formátum"
 msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Formátum pl. d-MMM-y (qqq''yy)"
 
+#. js-lingui-id: xMJhWJ
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
+msgstr ""
+
 #. js-lingui-id: 4JsQoY
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Formats"
+msgstr ""
+
+#. js-lingui-id: 1hxId5
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "fourth"
 msgstr ""
 
 #. js-lingui-id: a8nooQ
@@ -3385,6 +3622,11 @@ msgstr "Negyedik"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "Francia"
+
+#. js-lingui-id: qR8gT9
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "from {startDay} to {endDay}"
+msgstr ""
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -3718,9 +3960,16 @@ msgid "imap.example.com"
 msgstr "imap.pelda.com"
 
 #. js-lingui-id: tSVr6t
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "Megszemélyesítés"
+
+#. js-lingui-id: n3ohBy
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Impersonate workspace users"
+msgstr ""
 
 #. js-lingui-id: l3s5ri
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3845,6 +4094,11 @@ msgstr "Érvénytelen API-kulcs"
 msgid "Invalid auth provider"
 msgstr "Érvénytelen hitelesítési szolgáltató"
 
+#. js-lingui-id: ER/0YT
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Invalid cron expression"
+msgstr ""
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -3871,6 +4125,27 @@ msgstr "Érvénytelen fájl"
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Érvénytelen űrlap értékek"
+
+#. js-lingui-id: 04zLGG
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr ""
+
+#. js-lingui-id: fLMLtY
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr ""
+
+#. js-lingui-id: +Yi3bs
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr ""
+
+#. js-lingui-id: 942L1w
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr ""
 
 #. js-lingui-id: VEKoJx
 #: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
@@ -4075,6 +4350,11 @@ msgstr "Csatlakozzon a(z) {workspaceName} csapathoz"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr "Kanban"
+
+#. js-lingui-id: 7sMeHQ
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "Key"
+msgstr ""
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -4647,6 +4927,12 @@ msgstr "Új ügynök"
 msgid "New Approved Access Domain"
 msgstr "Új jóváhagyott hozzáférési tartomány"
 
+#. js-lingui-id: wqoYqp
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "New Emailing Domain"
+msgstr ""
+
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "New Field"
@@ -5079,6 +5365,52 @@ msgstr "Objektumok és mezők jogosultságainak beállításai"
 msgid "Off the beaten path"
 msgstr "A járatlan úton"
 
+#. js-lingui-id: jcwJgk
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {firstDay} and {secondDay} of the month"
+msgstr ""
+
+#. js-lingui-id: GSNAUy
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on the {ordinal} {dayName} of the month"
+msgstr ""
+
+#. js-lingui-id: s+rd/k
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {ordinalDay} of the month"
+msgstr ""
+
+#. js-lingui-id: Q4spp9
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the {remainingDays} and {lastDay} of the month"
+msgstr ""
+
+#. js-lingui-id: aJ++Ko
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on the last {dayName} of the month"
+msgstr ""
+
+#. js-lingui-id: MhQi70
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the last day of the month"
+msgstr ""
+
+#. js-lingui-id: irOZkJ
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on the weekday closest to the {ordinalDay} of the month"
+msgstr ""
+
+#. js-lingui-id: qF20Rl
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on weekdays"
+msgstr ""
+
+#. js-lingui-id: gLM6bK
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
+msgid "on weekdays only"
+msgstr ""
+
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "On which object(s) should this trigger be available"
@@ -5088,6 +5420,38 @@ msgstr "Mely objektum(ok)on legyen elérhető ez a kiváltó"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Csak a dátum és résztvevők lesznek megosztva a csapatával."
+
+#. js-lingui-id: Ecstfp
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {firstMonth} and {secondMonth}"
+msgstr ""
+
+#. js-lingui-id: scO7qS
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {monthName}"
+msgstr ""
+
+#. js-lingui-id: nZ4jBc
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
+msgid "only in {remainingMonths} and {lastMonth}"
+msgstr ""
+
+#. js-lingui-id: G+ijJ2
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {dayName}"
+msgstr ""
+
+#. js-lingui-id: rPnv5P
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {firstDay} and {secondDay}"
+msgstr ""
+
+#. js-lingui-id: pYaMbU
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "only on {remainingDays} and {lastDay}"
+msgstr ""
 
 #. js-lingui-id: 50ETCF
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -5214,6 +5578,11 @@ msgstr "A jelszó visszaállítási linket elküldtük az e-mail címre"
 msgid "Paste the code below"
 msgstr "Illessze be az alábbi kódot"
 
+#. js-lingui-id: UbRKMZ
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Pending"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5314,6 +5683,11 @@ msgstr "Csomag"
 msgid "Plan switching has been cancelled."
 msgstr ""
 
+#. js-lingui-id: VUi6Nf
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Please check your cron expression syntax."
+msgstr ""
+
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -5406,6 +5780,11 @@ msgstr "Ár frissítésre került."
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
 msgid "Primary Email"
 msgstr "Elsődleges e-mail"
+
+#. js-lingui-id: 1hKEom
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "Priority"
+msgstr ""
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -5811,6 +6190,7 @@ msgstr "Szombat"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save"
 msgstr "Mentés"
 
@@ -5818,6 +6198,21 @@ msgstr "Mentés"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Mentés új nézetként"
+
+#. js-lingui-id: 7GK4Vt
+#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+msgid "Save Dashboard"
+msgstr ""
+
+#. js-lingui-id: gmB6oO
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Schedule"
+msgstr ""
+
+#. js-lingui-id: Qp0P63
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Schedule runs in UTC timezone."
+msgstr ""
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -5968,6 +6363,11 @@ msgstr "hely / hónap - évente számlázva"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Seats"
 msgstr "Helyek"
+
+#. js-lingui-id: ZuduiH
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "second"
+msgstr ""
 
 #. js-lingui-id: ku//5b
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -6482,6 +6882,11 @@ msgstr "Kezdjen egy beszélgetést az AI ügynökével, hogy munkafolyamat betek
 msgid "Start Your Subscription"
 msgstr "Szerezze meg előfizetését"
 
+#. js-lingui-id: hTX65V
+#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
+msgid "Started verification process"
+msgstr ""
+
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "State"
@@ -6489,6 +6894,7 @@ msgstr "Állapot"
 
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
@@ -6726,6 +7132,11 @@ msgstr "Célügynök"
 msgid "Tasks"
 msgstr "Feladatok"
 
+#. js-lingui-id: lKXcJz
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Temporary Failure"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
@@ -6771,6 +7182,11 @@ msgstr "Az új címek alapértelmezett országa"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The description of this field"
 msgstr "Ennek a mezőnek a leírása"
+
+#. js-lingui-id: HUoA4b
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+msgid "The domain name you want to use for emailing"
+msgstr ""
 
 #. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
@@ -6866,6 +7282,11 @@ msgstr "Hiba történt a jelszó frissítése közben."
 #. js-lingui-id: Ed99mE
 #: src/modules/ai/components/ReasoningSummaryDisplay.tsx
 msgid "Thinking..."
+msgstr ""
+
+#. js-lingui-id: 9ItHLu
+#: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "third"
 msgstr ""
 
 #. js-lingui-id: UlykKR
@@ -7023,16 +7444,16 @@ msgstr "A próbaidőszak lejárt. Kérjük, frissítse a számlázási adatait."
 msgid "Trigger"
 msgstr "Kiváltó"
 
-#. js-lingui-id: EfDzVR
+#. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Trigger at hour"
-msgstr "Ébresztés órakor"
+msgid "Trigger at hour (UTC)"
+msgstr ""
 
-#. js-lingui-id: gV4kml
+#. js-lingui-id: 4QBmLn
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Trigger at minute"
-msgstr "Ébresztés perckor"
+msgid "Trigger at minute (UTC)"
+msgstr ""
 
 #. js-lingui-id: jGYsS/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7061,6 +7482,11 @@ msgstr "Próbálja ki a REST vagy GraphQL API játszótereinket."
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Try with another email"
 msgstr "Próbálja meg egy másik e-maillel"
+
+#. js-lingui-id: ouRvqq
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+msgid "TTL"
+msgstr ""
 
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -7095,6 +7521,7 @@ msgstr "Kétfaktoros hitelesítési beállítás sikeresen befejezve!"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Type"
 msgstr "Típus"
 
@@ -7121,12 +7548,14 @@ msgid "Unique"
 msgstr "Egyedi"
 
 #. js-lingui-id: Ef7StM
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "Ismeretlen"
 
 #. js-lingui-id: 29VNqC
 #: src/pages/onboarding/CreateWorkspace.tsx
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -7151,6 +7580,11 @@ msgstr "Cím nélküli szerep"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr "Cím nélküli munkafolyamat"
+
+#. js-lingui-id: b26MvX
+#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+msgid "Upcoming execution times ({timeZone})"
+msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -7276,6 +7710,7 @@ msgstr "Adat érvényesítése"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
@@ -7308,6 +7743,11 @@ msgstr "Változó nem található"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
 msgstr "A változó sikeresen frissült."
+
+#. js-lingui-id: QDEWii
+#: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+msgid "Verified"
+msgstr ""
 
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts
@@ -7499,6 +7939,8 @@ msgstr "Munkafolyamatok"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx

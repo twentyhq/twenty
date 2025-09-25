@@ -34,7 +34,7 @@ const resolveRelativePath = async (providedPath: string): Promise<string> => {
     }
   }
 
-  throw new Error(`Cannot find twenty-app.json at any of these locations:
+  throw new Error(`Cannot find package.json at any of these locations:
   - ${fromCwd}
   - ${projectRoot ? path.resolve(projectRoot, providedPath) : 'N/A (no project root found)'}
   
@@ -60,7 +60,7 @@ const autoDetectAppPath = async (): Promise<string> => {
 
   const suggestions = await findNearbyApps(process.cwd());
   let errorMessage =
-    'No twenty-app.json found in current directory or parent directories.';
+    'No package.json found in current directory or parent directories.';
 
   if (suggestions.length > 0) {
     errorMessage += '\n\nFound Twenty applications nearby:';
@@ -77,14 +77,12 @@ const autoDetectAppPath = async (): Promise<string> => {
 };
 
 const validateAppPath = async (appPath: string): Promise<string> => {
-  const jsoncManifestPath = path.join(appPath, 'twenty-app.jsonc');
-  const jsonManifestPath = path.join(appPath, 'twenty-app.json');
+  const hasPackageJson = await fs.pathExists(
+    path.join(appPath, 'package.json'),
+  );
 
-  const hasJsoncManifest = await fs.pathExists(jsoncManifestPath);
-  const hasJsonManifest = await fs.pathExists(jsonManifestPath);
-
-  if (!hasJsoncManifest && !hasJsonManifest) {
-    let errorMessage = `No manifest file found. Expected twenty-app.jsonc or twenty-app.json in: ${appPath}`;
+  if (!hasPackageJson) {
+    let errorMessage = `package.json not found in: ${appPath}`;
 
     if (await fs.pathExists(appPath)) {
       try {

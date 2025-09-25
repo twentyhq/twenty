@@ -23,8 +23,9 @@ const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),
   filter: z
     .record(
-      z.record(
-        z.nativeEnum(ViewFilterOperand),
+      z.string(),
+      z.partialRecord(
+        z.enum(ViewFilterOperand),
         z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )

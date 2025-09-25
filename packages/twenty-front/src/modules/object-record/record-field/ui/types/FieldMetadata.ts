@@ -290,7 +290,7 @@ export const FieldActorValueSchema = z.object({
   name: z.string(),
   context: z
     .object({
-      provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+      provider: z.enum(ConnectedAccountProvider).optional(),
     })
     .nullable(),
 });

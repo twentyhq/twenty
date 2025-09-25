@@ -92,7 +92,7 @@ describe('LoginTokenService', () => {
       const mockSecret = 'mock-secret';
       const mockToken = 'mock-token';
       const workspaceId = 'workspace-id';
-      const impersonatorUserId = 'impersonator-id';
+      const impersonatorUserWorkspaceId = 'impersonator-id';
 
       jest
         .spyOn(jwtWrapperService, 'generateAppSecret')
@@ -104,7 +104,7 @@ describe('LoginTokenService', () => {
         email,
         workspaceId,
         AuthProviderEnum.Impersonation,
-        { impersonatorUserId },
+        { impersonatorUserWorkspaceId },
       );
 
       expect(result).toEqual({
@@ -121,7 +121,7 @@ describe('LoginTokenService', () => {
           workspaceId,
           type: 'LOGIN',
           authProvider: AuthProviderEnum.Impersonation,
-          impersonatorUserId,
+          impersonatorUserWorkspaceId,
         },
         { secret: mockSecret, expiresIn: expect.any(String) },
       );

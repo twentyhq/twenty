@@ -1,7 +1,7 @@
 import { type Dashboard } from '@/dashboards/components/types/Dashboard';
 import { useSetIsDashboardInEditMode } from '@/dashboards/hooks/useSetDashboardInEditMode';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { type PageLayoutWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 
 type DashboardContentRendererProps = {
@@ -16,7 +16,7 @@ export const DashboardContentRenderer = ({
   const { setIsDashboardInEditMode } =
     useSetIsDashboardInEditMode(pageLayoutId);
 
-  const onInitialized = (pageLayout: PageLayoutWithData) => {
+  const onInitialized = (pageLayout: PageLayout) => {
     if (isPageLayoutEmpty(pageLayout)) {
       setIsDashboardInEditMode(true);
     } else {
