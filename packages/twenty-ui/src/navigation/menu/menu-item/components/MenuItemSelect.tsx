@@ -32,6 +32,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
+  withIconContainer?: boolean;
   selected: boolean;
   needIconCheck?: boolean;
   text: string;
@@ -45,6 +46,7 @@ type MenuItemSelectProps = {
 
 export const MenuItemSelect = ({
   LeftIcon,
+  withIconContainer = false,
   text,
   selected,
   needIconCheck = true,
@@ -71,6 +73,7 @@ export const MenuItemSelect = ({
         LeftIcon={LeftIcon}
         text={text}
         contextualText={contextualText}
+        withIconContainer={withIconContainer}
       />
       {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
 

@@ -35,10 +35,20 @@ const StyledContextualText = styled.div`
   flex-shrink: 1;
 `;
 
+const StyledIconContainer = styled.div`
+  align-items: flex-start;
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
 type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
+  withIconContainer?: boolean;
   showGrip?: boolean;
   disabled?: boolean;
   text: ReactNode;
@@ -49,6 +59,7 @@ export const MenuItemLeftContent = ({
   className,
   LeftComponent,
   LeftIcon,
+  withIconContainer = false,
   text,
   contextualText,
   showGrip = false,
@@ -69,9 +80,14 @@ export const MenuItemLeftContent = ({
           />
         </StyledDraggableItem>
       )}
-      {LeftIcon && (
-        <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-      )}
+      {LeftIcon &&
+        (withIconContainer ? (
+          <StyledIconContainer>
+            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          </StyledIconContainer>
+        ) : (
+          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        ))}
       {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (

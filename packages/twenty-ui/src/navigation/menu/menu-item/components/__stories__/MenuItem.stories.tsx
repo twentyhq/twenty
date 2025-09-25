@@ -53,6 +53,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'accents',
           values: ['default', 'danger'] satisfies MenuItemAccent[],
           props: (accent: MenuItemAccent) => ({ accent }),
