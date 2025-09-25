@@ -1,5 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
+import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
 import { useMultiSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -10,7 +11,10 @@ import { useContext } from 'react';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
-  const { navigateToFieldOption } = useAddSelectOption(
+  const { addSelectOption } = useAddSelectOption(
+    fieldDefinition?.metadata?.fieldName,
+  );
+  const { canAddSelectOption } = useCanAddSelectOption(
     fieldDefinition?.metadata?.fieldName,
   );
 
@@ -28,11 +32,12 @@ export const MultiSelectFieldInput = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
-  const handleAddSelectOption = navigateToFieldOption
-    ? (optionName: string) => {
-        navigateToFieldOption(optionName);
-      }
-    : undefined;
+  const handleAddSelectOption = (optionName: string) => {
+    if (!canAddSelectOption) {
+      return;
+    }
+    addSelectOption(optionName);
+  };
 
   return (
     <MultiSelectInput
