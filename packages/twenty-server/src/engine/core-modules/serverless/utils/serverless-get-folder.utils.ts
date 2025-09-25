@@ -9,12 +9,13 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export const getServerlessFolder = ({
   serverlessFunction,
   version,
 }: {
-  serverlessFunction: ServerlessFunctionEntity;
+  serverlessFunction: ServerlessFunctionEntity | FlatServerlessFunction;
   version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
 }) => {
   if (version === 'latest' && !isDefined(serverlessFunction.latestVersion)) {

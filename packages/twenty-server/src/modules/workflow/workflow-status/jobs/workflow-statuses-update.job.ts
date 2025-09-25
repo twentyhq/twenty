@@ -11,6 +11,10 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -177,6 +181,13 @@ export class WorkflowStatusesUpdateJob {
             );
 
           const newStepSettings = { ...step.settings };
+
+          if (!isDefined(serverlessFunction.latestVersion)) {
+            throw new WorkflowVersionStepException(
+              `Fail to publish serverless function ${serverlessFunction.id}. Latest version is null`,
+              WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
+            );
+          }
 
           newStepSettings.input.serverlessFunctionVersion =
             serverlessFunction.latestVersion;
