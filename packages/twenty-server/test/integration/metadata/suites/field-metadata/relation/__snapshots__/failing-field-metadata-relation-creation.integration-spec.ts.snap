@@ -289,7 +289,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","type":"wrong","targetObjectMetadataId":"88e0377d-7389-48d0-a0eb-ff4b215d29d5","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -334,7 +334,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","targetObjectMetadataId":"88e0377d-7389-48d0-a0eb-ff4b215d29d5","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -438,7 +438,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"Relation Name","type":"MANY_TO_ONE","targetObjectMetadataId":"","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -840,7 +840,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","type":"wrong","targetObjectMetadataId":"88e0377d-7389-48d0-a0eb-ff4b215d29d5","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -885,7 +885,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"defaultTargetFieldLabel","targetObjectMetadataId":"88e0377d-7389-48d0-a0eb-ff4b215d29d5","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -973,7 +973,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid {"targetFieldLabel":"Relation Name","type":"ONE_TO_MANY","targetObjectMetadataId":"","targetFieldIcon":"IconBuildingSkyscraper"}",
+                "message": "Relation creation payload is invalid",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
