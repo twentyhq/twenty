@@ -63,7 +63,11 @@ export const MenuItemLeftContent = ({
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
             color={
-              disabled ? theme.font.color.extraLight : theme.font.color.light
+              withIconContainer
+                ? theme.font.color.tertiary
+                : disabled
+                  ? theme.font.color.extraLight
+                  : theme.font.color.light
             }
           />
         </StyledDraggableItem>
