@@ -8,10 +8,11 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:1-6:deduplicate-unique-fields',
+  name: 'upgrade:1-7:deduplicate-unique-fields',
   description:
     'Deduplicate unique fields for workspaceMembers, companies and people because we changed the unique constraint',
 })
@@ -26,38 +27,40 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
 
   override async runOnWorkspace({
     workspaceId,
+    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
       `Deduplicating indexed fields for workspace ${workspaceId}`,
     );
 
-    await this.deduplicateUniqueUserEmailFieldForWorkspaceMembers(
-      workspaceId,
-      options.dryRun ?? false,
-    );
+    await this.deduplicateUniqueUserEmailFieldForWorkspaceMembers({
+      dataSource,
+      dryRun: options.dryRun ?? false,
+    });
 
-    await this.deduplicateUniqueDomainNameFieldForCompanies(
-      workspaceId,
-      options.dryRun ?? false,
-    );
+    await this.deduplicateUniqueDomainNameFieldForCompanies({
+      dataSource,
+      dryRun: options.dryRun ?? false,
+    });
 
-    await this.deduplicateUniqueEmailFieldForPeople(
-      workspaceId,
-      options.dryRun ?? false,
-    );
+    await this.deduplicateUniqueEmailFieldForPeople({
+      dataSource,
+      dryRun: options.dryRun ?? false,
+    });
   }
 
-  private async deduplicateUniqueUserEmailFieldForWorkspaceMembers(
-    workspaceId: string,
-    dryRun: boolean,
-  ) {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+  private async deduplicateUniqueUserEmailFieldForWorkspaceMembers({
+    dataSource,
+    dryRun,
+  }: {
+    dataSource: WorkspaceDataSource;
+    dryRun: boolean;
+  }) {
+    const workspaceMemberRepository = dataSource.getRepository(
+      'workspaceMember',
+      true,
+    );
 
     const duplicates = await workspaceMemberRepository
       .createQueryBuilder('workspaceMember')
@@ -107,16 +110,14 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     }
   }
 
-  private async deduplicateUniqueDomainNameFieldForCompanies(
-    workspaceId: string,
-    dryRun: boolean,
-  ) {
-    const companyRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'company',
-        { shouldBypassPermissionChecks: true },
-      );
+  private async deduplicateUniqueDomainNameFieldForCompanies({
+    dataSource,
+    dryRun,
+  }: {
+    dataSource: WorkspaceDataSource;
+    dryRun: boolean;
+  }) {
+    const companyRepository = dataSource.getRepository('company', true);
 
     const duplicates = await companyRepository
       .createQueryBuilder('company')
@@ -167,16 +168,14 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     }
   }
 
-  private async deduplicateUniqueEmailFieldForPeople(
-    workspaceId: string,
-    dryRun: boolean,
-  ) {
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
+  private async deduplicateUniqueEmailFieldForPeople({
+    dataSource,
+    dryRun,
+  }: {
+    dataSource: WorkspaceDataSource;
+    dryRun: boolean;
+  }) {
+    const personRepository = dataSource.getRepository('person', true);
 
     const duplicates = await personRepository
       .createQueryBuilder('person')
