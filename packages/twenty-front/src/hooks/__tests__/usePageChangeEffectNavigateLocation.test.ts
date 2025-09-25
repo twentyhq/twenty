@@ -67,9 +67,11 @@ jest.mock('recoil');
 const setupMockRecoil = (
   objectNamePlural?: string,
   verifyEmailRedirectPath?: string,
+  calendarBookingPageId?: string | null,
 ) => {
   jest
     .mocked(useRecoilValue)
+    .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
     .mockReturnValueOnce(verifyEmailRedirectPath);
 };
@@ -343,6 +345,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
   );
+
   describe('tests should be exhaustive', () => {
     it('all location, onboarding status and suspended/not suspended workspace activation status should be tested', () => {
       expect(testCases.length).toEqual(
