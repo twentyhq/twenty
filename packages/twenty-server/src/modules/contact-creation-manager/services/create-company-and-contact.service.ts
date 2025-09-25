@@ -198,11 +198,19 @@ export class CreateCompanyAndPersonService {
       companiesMap,
     });
 
-    const createdOrRestoredPeople =
-      await this.createPersonService.createOrRestorePeople(
-        peopleToCreate,
-        workspaceId,
-      );
+    const createdOrRestoredPeople = await this.createPersonService.createPeople(
+      peopleToCreate,
+      workspaceId,
+    );
+
+    const peopleToRestore = peopleToCreate
+      .filter((person) => !isNull(person.deletedAt))
+      .map((person) => person.id ?? '');
+
+    const restoredPeople = await this.createPersonService.restorePeople(
+      peopleToRestore,
+      workspaceId,
+    );
 
     return createdOrRestoredPeople;
   }

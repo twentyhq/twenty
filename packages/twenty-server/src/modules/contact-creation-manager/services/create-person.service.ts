@@ -12,7 +12,7 @@ export class CreatePersonService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  public async createOrRestorePeople(
+  public async createPeople(
     peopleToCreate: Partial<PersonWorkspaceEntity>[],
     workspaceId: string,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
@@ -34,10 +34,10 @@ export class CreatePersonService {
   }
 
   public async restorePeople(
-    peopleToRestore: Partial<PersonWorkspaceEntity>[],
+    personIds: string[],
     workspaceId: string,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
-    if (peopleToRestore.length === 0) {
+    if (personIds.length === 0) {
       return [];
     }
 
