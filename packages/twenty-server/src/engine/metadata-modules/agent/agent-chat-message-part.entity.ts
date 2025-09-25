@@ -1,3 +1,4 @@
+import { JSONValue } from 'ai';
 import {
   Column,
   CreateDateColumn,
@@ -30,16 +31,13 @@ export class AgentChatMessagePartEntity {
   orderIndex: number;
 
   @Column({ type: 'varchar', length: 50 })
-  partType: string;
+  type: string;
 
   @Column({ type: 'text', nullable: true })
   textContent: string | null;
 
   @Column({ type: 'text', nullable: true })
   reasoningContent: string | null;
-
-  @Column({ type: 'boolean', nullable: true })
-  reasoningIsThinking: boolean | null;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   toolName: string | null;
@@ -62,20 +60,38 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'jsonb', nullable: true })
   errorDetails: Record<string, unknown> | null;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  sourceUrlSourceId: string | null;
+
   @Column({ type: 'varchar', length: 500, nullable: true })
   sourceUrlUrl: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  sourceUrlDescription: string | null;
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  sourceUrlTitle: string | null;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  sourceDocumentSourceId: string | null;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  sourceDocumentMediaType: string | null;
 
   @Column({ type: 'varchar', length: 200, nullable: true })
-  sourceDocumentName: string | null;
+  sourceDocumentTitle: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  sourceDocumentContent: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  sourceDocumentFilename: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  sourceDocumentPage: number | null;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  fileMediaType: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  fileFilename: string | null;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  fileUrl: string | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  providerMetadata: Record<string, Record<string, JSONValue>> | null;
 
   @CreateDateColumn()
   createdAt: Date;
