@@ -45,10 +45,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
+    const objectMetadataNameSingular =
+      objectMetadataItemWithFieldMaps.nameSingular;
+
     const { roleId } = executionArgs;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
     );
 
     const aggregateQueryBuilder = queryBuilder.clone();
@@ -58,7 +61,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       appliedFilters,
     );
 
@@ -93,14 +96,14 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       appliedFilters,
     );
 
     executionArgs.graphqlQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       isForwardPagination,
     );
 
@@ -113,6 +116,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
       queryBuilder: aggregateQueryBuilder,
+      objectMetadataNameSingular,
     });
 
     const limit =
@@ -171,7 +175,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      objectName: objectMetadataNameSingular,
       take: limit,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       order: orderByWithIdCondition,

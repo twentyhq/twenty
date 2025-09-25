@@ -15,7 +15,7 @@ const RelativeDateValueSchema = z.object({
   }
   return true;
 }, {
-  message: 'Amount is required for NEXT and PAST directions and must be positive',
+    error: 'Amount is required for NEXT and PAST directions and must be positive'
 });
 
 export const safeParseRelativeDateFilterValue = (

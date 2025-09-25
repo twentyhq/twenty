@@ -54,9 +54,7 @@ const StyledActionSkipLinkContainer = styled.div`
 `;
 
 const validationSchema = z.object({
-  emails: z.array(
-    z.object({ email: z.union([z.literal(''), z.string().email()]) }),
-  ),
+  emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
 });
 
 type FormInput = z.infer<typeof validationSchema>;

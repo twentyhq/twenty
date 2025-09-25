@@ -129,6 +129,7 @@ exports[`Workspace migration builder field actions test suite It should build an
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": "A rocket",
           "duplicateCriteria": null,
@@ -196,6 +197,7 @@ exports[`Workspace migration builder field actions test suite It should build an
           "defaultValue": null,
           "description": "default flat field metadata description",
           "flatRelationTargetObjectMetadata": {
+            "applicationId": null,
             "createdAt": Any<String>,
             "description": "A rocket",
             "duplicateCriteria": null,
@@ -252,6 +254,7 @@ exports[`Workspace migration builder field actions test suite It should build an
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": null,
           "duplicateCriteria": null,
@@ -1054,6 +1057,7 @@ exports[`Workspace migration builder object actions test suite It should build a
         },
       ],
       "flatObjectMetadataWithoutFields": {
+        "applicationId": null,
         "createdAt": Any<String>,
         "description": "A rocket",
         "duplicateCriteria": null,
@@ -2373,6 +2377,7 @@ exports[`Workspace migration builder object actions test suite It should build a
         },
       ],
       "flatObjectMetadataWithoutFields": {
+        "applicationId": null,
         "createdAt": Any<String>,
         "description": null,
         "duplicateCriteria": null,

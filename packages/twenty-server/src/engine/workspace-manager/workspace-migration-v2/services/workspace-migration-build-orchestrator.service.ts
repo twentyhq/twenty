@@ -12,6 +12,7 @@ import {
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
+import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
@@ -27,6 +28,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
+    private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -77,6 +79,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       view: [],
       viewField: [],
       index: [],
+      serverlessFunction: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -88,6 +91,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFieldMaps,
       flatViewMaps,
       flatIndexMaps,
+      flatServerlessFunctionMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -189,6 +193,35 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatServerlessFunctionMaps)) {
+      const {
+        from: fromFlatServerlessFunctionMaps,
+        to: toFlatServerlessFunctionMaps,
+      } = flatServerlessFunctionMaps;
+
+      const serverlessFunctionResult =
+        await this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatServerlessFunctionMaps,
+            to: toFlatServerlessFunctionMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatServerlessFunctionMaps =
+        serverlessFunctionResult.optimisticFlatEntityMaps;
+
+      if (serverlessFunctionResult.status === 'fail') {
+        orchestratorFailureReport.serverlessFunction.push(
+          ...serverlessFunctionResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.serverlessFunction =
+          serverlessFunctionResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -207,7 +240,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       workspaceMigration: {
         relatedFlatEntityMapsKeys,
         actions: [
-          // Object and fields
+          // Object and fields and indexes
           ...orchestratorActionsReport.index.deleted,
           ...orchestratorActionsReport.fieldMetadata.deleted,
           ...orchestratorActionsReport.objectMetadata.deleted,
@@ -226,6 +259,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...orchestratorActionsReport.viewField.deleted,
           ...orchestratorActionsReport.viewField.created,
           ...orchestratorActionsReport.viewField.updated,
+          ///
+
+          // Serverless functions
+          ...orchestratorActionsReport.serverlessFunction.deleted,
+          ...orchestratorActionsReport.serverlessFunction.created,
+          ...orchestratorActionsReport.serverlessFunction.updated,
           ///
         ],
         workspaceId,

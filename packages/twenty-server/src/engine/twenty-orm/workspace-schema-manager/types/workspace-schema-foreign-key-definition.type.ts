@@ -1,8 +1,8 @@
 export type WorkspaceSchemaForeignKeyDefinition = {
-  name: string;
-  columnNames: string[];
+  tableName: string;
+  columnName: string;
   referencedTableName: string;
-  referencedColumnNames: string[];
+  referencedColumnName: string;
   onDelete?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | 'SET DEFAULT';
   onUpdate?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | 'SET DEFAULT';
 };
