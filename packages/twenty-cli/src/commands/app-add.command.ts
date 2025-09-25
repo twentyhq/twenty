@@ -21,10 +21,9 @@ const getFolderName = (entity: SyncableEntity) => {
 };
 
 export class AppAddCommand {
-  async execute(options: {
-    entity: 'agent' | 'object';
-    path?: string;
-  }): Promise<void> {
+  async execute(options: { path?: string }): Promise<void> {
+    const entity = await this.getEntity();
+
     try {
       const appPath = await resolveAppPath(options.path);
 
@@ -35,14 +34,11 @@ export class AppAddCommand {
         process.exit(1);
       }
 
-      const entityName = await this.getEntityName(options.entity);
+      const entityName = await this.getEntityName(entity);
 
-      const entityData = await this.getEntityToCreateData(
-        options.entity,
-        entityName,
-      );
+      const entityData = await this.getEntityToCreateData(entity, entityName);
 
-      const folderName = getFolderName(options.entity);
+      const folderName = getFolderName(entity);
 
       const entitiesDir = path.join(appPath, folderName);
 
@@ -53,11 +49,25 @@ export class AppAddCommand {
       await writeJsoncFile(entityPath, entityData);
     } catch (error) {
       console.error(
-        chalk.red(`Add new ${options.entity} failed:`),
+        chalk.red(`Add new ${entity} failed:`),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
     }
+  }
+
+  private async getEntity() {
+    const { entity } = await inquirer.prompt([
+      {
+        type: 'select',
+        name: 'entity',
+        message: `What entity do you want to create?`,
+        default: '',
+        choices: ['agent', 'object'],
+      },
+    ]);
+
+    return entity as SyncableEntity;
   }
 
   private async getEntityName(entity: SyncableEntity) {
@@ -68,11 +78,15 @@ export class AppAddCommand {
         message: `Enter a name for your new ${entity}:`,
         default: '',
         validate: (input) => {
-          try {
-            return input.length > 0;
-          } catch {
-            return 'Please enter non empty string';
+          if (input.length === 0) {
+            return `${entity} name is required`;
           }
+
+          if (!/^[a-z0-9-]+$/.test(input)) {
+            return 'Name must contain only lowercase letters, numbers, and hyphens';
+          }
+
+          return true;
         },
       },
     ]);

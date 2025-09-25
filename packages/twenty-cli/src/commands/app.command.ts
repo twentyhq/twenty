@@ -53,11 +53,6 @@ export class AppCommand {
         '-p, --path <path>',
         'Application directory path (auto-detected if not specified)',
       )
-      .option(
-        '-e, --entity <entity>',
-        'Entity you need to add (object, agent,...)',
-        'object',
-      )
       .action(async (options) => {
         await this.addCommand.execute(options);
       });
