@@ -72,12 +72,17 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
+        const timeStart = performance.now();
+
         this.logger.log(
           `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
         );
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
+        const timeEnd = performance.now();
+        const executionTime = timeEnd - timeStart;
+
         this.logger.log(
-          `Job ${job.id} with name ${job.name} processed on queue ${queueName}`,
+          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
         );
       },
       workerOptions,
