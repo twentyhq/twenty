@@ -3,7 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type DeepPartial } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -15,12 +17,13 @@ import { CreatePersonService } from 'src/modules/contact-creation-manager/servic
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
+import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
-
 @Injectable()
 export class CreateCompanyAndPersonService {
   constructor(
@@ -77,43 +80,81 @@ export class CreateCompanyAndPersonService {
       emails: uniqueHandles,
     });
 
-    const alreadyCreatedContacts = await queryBuilder
+    const alreadyCreatedPeople = await queryBuilder
       .orderBy('person.createdAt', 'ASC')
+      .withDeleted()
       .getMany();
 
-    const alreadyCreatedContactEmails: string[] =
-      alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
-        const currentContactEmails: string[] = [];
+    const shouldCreateOrRestorePeopleByHandleMap = new Map<
+      string,
+      { existingPerson: PersonWorkspaceEntity | undefined }
+    >();
 
-        if (isNonEmptyString(emails?.primaryEmail)) {
-          currentContactEmails.push(emails.primaryEmail.toLowerCase());
+    for (const contact of uniqueContacts) {
+      if (!contact.handle.includes('@')) {
+        shouldCreateOrRestorePeopleByHandleMap.set(
+          contact.handle.toLowerCase(),
+          {
+            existingPerson: undefined,
+          },
+        );
+
+        continue;
+      }
+      const existingPerson = alreadyCreatedPeople.find((person) => {
+        if (isNonEmptyString(person.emails?.primaryEmail)) {
+          return (
+            person.emails.primaryEmail.toLowerCase() ===
+            contact.handle.toLowerCase()
+          );
         }
-        if (Array.isArray(emails?.additionalEmails)) {
-          const additionalEmails = emails.additionalEmails
-            .filter(isNonEmptyString)
-            .map((email) => email.toLowerCase());
 
-          currentContactEmails.push(...additionalEmails);
+        if (Array.isArray(person.emails?.additionalEmails)) {
+          return person.emails.additionalEmails.some(
+            (email) => email.toLowerCase() === contact.handle.toLowerCase(),
+          );
         }
 
-        return [...acc, ...currentContactEmails];
-      }, []);
+        return false;
+      });
 
-    const filteredContactsToCreate = uniqueContacts.filter(
-      (participant) =>
-        !alreadyCreatedContactEmails.includes(
-          participant.handle.toLowerCase(),
-        ) && participant.handle.includes('@'),
+      shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
+        existingPerson,
+      });
+    }
+
+    const contactsThatNeedPersonCreate = uniqueContacts.filter(
+      (contact) =>
+        !shouldCreateOrRestorePeopleByHandleMap.has(
+          contact.handle.toLowerCase(),
+        ),
     );
+    const contactsThatNeedPersonRestore = uniqueContacts.filter((contact) => {
+      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
+        contact.handle.toLowerCase(),
+      )?.existingPerson;
 
-    const filteredContactsToCreateWithCompanyDomainNames =
-      filteredContactsToCreate?.map((participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyDomainName: isWorkEmail(participant.handle)
-          ? getDomainNameFromHandle(participant.handle)
-          : undefined,
-      }));
+      if (!existingPerson) {
+        return false;
+      }
+
+      if (!existingPerson.deletedAt) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const filteredContactsToCreateWithCompanyDomainNames = [
+      ...contactsThatNeedPersonCreate,
+      ...contactsThatNeedPersonRestore,
+    ].map((contact) => ({
+      handle: contact.handle,
+      displayName: contact.displayName,
+      companyDomainName: isWorkEmail(contact.handle)
+        ? getDomainNameFromHandle(contact.handle)
+        : undefined,
+    }));
 
     const domainNamesToCreate = compact(
       filteredContactsToCreateWithCompanyDomainNames
@@ -147,23 +188,21 @@ export class CreateCompanyAndPersonService {
         workspaceId,
       );
 
-    const formattedContactsToCreate =
-      filteredContactsToCreateWithCompanyDomainNames.map((contact) => ({
-        handle: contact.handle,
-        displayName: contact.displayName,
-        companyId: isNonEmptyString(contact.companyDomainName)
-          ? companies[contact.companyDomainName]
-          : undefined,
-        createdBySource: source,
-        createdByWorkspaceMember: connectedAccount.accountOwner,
-        createdByContext: {
+    const peopleToCreate = this.formatPeopleFromContacts({
+      contactsToCreate: filteredContactsToCreateWithCompanyDomainNames,
+      createdBy: {
+        source: source,
+        workspaceMember: connectedAccount.accountOwner,
+        context: {
           provider: connectedAccount.provider,
         },
-      }));
+      },
+      companiesMap: companies,
+    });
 
     const createdOrRestoredPeople =
       await this.createPersonService.createOrRestorePeople(
-        formattedContactsToCreate,
+        peopleToCreate,
         workspaceId,
       );
 
@@ -176,7 +215,10 @@ export class CreateCompanyAndPersonService {
     workspaceId: string,
     source: FieldActorSource,
   ) {
-    const peopleBatches = chunk(contactsToCreate, CONTACTS_CREATION_BATCH_SIZE);
+    const contactsBatches = chunk(
+      contactsToCreate,
+      CONTACTS_CREATION_BATCH_SIZE,
+    );
 
     if (!connectedAccount.accountOwner) {
       const workspaceMemberRepository =
@@ -200,11 +242,11 @@ export class CreateCompanyAndPersonService {
       connectedAccount.accountOwner = workspaceMember;
     }
 
-    for (const peopleBatch of peopleBatches) {
+    for (const contactsBatch of contactsBatches) {
       try {
         await this.createCompaniesAndPeople(
           connectedAccount,
-          peopleBatch,
+          contactsBatch,
           workspaceId,
           source,
         );
@@ -216,5 +258,58 @@ export class CreateCompanyAndPersonService {
         });
       }
     }
+  }
+
+  formatPeopleFromContacts({
+    contactsToCreate,
+    createdBy,
+    companiesMap,
+  }: {
+    contactsToCreate: {
+      handle: string;
+      displayName: string;
+      companyDomainName: string | undefined;
+    }[];
+    createdBy: {
+      source: FieldActorSource;
+      workspaceMember?: WorkspaceMemberWorkspaceEntity | null;
+      context: {
+        provider: ConnectedAccountProvider;
+      };
+    };
+    companiesMap: Record<string, string>;
+  }): Partial<PersonWorkspaceEntity>[] {
+    return contactsToCreate.map((contact) => {
+      const id = v4();
+
+      const { handle, displayName, companyDomainName } = contact;
+
+      const { firstName, lastName } =
+        getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
+      const createdByName = computeDisplayName(createdBy.workspaceMember?.name);
+
+      const companyId = isNonEmptyString(companyDomainName)
+        ? companiesMap[companyDomainName]
+        : undefined;
+
+      return {
+        id,
+        emails: {
+          primaryEmail: handle.toLowerCase(),
+          additionalEmails: null,
+        },
+        name: {
+          firstName,
+          lastName,
+        },
+        companyId,
+        createdBy: {
+          source: createdBy.source,
+          workspaceMemberId: createdBy.workspaceMember?.id ?? null,
+          name: createdByName,
+          context: createdBy.context,
+        },
+      };
+    });
   }
 }
