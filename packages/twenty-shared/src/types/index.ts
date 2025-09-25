@@ -15,6 +15,11 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { FieldMetadataType } from './FieldMetadataType';
+export type {
+  FilterableFieldType,
+  FilterableAndTSVectorFieldType,
+} from './FilterableFieldType';
+export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export type { FromTo } from './FromToType';
 export type { IsExactly } from './IsExactly';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -26,6 +31,40 @@ export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
 export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
+export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
+export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
+export type {
+  UUIDFilterValue,
+  IsFilter,
+  UUIDFilter,
+  RelationFilter,
+  BooleanFilter,
+  StringFilter,
+  RatingFilter,
+  FloatFilter,
+  DateFilter,
+  CurrencyFilter,
+  URLFilter,
+  FullNameFilter,
+  AddressFilter,
+  LinksFilter,
+  ActorFilter,
+  EmailsFilter,
+  PhonesFilter,
+  SelectFilter,
+  MultiSelectFilter,
+  ArrayFilter,
+  RawJsonFilter,
+  RichTextV2LeafFilter,
+  RichTextV2Filter,
+  TSVectorFilter,
+  LeafFilter,
+  AndObjectRecordFilter,
+  OrObjectRecordFilter,
+  NotObjectRecordFilter,
+  LeafObjectRecordFilter,
+  RecordGqlOperationFilter,
+} from './RecordGqlOperationFilter';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationType } from './RelationType';

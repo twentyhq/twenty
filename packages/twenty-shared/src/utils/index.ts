@@ -18,6 +18,40 @@ export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
+export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
+export { computeEmptyGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
+export { computeEmptyGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
+export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
+export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
+export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
+export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export type {
+  RecordFilterShared,
+  RecordFilterGroupShared,
+} from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
+export { arrayOfStringsOrVariablesSchema } from './filter/utils/arrayOfStringsOrVariablesSchema';
+export { combineFilters } from './filter/utils/combineFilters';
+export {
+  convertGreaterThanOrEqualRatingToArrayOfRatingValues,
+  convertLessThanOrEqualRatingToArrayOfRatingValues,
+  convertRatingToRatingValue,
+} from './filter/utils/fieldRatingConvertors';
+export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
+export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
+export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
+export type {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+  ResolvedDateViewFilterValue,
+} from './filter/utils/resolveDateViewFilterValue';
+export {
+  variableDateViewFilterValueUnitSchema,
+  variableDateViewFilterValuePartsSchema,
+  resolveDateViewFilterValue,
+} from './filter/utils/resolveDateViewFilterValue';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
