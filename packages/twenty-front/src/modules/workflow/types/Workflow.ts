@@ -20,7 +20,7 @@ import {
   type workflowTriggerSchema,
   type workflowUpdateRecordActionSchema,
   type workflowWebhookTriggerSchema,
-} from '@/workflow/validation-schemas/workflowSchema';
+} from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;

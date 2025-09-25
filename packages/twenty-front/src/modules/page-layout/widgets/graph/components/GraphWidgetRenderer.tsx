@@ -42,8 +42,13 @@ type GraphWidgetRendererProps = {
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  const graphType = widget.configuration.graphType;
-  const data = widget.data ?? getDefaultWidgetData(graphType);
+  const graphType = widget.configuration?.graphType;
+
+  if (!Object.values(GraphType).includes(graphType)) {
+    return null;
+  }
+
+  const data: any = getDefaultWidgetData(graphType);
 
   if (!data) {
     return null;

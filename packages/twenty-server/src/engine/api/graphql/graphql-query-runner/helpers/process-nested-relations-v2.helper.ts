@@ -152,8 +152,10 @@ export class ProcessNestedRelationsV2Helper {
       roleId,
     );
 
+    const targetObjectNameSingular = targetObjectMetadata.nameSingular;
+
     let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
-      targetObjectMetadata.nameSingular,
+      targetObjectNameSingular,
     );
 
     const columnsToSelect = buildColumnsToSelect({
@@ -196,6 +198,7 @@ export class ProcessNestedRelationsV2Helper {
         limit: limit * parentObjectRecords.length,
         aggregate,
         sourceFieldName,
+        targetObjectNameSingular,
       });
 
     this.assignRelationResults({
@@ -306,6 +309,7 @@ export class ProcessNestedRelationsV2Helper {
     limit,
     aggregate,
     sourceFieldName,
+    targetObjectNameSingular,
   }: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
@@ -316,7 +320,7 @@ export class ProcessNestedRelationsV2Helper {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
-
+    targetObjectNameSingular: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
@@ -333,6 +337,7 @@ export class ProcessNestedRelationsV2Helper {
       ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
         selectedAggregatedFields: aggregateForRelation,
         queryBuilder: aggregateQueryBuilder,
+        objectMetadataNameSingular: targetObjectNameSingular,
       });
 
       const aggregatedFieldsValues = await aggregateQueryBuilder

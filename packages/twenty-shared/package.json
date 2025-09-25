@@ -30,7 +30,7 @@
     "libphonenumber-js": "^1.10.26",
     "qs": "^6.11.2",
     "react-router-dom": "^6.4.4",
-    "zod": "3.23.8"
+    "zod": "^4.1.11"
   },
   "exports": {
     ".": {

@@ -11,6 +11,11 @@ export type WorkflowRunStepInfo = {
   result?: object;
   error?: string;
   status: StepStatus;
+  history?: {
+    status: StepStatus;
+    result?: object;
+    error?: string;
+  }[];
 };
 
 export type WorkflowRunStepInfos = Record<string, WorkflowRunStepInfo>;
