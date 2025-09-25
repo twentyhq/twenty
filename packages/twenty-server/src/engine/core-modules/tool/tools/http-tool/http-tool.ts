@@ -13,7 +13,7 @@ import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 export class HttpTool implements Tool {
   description =
     'Make an HTTP request to any URL with configurable method, headers, and body.';
-  parameters = HttpToolParametersZodSchema;
+  inputSchema = HttpToolParametersZodSchema;
 
   async execute(parameters: ToolInput): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;

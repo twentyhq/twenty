@@ -24,8 +24,10 @@ import { updatePageLayoutWidgetOperationFactory } from 'test/integration/graphql
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { assertPageLayoutWidgetStructure } from 'test/integration/utils/page-layout-widget-test.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import {
@@ -102,7 +104,7 @@ describe('Page Layout Widget Resolver', () => {
       const widgetTitle1 = 'Widget 1';
       const widgetTitle2 = 'Widget 2';
 
-      await Promise.all([
+      const [{ id: widget1Id }, { id: widget2Id }] = await Promise.all([
         createTestPageLayoutWidgetWithGraphQL({
           title: widgetTitle1,
           type: WidgetType.VIEW,
@@ -125,14 +127,22 @@ describe('Page Layout Widget Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getPageLayoutWidgets).toHaveLength(2);
 
-      const widgets = response.body.data.getPageLayoutWidgets;
+      const widgets: PageLayoutWidgetEntity[] =
+        response.body.data.getPageLayoutWidgets ?? [];
 
-      assertPageLayoutWidgetStructure(widgets[0], {
+      const widget1 = widgets.find((widget) => widget.id === widget1Id);
+      const widget2 = widgets.find((widget) => widget.id === widget2Id);
+
+      if (!isDefined(widget1) || !isDefined(widget2)) {
+        throw new Error('Widget not found');
+      }
+
+      assertPageLayoutWidgetStructure(widget1, {
         title: widgetTitle1,
         type: WidgetType.VIEW,
         pageLayoutTabId: testPageLayoutTabId,
       });
-      assertPageLayoutWidgetStructure(widgets[1], {
+      assertPageLayoutWidgetStructure(widget2, {
         title: widgetTitle2,
         type: WidgetType.GRAPH,
         pageLayoutTabId: testPageLayoutTabId,

@@ -18,11 +18,8 @@ export class ApplicationService {
     });
   }
 
-  async findByStandardId(
-    standardId: string,
-    workspaceId: string,
-  ): Promise<ApplicationEntity[]> {
-    return this.applicationRepository.find({
+  async findByStandardId(standardId: string, workspaceId: string) {
+    return this.applicationRepository.findOne({
       where: {
         standardId,
         workspaceId,

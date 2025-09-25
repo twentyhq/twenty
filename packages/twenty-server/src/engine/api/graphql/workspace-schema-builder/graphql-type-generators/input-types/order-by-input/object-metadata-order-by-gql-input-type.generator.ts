@@ -34,7 +34,11 @@ export class ObjectMetadataOrderByGqlInputTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore({
+    objectMetadata,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+  }) {
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderBy.toString()}Input`,
       description: objectMetadata.description,

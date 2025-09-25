@@ -13,8 +13,7 @@ type ConnectedAccount = Pick<
 >;
 
 type FetchAllResult = {
-  uidsByBatch: number[][];
-  batchResults: MessageFetchResult[][];
+  results: MessageFetchResult[];
 };
 
 @Injectable()
@@ -32,8 +31,7 @@ export class ImapFetchByBatchService {
     folder: string,
   ): Promise<FetchAllResult> {
     const batchLimit = 20;
-    const batchResults: MessageFetchResult[][] = [];
-    const uidsByBatch: number[][] = [];
+    const results: MessageFetchResult[] = [];
 
     this.logger.log(
       `Starting optimized batch fetch for ${uids.length} messages from folder ${folder}`,
@@ -45,8 +43,6 @@ export class ImapFetchByBatchService {
       for (let i = 0; i < uids.length; i += batchLimit) {
         const batchUids = uids.slice(i, i + batchLimit);
 
-        uidsByBatch.push(batchUids);
-
         try {
           const batchResult =
             await this.imapMessageProcessorService.processMessagesByUidsInFolder(
@@ -55,7 +51,7 @@ export class ImapFetchByBatchService {
               client,
             );
 
-          batchResults.push(batchResult);
+          results.push(...batchResult);
 
           this.logger.log(
             `Fetched batch ${Math.floor(i / batchLimit) + 1}/${Math.ceil(uids.length / batchLimit)} (${batchUids.length} messages)`,
@@ -72,14 +68,11 @@ export class ImapFetchByBatchService {
               error as Error,
             );
 
-          batchResults.push(errorResults);
+          results.push(...errorResults);
         }
       }
 
-      return {
-        uidsByBatch,
-        batchResults,
-      };
+      return { results };
     } finally {
       if (client) {
         await this.imapClientProvider.closeClient(client);

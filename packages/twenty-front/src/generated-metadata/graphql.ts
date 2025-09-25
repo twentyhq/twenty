@@ -171,20 +171,6 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
-export type Application = {
-  __typename?: 'Application';
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  sourcePath: Scalars['String'];
-  sourceType: Scalars['String'];
-  standardId?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-  version?: Maybe<Scalars['String']>;
-  workspaceId: Scalars['UUID'];
-};
-
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -488,6 +474,7 @@ export enum ConfigVariableType {
 
 export enum ConfigVariablesGroup {
   AnalyticsConfig = 'AnalyticsConfig',
+  AwsSesSettings = 'AwsSesSettings',
   BillingConfig = 'BillingConfig',
   CaptchaConfig = 'CaptchaConfig',
   CloudflareConfig = 'CloudflareConfig',
@@ -873,6 +860,8 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -1032,6 +1021,29 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
+export type EmailingDomain = {
+  __typename?: 'EmailingDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
+  id: Scalars['UUID'];
+  status: EmailingDomainStatus;
+  updatedAt: Scalars['DateTime'];
+  verificationRecords?: Maybe<Array<VerificationRecord>>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export enum EmailingDomainDriver {
+  AWS_SES = 'AWS_SES'
+}
+
+export enum EmailingDomainStatus {
+  FAILED = 'FAILED',
+  PENDING = 'PENDING',
+  TEMPORARY_FAILURE = 'TEMPORARY_FAILURE',
+  VERIFIED = 'VERIFIED'
+}
+
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1063,6 +1075,7 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
+  IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -1474,6 +1487,7 @@ export type Mutation = {
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
+  createEmailingDomain: EmailingDomain;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -1502,6 +1516,7 @@ export type Mutation = {
   deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
+  deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
   deleteOneField: Field;
@@ -1570,7 +1585,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Application;
+  syncApplication: Scalars['Boolean'];
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   trackAnalytics: Analytics;
@@ -1593,6 +1608,7 @@ export type Mutation = {
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
+  updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
@@ -1610,6 +1626,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
@@ -1719,6 +1736,12 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateEmailingDomainArgs = {
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
 };
 
 
@@ -1857,6 +1880,11 @@ export type MutationDeleteCoreViewSortArgs = {
 
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
+};
+
+
+export type MutationDeleteEmailingDomainArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2309,6 +2337,12 @@ export type MutationUpdatePageLayoutWidgetArgs = {
 };
 
 
+export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutWithTabsInput;
+};
+
+
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
@@ -2397,6 +2431,11 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyEmailingDomainArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2626,6 +2665,7 @@ export enum PermissionFlagType {
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   DATA_MODEL = 'DATA_MODEL',
   EXPORT_CSV = 'EXPORT_CSV',
+  IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
@@ -2732,6 +2772,7 @@ export type Query = {
   getCoreViewSorts: Array<CoreViewSort>;
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
+  getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
@@ -3602,12 +3643,36 @@ export type UpdatePageLayoutTabInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdatePageLayoutTabWithWidgetsInput = {
+  id: Scalars['UUID'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
+  widgets: Array<UpdatePageLayoutWidgetWithIdInput>;
+};
+
 export type UpdatePageLayoutWidgetInput = {
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<WidgetType>;
+};
+
+export type UpdatePageLayoutWidgetWithIdInput = {
+  configuration: Scalars['JSON'];
+  gridPosition: GridPositionInput;
+  id: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type: WidgetType;
+};
+
+export type UpdatePageLayoutWithTabsInput = {
+  name: Scalars['String'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
+  type: PageLayoutType;
 };
 
 export type UpdateRemoteServerInput = {
@@ -3865,6 +3930,14 @@ export type ValidatePasswordResetToken = {
   id: Scalars['UUID'];
 };
 
+export type VerificationRecord = {
+  __typename?: 'VerificationRecord';
+  key: Scalars['String'];
+  priority?: Maybe<Scalars['Float']>;
+  type: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type VerifyTwoFactorAuthenticationMethodOutput = {
   __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
   success: Scalars['Boolean'];
@@ -4001,10 +4074,8 @@ export type WorkflowVersion = {
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  createdStep?: Maybe<WorkflowAction>;
-  deletedStepIds?: Maybe<Array<Scalars['String']>>;
-  stepsNextStepIds?: Maybe<Scalars['JSON']>;
-  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type Workspace = {
@@ -4884,6 +4955,33 @@ export type FindManyPublicDomainsQueryVariables = Exact<{ [key: string]: never; 
 
 export type FindManyPublicDomainsQuery = { __typename?: 'Query', findManyPublicDomains: Array<{ __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, createdAt: string }> };
 
+export type CreateEmailingDomainMutationVariables = Exact<{
+  domain: Scalars['String'];
+  driver: EmailingDomainDriver;
+}>;
+
+
+export type CreateEmailingDomainMutation = { __typename?: 'Mutation', createEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null } };
+
+export type DeleteEmailingDomainMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteEmailingDomainMutation = { __typename?: 'Mutation', deleteEmailingDomain: boolean };
+
+export type VerifyEmailingDomainMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type VerifyEmailingDomainMutation = { __typename?: 'Mutation', verifyEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string } };
+
+export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
+
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
@@ -5379,6 +5477,8 @@ export type FindOneCoreViewSortQueryVariables = Exact<{
 
 export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } | null };
 
+export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
+
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
 }>;
@@ -5405,14 +5505,14 @@ export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
 }>;
 
 
-export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type CreateWorkflowVersionStepMutationVariables = Exact<{
   input: CreateWorkflowVersionStepInput;
 }>;
 
 
-export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
+export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
@@ -5426,21 +5526,21 @@ export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
 }>;
 
 
-export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null } };
+export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeleteWorkflowVersionStepMutationVariables = Exact<{
   input: DeleteWorkflowVersionStepInput;
 }>;
 
 
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, deletedStepIds?: Array<string> | null } };
+export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
 }>;
 
 
-export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerNextStepIds?: Array<string> | null, stepsNextStepIds?: any | null, createdStep?: { __typename?: 'WorkflowAction', id: string, name: string, type: string, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } | null } };
+export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
@@ -6030,6 +6130,12 @@ ${BillingSubscriptionFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
 ${ViewFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
+export const WorkflowDiffFragmentFragmentDoc = gql`
+    fragment WorkflowDiffFragment on WorkflowVersionStepChanges {
+  triggerDiff
+  stepsDiff
+}
+    `;
 export const AssignRoleToAgentDocument = gql`
     mutation AssignRoleToAgent($agentId: UUID!, $roleId: UUID!) {
   assignRoleToAgent(agentId: $agentId, roleId: $roleId)
@@ -9975,6 +10081,168 @@ export function useFindManyPublicDomainsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type FindManyPublicDomainsQueryHookResult = ReturnType<typeof useFindManyPublicDomainsQuery>;
 export type FindManyPublicDomainsLazyQueryHookResult = ReturnType<typeof useFindManyPublicDomainsLazyQuery>;
 export type FindManyPublicDomainsQueryResult = Apollo.QueryResult<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>;
+export const CreateEmailingDomainDocument = gql`
+    mutation CreateEmailingDomain($domain: String!, $driver: EmailingDomainDriver!) {
+  createEmailingDomain(domain: $domain, driver: $driver) {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    verificationRecords {
+      type
+      key
+      value
+      priority
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateEmailingDomainMutationFn = Apollo.MutationFunction<CreateEmailingDomainMutation, CreateEmailingDomainMutationVariables>;
+
+/**
+ * __useCreateEmailingDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateEmailingDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEmailingDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEmailingDomainMutation, { data, loading, error }] = useCreateEmailingDomainMutation({
+ *   variables: {
+ *      domain: // value for 'domain'
+ *      driver: // value for 'driver'
+ *   },
+ * });
+ */
+export function useCreateEmailingDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateEmailingDomainMutation, CreateEmailingDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEmailingDomainMutation, CreateEmailingDomainMutationVariables>(CreateEmailingDomainDocument, options);
+      }
+export type CreateEmailingDomainMutationHookResult = ReturnType<typeof useCreateEmailingDomainMutation>;
+export type CreateEmailingDomainMutationResult = Apollo.MutationResult<CreateEmailingDomainMutation>;
+export type CreateEmailingDomainMutationOptions = Apollo.BaseMutationOptions<CreateEmailingDomainMutation, CreateEmailingDomainMutationVariables>;
+export const DeleteEmailingDomainDocument = gql`
+    mutation DeleteEmailingDomain($id: String!) {
+  deleteEmailingDomain(id: $id)
+}
+    `;
+export type DeleteEmailingDomainMutationFn = Apollo.MutationFunction<DeleteEmailingDomainMutation, DeleteEmailingDomainMutationVariables>;
+
+/**
+ * __useDeleteEmailingDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteEmailingDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteEmailingDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteEmailingDomainMutation, { data, loading, error }] = useDeleteEmailingDomainMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteEmailingDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEmailingDomainMutation, DeleteEmailingDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEmailingDomainMutation, DeleteEmailingDomainMutationVariables>(DeleteEmailingDomainDocument, options);
+      }
+export type DeleteEmailingDomainMutationHookResult = ReturnType<typeof useDeleteEmailingDomainMutation>;
+export type DeleteEmailingDomainMutationResult = Apollo.MutationResult<DeleteEmailingDomainMutation>;
+export type DeleteEmailingDomainMutationOptions = Apollo.BaseMutationOptions<DeleteEmailingDomainMutation, DeleteEmailingDomainMutationVariables>;
+export const VerifyEmailingDomainDocument = gql`
+    mutation VerifyEmailingDomain($id: String!) {
+  verifyEmailingDomain(id: $id) {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type VerifyEmailingDomainMutationFn = Apollo.MutationFunction<VerifyEmailingDomainMutation, VerifyEmailingDomainMutationVariables>;
+
+/**
+ * __useVerifyEmailingDomainMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailingDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailingDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailingDomainMutation, { data, loading, error }] = useVerifyEmailingDomainMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useVerifyEmailingDomainMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailingDomainMutation, VerifyEmailingDomainMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailingDomainMutation, VerifyEmailingDomainMutationVariables>(VerifyEmailingDomainDocument, options);
+      }
+export type VerifyEmailingDomainMutationHookResult = ReturnType<typeof useVerifyEmailingDomainMutation>;
+export type VerifyEmailingDomainMutationResult = Apollo.MutationResult<VerifyEmailingDomainMutation>;
+export type VerifyEmailingDomainMutationOptions = Apollo.BaseMutationOptions<VerifyEmailingDomainMutation, VerifyEmailingDomainMutationVariables>;
+export const GetEmailingDomainsDocument = gql`
+    query GetEmailingDomains {
+  getEmailingDomains {
+    id
+    domain
+    driver
+    status
+    verifiedAt
+    verificationRecords {
+      type
+      key
+      value
+      priority
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetEmailingDomainsQuery__
+ *
+ * To run a query within a React component, call `useGetEmailingDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEmailingDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEmailingDomainsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetEmailingDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>(GetEmailingDomainsDocument, options);
+      }
+export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>(GetEmailingDomainsDocument, options);
+        }
+export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
+export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
+export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {
@@ -12362,11 +12630,10 @@ export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationO
 export const CreateWorkflowVersionEdgeDocument = gql`
     mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   createWorkflowVersionEdge(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type CreateWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
 
 /**
@@ -12396,23 +12663,10 @@ export type CreateWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOption
 export const CreateWorkflowVersionStepDocument = gql`
     mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
   createWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    createdStep {
-      id
-      name
-      type
-      settings
-      valid
-      nextStepIds
-      position {
-        x
-        y
-      }
-    }
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
 
 /**
@@ -12473,11 +12727,10 @@ export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOption
 export const DeleteWorkflowVersionEdgeDocument = gql`
     mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
   deleteWorkflowVersionEdge(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DeleteWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
 
 /**
@@ -12507,12 +12760,10 @@ export type DeleteWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOption
 export const DeleteWorkflowVersionStepDocument = gql`
     mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
   deleteWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    deletedStepIds
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
 
 /**
@@ -12542,23 +12793,10 @@ export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOption
 export const DuplicateWorkflowVersionStepDocument = gql`
     mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
   duplicateWorkflowVersionStep(input: $input) {
-    triggerNextStepIds
-    stepsNextStepIds
-    createdStep {
-      id
-      name
-      type
-      settings
-      valid
-      nextStepIds
-      position {
-        x
-        y
-      }
-    }
+    ...WorkflowDiffFragment
   }
 }
-    `;
+    ${WorkflowDiffFragmentFragmentDoc}`;
 export type DuplicateWorkflowVersionStepMutationFn = Apollo.MutationFunction<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
 
 /**
