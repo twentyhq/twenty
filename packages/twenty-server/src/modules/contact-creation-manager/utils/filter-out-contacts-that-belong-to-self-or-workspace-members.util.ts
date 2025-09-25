@@ -4,7 +4,7 @@ import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/ut
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
-export function filterOutSelfAndContactsFromCompanyOrWorkspace(
+export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   contacts: Contact[],
   connectedAccount: ConnectedAccountWorkspaceEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -15,7 +15,7 @@ import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manag
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
-import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
+import { filterOutContactsThatBelongToSelfOrWorkspaceMembers } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-that-belong-to-self-or-workspace-members.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
@@ -61,7 +61,7 @@ export class CreateCompanyAndPersonService {
     const workspaceMembers = await workspaceMemberRepository.find();
 
     const peopleToCreateFromOtherCompanies =
-      filterOutSelfAndContactsFromCompanyOrWorkspace(
+      filterOutContactsThatBelongToSelfOrWorkspaceMembers(
         contactsToCreate,
         connectedAccount,
         workspaceMembers,
@@ -101,6 +101,7 @@ export class CreateCompanyAndPersonService {
 
         continue;
       }
+
       const existingPerson = alreadyCreatedPeople.find((person) => {
         if (isNonEmptyString(person.emails?.primaryEmail)) {
           return (
@@ -129,6 +130,7 @@ export class CreateCompanyAndPersonService {
           contact.handle.toLowerCase(),
         ),
     );
+
     const contactsThatNeedPersonRestore = uniqueContacts.filter((contact) => {
       const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
         contact.handle.toLowerCase(),
@@ -138,11 +140,7 @@ export class CreateCompanyAndPersonService {
         return false;
       }
 
-      if (!existingPerson.deletedAt) {
-        return false;
-      }
-
-      return true;
+      return !isNull(existingPerson.deletedAt);
     });
 
     const filteredContactsToCreateWithCompanyDomainNames = [
@@ -182,7 +180,7 @@ export class CreateCompanyAndPersonService {
       }),
     );
 
-    const companies =
+    const companiesMap =
       await this.createCompaniesService.createOrRestoreCompanies(
         workDomainNamesToCreateFormatted,
         workspaceId,
@@ -197,7 +195,7 @@ export class CreateCompanyAndPersonService {
           provider: connectedAccount.provider,
         },
       },
-      companiesMap: companies,
+      companiesMap,
     });
 
     const createdOrRestoredPeople =
