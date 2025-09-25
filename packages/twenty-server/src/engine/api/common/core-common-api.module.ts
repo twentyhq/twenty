@@ -1,5 +1,4 @@
-// tododo
-// - try to switch gql find One to common api find One
+// TODO : Refacto-common - To be refactored
 // - add filter validation in common api
 // - add field valdiation in ORM
 
