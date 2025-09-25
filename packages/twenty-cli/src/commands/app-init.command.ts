@@ -98,12 +98,6 @@ export class AppInitCommand {
     const basePackageJsonPath = path.join(appDir, 'package.json');
     await writeJsoncFile(basePackageJsonPath, basePackageJson);
 
-    // Create agent basePackageJson file
-    const agentManifest = createAgentManifest(appName);
-    const agentFileName = `${appName}-agent`;
-    const agentPath = path.join(agentsDir, `${agentFileName}.jsonc`);
-    await writeJsoncFile(agentPath, agentManifest);
-
     // Create README
     const readmeContent = createReadmeContent(appName, appDir);
     await fs.writeFile(path.join(appDir, 'README.md'), readmeContent);
