@@ -6,14 +6,13 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Failing update field metadata %s tests suite',
@@ -33,14 +32,6 @@ describe.each(fieldMetadataEnumTypes)(
         expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         value: false,
-      });
-    });
-
-    afterAll(async () => {
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: true,
       });
     });
 
@@ -95,21 +86,19 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterAll(async () => {
-      await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: createdObjectMetadataId,
-          updatePayload: {
-            isActive: false,
-          },
-        },
-      });
-
       await deleteOneObjectMetadata({
         input: {
           idToDelete: createdObjectMetadataId,
         },
         expectToFail: false,
+      });
+    });
+
+    afterAll(async () => {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: true,
       });
     });
 

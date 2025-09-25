@@ -52,7 +52,7 @@ describe(
       });
     });
 
-        afterAll(async () => {
+    afterAll(async () => {
       await updateFeatureFlag({
         expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,

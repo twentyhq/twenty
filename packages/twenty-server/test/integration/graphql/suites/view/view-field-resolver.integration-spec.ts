@@ -46,14 +46,6 @@ describe('View Field Resolver', () => {
     });
   });
 
-  afterAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
-    });
-  });
-
   beforeAll(async () => {
     const {
       data: {
@@ -113,6 +105,14 @@ describe('View Field Resolver', () => {
       input: { idToDelete: testObjectMetadataId },
     });
     await cleanupViewRecords();
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
   });
 
   beforeEach(async () => {

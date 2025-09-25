@@ -7,6 +7,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type TestingRuntimeContext = {
   objectMetadataId: string;
@@ -100,6 +101,8 @@ describe('Object metadata update should fail', () => {
     });
 
     expect(errors).toBeDefined();
-    expect(errors).toMatchSnapshot();
+    expect(errors).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(errors),
+    );
   });
 });
