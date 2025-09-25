@@ -82,10 +82,10 @@ export class BillingSubscriptionService {
     });
   }
 
-  async getCurrentBillingSubscriptionOrThrow(criteria: {
+  async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
-  }) {
+  }): Promise<BillingSubscription | undefined> {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
@@ -102,14 +102,25 @@ export class BillingSubscriptionService {
       );
     }
 
-    if (notCanceledSubscriptions.length === 0) {
-      throw new BillingException(
+    return notCanceledSubscriptions[0];
+  }
+
+  async getCurrentBillingSubscriptionOrThrow(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }): Promise<BillingSubscription> {
+    const notCanceledSubscription =
+      await this.getCurrentBillingSubscription(criteria);
+
+    assertIsDefinedOrThrow(
+      notCanceledSubscription,
+      new BillingException(
         `No active subscription found for workspace ${criteria.workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
+      ),
+    );
 
-    return notCanceledSubscriptions[0];
+    return notCanceledSubscription;
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -149,10 +160,9 @@ export class BillingSubscriptionService {
   }
 
   async deleteSubscriptions(workspaceId: string) {
-    const subscriptionToCancel =
-      await this.getCurrentBillingSubscriptionOrThrow({
-        workspaceId,
-      });
+    const subscriptionToCancel = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
 
     if (subscriptionToCancel) {
       await this.stripeSubscriptionService.cancelSubscription(

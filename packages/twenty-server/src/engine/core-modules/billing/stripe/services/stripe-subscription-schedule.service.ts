@@ -2,6 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { findOrThrow } from 'twenty-shared/utils';
+
 import type Stripe from 'stripe';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
@@ -62,21 +64,21 @@ export class StripeSubscriptionScheduleService {
   }
 
   getEditablePhases(live: Stripe.SubscriptionSchedule) {
-    if (live.phases.length === 0) {
-      throw new BillingException(
-        `Subscription must have at least 1 phase to be editable`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND,
-      );
-    }
-
     const now = Math.floor(Date.now() / 1000);
 
-    const currentEditable = (live.phases || []).find((p) => {
-      const s = p.start_date ?? 0;
-      const e = p.end_date ?? Infinity;
+    const currentEditable = findOrThrow(
+      live.phases,
+      (p) => {
+        const s = p.start_date ?? 0;
+        const e = p.end_date ?? Infinity;
 
-      return s <= now && now < e;
-    }) as Stripe.SubscriptionSchedule.Phase;
+        return s <= now && now < e;
+      },
+      new BillingException(
+        `Subscription must have at least 1 phase to be editable`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND,
+      ),
+    );
 
     const nextEditable = (live.phases || [])
       .filter((p) => (p.start_date ?? 0) > now)
@@ -144,12 +146,10 @@ export class StripeSubscriptionScheduleService {
 
     const phases: Stripe.SubscriptionScheduleUpdateParams.Phase[] = [];
 
-    if (currentEditable) {
-      const currentSnapshot =
-        desired.currentSnapshot ?? this.snapshotFromLivePhase(currentEditable);
+    const currentSnapshot =
+      desired.currentSnapshot ?? this.snapshotFromLivePhase(currentEditable);
 
-      phases.push(currentSnapshot);
-    }
+    phases.push(currentSnapshot);
 
     const hasNextKey = 'nextPhase' in desired;
     const wantsNext = hasNextKey && !!desired.nextPhase;
