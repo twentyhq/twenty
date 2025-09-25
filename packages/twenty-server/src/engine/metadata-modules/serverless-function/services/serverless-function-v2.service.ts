@@ -11,6 +11,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modul
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
@@ -94,22 +95,33 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    if (
-      !isDefined(
-        updatedFlatEntityMaps.flatServerlessFunctionMaps.byId[
-          flatServerlessFunctionToCreate.id
-        ],
-      )
-    ) {
+    const createdServerlessFunction =
+      updatedFlatEntityMaps.flatServerlessFunctionMaps.byId[
+        flatServerlessFunctionToCreate.id
+      ];
+
+    if (!isDefined(createdServerlessFunction)) {
       throw new ServerlessFunctionException(
         'Created serverless function not found in recomputed cache',
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
     }
 
-    return updatedFlatEntityMaps.flatServerlessFunctionMaps.byId[
-      flatServerlessFunctionToCreate.id
-    ];
+    const draftFileFolder = getServerlessFolder({
+      serverlessFunction: createdServerlessFunction,
+      version: 'draft',
+    });
+
+    for (const file of await getBaseTypescriptProjectFiles) {
+      await this.fileStorageService.write({
+        file: file.content,
+        name: file.name,
+        mimeType: undefined,
+        folder: join(draftFileFolder, file.path),
+      });
+    }
+
+    return createdServerlessFunction;
   }
 
   async updateOne(

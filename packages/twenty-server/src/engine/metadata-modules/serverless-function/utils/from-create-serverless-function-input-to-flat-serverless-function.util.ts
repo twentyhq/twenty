@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -28,7 +29,7 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     latestVersionInputSchema: null,
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
-    layerVersion: null,
+    layerVersion: LAST_LAYER_VERSION,
     workspaceId,
   };
 };
