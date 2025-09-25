@@ -4,8 +4,10 @@ import { expect, within } from '@storybook/test';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
 import { RecoilRoot } from 'recoil';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -54,6 +56,8 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             graphType: GraphType.NUMBER,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -75,6 +79,10 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             graphType: GraphType.GAUGE,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
+            aggregateOperationTotal: AggregateOperations.COUNT,
+            aggregateFieldMetadataIdTotal: 'id',
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -96,6 +104,10 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             graphType: GraphType.PIE,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
+            groupByFieldMetadataId: 'createdAt',
+            orderBy: GraphOrderBy.VALUE_DESC,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -117,6 +129,10 @@ const mixedGraphsPageLayoutMocks = {
           },
           configuration: {
             graphType: GraphType.BAR,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
+            groupByFieldMetadataIdX: 'createdAt',
+            orderByX: GraphOrderBy.FIELD_ASC,
           },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
