@@ -4,38 +4,40 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
-import { CreateContactService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-describe('CreateCompanyAndContactService', () => {
-  let service: CreateCompanyAndContactService;
-  let createCompaniesService: CreateCompanyService;
-  let createContactService: CreateContactService;
+describe('CreateCompanyAndPersonService', () => {
+  let service: CreateCompanyAndPersonService;
 
-  const workspaceId = 'workspace-1';
-
-  const mockConnectedAccount = {} as ConnectedAccountWorkspaceEntity;
+  const mockConnectedAccount = {
+    id: 'connected-account-1',
+    accountOwner: {
+      id: 'workspace-member-1',
+    },
+  } as unknown as ConnectedAccountWorkspaceEntity;
 
   beforeEach(async () => {
     const mockCreateCompaniesService = {
       createOrRestoreCompanies: jest.fn(),
     };
-    const mockCreateContactService = {
+    const mockCreatePersonService = {
       restorePeople: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CreateCompanyAndContactService,
+        CreateCompanyAndPersonService,
         {
           provide: CreateCompanyService,
           useValue: mockCreateCompaniesService,
         },
         {
-          provide: CreateContactService,
-          useValue: mockCreateContactService,
+          provide: CreatePersonService,
+          useValue: mockCreatePersonService,
         },
         {
           provide: TwentyORMGlobalManager,
@@ -48,114 +50,85 @@ describe('CreateCompanyAndContactService', () => {
       ],
     }).compile();
 
-    service = module.get<CreateCompanyAndContactService>(
-      CreateCompanyAndContactService,
+    service = module.get<CreateCompanyAndPersonService>(
+      CreateCompanyAndPersonService,
     );
-    createContactService =
-      module.get<CreateContactService>(CreateContactService);
-    createCompaniesService =
-      module.get<CreateCompanyService>(CreateCompanyService);
   });
 
-  describe('restorePeopleAndRestoreOrCreateCompanies - method', () => {
-    it('should restore the soft deleted contact - matching primary email', async () => {
-      await service.restorePeopleAndRestoreOrCreateCompanies(
-        [
-          {
-            id: 'contact-1',
-            emails: {
-              primaryEmail: 'soft-deleted-contact@example.com',
-              additionalEmails: [],
-            },
-            deletedAt: new Date(),
-          } as unknown as PersonWorkspaceEntity,
-        ],
-        [
-          {
-            handle: 'soft-deleted-contact@example.com',
-            displayName: 'Contact 1',
-          },
-        ],
-        workspaceId,
-        FieldActorSource.CALENDAR,
-        mockConnectedAccount,
+  describe('computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate', () => {
+    const mockContacts: Contact[] = [
+      {
+        handle: 'john.doe@company.com',
+        displayName: 'John Doe',
+      },
+      {
+        handle: 'jane.smith@company.com',
+        displayName: 'Jane Smith',
+      },
+      {
+        handle: 'personal@email.com',
+        displayName: 'Personal Contact',
+      },
+    ];
+
+    const mockExistingPeople: PersonWorkspaceEntity[] = [
+      {
+        id: 'soft-deleted-person-1',
+        emails: {
+          primaryEmail: 'john.doe@company.com',
+          additionalEmails: null,
+        },
+        deletedAt: new Date(),
+      } as unknown as PersonWorkspaceEntity,
+      {
+        id: 'soft-deleted-person-2',
+        emails: {
+          primaryEmail: 'different@company.com',
+          additionalEmails: ['jane.smith@company.com'],
+        },
+        deletedAt: new Date(),
+      } as unknown as PersonWorkspaceEntity,
+      {
+        id: 'active-person-3',
+        emails: {
+          primaryEmail: 'active@company.com',
+          additionalEmails: null,
+        },
+        deletedAt: null,
+      } as unknown as PersonWorkspaceEntity,
+    ];
+
+    it('should identify contacts that need person creation for new contacts', () => {
+      const result =
+        service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+          mockContacts,
+          mockExistingPeople,
+          FieldActorSource.CALENDAR,
+          mockConnectedAccount,
+        );
+
+      expect(result.contactsThatNeedPersonCreate).toHaveLength(1);
+      expect(result.contactsThatNeedPersonCreate[0].handle).toBe(
+        'personal@email.com',
       );
-      expect(createContactService.restorePeople).toHaveBeenCalledWith(
-        [
-          {
-            id: 'contact-1',
-            companyId: undefined,
-          },
-        ],
-        workspaceId,
-      );
-      expect(
-        createCompaniesService.createOrRestoreCompanies,
-      ).toHaveBeenCalled();
     });
-    it('should restore the soft deleted contact - matching primary email', async () => {
-      await service.restorePeopleAndRestoreOrCreateCompanies(
-        [
-          {
-            id: 'contact-1',
-            emails: {
-              primaryEmail: 'primary-email-soft-deleted-contact@example.com',
-              additionalEmails: [
-                'additional-email-soft-deleted-contact@example.com',
-              ],
-            },
-            deletedAt: new Date(),
-          } as unknown as PersonWorkspaceEntity,
-        ],
-        [
-          {
-            handle: 'additional-email-soft-deleted-contact@example.com',
-            displayName: 'Contact 1',
-          },
-        ],
-        workspaceId,
-        FieldActorSource.CALENDAR,
-        mockConnectedAccount,
-      );
-      expect(createContactService.restorePeople).toHaveBeenCalledWith(
-        [
-          {
-            id: 'contact-1',
-            companyId: undefined,
-          },
-        ],
-        workspaceId,
-      );
+
+    it('should identify contacts that need person restoration for soft-deleted contacts', () => {
+      const result =
+        service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+          mockContacts,
+          mockExistingPeople,
+          FieldActorSource.CALENDAR,
+          mockConnectedAccount,
+        );
+
+      expect(result.contactsThatNeedPersonRestore).toHaveLength(2);
       expect(
-        createCompaniesService.createOrRestoreCompanies,
-      ).toHaveBeenCalled();
-    });
-    it('should not restore any contact', async () => {
-      await service.restorePeopleAndRestoreOrCreateCompanies(
-        [
-          {
-            id: 'contact-1',
-            emails: {
-              primaryEmail: 'soft-deleted-contact@example.com',
-              additionalEmails: [],
-            },
-            deletedAt: new Date(),
-          } as unknown as PersonWorkspaceEntity,
-        ],
-        [
-          {
-            handle: 'not-matching-email-soft-deleted-contact@example.com',
-            displayName: 'Contact 1',
-          },
-        ],
-        workspaceId,
-        FieldActorSource.CALENDAR,
-        mockConnectedAccount,
-      );
-      expect(createContactService.restorePeople).not.toHaveBeenCalled();
+        result.contactsThatNeedPersonRestore.map((c) => c.handle),
+      ).toContain('john.doe@company.com');
       expect(
-        createCompaniesService.createOrRestoreCompanies,
-      ).not.toHaveBeenCalled();
+        result.contactsThatNeedPersonRestore.map((c) => c.handle),
+      ).toContain('jane.smith@company.com');
     });
   });
 });

@@ -4,6 +4,7 @@ import { isNonEmptyString, isNull } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -33,7 +34,7 @@ export class CreateCompanyAndPersonService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  private async createCompaniesAndPeople(
+  async createCompaniesAndPeople(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
@@ -85,109 +86,27 @@ export class CreateCompanyAndPersonService {
       .withDeleted()
       .getMany();
 
-    const shouldCreateOrRestorePeopleByHandleMap = new Map<
-      string,
-      { existingPerson: PersonWorkspaceEntity | undefined }
-    >();
-
-    for (const contact of uniqueContacts) {
-      if (!contact.handle.includes('@')) {
-        shouldCreateOrRestorePeopleByHandleMap.set(
-          contact.handle.toLowerCase(),
-          {
-            existingPerson: undefined,
-          },
-        );
-
-        continue;
-      }
-
-      const existingPerson = alreadyCreatedPeople.find((person) => {
-        if (isNonEmptyString(person.emails?.primaryEmail)) {
-          return (
-            person.emails.primaryEmail.toLowerCase() ===
-            contact.handle.toLowerCase()
-          );
-        }
-
-        if (Array.isArray(person.emails?.additionalEmails)) {
-          return person.emails.additionalEmails.some(
-            (email) => email.toLowerCase() === contact.handle.toLowerCase(),
-          );
-        }
-
-        return false;
-      });
-
-      shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
-        existingPerson,
-      });
-    }
-
-    const contactsThatNeedPersonCreate = uniqueContacts.filter(
-      (contact) =>
-        !shouldCreateOrRestorePeopleByHandleMap.has(
-          contact.handle.toLowerCase(),
-        ),
-    );
-
-    const contactsThatNeedPersonRestore = uniqueContacts.filter((contact) => {
-      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
-        contact.handle.toLowerCase(),
-      )?.existingPerson;
-
-      if (!existingPerson) {
-        return false;
-      }
-
-      return !isNull(existingPerson.deletedAt);
-    });
-
-    const filteredContactsToCreateWithCompanyDomainNames = [
-      ...contactsThatNeedPersonCreate,
-      ...contactsThatNeedPersonRestore,
-    ].map((contact) => ({
-      handle: contact.handle,
-      displayName: contact.displayName,
-      companyDomainName: isWorkEmail(contact.handle)
-        ? getDomainNameFromHandle(contact.handle)
-        : undefined,
-    }));
-
-    const domainNamesToCreate = compact(
-      filteredContactsToCreateWithCompanyDomainNames
-        .filter((participant) => participant.companyDomainName)
-        .map((participant) => ({
-          domainName: participant.companyDomainName,
-          createdBySource: source,
-          createdByWorkspaceMember: connectedAccount.accountOwner,
-        })),
-    );
-
-    const workDomainNamesToCreate = domainNamesToCreate.filter(
-      (domainName) =>
-        domainName?.domainName && isWorkDomain(domainName.domainName),
-    );
-
-    const workDomainNamesToCreateFormatted = workDomainNamesToCreate.map(
-      (domainName) => ({
-        ...domainName,
-        createdBySource: source,
-        createdByWorkspaceMember: connectedAccount.accountOwner,
-        createdByContext: {
-          provider: connectedAccount.provider,
-        },
-      }),
-    );
+    const {
+      contactsThatNeedPersonCreate,
+      contactsThatNeedPersonRestore,
+      workDomainNamesToCreate,
+      shouldCreateOrRestorePeopleByHandleMap,
+    } =
+      this.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+        uniqueContacts,
+        alreadyCreatedPeople,
+        source,
+        connectedAccount,
+      );
 
     const companiesMap =
       await this.createCompaniesService.createOrRestoreCompanies(
-        workDomainNamesToCreateFormatted,
+        workDomainNamesToCreate,
         workspaceId,
       );
 
-    const peopleToCreate = this.formatPeopleFromContacts({
-      contactsToCreate: filteredContactsToCreateWithCompanyDomainNames,
+    const peopleToCreate = this.formatPeopleToCreateFromContacts({
+      contactsToCreate: contactsThatNeedPersonCreate,
       createdBy: {
         source: source,
         workspaceMember: connectedAccount.accountOwner,
@@ -198,21 +117,23 @@ export class CreateCompanyAndPersonService {
       companiesMap,
     });
 
-    const createdOrRestoredPeople = await this.createPersonService.createPeople(
+    const createdPeople = await this.createPersonService.createPeople(
       peopleToCreate,
       workspaceId,
     );
 
-    const peopleToRestore = peopleToCreate
-      .filter((person) => !isNull(person.deletedAt))
-      .map((person) => person.id ?? '');
+    const peopleToRestore = this.formatPeopleToRestoreFromContacts({
+      contactsToRestore: contactsThatNeedPersonRestore,
+      companiesMap,
+      shouldCreateOrRestorePeopleByHandleMap,
+    });
 
     const restoredPeople = await this.createPersonService.restorePeople(
       peopleToRestore,
       workspaceId,
     );
 
-    return createdOrRestoredPeople;
+    return { ...createdPeople, ...restoredPeople };
   }
 
   async createCompaniesAndPeopleAndUpdateParticipants(
@@ -266,7 +187,110 @@ export class CreateCompanyAndPersonService {
     }
   }
 
-  formatPeopleFromContacts({
+  computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+    uniqueContacts: Contact[],
+    alreadyCreatedPeople: PersonWorkspaceEntity[],
+    source: FieldActorSource,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
+  ) {
+    const shouldCreateOrRestorePeopleByHandleMap = new Map<
+      string,
+      { existingPerson: PersonWorkspaceEntity }
+    >();
+
+    for (const contact of uniqueContacts) {
+      if (!contact.handle.includes('@')) {
+        continue;
+      }
+
+      const existingPersonOnPrimaryEmail = alreadyCreatedPeople.find(
+        (person) => {
+          return (
+            isNonEmptyString(person.emails?.primaryEmail) &&
+            person.emails.primaryEmail.toLowerCase() ===
+              contact.handle.toLowerCase()
+          );
+        },
+      );
+
+      if (isDefined(existingPersonOnPrimaryEmail)) {
+        shouldCreateOrRestorePeopleByHandleMap.set(
+          contact.handle.toLowerCase(),
+          {
+            existingPerson: existingPersonOnPrimaryEmail,
+          },
+        );
+        continue;
+      }
+
+      const existingPersonOnAdditionalEmails = alreadyCreatedPeople.find(
+        (person) => {
+          return (
+            Array.isArray(person.emails?.additionalEmails) &&
+            person.emails.additionalEmails.some(
+              (email) => email.toLowerCase() === contact.handle.toLowerCase(),
+            )
+          );
+        },
+      );
+
+      if (!isDefined(existingPersonOnAdditionalEmails)) continue;
+
+      shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
+        existingPerson: existingPersonOnAdditionalEmails,
+      });
+    }
+
+    const contactsThatNeedPersonCreate = uniqueContacts.filter(
+      (contact) =>
+        !shouldCreateOrRestorePeopleByHandleMap.has(
+          contact.handle.toLowerCase(),
+        ),
+    );
+
+    const contactsThatNeedPersonRestore = uniqueContacts.filter((contact) => {
+      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
+        contact.handle.toLowerCase(),
+      )?.existingPerson;
+
+      if (!isDefined(existingPerson)) {
+        return false;
+      }
+
+      return !isNull(existingPerson.deletedAt);
+    });
+
+    const workDomainNamesToCreate = compact(
+      [...contactsThatNeedPersonCreate, ...contactsThatNeedPersonRestore]
+        .map((contact) => {
+          const companyDomainName = isWorkEmail(contact.handle)
+            ? getDomainNameFromHandle(contact.handle)
+            : undefined;
+
+          if (!isDefined(companyDomainName) || !isWorkDomain(companyDomainName))
+            return undefined;
+
+          return {
+            domainName: companyDomainName,
+            createdBySource: source,
+            createdByWorkspaceMember: connectedAccount.accountOwner,
+            createdByContext: {
+              provider: connectedAccount.provider,
+            },
+          };
+        })
+        .filter(isDefined),
+    );
+
+    return {
+      contactsThatNeedPersonCreate,
+      contactsThatNeedPersonRestore,
+      workDomainNamesToCreate,
+      shouldCreateOrRestorePeopleByHandleMap,
+    };
+  }
+
+  formatPeopleToCreateFromContacts({
     contactsToCreate,
     createdBy,
     companiesMap,
@@ -274,7 +298,6 @@ export class CreateCompanyAndPersonService {
     contactsToCreate: {
       handle: string;
       displayName: string;
-      companyDomainName: string | undefined;
     }[];
     createdBy: {
       source: FieldActorSource;
@@ -288,15 +311,13 @@ export class CreateCompanyAndPersonService {
     return contactsToCreate.map((contact) => {
       const id = v4();
 
-      const { handle, displayName, companyDomainName } = contact;
+      const { handle, displayName } = contact;
 
       const { firstName, lastName } =
         getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
       const createdByName = computeDisplayName(createdBy.workspaceMember?.name);
 
-      const companyId = isNonEmptyString(companyDomainName)
-        ? companiesMap[companyDomainName]
-        : undefined;
+      const companyId = companiesMap[getDomainNameFromHandle(handle)];
 
       return {
         id,
@@ -317,5 +338,43 @@ export class CreateCompanyAndPersonService {
         },
       };
     });
+  }
+
+  formatPeopleToRestoreFromContacts({
+    contactsToRestore,
+    companiesMap,
+    shouldCreateOrRestorePeopleByHandleMap,
+  }: {
+    contactsToRestore: {
+      handle: string;
+      displayName: string;
+    }[];
+    companiesMap: Record<string, string>;
+    shouldCreateOrRestorePeopleByHandleMap: Map<
+      string,
+      { existingPerson: PersonWorkspaceEntity | undefined }
+    >;
+  }): { personId: string; companyId: string | undefined }[] {
+    const peopleToRestore = [];
+
+    for (const contact of contactsToRestore) {
+      const { handle } = contact;
+
+      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
+        handle.toLowerCase(),
+      )?.existingPerson;
+
+      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt))
+        continue;
+
+      const companyId = companiesMap[getDomainNameFromHandle(handle)];
+
+      peopleToRestore.push({
+        personId: existingPerson.id,
+        companyId,
+      });
+    }
+
+    return peopleToRestore;
   }
 }

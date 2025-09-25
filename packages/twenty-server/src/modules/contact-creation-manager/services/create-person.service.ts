@@ -30,14 +30,23 @@ export class CreatePersonService {
     const lastPersonPosition =
       await this.getLastPersonPosition(personRepository);
 
-    return personRepository.save(peopleToCreate, undefined);
+    const createdPeople = await personRepository.insert(
+      peopleToCreate.map((person, index) => ({
+        ...person,
+        position: lastPersonPosition + index,
+      })),
+      undefined,
+      ['companyId', 'id'],
+    );
+
+    return createdPeople.raw;
   }
 
   public async restorePeople(
-    personIds: string[],
+    people: { personId: string; companyId: string | undefined }[],
     workspaceId: string,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
-    if (personIds.length === 0) {
+    if (people.length === 0) {
       return [];
     }
 
@@ -51,11 +60,11 @@ export class CreatePersonService {
       );
 
     const restoredPeople = await personRepository.updateMany(
-      peopleToRestore.map((person) => ({
-        criteria: person.id ?? '',
+      people.map(({ personId, companyId }) => ({
+        criteria: personId,
         partialEntity: {
-          companyId: person.companyId,
           deletedAt: null,
+          companyId,
         },
       })),
       undefined,

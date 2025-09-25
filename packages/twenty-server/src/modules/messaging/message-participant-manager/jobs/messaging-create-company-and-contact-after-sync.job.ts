@@ -100,7 +100,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       },
     });
 
-    await this.createCompanyAndPersonService.createCompaniesAndContactsAndUpdateParticipants(
+    await this.createCompanyAndPersonService.createCompaniesAndPeopleAndUpdateParticipants(
       connectedAccount,
       contactsToCreate,
       workspaceId,
