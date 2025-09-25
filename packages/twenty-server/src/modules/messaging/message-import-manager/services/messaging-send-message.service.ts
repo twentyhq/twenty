@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -26,7 +26,6 @@ interface SendMessageInput {
 
 @Injectable()
 export class MessagingSendMessageService {
-  private readonly logger = new Logger(MessagingSendMessageService.name);
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly oAuth2ClientProvider: OAuth2ClientProvider,
@@ -144,7 +143,7 @@ export class MessagingSendMessageService {
           raw: messageBuffer,
         });
 
-        try {
+        if (isDefined(connectedAccount.connectionParameters?.IMAP)) {
           const imapClient =
             await this.imapClientProvider.getClient(connectedAccount);
 
@@ -161,13 +160,6 @@ export class MessagingSendMessageService {
           }
 
           await this.imapClientProvider.closeClient(imapClient);
-        } catch (error) {
-          this.logger.warn(
-            `Could not append sent message to IMAP folder for ${
-              connectedAccount.handle
-            }. It's possible that IMAP is not configured for this account.`,
-            error,
-          );
         }
 
         break;
