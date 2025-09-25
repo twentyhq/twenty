@@ -52,10 +52,15 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     });
   }
 
-  async executeActionHandler<T extends WorkspaceMigrationActionV2>(
-    actionType: WorkspaceMigrationActionTypeV2,
-    context: WorkspaceMigrationActionRunnerArgs<T>,
-  ): Promise<Partial<AllFlatEntityMaps>> {
+  async executeActionHandler<T extends WorkspaceMigrationActionV2>({
+    actionType,
+    context,
+    rollback,
+  }: {
+    actionType: WorkspaceMigrationActionTypeV2;
+    context: WorkspaceMigrationActionRunnerArgs<T>;
+    rollback?: boolean;
+  }): Promise<Partial<AllFlatEntityMaps>> {
     const handler = this.actionHandlers.get(actionType);
 
     if (!handler) {
@@ -63,6 +68,12 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
         `No migration runner action handler found for action: ${actionType}`,
         WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE,
       );
+    }
+
+    if (rollback) {
+      await handler.rollback(context);
+
+      return {};
     }
 
     return await handler.execute(context);

@@ -1,7 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
 export const serverlessFunctionCreateCodeChecksum = (code: JSON): string => {
-  if (!code || typeof code !== 'object') {
+  if (!isDefined(code) || typeof code !== 'object') {
     return serverlessFunctionCreateHash('');
   }
 

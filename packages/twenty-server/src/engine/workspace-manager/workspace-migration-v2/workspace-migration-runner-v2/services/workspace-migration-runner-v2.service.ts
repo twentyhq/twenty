@@ -41,16 +41,20 @@ export class WorkspaceMigrationRunnerV2Service {
 
     let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
 
+    const invertedActions = actions.reverse();
+
     try {
       for (const action of actions) {
         const partialOptimisticCache =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
-            action.type,
             {
-              action,
-              allFlatEntityMaps,
-              queryRunner,
-              workspaceId,
+              actionType: action.type,
+              context: {
+                action,
+                allFlatEntityMaps,
+                queryRunner,
+                workspaceId,
+              },
             },
           );
         const optimisticallyUpdatedFlatEntityMapsKeys = Object.keys(
@@ -77,7 +81,7 @@ export class WorkspaceMigrationRunnerV2Service {
         flatEntities: flatEntityMapsToInvalidate,
       });
 
-      return allFlatEntityMaps;
+      throw new Error('test');
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         try {
@@ -87,6 +91,22 @@ export class WorkspaceMigrationRunnerV2Service {
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }
+
+      for (const invertedAction of invertedActions) {
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+          {
+            actionType: invertedAction.type,
+            context: {
+              action: invertedAction,
+              allFlatEntityMaps: allFlatEntityMaps,
+              queryRunner,
+              workspaceId,
+            },
+            rollback: true,
+          },
+        );
+      }
+
       throw new WorkspaceQueryRunnerException(
         error.message,
         WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,

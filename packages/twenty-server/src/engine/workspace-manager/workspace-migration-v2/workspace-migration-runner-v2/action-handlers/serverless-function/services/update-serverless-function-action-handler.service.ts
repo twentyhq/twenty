@@ -4,14 +4,9 @@ import { basename, dirname, join } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
@@ -30,35 +25,6 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     private readonly serverlessService: ServerlessService,
   ) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<UpdateServerlessFunctionAction>): Partial<AllFlatEntityMaps> {
-    const { flatServerlessFunctionMaps } = allFlatEntityMaps;
-    const { serverlessFunctionId } = action;
-
-    const existingServerlessFunction =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: serverlessFunctionId,
-        flatEntityMaps: flatServerlessFunctionMaps,
-      });
-
-    const updatedServerlessFunction = {
-      ...existingServerlessFunction,
-      ...fromWorkspaceMigrationUpdateActionToPartialEntity(action),
-    };
-
-    const updatedFlatServerlessFunctionMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: updatedServerlessFunction,
-        flatEntityMaps: flatServerlessFunctionMaps,
-      });
-
-    return {
-      flatServerlessFunctionMaps: updatedFlatServerlessFunctionMaps,
-    };
   }
 
   async executeForMetadata(
@@ -128,11 +94,5 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
         folder: join(fileFolder, dirname(key)),
       });
     }
-  }
-
-  async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateServerlessFunctionAction>,
-  ): Promise<void> {
-    return;
   }
 }

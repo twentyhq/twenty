@@ -2,13 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { join } from 'path';
 
-import {
-  OptimisticallyApplyActionOnAllFlatEntityMapsArgs,
-  WorkspaceMigrationRunnerActionHandler,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
@@ -22,24 +17,6 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
 ) {
   constructor(private readonly fileStorageService: FileStorageService) {
     super();
-  }
-
-  optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
-    allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<CreateServerlessFunctionAction>): Partial<AllFlatEntityMaps> {
-    const { flatServerlessFunctionMaps } = allFlatEntityMaps;
-    const { serverlessFunction } = action;
-
-    const updatedFlatServerlessFunctionMaps =
-      addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: serverlessFunction,
-        flatEntityMaps: flatServerlessFunctionMaps,
-      });
-
-    return {
-      flatServerlessFunctionMaps: updatedFlatServerlessFunctionMaps,
-    };
   }
 
   async executeForMetadata(
@@ -73,9 +50,15 @@ export class CreateServerlessFunctionActionHandlerService extends WorkspaceMigra
     }
   }
 
-  async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateServerlessFunctionAction>,
+  async rollbackForMetadata(
+    context: WorkspaceMigrationActionRunnerArgs<CreateServerlessFunctionAction>,
   ): Promise<void> {
-    return;
+    const { action } = context;
+
+    await this.fileStorageService.delete({
+      folderPath: getServerlessFolder({
+        serverlessFunction: action.serverlessFunction,
+      }),
+    });
   }
 }

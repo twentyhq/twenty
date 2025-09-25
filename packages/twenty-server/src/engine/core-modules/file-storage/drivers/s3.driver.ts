@@ -172,11 +172,11 @@ export class S3Driver implements StorageDriver {
   }
 
   async move(params: {
-    from: { folderPath: string; filename: string };
-    to: { folderPath: string; filename: string };
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
   }): Promise<void> {
-    const fromKey = `${params.from.folderPath}/${params.from.filename}`;
-    const toKey = `${params.to.folderPath}/${params.to.filename}`;
+    const fromKey = `${params.from.folderPath}/${params.from.filename || ''}`;
+    const toKey = `${params.to.folderPath}/${params.to.filename || ''}`;
 
     try {
       // Check if the source file exists
