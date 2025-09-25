@@ -55,7 +55,7 @@ export const usePageLayoutHandleLayoutChange = (
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        const currentTab = pageLayoutDraft.tabs?.find(
+        const currentTab = pageLayoutDraft.tabs.find(
           (tab) => tab.id === activeTabId,
         );
 
@@ -69,7 +69,7 @@ export const usePageLayoutHandleLayoutChange = (
         if (isDefined(activeTabId)) {
           set(pageLayoutDraftState, (prev) => ({
             ...prev,
-            tabs: prev.tabs?.map((tab) => {
+            tabs: prev.tabs.map((tab) => {
               if (tab.id === activeTabId) {
                 const tabWidgets = updatedWidgets.filter(
                   (w) => w.pageLayoutTabId === activeTabId,
