@@ -12,6 +12,7 @@ export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
+export { getRange } from './array/getRange';
 export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';

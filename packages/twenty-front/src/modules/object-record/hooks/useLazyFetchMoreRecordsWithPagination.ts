@@ -24,6 +24,7 @@ import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindMan
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
@@ -88,7 +89,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecordsLazy = useRecoilCallback(
     ({ snapshot, set }) =>
-      async () => {
+      async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
         const hasNextPageLocal = snapshot
           .getLoadable(hasNextPageFamilyState(queryIdentifier))
           .getValue();
@@ -105,6 +106,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
           try {
             const { data: fetchMoreDataResult } = await fetchMore({
               variables: {
+                limit,
                 filter,
                 orderBy,
                 lastCursor: isNonEmptyString(lastCursorLocal)

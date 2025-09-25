@@ -1,88 +1,91 @@
-import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
 
-import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
-import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
+
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
-import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
+import { useInitializeRowVirtualization } from '@/object-record/record-table/virtualization/hooks/useInitializeRowVirtualization';
+import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
+import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular, recordTableId } = useRecordTableContextOrThrow();
 
-  const { records, loading, hasNextPage } =
+  const { records, loading, totalCount } =
     useRecordIndexTableQuery(objectNameSingular);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
   });
 
-  const showAuthModal = useShowAuthModal();
-
-  const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
-
-  const setHasRecordTableFetchedAllRecordsComponents =
-    useSetRecoilComponentState(hasRecordTableFetchedAllRecordsComponentState);
-  const setIsRecordTableInitialLoading = useSetRecoilComponentState(
-    isRecordTableInitialLoadingComponentState,
-  );
-  const isFetchingMoreRecords = useRecoilValue(
-    isFetchingMoreRecordsFamilyState(recordTableId),
+  const setHasAlreadyFetchedUpToRealIndex = useSetRecoilComponentState(
+    hasAlreadyFetchedUpToRealIndexComponentState,
   );
 
-  const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
+  const [isRecordTableInitialLoading, setIsRecordTableInitialLoading] =
+    useRecoilComponentState(isRecordTableInitialLoadingComponentState);
 
-  const { scrollToPosition } = useScrollToPosition();
+  const setTotalNumberOfRecordsToVirtualize = useSetRecoilComponentState(
+    totalNumberOfRecordsToVirtualizeComponentState,
+  );
+
+  const { initializeRowsVirtualization } = useInitializeRowVirtualization();
 
   useEffect(() => {
-    if (!loading && !isFetchingMoreRecords) {
+    if (isRecordTableInitialLoading && !loading) {
       setRecordTableData({
         records,
       });
-      setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
+
+      if (isDefined(totalCount)) {
+        setTotalNumberOfRecordsToVirtualize(totalCount);
+      }
+
+      initializeRowsVirtualization(records);
+
+      setHasAlreadyFetchedUpToRealIndex(records.length);
+
       setIsRecordTableInitialLoading(false);
     }
   }, [
-    hasNextPage,
-    isFetchingMoreRecords,
-    loading,
-    records,
-    setHasRecordTableFetchedAllRecordsComponents,
+    isRecordTableInitialLoading,
     setIsRecordTableInitialLoading,
     setRecordTableData,
-    showAuthModal,
+    records,
+    loading,
+    totalCount,
+    setTotalNumberOfRecordsToVirtualize,
+    initializeRowsVirtualization,
+    setHasAlreadyFetchedUpToRealIndex,
   ]);
 
-  useEffect(() => {
-    if (hasInitializedScroll) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (hasInitializedScroll) {
+  //     return;
+  //   }
 
-    if (isNonEmptyString(lastShowPageRecordId)) {
-      const isRecordAlreadyFetched = records.some(
-        (record) => record.id === lastShowPageRecordId,
-      );
+  //   if (isNonEmptyString(lastShowPageRecordId)) {
+  //     const isRecordAlreadyFetched = records.some(
+  //       (record) => record.id === lastShowPageRecordId,
+  //     );
 
-      if (isRecordAlreadyFetched) {
-        const recordPosition = records.findIndex(
-          (record) => record.id === lastShowPageRecordId,
-        );
+  //     if (isRecordAlreadyFetched) {
+  //       const recordPosition = records.findIndex(
+  //         (record) => record.id === lastShowPageRecordId,
+  //       );
 
-        const positionInPx = recordPosition * ROW_HEIGHT;
+  //       const positionInPx = recordPosition * RECORD_TABLE_ROW_HEIGHT;
 
-        scrollToPosition(positionInPx);
+  //       scrollToPosition(positionInPx);
 
-        setHasInitializedScroll(true);
-      }
-    }
-  }, [hasInitializedScroll, lastShowPageRecordId, records, scrollToPosition]);
+  //       setHasInitializedScroll(true);
+  //     }
+  //   }
+  // }, [hasInitializedScroll, lastShowPageRecordId, records, scrollToPosition]);
 
   return <></>;
 };

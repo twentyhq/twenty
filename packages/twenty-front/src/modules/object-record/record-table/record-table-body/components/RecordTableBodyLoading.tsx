@@ -14,7 +14,7 @@ export const RecordTableBodyLoading = () => {
 
   return (
     <RecordTableBody>
-      {Array.from({ length: 50 }).map((_, rowIndex) => (
+      {Array.from({ length: 80 }).map((_, rowIndex) => (
         <RecordTableRowContextProvider
           key={rowIndex}
           value={{

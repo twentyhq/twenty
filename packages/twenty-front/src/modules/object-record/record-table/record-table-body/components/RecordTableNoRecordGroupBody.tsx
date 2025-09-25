@@ -7,6 +7,7 @@ import { RecordTableBodyLoading } from '@/object-record/record-table/record-tabl
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { RecordTableVirtualizationEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizationEffect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableNoRecordGroupBody = () => {
@@ -32,6 +33,7 @@ export const RecordTableNoRecordGroupBody = () => {
         {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
           <RecordTableAggregateFooter />
         )}
+        <RecordTableVirtualizationEffect />
       </RecordTableBodyDragDropContextProvider>
     </RecordTableNoRecordGroupBodyContextProvider>
   );

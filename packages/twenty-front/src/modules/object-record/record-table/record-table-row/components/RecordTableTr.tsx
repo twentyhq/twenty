@@ -7,7 +7,6 @@ import { RecordTableFirstRowOfGroup } from '@/object-record/record-table/record-
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordIdFirstOfGroupComponentFamilySelector } from '@/object-record/record-table/record-table-row/states/isRecordIdFirstOfGroupComponentFamilySelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -45,10 +44,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       recordId,
     );
 
-    const isRowVisible = useRecoilComponentFamilyValue(
-      isRowVisibleComponentFamilyState,
-      recordId,
-    );
+    const isRowVisible = true;
 
     const isActive = useRecoilComponentFamilyValue(
       isRecordTableRowActiveComponentFamilyState,

@@ -1,29 +1,40 @@
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableAddNew } from '@/object-record/record-table/components/RecordTableAddNew';
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
-import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
-import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
+import { RecordTableRowVirtualized } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualized';
+import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
+import { RecordTableVirtualizedFetchMoreEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedFetchMore';
+import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
+import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getRange, isDefined } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupRows = () => {
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
+  const totalNumberOfRecordsToVirtualize = useRecoilComponentValue(
+    totalNumberOfRecordsToVirtualizeComponentState,
   );
+
+  const numberOfRows = isDefined(totalNumberOfRecordsToVirtualize)
+    ? Math.max(
+        totalNumberOfRecordsToVirtualize ?? 0,
+        NUMBER_OF_VIRTUALIZED_ROWS,
+      )
+    : 0;
+
+  const virtualRowIndexes = getRange(0, numberOfRows);
 
   return (
     <>
-      {allRecordIds.map((recordId, rowIndex) => {
+      <RecordTableVirtualizedBodyPlaceholder />
+      {virtualRowIndexes.map((virtualRowIndex) => {
         return (
-          <RecordTableRow
-            key={recordId}
-            recordId={recordId}
-            rowIndexForFocus={rowIndex}
-            rowIndexForDrag={rowIndex}
-            isFirstRowOfGroup={rowIndex === 0}
+          <RecordTableRowVirtualized
+            key={virtualRowIndex}
+            virtualIndex={virtualRowIndex}
           />
         );
       })}
-      <RecordTableBodyFetchMoreLoader />
+      <RecordTableVirtualizedFetchMoreEffect />
+      {/* <RecordTableBodyFetchMoreLoader /> */}
       <RecordTableBodyDroppablePlaceholder />
       <RecordTableAddNew />
     </>

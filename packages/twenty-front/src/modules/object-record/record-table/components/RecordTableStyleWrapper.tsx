@@ -72,6 +72,8 @@ const StyledTable = styled.div<{
   flex-wrap: wrap;
   width: 100%;
 
+  position: relative;
+
   div.header-cell {
     position: sticky;
     top: 0;
