@@ -13,16 +13,15 @@ import {
   type ReactNode,
 } from 'react';
 
-import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
-  MenuItemContextualText,
   StyledHoverableMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
   StyledMenuItemRightContent,
+  StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
 
@@ -56,12 +55,6 @@ export type MenuItemProps = {
   focused?: boolean;
   hotKeys?: string[];
 };
-
-const StyledRightMenuItemContextualText = styled(MenuItemContextualText)`
-  display: flex;
-  text-align: right;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
 
 export const MenuItem = ({
   accent = 'default',

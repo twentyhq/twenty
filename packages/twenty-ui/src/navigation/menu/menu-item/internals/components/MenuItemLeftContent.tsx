@@ -9,8 +9,8 @@ import {
   OverflowingTextWithTooltip,
 } from '@ui/display';
 import {
-  MenuItemContextualText,
   StyledDraggableItem,
+  StyledMenuItemContextualText,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
@@ -88,9 +88,9 @@ export const MenuItemLeftContent = ({
         {isString(contextualText) ? (
           <>
             {isNonEmptyString(contextualText) && (
-              <MenuItemContextualText>
+              <StyledMenuItemContextualText>
                 <OverflowingTextWithTooltip text={`· ${contextualText}`} />
-              </MenuItemContextualText>
+              </StyledMenuItemContextualText>
             )}
           </>
         ) : (

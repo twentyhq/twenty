@@ -170,7 +170,7 @@ export const StyledMenuItemIconCheck = styled(IconCheck)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledMenuItemContextualText = styled.div`
+export const StyledMenuItemContextualText = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-family: inherit;
   font-size: inherit;
@@ -180,4 +180,10 @@ const StyledMenuItemContextualText = styled.div`
   overflow: hidden;
 `;
 
-export { StyledMenuItemContextualText as MenuItemContextualText };
+export const StyledRightMenuItemContextualText = styled(
+  StyledMenuItemContextualText,
+)`
+  display: flex;
+  text-align: right;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
