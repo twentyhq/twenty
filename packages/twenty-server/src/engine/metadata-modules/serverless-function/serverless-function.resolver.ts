@@ -21,6 +21,7 @@ import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-fu
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
@@ -30,6 +31,7 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
@@ -95,8 +97,8 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.serverlessFunctionService.deleteOneServerlessFunction({
-        id: input.id,
+      return await this.serverlessFunctionV2Service.destroyOne({
+        destroyServerlessFunctionInput: input,
         workspaceId,
       });
     } catch (error) {
@@ -111,7 +113,7 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.serverlessFunctionService.updateOneServerlessFunction(
+      return await this.serverlessFunctionV2Service.updateOne(
         input,
         workspaceId,
       );
@@ -127,7 +129,7 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.serverlessFunctionService.createOneServerlessFunction(
+      return await this.serverlessFunctionV2Service.createOne(
         input,
         workspaceId,
       );
