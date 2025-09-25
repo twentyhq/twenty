@@ -84,7 +84,7 @@ export const PageLayoutGridLayout = () => {
     return null;
   }
 
-  const activeTabWidgets = currentPageLayout?.tabs.find(
+  const activeTabWidgets = currentPageLayout.tabs?.find(
     (tab) => tab.id === activeTabId,
   )?.widgets;
 

@@ -1,9 +1,9 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -18,12 +18,12 @@ export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
-      (widgetId: string, updates: Partial<PageLayoutWidget>) => {
+      (widgetId: string, updates: Partial<Widget>) => {
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: prev.tabs.map((tab) => ({
+          tabs: prev.tabs?.map((tab) => ({
             ...tab,
-            widgets: tab.widgets.map((widget) =>
+            widgets: tab.widgets?.map((widget) =>
               widget.id === widgetId ? { ...widget, ...updates } : widget,
             ),
           })),

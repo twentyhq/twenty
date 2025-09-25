@@ -1,9 +1,9 @@
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { GraphType, WidgetType } from '../../mocks/mockWidgets';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
-  const mockWidgets: PageLayoutWidget[] = [
+  const mockWidgets: Widget[] = [
     {
       id: 'widget-1',
       pageLayoutTabId: 'tab-1',

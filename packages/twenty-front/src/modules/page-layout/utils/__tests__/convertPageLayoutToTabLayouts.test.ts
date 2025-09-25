@@ -1,5 +1,9 @@
-import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { GraphType } from '@/page-layout/mocks/mockWidgets';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
+import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
@@ -17,27 +21,41 @@ describe('convertPageLayoutToTabLayouts', () => {
           pageLayoutId: 'page-layout-1',
           widgets: [
             {
+              __typename: 'PageLayoutWidget',
               id: 'widget-1',
               pageLayoutTabId: 'tab-1',
               title: 'Widget 1',
               type: WidgetType.GRAPH,
+              configuration: {
+                graphType: GraphType.NUMBER,
+                aggregateOperation: AggregateOperations.COUNT,
+                aggregateFieldMetadataId: 'id',
+              },
               gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
-            },
+            } as GraphWidget,
             {
+              __typename: 'PageLayoutWidget',
               id: 'widget-2',
               pageLayoutTabId: 'tab-1',
               title: 'Widget 2',
               type: WidgetType.GRAPH,
+              configuration: {
+                graphType: GraphType.PIE,
+                aggregateOperation: AggregateOperations.COUNT,
+                aggregateFieldMetadataId: 'id',
+                groupByFieldMetadataId: 'status',
+                orderBy: GraphOrderBy.VALUE_DESC,
+              },
               gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
               objectMetadataId: 'object-metadata-1',
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
-            },
+            } as GraphWidget,
           ],
           createdAt: '2025-01-01T00:00:00.000Z',
           updatedAt: '2025-01-01T00:00:00.000Z',

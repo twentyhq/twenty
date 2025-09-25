@@ -55,7 +55,7 @@ export const usePageLayoutHandleLayoutChange = (
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
-        const currentTab = pageLayoutDraft.tabs.find(
+        const currentTab = pageLayoutDraft.tabs?.find(
           (tab) => tab.id === activeTabId,
         );
 
@@ -69,24 +69,11 @@ export const usePageLayoutHandleLayoutChange = (
         if (isDefined(activeTabId)) {
           set(pageLayoutDraftState, (prev) => ({
             ...prev,
-            tabs: prev.tabs.map((tab) => {
+            tabs: prev.tabs?.map((tab) => {
               if (tab.id === activeTabId) {
-                const tabWidgets = updatedWidgets
-                  .filter((w) => w.pageLayoutTabId === activeTabId)
-                  .map((widget) => ({
-                    id: widget.id,
-                    pageLayoutTabId: widget.pageLayoutTabId || activeTabId,
-                    title: widget.title,
-                    type: widget.type,
-                    objectMetadataId: null,
-                    gridPosition: widget.gridPosition,
-                    configuration: widget.configuration || undefined,
-                    createdAt:
-                      tab.widgets.find((w) => w.id === widget.id)?.createdAt ||
-                      new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    deletedAt: null,
-                  }));
+                const tabWidgets = updatedWidgets.filter(
+                  (w) => w.pageLayoutTabId === activeTabId,
+                );
                 return {
                   ...tab,
                   widgets: tabWidgets,

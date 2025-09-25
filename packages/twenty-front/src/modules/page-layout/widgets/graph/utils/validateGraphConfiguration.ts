@@ -119,7 +119,7 @@ const isValidGaugeChartConfiguration = (
 };
 
 export const validateGraphConfiguration = (
-  config: unknown,
+  config: Record<string, unknown>,
 ): GraphWidgetConfiguration | null => {
   if (!isObject(config)) {
     return null;
@@ -129,7 +129,7 @@ export const validateGraphConfiguration = (
     return null;
   }
 
-  const typedConfig = config as Record<string, unknown>;
+  const typedConfig = config;
 
   switch (typedConfig.graphType) {
     case GraphType.BAR:

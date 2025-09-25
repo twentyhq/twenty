@@ -1,13 +1,13 @@
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { validateGraphConfiguration } from '@/page-layout/widgets/graph/utils/validateGraphConfiguration';
 import { type IframeWidget } from '@/page-layout/widgets/iframe/types/IframeWidget';
 import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { isString } from '@sniptt/guards';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 import { WidgetType } from '~/generated/graphql';
 
 export const validatePageLayoutWidget = (
-  widget: PageLayoutWidgetWithData,
+  widget: PageLayoutWidget,
 ): Widget | null => {
   switch (widget.type) {
     case WidgetType.GRAPH: {

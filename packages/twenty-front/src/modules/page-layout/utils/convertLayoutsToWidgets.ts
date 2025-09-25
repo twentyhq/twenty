@@ -1,10 +1,10 @@
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { type Layouts } from 'react-grid-layout';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 export const convertLayoutsToWidgets = (
-  widgets: PageLayoutWidget[],
+  widgets: Widget[],
   layouts: Layouts,
-): PageLayoutWidget[] => {
+): Widget[] => {
   const activeLayouts = layouts.desktop || layouts.mobile || [];
 
   return widgets.map((widget) => {

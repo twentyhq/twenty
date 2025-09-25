@@ -1,12 +1,12 @@
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
 import { validatePageLayoutWidget } from '@/page-layout/utils/validatePageLayoutWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 import { WidgetType } from '~/generated/graphql';
 
 type WidgetContentRendererProps = {
-  widget: PageLayoutWidgetWithData;
+  widget: PageLayoutWidget;
 };
 
 export const WidgetContentRenderer = ({
@@ -15,7 +15,10 @@ export const WidgetContentRenderer = ({
   const validatedWidget = validatePageLayoutWidget(widget);
 
   if (!isDefined(validatedWidget)) {
-    console.log('Invalid widget configuration', JSON.stringify(widget));
+    console.log(
+      `WidgetContentRenderer: Invalid widget configuration for widget ID ${widget.id}`,
+      JSON.stringify(widget),
+    );
     return null;
   }
 

@@ -1,10 +1,10 @@
-import { type PageLayoutTab } from '@/page-layout/types/pageLayoutTypes';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type Widget } from '@/page-layout/widgets/types/Widget';
 
 export const addWidgetToTab = (
   tabs: PageLayoutTab[],
   activeTabId: string,
-  newWidget: PageLayoutWidget,
+  newWidget: Widget,
 ): PageLayoutTab[] => {
   return tabs.map((tab) => {
     if (tab.id === activeTabId) {
