@@ -13,8 +13,10 @@ import {
   type ReactNode,
 } from 'react';
 
+import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
+import { motion } from 'framer-motion';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
@@ -54,7 +56,14 @@ export type MenuItemProps = {
   hasSubMenu?: boolean;
   focused?: boolean;
   hotKeys?: string[];
+  isSubMenuOpened?: boolean;
 };
+
+const StyledSubMenuIcon = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const MenuItem = ({
   accent = 'default',
@@ -77,6 +86,7 @@ export const MenuItem = ({
   disabled = false,
   focused = false,
   hotKeys,
+  isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -138,10 +148,15 @@ export const MenuItem = ({
         )}
         {RightComponent}
         {hasSubMenu && !disabled && (
-          <IconChevronRight
-            size={theme.icon.size.sm}
-            color={theme.font.color.light}
-          />
+          <StyledSubMenuIcon
+            animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
+            transition={{ duration: theme.animation.duration.normal }}
+          >
+            <IconChevronRight
+              size={theme.icon.size.sm}
+              color={theme.font.color.light}
+            />
+          </StyledSubMenuIcon>
         )}
       </StyledMenuItemRightContent>
     </StyledHoverableMenuItemBase>

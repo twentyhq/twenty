@@ -169,15 +169,13 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'active'],
+          values: ['default', 'hover'],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
                 return { className: 'hover' };
-              case 'active':
-                return { className: 'pressed' };
               default:
                 return {};
             }
@@ -197,7 +195,6 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
 export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
   args: {
     text: 'Menu item with contextual text',
-    contextualText: 'Very very very very long contextual text',
   },
   decorators: [CatalogDecorator],
   parameters: {
@@ -212,6 +209,24 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
           labels: (contextualTextPosition: 'left' | 'right') =>
             contextualTextPosition === 'left' ? 'Left' : 'Right',
         },
+        {
+          name: 'contextualText',
+          values: [
+            'Contextual text',
+            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.',
+          ],
+          props: (contextualText: string) => ({ contextualText }),
+          labels: (contextualText: string) => {
+            switch (contextualText) {
+              case 'Contextual text':
+                return 'Contextual text';
+              case 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.':
+                return 'Long contextual text';
+              default:
+                return contextualText;
+            }
+          },
+        },
       ],
       options: {
         elementContainer: {
@@ -220,4 +235,31 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
       },
     },
   },
+};
+
+export const SubMenuCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with sub menu',
+    LeftIcon: IconBell,
+    hasSubMenu: true,
+  },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'isSubMenuOpened',
+          values: [true, false],
+          props: (isSubMenuOpened: boolean) => ({ isSubMenuOpened }),
+          labels: (isSubMenuOpened: boolean) =>
+            isSubMenuOpened ? 'Opened' : 'Closed',
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 200,
+        },
+      },
+    },
+  },
+  decorators: [CatalogDecorator],
 };
