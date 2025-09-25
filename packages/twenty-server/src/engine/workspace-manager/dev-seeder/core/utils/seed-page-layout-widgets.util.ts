@@ -9,14 +9,15 @@ export const seedPageLayoutWidgets = async (
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
 ) => {
-  const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(workspaceId, objectMetadataItems).map(
-    (widget) => ({
-      ...widget,
-      workspaceId,
-      gridPosition: widget.gridPosition,
-      configuration: widget.configuration,
-    }),
-  );
+  const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(
+    workspaceId,
+    objectMetadataItems,
+  ).map((widget) => ({
+    ...widget,
+    workspaceId,
+    gridPosition: widget.gridPosition,
+    configuration: widget.configuration,
+  }));
 
   if (pageLayoutWidgets.length > 0) {
     await dataSource
