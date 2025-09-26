@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVariableTagInnerRegex';
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/contentTypeValuesHttpRequest';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
@@ -56,5 +57,11 @@ export type {
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
+export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
+export type {
+  GlobalAvailability,
+  SingleRecordAvailability,
+  BulkRecordsAvailability,
+} from './workflow-trigger/types/workflow-trigger.type';

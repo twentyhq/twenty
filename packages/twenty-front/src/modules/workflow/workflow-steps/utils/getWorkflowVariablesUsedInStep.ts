@@ -1,6 +1,6 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import { isObject, isString } from '@sniptt/guards';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
 function* resolveVariables(value: JsonValue): Generator<string> {

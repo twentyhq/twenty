@@ -11,7 +11,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityOptions';
 import { MANUAL_TRIGGER_IS_PINNED_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions';
-import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
+import { getManualTriggerDefaultSettingsDeprecated } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettingsDeprecated';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -23,7 +23,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
-type WorkflowEditTriggerManualFormProps = {
+type WorkflowEditTriggerManualDeprecatedProps = {
   trigger: WorkflowManualTrigger;
   triggerOptions:
     | {
@@ -54,10 +54,10 @@ const StyledIconPickerContainer = styled.div`
   flex-direction: column;
 `;
 
-export const WorkflowEditTriggerManualForm = ({
+export const WorkflowEditTriggerManualDeprecated = ({
   trigger,
   triggerOptions,
-}: WorkflowEditTriggerManualFormProps) => {
+}: WorkflowEditTriggerManualDeprecatedProps) => {
   const theme = useTheme();
 
   const { t } = useLingui();
@@ -168,7 +168,7 @@ export const WorkflowEditTriggerManualForm = ({
 
             triggerOptions.onTriggerUpdate({
               ...trigger,
-              settings: getManualTriggerDefaultSettings({
+              settings: getManualTriggerDefaultSettingsDeprecated({
                 availability: updatedTriggerType,
                 activeNonSystemObjectMetadataItems,
                 icon: trigger.settings.icon,

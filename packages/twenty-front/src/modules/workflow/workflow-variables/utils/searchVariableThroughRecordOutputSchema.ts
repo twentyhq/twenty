@@ -1,4 +1,3 @@
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import {
   type FieldOutputSchemaV2,
@@ -7,6 +6,7 @@ import {
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
 const getRecordObjectLabel = (
   recordSchema: RecordOutputSchemaV2,
