@@ -161,16 +161,14 @@ export class WorkspaceUpdateQueryBuilder<
         authContext: this.authContext,
       });
 
-      if (formattedAfter.length > 0) {
-        await this.internalContext.eventEmitterService.emitMutationEvent({
-          action: DatabaseEventAction.UPSERTED,
-          objectMetadataItem: objectMetadata,
-          workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
-          authContext: this.authContext,
-        });
-      }
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPSERTED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        beforeEntities: formattedBefore,
+        authContext: this.authContext,
+      });
 
       const formattedResult = formatResult<T[]>(
         result.raw,
@@ -304,16 +302,14 @@ export class WorkspaceUpdateQueryBuilder<
         authContext: this.authContext,
       });
 
-      if (formattedAfter.length > 0) {
-        await this.internalContext.eventEmitterService.emitMutationEvent({
-          action: DatabaseEventAction.UPSERTED,
-          objectMetadataItem: objectMetadata,
-          workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
-          authContext: this.authContext,
-        });
-      }
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPSERTED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        beforeEntities: formattedBefore,
+        authContext: this.authContext,
+      });
 
       const formattedResults = formatResult<T[]>(
         results.flatMap((result) => result.raw),
