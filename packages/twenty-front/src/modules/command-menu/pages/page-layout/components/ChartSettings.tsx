@@ -90,15 +90,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     <CommandMenuList
       commandGroups={[]}
       selectableItemIds={[
-        'source',
-        'filter',
-        'data-on-display-x',
-        'sort-by',
-        'data-on-display-y',
-        'group-by-y',
-        'colors',
-        'axis-name',
-        'data-labels',
+        ...chartSettings.flatMap((group) => group.items.map((item) => item.id)),
       ]}
     >
       <ChartTypeSelectionSection
