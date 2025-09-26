@@ -8,6 +8,7 @@ export enum FileFolder {
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
   ServerlessFunction = 'serverless-function',
+  ServerlessFunctionToDelete = 'serverless-function-to-delete',
   File = 'file',
 }
 
@@ -33,6 +34,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.ServerlessFunction]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.ServerlessFunctionToDelete]: {
     ignoreExpirationToken: false,
   },
   [FileFolder.File]: {

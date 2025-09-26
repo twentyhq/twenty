@@ -1,14 +1,6 @@
-import { type FromTo } from 'twenty-shared/types';
-
-import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunctionPropertiesToCompare } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function-properties-to-compare.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-
-export type FlatServerlessFunctionPropertyUpdate<
-  P extends FlatServerlessFunctionPropertiesToCompare,
-> = {
-  property: P;
-} & FromTo<ServerlessFunctionEntity[P]>;
+import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/types/property-update.type';
 
 export type CreateServerlessFunctionAction = {
   type: 'create_serverless_function';
@@ -18,9 +10,13 @@ export type CreateServerlessFunctionAction = {
 export type UpdateServerlessFunctionAction = {
   type: 'update_serverless_function';
   serverlessFunctionId: string;
+  code?: JSON;
   updates: Array<
     {
-      [P in FlatServerlessFunctionPropertiesToCompare]: FlatServerlessFunctionPropertyUpdate<P>;
+      [P in FlatServerlessFunctionPropertiesToCompare]: PropertyUpdate<
+        FlatServerlessFunction,
+        P
+      >;
     }[FlatServerlessFunctionPropertiesToCompare]
   >;
 };
