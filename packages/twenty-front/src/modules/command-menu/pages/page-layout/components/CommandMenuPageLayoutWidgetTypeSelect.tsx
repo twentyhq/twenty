@@ -5,7 +5,7 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -86,8 +86,9 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     <StyledContainer>
       <StyledSectionTitle>Widget type</StyledSectionTitle>
       {widgetTypeOptions.map((option) => {
-        const MenuItem = (
-          <MenuItemCommand
+        const MenuItemComponent = (
+          <MenuItem
+            withIconContainer={true}
             key={option.type}
             LeftIcon={option.icon}
             text={option.title}
@@ -97,10 +98,10 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
         return option.disabled ? (
           <StyledDisabledMenuItem key={option.type}>
-            {MenuItem}
+            {MenuItemComponent}
           </StyledDisabledMenuItem>
         ) : (
-          MenuItem
+          MenuItemComponent
         );
       })}
     </StyledContainer>

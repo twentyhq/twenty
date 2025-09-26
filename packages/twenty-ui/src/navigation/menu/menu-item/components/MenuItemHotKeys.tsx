@@ -31,15 +31,15 @@ const StyledCommandKey = styled.div`
   width: ${({ theme }) => theme.spacing(4)};
 `;
 
-export type MenuItemCommandHotKeysProps = {
+export type MenuItemHotKeysProps = {
   hotKeys?: string[];
   joinLabel?: string;
 };
 
-export const MenuItemCommandHotKeys = ({
+export const MenuItemHotKeys = ({
   hotKeys,
   joinLabel = 'then',
-}: MenuItemCommandHotKeysProps) => {
+}: MenuItemHotKeysProps) => {
   return (
     <StyledCommandText>
       {hotKeys && (
