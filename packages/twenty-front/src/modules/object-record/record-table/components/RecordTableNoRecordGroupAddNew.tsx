@@ -53,10 +53,6 @@ export const RecordTableNoRecordGroupAddNew = () => {
           position: 'last',
         });
 
-        console.log({
-          createdRecord,
-        });
-
         const hasAlreadyFetchedUpToRealIndex = getSnapshotValue(
           snapshot,
           hasAlreadyFetchedUpToRealIndexCallbackState,
@@ -74,10 +70,6 @@ export const RecordTableNoRecordGroupAddNew = () => {
             hasAlreadyFetchedUpToRealIndexCallbackState,
             hasAlreadyFetchedUpToRealIndex + 1,
           );
-
-          console.log({
-            hasAlreadyFetchedUpToRealIndex,
-          });
         }
       },
     [
@@ -86,8 +78,6 @@ export const RecordTableNoRecordGroupAddNew = () => {
       hasAlreadyFetchedUpToRealIndexCallbackState,
     ],
   );
-
-  console.log({ hasRecordTableFetchedAllRecords });
 
   if (hasAnySoftDeleteFilterOnView) {
     return null;

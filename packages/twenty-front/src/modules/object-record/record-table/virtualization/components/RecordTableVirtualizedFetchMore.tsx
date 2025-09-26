@@ -82,9 +82,6 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
               hasAlreadyFetchedUpToRealIndexSnapshotValue ?? 0;
 
             if (isDefined(records)) {
-              console.log({
-                records,
-              });
               const pagingForUIUpdate = PAGING_FOR_UI_UPDATE;
 
               const pages = Math.ceil(records.length / pagingForUIUpdate);
@@ -124,8 +121,6 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
                 hasAlreadyFetchedUpToRealIndexCallbackState,
                 startingRealIndex + records.length,
               );
-
-              console.log({ hasNextPage: result?.data?.pageInfo.hasNextPage });
 
               set(
                 hasRecordTableFetchedAllRecordsCallbackState,
