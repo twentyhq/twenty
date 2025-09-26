@@ -1,5 +1,7 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
+import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
+import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
 import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -14,6 +16,12 @@ import { type SelectOption } from 'twenty-ui/input';
 
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
+  const { addSelectOption } = useAddSelectOption(
+    fieldDefinition?.metadata?.fieldName,
+  );
+  const { canAddSelectOption } = useCanAddSelectOption(
+    fieldDefinition?.metadata?.fieldName,
+  );
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
 
@@ -35,6 +43,13 @@ export const SelectFieldInput = () => {
   const handleClearField = () => {
     clearField();
     onCancel?.();
+  };
+
+  const handleAddSelectOption = (optionName: string) => {
+    if (!canAddSelectOption) {
+      return;
+    }
+    addSelectOption(optionName);
   };
 
   const handleSubmit = (option: SelectOption) => {
@@ -82,6 +97,7 @@ export const SelectFieldInput = () => {
         fieldDefinition.metadata.isNullable ? handleClearField : undefined
       }
       clearLabel={fieldDefinition.label}
+      onAddSelectOption={handleAddSelectOption}
     />
   );
 };
