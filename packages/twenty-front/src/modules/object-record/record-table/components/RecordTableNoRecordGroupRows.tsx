@@ -1,4 +1,4 @@
-import { RecordTableAddNew } from '@/object-record/record-table/components/RecordTableAddNew';
+import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNew';
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
 import { RecordTableRowVirtualized } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualized';
 import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
@@ -32,7 +32,7 @@ export const RecordTableNoRecordGroupRows = () => {
       })}
       <RecordTableVirtualizedFetchMoreEffect />
       <RecordTableBodyDroppablePlaceholder />
-      <RecordTableAddNew />
+      <RecordTableNoRecordGroupAddNew />
     </>
   );
 };

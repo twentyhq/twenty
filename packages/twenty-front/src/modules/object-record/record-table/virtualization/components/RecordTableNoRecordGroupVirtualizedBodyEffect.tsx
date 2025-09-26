@@ -50,6 +50,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
+    console.log('useEffect no record group');
     if (!loading) {
       setRecordTableData({
         records,
