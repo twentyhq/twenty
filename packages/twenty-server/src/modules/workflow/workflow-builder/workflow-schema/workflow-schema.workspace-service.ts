@@ -47,7 +47,7 @@ export class WorkflowSchemaWorkspaceService {
   }: {
     step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
-    workflowVersionId: string;
+    workflowVersionId?: string;
   }): Promise<OutputSchema> {
     const stepType = step.type;
 
@@ -108,8 +108,8 @@ export class WorkflowSchemaWorkspaceService {
         return {
           currentItem: await this.computeLoopCurrentItemOutputSchema({
             items,
-            workflowVersionId,
             workspaceId,
+            workflowVersionId,
           }),
           currentItemIndex: {
             label: 'Current Item Index',
@@ -308,12 +308,12 @@ export class WorkflowSchemaWorkspaceService {
 
   private async computeLoopCurrentItemOutputSchema({
     items,
-    workflowVersionId,
     workspaceId,
+    workflowVersionId,
   }: {
     items: string | undefined | unknown[];
-    workflowVersionId: string;
     workspaceId: string;
+    workflowVersionId?: string;
   }): Promise<Leaf | Node> {
     if (!isDefined(items)) {
       return DEFAULT_ITERATOR_CURRENT_ITEM;
@@ -322,8 +322,8 @@ export class WorkflowSchemaWorkspaceService {
     if (isString(items) && isValidVariable(items)) {
       return this.computeIteratorCurrentItemFromVariable({
         items,
-        workflowVersionId,
         workspaceId,
+        workflowVersionId,
       });
     }
 
@@ -332,13 +332,17 @@ export class WorkflowSchemaWorkspaceService {
 
   private async computeIteratorCurrentItemFromVariable({
     items,
-    workflowVersionId,
     workspaceId,
+    workflowVersionId,
   }: {
     items: string;
-    workflowVersionId: string;
     workspaceId: string;
+    workflowVersionId?: string;
   }): Promise<Leaf | Node> {
+    if (!isDefined(workflowVersionId)) {
+      return DEFAULT_ITERATOR_CURRENT_ITEM;
+    }
+
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
         workflowVersionId,
