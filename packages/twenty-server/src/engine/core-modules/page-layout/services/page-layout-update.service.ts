@@ -3,13 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { DataSource, EntityManager } from 'typeorm';
 
+import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
+import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
+import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
+import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 
@@ -40,6 +44,7 @@ export class PageLayoutUpdateService {
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+    private readonly pageLayoutWidgetValidationService: PageLayoutWidgetValidationService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -226,17 +231,55 @@ export class PageLayoutUpdateService {
     }
 
     for (const widgetUpdate of entitiesToUpdate) {
+      let validatedConfig: WidgetConfigurationInterface | null = null;
+
+      if (widgetUpdate.configuration && widgetUpdate.type) {
+        validatedConfig =
+          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+            widgetUpdate.type,
+            widgetUpdate.configuration,
+          );
+
+        if (!validatedConfig) {
+          throw new Error(
+            `Invalid configuration for widget ${widgetUpdate.id} of type ${widgetUpdate.type}`,
+          );
+        }
+      }
+
       await this.pageLayoutWidgetService.update(
         widgetUpdate.id,
         workspaceId,
-        widgetUpdate,
+        {
+          ...widgetUpdate,
+          ...(validatedConfig && { configuration: validatedConfig }),
+        } as UpdatePageLayoutWidgetInput,
         transactionManager,
       );
     }
 
     for (const widgetToCreate of entitiesToCreate) {
+      let validatedConfig: WidgetConfigurationInterface | null = null;
+
+      if (widgetToCreate.configuration && widgetToCreate.type) {
+        validatedConfig =
+          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+            widgetToCreate.type,
+            widgetToCreate.configuration,
+          );
+
+        if (!validatedConfig) {
+          throw new Error(
+            `Invalid configuration for new widget of type ${widgetToCreate.type}`,
+          );
+        }
+      }
+
       await this.pageLayoutWidgetService.create(
-        widgetToCreate,
+        {
+          ...widgetToCreate,
+          ...(validatedConfig && { configuration: validatedConfig }),
+        } as CreatePageLayoutWidgetInput,
         workspaceId,
         transactionManager,
       );

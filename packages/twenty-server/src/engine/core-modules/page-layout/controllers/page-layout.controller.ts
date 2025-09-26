@@ -34,14 +34,18 @@ export class PageLayoutController {
     @AuthWorkspace() workspace: Workspace,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
+    let entities: PageLayoutEntity[];
+
     if (isDefined(objectMetadataId)) {
-      return this.pageLayoutService.findByObjectMetadataId(
+      entities = await this.pageLayoutService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
       );
+    } else {
+      entities = await this.pageLayoutService.findByWorkspaceId(workspace.id);
     }
 
-    return this.pageLayoutService.findByWorkspaceId(workspace.id);
+    return entities;
   }
 
   @Get(':id')
@@ -49,7 +53,12 @@ export class PageLayoutController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
+    const entity = await this.pageLayoutService.findByIdOrThrow(
+      id,
+      workspace.id,
+    );
+
+    return entity;
   }
 
   @Post()
@@ -57,7 +66,9 @@ export class PageLayoutController {
     @Body() input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.create(input, workspace.id);
+    const entity = await this.pageLayoutService.create(input, workspace.id);
+
+    return entity;
   }
 
   @Patch(':id')
@@ -66,25 +77,18 @@ export class PageLayoutController {
     @Body() input: UpdatePageLayoutInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
-    const updatedPageLayout = await this.pageLayoutService.update(
-      id,
-      workspace.id,
-      input,
-    );
+    const entity = await this.pageLayoutService.update(id, workspace.id, input);
 
-    return updatedPageLayout;
+    return entity;
   }
 
   @Delete(':id')
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<PageLayoutEntity> {
-    const deletedPageLayout = await this.pageLayoutService.delete(
-      id,
-      workspace.id,
-    );
+  ): Promise<PageLayoutDTO> {
+    const entity = await this.pageLayoutService.delete(id, workspace.id);
 
-    return deletedPageLayout;
+    return entity;
   }
 }

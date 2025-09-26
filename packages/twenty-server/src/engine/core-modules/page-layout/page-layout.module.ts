@@ -14,6 +14,7 @@ import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/servic
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
     PageLayoutTabResolver,
     PageLayoutWidgetResolver,
     PageLayoutUpdateService,
+    PageLayoutWidgetValidationService,
   ],
   exports: [PageLayoutService, PageLayoutTabService, PageLayoutWidgetService],
 })

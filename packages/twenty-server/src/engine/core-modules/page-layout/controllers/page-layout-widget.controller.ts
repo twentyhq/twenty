@@ -50,10 +50,12 @@ export class PageLayoutWidgetController {
       );
     }
 
-    return this.pageLayoutWidgetService.findByPageLayoutTabId(
+    const entities = await this.pageLayoutWidgetService.findByPageLayoutTabId(
       workspace.id,
       pageLayoutTabId,
     );
+
+    return entities;
   }
 
   @Get(':id')
@@ -61,7 +63,12 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO | null> {
-    return this.pageLayoutWidgetService.findByIdOrThrow(id, workspace.id);
+    const entity = await this.pageLayoutWidgetService.findByIdOrThrow(
+      id,
+      workspace.id,
+    );
+
+    return entity;
   }
 
   @Post()
@@ -69,7 +76,12 @@ export class PageLayoutWidgetController {
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    const entity = await this.pageLayoutWidgetService.create(
+      input,
+      workspace.id,
+    );
+
+    return entity;
   }
 
   @Patch(':id')
@@ -78,7 +90,13 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    const entity = await this.pageLayoutWidgetService.update(
+      id,
+      workspace.id,
+      input,
+    );
+
+    return entity;
   }
 
   @Delete(':id')
@@ -86,6 +104,8 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+    const entity = await this.pageLayoutWidgetService.delete(id, workspace.id);
+
+    return entity;
   }
 }

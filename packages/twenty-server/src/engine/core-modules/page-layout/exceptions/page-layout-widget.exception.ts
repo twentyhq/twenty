@@ -14,6 +14,7 @@ export enum PageLayoutWidgetExceptionMessageKey {
   PAGE_LAYOUT_TAB_NOT_FOUND = 'PAGE_LAYOUT_TAB_NOT_FOUND',
   PAGE_LAYOUT_WIDGET_NOT_DELETED = 'PAGE_LAYOUT_WIDGET_NOT_DELETED',
   GRID_POSITION_REQUIRED = 'GRID_POSITION_REQUIRED',
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
 }
 
 export class PageLayoutWidgetException extends CustomException<PageLayoutWidgetExceptionCode> {}
@@ -35,6 +36,10 @@ export const generatePageLayoutWidgetExceptionMessage = (
       return 'Page layout widget is not deleted and cannot be restored';
     case PageLayoutWidgetExceptionMessageKey.GRID_POSITION_REQUIRED:
       return 'Grid position is required';
+    case PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION:
+      return value
+        ? `Invalid configuration for widget type ${value}`
+        : 'Invalid widget configuration';
     default:
       assertUnreachable(key);
   }
