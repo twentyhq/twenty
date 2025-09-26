@@ -3,4 +3,5 @@ import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverl
 
 export const FLAT_SERVERLESS_FUNCTION_PROPERTIES_TO_COMPARE = [
   ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES,
+  'deletedAt',
 ] as const satisfies (keyof FlatServerlessFunction)[];
