@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('createOne FieldMetadataService relation fields', () => {
-  let createdObjectMetadataPersonId: string
+  let createdObjectMetadataPersonId: string;
   let createdObjectMetadataOpportunityId: string;
 
   beforeEach(async () => {
@@ -101,7 +101,9 @@ describe('createOne FieldMetadataService relation fields', () => {
       fieldMetadataId: createdField.relation.targetFieldMetadata.id,
     });
 
-    expect(opportunityFieldOnPerson.object.nameSingular).toBe('personForRelation');
+    expect(opportunityFieldOnPerson.object.nameSingular).toBe(
+      'personForRelation',
+    );
     expect(opportunityFieldOnPerson.relation.type).toBe(
       RelationType.ONE_TO_MANY,
     );
@@ -138,7 +140,9 @@ describe('createOne FieldMetadataService relation fields', () => {
       fieldMetadataId: createdField.relation.targetFieldMetadata.id,
     });
 
-    expect(opportunityFieldOnPerson.object.nameSingular).toBe('personForRelation');
+    expect(opportunityFieldOnPerson.object.nameSingular).toBe(
+      'personForRelation',
+    );
     expect(opportunityFieldOnPerson.relation.type).toBe(
       RelationType.MANY_TO_ONE,
     );
@@ -187,6 +191,7 @@ const findFieldMetadata = async ({
         settings
     `,
   });
+
   expect(fields.length).toBe(1);
   const field = fields[0]?.node;
 

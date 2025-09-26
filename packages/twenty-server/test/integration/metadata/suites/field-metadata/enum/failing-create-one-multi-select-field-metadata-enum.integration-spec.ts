@@ -3,10 +3,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { isDefined } from 'twenty-shared/utils';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('Failing create field metadata MULTI_SELECT tests suite', () => {
   let createdObjectMetadataId: string;

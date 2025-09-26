@@ -114,6 +114,7 @@ describe('createOne FieldMetadataService name/label sync', () => {
     // Assert
     expect(response.errors.length).toBe(1);
     const [firstError] = response.errors;
+
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),
     );

@@ -4,14 +4,13 @@ import { destroyViewOperationFactory } from 'test/integration/graphql/utils/dest
 import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
 import {
   assertGraphQLErrorResponseWithSnapshot,
-  assertGraphQLSuccessfulResponse
+  assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
-
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 
 describe('Destroy core view', () => {
@@ -91,8 +90,6 @@ describe('Destroy core view', () => {
     });
     const response = await makeGraphqlAPIRequest(operation);
 
-    assertGraphQLErrorResponseWithSnapshot(
-      response,
-    );
+    assertGraphQLErrorResponseWithSnapshot(response);
   });
 });

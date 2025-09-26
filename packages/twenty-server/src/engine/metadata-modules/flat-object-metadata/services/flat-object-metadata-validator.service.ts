@@ -317,6 +317,7 @@ export class FlatObjectMetadataValidatorService {
     flatObjectMetadata: FlatObjectMetadata;
   }) {
     const errors: FlatObjectMetadataValidationError[] = [];
+
     if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
       errors.push({
         code: ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
@@ -330,6 +331,7 @@ export class FlatObjectMetadataValidatorService {
             flatFieldMetadata.id ===
             flatObjectMetadata.labelIdentifierFieldMetadataId,
         );
+
       if (!relatedFlatFieldMetadata) {
         errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

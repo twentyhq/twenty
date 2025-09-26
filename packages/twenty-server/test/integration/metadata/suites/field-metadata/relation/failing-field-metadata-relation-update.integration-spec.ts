@@ -6,9 +6,9 @@ import { getMockCreateObjectInput } from 'test/integration/metadata/suites/objec
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type UpdateOneFieldMetadataTestingContext = EachTestingContext<{
   name: string;
@@ -115,7 +115,9 @@ describe('Field metadata relation update should fail', () => {
       });
 
       expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
+      );
     },
   );
 });

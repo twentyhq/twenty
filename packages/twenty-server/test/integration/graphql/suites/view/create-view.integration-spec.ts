@@ -7,10 +7,10 @@ import {
   assertViewStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 
 describe('Create core view', () => {
   let testObjectMetadataId: string;

@@ -1,9 +1,10 @@
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+
 import {
   type BaseGraphQLError,
   type ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 export interface GraphQLResponse<T extends Record<string, unknown>> {
   status: number;
@@ -56,6 +57,7 @@ export const assertGraphQLErrorResponseWithSnapshot = <
   expect(response.body.errors).toHaveLength(1);
 
   const firstError = response.body.errors[0];
+
   jestExpectToBeDefined(firstError);
   expect(firstError).toMatchSnapshot(
     extractRecordIdsAndDatesAsExpectAny(firstError),

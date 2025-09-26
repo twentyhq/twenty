@@ -5,14 +5,14 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
-import { isDefined } from 'twenty-shared/utils';
 
 type DeleteOneObjectMetadataItemTestingContext = EachTestingContext<
   (args: { objectMetadataIdToDelete: string; relationFieldId: string }) => {

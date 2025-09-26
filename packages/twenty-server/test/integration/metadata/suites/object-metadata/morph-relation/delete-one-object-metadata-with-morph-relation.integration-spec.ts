@@ -5,10 +5,10 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('Delete Object metadata with morph relation should succeed', () => {
   let opportunityId: undefined | string;

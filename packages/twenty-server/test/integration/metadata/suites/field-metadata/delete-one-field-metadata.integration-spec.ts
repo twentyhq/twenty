@@ -11,11 +11,11 @@ import {
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 describe('deleteOne', () => {
   beforeAll(async () => {
@@ -89,7 +89,7 @@ describe('deleteOne', () => {
         input: { idToDelete: listingObjectId },
       });
     });
-    
+
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 

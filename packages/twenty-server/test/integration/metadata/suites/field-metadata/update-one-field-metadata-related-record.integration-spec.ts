@@ -16,6 +16,7 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
@@ -25,7 +26,6 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -71,6 +71,7 @@ const testFieldMetadataType: EnumFieldMetadataType[] = [
 
 describe('update-one-field-metadata-related-record', () => {
   let idToDelete: string;
+
   beforeAll(async () => {
     await updateFeatureFlag({
       expectToFail: false,
