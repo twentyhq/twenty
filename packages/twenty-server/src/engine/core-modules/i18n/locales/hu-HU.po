@@ -1724,6 +1724,24 @@ msgstr "kanbanfieldMetadatId"
 msgid "Key"
 msgstr "Kulcs"
 
+#. js-lingui-id: dcVKg5
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Label identifier field metadata is required"
+msgstr ""
+
+#. js-lingui-id: Q/u31y
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Label identifier field metadata must be a TEXT or FULL_NAME field type"
+msgstr ""
+
+#. js-lingui-id: fzIM4E
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Label identifier field metadata not found in field metadata list"
+msgstr ""
+
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
 msgid "Label is required"
