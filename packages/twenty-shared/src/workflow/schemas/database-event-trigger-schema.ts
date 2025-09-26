@@ -25,5 +25,5 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
     }),
   })
   .describe(
-    'Database event trigger that fires when a record is created, updated, or deleted, or upserted. The triggered record is accessible in workflow steps via {{trigger.object.fieldName}}.',
+    'Database event trigger that fires when a record is created, updated, deleted, or upserted. The triggered record is accessible in workflow steps via {{trigger.object.fieldName}}.',
   );
