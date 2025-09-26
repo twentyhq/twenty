@@ -6,10 +6,14 @@ export const syncApp = async (
   appPath: string,
   apiService: ApiService,
 ): Promise<any> => {
-  const manifest = await loadManifest(appPath);
+  const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
   try {
-    const result = await apiService.syncApplication(manifest);
+    const result = await apiService.syncApplication({
+      manifest,
+      packageJson,
+      yarnLock,
+    });
 
     if (result.success) {
       console.log(chalk.green('✅ Application synced successfully'));
