@@ -14,12 +14,12 @@ import {
   cleanupPageLayoutRecords,
 } from 'test/integration/utils/page-layout-test.util';
 import { cleanupPageLayoutWidgetRecords } from 'test/integration/utils/page-layout-widget-test.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 const existingTabId = '20202020-e02c-4292-9994-42695c4e41e8';
 const tabToUpdateId = '20202020-974a-4480-b814-1fca24937132';
@@ -62,7 +62,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
         },
       },
     });
-    
+
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
