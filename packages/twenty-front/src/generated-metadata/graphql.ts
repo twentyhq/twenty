@@ -3755,7 +3755,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
-  configuration: Scalars['JSON'];
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
