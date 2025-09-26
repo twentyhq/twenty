@@ -161,6 +161,15 @@ export class WorkspaceUpdateQueryBuilder<
         authContext: this.authContext,
       });
 
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPSERTED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        beforeEntities: formattedBefore,
+        authContext: this.authContext,
+      });
+
       const formattedResult = formatResult<T[]>(
         result.raw,
         objectMetadata,
@@ -286,6 +295,15 @@ export class WorkspaceUpdateQueryBuilder<
 
       await this.internalContext.eventEmitterService.emitMutationEvent({
         action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: objectMetadata,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedAfter,
+        beforeEntities: formattedBefore,
+        authContext: this.authContext,
+      });
+
+      await this.internalContext.eventEmitterService.emitMutationEvent({
+        action: DatabaseEventAction.UPSERTED,
         objectMetadataItem: objectMetadata,
         workspaceId: this.internalContext.workspaceId,
         entities: formattedAfter,

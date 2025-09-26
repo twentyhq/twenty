@@ -4,9 +4,14 @@ export type BaseDatabaseEventTriggerSettings = {
 
 export type DatabaseEventTriggerSettings =
   | BaseDatabaseEventTriggerSettings
-  | UpdateEventTriggerSettings;
+  | UpdateEventTriggerSettings
+  | UpsertEventTriggerSettings;
 
 export type UpdateEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
+  fields: string[];
+};
+
+export type UpsertEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
   fields: string[];
 };
 
