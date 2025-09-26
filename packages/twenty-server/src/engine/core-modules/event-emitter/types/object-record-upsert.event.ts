@@ -1,4 +1,4 @@
-import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
+import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 
 export class ObjectRecordUpsertEvent<
