@@ -114,7 +114,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { ...TEST_NUMBER_CHART_CONFIG_MINIMAL },
+                configuration: TEST_NUMBER_CHART_CONFIG_MINIMAL,
               },
               {
                 id: widgetToDeleteId,
@@ -128,7 +128,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { ...TEST_IFRAME_CONFIG },
+                configuration: TEST_IFRAME_CONFIG,
               },
             ],
           },
@@ -205,7 +205,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 3,
                 },
-                configuration: { ...TEST_BAR_CHART_CONFIG_MINIMAL },
+                configuration: TEST_BAR_CHART_CONFIG_MINIMAL,
               },
               {
                 id: newWidgetId,
@@ -240,7 +240,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { ...TEST_IFRAME_CONFIG_ALTERNATIVE },
+                configuration: TEST_IFRAME_CONFIG_ALTERNATIVE,
               },
             ],
           },
@@ -494,7 +494,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { ...TEST_IFRAME_CONFIG },
+                configuration: TEST_IFRAME_CONFIG,
               },
               {
                 id: '20202020-1012-4012-a012-121212121212',
@@ -508,7 +508,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 2,
                 },
-                configuration: { ...TEST_NUMBER_CHART_CONFIG_MINIMAL },
+                configuration: TEST_NUMBER_CHART_CONFIG_MINIMAL,
               },
               {
                 id: '20202020-1013-4013-a013-131313131313',
