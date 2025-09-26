@@ -8,12 +8,14 @@ export * from './computeRecordGqlOperationFilter';
 export * from './isEmptinessOperand';
 export * from './turnRecordFilterGroupIntoGqlOperationFilter';
 export * from './turnRecordFilterIntoGqlOperationFilter';
-export * from './utils/arrayOfStringsOrVariablesSchema';
 export * from './utils/combineFilters';
 export * from './utils/fieldRatingConvertors';
 export * from './utils/generateILikeFiltersForCompositeFields';
 export * from './utils/getEmptyRecordGqlOperationFilter';
 export * from './utils/getFilterTypeFromFieldType';
 export * from './utils/resolveDateViewFilterValue';
+export * from './utils/validation-schemas/arrayOfStringsOrVariablesSchema';
+export * from './utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export * from './utils/validation-schemas/jsonRelationFilterValueSchema';
 
 

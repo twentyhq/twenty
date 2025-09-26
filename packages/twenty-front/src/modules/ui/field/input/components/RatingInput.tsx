@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
-import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
-import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { RATING_VALUES } from 'twenty-shared/constants';
+import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui/display';
 import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
 

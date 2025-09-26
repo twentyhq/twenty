@@ -32,7 +32,6 @@ export type {
 } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
-export { arrayOfStringsOrVariablesSchema } from './filter/utils/arrayOfStringsOrVariablesSchema';
 export { combineFilters } from './filter/utils/combineFilters';
 export {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
@@ -52,6 +51,12 @@ export {
   variableDateViewFilterValuePartsSchema,
   resolveDateViewFilterValue,
 } from './filter/utils/resolveDateViewFilterValue';
+export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
+export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  relationFilterValueSchemaObject,
+  jsonRelationFilterValueSchema,
+} from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';

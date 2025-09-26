@@ -12,7 +12,6 @@ import {
   type FieldMultiSelectValue,
   type FieldNumberValue,
   type FieldPhonesValue,
-  type FieldRatingValue,
   type FieldRelationFromManyValue,
   type FieldRelationToOneValue,
   type FieldSelectValue,
@@ -20,6 +19,7 @@ import {
   type FieldUUidValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRatingValue } from 'twenty-shared/types';
 
 export type FieldTextDraftValue = string;
 export type FieldNumberDraftValue = number;
