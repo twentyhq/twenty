@@ -42,6 +42,8 @@ export class MessagingSendMessageService {
     const { handle, connectionParameters, messageChannels, provider } =
       connectedAccount;
 
+    const { to, subject, body, html } = sendMessageInput;
+
     switch (provider) {
       case ConnectedAccountProvider.GOOGLE: {
         const gmailClient =
@@ -65,20 +67,20 @@ export class MessagingSendMessageService {
         }
 
         headers.push(
-          `To: ${sendMessageInput.to}`,
-          `Subject: ${mimeEncode(sendMessageInput.subject)}`,
+          `To: ${to}`,
+          `Subject: ${mimeEncode(subject)}`,
           'MIME-Version: 1.0',
           `Content-Type: multipart/alternative; boundary="${boundary}"`,
           '',
           `--${boundary}`,
           'Content-Type: text/plain; charset="UTF-8"',
           '',
-          sendMessageInput.body,
+          body,
           '',
           `--${boundary}`,
           'Content-Type: text/html; charset="UTF-8"',
           '',
-          sendMessageInput.html,
+          html,
           '',
           `--${boundary}--`,
         );
@@ -101,12 +103,12 @@ export class MessagingSendMessageService {
           );
 
         const message = {
-          subject: sendMessageInput.subject,
+          subject: subject,
           body: {
             contentType: 'HTML',
-            content: sendMessageInput.html,
+            content: html,
           },
-          toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
+          toRecipients: [{ emailAddress: { address: to } }],
         };
 
         const response = await microsoftClient
@@ -143,8 +145,6 @@ export class MessagingSendMessageService {
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
-        const { to, subject, body, html } = sendMessageInput;
-
         const mail = new MailComposer({
           from: handle,
           to,
@@ -159,6 +159,7 @@ export class MessagingSendMessageService {
           from: handle,
           to,
           raw: messageBuffer,
+        });
 
         if (isDefined(connectionParameters?.IMAP)) {
           const imapClient =
