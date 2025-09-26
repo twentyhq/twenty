@@ -4,6 +4,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
+import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
@@ -25,6 +26,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
+  const { getChartSettingsValues } = useChartSettingsValues(configuration);
+
   const handleGraphTypeChange = (graphType: GraphType) => {
     updateCurrentWidgetConfig({
       graphType,
@@ -33,28 +36,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     updateCommandMenuPageInfo({
       pageIcon: GRAPH_TYPE_INFORMATION[graphType].icon,
     });
-  };
-
-  const getItemDescription = ({
-    configuration,
-    itemId,
-  }: {
-    configuration: any;
-    itemId: string;
-  }) => {
-    const descriptionMap: Record<string, string> = {
-      source: configuration?.source,
-      filter: configuration?.filter,
-      'data-on-display-x': configuration?.dataOnDisplayX,
-      'sort-by': configuration?.sortBy,
-      'data-on-display-y': configuration?.dataOnDisplayY,
-      'group-by-y': configuration?.groupByY,
-      colors: configuration?.colors,
-      'axis-name': configuration?.axisName,
-      'data-labels': configuration?.dataLabels,
-    };
-
-    return descriptionMap[itemId];
   };
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
@@ -87,10 +68,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 </DropdownContent>
               }
               dropdownPlacement="bottom-end"
-              description={getItemDescription({
-                configuration,
-                itemId: item.id,
-              })}
+              description={getChartSettingsValues(item.id)}
               contextualTextPosition={item.contextualTextPosition}
               hasSubMenu={item.hasSubMenu}
               isSubMenuOpened={item.isSubMenuOpened}
