@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -17,6 +18,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -36,6 +38,13 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @Column({ nullable: true, type: 'uuid' })
   applicationId: string | null;
+
+  @ManyToOne(() => ApplicationEntity, (application) => application.objects, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
 
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;

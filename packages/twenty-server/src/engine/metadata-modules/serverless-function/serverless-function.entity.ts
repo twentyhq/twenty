@@ -5,8 +5,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,6 +20,7 @@ import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event
 import { Route } from 'src/engine/metadata-modules/route/route.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -73,6 +77,17 @@ export class ServerlessFunctionEntity
 
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
+
+  @ManyToOne(
+    () => ApplicationEntity,
+    (application) => application.serverlessFunctions,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
 
   @OneToMany(
     () => CronTrigger,
