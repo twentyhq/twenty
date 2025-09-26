@@ -116,6 +116,7 @@ export class ServerlessFunctionService {
           id,
           workspaceId,
         },
+        relations: ['application'],
       });
 
     const resultServerlessFunction = await this.serverlessService.execute(
@@ -308,7 +309,7 @@ export class ServerlessFunctionService {
         id: serverlessFunctionId,
       });
     const { packageJson, yarnLock } = await getLayerDependencies(
-      serverlessFunction?.layerVersion || 'latest',
+      serverlessFunction?.layerVersion || LAST_LAYER_VERSION,
     );
 
     const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;

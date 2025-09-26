@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ServerlessDriver,
@@ -19,6 +20,7 @@ import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/util
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { APPLICATION_LAYER_FOLDER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/application-layer-folder-name';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -31,25 +33,49 @@ export class LocalDriver implements ServerlessDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryLayerFolderPath = (version: number) => {
-    return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
+  private getInMemoryLayerFolderPath = (
+    serverlessFunction: ServerlessFunctionEntity,
+  ) => {
+    if (
+      !isDefined(serverlessFunction.applicationId) ||
+      !isDefined(serverlessFunction.application?.packageChecksum) ||
+      !isDefined(serverlessFunction.application?.standardId)
+    ) {
+      return join(
+        SERVERLESS_TMPDIR_FOLDER,
+        COMMON_LAYER_NAME,
+        `${serverlessFunction.layerVersion}`,
+      );
+    }
+
+    return join(
+      SERVERLESS_TMPDIR_FOLDER,
+      APPLICATION_LAYER_FOLDER_NAME,
+      serverlessFunction.application?.standardId,
+      serverlessFunction.application?.packageChecksum ?? '',
+    );
   };
 
-  private async createLayerIfNotExists(version: number) {
-    const inMemoryLastVersionLayerFolderPath =
-      this.getInMemoryLayerFolderPath(version);
+  private async createLayerIfNotExists(
+    serverlessFunction: ServerlessFunctionEntity,
+  ) {
+    const inMemoryLayerFolderPath =
+      this.getInMemoryLayerFolderPath(serverlessFunction);
 
     try {
-      await fs.access(inMemoryLastVersionLayerFolderPath);
+      await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
+      await copyAndBuildDependencies(
+        inMemoryLayerFolderPath,
+        serverlessFunction,
+      );
     }
   }
 
   async delete() {}
 
   private async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLayerIfNotExists(serverlessFunction.layerVersion ?? 0);
+    await this.createLayerIfNotExists(serverlessFunction);
   }
 
   private async executeWithTimeout<T>(
@@ -119,7 +145,7 @@ export class LocalDriver implements ServerlessDriver {
 
       await fs.symlink(
         join(
-          this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
+          this.getInMemoryLayerFolderPath(serverlessFunction),
           'node_modules',
         ),
         join(compiledCodeFolderPath, 'node_modules'),

@@ -67,11 +67,6 @@ export class ApplicationEntity {
   })
   agents: Relation<AgentEntity[]>;
 
-  @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
-    onDelete: 'CASCADE',
-  })
-  objects: Relation<ObjectMetadataEntity[]>;
-
   @OneToMany(
     () => ServerlessFunctionEntity,
     (serverlessFunction) => serverlessFunction.application,

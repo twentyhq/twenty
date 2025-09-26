@@ -9,7 +9,7 @@ export type LayerDependencies = {
 };
 
 export const getLayerDependencies = async (
-  layerVersion: number | 'latest',
+  layerVersion: number,
 ): Promise<LayerDependencies> => {
   const lastVersionLayerDirName = getLayerDependenciesDirName(layerVersion);
   const [packageJson, yarnLock] = await Promise.all([
