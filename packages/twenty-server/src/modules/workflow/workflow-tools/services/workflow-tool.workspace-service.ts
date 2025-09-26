@@ -376,11 +376,13 @@ This is the most efficient way for AI to create workflows as it handles all the 
       inputSchema: computeStepOutputSchemaSchema,
       execute: async (parameters: {
         step: WorkflowTrigger | WorkflowAction;
+        workflowVersionId: string;
       }) => {
         try {
           return await this.workflowSchemaService.computeStepOutputSchema({
             step: parameters.step,
             workspaceId,
+            workflowVersionId: parameters.workflowVersionId,
           });
         } catch (error) {
           return {
