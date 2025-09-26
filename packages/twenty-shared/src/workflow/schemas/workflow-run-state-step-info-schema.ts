@@ -10,6 +10,7 @@ export const workflowRunStateStepInfoSchema = z.object({
       workflowRunStateStepInfoSchema.pick({
         result: true,
         status: true,
+        error: true,
       })
     ).optional();
   }
