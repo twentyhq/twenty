@@ -13,6 +13,7 @@ import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
 import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
@@ -52,11 +53,15 @@ export class FindOneResolverFactory
         internalContext.objectMetadataMaps,
       );
 
-      return await this.commonQueryRunnerService.execute(
-        { ...args, selectedFieldsResult },
-        options,
-        CommonQueryNames.findOne,
-      );
+      try {
+        return await this.commonQueryRunnerService.execute(
+          { ...args, selectedFieldsResult },
+          options,
+          CommonQueryNames.findOne,
+        );
+      } catch (error) {
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+      }
     };
   }
 }

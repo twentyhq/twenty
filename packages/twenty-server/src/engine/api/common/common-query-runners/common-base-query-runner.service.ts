@@ -21,7 +21,6 @@ import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/g
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -67,84 +66,80 @@ export abstract class CommonBaseQueryRunnerService<
     options: CommonQueryRunnerOptions,
     operationName: CommonQueryNames,
   ): Promise<Response | undefined> {
-    try {
-      const { authContext, objectMetadataItemWithFieldMaps } = options;
-      const workspace = authContext.workspace;
+    const { authContext, objectMetadataItemWithFieldMaps } = options;
+    const workspace = authContext.workspace;
 
-      assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace);
 
-      await this.validate(args, options);
+    await this.validate(args, options);
 
-      const workspaceDataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-          workspaceId: workspace.id,
-        });
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId: workspace.id,
+      });
 
-      if (objectMetadataItemWithFieldMaps.isSystem === true) {
-        await this.validateSettingsPermissionsOnObjectOrThrow(options);
-      }
+    if (objectMetadataItemWithFieldMaps.isSystem === true) {
+      await this.validateSettingsPermissionsOnObjectOrThrow(options);
+    }
 
-      const hookedArgs =
-        await this.workspaceQueryHookService.executePreQueryHooks(
-          authContext,
-          objectMetadataItemWithFieldMaps.nameSingular,
-          operationName,
-          args,
-        );
-
-      const computedArgs = (await this.queryRunnerArgsFactory.create(
-        hookedArgs,
-        options,
-        ResolverArgsType[
-          //TODO : Refacto-common
-          capitalize(operationName) as keyof typeof ResolverArgsType
-        ],
-        //TODO : Refacto-common
-      )) as Input;
-
-      const roleId = await this.getRoleId(authContext, workspace.id);
-
-      const repository = workspaceDataSource.getRepository(
-        objectMetadataItemWithFieldMaps.nameSingular,
-        false,
-        roleId,
-        authContext,
-      );
-
-      const commonBaseMethodExecutionArgs = {
-        args: computedArgs,
-        options,
-        workspaceDataSource,
-        repository,
-        selectedFieldsResult: args.selectedFieldsResult,
-        isExecutedByApiKey: isDefined(authContext.apiKey),
-        roleId,
-        shouldBypassPermissionChecks: false,
-      };
-
-      const results = await this.run(
-        commonBaseMethodExecutionArgs,
-        workspaceDataSource.featureFlagMap,
-      );
-
-      const resultWithGetters = await this.queryResultGettersFactory.create(
-        results,
-        objectMetadataItemWithFieldMaps,
-        workspace.id,
-        options.objectMetadataMaps,
-      );
-
-      await this.workspaceQueryHookService.executePostQueryHooks(
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        resultWithGetters,
+        args,
       );
 
-      return resultWithGetters;
-    } catch (error) {
-      workspaceQueryRunnerGraphqlApiExceptionHandler(error);
-    }
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
+      hookedArgs,
+      options,
+      ResolverArgsType[
+        //TODO : Refacto-common
+        capitalize(operationName) as keyof typeof ResolverArgsType
+      ],
+      //TODO : Refacto-common
+    )) as Input;
+
+    const roleId = await this.getRoleId(authContext, workspace.id);
+
+    const repository = workspaceDataSource.getRepository(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      false,
+      roleId,
+      authContext,
+    );
+
+    const commonBaseMethodExecutionArgs = {
+      args: computedArgs,
+      options,
+      workspaceDataSource,
+      repository,
+      selectedFieldsResult: args.selectedFieldsResult,
+      isExecutedByApiKey: isDefined(authContext.apiKey),
+      roleId,
+      shouldBypassPermissionChecks: false,
+    };
+
+    const results = await this.run(
+      commonBaseMethodExecutionArgs,
+      workspaceDataSource.featureFlagMap,
+    );
+
+    const resultWithGetters = await this.queryResultGettersFactory.create(
+      results,
+      objectMetadataItemWithFieldMaps,
+      workspace.id,
+      options.objectMetadataMaps,
+    );
+
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      objectMetadataItemWithFieldMaps.nameSingular,
+      operationName,
+      resultWithGetters,
+    );
+
+    return resultWithGetters;
   }
 
   private async validateSettingsPermissionsOnObjectOrThrow(
