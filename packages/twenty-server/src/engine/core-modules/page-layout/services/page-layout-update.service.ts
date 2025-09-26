@@ -13,9 +13,9 @@ import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entitie
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
 type UpdatePageLayoutWithTabsParams = {
   id: string;
@@ -44,7 +44,6 @@ export class PageLayoutUpdateService {
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
-    private readonly pageLayoutWidgetValidationService: PageLayoutWidgetValidationService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -234,11 +233,16 @@ export class PageLayoutUpdateService {
       let validatedConfig: WidgetConfigurationInterface | null = null;
 
       if (widgetUpdate.configuration && widgetUpdate.type) {
-        validatedConfig =
-          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
             widgetUpdate.type,
             widgetUpdate.configuration,
           );
+        } catch (error) {
+          throw new Error(
+            `Invalid configuration for widget ${widgetUpdate.id} of type ${widgetUpdate.type}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
 
         if (!validatedConfig) {
           throw new Error(
@@ -262,11 +266,16 @@ export class PageLayoutUpdateService {
       let validatedConfig: WidgetConfigurationInterface | null = null;
 
       if (widgetToCreate.configuration && widgetToCreate.type) {
-        validatedConfig =
-          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
             widgetToCreate.type,
             widgetToCreate.configuration,
           );
+        } catch (error) {
+          throw new Error(
+            `Invalid configuration for new widget of type ${widgetToCreate.type}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
 
         if (!validatedConfig) {
           throw new Error(

@@ -39,7 +39,7 @@ type WidgetContainerProps = {
 export const WidgetContainer = ({
   children,
   onClick,
-  isRestricted,
+  isRestricted = false,
 }: WidgetContainerProps) => {
   const isPageLayoutInEditModeComponent = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,

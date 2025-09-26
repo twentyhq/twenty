@@ -459,7 +459,6 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
 
       const response = await makeGraphqlAPIRequest(operation);
 
-      // Expect the mutation to fail with invalid configuration
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain(
         'Invalid configuration for new widget of type IFRAME',

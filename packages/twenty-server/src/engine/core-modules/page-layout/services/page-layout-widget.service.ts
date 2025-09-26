@@ -20,7 +20,7 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
 @Injectable()
 export class PageLayoutWidgetService {
@@ -28,7 +28,6 @@ export class PageLayoutWidgetService {
     @InjectRepository(PageLayoutWidgetEntity)
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
     private readonly pageLayoutTabService: PageLayoutTabService,
-    private readonly pageLayoutWidgetValidationService: PageLayoutWidgetValidationService,
   ) {}
 
   private getPageLayoutWidgetRepository(
@@ -126,11 +125,20 @@ export class PageLayoutWidgetService {
       let validatedConfig: WidgetConfigurationInterface | null = null;
 
       if (pageLayoutWidgetData.configuration && pageLayoutWidgetData.type) {
-        validatedConfig =
-          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
             pageLayoutWidgetData.type,
             pageLayoutWidgetData.configuration,
           );
+        } catch (error) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              pageLayoutWidgetData.type,
+            ) + `: ${error instanceof Error ? error.message : String(error)}`,
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
 
         if (!validatedConfig) {
           throw new PageLayoutWidgetException(
@@ -204,11 +212,20 @@ export class PageLayoutWidgetService {
       const typeForValidation = updateData.type ?? existingWidget.type;
 
       if (typeForValidation) {
-        validatedConfig =
-          await this.pageLayoutWidgetValidationService.validateWidgetConfiguration(
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
             typeForValidation,
             updateData.configuration,
           );
+        } catch (error) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              typeForValidation,
+            ) + `: ${error instanceof Error ? error.message : String(error)}`,
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
 
         if (!validatedConfig) {
           throw new PageLayoutWidgetException(
