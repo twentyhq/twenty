@@ -28,12 +28,12 @@ rawDataSource
 
     await performQuery(
       `CREATE OR REPLACE FUNCTION public.unaccent_immutable(input text)
-          RETURNS text
-          LANGUAGE sql
-          IMMUTABLE
-      AS $$
-      SELECT public.unaccent('public.unaccent'::regdictionary, input)
-      $$`,
+    RETURNS text
+    LANGUAGE sql
+    IMMUTABLE
+AS $$
+SELECT public.unaccent('public.unaccent'::regdictionary, input)
+$$;`,
       'create immutable unaccent wrapper function',
     );
 
