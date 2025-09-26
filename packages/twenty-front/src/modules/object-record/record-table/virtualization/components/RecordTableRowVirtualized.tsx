@@ -9,6 +9,8 @@ import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-ta
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
+import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
+import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
@@ -133,8 +135,8 @@ export const RecordTableRowVirtualized = ({
       >
         {isRowFocusActive && isFocused && (
           <>
-            {/* <RecordTableRowHotkeyEffect /> */}
-            {/* <RecordTableRowArrowKeysEffect /> */}
+            <RecordTableRowHotkeyEffect />
+            <RecordTableRowArrowKeysEffect />
           </>
         )}
         <RecordTableCellDragAndDrop />
