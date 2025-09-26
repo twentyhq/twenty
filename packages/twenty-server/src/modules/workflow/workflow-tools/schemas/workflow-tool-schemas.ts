@@ -96,6 +96,7 @@ export const computeStepOutputSchemaSchema = z.object({
   step: z
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
+  workflowVersionId: z.string().describe('The ID of the workflow version'),
 });
 
 export const createCompleteWorkflowSchema = z.object({

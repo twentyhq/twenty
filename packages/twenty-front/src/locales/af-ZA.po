@@ -1101,7 +1101,8 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr "Outomaties skep van Persoonlike rekords by ontvang of stuur van e-posse"
 
 #. js-lingui-id: lXkUEV
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
 msgstr "Beskikbaarheid"
 
@@ -1562,7 +1563,8 @@ msgid "Columns not matched:"
 msgstr "Kolomme nie ooreenstem nie:"
 
 #. js-lingui-id: RyZt4H
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Opdrag ikoon"
 
@@ -2540,7 +2542,8 @@ msgid "Display"
 msgstr "Vertoon"
 
 #. js-lingui-id: r/aDR/
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
 msgstr "Wys 'n knoppie in die boonste kiesbalk om hierdie werksvloei te aktiveer"
 
@@ -4838,7 +4841,8 @@ msgid "Name of your workspace"
 msgstr "Naam van jou werkruimte"
 
 #. js-lingui-id: JxC/pi
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Navbar"
 msgstr "Kiesbalk"
 
@@ -5186,6 +5190,11 @@ msgstr "Geen betaalmetode gevind nie. Werk asseblief u faktureringsbesonderhede 
 msgid "No permissions have been set for individual objects."
 msgstr "Geen toestemmings is ingestel vir individuele voorwerpe nie."
 
+#. js-lingui-id: ePgApM
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "No record is required to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -5327,7 +5336,8 @@ msgid "Number type"
 msgstr "Nommer tipe"
 
 #. js-lingui-id: W0i24j
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objek"
@@ -5412,7 +5422,8 @@ msgid "on weekdays only"
 msgstr ""
 
 #. js-lingui-id: 4e9dd8
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "Op watter voorwerp(e) behoort hierdie sneller beskikbaar te wees"
 
@@ -5480,7 +5491,7 @@ msgid "Open Outlook"
 msgstr "Maak Outlook oop"
 
 #. js-lingui-id: avIMon
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "Open the ⌘K to trigger this workflow"
 msgstr "Maak die ⌘K oop om hierdie werkvloei te aktiveer"
 
@@ -7194,7 +7205,8 @@ msgid "The email associated to your account"
 msgstr "Die e-pos geassosieerd met jou rekening"
 
 #. js-lingui-id: diO3fm
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Die ikoon wat jou werkvloeiproses in die opdragmenu sal vertoon"
 
@@ -7224,10 +7236,20 @@ msgstr "Die naam van jou organisasie"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "Die bladsy waarna jy soek is of weg of het nooit bestaan nie. Kom ons kry jou terug op die regte pad"
 
+#. js-lingui-id: jrCR2X
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected record will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: 3lMl10
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "The selected record(s) will be passed to your workflow"
 msgstr "Die geselekteerde rekord(s) sal na u werkvloei gestuur word"
+
+#. js-lingui-id: f1lGdk
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected records will be passed to your workflow"
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

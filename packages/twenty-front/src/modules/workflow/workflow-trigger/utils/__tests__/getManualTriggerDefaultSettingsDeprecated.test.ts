@@ -1,11 +1,11 @@
 import { type WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { getManualTriggerDefaultSettings } from '../getManualTriggerDefaultSettings';
+import { getManualTriggerDefaultSettingsDeprecated } from '../getManualTriggerDefaultSettingsDeprecated';
 
 it('returns settings for a manual trigger that can be activated from any where', () => {
   expect(
-    getManualTriggerDefaultSettings({
+    getManualTriggerDefaultSettingsDeprecated({
       availability: 'EVERYWHERE',
       activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
     }),
@@ -19,7 +19,7 @@ it('returns settings for a manual trigger that can be activated from any where',
 
 it('returns settings for a manual trigger that can be activated from any where', () => {
   expect(
-    getManualTriggerDefaultSettings({
+    getManualTriggerDefaultSettingsDeprecated({
       availability: 'WHEN_RECORD_SELECTED',
       activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       icon: 'IconTest',
@@ -34,7 +34,7 @@ it('returns settings for a manual trigger that can be activated from any where',
 
 it('returns settings for WHEN_RECORD_SELECTED with default icon when no custom icon provided', () => {
   expect(
-    getManualTriggerDefaultSettings({
+    getManualTriggerDefaultSettingsDeprecated({
       availability: 'WHEN_RECORD_SELECTED',
       activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
     }),
@@ -51,7 +51,7 @@ it('throws error for unsupported availability type', () => {
     'INVALID_AVAILABILITY' as WorkflowManualTriggerAvailability;
 
   expect(() =>
-    getManualTriggerDefaultSettings({
+    getManualTriggerDefaultSettingsDeprecated({
       availability: invalidAvailability,
       activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
     }),

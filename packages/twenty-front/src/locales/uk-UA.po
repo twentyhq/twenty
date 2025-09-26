@@ -1101,7 +1101,8 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr "Автоматично створювати записи Людей при отриманні або відправленні електронної пошти"
 
 #. js-lingui-id: lXkUEV
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
 msgstr "Доступність"
 
@@ -1562,7 +1563,8 @@ msgid "Columns not matched:"
 msgstr "Стовпці не збіглися:"
 
 #. js-lingui-id: RyZt4H
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Значок команди"
 
@@ -2540,7 +2542,8 @@ msgid "Display"
 msgstr "Відображати"
 
 #. js-lingui-id: r/aDR/
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
 msgstr "Показати кнопку у верхній панелі навігації для запуску цього процесу"
 
@@ -4838,7 +4841,8 @@ msgid "Name of your workspace"
 msgstr "Назва вашого робочого простору"
 
 #. js-lingui-id: JxC/pi
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Navbar"
 msgstr "Панель навігації"
 
@@ -5186,6 +5190,11 @@ msgstr "Спосіб оплати не знайдено. Будь ласка, о
 msgid "No permissions have been set for individual objects."
 msgstr "‎Не встановлено дозволів для окремих об'єктів."
 
+#. js-lingui-id: ePgApM
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "No record is required to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -5327,7 +5336,8 @@ msgid "Number type"
 msgstr "Тип числа"
 
 #. js-lingui-id: W0i24j
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Об'єкт"
@@ -5412,7 +5422,8 @@ msgid "on weekdays only"
 msgstr ""
 
 #. js-lingui-id: 4e9dd8
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "На яких об'єктах має бути доступний цей тригер"
 
@@ -5480,7 +5491,7 @@ msgid "Open Outlook"
 msgstr "Відкрити Outlook"
 
 #. js-lingui-id: avIMon
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "Open the ⌘K to trigger this workflow"
 msgstr "Відкрийте ⌘K, щоб застосувати цей робочий процес"
 
@@ -7194,7 +7205,8 @@ msgid "The email associated to your account"
 msgstr "Електронна адреса, пов'язана з вашим акаунтом"
 
 #. js-lingui-id: diO3fm
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Іконка, яку ваш тригер робочого процесу відображатиме в меню команд"
 
@@ -7224,10 +7236,20 @@ msgstr "Назва вашої організації"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "Сторінка, яку ви шукаєте, зникла або ніколи не існувала. Давайте повернемось на правильний шлях"
 
+#. js-lingui-id: jrCR2X
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected record will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: 3lMl10
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "The selected record(s) will be passed to your workflow"
 msgstr "Вибраний запис(и) буде передано у ваш робочий процес"
+
+#. js-lingui-id: f1lGdk
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected records will be passed to your workflow"
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
