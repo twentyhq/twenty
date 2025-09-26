@@ -87,19 +87,19 @@ export class LocalDriver implements StorageDriver {
   }
 
   async move(params: {
-    from: { folderPath: string; filename: string };
-    to: { folderPath: string; filename: string };
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
   }): Promise<void> {
     const fromPath = join(
       `${this.options.storagePath}/`,
       params.from.folderPath,
-      params.from.filename,
+      params.from.filename || '',
     );
 
     const toPath = join(
       `${this.options.storagePath}/`,
       params.to.folderPath,
-      params.to.filename,
+      params.to.filename || '',
     );
 
     await this.createFolder(dirname(toPath));

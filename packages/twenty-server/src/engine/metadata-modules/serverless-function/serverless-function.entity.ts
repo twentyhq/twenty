@@ -71,6 +71,9 @@ export class ServerlessFunctionEntity
   @Column({ nullable: true, type: 'uuid' })
   applicationId: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  checksum: string | null;
+
   @OneToMany(
     () => CronTrigger,
     (cronTrigger) => cronTrigger.serverlessFunction,

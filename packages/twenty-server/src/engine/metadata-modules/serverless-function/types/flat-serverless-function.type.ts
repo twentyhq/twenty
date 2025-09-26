@@ -16,4 +16,5 @@ export type FlatServerlessFunction = Omit<
   ServerlessFunctionEntityRelationProperties
 > & {
   universalIdentifier: string;
+  code?: JSON;
 };

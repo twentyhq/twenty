@@ -36,8 +36,8 @@ export class FileStorageService implements StorageDriver {
   }
 
   move(params: {
-    from: { folderPath: string; filename: string };
-    to: { folderPath: string; filename: string };
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
   }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { basename, dirname, join } from 'path';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
@@ -10,14 +8,9 @@ import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modul
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
-import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
@@ -33,8 +26,6 @@ export class ServerlessFunctionV2Service {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly fileStorageService: FileStorageService,
-    private readonly serverlessService: ServerlessService,
   ) {}
 
   async createOne(
@@ -87,7 +78,9 @@ export class ServerlessFunctionV2Service {
       );
     }
 
-    const updatedFlatEntityMaps =
+    const {
+      flatServerlessFunctionMaps: recomputedExistingFlatServerlessFunctionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -95,33 +88,10 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const createdServerlessFunction =
-      updatedFlatEntityMaps.flatServerlessFunctionMaps.byId[
-        flatServerlessFunctionToCreate.id
-      ];
-
-    if (!isDefined(createdServerlessFunction)) {
-      throw new ServerlessFunctionException(
-        'Created serverless function not found in recomputed cache',
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const draftFileFolder = getServerlessFolder({
-      serverlessFunction: createdServerlessFunction,
-      version: 'draft',
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatServerlessFunctionToCreate.id,
+      flatEntityMaps: recomputedExistingFlatServerlessFunctionMaps,
     });
-
-    for (const file of await getBaseTypescriptProjectFiles) {
-      await this.fileStorageService.write({
-        file: file.content,
-        name: file.name,
-        mimeType: undefined,
-        folder: join(draftFileFolder, file.path),
-      });
-    }
-
-    return createdServerlessFunction;
   }
 
   async updateOne(
@@ -179,7 +149,9 @@ export class ServerlessFunctionV2Service {
       );
     }
 
-    const updatedFlatEntityMaps =
+    const {
+      flatServerlessFunctionMaps: recomputedExistingFlatServerlessFunctionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -187,34 +159,10 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const updatedFlatServerlessFunction =
-      updatedFlatEntityMaps.flatServerlessFunctionMaps.byId[
-        optimisticallyUpdatedFlatServerlessFunction.id
-      ];
-
-    if (!isDefined(updatedFlatServerlessFunction)) {
-      throw new ServerlessFunctionException(
-        'Updated serverless function not found in recomputed cache',
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const fileFolder = getServerlessFolder({
-      serverlessFunction: updatedFlatServerlessFunction,
-      version: 'draft',
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: optimisticallyUpdatedFlatServerlessFunction.id,
+      flatEntityMaps: recomputedExistingFlatServerlessFunctionMaps,
     });
-
-    for (const key of Object.keys(serverlessFunctionInput.code)) {
-      await this.fileStorageService.write({
-        // @ts-expect-error legacy noImplicitAny
-        file: serverlessFunctionInput.code[key],
-        name: basename(key),
-        mimeType: undefined,
-        folder: join(fileFolder, dirname(key)),
-      });
-    }
-
-    return updatedFlatServerlessFunction;
   }
 
   async deleteOne({
@@ -287,10 +235,6 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    this.serverlessService.delete(
-      existingFlatServerlessFunction as ServerlessFunctionEntity,
-    );
-
     return findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt.id,
       flatEntityMaps: recomputedExistingFlatServerlessFunctionMaps,
@@ -357,12 +301,6 @@ export class ServerlessFunctionV2Service {
         'Multiple validation errors occurred while destroying serverless function',
       );
     }
-
-    this.fileStorageService.delete({
-      folderPath: getServerlessFolder({
-        serverlessFunction: existingFlatServerlessFunction,
-      }),
-    });
 
     return existingFlatServerlessFunction;
   }

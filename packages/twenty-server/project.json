@@ -161,6 +161,13 @@
         ]
       }
     },
+    "database:migrate:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "npx nx typeorm -- migration:generate src/database/typeorm/core/migrations/common/{args.migrationName} -d src/database/typeorm/core/core.datasource.ts"
+      }
+    },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

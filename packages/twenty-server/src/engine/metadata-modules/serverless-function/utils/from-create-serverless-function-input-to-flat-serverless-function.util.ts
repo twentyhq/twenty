@@ -32,5 +32,6 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
     layerVersion: LAST_LAYER_VERSION,
     workspaceId,
+    checksum: null,
   };
 };

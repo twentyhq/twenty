@@ -15,6 +15,10 @@ export interface WorkspaceMigrationRunnerActionHandlerService<
   execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
   ): Promise<Partial<AllFlatEntityMaps>>;
+
+  rollback(
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void>;
 }
 
 export type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
@@ -28,19 +32,34 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionTypeV2,
 > implements WorkspaceMigrationRunnerActionHandlerService<TActionType>
 {
-  abstract executeForMetadata(
+  executeForMetadata(
+    // eslint-disable-next-line unused-imports/no-unused-vars
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
-  ): Promise<void>;
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 
-  abstract executeForWorkspaceSchema(
+  executeForWorkspaceSchema(
+    // eslint-disable-next-line unused-imports/no-unused-vars
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
-  ): Promise<void>;
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 
-  abstract optimisticallyApplyActionOnAllFlatEntityMaps(
+  optimisticallyApplyActionOnAllFlatEntityMaps(
     args: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
       ExtractAction<TActionType>
     >,
-  ): Partial<AllFlatEntityMaps>;
+  ): Partial<AllFlatEntityMaps> {
+    return args.allFlatEntityMaps;
+  }
+
+  rollbackForMetadata(
+    // eslint-disable-next-line unused-imports/no-unused-vars
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
 
   async execute(
     context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
@@ -54,6 +73,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       action: context.action,
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
+  }
+
+  async rollback(
+    context: WorkspaceMigrationActionRunnerArgs<ExtractAction<TActionType>>,
+  ): Promise<void> {
+    await this.rollbackForMetadata(context);
   }
 }
 
