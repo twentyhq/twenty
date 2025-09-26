@@ -1,3 +1,4 @@
+import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
@@ -51,6 +52,7 @@ export const useAggregateRecordsForHeader = ({
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
+    throwCustomError,
   });
 
   const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregateForView({

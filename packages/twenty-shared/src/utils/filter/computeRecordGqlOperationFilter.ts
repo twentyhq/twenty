@@ -17,12 +17,13 @@ export const computeRecordGqlOperationFilter = ({
   recordFilters,
   recordFilterGroups,
   filterValueDependencies,
-
+  throwCustomError = (errorMessage: string) => {throw new Error(errorMessage);},
 }: {
   recordFilters: RecordFilterShared[];
   fields: PartialFieldMetadataItem[];
   recordFilterGroups: RecordFilterGroupShared[];
   filterValueDependencies: RecordFilterValueDependencies;
+  throwCustomError?: (message: string, code?: string) => never;
 }): RecordGqlOperationFilter => {
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
     recordFilters
@@ -32,6 +33,7 @@ export const computeRecordGqlOperationFilter = ({
           recordFilter: regularFilter,
           fieldMetadataItems: fields,
           filterValueDependencies,
+          throwCustomError,
         });
       })
       .filter(isDefined);
@@ -41,12 +43,14 @@ export const computeRecordGqlOperationFilter = ({
   )?.id;
 
   const advancedRecordGqlOperationFilter =
-    turnRecordFilterGroupsIntoGqlOperationFilter(
+    turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies,
-      recordFilters,
+      filters: recordFilters,
       fields,
       recordFilterGroups,
-      outermostFilterGroupId,
+      currentRecordFilterGroupId: outermostFilterGroupId,
+      throwCustomError
+    }
     );
 
   const recordGqlOperationFilters = [

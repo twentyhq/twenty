@@ -1,4 +1,5 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -43,6 +44,7 @@ export const computeContextStoreFilters = ({
         fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
+        throwCustomError,
       }),
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {
@@ -70,6 +72,7 @@ export const computeContextStoreFilters = ({
         fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
+        throwCustomError,
       }),
     ]);
   }

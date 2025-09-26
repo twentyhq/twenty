@@ -1,7 +1,4 @@
-import {
-  type UUIDFilter,
-  type UUIDFilterValue,
-} from 'twenty-shared/types';
+import { type UUIDFilter, type UUIDFilterValue } from 'twenty-shared/types';
 
 export const isMatchingUUIDFilter = ({
   uuidFilter,

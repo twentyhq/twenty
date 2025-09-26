@@ -1,4 +1,3 @@
-// import { CustomError } from '@/error-handler/CustomError';
 import {
   ViewFilterOperand,
   type ActorFilter,
@@ -6,9 +5,9 @@ import {
   type ArrayFilter,
   type CurrencyFilter,
   type DateFilter,
-  type FieldMetadataType,
   type FloatFilter,
   type MultiSelectFilter,
+  type PartialFieldMetadataItem,
   type PhonesFilter,
   type RatingFilter,
   type RawJsonFilter,
@@ -24,22 +23,18 @@ import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/gen
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isNonEmptyString } from '@sniptt/guards';
 
-type Field = {
-  id: string;
-  name: string;
-  type: FieldMetadataType
-}
-
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
-  correspondingField: Pick<Field, 'id' | 'name' | 'type'>;
+  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
   recordFilter: RecordFilterShared;
+  throwCustomError: (message: string, code?: string) => never;
 };
 
 export const getEmptyRecordGqlOperationFilter = ({
   operand,
   correspondingField,
   recordFilter,
+  throwCustomError,
 }: GetEmptyRecordGqlOperationFilterParams) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
@@ -197,6 +192,7 @@ export const getEmptyRecordGqlOperationFilter = ({
       emptyRecordFilter = computeEmptyGqlOperationFilterForLinks({
         correspondingFieldMetadataItem: correspondingField,
         recordFilter,
+        throwCustomError,
       });
       break;
     }
@@ -388,12 +384,13 @@ export const getEmptyRecordGqlOperationFilter = ({
       emptyRecordFilter = computeEmptyGqlOperationFilterForEmails({
         correspondingFieldMetadataItem: correspondingField,
         recordFilter,
+        throwCustomError,
       });
       break;
     default:
-      throw new Error( // TODO
+      return throwCustomError( 
         `Unsupported empty filter type ${filterType}`,
-        // 'UNSUPPORTED_EMPTY_FILTER_TYPE',
+        'UNSUPPORTED_EMPTY_FILTER_TYPE',
       );
   }
 
@@ -405,9 +402,9 @@ export const getEmptyRecordGqlOperationFilter = ({
         not: emptyRecordFilter,
       };
     default:
-      throw new Error( // TODO
+      return throwCustomError( 
         `Unknown operand ${operand} for ${filterType} filter`,
-        // 'UNKNOWN_OPERAND_FOR_FILTER',
+        'UNKNOWN_OPERAND_FOR_FILTER',
       );
   }
 };

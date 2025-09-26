@@ -1,3 +1,4 @@
+import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -46,6 +47,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     filterValueDependencies,
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
+    throwCustomError,
   });
 
   const { viewFieldId } = useContext(

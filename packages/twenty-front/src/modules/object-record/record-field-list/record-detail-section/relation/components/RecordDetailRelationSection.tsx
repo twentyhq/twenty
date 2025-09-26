@@ -23,7 +23,11 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
-import { AppPath, ViewFilterOperand, type RecordGqlOperationFilter } from 'twenty-shared/types';
+import {
+  AppPath,
+  ViewFilterOperand,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
