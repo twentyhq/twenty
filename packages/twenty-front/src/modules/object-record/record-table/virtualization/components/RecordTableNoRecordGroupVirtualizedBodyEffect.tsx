@@ -7,7 +7,7 @@ import { useSetRecordTableData } from '@/object-record/record-table/hooks/intern
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
-import { useInitializeRowVirtualization } from '@/object-record/record-table/virtualization/hooks/useInitializeRowVirtualization';
+import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
@@ -45,7 +45,8 @@ export const RecordTableNoRecordGroupVirtualizedBodyEffect = () => {
     hasRecordTableFetchedAllRecordsComponentState,
   );
 
-  const { initializeRowsVirtualization } = useInitializeRowVirtualization();
+  const { resetVirtualizedRowTreadmill: initializeRowsVirtualization } =
+    useResetVirtualizedRowTreadmill();
 
   const { scrollToPosition } = useScrollToPosition();
 

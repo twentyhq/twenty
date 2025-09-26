@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const RecordTableVirtualizationEffect = () => {
+export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const lastScrollPositionCallbackState = useRecoilComponentCallbackState(

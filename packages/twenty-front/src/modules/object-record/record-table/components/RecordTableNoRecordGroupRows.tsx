@@ -2,7 +2,7 @@ import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/com
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
 import { RecordTableRowVirtualized } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualized';
 import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
-import { RecordTableVirtualizedFetchMoreEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedFetchMore';
+import { RecordTableVirtualizedDataLoaderEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataLoaderEffect';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -30,7 +30,7 @@ export const RecordTableNoRecordGroupRows = () => {
           />
         );
       })}
-      <RecordTableVirtualizedFetchMoreEffect />
+      <RecordTableVirtualizedDataLoaderEffect />
       <RecordTableBodyDroppablePlaceholder />
       <RecordTableNoRecordGroupAddNew />
     </>

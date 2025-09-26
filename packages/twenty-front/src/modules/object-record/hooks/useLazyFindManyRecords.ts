@@ -96,7 +96,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
           return {
             data: null,
-            records: [],
+            records: null,
             totalCount: 0,
             hasNextPage: false,
             error: undefined,

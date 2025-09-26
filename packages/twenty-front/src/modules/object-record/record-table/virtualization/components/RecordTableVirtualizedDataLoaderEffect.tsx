@@ -6,21 +6,25 @@ import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/r
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 
+import { useResetNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/hooks/useResetNumberOfRecordsToVirtualize';
+import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
+import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useCallback, useEffect } from 'react';
+import { getRange, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const RecordTableVirtualizedFetchMoreEffect = () => {
+export const RecordTableVirtualizedDataLoaderEffect = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { fetchMoreRecordsLazy } =
+  const { fetchMoreRecordsLazy, findManyRecordsLazy, queryIdentifier } =
     useRecordIndexTableFetchMore(objectNameSingular);
 
   const lastRealIndexSet = useRecoilComponentValue(
@@ -29,6 +33,10 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
 
   const [hasAlreadyFetchedUpToRealIndex] = useRecoilComponentState(
     hasAlreadyFetchedUpToRealIndexComponentState,
+  );
+
+  const lastRecordTableQueryIdentifier = useRecoilComponentValue(
+    lastRecordTableQueryIdentifierComponentState,
   );
 
   const hasAlreadyFetchedUpToRealIndexCallbackState =
@@ -45,6 +53,73 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     useRecoilComponentFamilyCallbackState(
       recordIdByRealIndexComponentFamilyState,
     );
+
+  const { scrollToPosition } = useScrollToPosition();
+
+  const { resetVirtualizedRowTreadmill } = useResetVirtualizedRowTreadmill();
+  const { resetNumberOfRecordsToVirtualize } =
+    useResetNumberOfRecordsToVirtualize();
+
+  const resetRecordTableVirtualDataLoading = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const lastFetchedRealIndex = getSnapshotValue(
+          snapshot,
+          hasAlreadyFetchedUpToRealIndexCallbackState,
+        );
+
+        if (isDefined(lastFetchedRealIndex) && lastFetchedRealIndex > 0) {
+          for (const realIndex of getRange(0, lastFetchedRealIndex)) {
+            set(recordIdByRealIndexCallbackState({ realIndex }), null);
+          }
+        }
+
+        set(hasAlreadyFetchedUpToRealIndexCallbackState, null);
+        set(hasRecordTableFetchedAllRecordsCallbackState, false);
+      },
+    [
+      hasAlreadyFetchedUpToRealIndexCallbackState,
+      hasRecordTableFetchedAllRecordsCallbackState,
+      recordIdByRealIndexCallbackState,
+    ],
+  );
+
+  const triggerNewFreshFirstDataLoad = useCallback(async () => {
+    const { records, error, data, totalCount, hasNextPage } =
+      await findManyRecordsLazy();
+
+    if (isDefined(records)) {
+      resetVirtualizedRowTreadmill();
+
+      scrollToPosition(0);
+
+      resetNumberOfRecordsToVirtualize({
+        records,
+        totalCount,
+      });
+
+      resetRecordTableVirtualDataLoading();
+    }
+  }, [
+    findManyRecordsLazy,
+    resetVirtualizedRowTreadmill,
+    resetNumberOfRecordsToVirtualize,
+    scrollToPosition,
+    resetRecordTableVirtualDataLoading,
+  ]);
+
+  useEffect(() => {
+    if (queryIdentifier !== lastRecordTableQueryIdentifier) {
+      resetRecordTableVirtualDataLoading();
+
+      triggerNewFreshFirstDataLoad();
+    }
+  }, [
+    queryIdentifier,
+    lastRecordTableQueryIdentifier,
+    resetRecordTableVirtualDataLoading,
+    triggerNewFreshFirstDataLoad,
+  ]);
 
   // TODO: Those parameters allow the UI to not freeze while it can take time to fetch data.
   // We should work on two additional optimization rounds :

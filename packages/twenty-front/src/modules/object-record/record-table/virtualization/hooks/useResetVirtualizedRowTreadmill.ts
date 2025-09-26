@@ -4,12 +4,12 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { getRange } from 'twenty-shared/utils';
 
-export const useInitializeRowVirtualization = () => {
+export const useResetVirtualizedRowTreadmill = () => {
   const realIndexByVirtualIndexCallbackState = useRecoilComponentCallbackState(
     realIndexByVirtualIndexComponentFamilyState,
   );
 
-  const initializeRowsVirtualization = useRecoilCallback(
+  const resetVirtualizedRowTreadmill = useRecoilCallback(
     ({ set }) =>
       () => {
         for (const virtualIndex of getRange(0, NUMBER_OF_VIRTUALIZED_ROWS)) {
@@ -26,5 +26,5 @@ export const useInitializeRowVirtualization = () => {
     [realIndexByVirtualIndexCallbackState],
   );
 
-  return { initializeRowsVirtualization };
+  return { resetVirtualizedRowTreadmill };
 };
