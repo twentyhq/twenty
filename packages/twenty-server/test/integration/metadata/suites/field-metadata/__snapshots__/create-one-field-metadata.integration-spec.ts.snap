@@ -24,6 +24,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [],
       "viewField": [],
     },
@@ -31,6 +32,7 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,

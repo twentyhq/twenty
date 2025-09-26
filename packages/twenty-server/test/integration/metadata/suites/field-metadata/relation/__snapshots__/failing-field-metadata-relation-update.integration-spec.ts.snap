@@ -39,6 +39,7 @@ exports[`Field metadata relation update should fail relation when name is change
             "type": "update_field",
           },
         ],
+        "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
@@ -46,6 +47,7 @@ exports[`Field metadata relation update should fail relation when name is change
       "summary": {
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "totalErrors": 0,
@@ -121,6 +123,7 @@ exports[`Field metadata relation update should fail relation when name is not in
             "type": "update_field",
           },
         ],
+        "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
@@ -128,6 +131,7 @@ exports[`Field metadata relation update should fail relation when name is not in
       "summary": {
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "totalErrors": 0,

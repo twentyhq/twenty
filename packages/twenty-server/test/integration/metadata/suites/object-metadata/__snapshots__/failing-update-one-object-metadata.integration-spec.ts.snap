@@ -25,6 +25,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             "type": "update_object",
           },
         ],
+        "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
@@ -32,6 +33,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
       "summary": {
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "totalErrors": 0,
@@ -69,6 +71,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
             "type": "update_object",
           },
         ],
+        "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
@@ -76,6 +79,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
       "summary": {
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "totalErrors": 0,
@@ -128,6 +132,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
             "type": "update_object",
           },
         ],
+        "serverlessFunction": [],
         "view": [],
         "viewField": [],
       },
@@ -135,6 +140,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
       "summary": {
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
         "invalidView": 0,
         "invalidViewField": 0,
         "totalErrors": 0,
