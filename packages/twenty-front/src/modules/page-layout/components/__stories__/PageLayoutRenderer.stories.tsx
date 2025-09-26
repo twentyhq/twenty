@@ -58,6 +58,7 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'NumberChartConfiguration',
             graphType: GraphType.NUMBER,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
@@ -81,6 +82,7 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'GaugeChartConfiguration',
             graphType: GraphType.GAUGE,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
@@ -106,6 +108,7 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
+            __typename: 'PieChartConfiguration',
             graphType: GraphType.PIE,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
@@ -131,6 +134,7 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 6,
           },
           configuration: {
+            __typename: 'BarChartConfiguration',
             graphType: GraphType.BAR,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: 'id',
