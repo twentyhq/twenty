@@ -46,13 +46,13 @@ export class AgentChatMessagePartEntity {
   toolCallId: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  toolInput: Record<string, unknown> | null;
+  toolInput: unknown | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  toolOutput: Record<string, unknown> | null;
+  toolOutput: unknown | null;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  toolState: string | null;
+  state: string | null;
 
   @Column({ type: 'text', nullable: true })
   errorMessage: string | null;

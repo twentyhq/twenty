@@ -65,7 +65,6 @@ export class AgentChatController {
     body: {
       threadId: string;
       messages: UIMessage[];
-      fileIds?: string[];
       recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -77,7 +76,6 @@ export class AgentChatController {
       messages: body.messages,
       userWorkspaceId,
       workspace,
-      fileIds: body.fileIds || [],
       recordIdsByObjectMetadataNameSingular:
         body.recordIdsByObjectMetadataNameSingular || [],
       response,

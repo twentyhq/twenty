@@ -38,7 +38,7 @@ export class AgentChatMessagePartDTO {
   toolOutput?: Record<string, unknown>;
 
   @Field({ nullable: true })
-  toolState?: string;
+  state?: string;
 
   @Field({ nullable: true })
   errorMessage?: string;
