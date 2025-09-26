@@ -16,6 +16,7 @@ export const createBasePackageJson = (
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' '),
     description,
+    license: 'MIT',
     version: '0.0.1',
   };
 };

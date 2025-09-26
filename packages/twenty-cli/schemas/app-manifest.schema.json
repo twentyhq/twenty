@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["standardId", "label", "version"],
+  "required": ["standardId", "label", "version", "license"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -30,6 +30,11 @@
       "type": "string",
       "description": "Icon for the application (emoji or icon name)",
       "maxLength": 50
+    },
+    "license": {
+      "const": "MIT",
+      "title": "The application's license",
+      "description": "Currently only MIT is accepted, although more licenses will probably be available in the future."
     },
     "version": {
       "type": "string",
@@ -71,7 +76,8 @@
       "label": "Customer Support App",
       "description": "Comprehensive customer support application with AI agents",
       "icon": "🎧",
-      "version": "1.0.0"
+      "version": "1.0.0",
+      "license": "MIT"
     }
   ]
 }
