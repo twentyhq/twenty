@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
@@ -11,6 +12,7 @@ import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-tabl
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -28,15 +30,15 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  // const isRecordTableInitialLoading = useRecoilComponentValue(
-  //   isRecordTableInitialLoadingComponentState,
-  //   recordTableId,
-  // );
+  const isRecordTableInitialLoading = useRecoilComponentValue(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
 
-  // const recordTableHasRecords = useRecoilComponentValue(
-  //   recordIndexHasRecordsComponentSelector,
-  //   recordTableId,
-  // );
+  const recordTableHasRecords = useRecoilComponentValue(
+    recordIndexHasRecordsComponentSelector,
+    recordTableId,
+  );
 
   const hasRecordGroups = useRecoilComponentValue(
     hasRecordGroupsComponentSelector,
@@ -45,7 +47,8 @@ export const RecordTable = () => {
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
-  const recordTableIsEmpty = false;
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading && !recordTableHasRecords;
 
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
