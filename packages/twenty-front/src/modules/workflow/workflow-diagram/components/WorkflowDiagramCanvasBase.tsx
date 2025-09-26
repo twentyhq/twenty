@@ -34,6 +34,7 @@ import {
   applyNodeChanges,
   useReactFlow,
   type Connection,
+  type Edge,
   type EdgeChange,
   type FitViewOptions,
   type NodeChange,
@@ -41,6 +42,7 @@ import {
   type OnBeforeDelete,
   type OnDelete,
   type OnNodeDrag,
+  type OnReconnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -102,6 +104,9 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect,
   onDeleteEdge,
   onNodeDragStop,
+  onReconnect,
+  onReconnectStart,
+  onReconnectEnd,
   handlePaneContextMenu,
   nodesConnectable = false,
   nodesDraggable = false,
@@ -136,6 +141,9 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect?: (params: WorkflowConnection) => void;
   onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
+  onReconnect?: OnReconnect;
+  onReconnectStart?: () => void;
+  onReconnectEnd?: () => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -182,6 +190,7 @@ export const WorkflowDiagramCanvasBase = ({
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
+  const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
 
   const { nodes, edges } = useMemo(() => {
     if (isDefined(workflowDiagram)) {
@@ -457,6 +466,23 @@ export const WorkflowDiagramCanvasBase = ({
     onConnect?.(connection);
   };
 
+  const handleReconnectStart = useCallback(() => {
+    setIsReconnecting(true);
+    onReconnectStart?.();
+  }, [onReconnectStart]);
+
+  const handleReconnectEnd = useCallback(() => {
+    setIsReconnecting(false);
+    onReconnectEnd?.();
+  }, [onReconnectEnd]);
+
+  const handleReconnect = useCallback(
+    (oldEdge: Edge, connection: Connection) => {
+      onReconnect?.(oldEdge, connection);
+    },
+    [onReconnect],
+  );
+
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -476,6 +502,9 @@ export const WorkflowDiagramCanvasBase = ({
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onConnect={handleConnect}
+        onReconnect={handleReconnect}
+        onReconnectStart={handleReconnectStart}
+        onReconnectEnd={handleReconnectEnd}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}

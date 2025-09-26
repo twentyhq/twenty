@@ -80,7 +80,11 @@ export const generateNodesAndEdgesForDefaultNode = ({
           }),
         },
         ...(edgeTypeBetweenTwoNodes.includes('editable')
-          ? { deletable: true, selectable: true }
+          ? { 
+              deletable: true, 
+              selectable: true,
+              reconnectable: workflowContext === 'workflow' ? 'target' : false,
+            }
           : {}),
       });
     }
