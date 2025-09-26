@@ -9,7 +9,6 @@ import { RecordTableVirtualizationEffect } from '@/object-record/record-table/vi
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableNoRecordGroupBody = () => {
-  console.log('RecordTableNoRecordGroupBody');
   // const recordTableHasRecords = useRecoilComponentValue(
   //   recordIndexHasRecordsComponentSelector,
   // );

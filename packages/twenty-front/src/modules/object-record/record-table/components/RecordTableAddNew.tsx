@@ -9,7 +9,6 @@ import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableAddNew = () => {
-  console.log('RecordTableAddNew');
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const hasRecordTableFetchedAllRecords = useRecoilComponentValue(

@@ -12,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordTableVirtualizedBodyPlaceholder = () => {
-  console.log('RecordTableVirtualizedBodyPlaceholder');
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();

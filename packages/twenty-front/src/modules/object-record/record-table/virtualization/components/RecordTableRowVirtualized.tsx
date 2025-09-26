@@ -15,6 +15,7 @@ import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/rec
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -82,7 +83,7 @@ export const RecordTableRowVirtualized = ({
             color: 'GrayText',
           }}
         >
-          {virtualIndex}-{realIndex}-{pixelsFromTop}
+          {virtualIndex}-{realIndex}-{pixelsFromTop}-{recordId}
         </div>
         <RecordTableDraggableTr
           recordId={realIndex.toString()}
@@ -116,13 +117,14 @@ export const RecordTableRowVirtualized = ({
       <div
         style={{
           position: 'absolute',
-          left: 800,
+          left: 500,
           top: 10,
           zIndex: 4,
           color: 'GrayText',
+          width: 500,
         }}
       >
-        {virtualIndex}-{realIndex}-{pixelsFromTop}
+        {virtualIndex}-{realIndex}-{pixelsFromTop}-{recordId}
       </div>
       <RecordTableDraggableTr
         recordId={recordId}
@@ -140,11 +142,11 @@ export const RecordTableRowVirtualized = ({
         <RecordTableCells />
         <RecordTablePlusButtonCellPlaceholder />
         <RecordTableLastEmptyCell />
-        {/* <ListenRecordUpdatesEffect
+        <ListenRecordUpdatesEffect
           objectNameSingular={objectNameSingular}
           recordId={recordId}
           listenedFields={listenedFields}
-        /> */}
+        />
       </RecordTableDraggableTr>
     </div>
   );

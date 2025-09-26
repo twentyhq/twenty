@@ -84,7 +84,7 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
             if (isDefined(records)) {
               const pagingForUIUpdate = PAGING_FOR_UI_UPDATE;
 
-              const pages = Math.floor(records.length / pagingForUIUpdate);
+              const pages = Math.ceil(records.length / pagingForUIUpdate);
 
               let indexOfCurrentRecordBatch = 0;
 
@@ -101,7 +101,7 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
 
                 for (
                   let realIndexToSet = startingRealIndexInThisPage;
-                  realIndexToSet <= endingRealIndexInThisPage;
+                  realIndexToSet < endingRealIndexInThisPage;
                   realIndexToSet++
                 ) {
                   if (isDefined(records[indexOfCurrentRecordBatch])) {

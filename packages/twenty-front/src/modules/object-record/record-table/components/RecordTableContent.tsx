@@ -42,7 +42,6 @@ export const RecordTableContent = ({
   hasRecordGroups,
   recordTableId,
 }: RecordTableContentProps) => {
-  console.log('RecordTableContent');
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

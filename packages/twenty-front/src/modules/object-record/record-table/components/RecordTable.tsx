@@ -15,7 +15,6 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTable = () => {
-  console.log('RecordTable');
   const { recordTableId, objectNameSingular, objectMetadataItem } =
     useRecordTableContextOrThrow();
 
