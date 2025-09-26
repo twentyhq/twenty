@@ -5,6 +5,7 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -80,10 +81,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     return descriptionMap[itemId];
   };
 
-  const getDropdownContent = (_itemId: string) => {
-    return <div>configuration options will be implemented here</div>;
-  };
-
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
   return (
@@ -109,7 +106,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    {getDropdownContent(item.id)}
+                    {getChartSettingsDropdownContent(item.id)}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
