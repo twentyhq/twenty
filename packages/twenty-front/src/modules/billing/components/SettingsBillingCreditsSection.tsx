@@ -79,25 +79,23 @@ export const SettingsBillingCreditsSection = ({
             withBorderRadius={true}
           />
 
-          <StyledLineSeparator />
           {!isTrialing && (
-            <SettingsBillingLabelValueItem
-              label={t`Extra Credits Used`}
-              value={`${formatToShortNumber(extraCreditsUsed)}`}
-            />
-          )}
-          {!isTrialing && (
-            <SettingsBillingLabelValueItem
-              label={t`Cost per 1k Extra Credits`}
-              value={`$${formatNumber(costPer1kExtraCredits, { abbreviate: true, decimals: 6 })}`}
-            />
-          )}
-          {!isTrialing && (
-            <SettingsBillingLabelValueItem
-              label={t`Cost`}
-              isValueInPrimaryColor={true}
-              value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
-            />
+            <>
+              <StyledLineSeparator />
+              <SettingsBillingLabelValueItem
+                label={t`Extra Credits Used`}
+                value={`${formatToShortNumber(extraCreditsUsed)}`}
+              />
+              <SettingsBillingLabelValueItem
+                label={t`Cost per 1k Extra Credits`}
+                value={`$${formatNumber(costPer1kExtraCredits, { abbreviate: true, decimals: 6 })}`}
+              />
+              <SettingsBillingLabelValueItem
+                label={t`Cost`}
+                isValueInPrimaryColor={true}
+                value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
+              />
+            </>
           )}
         </SubscriptionInfoContainer>
       </Section>
