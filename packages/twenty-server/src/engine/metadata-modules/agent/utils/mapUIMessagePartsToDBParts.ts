@@ -1,9 +1,9 @@
-import type { UIMessagePart } from 'ai';
+import { type ToolUIPart, type UIMessagePart, type UITool } from 'ai';
 
 import { type AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 
 export const mapUIMessagePartsToDBParts = (
-  uiMessageParts: UIMessagePart<never, never>[],
+  uiMessageParts: UIMessagePart<never, Record<string, UITool>>[],
   messageId: string,
 ): Partial<AgentChatMessagePartEntity>[] => {
   return uiMessageParts.map((part, index) => {
@@ -51,6 +51,19 @@ export const mapUIMessagePartsToDBParts = (
       case 'step-start':
         return basePart;
       default:
+        {
+          if (part.type.includes('tool-')) {
+            const { toolCallId, input, output, errorText } = part as ToolUIPart;
+
+            return {
+              ...basePart,
+              toolCallId: toolCallId,
+              toolInput: input,
+              toolOutput: output,
+              errorMessage: errorText,
+            };
+          }
+        }
         throw new Error(`Unsupported part type: ${part.type}`);
     }
   });

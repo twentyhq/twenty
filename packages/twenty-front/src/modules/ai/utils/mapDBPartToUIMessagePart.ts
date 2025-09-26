@@ -1,10 +1,9 @@
-import type { UIMessagePart } from 'ai';
-
-import { type AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
+import { type ToolUIPart, type UIMessagePart, type UITool } from 'ai';
+import { type AgentChatMessagePart } from '~/generated/graphql';
 
 export const mapDBPartToUIMessagePart = (
-  part: AgentChatMessagePartEntity,
-): UIMessagePart<never, never> => {
+  part: AgentChatMessagePart,
+): UIMessagePart<never, Record<string, UITool>> => {
   switch (part.type) {
     case 'text':
       return {
@@ -45,6 +44,18 @@ export const mapDBPartToUIMessagePart = (
         type: 'step-start',
       };
     default:
+      {
+        if (part.type.includes('tool-') === true) {
+          return {
+            type: part.type as `tool-${string}`,
+            toolCallId: part.toolCallId!,
+            input: part.toolInput,
+            output: part.toolOutput,
+            errorText: part.errorMessage!,
+            state: part.toolState,
+          } as ToolUIPart;
+        }
+      }
       throw new Error(`Unsupported part type: ${part.type}`);
   }
 };
