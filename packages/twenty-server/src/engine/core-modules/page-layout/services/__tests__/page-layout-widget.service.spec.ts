@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
+import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 
 describe('PageLayoutWidgetService', () => {
   let pageLayoutWidgetService: PageLayoutWidgetService;
@@ -62,6 +63,12 @@ describe('PageLayoutWidgetService', () => {
           provide: PageLayoutTabService,
           useValue: {
             findByIdOrThrow: jest.fn(),
+          },
+        },
+        {
+          provide: PageLayoutWidgetValidationService,
+          useValue: {
+            validateConfiguration: jest.fn(),
           },
         },
       ],

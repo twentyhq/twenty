@@ -12,6 +12,7 @@ import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-typ
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
+import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -106,6 +107,12 @@ describe('PageLayoutUpdateService', () => {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: PageLayoutWidgetValidationService,
+          useValue: {
+            validateConfiguration: jest.fn(),
           },
         },
         {
