@@ -15,9 +15,9 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
-import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
 @ObjectType('LineChartConfiguration')
 export class LineChartConfigurationDTO {
@@ -60,7 +60,6 @@ export class LineChartConfigurationDTO {
   @IsBoolean()
   @IsOptional()
   omitNullValues?: boolean;
-
 
   @Field(() => String, { nullable: true })
   @IsString()
