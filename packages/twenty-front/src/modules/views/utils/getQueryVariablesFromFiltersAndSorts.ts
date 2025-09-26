@@ -2,9 +2,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const getQueryVariablesFromFiltersAndSorts = ({
   recordFilterGroups,

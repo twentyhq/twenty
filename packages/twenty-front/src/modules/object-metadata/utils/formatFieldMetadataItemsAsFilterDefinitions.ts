@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const getRelationObjectMetadataNameSingular = ({
