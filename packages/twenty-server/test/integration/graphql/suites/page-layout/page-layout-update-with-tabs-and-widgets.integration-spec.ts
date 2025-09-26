@@ -471,8 +471,9 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain(
-        'Invalid configuration for new widget of type IFRAME',
+        'Invalid configuration for widget "Invalid Iframe Widget" of type IFRAME',
       );
+      expect(response.body.errors[0].message).toContain('url must be');
     });
 
     it('should accept valid widget configurations for each type', async () => {

@@ -133,9 +133,11 @@ export class PageLayoutWidgetService {
         } catch (error) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
-              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              pageLayoutWidgetData.title,
               pageLayoutWidgetData.type,
-            ) + `: ${error instanceof Error ? error.message : String(error)}`,
+              error instanceof Error ? error.message : String(error),
+            ),
             PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
           );
         }
@@ -143,7 +145,8 @@ export class PageLayoutWidgetService {
         if (!validatedConfig) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
-              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              pageLayoutWidgetData.title,
               pageLayoutWidgetData.type,
             ),
             PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -210,6 +213,7 @@ export class PageLayoutWidgetService {
 
     if (updateData.configuration) {
       const typeForValidation = updateData.type ?? existingWidget.type;
+      const titleForError = updateData.title ?? existingWidget.title;
 
       if (typeForValidation) {
         try {
@@ -220,9 +224,11 @@ export class PageLayoutWidgetService {
         } catch (error) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
-              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              titleForError,
               typeForValidation,
-            ) + `: ${error instanceof Error ? error.message : String(error)}`,
+              error instanceof Error ? error.message : String(error),
+            ),
             PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
           );
         }
@@ -230,7 +236,8 @@ export class PageLayoutWidgetService {
         if (!validatedConfig) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
-              PageLayoutWidgetExceptionMessageKey.INVALID_CONFIGURATION,
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              titleForError,
               typeForValidation,
             ),
             PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,

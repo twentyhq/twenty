@@ -8,14 +8,12 @@ import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/pag
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
-import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
 type UpdatePageLayoutWithTabsParams = {
   id: string;
@@ -230,65 +228,17 @@ export class PageLayoutUpdateService {
     }
 
     for (const widgetUpdate of entitiesToUpdate) {
-      let validatedConfig: WidgetConfigurationInterface | null = null;
-
-      if (widgetUpdate.configuration && widgetUpdate.type) {
-        try {
-          validatedConfig = validateAndTransformWidgetConfiguration(
-            widgetUpdate.type,
-            widgetUpdate.configuration,
-          );
-        } catch (error) {
-          throw new Error(
-            `Invalid configuration for widget ${widgetUpdate.id} of type ${widgetUpdate.type}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-
-        if (!validatedConfig) {
-          throw new Error(
-            `Invalid configuration for widget ${widgetUpdate.id} of type ${widgetUpdate.type}`,
-          );
-        }
-      }
-
       await this.pageLayoutWidgetService.update(
         widgetUpdate.id,
         workspaceId,
-        {
-          ...widgetUpdate,
-          ...(validatedConfig && { configuration: validatedConfig }),
-        } as UpdatePageLayoutWidgetInput,
+        widgetUpdate as UpdatePageLayoutWidgetInput,
         transactionManager,
       );
     }
 
     for (const widgetToCreate of entitiesToCreate) {
-      let validatedConfig: WidgetConfigurationInterface | null = null;
-
-      if (widgetToCreate.configuration && widgetToCreate.type) {
-        try {
-          validatedConfig = validateAndTransformWidgetConfiguration(
-            widgetToCreate.type,
-            widgetToCreate.configuration,
-          );
-        } catch (error) {
-          throw new Error(
-            `Invalid configuration for new widget of type ${widgetToCreate.type}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-
-        if (!validatedConfig) {
-          throw new Error(
-            `Invalid configuration for new widget of type ${widgetToCreate.type}`,
-          );
-        }
-      }
-
       await this.pageLayoutWidgetService.create(
-        {
-          ...widgetToCreate,
-          ...(validatedConfig && { configuration: validatedConfig }),
-        } as CreatePageLayoutWidgetInput,
+        widgetToCreate as CreatePageLayoutWidgetInput,
         workspaceId,
         transactionManager,
       );

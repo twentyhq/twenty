@@ -145,6 +145,6 @@ export const validateAndTransformWidgetConfiguration = (
   } catch (error) {
     const errorMessage = formatValidationErrors(error);
 
-    throw new Error(`Widget configuration validation failed: ${errorMessage}`);
+    throw new Error(errorMessage);
   }
 };
