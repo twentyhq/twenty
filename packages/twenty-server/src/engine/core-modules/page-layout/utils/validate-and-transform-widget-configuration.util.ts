@@ -11,23 +11,16 @@ import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
-const formatValidationErrors = (error: unknown): string => {
-  if (Array.isArray(error)) {
-    return error
-      .map((err: ValidationError) => {
-        const constraints = err.constraints
-          ? Object.values(err.constraints).join(', ')
-          : 'Unknown error';
+const formatValidationErrors = (errors: ValidationError[]): string => {
+  return errors
+    .map((err) => {
+      const constraints = err.constraints
+        ? Object.values(err.constraints).join(', ')
+        : 'Unknown error';
 
-        return `${err.property}: ${constraints}`;
-      })
-      .join('; ');
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return String(error);
+      return `${err.property}: ${constraints}`;
+    })
+    .join('; ');
 };
 
 const validateGraphConfiguration = (
@@ -49,7 +42,10 @@ const validateGraphConfiguration = (
         throw errors;
       }
 
-      return instance;
+      return {
+        ...instance,
+        __typename: 'BarChartConfiguration',
+      } as WidgetConfigurationInterface;
     }
     case GraphType.LINE: {
       const instance = plainToInstance(
@@ -63,7 +59,10 @@ const validateGraphConfiguration = (
         throw errors;
       }
 
-      return instance;
+      return {
+        ...instance,
+        __typename: 'LineChartConfiguration',
+      } as WidgetConfigurationInterface;
     }
     case GraphType.PIE: {
       const instance = plainToInstance(PieChartConfigurationDTO, configuration);
@@ -74,7 +73,10 @@ const validateGraphConfiguration = (
         throw errors;
       }
 
-      return instance;
+      return {
+        ...instance,
+        __typename: 'PieChartConfiguration',
+      } as WidgetConfigurationInterface;
     }
     case GraphType.NUMBER: {
       const instance = plainToInstance(
@@ -88,7 +90,10 @@ const validateGraphConfiguration = (
         throw errors;
       }
 
-      return instance;
+      return {
+        ...instance,
+        __typename: 'NumberChartConfiguration',
+      } as WidgetConfigurationInterface;
     }
     case GraphType.GAUGE: {
       const instance = plainToInstance(
@@ -102,7 +107,10 @@ const validateGraphConfiguration = (
         throw errors;
       }
 
-      return instance;
+      return {
+        ...instance,
+        __typename: 'GaugeChartConfiguration',
+      } as WidgetConfigurationInterface;
     }
     default:
       return null;
@@ -120,7 +128,10 @@ const validateIframeConfiguration = (
     throw errors;
   }
 
-  return instance;
+  return {
+    ...instance,
+    __typename: 'IframeConfiguration',
+  } as WidgetConfigurationInterface;
 };
 
 export const validateAndTransformWidgetConfiguration = (
@@ -143,8 +154,11 @@ export const validateAndTransformWidgetConfiguration = (
         return null;
     }
   } catch (error) {
-    const errorMessage = formatValidationErrors(error);
+    if (Array.isArray(error)) {
+      const errorMessage = formatValidationErrors(error);
 
-    throw new Error(errorMessage);
+      throw new Error(errorMessage);
+    }
+    throw error;
   }
 };

@@ -6,7 +6,6 @@ import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/number-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
 export const WidgetConfiguration = createUnionType({
   name: 'WidgetConfiguration',
@@ -19,27 +18,30 @@ export const WidgetConfiguration = createUnionType({
     IframeConfigurationDTO,
   ],
   resolveType(configuration: Record<string, unknown>) {
-    // get back to this later -- I am sure just checking for url is not enough to consider it an iframe config
-    if ('url' in configuration && configuration.url) {
-      return IframeConfigurationDTO;
+    if (!('__typename' in configuration)) {
+      throw new Error(
+        'Widget configuration missing __typename discriminator. This indicates a validation bug or data corruption.',
+      );
     }
 
-    if ('graphType' in configuration && configuration.graphType) {
-      switch (configuration.graphType) {
-        case GraphType.BAR:
-          return BarChartConfigurationDTO;
-        case GraphType.LINE:
-          return LineChartConfigurationDTO;
-        case GraphType.PIE:
-          return PieChartConfigurationDTO;
-        case GraphType.NUMBER:
-          return NumberChartConfigurationDTO;
-        case GraphType.GAUGE:
-          return GaugeChartConfigurationDTO;
-      }
+    switch (configuration.__typename) {
+      case 'IframeConfiguration':
+        return IframeConfigurationDTO;
+      case 'BarChartConfiguration':
+        return BarChartConfigurationDTO;
+      case 'LineChartConfiguration':
+        return LineChartConfigurationDTO;
+      case 'PieChartConfiguration':
+        return PieChartConfigurationDTO;
+      case 'NumberChartConfiguration':
+        return NumberChartConfigurationDTO;
+      case 'GaugeChartConfiguration':
+        return GaugeChartConfigurationDTO;
+      default:
+        throw new Error(
+          `Unknown widget configuration type: ${configuration.__typename}`,
+        );
     }
-
-    throw new Error('Unable to resolve widget configuration type');
   },
 });
 
