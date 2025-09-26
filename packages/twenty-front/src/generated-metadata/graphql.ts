@@ -96,12 +96,12 @@ export type AgentChatMessagePart = {
   sourceUrlSourceId?: Maybe<Scalars['String']>;
   sourceUrlTitle?: Maybe<Scalars['String']>;
   sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
   textContent?: Maybe<Scalars['String']>;
   toolCallId?: Maybe<Scalars['String']>;
   toolInput?: Maybe<Scalars['JSON']>;
   toolName?: Maybe<Scalars['String']>;
   toolOutput?: Maybe<Scalars['JSON']>;
-  toolState?: Maybe<Scalars['String']>;
   type: Scalars['String'];
 };
 
@@ -1244,6 +1244,7 @@ export type File = {
 };
 
 export enum FileFolder {
+  AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   File = 'File',
   PersonPicture = 'PersonPicture',
@@ -4348,7 +4349,7 @@ export type GetAgentChatMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, toolState?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }>, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
+export type GetAgentChatMessagesQuery = { __typename?: 'Query', agentChatMessages: Array<{ __typename?: 'AgentChatMessage', id: string, threadId: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentChatMessagePart', id: string, messageId: string, orderIndex: number, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, state?: string | null, errorMessage?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null, createdAt: string }>, files: Array<{ __typename?: 'File', id: string, name: string, fullPath: string, size: number, type: string, createdAt: string }> }> };
 
 export type GetAgentChatThreadsQueryVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -6619,7 +6620,7 @@ export const GetAgentChatMessagesDocument = gql`
       toolCallId
       toolInput
       toolOutput
-      toolState
+      state
       errorMessage
       errorDetails
       sourceUrlSourceId

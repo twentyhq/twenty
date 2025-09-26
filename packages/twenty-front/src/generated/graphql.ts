@@ -96,12 +96,12 @@ export type AgentChatMessagePart = {
   sourceUrlSourceId?: Maybe<Scalars['String']>;
   sourceUrlTitle?: Maybe<Scalars['String']>;
   sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
   textContent?: Maybe<Scalars['String']>;
   toolCallId?: Maybe<Scalars['String']>;
   toolInput?: Maybe<Scalars['JSON']>;
   toolName?: Maybe<Scalars['String']>;
   toolOutput?: Maybe<Scalars['JSON']>;
-  toolState?: Maybe<Scalars['String']>;
   type: Scalars['String'];
 };
 
@@ -1208,6 +1208,7 @@ export type File = {
 };
 
 export enum FileFolder {
+  AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   File = 'File',
   PersonPicture = 'PersonPicture',
