@@ -103,25 +103,6 @@ export const useEdgeState = () => {
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
     setWorkflowHoveredEdge({ source, target, sourceHandle, targetHandle });
-
-    reactflow.setEdges((edges) =>
-      edges.map((edge) => {
-        if (
-          edge.source === source &&
-          edge.sourceHandle === sourceHandle &&
-          edge.target === target &&
-          edge.targetHandle === targetHandle &&
-          edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
-        ) {
-          return {
-            ...edge,
-            ...EDGE_BRANCH_ARROW_MARKER.Hover,
-          };
-        }
-
-        return edge;
-      }),
-    );
   };
 
   const clearEdgeSelected = () => {
@@ -137,19 +118,6 @@ export const useEdgeState = () => {
 
   const clearEdgeHover = () => {
     setWorkflowHoveredEdge(undefined);
-
-    reactflow.setEdges((edges) =>
-      edges.map((edge) => {
-        if (edge.markerEnd === EDGE_BRANCH_ARROW_MARKER.Hover.markerEnd) {
-          return {
-            ...edge,
-            ...EDGE_BRANCH_ARROW_MARKER.Default,
-          };
-        }
-
-        return edge;
-      }),
-    );
   };
 
 
