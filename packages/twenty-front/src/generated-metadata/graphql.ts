@@ -445,7 +445,7 @@ export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export enum ConfigSource {
