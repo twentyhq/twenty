@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { GridPosition } from 'src/engine/core-modules/page-layout/types/grid-position.type';
@@ -72,7 +73,7 @@ export class PageLayoutWidgetEntity
   gridPosition: GridPosition;
 
   @Column({ type: 'jsonb', nullable: true })
-  configuration: Record<string, unknown> | null;
+  configuration: WidgetConfigurationInterface | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

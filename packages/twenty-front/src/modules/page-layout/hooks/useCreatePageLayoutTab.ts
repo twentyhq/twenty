@@ -5,7 +5,7 @@ import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { type PageLayoutTab } from '../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../types/PageLayoutTab';
 import { getEmptyTabLayout } from '../utils/getEmptyTabLayout';
 
 export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {

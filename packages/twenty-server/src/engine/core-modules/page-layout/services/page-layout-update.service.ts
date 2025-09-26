@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { DataSource, EntityManager } from 'typeorm';
 
+import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
+import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
@@ -229,14 +231,14 @@ export class PageLayoutUpdateService {
       await this.pageLayoutWidgetService.update(
         widgetUpdate.id,
         workspaceId,
-        widgetUpdate,
+        widgetUpdate as UpdatePageLayoutWidgetInput,
         transactionManager,
       );
     }
 
     for (const widgetToCreate of entitiesToCreate) {
       await this.pageLayoutWidgetService.create(
-        widgetToCreate,
+        widgetToCreate as CreatePageLayoutWidgetInput,
         workspaceId,
         transactionManager,
       );

@@ -1,4 +1,4 @@
-import { type PageLayout } from '~/modules/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 
 export const isPageLayoutEmpty = (pageLayout: PageLayout): boolean => {
   return (

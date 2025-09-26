@@ -1,5 +1,10 @@
-import { type PageLayoutWidget } from '~/generated/graphql';
-import { GraphType, WidgetType } from '../../mocks/mockWidgets';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+  type PageLayoutWidget,
+} from '~/generated-metadata/graphql';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
@@ -18,6 +23,8 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.NUMBER,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: 'id',
       },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
@@ -37,6 +44,10 @@ describe('convertLayoutsToWidgets', () => {
       },
       configuration: {
         graphType: GraphType.PIE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: 'id',
+        groupByFieldMetadataId: 'status',
+        orderBy: GraphOrderBy.VALUE_DESC,
       },
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',

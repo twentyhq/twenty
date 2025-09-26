@@ -3,6 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { createDefaultIframeWidget } from '@/page-layout/utils/createDefaultIframeWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
@@ -12,7 +13,6 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,
@@ -64,25 +64,18 @@ export const useCreatePageLayoutIframeWidget = (
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidget = {
-          id: widgetId,
-          pageLayoutTabId: activeTabId,
+        const newWidget = createDefaultIframeWidget(
+          widgetId,
+          activeTabId,
           title,
-          type: WidgetType.IFRAME,
-          gridPosition: {
+          url,
+          {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
-          configuration: {
-            url,
-          },
-          objectMetadataId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
+        );
 
         const newLayout = {
           i: widgetId,

@@ -1,14 +1,21 @@
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '../../types/PageLayoutTab';
 import { type PageLayoutWidget } from '~/generated/graphql';
-import { WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutTab } from '../../types/pageLayoutTypes';
 import { addWidgetToTab } from '../addWidgetToTab';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
+    __typename: 'PageLayoutWidget',
     id: 'widget-1',
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
     type: WidgetType.GRAPH,
+    configuration: {
+      graphType: GraphType.NUMBER,
+      aggregateOperation: AggregateOperations.COUNT,
+      aggregateFieldMetadataId: 'id',
+    },
     gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
     objectMetadataId: null,
     createdAt: '2024-01-01T00:00:00Z',

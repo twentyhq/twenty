@@ -1,5 +1,10 @@
-import { WidgetType } from '../../mocks/mockWidgets';
-import { type PageLayoutTab } from '../../types/pageLayoutTypes';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '../../types/PageLayoutTab';
 import { removeWidgetFromTab } from '../removeWidgetFromTab';
 
 describe('removeWidgetFromTab', () => {
@@ -11,10 +16,16 @@ describe('removeWidgetFromTab', () => {
       pageLayoutId: 'layout-1',
       widgets: [
         {
+          __typename: 'PageLayoutWidget' as const,
           id: 'widget-1',
           pageLayoutTabId: 'tab-1',
           title: 'Widget 1',
           type: WidgetType.GRAPH,
+          configuration: {
+            graphType: GraphType.NUMBER,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
+          },
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',
@@ -22,10 +33,18 @@ describe('removeWidgetFromTab', () => {
           deletedAt: null,
         },
         {
+          __typename: 'PageLayoutWidget' as const,
           id: 'widget-2',
           pageLayoutTabId: 'tab-1',
           title: 'Widget 2',
           type: WidgetType.GRAPH,
+          configuration: {
+            graphType: GraphType.PIE,
+            aggregateOperation: AggregateOperations.COUNT,
+            aggregateFieldMetadataId: 'id',
+            groupByFieldMetadataId: 'status',
+            orderBy: GraphOrderBy.VALUE_DESC,
+          },
           gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',
@@ -44,10 +63,14 @@ describe('removeWidgetFromTab', () => {
       pageLayoutId: 'layout-1',
       widgets: [
         {
+          __typename: 'PageLayoutWidget' as const,
           id: 'widget-3',
           pageLayoutTabId: 'tab-2',
           title: 'Widget 3',
           type: WidgetType.IFRAME,
+          configuration: {
+            url: 'https://example.com',
+          },
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',

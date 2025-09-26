@@ -1,3 +1,4 @@
+import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -5,7 +6,14 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 const meta: Meta<typeof WidgetPlaceholder> = {
   title: 'Modules/PageLayout/Widgets/WidgetPlaceholder',
   component: WidgetPlaceholder,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <PageLayoutTestWrapper>
+        <Story />
+      </PageLayoutTestWrapper>
+    ),
+    ComponentDecorator,
+  ],
   parameters: {
     layout: 'centered',
     docs: {

@@ -7,6 +7,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
+import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import {
   PageLayoutTabException,
@@ -19,6 +20,7 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 
 @Injectable()
 export class PageLayoutWidgetService {
@@ -120,11 +122,44 @@ export class PageLayoutWidgetService {
         transactionManager,
       );
 
+      let validatedConfig: WidgetConfigurationInterface | null = null;
+
+      if (pageLayoutWidgetData.configuration && pageLayoutWidgetData.type) {
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
+            pageLayoutWidgetData.type,
+            pageLayoutWidgetData.configuration,
+          );
+        } catch (error) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              pageLayoutWidgetData.title,
+              pageLayoutWidgetData.type,
+              error instanceof Error ? error.message : String(error),
+            ),
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
+
+        if (!validatedConfig) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              pageLayoutWidgetData.title,
+              pageLayoutWidgetData.type,
+            ),
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
+      }
+
       const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
       const insertResult = await repository.insert({
         ...pageLayoutWidgetData,
         workspaceId,
+        ...(validatedConfig && { configuration: validatedConfig }),
       } as QueryDeepPartialEntity<PageLayoutWidgetEntity>);
 
       return this.findByIdOrThrow(
@@ -174,10 +209,47 @@ export class PageLayoutWidgetService {
       );
     }
 
-    await repository.update(
-      { id },
-      updateData as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
-    );
+    let validatedConfig: WidgetConfigurationInterface | null = null;
+
+    if (updateData.configuration) {
+      const typeForValidation = updateData.type ?? existingWidget.type;
+      const titleForError = updateData.title ?? existingWidget.title;
+
+      if (typeForValidation) {
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration(
+            typeForValidation,
+            updateData.configuration,
+          );
+        } catch (error) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              titleForError,
+              typeForValidation,
+              error instanceof Error ? error.message : String(error),
+            ),
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
+
+        if (!validatedConfig) {
+          throw new PageLayoutWidgetException(
+            generatePageLayoutWidgetExceptionMessage(
+              PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION,
+              titleForError,
+              typeForValidation,
+            ),
+            PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          );
+        }
+      }
+    }
+
+    await repository.update({ id }, {
+      ...updateData,
+      ...(validatedConfig && { configuration: validatedConfig }),
+    } as QueryDeepPartialEntity<PageLayoutWidgetEntity>);
 
     return this.findByIdOrThrow(id, workspaceId, transactionManager);
   }

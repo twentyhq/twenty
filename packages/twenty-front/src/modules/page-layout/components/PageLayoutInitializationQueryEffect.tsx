@@ -2,8 +2,9 @@ import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLa
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useQuery } from '@apollo/client';
@@ -29,7 +30,9 @@ export const PageLayoutInitializationQueryEffect = ({
     },
   });
 
-  const pageLayout: PageLayout | undefined = data?.getPageLayout;
+  const pageLayout: PageLayout | undefined = data?.getPageLayout
+    ? transformPageLayout(data.getPageLayout)
+    : undefined;
 
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);

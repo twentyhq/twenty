@@ -1,4 +1,4 @@
-import { type PageLayout } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type TabLayouts } from '@/page-layout/types/tab-layouts';
 
 export const convertPageLayoutToTabLayouts = (
