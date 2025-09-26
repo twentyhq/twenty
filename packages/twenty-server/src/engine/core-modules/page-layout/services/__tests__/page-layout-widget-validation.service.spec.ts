@@ -1,26 +1,27 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
-import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
-import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import {
-  TEST_IFRAME_CONFIG,
-  TEST_NUMBER_CHART_CONFIG,
-  TEST_BAR_CHART_CONFIG,
-  TEST_LINE_CHART_CONFIG,
-  TEST_PIE_CHART_CONFIG,
-  TEST_GAUGE_CHART_CONFIG,
-  INVALID_IFRAME_CONFIG_BAD_URL,
-  INVALID_IFRAME_CONFIG_MISSING_URL,
-  INVALID_IFRAME_CONFIG_EMPTY_URL,
-  INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-  INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
+  INVALID_IFRAME_CONFIG_BAD_URL,
+  INVALID_IFRAME_CONFIG_EMPTY_URL,
+  INVALID_IFRAME_CONFIG_MISSING_URL,
+  INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
+  INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+  TEST_BAR_CHART_CONFIG,
   TEST_FIELD_METADATA_ID_1,
   TEST_FIELD_METADATA_ID_2,
+  TEST_GAUGE_CHART_CONFIG,
+  TEST_IFRAME_CONFIG,
+  TEST_LINE_CHART_CONFIG,
+  TEST_NUMBER_CHART_CONFIG,
+  TEST_PIE_CHART_CONFIG,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
+
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
+import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
+import { PageLayoutWidgetValidationService } from 'src/engine/core-modules/page-layout/services/page-layout-widget-validation.service';
 
 describe('PageLayoutWidgetValidationService', () => {
   let service: PageLayoutWidgetValidationService;
@@ -290,7 +291,6 @@ describe('PageLayoutWidgetValidationService', () => {
           graphType: GraphType.GAUGE,
           aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
           aggregateOperation: AggregateOperations.SUM,
-          // Missing aggregateOperationTotal and aggregateFieldMetadataIdTotal
         };
 
         const result = await service.validateWidgetConfiguration(
