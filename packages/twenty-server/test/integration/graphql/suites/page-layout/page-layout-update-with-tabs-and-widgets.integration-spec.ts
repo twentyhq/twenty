@@ -14,6 +14,7 @@ import {
   cleanupPageLayoutRecords,
 } from 'test/integration/utils/page-layout-test.util';
 import { cleanupPageLayoutWidgetRecords } from 'test/integration/utils/page-layout-widget-test.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
@@ -53,6 +54,15 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
