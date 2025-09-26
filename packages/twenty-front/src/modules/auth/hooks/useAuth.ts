@@ -69,6 +69,7 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
+
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -313,7 +314,7 @@ export const useAuth = () => {
       handleSetAuthTokens(authTokens);
 
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
-      // then UserProvider updates its children and PrefetchDataProvider is triggered
+      // then UserProvider updates its children and PrefetchDataProvider is then triggered
       // which requires the correct metadata to be loaded (not the mocks)
       await loadCurrentUser();
       await refreshObjectMetadataItems();

@@ -62,6 +62,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -401,6 +403,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
         queryRunner,
       );
+
       if (inputPayload.labelIdentifierFieldMetadataId) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
@@ -439,6 +442,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.objectMetadataRelatedRecordsService.updateObjectViews(
           updatedObject,
           workspaceId,
+        );
+      }
+
+      if (
+        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
+        inputPayload.labelIdentifierFieldMetadataId !==
+          existingObjectMetadata.labelIdentifierFieldMetadataId
+      ) {
+        const labelIdentifierFieldMetadata =
+          existingObjectMetadata.fieldsById[
+            inputPayload.labelIdentifierFieldMetadataId
+          ];
+
+        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
+          {
+            newLabelMetadataIdentifierFieldMetadata:
+              labelIdentifierFieldMetadata,
+          },
         );
       }
 
@@ -625,7 +646,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {
-    await this.objectMetadataRepository.delete({ workspaceId });
+    const objectsMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+      type: In([FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION]),
+    });
+
+    for (const objectMetadata of objectsMetadata) {
+      await this.objectMetadataRepository.delete({
+        id: objectMetadata.id,
+      });
+    }
   }
 
   private async handleObjectNameAndLabelUpdates({

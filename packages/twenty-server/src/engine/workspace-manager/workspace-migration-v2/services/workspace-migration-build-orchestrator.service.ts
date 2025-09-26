@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import {
   OrchestratorFailureReport,
   WorkspaceMigrationOrchestratorBuildArgs,
@@ -11,10 +12,10 @@ import {
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
+import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -27,6 +28,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
+    private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -69,12 +71,15 @@ export class WorkspaceMigrationBuildOrchestratorService {
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
-    const allActions: WorkspaceMigrationActionV2[] = [];
+    const orchestratorActionsReport = structuredClone({
+      ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+    });
     const orchestratorFailureReport: OrchestratorFailureReport = {
       objectMetadata: [],
       view: [],
       viewField: [],
       index: [],
+      serverlessFunction: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -86,6 +91,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFieldMaps,
       flatViewMaps,
       flatIndexMaps,
+      flatServerlessFunctionMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -96,7 +102,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         await this.workspaceMigrationBuilderV2Service.validateAndBuild({
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
-          workspaceId,
           buildOptions,
         });
 
@@ -106,7 +111,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       if (objectResult.status === 'fail') {
         orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
       } else {
-        allActions.push(...objectResult.workspaceMigration.actions);
+        orchestratorActionsReport.fieldMetadata = objectResult.fieldsActions;
+        orchestratorActionsReport.objectMetadata = objectResult.objectActions;
       }
     }
 
@@ -131,7 +137,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       if (indexResult.status === 'fail') {
         orchestratorFailureReport.index.push(...indexResult.errors);
       } else {
-        allActions.push(...indexResult.actions);
+        orchestratorActionsReport.index = indexResult.actions;
       }
     }
 
@@ -156,7 +162,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       if (viewResult.status === 'fail') {
         orchestratorFailureReport.view.push(...viewResult.errors);
       } else {
-        allActions.push(...viewResult.actions);
+        orchestratorActionsReport.view = viewResult.actions;
       }
     }
 
@@ -183,7 +189,36 @@ export class WorkspaceMigrationBuildOrchestratorService {
       if (viewFieldResult.status === 'fail') {
         orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
       } else {
-        allActions.push(...viewFieldResult.actions);
+        orchestratorActionsReport.viewField = viewFieldResult.actions;
+      }
+    }
+
+    if (isDefined(flatServerlessFunctionMaps)) {
+      const {
+        from: fromFlatServerlessFunctionMaps,
+        to: toFlatServerlessFunctionMaps,
+      } = flatServerlessFunctionMaps;
+
+      const serverlessFunctionResult =
+        await this.workspaceMigrationV2ServerlessFunctionActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatServerlessFunctionMaps,
+            to: toFlatServerlessFunctionMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatServerlessFunctionMaps =
+        serverlessFunctionResult.optimisticFlatEntityMaps;
+
+      if (serverlessFunctionResult.status === 'fail') {
+        orchestratorFailureReport.serverlessFunction.push(
+          ...serverlessFunctionResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.serverlessFunction =
+          serverlessFunctionResult.actions;
       }
     }
 
@@ -204,7 +239,34 @@ export class WorkspaceMigrationBuildOrchestratorService {
       status: 'success',
       workspaceMigration: {
         relatedFlatEntityMapsKeys,
-        actions: allActions,
+        actions: [
+          // Object and fields and indexes
+          ...orchestratorActionsReport.index.deleted,
+          ...orchestratorActionsReport.fieldMetadata.deleted,
+          ...orchestratorActionsReport.objectMetadata.deleted,
+          ...orchestratorActionsReport.objectMetadata.created,
+          ...orchestratorActionsReport.objectMetadata.updated,
+          ...orchestratorActionsReport.fieldMetadata.created,
+          ...orchestratorActionsReport.fieldMetadata.updated,
+          ...orchestratorActionsReport.index.created,
+          ...orchestratorActionsReport.index.updated,
+          ///
+
+          // Views
+          ...orchestratorActionsReport.view.deleted,
+          ...orchestratorActionsReport.view.created,
+          ...orchestratorActionsReport.view.updated,
+          ...orchestratorActionsReport.viewField.deleted,
+          ...orchestratorActionsReport.viewField.created,
+          ...orchestratorActionsReport.viewField.updated,
+          ///
+
+          // Serverless functions
+          ...orchestratorActionsReport.serverlessFunction.deleted,
+          ...orchestratorActionsReport.serverlessFunction.created,
+          ...orchestratorActionsReport.serverlessFunction.updated,
+          ///
+        ],
         workspaceId,
       },
     };

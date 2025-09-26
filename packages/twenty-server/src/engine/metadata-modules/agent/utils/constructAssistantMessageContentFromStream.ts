@@ -1,60 +1,96 @@
+import { type ReasoningPart } from '@ai-sdk/provider-utils';
 import { type TextPart } from 'ai';
-
-type ReasoningPart = {
-  type: 'reasoning';
-  text: string;
-  signature: string;
-};
+import {
+  parseStreamLine,
+  splitStreamIntoLines,
+  type TextBlock,
+} from 'twenty-shared/ai';
 
 export const constructAssistantMessageContentFromStream = (
   rawContent: string,
 ) => {
-  const lines = rawContent.trim().split('\n');
+  const lines = splitStreamIntoLines(rawContent);
 
   const output: Array<TextPart | ReasoningPart> = [];
-  let reasoningText = '';
-  let textContent = '';
+  let currentTextBlock: TextBlock = null;
+
+  const flushTextBlock = () => {
+    if (currentTextBlock) {
+      if (currentTextBlock.type === 'reasoning') {
+        output.push({
+          type: 'reasoning',
+          text: currentTextBlock.content,
+        });
+      } else {
+        output.push({
+          type: 'text',
+          text: currentTextBlock.content,
+        });
+      }
+      currentTextBlock = null;
+    }
+  };
 
   for (const line of lines) {
-    let event;
+    const event = parseStreamLine(line);
 
-    try {
-      event = JSON.parse(line);
-    } catch {
+    if (!event) {
       continue;
     }
 
     switch (event.type) {
-      case 'reasoning':
-        reasoningText += event.textDelta || '';
+      case 'reasoning-start':
+        flushTextBlock();
+        currentTextBlock = {
+          type: 'reasoning',
+          content: '',
+          isThinking: true,
+        };
         break;
 
-      case 'reasoning-signature':
-        if (reasoningText) {
-          output.push({
+      case 'reasoning-delta':
+        if (!currentTextBlock || currentTextBlock.type !== 'reasoning') {
+          flushTextBlock();
+          currentTextBlock = {
             type: 'reasoning',
-            text: reasoningText,
-            signature: event.signature,
-          });
-          reasoningText = '';
+            content: '',
+            isThinking: true,
+          };
+        }
+        currentTextBlock.content += event.text || '';
+        break;
+
+      case 'reasoning-end':
+        if (currentTextBlock?.type === 'reasoning') {
+          currentTextBlock.isThinking = false;
         }
         break;
 
       case 'text-delta':
-        textContent += event.textDelta || '';
+        if (!currentTextBlock || currentTextBlock.type !== 'text') {
+          flushTextBlock();
+          currentTextBlock = { type: 'text', content: '' };
+        }
+        currentTextBlock.content += event.text || '';
+        break;
+
+      case 'step-finish':
+        if (currentTextBlock?.type === 'reasoning') {
+          currentTextBlock.isThinking = false;
+        }
+        flushTextBlock();
+        break;
+
+      case 'error':
+        flushTextBlock();
         break;
 
       default:
-        if (textContent) {
-          output.push({
-            type: 'text',
-            text: textContent,
-          });
-          textContent = '';
-        }
         break;
     }
   }
+
+  flushTextBlock();
 
   return output;
 };

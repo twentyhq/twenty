@@ -13,10 +13,6 @@ import {
   UpdateViewAction,
   WorkspaceMigrationViewActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
-import {
-  getWorkspaceMigrationV2ViewCreateAction,
-  getWorkspaceMigrationV2ViewDeleteAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-action';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
 
 export type ViewRelatedFlatEntityMaps = Pick<
@@ -59,7 +55,10 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2ViewCreateAction(flatViewToValidate),
+      action: {
+        type: 'create_view',
+        view: flatViewToValidate,
+      },
     };
   }
 
@@ -86,7 +85,10 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2ViewDeleteAction(flatViewToValidate),
+      action: {
+        type: 'delete_view',
+        viewId: flatViewToValidate.id,
+      },
     };
   }
 

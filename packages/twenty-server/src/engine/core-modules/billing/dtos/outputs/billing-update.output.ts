@@ -2,10 +2,17 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+
 @ObjectType()
 export class BillingUpdateOutput {
-  @Field(() => Boolean, {
-    description: 'Boolean that confirms query was successful',
+  @Field(() => BillingSubscription, {
+    description: 'Current billing subscription',
   })
-  success: boolean;
+  currentBillingSubscription: BillingSubscription;
+
+  @Field(() => [BillingSubscription], {
+    description: 'All billing subscriptions',
+  })
+  billingSubscriptions: BillingSubscription[];
 }

@@ -14,7 +14,7 @@ import {
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
-import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
@@ -64,7 +64,13 @@ export const WorkflowDiagramCanvasEditable = () => {
       };
     });
 
-    createEdge(edgeConnect);
+    createEdge({
+      source: edgeConnect.source,
+      target: edgeConnect.target,
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId: edgeConnect.sourceHandle,
+      }),
+    });
   };
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
@@ -128,8 +134,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
-          'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
-          'filter--editable': WorkflowDiagramFilterEdgeEditable,
+          editable: WorkflowDiagramDefaultEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}

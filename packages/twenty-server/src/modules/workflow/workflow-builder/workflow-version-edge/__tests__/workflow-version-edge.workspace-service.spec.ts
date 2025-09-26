@@ -181,12 +181,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1', 'step-3'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [
+            {
+              path: ['trigger', 'nextStepIds', 1],
+              type: 'CREATE',
+              value: 'step-3',
+            },
+          ],
+          stepsDiff: [],
         });
       });
 
@@ -203,12 +205,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [],
+          stepsDiff: [],
         });
       });
     });
@@ -272,13 +270,21 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2'],
-            },
+            stepsDiff: [
+              {
+                path: [
+                  'steps',
+                  3,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  1,
+                ],
+                type: 'CREATE',
+                value: 'step-3',
+              },
+            ],
+            triggerDiff: [],
           });
         });
 
@@ -301,13 +307,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           ).not.toHaveBeenCalled();
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2'],
-            },
+            stepsDiff: [],
+            triggerDiff: [],
           });
         });
 
@@ -357,13 +358,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-              'iterator-step': ['step-2', 'step-3'],
-            },
+            stepsDiff: [
+              {
+                path: ['steps', 3, 'nextStepIds', 1],
+                type: 'CREATE',
+                value: 'step-3',
+              },
+            ],
+            triggerDiff: [],
           });
         });
       });
@@ -392,12 +394,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': ['step-3'],
-            'step-3': [],
-          },
+          stepsDiff: [
+            {
+              path: ['steps', 1, 'nextStepIds', 0],
+              type: 'CREATE',
+              value: 'step-3',
+            },
+          ],
+          triggerDiff: [],
         });
       });
 
@@ -414,12 +418,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
 
@@ -480,12 +480,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: [],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          triggerDiff: [
+            {
+              oldValue: 'step-1',
+              path: ['trigger', 'nextStepIds', 0],
+              type: 'REMOVE',
+            },
+          ],
+          stepsDiff: [],
         });
       });
 
@@ -509,12 +511,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalled();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
     });
@@ -544,12 +542,14 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         });
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': [],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [
+            {
+              oldValue: 'step-2',
+              path: ['steps', 0, 'nextStepIds', 0],
+              type: 'REMOVE',
+            },
+          ],
+          triggerDiff: [],
         });
       });
 
@@ -566,12 +566,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         ).not.toHaveBeenCalledWith();
 
         expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
+          stepsDiff: [],
+          triggerDiff: [],
         });
       });
 
@@ -670,13 +666,34 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': ['step-1'],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [
+              {
+                oldValue: 'step-2',
+                path: [
+                  'steps',
+                  0,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  0,
+                ],
+                type: 'CHANGE',
+                value: 'step-3',
+              },
+              {
+                oldValue: 'step-3',
+                path: [
+                  'steps',
+                  0,
+                  'settings',
+                  'input',
+                  'initialLoopStepIds',
+                  1,
+                ],
+                type: 'REMOVE',
+              },
+            ],
+            triggerDiff: [],
           });
         });
 
@@ -699,13 +716,8 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           ).not.toHaveBeenCalled();
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': ['step-1'],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [],
+            triggerDiff: [],
           });
         });
 
@@ -735,204 +747,15 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
           });
 
           expect(result).toEqual({
-            triggerNextStepIds: ['step-1'],
-            stepsNextStepIds: {
-              'iterator-step': [],
-              'step-1': ['step-2'],
-              'step-2': [],
-              'step-3': [],
-            },
+            stepsDiff: [
+              {
+                oldValue: 'step-1',
+                path: ['steps', 0, 'nextStepIds', 0],
+                type: 'REMOVE',
+              },
+            ],
+            triggerDiff: [],
           });
-        });
-      });
-    });
-
-    describe('with filter steps', () => {
-      it('should delete the filter step when deleting edge from trigger to target through filter', async () => {
-        const mockStepsWithFilter = [
-          {
-            id: 'step-1',
-            type: WorkflowActionType.FORM,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-2'],
-          },
-          {
-            id: 'step-2',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: [],
-          },
-          {
-            id: 'filter-step',
-            type: WorkflowActionType.FILTER,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-2'],
-          },
-        ] as WorkflowAction[];
-
-        const mockTriggerWithFilter = {
-          type: WorkflowTriggerType.MANUAL,
-          settings: {},
-          nextStepIds: ['step-1', 'filter-step'],
-        };
-
-        const mockWorkflowVersionWithFilter = {
-          id: mockWorkflowVersionId,
-          trigger: mockTriggerWithFilter,
-          steps: mockStepsWithFilter,
-          status: 'DRAFT',
-        } as WorkflowVersionWorkspaceEntity;
-
-        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
-          mockWorkflowVersionWithFilter,
-        );
-
-        const result = await service.deleteWorkflowVersionEdge({
-          source: TRIGGER_STEP_ID,
-          target: 'step-2',
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
-        });
-
-        expect(
-          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
-        ).toHaveBeenCalledWith({
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
-        });
-
-        expect(
-          mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          trigger: {
-            ...mockTriggerWithFilter,
-            nextStepIds: ['step-1'],
-          },
-          steps: mockStepsWithFilter.filter(
-            (step) => step.id !== 'filter-step',
-          ),
-        });
-
-        expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-          },
-        });
-      });
-      it('should delete the filter step when deleting edge from step to target through filter', async () => {
-        const mockStepsWithFilter = [
-          {
-            id: 'step-1',
-            type: WorkflowActionType.FORM,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-2', 'filter-step'],
-          },
-          {
-            id: 'step-2',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: [],
-          },
-          {
-            id: 'step-3',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: [],
-          },
-          {
-            id: 'filter-step',
-            type: WorkflowActionType.FILTER,
-            settings: {
-              errorHandlingOptions: {
-                continueOnFailure: { value: false },
-                retryOnFailure: { value: false },
-              },
-            },
-            nextStepIds: ['step-3'],
-          },
-        ] as WorkflowAction[];
-
-        const mockWorkflowVersionWithFilter = {
-          id: mockWorkflowVersionId,
-          trigger: mockTrigger,
-          steps: mockStepsWithFilter,
-          status: 'DRAFT',
-        } as WorkflowVersionWorkspaceEntity;
-
-        workflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
-          mockWorkflowVersionWithFilter,
-        );
-
-        const result = await service.deleteWorkflowVersionEdge({
-          source: 'step-1',
-          target: 'step-3',
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
-        });
-
-        expect(
-          workflowCommonWorkspaceService.getWorkflowVersionOrFail,
-        ).toHaveBeenCalledWith({
-          workflowVersionId: mockWorkflowVersionId,
-          workspaceId: mockWorkspaceId,
-        });
-
-        expect(
-          mockWorkflowVersionWorkspaceRepository.update,
-        ).toHaveBeenCalledWith(mockWorkflowVersionId, {
-          steps: mockStepsWithFilter
-            .map((step) => {
-              if (step.id === 'step-1') {
-                return {
-                  ...step,
-                  nextStepIds: ['step-2'],
-                };
-              }
-
-              return step;
-            })
-            .filter((step) => step.id !== 'filter-step'),
-        });
-
-        expect(result).toEqual({
-          triggerNextStepIds: ['step-1'],
-          stepsNextStepIds: {
-            'step-1': ['step-2'],
-            'step-2': [],
-            'step-3': [],
-          },
         });
       });
     });

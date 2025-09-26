@@ -37,7 +37,7 @@ export const getStepDefinitionOrThrow = ({
 
   const selectedNodePosition = findStepPosition({
     steps,
-    stepId: stepId,
+    stepId,
   });
   if (!isDefined(selectedNodePosition)) {
     return undefined;

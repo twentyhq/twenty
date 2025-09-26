@@ -17,6 +17,9 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
 
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
+import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -34,6 +37,7 @@ import {
 import { Tag } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrContainer = styled.div<{ shouldDisplayBorderBottom: boolean }>`
   cursor: pointer;
@@ -54,11 +58,11 @@ const StyledChevronContainer = styled.div`
   display: flex;
   text-align: center;
   vertical-align: middle;
-  width: 32px;
-  min-width: 32px;
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
-  left: 16px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -76,12 +80,13 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   width: ${({ width }) => width}px;
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: 48px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -133,13 +138,16 @@ export const RecordTableRecordGroupSection = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const widthOfLabelIdentifierRecordField =
-    visibleRecordFields.find(
-      findByProperty(
-        'fieldMetadataItemId',
-        labelIdentifierFieldMetadataItem?.id ?? '',
-      ),
-    )?.size ?? null;
+  const isMobile = useIsMobile();
+
+  const widthOfLabelIdentifierRecordField = isMobile
+    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
+    : (visibleRecordFields.find(
+        findByProperty(
+          'fieldMetadataItemId',
+          labelIdentifierFieldMetadataItem?.id ?? '',
+        ),
+      )?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
 
   const [
     isRecordGroupTableSectionToggled,
@@ -224,7 +232,7 @@ export const RecordTableRecordGroupSection = () => {
       </StyledChevronContainer>
       <StyledRecordGroupSection
         className="disable-shadow"
-        width={widthOfLabelIdentifierRecordField ?? 104}
+        width={widthOfLabelIdentifierRecordField}
       >
         <StyledTag
           variant={

@@ -115,6 +115,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ObjectMetadataResolver,
     BeforeUpdateOneObject,
   ],
-  exports: [ObjectMetadataService],
+  exports: [ObjectMetadataService, ObjectMetadataServiceV2],
 })
 export class ObjectMetadataModule {}

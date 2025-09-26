@@ -1,8 +1,14 @@
 import { type ParsedMail } from 'mailparser';
 
-import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-message-text.util';
+import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 
-describe('extractTextWithoutReplyQuotations', () => {
+describe('ImapMessageTextExtractorService', () => {
+  let service: ImapMessageTextExtractorService;
+
+  beforeEach(() => {
+    service = new ImapMessageTextExtractorService();
+  });
+
   it('should extract text from plain text emails with lot of reply quotations', () => {
     const parsed: ParsedMail = {
       text: `Hi John,
@@ -96,7 +102,7 @@ Developer Support
       html: false,
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toBe(`Hi John,
 
@@ -132,7 +138,7 @@ Developer Support`);
       html: false,
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toBe('just a follow up');
   });
@@ -154,7 +160,7 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toBe('just a follow up');
   });
@@ -167,7 +173,7 @@ Developer Support`);
       html: false,
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toBe('');
   });
@@ -295,7 +301,7 @@ Developer Support`);
   </style></head><body><div id="inbox-html-wrapper"><div id="isPasted" fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Hi Sarah,</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">I wanted to quickly follow up regarding the Q3 marketing campaign results. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Let’s schedule a short call early next week to discuss adjustments before the Q4 push. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Would Monday 10 AM work for you?</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Best regards, &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">John</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><img class="flm-open" width="0" height="0" style="border: 0px; width: 0px; height: 0px; max-width: 100vw;" data-open-tracking-src="{{track-read-receipt}}"></div></body></html>`,
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toEqual(`Hi Sarah,
 
@@ -321,7 +327,7 @@ John`);
       headerLines: [],
     };
 
-    const result = extractTextWithoutReplyQuotations(parsed);
+    const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toBe('Plain text content');
   });

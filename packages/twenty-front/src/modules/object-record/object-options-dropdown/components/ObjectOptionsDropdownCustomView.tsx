@@ -137,6 +137,7 @@ export const ObjectOptionsDropdownCustomView = ({
               )}
               text={t`Layout`}
               contextualText={`${capitalize(customViewData?.type ?? '')}`}
+              contextualTextPosition="right"
               hasSubMenu
             />
           </SelectableListItem>
@@ -160,6 +161,7 @@ export const ObjectOptionsDropdownCustomView = ({
                         ? t`Not available on Default View`
                         : calendarFieldMetadata?.label
                     }
+                    contextualTextPosition="right"
                     hasSubMenu
                     disabled={isDefaultView}
                   />
@@ -181,6 +183,7 @@ export const ObjectOptionsDropdownCustomView = ({
                         ? t`Week`
                         : t`Day`
                   }
+                  contextualTextPosition="right"
                 />
               </SelectableListItem>
             </>
@@ -195,6 +198,7 @@ export const ObjectOptionsDropdownCustomView = ({
               LeftIcon={IconListDetails}
               text={t`Fields`}
               contextualText={`${visibleBoardFields.length} shown`}
+              contextualTextPosition="right"
               hasSubMenu
             />
           </SelectableListItem>
@@ -222,6 +226,7 @@ export const ObjectOptionsDropdownCustomView = ({
                       ? t`Not available on Default View`
                       : recordGroupFieldMetadata?.label
                   }
+                  contextualTextPosition="right"
                   hasSubMenu
                   disabled={isDefaultView}
                 />

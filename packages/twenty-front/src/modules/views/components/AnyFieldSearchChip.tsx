@@ -23,8 +23,8 @@ export const AnyFieldSearchChip = () => {
   return (
     <SortOrFilterChip
       testId={ADVANCED_FILTER_DROPDOWN_ID}
-      labelKey={t`Any field :`}
-      labelValue={anyFieldFilterValue}
+      labelKey={t`Any field`}
+      labelValue={`: ${anyFieldFilterValue}`}
       Icon={IconFilter}
       onRemove={handleRemoveClick}
       type="filter"

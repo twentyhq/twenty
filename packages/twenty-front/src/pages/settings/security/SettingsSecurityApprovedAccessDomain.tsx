@@ -27,22 +27,20 @@ export const SettingsSecurityApprovedAccessDomain = () => {
   const form = useForm<{ domain: string; email: string }>({
     mode: 'onSubmit',
     resolver: zodResolver(
-      z
-        .object({
-          domain: z
-            .string()
-            .regex(
-              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.[a-zA-Z]{2,}$/,
-              {
-                message: t`Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters.`,
-              },
-            )
-            .max(256),
-          email: z.string().min(1, {
-            message: t`Email cannot be empty`,
-          }),
-        })
-        .strict(),
+      z.strictObject({
+        domain: z
+          .string()
+          .regex(
+            /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.[a-zA-Z]{2,}$/,
+            {
+              message: t`Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters.`,
+            },
+          )
+          .max(256),
+        email: z.string().min(1, {
+          message: t`Email cannot be empty`,
+        }),
+      }),
     ),
     defaultValues: {
       email: '',

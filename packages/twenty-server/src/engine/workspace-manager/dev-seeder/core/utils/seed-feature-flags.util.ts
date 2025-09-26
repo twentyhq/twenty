@@ -83,6 +83,16 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
         workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_DYNAMIC_SEARCH_FIELDS_ENABLED,
+        workspaceId: workspaceId,
         value: false,
       },
     ])

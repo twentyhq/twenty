@@ -7,8 +7,7 @@ import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLa
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { RecoilRoot } from 'recoil';
-import { PageLayoutType } from '~/generated/graphql';
-import { type PageLayoutWidgetWithData } from '../../types/pageLayoutTypes';
+import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
@@ -56,14 +55,10 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             graphType: GraphType.NUMBER,
           },
-          data: {
-            value: '$125,000',
-            trendPercentage: 8.3,
-          },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidgetWithData,
+        } as PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'gauge-widget',
@@ -81,16 +76,10 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             graphType: GraphType.GAUGE,
           },
-          data: {
-            value: 0.75,
-            min: 0,
-            max: 1,
-            label: 'Goal Progress',
-          },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidgetWithData,
+        } as PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'pie-widget',
@@ -108,17 +97,10 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             graphType: GraphType.PIE,
           },
-          data: {
-            items: [
-              { id: 'product', value: 60, label: 'Product Sales' },
-              { id: 'services', value: 30, label: 'Services' },
-              { id: 'support', value: 10, label: 'Support' },
-            ],
-          },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidgetWithData,
+        } as PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
           id: 'bar-widget',
@@ -136,25 +118,10 @@ const mixedGraphsPageLayoutMocks = {
           configuration: {
             graphType: GraphType.BAR,
           },
-          data: {
-            items: [
-              { quarter: 'Q1', revenue: 100000, expenses: 80000 },
-              { quarter: 'Q2', revenue: 125000, expenses: 90000 },
-              { quarter: 'Q3', revenue: 150000, expenses: 95000 },
-              { quarter: 'Q4', revenue: 180000, expenses: 100000 },
-            ],
-            indexBy: 'quarter',
-            keys: ['revenue', 'expenses'],
-            layout: 'vertical',
-            seriesLabels: {
-              revenue: 'Revenue',
-              expenses: 'Expenses',
-            },
-          },
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
-        } as PageLayoutWidgetWithData,
+        } as PageLayoutWidget,
       ],
     },
   ],
