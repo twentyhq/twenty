@@ -44,7 +44,6 @@ export const RecordTableDraggableTr = ({
     >
       {(draggableProvided, draggableSnapshot) => (
         <>
-          {/* <RecordTableTrEffect recordId={recordId} /> */}
           <RecordTableTr
             recordId={recordId}
             focusIndex={focusIndex}
