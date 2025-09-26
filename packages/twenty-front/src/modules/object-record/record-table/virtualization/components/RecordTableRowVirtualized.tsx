@@ -9,15 +9,12 @@ import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-ta
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
-import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
-import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -55,7 +52,7 @@ export const RecordTableRowVirtualized = ({
   );
 
   const recordId = useRecoilComponentFamilyValue(
-    recordIdByRealIndexComponentFamilySelector,
+    recordIdByRealIndexComponentFamilyState,
     { realIndex },
   );
 
@@ -134,8 +131,8 @@ export const RecordTableRowVirtualized = ({
       >
         {isRowFocusActive && isFocused && (
           <>
-            <RecordTableRowHotkeyEffect />
-            <RecordTableRowArrowKeysEffect />
+            {/* <RecordTableRowHotkeyEffect /> */}
+            {/* <RecordTableRowArrowKeysEffect /> */}
           </>
         )}
         <RecordTableCellDragAndDrop />
@@ -143,11 +140,11 @@ export const RecordTableRowVirtualized = ({
         <RecordTableCells />
         <RecordTablePlusButtonCellPlaceholder />
         <RecordTableLastEmptyCell />
-        <ListenRecordUpdatesEffect
+        {/* <ListenRecordUpdatesEffect
           objectNameSingular={objectNameSingular}
           recordId={recordId}
           listenedFields={listenedFields}
-        />
+        /> */}
       </RecordTableDraggableTr>
     </div>
   );

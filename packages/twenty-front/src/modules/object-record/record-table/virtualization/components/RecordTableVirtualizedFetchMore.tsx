@@ -1,15 +1,15 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 
-import { useAppendRecordTableData } from '@/object-record/record-table/hooks/internal/useAppendRecordTableData';
+import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -27,8 +27,6 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     lastRealIndexSetComponentState,
   );
 
-  const appendRecordTableData = useAppendRecordTableData();
-
   const [hasAlreadyFetchedUpToRealIndex] = useRecoilComponentState(
     hasAlreadyFetchedUpToRealIndexComponentState,
   );
@@ -41,6 +39,11 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
   const hasRecordTableFetchedAllRecordsCallbackState =
     useRecoilComponentCallbackState(
       hasRecordTableFetchedAllRecordsComponentState,
+    );
+
+  const recordIdByRealIndexCallbackState =
+    useRecoilComponentFamilyCallbackState(
+      recordIdByRealIndexComponentFamilyState,
     );
 
   // TODO: Those parameters allow the UI to not freeze while it can take time to fetch data.
@@ -103,10 +106,10 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
                 ) {
                   if (isDefined(records[indexOfCurrentRecordBatch])) {
                     set(
-                      recordStoreFamilyState(
-                        records[indexOfCurrentRecordBatch].id,
-                      ),
-                      records[indexOfCurrentRecordBatch],
+                      recordIdByRealIndexCallbackState({
+                        realIndex: realIndexToSet,
+                      }),
+                      records[indexOfCurrentRecordBatch].id,
                     );
                   }
 
@@ -114,16 +117,16 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
                 }
               }
 
-              // set(
-              //   hasAlreadyFetchedUpToRealIndexCallbackState,
-              //   startingRealIndex + records.length,
-              // );
+              set(
+                hasAlreadyFetchedUpToRealIndexCallbackState,
+                startingRealIndex + records.length,
+              );
             }
 
-            // set(
-            //   hasRecordTableFetchedAllRecordsCallbackState,
-            //   result?.data?.pageInfo.hasNextPage === false,
-            // );
+            set(
+              hasRecordTableFetchedAllRecordsCallbackState,
+              result?.data?.pageInfo.hasNextPage === false,
+            );
           }
 
           set(isFetchingMoreRecordsFamilyState(recordTableId), false);
@@ -132,7 +135,8 @@ export const RecordTableVirtualizedFetchMoreEffect = () => {
     [
       fetchMoreRecordsLazy,
       hasAlreadyFetchedUpToRealIndexCallbackState,
-      // hasRecordTableFetchedAllRecordsCallbackState,
+      hasRecordTableFetchedAllRecordsCallbackState,
+      recordIdByRealIndexCallbackState,
       recordTableId,
     ],
   );

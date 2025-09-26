@@ -9,6 +9,7 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { useInitializeRowVirtualization } from '@/object-record/record-table/virtualization/hooks/useInitializeRowVirtualization';
 import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
+import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -32,9 +33,13 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const [isRecordTableInitialLoading, setIsRecordTableInitialLoading] =
     useRecoilComponentState(isRecordTableInitialLoadingComponentState);
 
-  const [, setTotalNumberOfRecordsToVirtualize] = useRecoilComponentState(
-    totalNumberOfRecordsToVirtualizeComponentState,
-  );
+  const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
+    useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
+
+  const [
+    totalNumberOfRecordsToVirtualize,
+    setTotalNumberOfRecordsToVirtualize,
+  ] = useRecoilComponentState(totalNumberOfRecordsToVirtualizeComponentState);
 
   const setHasRecordTableFetchedAllRecords = useSetRecoilComponentState(
     hasRecordTableFetchedAllRecordsComponentState,
@@ -50,17 +55,15 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
         records,
       });
 
-      console.log({ queryIdentifier });
-
-      setHasAlreadyFetchedUpToRealIndex(records.length);
-
-      setHasRecordTableFetchedAllRecords(records.length === totalCount);
-
       if (isDefined(totalCount)) {
         if (totalCount > NUMBER_OF_VIRTUALIZED_ROWS) {
-          setTotalNumberOfRecordsToVirtualize(totalCount);
+          if (totalNumberOfRecordsToVirtualize !== totalCount) {
+            setTotalNumberOfRecordsToVirtualize(totalCount);
+          }
         } else {
-          setTotalNumberOfRecordsToVirtualize(records.length);
+          if (totalNumberOfRecordsToVirtualize !== records.length) {
+            setTotalNumberOfRecordsToVirtualize(records.length);
+          }
         }
       }
 
@@ -69,7 +72,17 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
         scrollToPosition(0);
 
+        setHasAlreadyFetchedUpToRealIndex(records.length);
+
+        setHasRecordTableFetchedAllRecords(records.length === totalCount);
+
         setIsRecordTableInitialLoading(false);
+      }
+
+      if (queryIdentifier !== lastRecordTableQueryIdentifier) {
+        setLastRecordTableQueryIdentifier(queryIdentifier);
+
+        scrollToPosition(0);
       }
     }
   }, [
@@ -85,6 +98,10 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     scrollToPosition,
     setHasRecordTableFetchedAllRecords,
     hasNextPage,
+    queryIdentifier,
+    lastRecordTableQueryIdentifier,
+    setLastRecordTableQueryIdentifier,
+    totalNumberOfRecordsToVirtualize,
   ]);
 
   // useEffect(() => {
