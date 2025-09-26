@@ -360,8 +360,18 @@ export class WorkflowSchemaWorkspaceService {
       switch (trigger.type) {
         case WorkflowTriggerType.MANUAL: {
           if (trigger.settings.availability?.type === 'BULK_RECORDS') {
+            const objectMetadataInfo =
+              await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+                trigger.settings.availability.objectNameSingular,
+                workspaceId,
+              );
+
             return {
-              label: 'Current Record',
+              label:
+                'Current Item (' +
+                objectMetadataInfo.objectMetadataItemWithFieldsMaps
+                  .labelSingular +
+                ')',
               isLeaf: false,
               type: 'object',
               value: await this.computeRecordOutputSchema({

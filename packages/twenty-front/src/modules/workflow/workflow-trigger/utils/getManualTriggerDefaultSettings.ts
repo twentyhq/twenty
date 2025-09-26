@@ -1,40 +1,57 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  type WorkflowManualTriggerAvailability,
-  type WorkflowManualTriggerSettings,
-} from '@/workflow/types/Workflow';
+import { type WorkflowManualTriggerSettings } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getManualTriggerDefaultSettings = ({
-  availability,
+  availabilityType,
   activeNonSystemObjectMetadataItems,
   icon,
   isPinned,
 }: {
-  availability: WorkflowManualTriggerAvailability;
+  availabilityType: 'GLOBAL' | 'SINGLE_RECORD' | 'BULK_RECORDS';
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
   icon?: string;
   isPinned?: boolean;
 }): WorkflowManualTriggerSettings => {
-  switch (availability) {
-    case 'EVERYWHERE': {
+  switch (availabilityType) {
+    case 'GLOBAL': {
       return {
-        objectType: undefined,
+        availability: {
+          type: 'GLOBAL',
+          locations: undefined,
+        },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
         isPinned: isPinned || false,
       };
     }
-    case 'WHEN_RECORD_SELECTED': {
+    case 'SINGLE_RECORD': {
       return {
-        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
+        availability: {
+          type: 'SINGLE_RECORD',
+          objectNameSingular:
+            activeNonSystemObjectMetadataItems[0].nameSingular,
+        },
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
         isPinned: isPinned || false,
       };
+    }
+    case 'BULK_RECORDS': {
+      return {
+        availability: {
+          type: 'BULK_RECORDS',
+          objectNameSingular:
+            activeNonSystemObjectMetadataItems[0].nameSingular,
+        },
+        outputSchema: {},
+        icon: icon || COMMAND_MENU_DEFAULT_ICON,
+        isPinned: isPinned || false,
+      };
+    }
+    default: {
+      return assertUnreachable(availabilityType);
     }
   }
-
-  return assertUnreachable(availability);
 };

@@ -8,7 +8,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityTypeOptions';
 import { MANUAL_TRIGGER_IS_PINNED_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions';
-import { getManualTriggerDefaultSettingsV2 } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettingsV2';
+import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -19,7 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
-type WorkflowEditTriggerManualV2Props = {
+type WorkflowEditTriggerManualProps = {
   trigger: WorkflowManualTrigger;
   triggerOptions:
     | {
@@ -50,10 +50,10 @@ const StyledIconPickerContainer = styled.div`
   flex-direction: column;
 `;
 
-export const WorkflowEditTriggerManualV2 = ({
+export const WorkflowEditTriggerManual = ({
   trigger,
   triggerOptions,
-}: WorkflowEditTriggerManualV2Props) => {
+}: WorkflowEditTriggerManualProps) => {
   const theme = useTheme();
 
   const { t } = useLingui();
@@ -123,7 +123,7 @@ export const WorkflowEditTriggerManualV2 = ({
 
             triggerOptions.onTriggerUpdate({
               ...trigger,
-              settings: getManualTriggerDefaultSettingsV2({
+              settings: getManualTriggerDefaultSettings({
                 availabilityType,
                 activeNonSystemObjectMetadataItems,
                 icon: trigger.settings.icon,
