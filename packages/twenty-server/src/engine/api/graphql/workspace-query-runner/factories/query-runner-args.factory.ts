@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { CommonQueryRunnerOptions } from 'src/engine/api/common/interfaces/common-query-runner-options.interface';
 import {
   type ObjectRecord,
   type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type CreateManyResolverArgs,
   type CreateOneResolverArgs,
@@ -23,9 +23,9 @@ import {
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -36,7 +36,7 @@ export class QueryRunnerArgsFactory {
 
   async create(
     args: ResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
+    options: CommonQueryRunnerOptions,
     resolverArgsType: ResolverArgsType,
   ) {
     const fieldMetadataMapByNameByName =
@@ -148,7 +148,7 @@ export class QueryRunnerArgsFactory {
 
   private async overrideDataByFieldMetadata(
     partialRecordInputs: Partial<ObjectRecord>[] | undefined,
-    options: WorkspaceQueryRunnerOptions,
+    options: CommonQueryRunnerOptions,
     shouldBackfillPositionIfUndefined = true,
   ): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
