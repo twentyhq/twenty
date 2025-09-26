@@ -11,9 +11,13 @@ export const isImpersonatingState = selector<boolean>({
     if (!isDefined(tokenPair?.accessOrWorkspaceAgnosticToken?.token))
       return false;
 
-    const decodedToken = jwtDecode<{ isImpersonating: boolean }>(
-      tokenPair.accessOrWorkspaceAgnosticToken.token,
-    );
-    return decodedToken?.isImpersonating ?? false;
+    try {
+      const decodedToken = jwtDecode<{ isImpersonating: boolean }>(
+        tokenPair.accessOrWorkspaceAgnosticToken.token,
+      );
+      return decodedToken?.isImpersonating ?? false;
+    } catch {
+      return false;
+    }
   },
 });
