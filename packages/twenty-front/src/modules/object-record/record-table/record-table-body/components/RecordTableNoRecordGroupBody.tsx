@@ -30,7 +30,9 @@ export const RecordTableNoRecordGroupBody = () => {
           <RecordTableNoRecordGroupRows />
           <RecordTableCellPortals />
         </RecordTableBodyDroppable>
-        {!isRecordTableInitialLoading && <RecordTableAggregateFooter />}
+        {!isRecordTableInitialLoading && recordTableHasRecords && (
+          <RecordTableAggregateFooter />
+        )}
         <RecordTableVirtualizationEffect />
       </RecordTableBodyDragDropContextProvider>
     </RecordTableNoRecordGroupBodyContextProvider>
