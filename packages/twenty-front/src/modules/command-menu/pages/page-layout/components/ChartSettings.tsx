@@ -1,5 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
@@ -8,6 +8,8 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
@@ -78,6 +80,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     return descriptionMap[itemId];
   };
 
+  const getDropdownContent = (_itemId: string) => {
+    return <div>configuration options will be implemented here</div>;
+  };
+
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
   return (
@@ -102,11 +108,20 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       {chartSettings.map((group) => (
         <CommandGroup key={group.heading} heading={group.heading}>
           {group.items.map((item) => (
-            <CommandMenuItem
+            <CommandMenuItemDropdown
               key={item.id}
               Icon={item.Icon}
               label={item.label}
               id={item.id}
+              dropdownId={item.id}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    {getDropdownContent(item.id)}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+              dropdownPlacement="bottom-end"
               description={getItemDescription({
                 configuration,
                 itemId: item.id,
@@ -114,7 +129,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               contextualTextPosition={item.contextualTextPosition}
               hasSubMenu={item.hasSubMenu}
               isSubMenuOpened={item.isSubMenuOpened}
-              onClick={item.onClick}
             />
           ))}
         </CommandGroup>

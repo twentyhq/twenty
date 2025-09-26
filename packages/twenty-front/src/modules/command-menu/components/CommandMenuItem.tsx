@@ -53,11 +53,14 @@ export const CommandMenuItem = ({
       contextualText={description}
       contextualTextPosition={contextualTextPosition}
       hotKeys={hotKeys}
-      onClick={() =>
-        onItemClick({
-          onClick,
-          to,
-        })
+      onClick={
+        onClick || to
+          ? () =>
+              onItemClick({
+                onClick,
+                to,
+              })
+          : undefined
       }
       focused={isSelectedItemId}
       RightComponent={RightComponent}
