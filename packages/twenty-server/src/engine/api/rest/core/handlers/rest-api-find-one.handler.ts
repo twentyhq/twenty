@@ -8,6 +8,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
 import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
 @Injectable()
 export class RestApiFindOneHandler extends RestApiBaseHandler {
@@ -18,24 +19,25 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
   }
 
   async handle(request: Request) {
-    const { args, options } =
-      await this.buildCommonArgsAndOptionsFromRestRequest(request);
+    try {
+      const { args, options } =
+        await this.buildCommonArgsAndOptionsFromRestRequest(request);
 
-    const record = await this.commonFindOneQueryRunnerService.execute(
-      args,
-      options,
-      CommonQueryNames.findOne,
-    );
+      const record = await this.commonFindOneQueryRunnerService.execute(
+        args,
+        options,
+        CommonQueryNames.findOne,
+      );
 
-    if (!isDefined(record)) {
-      throw new BadRequestException('Record not found');
+      return this.formatResult({
+        operation: CommonQueryNames.findOne,
+        objectNameSingular:
+          options.objectMetadataItemWithFieldMaps.nameSingular,
+        data: record,
+      });
+    } catch (error) {
+      workspaceQueryRunnerRestApiExceptionHandler(error);
     }
-
-    return this.formatResult({
-      operation: CommonQueryNames.findOne,
-      objectNameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
-      data: record,
-    });
   }
 
   private async buildCommonArgsAndOptionsFromRestRequest(request: Request) {
