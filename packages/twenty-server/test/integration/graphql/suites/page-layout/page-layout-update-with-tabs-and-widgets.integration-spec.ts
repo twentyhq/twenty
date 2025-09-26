@@ -1,3 +1,9 @@
+import {
+  TEST_BAR_CHART_CONFIG_MINIMAL,
+  TEST_IFRAME_CONFIG,
+  TEST_IFRAME_CONFIG_ALTERNATIVE,
+  TEST_NUMBER_CHART_CONFIG_MINIMAL,
+} from 'test/integration/constants/widget-configuration-test-data.constants';
 import { findPageLayoutOperationFactory } from 'test/integration/graphql/utils/find-page-layout-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
@@ -94,13 +100,13 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 2,
                 },
-                configuration: { viewId: 'test-view-1' },
+                configuration: null,
               },
               {
                 id: widgetToUpdateId,
                 pageLayoutTabId: existingTabId,
                 title: 'Widget To Update',
-                type: WidgetType.FIELDS,
+                type: WidgetType.GRAPH,
                 objectMetadataId: testObjectMetadataId,
                 gridPosition: {
                   row: 0,
@@ -108,7 +114,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { fields: ['id', 'name'] },
+                configuration: { ...TEST_NUMBER_CHART_CONFIG_MINIMAL },
               },
               {
                 id: widgetToDeleteId,
@@ -122,7 +128,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { url: 'https://example.com' },
+                configuration: { ...TEST_IFRAME_CONFIG },
               },
             ],
           },
@@ -185,7 +191,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 2,
                 },
-                configuration: { viewId: 'test-view-1' },
+                configuration: null,
               },
               {
                 id: widgetToUpdateId,
@@ -199,7 +205,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 2,
                   columnSpan: 3,
                 },
-                configuration: null,
+                configuration: { ...TEST_BAR_CHART_CONFIG_MINIMAL },
               },
               {
                 id: newWidgetId,
@@ -213,7 +219,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 2,
                 },
-                configuration: { fields: ['id', 'name', 'createdAt'] },
+                configuration: null,
               },
             ],
           },
@@ -234,7 +240,7 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                configuration: { url: 'https://updated-example.com' },
+                configuration: { ...TEST_IFRAME_CONFIG_ALTERNATIVE },
               },
             ],
           },
@@ -319,12 +325,10 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
       expect(updatedWidget?.type).toBe(WidgetType.GRAPH);
       expect(updatedWidget?.gridPosition.rowSpan).toBe(2);
       expect(updatedWidget?.gridPosition.columnSpan).toBe(3);
-      // Widget configuration is null for this test
 
       expect(newWidget).toBeDefined();
       expect(newWidget?.title).toBe('New Widget');
       expect(newWidget?.type).toBe(WidgetType.FIELDS);
-      // Widget configuration should be validated separately
 
       expect(deletedWidget).toBeUndefined();
 
@@ -339,7 +343,6 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
       expect(anotherNewWidget).toBeDefined();
       expect(anotherNewWidget?.title).toBe('Another New Widget');
       expect(anotherNewWidget?.type).toBe(WidgetType.IFRAME);
-      // Iframe configuration should be validated separately
 
       expect(newTab?.widgets).toHaveLength(0);
     });
@@ -411,6 +414,153 @@ describe('Page Layout Update With Tabs And Widgets Integration', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLErrorResponse(response, ErrorCode.BAD_USER_INPUT);
+    });
+
+    it('should reject invalid widget configurations', async () => {
+      const pageLayout = await createTestPageLayoutWithGraphQL({
+        name: 'Test Invalid Config',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: testObjectMetadataId,
+      });
+
+      const invalidConfigInput = {
+        name: 'Layout with Invalid Widget Config',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: testObjectMetadataId,
+        tabs: [
+          {
+            id: '20202020-1001-4001-a001-000000000001',
+            title: 'Tab with Invalid Widget',
+            position: 1,
+            widgets: [
+              {
+                id: '20202020-1002-4002-a002-000000000002',
+                pageLayoutTabId: '20202020-1001-4001-a001-000000000001',
+                title: 'Invalid Iframe Widget',
+                type: WidgetType.IFRAME,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: { url: 'not-a-valid-url' },
+              },
+            ],
+          },
+        ],
+      };
+
+      const operation = updatePageLayoutWithTabsOperationFactory({
+        pageLayoutId: pageLayout.id,
+        data: invalidConfigInput,
+      });
+
+      const response = await makeGraphqlAPIRequest(operation);
+
+      // Expect the mutation to fail with invalid configuration
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toContain(
+        'Invalid configuration for new widget of type IFRAME',
+      );
+    });
+
+    it('should accept valid widget configurations for each type', async () => {
+      const pageLayout = await createTestPageLayoutWithGraphQL({
+        name: 'Test Valid Configs',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: testObjectMetadataId,
+      });
+
+      const validConfigInput = {
+        name: 'Layout with Valid Widget Configs',
+        type: PageLayoutType.DASHBOARD,
+        objectMetadataId: testObjectMetadataId,
+        tabs: [
+          {
+            id: '20202020-1010-4010-a010-101010101010',
+            title: 'Tab with Valid Widgets',
+            position: 1,
+            widgets: [
+              {
+                id: '20202020-1011-4011-a011-111111111111',
+                pageLayoutTabId: '20202020-1010-4010-a010-101010101010',
+                title: 'Valid Iframe Widget',
+                type: WidgetType.IFRAME,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: { ...TEST_IFRAME_CONFIG },
+              },
+              {
+                id: '20202020-1012-4012-a012-121212121212',
+                pageLayoutTabId: '20202020-1010-4010-a010-101010101010',
+                title: 'Valid Graph Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: testObjectMetadataId,
+                gridPosition: {
+                  row: 1,
+                  column: 0,
+                  rowSpan: 2,
+                  columnSpan: 2,
+                },
+                configuration: { ...TEST_NUMBER_CHART_CONFIG_MINIMAL },
+              },
+              {
+                id: '20202020-1013-4013-a013-131313131313',
+                pageLayoutTabId: '20202020-1010-4010-a010-101010101010',
+                title: 'Valid View Widget',
+                type: WidgetType.VIEW,
+                objectMetadataId: testObjectMetadataId,
+                gridPosition: {
+                  row: 0,
+                  column: 1,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: null,
+              },
+            ],
+          },
+        ],
+      };
+
+      const operation = updatePageLayoutWithTabsOperationFactory({
+        pageLayoutId: pageLayout.id,
+        data: validConfigInput,
+      });
+
+      const response = await makeGraphqlAPIRequest(operation);
+
+      assertGraphQLSuccessfulResponse(response);
+
+      const result = response.body.data.updatePageLayoutWithTabsAndWidgets;
+      const widgets = result.tabs[0].widgets;
+
+      expect(widgets).toHaveLength(3);
+
+      const iframeWidget = widgets.find(
+        (w: any) => w.type === WidgetType.IFRAME,
+      );
+
+      expect(iframeWidget.configuration).toBeDefined();
+      expect(iframeWidget.configuration.url).toBe(TEST_IFRAME_CONFIG.url);
+
+      const graphWidget = widgets.find((w: any) => w.type === WidgetType.GRAPH);
+
+      expect(graphWidget.configuration).toBeDefined();
+      expect(graphWidget.configuration.graphType).toBe(
+        TEST_NUMBER_CHART_CONFIG_MINIMAL.graphType,
+      );
+
+      const viewWidget = widgets.find((w: any) => w.type === WidgetType.VIEW);
+
+      expect(viewWidget.configuration).toBeNull();
     });
   });
 });

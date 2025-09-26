@@ -1,4 +1,5 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { v4 as uuidv4 } from 'uuid';
 import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
 import {
   type GridPosition,
@@ -10,20 +11,23 @@ import {
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
 ): WidgetConfiguration => {
+  const placeholderFieldId1 = uuidv4();
+  const placeholderFieldId2 = uuidv4();
+
   switch (graphType) {
     case GraphType.NUMBER:
       return {
         graphType: GraphType.NUMBER,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
+        aggregateFieldMetadataId: placeholderFieldId1,
       };
 
     case GraphType.PIE:
       return {
         graphType: GraphType.PIE,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
-        groupByFieldMetadataId: 'createdAt',
+        aggregateFieldMetadataId: placeholderFieldId1,
+        groupByFieldMetadataId: placeholderFieldId2,
         orderBy: GraphOrderBy.VALUE_DESC,
       };
 
@@ -31,8 +35,8 @@ const createDefaultGraphConfiguration = (
       return {
         graphType: GraphType.BAR,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
-        groupByFieldMetadataIdX: 'createdAt',
+        aggregateFieldMetadataId: placeholderFieldId1,
+        groupByFieldMetadataIdX: placeholderFieldId2,
         orderByX: GraphOrderBy.FIELD_ASC,
       };
 
@@ -40,8 +44,8 @@ const createDefaultGraphConfiguration = (
       return {
         graphType: GraphType.LINE,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
-        groupByFieldMetadataIdX: 'createdAt',
+        aggregateFieldMetadataId: placeholderFieldId1,
+        groupByFieldMetadataIdX: placeholderFieldId2,
         orderByX: GraphOrderBy.FIELD_ASC,
       };
 
@@ -49,16 +53,16 @@ const createDefaultGraphConfiguration = (
       return {
         graphType: GraphType.GAUGE,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
+        aggregateFieldMetadataId: placeholderFieldId1,
         aggregateOperationTotal: AggregateOperations.COUNT,
-        aggregateFieldMetadataIdTotal: 'id',
+        aggregateFieldMetadataIdTotal: placeholderFieldId2,
       };
 
     default:
       return {
         graphType: GraphType.NUMBER,
         aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: 'id',
+        aggregateFieldMetadataId: placeholderFieldId1,
       };
   }
 };
