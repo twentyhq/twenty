@@ -18,10 +18,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import {
-  ATTACHMENT_STANDARD_FIELD_IDS,
-  PERSON_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -46,7 +43,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceIsSystem()
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -81,14 +78,14 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment type`,
     icon: 'IconList',
     options: [
-      { value: 'ARCHIVE', label: 'Archive', position: 0, color: 'orange' },
-      { value: 'AUDIO', label: 'Audio', position: 1, color: 'purple' },
-      { value: 'IMAGE', label: 'Image', position: 2, color: 'green' },
+      { value: 'ARCHIVE', label: 'Archive', position: 0, color: 'gray' },
+      { value: 'AUDIO', label: 'Audio', position: 1, color: 'pink' },
+      { value: 'IMAGE', label: 'Image', position: 2, color: 'yellow' },
       {
         value: 'PRESENTATION',
         label: 'Presentation',
         position: 3,
-        color: 'blue',
+        color: 'orange',
       },
       {
         value: 'SPREADSHEET',
@@ -100,9 +97,9 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
         value: 'TEXT_DOCUMENT',
         label: 'Text Document',
         position: 5,
-        color: 'yellow',
+        color: 'blue',
       },
-      { value: 'VIDEO', label: 'Video', position: 6, color: 'red' },
+      { value: 'VIDEO', label: 'Video', position: 6, color: 'purple' },
       { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
     ],
   })

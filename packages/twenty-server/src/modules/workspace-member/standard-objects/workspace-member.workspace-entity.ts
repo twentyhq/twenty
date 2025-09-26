@@ -25,8 +25,8 @@ import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manage
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    type FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';

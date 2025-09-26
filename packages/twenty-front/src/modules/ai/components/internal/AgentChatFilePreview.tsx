@@ -1,5 +1,6 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
+import { IconMapping } from '@/file/utils/fileIconMappings';
+import { useAttachmentTypeColors } from '@/file/utils/getAttachmentTypeColors';
 import { useTheme } from '@emotion/react';
 import { AvatarChip, Chip, ChipVariant } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
@@ -16,7 +17,7 @@ export const AgentChatFilePreview = ({
   isUploading?: boolean;
 }) => {
   const theme = useTheme();
-  const iconColors = useFileTypeColors();
+  const attachmentTypeColors = useAttachmentTypeColors();
 
   return (
     <Chip
@@ -28,7 +29,7 @@ export const AgentChatFilePreview = ({
         ) : (
           <AvatarChip
             Icon={IconMapping[getFileType(file.name)]}
-            IconBackgroundColor={iconColors[getFileType(file.name)]}
+            IconBackgroundColor={attachmentTypeColors[getFileType(file.name)]}
           />
         )
       }
