@@ -1,4 +1,4 @@
-import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
+import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
 
@@ -32,12 +32,12 @@ export const ChartTypeSelectionSection = ({
       {graphTypeOptions.map((graphType) => (
         <MenuPicker
           selected={currentGraphType === graphType}
-          key={GraphTypeInfo[graphType].label}
-          icon={GraphTypeInfo[graphType].icon}
+          key={GRAPH_TYPE_INFORMATION[graphType].label}
+          icon={GRAPH_TYPE_INFORMATION[graphType].icon}
           onClick={() => {
             setCurrentGraphType(graphType);
           }}
-          label={GraphTypeInfo[graphType].label}
+          label={GRAPH_TYPE_INFORMATION[graphType].label}
           showLabel={false}
         />
       ))}

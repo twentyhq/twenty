@@ -1,129 +1,55 @@
-import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
-import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
-import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
-import { GraphTypeInfo } from '@/command-menu/pages/page-layout/components/GraphTypeInfo';
+import { ChartSettings } from '@/command-menu/pages/page-layout/components/ChartSettings';
+import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
-import {
-  IconArrowsSort,
-  IconAxisX,
-  IconAxisY,
-  IconColorSwatch,
-  IconDatabase,
-  IconFilter,
-  IconFilters,
-  IconMathXy,
-  IconTag,
-} from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const draftPageLayout = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
+
+  const widgetInEditMode = draftPageLayout.tabs
+    .flatMap((tab) => tab.widgets)
+    .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
   const [currentGraphType, setCurrentGraphType] = useState(GraphType.BAR);
+
   const theme = useTheme();
 
-  const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
-
-  const handleGraphTypeChange = (graphType: GraphType) => {
-    setCurrentGraphType(graphType);
-    updateCommandMenuPageInfo({
-      pageIcon: GraphTypeInfo[graphType].icon,
-    });
-  };
+  if (!isDefined(widgetInEditMode)) {
+    return null;
+  }
 
   return (
     <>
       <SidePanelHeader
-        Icon={GraphTypeInfo[currentGraphType].icon}
+        Icon={GRAPH_TYPE_INFORMATION[currentGraphType].icon}
         iconColor={theme.font.color.tertiary}
         initialTitle="Chart"
-        headerType={GraphTypeInfo[currentGraphType].label}
+        headerType={GRAPH_TYPE_INFORMATION[currentGraphType].label}
         onTitleChange={() => {}}
       />
 
-      <CommandMenuList
-        commandGroups={[]}
-        selectableItemIds={[
-          'source',
-          'filter',
-          'data-on-display-x',
-          'sort-by',
-          'data-on-display-y',
-          'group-by-y',
-          'colors',
-          'axis-name',
-          'data-labels',
-        ]}
-      >
-        <ChartTypeSelectionSection
-          currentGraphType={currentGraphType}
-          setCurrentGraphType={handleGraphTypeChange}
-        />
-        <CommandGroup heading="Data">
-          <CommandMenuItem
-            Icon={IconDatabase}
-            label="Source"
-            id="source"
-            onClick={() => {}}
-          />
-          <CommandMenuItem
-            Icon={IconFilter}
-            label="Filter"
-            id="filter"
-            onClick={() => {}}
-          />
-        </CommandGroup>
-        <CommandGroup heading="X axis">
-          <CommandMenuItem
-            Icon={IconAxisX}
-            label="Data on display"
-            id="data-on-display-x"
-            onClick={() => {}}
-          />
-          <CommandMenuItem
-            Icon={IconArrowsSort}
-            label="Sort by"
-            id="sort-by"
-            onClick={() => {}}
-          />
-        </CommandGroup>
-        <CommandGroup heading="Y axis">
-          <CommandMenuItem
-            Icon={IconAxisY}
-            label="Data on display"
-            id="data-on-display-y"
-            onClick={() => {}}
-          />
-          <CommandMenuItem
-            Icon={IconFilters}
-            label="Group by"
-            id="group-by-y"
-            onClick={() => {}}
-          />
-        </CommandGroup>
-        <CommandGroup heading="Style">
-          <CommandMenuItem
-            Icon={IconColorSwatch}
-            label="Colors"
-            id="colors"
-            onClick={() => {}}
-          />
-          <CommandMenuItem
-            Icon={IconMathXy}
-            label="Axis name"
-            id="axis-name"
-            onClick={() => {}}
-          />
-          <CommandMenuItem
-            Icon={IconTag}
-            label="Data labels"
-            id="data-labels"
-            onClick={() => {}}
-          />
-        </CommandGroup>
-      </CommandMenuList>
+      <ChartSettings
+        widget={widgetInEditMode}
+        currentGraphType={currentGraphType}
+        setCurrentGraphType={setCurrentGraphType}
+      />
     </>
   );
 };

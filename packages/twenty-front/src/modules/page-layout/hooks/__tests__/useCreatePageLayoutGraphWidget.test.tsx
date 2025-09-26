@@ -82,7 +82,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutWidget(
+      result.current.createWidget.createPageLayoutGraphWidget(
         WidgetType.GRAPH,
         GraphType.BAR,
       );
@@ -167,7 +167,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutWidget(
+        result.current.createWidget.createPageLayoutGraphWidget(
           WidgetType.GRAPH,
           graphType,
         );
@@ -218,7 +218,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
     );
 
     act(() => {
-      result.current.createWidget.createPageLayoutWidget(
+      result.current.createWidget.createPageLayoutGraphWidget(
         WidgetType.GRAPH,
         GraphType.BAR,
       );

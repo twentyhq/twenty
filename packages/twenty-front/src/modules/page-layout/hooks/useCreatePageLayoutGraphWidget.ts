@@ -48,13 +48,15 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutId,
   );
 
-  const createPageLayoutWidget = useRecoilCallback(
+  const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetType: WidgetType, graphType: GraphType) => {
+      (widgetType: WidgetType, graphType: GraphType): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!activeTabId) {
-          return;
+          throw new Error(
+            'A tab must be selected to create a new graph widget',
+          );
         }
 
         const pageLayoutDraft = snapshot
@@ -124,6 +126,8 @@ export const useCreatePageLayoutGraphWidget = (
         }));
 
         set(pageLayoutDraggedAreaState, null);
+
+        return newWidget;
       },
     [
       activeTabIdState,
@@ -133,5 +137,5 @@ export const useCreatePageLayoutGraphWidget = (
     ],
   );
 
-  return { createPageLayoutWidget };
+  return { createPageLayoutGraphWidget };
 };
