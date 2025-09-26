@@ -1,6 +1,6 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
-import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
+import { hasAlreadyVirtualyRenderedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyVirtualyRenderedUpToRealIndexComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -18,7 +18,7 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
   );
 
   const lastRealIndexSetCallbackState = useRecoilComponentCallbackState(
-    lastRealIndexSetComponentState,
+    hasAlreadyVirtualyRenderedUpToRealIndexComponentState,
   );
 
   const virtualizedRowRealIndexByVirtualIndexCallbackState =

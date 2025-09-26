@@ -4,7 +4,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
-import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
+import { hasAlreadyLoadedDataUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyLoadedDataUpToRealIndexComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
@@ -38,7 +38,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
   const hasAlreadyFetchedUpToRealIndexCallbackState =
     useRecoilComponentCallbackState(
-      hasAlreadyFetchedUpToRealIndexComponentState,
+      hasAlreadyLoadedDataUpToRealIndexComponentState,
     );
 
   const recordIdByRealIndexCallbackState =

@@ -1,13 +1,21 @@
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
-import { hasAlreadyFetchedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyFetchedUpToRealIndexComponentState';
-import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
+import { hasAlreadyLoadedDataUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyLoadedDataUpToRealIndexComponentState';
+import { hasAlreadyVirtualyRenderedUpToRealIndexComponentState } from '@/object-record/record-table/virtualization/states/hasAlreadyVirtualyRenderedUpToRealIndexComponentState';
 
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { useAppendRecordIds } from '@/object-record/record-table/virtualization/hooks/useAppendRecordIds';
+import { useAssignRecordsToStore } from '@/object-record/record-table/virtualization/hooks/useAssignRecordsToStore';
+import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
+import { useReapplyRowSelection } from '@/object-record/record-table/virtualization/hooks/useReapplyRowSelection';
 import { useResetNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/hooks/useResetNumberOfRecordsToVirtualize';
+import { useResetRecordIds } from '@/object-record/record-table/virtualization/hooks/useResetRecordIds';
+import { useResetTableFocuses } from '@/object-record/record-table/virtualization/hooks/useResetTableFocuses';
 import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
+import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
@@ -17,7 +25,7 @@ import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/comp
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { getRange, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -27,21 +35,32 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
   const { fetchMoreRecordsLazy, findManyRecordsLazy, queryIdentifier } =
     useRecordIndexTableFetchMore(objectNameSingular);
 
-  const lastRealIndexSet = useRecoilComponentValue(
-    lastRealIndexSetComponentState,
+  const hasAlreadyVirtualyRenderedUpToRealIndex = useRecoilComponentValue(
+    hasAlreadyVirtualyRenderedUpToRealIndexComponentState,
   );
 
   const [hasAlreadyFetchedUpToRealIndex] = useRecoilComponentState(
-    hasAlreadyFetchedUpToRealIndexComponentState,
+    hasAlreadyLoadedDataUpToRealIndexComponentState,
   );
 
-  const lastRecordTableQueryIdentifier = useRecoilComponentValue(
-    lastRecordTableQueryIdentifierComponentState,
+  const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
+    useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
+
+  const [
+    isInitializingVirtualTableDataLoading,
+    setIsInitializingVirtualTableDataLoading,
+  ] = useRecoilComponentState(
+    isInitializingVirtualTableDataLoadingComponentState,
   );
+
+  const isInitializingVirtualTableDataLoadingCallbackState =
+    useRecoilComponentCallbackState(
+      isInitializingVirtualTableDataLoadingComponentState,
+    );
 
   const hasAlreadyFetchedUpToRealIndexCallbackState =
     useRecoilComponentCallbackState(
-      hasAlreadyFetchedUpToRealIndexComponentState,
+      hasAlreadyLoadedDataUpToRealIndexComponentState,
     );
 
   const hasRecordTableFetchedAllRecordsCallbackState =
@@ -84,41 +103,118 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
     ],
   );
 
-  const triggerNewFreshFirstDataLoad = useCallback(async () => {
-    const { records, error, data, totalCount, hasNextPage } =
-      await findManyRecordsLazy();
+  const { resetTableFocuses } = useResetTableFocuses(recordTableId);
+  const { assignRecordsToStore } = useAssignRecordsToStore();
 
-    if (isDefined(records)) {
-      resetVirtualizedRowTreadmill();
+  const [isRecordTableInitialLoading, setIsRecordTableInitialLoading] =
+    useRecoilComponentState(isRecordTableInitialLoadingComponentState);
 
-      scrollToPosition(0);
+  const { resetRecordIds } = useResetRecordIds();
+  const { appendRecordIds } = useAppendRecordIds();
 
-      resetNumberOfRecordsToVirtualize({
-        records,
-        totalCount,
-      });
+  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
-      resetRecordTableVirtualDataLoading();
-    }
-  }, [
-    findManyRecordsLazy,
-    resetVirtualizedRowTreadmill,
-    resetNumberOfRecordsToVirtualize,
-    scrollToPosition,
-    resetRecordTableVirtualDataLoading,
-  ]);
+  const { reapplyRowSelection } = useReapplyRowSelection();
+
+  const isFetchingMoreRecords = useRecoilValue(
+    isFetchingMoreRecordsFamilyState(recordTableId),
+  );
+
+  const triggerInitialRecordTableDataLoad = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const isInitializing = getSnapshotValue(
+          snapshot,
+          isInitializingVirtualTableDataLoadingCallbackState,
+        );
+
+        if (isInitializing) {
+          return;
+        }
+
+        set(isInitializingVirtualTableDataLoadingCallbackState, true);
+
+        console.log('triggerInitialRecordTableDataLoad');
+
+        resetTableFocuses();
+
+        resetVirtualizedRowTreadmill();
+
+        resetRecordTableVirtualDataLoading();
+
+        scrollToPosition(0);
+
+        const { records, totalCount, hasNextPage } =
+          await findManyRecordsLazy();
+
+        if (isDefined(records)) {
+          resetNumberOfRecordsToVirtualize({
+            records,
+            totalCount,
+          });
+
+          assignRecordsToStore({ records });
+
+          loadRecordsToVirtualRows({
+            records,
+            startingRealIndex: 0,
+          });
+
+          resetRecordIds({ records });
+
+          reapplyRowSelection();
+        }
+
+        if (!hasNextPage) {
+          set(hasRecordTableFetchedAllRecordsCallbackState, true);
+        }
+
+        set(isInitializingVirtualTableDataLoadingCallbackState, false);
+      },
+    [
+      findManyRecordsLazy,
+      resetVirtualizedRowTreadmill,
+      resetNumberOfRecordsToVirtualize,
+      scrollToPosition,
+      resetRecordTableVirtualDataLoading,
+      loadRecordsToVirtualRows,
+      assignRecordsToStore,
+      resetTableFocuses,
+      resetRecordIds,
+      reapplyRowSelection,
+      isInitializingVirtualTableDataLoadingCallbackState,
+      hasRecordTableFetchedAllRecordsCallbackState,
+    ],
+  );
 
   useEffect(() => {
-    if (queryIdentifier !== lastRecordTableQueryIdentifier) {
-      resetRecordTableVirtualDataLoading();
-
-      triggerNewFreshFirstDataLoad();
+    if (isInitializingVirtualTableDataLoading) {
+      return;
     }
+
+    (async () => {
+      if (
+        queryIdentifier !== lastRecordTableQueryIdentifier &&
+        !isFetchingMoreRecords
+      ) {
+        setLastRecordTableQueryIdentifier(queryIdentifier);
+
+        await triggerInitialRecordTableDataLoad();
+
+        setIsRecordTableInitialLoading(false);
+      }
+    })();
   }, [
     queryIdentifier,
     lastRecordTableQueryIdentifier,
     resetRecordTableVirtualDataLoading,
-    triggerNewFreshFirstDataLoad,
+    triggerInitialRecordTableDataLoad,
+    setLastRecordTableQueryIdentifier,
+    isFetchingMoreRecords,
+    isRecordTableInitialLoading,
+    setIsRecordTableInitialLoading,
+    isInitializingVirtualTableDataLoading,
+    setIsInitializingVirtualTableDataLoading,
   ]);
 
   // TODO: Those parameters allow the UI to not freeze while it can take time to fetch data.
@@ -161,8 +257,6 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
 
               const pages = Math.ceil(records.length / pagingForUIUpdate);
 
-              let indexOfCurrentRecordBatch = 0;
-
               for (let page = 0; page < pages; page++) {
                 await new Promise<void>((res) =>
                   setTimeout(() => res(), TIME_BETWEEN_UI_BATCH_UPDATE),
@@ -171,31 +265,24 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
                 const startingRealIndexInThisPage =
                   startingRealIndex + page * pagingForUIUpdate;
 
-                const endingRealIndexInThisPage =
-                  startingRealIndexInThisPage + pagingForUIUpdate;
+                const startingSliceIndexInThisPage = page * pagingForUIUpdate;
+                const endingSliceIndexInThisPage =
+                  startingSliceIndexInThisPage + pagingForUIUpdate;
 
-                for (
-                  let realIndexToSet = startingRealIndexInThisPage;
-                  realIndexToSet < endingRealIndexInThisPage;
-                  realIndexToSet++
-                ) {
-                  if (isDefined(records[indexOfCurrentRecordBatch])) {
-                    set(
-                      recordIdByRealIndexCallbackState({
-                        realIndex: realIndexToSet,
-                      }),
-                      records[indexOfCurrentRecordBatch].id,
-                    );
-                  }
+                const recordsSlice = records.slice(
+                  startingSliceIndexInThisPage,
+                  endingSliceIndexInThisPage,
+                );
 
-                  indexOfCurrentRecordBatch++;
-                }
+                loadRecordsToVirtualRows({
+                  records: recordsSlice,
+                  startingRealIndex: startingRealIndexInThisPage,
+                });
+
+                assignRecordsToStore({ records: recordsSlice });
+
+                appendRecordIds({ records: recordsSlice });
               }
-
-              set(
-                hasAlreadyFetchedUpToRealIndexCallbackState,
-                startingRealIndex + records.length,
-              );
 
               set(
                 hasRecordTableFetchedAllRecordsCallbackState,
@@ -211,8 +298,10 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
       fetchMoreRecordsLazy,
       hasAlreadyFetchedUpToRealIndexCallbackState,
       hasRecordTableFetchedAllRecordsCallbackState,
-      recordIdByRealIndexCallbackState,
       recordTableId,
+      loadRecordsToVirtualRows,
+      appendRecordIds,
+      assignRecordsToStore,
     ],
   );
 
@@ -225,13 +314,23 @@ export const RecordTableVirtualizedDataLoaderEffect = () => {
   );
 
   useEffect(() => {
-    if ((lastRealIndexSet ?? 0) > (hasAlreadyFetchedUpToRealIndex ?? 0)) {
+    const dataLoadingIsLaggingBehindVirtualRowsUIRendering =
+      (hasAlreadyVirtualyRenderedUpToRealIndex ?? 0) >
+      (hasAlreadyFetchedUpToRealIndex ?? 0);
+
+    if (
+      dataLoadingIsLaggingBehindVirtualRowsUIRendering &&
+      !isInitializingVirtualTableDataLoading &&
+      !isFetchingMoreRecords
+    ) {
       triggerNewFetchMoreDebounced();
     }
   }, [
-    lastRealIndexSet,
+    hasAlreadyVirtualyRenderedUpToRealIndex,
     hasAlreadyFetchedUpToRealIndex,
     triggerNewFetchMoreDebounced,
+    isInitializingVirtualTableDataLoading,
+    isFetchingMoreRecords,
   ]);
 
   return null;

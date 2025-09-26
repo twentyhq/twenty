@@ -4,7 +4,7 @@ import { RecordTableBodyEscapeHotkeyEffect } from '@/object-record/record-table/
 import { RecordTableBodyFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusClickOutsideEffect';
 import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusKeyboardEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
-import { RecordTableNoRecordGroupVirtualizedBodyEffect } from '@/object-record/record-table/virtualization/components/RecordTableNoRecordGroupVirtualizedBodyEffect';
+import { RecordTableVirtualizedDataLoaderEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataLoaderEffect';
 
 export interface RecordTableBodyEffectsWrapperProps {
   hasRecordGroups: boolean;
@@ -22,7 +22,7 @@ export const RecordTableBodyEffectsWrapper = ({
       ) : (
         <>
           <RecordTableNoRecordGroupScrollToPreviousRecordEffect />
-          <RecordTableNoRecordGroupVirtualizedBodyEffect />
+          <RecordTableVirtualizedDataLoaderEffect />
         </>
       )}
       <RecordTableBodyEscapeHotkeyEffect />
