@@ -42,13 +42,17 @@ type GraphWidgetRendererProps = {
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
   if (!widget.configuration || !('graphType' in widget.configuration)) {
-    return null;
+    throw new Error(
+      `Invalid configuration for widget ${widget.id}: missing graphType`,
+    );
   }
 
   const graphType = widget.configuration.graphType;
 
   if (!Object.values(GraphType).includes(graphType)) {
-    return null;
+    throw new Error(
+      `Unsupported graph type ${graphType} for widget ${widget.id}`,
+    );
   }
 
   const data: any = getDefaultWidgetData(graphType);

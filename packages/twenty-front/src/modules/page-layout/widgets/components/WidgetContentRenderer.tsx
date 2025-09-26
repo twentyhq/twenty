@@ -11,19 +11,10 @@ export const WidgetContentRenderer = ({
 }: WidgetContentRendererProps) => {
   switch (widget.type) {
     case WidgetType.GRAPH:
-      // Check if configuration exists and has graphType (all graph configs have it)
-      if (!widget.configuration || !('graphType' in widget.configuration)) {
-        return null;
-      }
       return <GraphWidgetRenderer widget={widget} />;
 
-    case WidgetType.IFRAME: {
-      const configuration = widget.configuration;
-      if (!configuration || !('url' in configuration)) {
-        return null;
-      }
-      return <IframeWidget url={configuration.url} title={widget.title} />;
-    }
+    case WidgetType.IFRAME:
+      return <IframeWidget widget={widget} />;
 
     default:
       return null;
