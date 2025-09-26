@@ -1,16 +1,15 @@
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableFirstRowOfGroup } from '@/object-record/record-table/record-table-row/components/RecordTableFirstRowOfGroup';
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordIdFirstOfGroupComponentFamilySelector } from '@/object-record/record-table/record-table-row/states/isRecordIdFirstOfGroupComponentFamilySelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { isRowVisibleComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowVisibleComponentFamilyState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { forwardRef, type ReactNode } from 'react';
@@ -45,10 +44,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       recordId,
     );
 
-    const isRowVisible = useRecoilComponentFamilyValue(
-      isRowVisibleComponentFamilyState,
-      recordId,
-    );
+    const isRowVisible = true;
 
     const isActive = useRecoilComponentFamilyValue(
       isRecordTableRowActiveComponentFamilyState,
@@ -60,15 +56,14 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       focusIndex + 1,
     );
 
-    const allRecordIds = useRecoilComponentValue(
-      recordIndexAllRecordIdsComponentSelector,
+    const nextRecordId = useRecoilComponentFamilyValue(
+      recordIdByRealIndexComponentFamilyState,
+      { realIndex: focusIndex + 1 },
     );
-
-    const nextRecordId = allRecordIds[focusIndex + 1];
 
     const isNextRecordIdFirstOfGroup = useRecoilComponentFamilyValue(
       isRecordIdFirstOfGroupComponentFamilySelector,
-      { recordId: nextRecordId },
+      { recordId: nextRecordId ?? '' },
     );
 
     const isFocused = useRecoilComponentFamilyValue(

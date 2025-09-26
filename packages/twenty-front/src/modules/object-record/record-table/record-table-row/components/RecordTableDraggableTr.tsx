@@ -7,7 +7,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { RecordTableTrEffect } from '@/object-record/record-table/record-table-row/components/RecordTableTrEffect';
 
 type RecordTableDraggableTrProps = {
   className?: string;
@@ -45,7 +44,6 @@ export const RecordTableDraggableTr = ({
     >
       {(draggableProvided, draggableSnapshot) => (
         <>
-          <RecordTableTrEffect recordId={recordId} />
           <RecordTableTr
             recordId={recordId}
             focusIndex={focusIndex}

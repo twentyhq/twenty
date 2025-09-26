@@ -14,8 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { extractRecordPositions } from '@/object-record/record-drag/shared/utils/extractRecordPositions';
-import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
+import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useRecoilCallback } from 'recoil';
 
