@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   AgentManifest,
   AppManifest,
   ObjectManifest,
+  PackageJson,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
@@ -30,11 +33,23 @@ export class ApplicationSyncService {
     private readonly agentService: AgentService,
   ) {}
 
-  public async synchronizeFromManifest(
-    workspaceId: string,
-    manifest: AppManifest,
-  ) {
-    const applicationId = await this.syncApplication(manifest, workspaceId);
+  public async synchronizeFromManifest({
+    workspaceId,
+    manifest,
+    packageJson,
+    yarnLock,
+  }: {
+    workspaceId: string;
+    manifest: AppManifest;
+    packageJson: PackageJson;
+    yarnLock?: string;
+  }) {
+    const applicationId = await this.syncApplication({
+      workspaceId,
+      manifest,
+      packageJson,
+      yarnLock,
+    });
 
     await this.syncAgents({
       agentsToSync: manifest.agents,
@@ -51,22 +66,42 @@ export class ApplicationSyncService {
     this.logger.log('✅ Application sync from manifest completed');
   }
 
-  private async syncApplication(
-    applicationToSync: AppManifest,
-    workspaceId: string,
-  ): Promise<string> {
+  private computePackageChecksum(yarnLock?: string) {
+    if (!isDefined(yarnLock)) {
+      return;
+    }
+
+    return crypto.createHash('sha256').update(yarnLock).digest('hex');
+  }
+
+  private async syncApplication({
+    workspaceId,
+    manifest,
+    packageJson,
+    yarnLock,
+  }: {
+    workspaceId: string;
+    manifest: AppManifest;
+    packageJson: PackageJson;
+    yarnLock?: string;
+  }): Promise<string> {
     const application = await this.applicationService.findByStandardId(
-      applicationToSync.standardId,
+      manifest.standardId,
       workspaceId,
     );
 
+    const packageChecksum = this.computePackageChecksum(yarnLock);
+
     if (!isDefined(application)) {
       const createdApplication = await this.applicationService.create({
-        standardId: applicationToSync.standardId,
-        label: applicationToSync.label,
-        description: applicationToSync.description,
-        version: applicationToSync.version,
+        standardId: manifest.standardId,
+        label: manifest.label,
+        description: manifest.description,
+        version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
+        packageJson,
+        yarnLock,
+        packageChecksum,
         workspaceId,
       });
 
@@ -74,9 +109,12 @@ export class ApplicationSyncService {
     }
 
     await this.applicationService.update(application.id, {
-      label: applicationToSync.label,
-      description: applicationToSync.description,
-      version: applicationToSync.version,
+      label: manifest.label,
+      description: manifest.description,
+      version: manifest.version,
+      packageJson,
+      yarnLock,
+      packageChecksum,
     });
 
     return application.id;

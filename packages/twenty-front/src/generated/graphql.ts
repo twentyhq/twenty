@@ -2265,6 +2265,8 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
+  packageJson: Scalars['JSON'];
+  yarnLock?: InputMaybe<Scalars['String']>;
 };
 
 

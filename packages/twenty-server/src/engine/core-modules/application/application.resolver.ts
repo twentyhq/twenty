@@ -3,7 +3,10 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
-import { AppManifest } from 'src/engine/core-modules/application/types/application.types';
+import {
+  AppManifest,
+  PackageJson,
+} from 'src/engine/core-modules/application/types/application.types';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -20,12 +23,18 @@ export class ApplicationResolver {
   async syncApplication(
     @Args('manifest', { type: () => GraphQLJSON })
     manifest: AppManifest,
+    @Args('packageJson', { type: () => GraphQLJSON })
+    packageJson: PackageJson,
+    @Args('yarnLock', { type: () => String, nullable: true })
+    yarnLock: string | undefined,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    await this.applicationSyncService.synchronizeFromManifest(
+    await this.applicationSyncService.synchronizeFromManifest({
       workspaceId,
       manifest,
-    );
+      yarnLock,
+      packageJson,
+    });
 
     return true;
   }

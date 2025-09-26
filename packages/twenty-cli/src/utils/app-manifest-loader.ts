@@ -1,17 +1,24 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { AppManifest, CoreEntityManifest } from '../types/config.types';
+import {
+  AppManifest,
+  CoreEntityManifest,
+  PackageJson,
+} from '../types/config.types';
 import { parseJsoncFile } from './jsonc-parser';
 import { validateSchema } from '../utils/schema-validator';
 
-const findPackageJsonFile = async (appPath: string): Promise<string> => {
-  const jsonPath = path.join(appPath, 'package.json');
+const findPathFile = async (
+  appPath: string,
+  fileName: string,
+): Promise<string> => {
+  const jsonPath = path.join(appPath, fileName);
 
   if (await fs.pathExists(jsonPath)) {
     return jsonPath;
   }
 
-  throw new Error(`package.json not found in ${appPath}`);
+  throw new Error(`${fileName} not found in ${appPath}`);
 };
 
 const loadCoreEntity = async (
@@ -40,9 +47,18 @@ const loadCoreEntity = async (
   return coreEntities;
 };
 
-export const loadManifest = async (appPath: string): Promise<AppManifest> => {
-  const packageJsonPath = await findPackageJsonFile(appPath);
+export const loadManifest = async (
+  appPath: string,
+): Promise<{
+  packageJson: PackageJson;
+  yarnLock: string;
+  manifest: AppManifest;
+}> => {
+  const packageJsonPath = await findPathFile(appPath, 'package.json');
   const rawPackageJson = await parseJsoncFile(packageJsonPath);
+
+  const yarnLockPath = await findPathFile(appPath, 'yarn.lock');
+  const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
   await validateSchema('app-manifest', rawPackageJson, packageJsonPath);
 
@@ -57,8 +73,12 @@ export const loadManifest = async (appPath: string): Promise<AppManifest> => {
   );
 
   return {
-    ...rawPackageJson,
-    agents,
-    objects,
+    packageJson: rawPackageJson,
+    yarnLock: rawYarnLock,
+    manifest: {
+      ...rawPackageJson,
+      agents,
+      objects,
+    },
   };
 };
