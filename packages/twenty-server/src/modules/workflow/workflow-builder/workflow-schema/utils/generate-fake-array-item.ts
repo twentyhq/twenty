@@ -15,7 +15,7 @@ export const generateFakeArrayItem = ({
 
   try {
     parsedItems = isString(items) ? JSON.parse(items) : items;
-  } catch (error) {
+  } catch {
     return DEFAULT_ITERATOR_CURRENT_ITEM;
   }
 
