@@ -69,8 +69,8 @@ export class AgentEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => ApplicationEntity, {
-    onDelete: 'SET NULL',
+  @ManyToOne(() => ApplicationEntity, (application) => application.agents, {
+    onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'applicationId' })
