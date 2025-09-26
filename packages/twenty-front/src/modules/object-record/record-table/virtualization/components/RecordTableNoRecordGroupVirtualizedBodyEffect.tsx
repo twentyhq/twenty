@@ -16,7 +16,7 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RecordTableNoRecordGroupBodyEffect = () => {
+export const RecordTableNoRecordGroupVirtualizedBodyEffect = () => {
   const { objectNameSingular, recordTableId } = useRecordTableContextOrThrow();
 
   const { records, loading, totalCount, hasNextPage, queryIdentifier } =
