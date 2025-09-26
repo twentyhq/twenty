@@ -38,7 +38,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
           WidgetType.IFRAME,
           INVALID_IFRAME_CONFIG_BAD_URL,
         ),
-      ).toThrow('Widget configuration validation failed');
+      ).toThrow(/url must be a URL address/);
     });
 
     it('should throw error for missing URL', () => {
@@ -47,7 +47,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
           WidgetType.IFRAME,
           INVALID_IFRAME_CONFIG_MISSING_URL,
         ),
-      ).toThrow('Widget configuration validation failed');
+      ).toThrow(/url must be a URL address/);
     });
 
     it('should throw error for empty URL', () => {
@@ -56,7 +56,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
           WidgetType.IFRAME,
           INVALID_IFRAME_CONFIG_EMPTY_URL,
         ),
-      ).toThrow('Widget configuration validation failed');
+      ).toThrow(/url must be a URL address/);
     });
   });
 
@@ -86,7 +86,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
             WidgetType.GRAPH,
             INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
           ),
-        ).toThrow('Widget configuration validation failed');
+        ).toThrow(/aggregateFieldMetadataId should not be empty/);
       });
 
       it('should throw error for invalid UUID', () => {
@@ -124,7 +124,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
             WidgetType.GRAPH,
             INVALID_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           ),
-        ).toThrow('Widget configuration validation failed');
+        ).toThrow(/groupByFieldMetadataIdX should not be empty/);
       });
     });
 
