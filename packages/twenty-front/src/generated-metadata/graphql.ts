@@ -444,6 +444,8 @@ export type ClientAiModelConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+  /** Workflow version ID */
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export enum ConfigSource {
@@ -1206,6 +1208,7 @@ export enum FileFolder {
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
+  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 

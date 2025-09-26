@@ -381,9 +381,9 @@ export class FieldMetadataServiceV2 {
 
     return this.fieldMetadataRepository.find({
       where: {
-        name: In(
+        id: In(
           allTranspiledTranspilationInputs.map(
-            ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].name,
+            ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].id,
           ),
         ),
         workspaceId,

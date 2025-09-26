@@ -74,6 +74,7 @@ export class WorkflowVersionStepWorkspaceService {
       await this.workflowSchemaWorkspaceService.enrichOutputSchema({
         step: builtStep,
         workspaceId,
+        workflowVersionId,
       });
 
     const { updatedSteps, updatedTrigger } = insertStep({
@@ -156,6 +157,7 @@ export class WorkflowVersionStepWorkspaceService {
       : await this.updateWorkflowVersionStepSettings({
           newStep: step,
           workspaceId,
+          workflowVersionId,
         });
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
@@ -378,19 +380,23 @@ export class WorkflowVersionStepWorkspaceService {
         position: existingStep.position,
       },
       workspaceId,
+      workflowVersionId,
     });
   }
 
   private async updateWorkflowVersionStepSettings({
     newStep,
     workspaceId,
+    workflowVersionId,
   }: {
     newStep: WorkflowAction;
     workspaceId: string;
+    workflowVersionId: string;
   }): Promise<WorkflowAction> {
     return this.workflowSchemaWorkspaceService.enrichOutputSchema({
       step: newStep,
       workspaceId,
+      workflowVersionId,
     });
   }
 }

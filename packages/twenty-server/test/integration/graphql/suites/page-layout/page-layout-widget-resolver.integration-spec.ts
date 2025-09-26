@@ -23,6 +23,7 @@ import { restorePageLayoutWidgetOperationFactory } from 'test/integration/graphq
 import { updatePageLayoutWidgetOperationFactory } from 'test/integration/graphql/utils/update-page-layout-widget-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { assertPageLayoutWidgetStructure } from 'test/integration/utils/page-layout-widget-test.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -76,6 +77,15 @@ describe('Page Layout Widget Resolver', () => {
 
   afterAll(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });

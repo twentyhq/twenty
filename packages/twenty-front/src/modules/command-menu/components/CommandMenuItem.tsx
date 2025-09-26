@@ -5,7 +5,7 @@ import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { type ReactNode } from 'react';
 import { IconArrowUpRight, type IconComponent } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -40,10 +40,11 @@ export const CommandMenuItem = ({
   );
 
   return (
-    <MenuItemCommand
+    <MenuItem
+      withIconContainer={true}
       LeftIcon={Icon}
       text={label}
-      description={description}
+      contextualText={description}
       hotKeys={hotKeys}
       onClick={() =>
         onItemClick({
@@ -51,7 +52,7 @@ export const CommandMenuItem = ({
           to,
         })
       }
-      isSelected={isSelectedItemId}
+      focused={isSelectedItemId}
       RightComponent={RightComponent}
     />
   );

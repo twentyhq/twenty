@@ -5,4 +5,5 @@ export const ALL_FLAT_ENTITY_MAPS_PROPERTIES = [
   'flatViewFieldMaps',
   'flatViewMaps',
   'flatIndexMaps',
+  'flatServerlessFunctionMaps',
 ] as const satisfies (keyof AllFlatEntityMaps)[];

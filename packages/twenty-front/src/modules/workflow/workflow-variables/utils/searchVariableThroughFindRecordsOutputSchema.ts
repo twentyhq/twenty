@@ -1,9 +1,9 @@
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import type { FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
 import { searchRecordOutputSchema as searchRecordOutputSchemaUtil } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
 type SearchResultKey = 'first' | 'last' | 'totalCount';
 

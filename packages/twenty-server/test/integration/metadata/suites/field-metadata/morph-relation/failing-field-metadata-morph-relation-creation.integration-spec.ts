@@ -5,9 +5,11 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 
 type GlobalTestContext = {
@@ -42,6 +44,14 @@ type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
   | ((context: GlobalTestContext) => TestedRelationCreationPayload)
 >[];
 describe('Field metadata morph relation creation should fail', () => {
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
   const failingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
     [
       {
@@ -145,6 +155,14 @@ describe('Field metadata morph relation creation should fail', () => {
         },
       });
     }
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
   });
 
   it.each(failingLabelsCreationTestsUseCase)(

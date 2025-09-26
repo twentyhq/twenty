@@ -42,7 +42,7 @@ export const validateRelationCreationPayload = async ({
         status: 'fail',
         error: {
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-          message: `Relation creation payload is invalid ${JSON.stringify(relationCreationPayload)}`,
+          message: `Relation creation payload is invalid`,
           userFriendlyMessage: t`Invalid relation creation payload`,
           value: relationCreationPayload,
         },
