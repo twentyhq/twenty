@@ -1,5 +1,7 @@
 import { type QueryFailedError } from 'typeorm';
 
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
@@ -34,6 +36,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return graphqlQueryRunnerExceptionHandler(error);
     case error instanceof TwentyORMException:
       return twentyORMGraphqlApiExceptionHandler(error);
+    case error instanceof CommonQueryRunnerException:
+      return commonQueryRunnerToGraphqlApiExceptionHandler(error);
     case error instanceof AuthException:
       return authGraphqlApiExceptionHandler(error);
     case error instanceof ApiKeyException:
