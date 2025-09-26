@@ -27,6 +27,7 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     latestVersion: null,
     publishedVersions: [],
     applicationId: null,
+    application: null,
     latestVersionInputSchema: null,
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,

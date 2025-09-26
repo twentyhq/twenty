@@ -3,18 +3,49 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 import { join } from 'path';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/serverless/drivers/utils/get-layer-dependencies-dir-name';
+import type { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 
 const execPromise = promisify(exec);
 
-export const copyAndBuildDependencies = async (buildDirectory: string) => {
+export const copyAndBuildDependencies = async (
+  buildDirectory: string,
+  serverlessFunction: ServerlessFunctionEntity,
+) => {
   await fs.mkdir(buildDirectory, {
     recursive: true,
   });
 
-  await fs.cp(getLayerDependenciesDirName('latest'), buildDirectory, {
-    recursive: true,
-  });
+  if (!isDefined(serverlessFunction.applicationId)) {
+    await fs.cp(
+      getLayerDependenciesDirName(
+        serverlessFunction.layerVersion || LAST_LAYER_VERSION,
+      ),
+      buildDirectory,
+      {
+        recursive: true,
+      },
+    );
+  } else {
+    const packageJson = serverlessFunction.application?.packageJson;
+    const yarnLock = serverlessFunction.application?.yarnLock;
+
+    if (!isDefined(packageJson) || !isDefined(yarnLock)) {
+      return;
+    }
+
+    await fs.writeFile(
+      join(buildDirectory, 'package.json'),
+      JSON.stringify(packageJson, null, 2),
+      'utf8',
+    );
+
+    await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock);
+  }
+
   await fs.cp(getLayerDependenciesDirName('engine'), buildDirectory, {
     recursive: true,
   });

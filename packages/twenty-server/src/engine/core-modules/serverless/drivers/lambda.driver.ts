@@ -135,7 +135,9 @@ export class LambdaDriver implements ServerlessDriver {
     );
   }
 
-  private async createLayerIfNotExists(version: number): Promise<string> {
+  private async createLayerIfNotExists(
+    serverlessFunction: ServerlessFunctionEntity,
+  ): Promise<string> {
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: COMMON_LAYER_NAME,
       MaxItems: 1,
@@ -148,7 +150,8 @@ export class LambdaDriver implements ServerlessDriver {
     if (
       isDefined(listLayerResult.LayerVersions) &&
       listLayerResult.LayerVersions.length > 0 &&
-      listLayerResult.LayerVersions?.[0].Description === `${version}` &&
+      listLayerResult.LayerVersions?.[0].Description ===
+        `${serverlessFunction.layerVersion}` &&
       isDefined(listLayerResult.LayerVersions[0].LayerVersionArn)
     ) {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
@@ -163,7 +166,7 @@ export class LambdaDriver implements ServerlessDriver {
       NODE_LAYER_SUBFOLDER,
     );
 
-    await copyAndBuildDependencies(nodeDependenciesFolder);
+    await copyAndBuildDependencies(nodeDependenciesFolder, serverlessFunction);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -176,7 +179,7 @@ export class LambdaDriver implements ServerlessDriver {
         ServerlessFunctionRuntime.NODE18,
         ServerlessFunctionRuntime.NODE22,
       ],
-      Description: `${version}`,
+      Description: `${serverlessFunction.layerVersion}`,
     };
 
     const command = new PublishLayerVersionCommand(params);
@@ -233,9 +236,7 @@ export class LambdaDriver implements ServerlessDriver {
       await this.delete(serverlessFunction);
     }
 
-    const layerArn = await this.createLayerIfNotExists(
-      serverlessFunction.layerVersion ?? 0,
-    );
+    const layerArn = await this.createLayerIfNotExists(serverlessFunction);
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
