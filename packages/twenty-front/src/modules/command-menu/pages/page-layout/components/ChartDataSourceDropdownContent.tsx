@@ -1,17 +1,54 @@
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ChartDataSourceDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const draftPageLayout = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
+
+  const widgetInEditMode = draftPageLayout.tabs
+    .flatMap((tab) => tab.widgets)
+    .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+  const currentSource = widgetInEditMode?.configuration?.source;
+
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
+
+  const selectedItemId = useRecoilComponentValue(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
 
   const availableObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) => {
@@ -34,6 +71,11 @@ export const ChartDataSourceDropdownContent = () => {
     },
   );
 
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const { closeDropdown } = useCloseDropdown();
+
   return (
     <>
       <DropdownMenuHeader>Source</DropdownMenuHeader>
@@ -45,15 +87,38 @@ export const ChartDataSourceDropdownContent = () => {
         value={searchQuery}
       />
       <DropdownMenuItemsContainer>
-        {availableObjectMetadataItems.map((objectMetadataItem) => (
-          <MenuItem
-            key={objectMetadataItem.id}
-            text={objectMetadataItem.labelPlural}
-            onClick={() => {
-              // TODO: Handle object selection
-            }}
-          />
-        ))}
+        <SelectableList
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
+          selectableItemIdArray={availableObjectMetadataItems.map(
+            (item) => item.id,
+          )}
+        >
+          {availableObjectMetadataItems.map((objectMetadataItem) => (
+            <SelectableListItem
+              key={objectMetadataItem.id}
+              itemId={objectMetadataItem.id}
+              onEnter={() => {
+                updateCurrentWidgetConfig({
+                  source: objectMetadataItem.id,
+                });
+                closeDropdown();
+              }}
+            >
+              <MenuItemSelect
+                text={objectMetadataItem.labelPlural}
+                selected={currentSource === objectMetadataItem.id}
+                focused={selectedItemId === objectMetadataItem.id}
+                onClick={() => {
+                  updateCurrentWidgetConfig({
+                    source: objectMetadataItem.id,
+                  });
+                  closeDropdown();
+                }}
+              />
+            </SelectableListItem>
+          ))}
+        </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );

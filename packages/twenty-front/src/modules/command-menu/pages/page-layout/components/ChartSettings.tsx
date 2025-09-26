@@ -5,14 +5,11 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { type GraphType } from '@/page-layout/mocks/mockWidgets';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { type PageLayoutWidget } from '~/generated/graphql';
 
@@ -25,34 +22,13 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const setPageLayoutDraft = useSetRecoilComponentState(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
-
-  const currentlyEditingWidgetId = useRecoilComponentValue(
-    pageLayoutEditingWidgetIdComponentState,
-    pageLayoutId,
-  );
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
-    setPageLayoutDraft((prev) => ({
-      ...prev,
-      tabs: prev.tabs.map((tab) => ({
-        ...tab,
-        widgets: tab.widgets.map((widget) =>
-          widget.id === currentlyEditingWidgetId
-            ? {
-                ...widget,
-                configuration: {
-                  ...widget.configuration,
-                  graphType,
-                },
-              }
-            : widget,
-        ),
-      })),
-    }));
+    updateCurrentWidgetConfig({
+      graphType,
+    });
 
     updateCommandMenuPageInfo({
       pageIcon: GRAPH_TYPE_INFORMATION[graphType].icon,
