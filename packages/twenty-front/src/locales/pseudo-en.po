@@ -1096,7 +1096,8 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr ""
 
 #. js-lingui-id: lXkUEV
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
 msgstr ""
 
@@ -1557,7 +1558,8 @@ msgid "Columns not matched:"
 msgstr ""
 
 #. js-lingui-id: RyZt4H
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr ""
 
@@ -2535,7 +2537,8 @@ msgid "Display"
 msgstr ""
 
 #. js-lingui-id: r/aDR/
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
 msgstr ""
 
@@ -4833,7 +4836,8 @@ msgid "Name of your workspace"
 msgstr ""
 
 #. js-lingui-id: JxC/pi
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Navbar"
 msgstr ""
 
@@ -5181,6 +5185,11 @@ msgstr ""
 msgid "No permissions have been set for individual objects."
 msgstr ""
 
+#. js-lingui-id: ePgApM
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "No record is required to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
@@ -5322,7 +5331,8 @@ msgid "Number type"
 msgstr ""
 
 #. js-lingui-id: W0i24j
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr ""
@@ -5407,7 +5417,8 @@ msgid "on weekdays only"
 msgstr ""
 
 #. js-lingui-id: 4e9dd8
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr ""
 
@@ -5475,7 +5486,7 @@ msgid "Open Outlook"
 msgstr ""
 
 #. js-lingui-id: avIMon
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "Open the ⌘K to trigger this workflow"
 msgstr ""
 
@@ -7189,7 +7200,8 @@ msgid "The email associated to your account"
 msgstr ""
 
 #. js-lingui-id: diO3fm
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr ""
 
@@ -7219,9 +7231,19 @@ msgstr ""
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr ""
 
+#. js-lingui-id: jrCR2X
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected record will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: 3lMl10
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
+#. js-lingui-id: f1lGdk
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+msgid "The selected records will be passed to your workflow"
 msgstr ""
 
 #. js-lingui-id: uWikAA

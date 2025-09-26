@@ -1,5 +1,5 @@
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils';
+import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '../constants/CaptureAllVariableTagInnerRegex';
 
 export const extractRawVariableNamePart = ({
   rawVariableName,
@@ -19,9 +19,9 @@ export const extractRawVariableNamePart = ({
 
   const extractedPart =
     part === 'stepId'
-      ? parts.at(0)
+      ? parts[0]
       : part === 'selectedField'
-        ? parts.at(-1)
+        ? parts[parts.length - 1]
         : null;
 
   if (!isDefined(extractedPart)) {

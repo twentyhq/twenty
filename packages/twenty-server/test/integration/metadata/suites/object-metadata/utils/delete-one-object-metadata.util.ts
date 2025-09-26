@@ -10,7 +10,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 export const deleteOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail,
+  expectToFail = false,
 }: PerformMetadataQueryParams<DeleteOneObjectFactoryInput>) => {
   const graphqlOperation = deleteOneObjectMetadataQueryFactory({
     input,
