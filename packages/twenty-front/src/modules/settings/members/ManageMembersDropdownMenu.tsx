@@ -1,3 +1,4 @@
+import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -5,6 +6,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { IconDotsVertical, IconSpy, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -24,7 +26,9 @@ export const ManageMembersDropdownMenu = ({
   onImpersonate,
 }: ManageMembersDropdownMenuProps) => {
   const { closeDropdown } = useCloseDropdown();
-  const canImpersonate = useHasPermissionFlag(PermissionFlagType.IMPERSONATE);
+  const isImpersonating = useRecoilValue(isImpersonatingState);
+  const canImpersonate =
+    useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
 
   return (
     <Dropdown
