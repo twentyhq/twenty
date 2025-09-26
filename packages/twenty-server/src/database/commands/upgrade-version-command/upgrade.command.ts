@@ -29,6 +29,7 @@ import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { CleanAttachmentTypeValuesCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-clean-attachment-type-values.command';
+import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-migrate-attachment-author-to-created-by.command';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-regenerate-person-search-vector-with-phones.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -84,6 +85,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.7 Commands
     protected readonly cleanAttachmentTypeValuesCommand: CleanAttachmentTypeValuesCommand,
+    protected readonly migrateAttachmentAuthorToCreatedByCommand: MigrateAttachmentAuthorToCreatedByCommand,
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
   ) {
     super(
@@ -173,7 +175,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_170: VersionCommands = {
       beforeSyncMetadata: [this.cleanAttachmentTypeValuesCommand],
-      afterSyncMetadata: [this.regeneratePersonSearchVectorWithPhonesCommand],
+      afterSyncMetadata: [
+        this.migrateAttachmentAuthorToCreatedByCommand,
+        this.regeneratePersonSearchVectorWithPhonesCommand,
+      ],
     };
 
     this.allCommands = {

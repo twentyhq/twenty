@@ -5,7 +5,11 @@ export type Attachment = {
   type: AttachmentType;
   companyId: string;
   personId: string;
-  authorId: string;
+  createdBy: {
+    source: string;
+    workspaceMemberId: string;
+    name: string;
+  };
   createdAt: string;
   __typename: string;
 };

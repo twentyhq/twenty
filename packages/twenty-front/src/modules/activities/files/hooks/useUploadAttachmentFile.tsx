@@ -10,8 +10,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FileFolder,
-  useUploadFileMutation,
+    FileFolder,
+    useUploadFileMutation,
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
@@ -49,7 +49,13 @@ export const useUploadAttachmentFile = () => {
     });
 
     const attachmentToCreate = {
-      authorId: currentWorkspaceMember?.id,
+      createdBy: {
+        source: 'MANUAL',
+        workspaceMemberId: currentWorkspaceMember?.id || '',
+        name: currentWorkspaceMember?.name?.firstName && currentWorkspaceMember?.name?.lastName
+          ? `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`
+          : 'Unknown User',
+      },
       name: file.name,
       fullPath: attachmentPath,
       type: getFileType(file.name),

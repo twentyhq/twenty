@@ -6,17 +6,22 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  ATTACHMENT_STANDARD_FIELD_IDS,
+  PERSON_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -41,6 +46,16 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @WorkspaceIsSystem()
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Created by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The creator of the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  createdBy: ActorMetadata;
+
+  @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -56,6 +71,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment full path`,
     icon: 'IconLink',
   })
+  @WorkspaceIsFieldUIReadOnly()
   fullPath: string;
 
   @WorkspaceField({
@@ -90,6 +106,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
       { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
     ],
   })
+  @WorkspaceIsFieldUIReadOnly()
   type: string;
 
   @WorkspaceRelation({
@@ -102,10 +119,12 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'authoredAttachments',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('author')
+  @WorkspaceIsFieldUIReadOnly()
   authorId: string | null;
 
   @WorkspaceRelation({
