@@ -73,7 +73,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       .getOne();
 
     if (!objectRecord) {
-      //TODO : Refacto-common - Exception handler should be Common
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
