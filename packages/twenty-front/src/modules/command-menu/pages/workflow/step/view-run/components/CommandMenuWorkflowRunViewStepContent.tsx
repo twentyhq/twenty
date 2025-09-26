@@ -116,7 +116,7 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
   return (
     <CommandMenuWorkflowRunStepContentComponentInstanceContext.Provider
       value={{
-        instanceId: workflowSelectedNode,
+        instanceId: `${workflowRunId}_${workflowSelectedNode}`,
       }}
     >
       <StyledContainer>
