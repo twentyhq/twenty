@@ -94,7 +94,7 @@ export class FlatIndexValidatorService {
       optimisticFlatIndexMaps.byId,
     ).filter(isDefined);
 
-    const existingFlatIndexOnName = allExistingFlatIndex.some(
+    const existingFlatIndexOnName = allExistingFlatIndex.find(
       (flatIndexMetadata) =>
         flatIndexMetadata.name.toLocaleUpperCase() ===
         flatIndexToValidate.name.toLocaleUpperCase(),
@@ -102,7 +102,7 @@ export class FlatIndexValidatorService {
 
     if (isDefined(existingFlatIndexOnName)) {
       validationResult.errors.push({
-        code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
+        code: IndexExceptionCode.INDEX_ALREADY_EXISTS,
         message: t`Index with same name already exists`,
         userFriendlyMessage: t`Index with same name already exists`,
       });

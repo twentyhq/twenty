@@ -49,7 +49,7 @@ export class LocalDriver implements ServerlessDriver {
   async delete() {}
 
   private async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLayerIfNotExists(serverlessFunction.layerVersion);
+    await this.createLayerIfNotExists(serverlessFunction.layerVersion ?? 0);
   }
 
   private async executeWithTimeout<T>(
@@ -113,6 +113,10 @@ export class LocalDriver implements ServerlessDriver {
     await fs.writeFile(compiledCodeFilePath, compiledCode, 'utf8');
 
     try {
+      if (!serverlessFunction.layerVersion) {
+        throw new Error('Layer version is not set');
+      }
+
       await fs.symlink(
         join(
           this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),

@@ -19,9 +19,11 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { EmailingDomain } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
@@ -41,7 +43,6 @@ import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-hand
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -115,6 +116,9 @@ export class Workspace {
     (approvedAccessDomain) => approvedAccessDomain.workspace,
   )
   approvedAccessDomains: Relation<ApprovedAccessDomain[]>;
+
+  @OneToMany(() => EmailingDomain, (emailingDomain) => emailingDomain.workspace)
+  emailingDomains: Relation<EmailingDomain[]>;
 
   @OneToMany(() => PublicDomain, (publicDomain) => publicDomain.workspace)
   publicDomains: Relation<PublicDomain[]>;

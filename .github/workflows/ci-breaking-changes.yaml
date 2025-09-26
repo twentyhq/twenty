@@ -6,9 +6,6 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -37,7 +34,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: shipfox-8vcpu-ubuntu-2404
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -260,13 +257,16 @@ jobs:
         run: |
           git stash
           git checkout origin/main
-          git clean -fd
+          git reset --hard
+          git clean -xfd -ff
+          rm -rf node_modules packages/*/node_modules packages/*/dist dist .nx/cache
 
       - name: Install dependencies for main branch
         uses: ./.github/workflows/actions/yarn-install
 
       - name: Build main branch dependencies
         run: |
+          npx nx reset
           npx nx build twenty-shared
           npx nx build twenty-emails
 
@@ -275,6 +275,7 @@ jobs:
 
       - name: Setup main branch database
         run: |
+          npx nx reset:env twenty-server
           # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
@@ -290,6 +291,9 @@ jobs:
           
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
           set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
+          set_env_var "REDIS_URL" "redis://localhost:6379"
+          set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
+          set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
           
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod

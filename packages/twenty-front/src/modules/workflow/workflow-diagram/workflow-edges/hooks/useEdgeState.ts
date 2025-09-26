@@ -20,7 +20,7 @@ export const useEdgeState = () => {
     sourceHandle,
   }: {
     nodeId: string;
-    sourceHandle: string | null | undefined;
+    sourceHandle: string;
   }) => {
     return (
       workflowSelectedEdge?.source === nodeId &&
@@ -33,7 +33,7 @@ export const useEdgeState = () => {
     sourceHandle,
   }: {
     nodeId: string;
-    sourceHandle: string | null | undefined;
+    sourceHandle: string;
   }) => {
     return (
       workflowHoveredEdge?.source === nodeId &&

@@ -9,16 +9,18 @@ export type IndexMetadataRelationProperties =
     MetadataEntitiesRelationTarget
   >;
 
+export type FlatIndexFieldMetadata = Omit<
+  IndexFieldMetadataEntity,
+  ExtractRecordTypeOrmRelationProperties<
+    IndexFieldMetadataEntity,
+    MetadataEntitiesRelationTarget
+  >
+>;
+
 export type FlatIndexMetadata = Omit<
   IndexMetadataEntity,
   IndexMetadataRelationProperties
 > & {
   universalIdentifier: string;
-  flatIndexFieldMetadatas: Omit<
-    IndexFieldMetadataEntity,
-    ExtractRecordTypeOrmRelationProperties<
-      IndexFieldMetadataEntity,
-      MetadataEntitiesRelationTarget
-    >
-  >[];
+  flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
 };

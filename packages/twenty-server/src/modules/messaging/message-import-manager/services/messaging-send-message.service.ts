@@ -22,6 +22,7 @@ interface SendMessageInput {
   body: string;
   subject: string;
   to: string;
+  html: string;
 }
 
 @Injectable()
@@ -52,26 +53,37 @@ export class MessagingSendMessageService {
         const { data } = await oAuth2Client.userinfo.get();
 
         const fromEmail = data.email;
-
         const fromName = data.name;
+        const boundary = `boundary_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         const headers: string[] = [];
 
         if (isDefined(fromName)) {
           headers.push(`From: "${mimeEncode(fromName)}" <${fromEmail}>`);
+        } else {
+          headers.push(`From: ${fromEmail}`);
         }
 
         headers.push(
           `To: ${sendMessageInput.to}`,
           `Subject: ${mimeEncode(sendMessageInput.subject)}`,
           'MIME-Version: 1.0',
+          `Content-Type: multipart/alternative; boundary="${boundary}"`,
+          '',
+          `--${boundary}`,
           'Content-Type: text/plain; charset="UTF-8"',
           '',
           sendMessageInput.body,
+          '',
+          `--${boundary}`,
+          'Content-Type: text/html; charset="UTF-8"',
+          '',
+          sendMessageInput.html,
+          '',
+          `--${boundary}--`,
         );
 
         const message = headers.join('\n');
-
         const encodedMessage = Buffer.from(message).toString('base64');
 
         await gmailClient.users.messages.send({
@@ -91,8 +103,8 @@ export class MessagingSendMessageService {
         const message = {
           subject: sendMessageInput.subject,
           body: {
-            contentType: 'Text',
-            content: sendMessageInput.body,
+            contentType: 'HTML',
+            content: sendMessageInput.html,
           },
           toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
         };
@@ -131,13 +143,14 @@ export class MessagingSendMessageService {
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
-        const { to, subject, body } = sendMessageInput;
+        const { to, subject, body, html } = sendMessageInput;
 
         const mail = new MailComposer({
           from: handle,
           to,
           subject,
           text: body,
+          html,
         });
 
         const messageBuffer = await mail.compile().build();
@@ -146,7 +159,6 @@ export class MessagingSendMessageService {
           from: handle,
           to,
           raw: messageBuffer,
-        });
 
         if (isDefined(connectionParameters?.IMAP)) {
           const imapClient =

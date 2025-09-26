@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'node:crypto';
+import crypto, { randomUUID } from 'node:crypto';
 
-import { t, msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
@@ -18,6 +18,7 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -87,6 +88,7 @@ export class AuthService {
     @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly i18nService: I18nService,
+    private readonly auditService: AuditService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -310,6 +312,65 @@ export class AuthService {
     };
   }
 
+  async generateImpersonationAccessTokenAndRefreshToken({
+    workspaceId,
+    impersonatorUserWorkspaceId,
+    impersonatedUserWorkspaceId,
+    impersonatorUserId,
+    impersonatedUserId,
+  }: {
+    workspaceId: string;
+    impersonatorUserWorkspaceId: string;
+    impersonatedUserWorkspaceId: string;
+    impersonatorUserId: string;
+    impersonatedUserId: string;
+  }): Promise<AuthTokens> {
+    const correlationId = randomUUID();
+
+    const analytics = this.auditService.createContext({
+      workspaceId,
+      userId: impersonatorUserId,
+    });
+
+    await analytics.insertWorkspaceEvent('Monitoring', {
+      eventName: 'workspace.impersonation.attempted',
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
+    });
+
+    const accessToken = await this.accessTokenService.generateAccessToken({
+      userId: impersonatedUserId,
+      workspaceId,
+      authProvider: AuthProviderEnum.Impersonation,
+      isImpersonating: true,
+      impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId,
+    });
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      {
+        userId: impersonatedUserId,
+        workspaceId,
+        authProvider: AuthProviderEnum.Impersonation,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        isImpersonating: true,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+      },
+      true,
+    );
+
+    await analytics.insertWorkspaceEvent('Monitoring', {
+      eventName: 'workspace.impersonation.issued',
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
+    });
+
+    return {
+      tokens: {
+        accessOrWorkspaceAgnosticToken: accessToken,
+        refreshToken,
+      },
+    };
+  }
+
   async countAvailableWorkspacesByEmail(email: string): Promise<number> {
     return Object.values(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
@@ -482,8 +543,8 @@ export class AuthService {
       locale: firstUserWorkspace.locale,
     });
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
     const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);
