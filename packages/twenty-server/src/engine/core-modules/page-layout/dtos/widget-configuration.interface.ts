@@ -19,12 +19,11 @@ export const WidgetConfiguration = createUnionType({
     IframeConfigurationDTO,
   ],
   resolveType(configuration: Record<string, unknown>) {
-    // Check for iframe configuration
+    // get back to this later -- I am sure just checking for url is not enough to consider it an iframe config
     if ('url' in configuration && configuration.url) {
       return IframeConfigurationDTO;
     }
 
-    // Check for graph configurations
     if ('graphType' in configuration && configuration.graphType) {
       switch (configuration.graphType) {
         case GraphType.BAR:
@@ -44,7 +43,6 @@ export const WidgetConfiguration = createUnionType({
   },
 });
 
-// Export TypeScript type for use in services
 export type WidgetConfigurationInterface =
   | BarChartConfigurationDTO
   | LineChartConfigurationDTO

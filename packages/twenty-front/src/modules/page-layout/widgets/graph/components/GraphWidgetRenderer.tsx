@@ -41,8 +41,6 @@ type GraphWidgetRendererProps = {
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  // This component is only called after parent has verified it's a graph widget
-  // Double-check for type safety
   if (!widget.configuration || !('graphType' in widget.configuration)) {
     return null;
   }
