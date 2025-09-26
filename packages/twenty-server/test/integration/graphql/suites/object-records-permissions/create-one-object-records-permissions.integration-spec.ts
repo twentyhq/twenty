@@ -50,6 +50,7 @@ describe('createOneObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
+
     createdPersonIds.push(personId);
 
     expect(response.body.data).toBeDefined();
@@ -68,6 +69,7 @@ describe('createOneObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+
     createdPersonIds.push(personId);
 
     expect(response.body.data).toBeDefined();

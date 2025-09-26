@@ -35,20 +35,6 @@ export const compareTwoFlatFieldMetadata = ({
         return true;
       }
 
-      // // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
-      // const isMorphOrRelationFieldType =
-      //   isDefined(fieldMetadata.type) &&
-      //   isMorphOrRelationFieldMetadataType(fieldMetadata.type);
-
-      // if (
-      //   isMorphOrRelationFieldType &&
-      //   !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
-      //     property as FlatFieldMetadataRelationPropertiesToCompare,
-      //   )
-      // ) {
-      //   return true;
-      // }
-
       if (
         isStandardMetadata(fieldMetadata) &&
         property !== 'standardOverrides'

@@ -64,6 +64,7 @@ describe('createManyObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
+
     createdPersonIds.push(personId1, personId2);
 
     expect(response.body.data).toBeDefined();
@@ -98,6 +99,7 @@ describe('createManyObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+
     createdPersonIds.push(personId1, personId2);
 
     expect(response.body.data).toBeDefined();
