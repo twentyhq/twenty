@@ -1,4 +1,5 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValue } from 'recoil';
 
 type Configuration = {
   source?: string;
@@ -13,9 +14,11 @@ type Configuration = {
 };
 
 export const useChartSettingsValues = (configuration: Configuration) => {
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: configuration?.source || '',
-  });
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.id === configuration.source,
+  );
 
   const getChartSettingsValues = (itemId: string) => {
     switch (itemId) {
