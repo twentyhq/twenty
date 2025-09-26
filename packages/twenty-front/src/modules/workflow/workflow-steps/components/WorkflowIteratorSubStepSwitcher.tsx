@@ -7,6 +7,7 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
 import styled from '@emotion/styled';
+import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -19,6 +20,11 @@ const StyledContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(3)};
 `;
 
+const StyledCounter = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 export const WorkflowIteratorSubStepSwitcher = ({
   stepId,
 }: {
@@ -28,12 +34,6 @@ export const WorkflowIteratorSubStepSwitcher = ({
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const stepDefinition = getStepDefinitionOrThrow({
-    stepId,
-    trigger: flow.trigger,
-    steps: flow.steps,
-  });
-
   const [
     workflowRunIteratorSubStepIterationIndex,
     setWorkflowRunIteratorSubStepIterationIndex,
@@ -41,14 +41,30 @@ export const WorkflowIteratorSubStepSwitcher = ({
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
 
+  const stepDefinition = getStepDefinitionOrThrow({
+    stepId,
+    trigger: flow.trigger,
+    steps: flow.steps,
+  });
+
   const stepInfo = workflowRun?.state?.stepInfos[stepId];
 
-  if (!isDefined(stepInfo)) {
+  if (
+    !isDefined(stepInfo) ||
+    !isDefined(workflowRun?.state) ||
+    !isDefined(flow.steps) ||
+    stepDefinition?.type !== 'action'
+  ) {
     return null;
   }
 
   const allStepInfos = getWorkflowRunAllStepInfoHistory({
     stepInfo,
+  });
+
+  const isDescendantOfIterator = getIsDescendantOfIterator({
+    stepId,
+    steps: flow.steps,
   });
 
   const workflowRunIteratorSubStepIterationsCount = allStepInfos.length;
@@ -78,19 +94,6 @@ export const WorkflowIteratorSubStepSwitcher = ({
     );
   };
 
-  if (
-    !isDefined(workflowRun?.state) ||
-    !isDefined(flow.steps) ||
-    stepDefinition?.type !== 'action'
-  ) {
-    return null;
-  }
-
-  const isDescendantOfIterator = getIsDescendantOfIterator({
-    stepId,
-    steps: flow.steps,
-  });
-
   if (!isDescendantOfIterator) {
     return null;
   }
@@ -104,10 +107,13 @@ export const WorkflowIteratorSubStepSwitcher = ({
         onClick={handleDecrementIndex}
       />
 
-      <div>
+      <StyledCounter>
         {workflowRunIteratorSubStepIterationIndex + 1}/
-        {workflowRunIteratorSubStepIterationsCount} item
-      </div>
+        {plural(workflowRunIteratorSubStepIterationsCount, {
+          one: '# item',
+          other: '# items',
+        })}
+      </StyledCounter>
 
       <IconButton
         Icon={IconChevronRight}
