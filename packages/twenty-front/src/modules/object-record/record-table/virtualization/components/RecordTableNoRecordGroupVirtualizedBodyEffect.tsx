@@ -104,25 +104,5 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     totalNumberOfRecordsToVirtualize,
   ]);
 
-  // useEffect(() => {
-  //   if (isNonEmptyString(lastShowPageRecordId)) {
-  //     const isRecordAlreadyFetched = records.some(
-  //       (record) => record.id === lastShowPageRecordId,
-  //     );
-
-  //     if (isRecordAlreadyFetched) {
-  //       const recordPosition = records.findIndex(
-  //         (record) => record.id === lastShowPageRecordId,
-  //       );
-
-  //       const positionInPx = recordPosition * RECORD_TABLE_ROW_HEIGHT;
-
-  //       scrollToPosition(positionInPx);
-
-  //       setHasInitializedScroll(true);
-  //     }
-  //   }
-  // }, [hasInitializedScroll, lastShowPageRecordId, records, scrollToPosition]);
-
   return <></>;
 };
