@@ -1,0 +1,70 @@
+
+import {
+  type PartialFieldMetadataItem,
+  type RecordFilterValueDependencies,
+  type RecordGqlOperationFilter,
+} from '@/types';
+import {
+  isDefined,
+  turnRecordFilterGroupsIntoGqlOperationFilter,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+  type RecordFilterGroupShared,
+  type RecordFilterShared,
+} from '@/utils';
+
+export const computeRecordGqlOperationFilter = ({
+  fields,
+  recordFilters,
+  recordFilterGroups,
+  filterValueDependencies,
+
+}: {
+  recordFilters: RecordFilterShared[];
+  fields: PartialFieldMetadataItem[];
+  recordFilterGroups: RecordFilterGroupShared[];
+  filterValueDependencies: RecordFilterValueDependencies;
+}): RecordGqlOperationFilter => {
+  const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
+    recordFilters
+      .filter((filter) => !isDefined(filter.recordFilterGroupId))
+      .map((regularFilter) => {
+        return turnRecordFilterIntoRecordGqlOperationFilter({
+          recordFilter: regularFilter,
+          fieldMetadataItems: fields,
+          filterValueDependencies,
+        });
+      })
+      .filter(isDefined);
+
+  const outermostFilterGroupId = recordFilterGroups.find(
+    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
+  )?.id;
+
+  const advancedRecordGqlOperationFilter =
+    turnRecordFilterGroupsIntoGqlOperationFilter(
+      filterValueDependencies,
+      recordFilters,
+      fields,
+      recordFilterGroups,
+      outermostFilterGroupId,
+    );
+
+  const recordGqlOperationFilters = [
+    ...regularRecordGqlOperationFilter,
+    advancedRecordGqlOperationFilter,
+  ].filter(isDefined);
+
+  if (recordGqlOperationFilters.length === 0) {
+    return {};
+  }
+
+  if (recordGqlOperationFilters.length === 1) {
+    return recordGqlOperationFilters[0];
+  }
+
+  const recordGqlOperationFilter = {
+    and: recordGqlOperationFilters,
+  };
+
+  return recordGqlOperationFilter;
+};

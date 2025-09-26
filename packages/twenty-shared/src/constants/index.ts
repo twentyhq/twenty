@@ -16,6 +16,7 @@ export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { QUERY_DEFAULT_LIMIT_RECORDS } from './QueryDefaultLimitRecords';
 export { QUERY_MAX_RECORDS } from './QueryMaxRecords';
 export { QUOTED_STRING_REGEX } from './QuotedStringRegex';
+export { RATING_VALUES } from './RatingValues';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
