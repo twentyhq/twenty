@@ -2,12 +2,11 @@ import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { ChartSettings } from '@/command-menu/pages/page-layout/components/ChartSettings';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
+import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
@@ -27,13 +26,14 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 
-  const [currentGraphType, setCurrentGraphType] = useState(GraphType.BAR);
-
   const theme = useTheme();
 
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
+
+  const currentGraphType = widgetInEditMode.configuration
+    .graphType as GraphType;
 
   return (
     <>
@@ -45,11 +45,7 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
         onTitleChange={() => {}}
       />
 
-      <ChartSettings
-        widget={widgetInEditMode}
-        currentGraphType={currentGraphType}
-        setCurrentGraphType={setCurrentGraphType}
-      />
+      <ChartSettings widget={widgetInEditMode} />
     </>
   );
 };
