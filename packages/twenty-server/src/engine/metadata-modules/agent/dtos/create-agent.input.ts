@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
   IsNotEmpty,
@@ -53,4 +53,10 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   responseFormat?: object;
+
+  @HideField()
+  standardId?: string;
+
+  @HideField()
+  applicationId?: string;
 }

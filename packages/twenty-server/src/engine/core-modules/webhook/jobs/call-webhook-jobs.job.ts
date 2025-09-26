@@ -35,12 +35,6 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
-    this.logger.log(
-      'workspaceEventBatch',
-      workspaceEventBatch.name,
-      workspaceEventBatch.workspaceId,
-      workspaceEventBatch.events.length,
-    );
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
     const webhooks = await this.webhookService.findByOperations(

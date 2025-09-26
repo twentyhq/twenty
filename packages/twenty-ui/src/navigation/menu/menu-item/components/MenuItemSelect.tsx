@@ -1,10 +1,21 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCheck, IconChevronRight, type IconComponent } from '@ui/display';
+import { isString } from '@sniptt/guards';
+import {
+  IconCheck,
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+  type IconComponent,
+} from '@ui/display';
 import { type ReactNode } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledMenuItemBase,
+  StyledMenuItemLabel,
+  StyledMenuItemRightContent,
+  StyledRightMenuItemContextualText,
+} from '../internals/components/StyledMenuItemBase';
 
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
@@ -32,6 +43,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
+  withIconContainer?: boolean;
   selected: boolean;
   needIconCheck?: boolean;
   text: string;
@@ -41,10 +53,12 @@ type MenuItemSelectProps = {
   focused?: boolean;
   hasSubMenu?: boolean;
   contextualText?: ReactNode;
+  contextualTextPosition?: 'left' | 'right';
 };
 
 export const MenuItemSelect = ({
   LeftIcon,
+  withIconContainer = false,
   text,
   selected,
   needIconCheck = true,
@@ -54,6 +68,7 @@ export const MenuItemSelect = ({
   focused,
   hasSubMenu = false,
   contextualText,
+  contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
   const theme = useTheme();
 
@@ -70,16 +85,33 @@ export const MenuItemSelect = ({
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
-        contextualText={contextualText}
+        contextualText={
+          contextualTextPosition === 'left' ? contextualText : null
+        }
+        withIconContainer={withIconContainer}
       />
-      {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
+      <StyledMenuItemRightContent>
+        {contextualTextPosition === 'right' && (
+          <StyledMenuItemLabel>
+            {isString(contextualText) ? (
+              <StyledRightMenuItemContextualText>
+                <OverflowingTextWithTooltip text={contextualText} />
+              </StyledRightMenuItemContextualText>
+            ) : (
+              contextualText
+            )}
+          </StyledMenuItemLabel>
+        )}
 
-      {hasSubMenu && (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          color={theme.font.color.tertiary}
-        />
-      )}
+        {selected && needIconCheck && <IconCheck size={theme.icon.size.md} />}
+
+        {hasSubMenu && (
+          <IconChevronRight
+            size={theme.icon.size.sm}
+            color={theme.font.color.tertiary}
+          />
+        )}
+      </StyledMenuItemRightContent>
     </StyledMenuItemSelect>
   );
 };

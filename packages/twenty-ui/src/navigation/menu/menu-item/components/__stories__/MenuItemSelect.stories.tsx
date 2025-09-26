@@ -49,6 +49,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'states',
           values: ['default', 'hover', 'focused', 'hover+focused'],
           props: (state: string) => {

@@ -234,7 +234,7 @@ export class LambdaDriver implements ServerlessDriver {
     }
 
     const layerArn = await this.createLayerIfNotExists(
-      serverlessFunction.layerVersion,
+      serverlessFunction.layerVersion ?? 0,
     );
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();

@@ -54,6 +54,20 @@ export class AgentService {
     }));
   }
 
+  async findOneByApplicationAndStandardId({
+    applicationId,
+    standardId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    standardId: string;
+    workspaceId: string;
+  }) {
+    return await this.agentRepository.findOne({
+      where: { applicationId, standardId, workspaceId },
+    });
+  }
+
   async findOneAgent(id: string, workspaceId: string) {
     const agent = await this.agentRepository.findOne({
       where: { id, workspaceId },

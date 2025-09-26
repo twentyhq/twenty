@@ -45,6 +45,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelect> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'selected',
           values: [true, false],
           props: (selected: boolean) => ({ selected }),

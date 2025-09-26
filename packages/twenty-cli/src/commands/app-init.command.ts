@@ -3,7 +3,6 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
 import {
-  createAgentManifest,
   createBasePackageJson,
   createGitignoreContent,
   createReadmeContent,
@@ -13,14 +12,15 @@ import { writeJsoncFile } from '../utils/jsonc-parser';
 export class AppInitCommand {
   async execute(options: { path?: string; name?: string }): Promise<void> {
     try {
-      const appName = await this.getAppName(options.name);
-      const appDir = this.determineAppDirectory(options.path, appName);
+      const { name, description } = await this.getAppInfos(options.name);
+
+      const appDir = this.determineAppDirectory(name, options.path);
 
       await this.validateDirectory(appDir);
 
-      this.logCreationInfo(appDir, appName);
+      this.logCreationInfo(appDir, name);
 
-      await this.createAppStructure(appDir, appName);
+      await this.createAppStructure(appDir, name, description);
 
       this.logSuccess(appDir);
     } catch (error) {
@@ -32,15 +32,17 @@ export class AppInitCommand {
     }
   }
 
-  private async getAppName(providedName?: string): Promise<string> {
+  private async getAppInfos(
+    providedName?: string,
+  ): Promise<{ name: string; description: string }> {
     if (providedName) {
-      return providedName;
+      return { name: providedName, description: '' };
     }
 
-    const nameAnswer = await inquirer.prompt([
+    return inquirer.prompt([
       {
         type: 'input',
-        name: 'appName',
+        name: 'name',
         message: 'Application name:',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
@@ -49,17 +51,21 @@ export class AppInitCommand {
           return true;
         },
       },
+      {
+        type: 'input',
+        name: 'description',
+        message: 'Application description (optional):',
+        default: '',
+      },
     ]);
-
-    return nameAnswer.appName;
   }
 
   private determineAppDirectory(
+    appName: string,
     providedPath?: string,
-    appName?: string,
   ): string {
     if (providedPath) {
-      return path.resolve(providedPath);
+      return path.resolve(providedPath, appName);
     }
 
     return path.join(process.cwd(), appName!);
@@ -86,23 +92,14 @@ export class AppInitCommand {
   private async createAppStructure(
     appDir: string,
     appName: string,
+    description: string,
   ): Promise<void> {
     await fs.ensureDir(appDir);
 
-    // Create agents directory
-    const agentsDir = path.join(appDir, 'agents');
-    await fs.ensureDir(agentsDir);
-
     // Create main basePackageJson with agent references
-    const basePackageJson = createBasePackageJson(appName);
+    const basePackageJson = createBasePackageJson(appName, description);
     const basePackageJsonPath = path.join(appDir, 'package.json');
     await writeJsoncFile(basePackageJsonPath, basePackageJson);
-
-    // Create agent basePackageJson file
-    const agentManifest = createAgentManifest(appName);
-    const agentFileName = `${appName}-agent`;
-    const agentPath = path.join(agentsDir, `${agentFileName}.jsonc`);
-    await writeJsoncFile(agentPath, agentManifest);
 
     // Create README
     const readmeContent = createReadmeContent(appName, appDir);

@@ -9,6 +9,7 @@ import {
 
 export type MenuItemNavigateProps = {
   LeftIcon?: IconComponent;
+  withIconContainer?: boolean;
   text: string;
   onClick?: () => void;
   className?: string;
@@ -16,6 +17,7 @@ export type MenuItemNavigateProps = {
 
 export const MenuItemNavigate = ({
   LeftIcon,
+  withIconContainer = false,
   text,
   className,
   onClick,
@@ -25,7 +27,11 @@ export const MenuItemNavigate = ({
   return (
     <StyledMenuItemBase onClick={onClick} className={className}>
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+        <MenuItemLeftContent
+          LeftIcon={LeftIcon}
+          text={text}
+          withIconContainer={withIconContainer}
+        />
       </StyledMenuItemLeftContent>
       <IconChevronRight
         size={theme.icon.size.sm}

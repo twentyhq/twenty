@@ -45,6 +45,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'toggled',
           values: [true, false],
           props: (toggled: boolean) => ({ toggled }),

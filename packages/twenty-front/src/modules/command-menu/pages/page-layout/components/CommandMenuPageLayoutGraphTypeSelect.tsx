@@ -11,7 +11,7 @@ import {
   IconGauge,
   IconNumber,
 } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -74,7 +74,8 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
       <StyledSectionTitle>Graph type</StyledSectionTitle>
 
       {graphTypeOptions.map((option) => (
-        <MenuItemCommand
+        <MenuItem
+          withIconContainer={true}
           key={option.type}
           LeftIcon={option.icon}
           text={option.title}

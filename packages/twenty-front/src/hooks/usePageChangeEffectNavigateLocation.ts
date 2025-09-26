@@ -1,5 +1,6 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -22,6 +23,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
+  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
@@ -123,6 +125,9 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
     !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
   ) {
+    if (!isDefined(calendarBookingPageId)) {
+      return defaultHomePagePath;
+    }
     return AppPath.BookCallDecision;
   }
 

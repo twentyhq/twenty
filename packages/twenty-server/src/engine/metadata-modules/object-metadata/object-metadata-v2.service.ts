@@ -171,9 +171,11 @@ export class ObjectMetadataServiceV2 {
   async deleteOne({
     deleteObjectInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<ObjectMetadataDTO> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -253,7 +255,7 @@ export class ObjectMetadataServiceV2 {
           },
           buildOptions: {
             inferDeletionFromMissingEntities: true,
-            isSystemBuild: false,
+            isSystemBuild,
           },
           workspaceId,
         },

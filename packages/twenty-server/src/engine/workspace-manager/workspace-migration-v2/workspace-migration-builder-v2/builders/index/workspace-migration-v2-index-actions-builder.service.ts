@@ -11,10 +11,6 @@ import {
   WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
-import {
-  getWorkspaceMigrationV2CreateIndexAction,
-  getWorkspaceMigrationV2DeleteIndexAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
 
 export type IndexRelatedFlatEntityMaps = Pick<
@@ -62,7 +58,10 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2CreateIndexAction(flatIndexToValidate),
+      action: {
+        type: 'create_index',
+        flatIndexMetadata: flatIndexToValidate,
+      },
     };
   }
 
@@ -95,7 +94,10 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2DeleteIndexAction(flatIndexToValidate),
+      action: {
+        type: 'delete_index',
+        flatIndexMetadataId: flatIndexToValidate.id,
+      },
     };
   }
 
@@ -156,8 +158,14 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: [
-        getWorkspaceMigrationV2DeleteIndexAction(fromFlatIndex),
-        getWorkspaceMigrationV2CreateIndexAction(toFlatIndex),
+        {
+          type: 'delete_index',
+          flatIndexMetadataId: fromFlatIndex.id,
+        },
+        {
+          type: 'create_index',
+          flatIndexMetadata: toFlatIndex,
+        },
       ],
     };
   }

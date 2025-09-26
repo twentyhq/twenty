@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -28,6 +30,9 @@ export class ClientConfigService {
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
+    const calendarBookingPageId = this.twentyConfigService.get(
+      'CALENDAR_BOOKING_PAGE_ID',
+    );
 
     const availableModels = this.aiModelRegistryService.getAvailableModels();
 
@@ -153,9 +158,9 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
-      calendarBookingPageId: this.twentyConfigService.get(
-        'CALENDAR_BOOKING_PAGE_ID',
-      ),
+      calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
+        ? calendarBookingPageId
+        : undefined,
     };
 
     return clientConfig;

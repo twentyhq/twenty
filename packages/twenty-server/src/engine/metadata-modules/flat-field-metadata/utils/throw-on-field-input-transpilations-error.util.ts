@@ -34,6 +34,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
                 flatEntityMinimalInformation: {},
               },
             ],
+            serverlessFunction: [],
           },
           status: 'fail',
         },

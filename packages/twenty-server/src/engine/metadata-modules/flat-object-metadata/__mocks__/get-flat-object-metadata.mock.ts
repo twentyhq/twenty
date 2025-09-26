@@ -33,6 +33,7 @@ export const getFlatObjectMetadataMock = (
     nameSingular: 'defaultflatObjectMetadataNameSingular',
     shortcut: 'shortcut',
     standardId: null,
+    applicationId: null,
     standardOverrides: null,
     targetTableName: '',
     workspaceId: faker.string.uuid(),

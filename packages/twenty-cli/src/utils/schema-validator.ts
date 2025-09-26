@@ -1,5 +1,4 @@
 import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -14,107 +13,64 @@ export class SchemaValidationError extends Error {
   }
 }
 
-export class SchemaValidator {
-  private ajv: Ajv;
-  private schemasLoaded = false;
+const formatErrors = (errors: any[]): string => {
+  return errors
+    .map((error) => {
+      const path = error.instancePath || 'root';
+      const message = error.message;
+      const value =
+        error.data !== undefined ? ` (got: ${JSON.stringify(error.data)})` : '';
+      return `  • ${path}: ${message}${value}`;
+    })
+    .join('\n');
+};
 
-  constructor() {
-    this.ajv = new Ajv({
-      allErrors: true,
-      verbose: true,
-      strict: false,
-    });
-    addFormats(this.ajv);
-  }
+export const validateSchema = async (
+  schemaName: 'app-manifest' | 'agent' | 'object',
+  manifest: any,
+  filePath?: string,
+): Promise<void> => {
+  const ajv = new Ajv({
+    allErrors: true,
+    verbose: true,
+    strict: false,
+  });
 
-  private async loadSchemas(): Promise<void> {
-    if (this.schemasLoaded) return;
+  const schemaUrls = getSchemaUrls();
+  let schema;
 
+  for (const name of Object.keys(schemaUrls) as (keyof typeof schemaUrls)[]) {
+    const formattedName = name === 'appManifest' ? 'app-manifest' : name;
     const schemasDir = path.join(__dirname, '../../schemas');
+    const schemaPath = path.join(schemasDir, `${formattedName}.schema.json`);
+    ajv.addSchema(await fs.readJson(schemaPath));
 
-    try {
-      // Load agent schema
-      const agentSchemaPath = path.join(schemasDir, 'agent.schema.json');
-      const agentSchema = await fs.readJson(agentSchemaPath);
-      this.ajv.addSchema(agentSchema, 'agent');
-
-      // Load app manifest schema
-      const appSchemaPath = path.join(schemasDir, 'app-manifest.schema.json');
-      const appSchema = await fs.readJson(appSchemaPath);
-      this.ajv.addSchema(appSchema, 'app-manifest');
-
-      this.schemasLoaded = true;
-    } catch {
-      // Gracefully handle missing schemas in development
-      console.warn('Warning: Could not load JSON schemas for validation');
-      this.schemasLoaded = true; // Prevent retry
+    if (formattedName === schemaName) {
+      schema = ajv.getSchema(schemaUrls[name])?.schema;
     }
   }
 
-  async validateAgent(agent: any, filePath?: string): Promise<void> {
-    await this.loadSchemas();
+  if (!schema) throw new Error(`Schema ${schemaName} not found.`);
 
-    const validate = this.ajv.getSchema('agent');
-    if (!validate) {
-      // Schema not available, skip validation
-      return;
-    }
+  const valid = ajv.validate(schema, manifest);
 
-    const valid = validate(agent);
-    if (!valid) {
-      const errorMessages = this.formatErrors(validate.errors || []);
-      throw new SchemaValidationError(
-        `Agent validation failed:\n${errorMessages}`,
-        validate.errors || [],
-        filePath,
-      );
-    }
+  if (!valid) {
+    const errorMessages = formatErrors(ajv.errors || []);
+    throw new SchemaValidationError(
+      `${schemaName} validation failed:\n${errorMessages}`,
+      ajv.errors || [],
+      filePath,
+    );
   }
+};
 
-  async validateAppManifest(manifest: any, filePath?: string): Promise<void> {
-    await this.loadSchemas();
-
-    const validate = this.ajv.getSchema('app-manifest');
-    if (!validate) {
-      // Schema not available, skip validation
-      return;
-    }
-
-    const valid = validate(manifest);
-    if (!valid) {
-      const errorMessages = this.formatErrors(validate.errors || []);
-      throw new SchemaValidationError(
-        `App manifest validation failed:\n${errorMessages}`,
-        validate.errors || [],
-        filePath,
-      );
-    }
-  }
-
-  private formatErrors(errors: any[]): string {
-    return errors
-      .map((error) => {
-        const path = error.instancePath || 'root';
-        const message = error.message;
-        const value =
-          error.data !== undefined
-            ? ` (got: ${JSON.stringify(error.data)})`
-            : '';
-        return `  • ${path}: ${message}${value}`;
-      })
-      .join('\n');
-  }
-
-  // Get schema URLs for $schema references
-  static getSchemaUrls() {
-    return {
-      agent:
-        'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
-      appManifest:
-        'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
-    };
-  }
-}
-
-// Singleton instance
-export const schemaValidator = new SchemaValidator();
+export const getSchemaUrls = () => {
+  return {
+    agent:
+      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/agent.schema.json',
+    object:
+      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/object.schema.json',
+    appManifest:
+      'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json',
+  };
+};

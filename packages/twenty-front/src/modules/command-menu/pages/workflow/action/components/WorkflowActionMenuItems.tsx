@@ -2,7 +2,7 @@ import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type Action = { type: WorkflowActionType; label: string; icon: string };
 
@@ -22,7 +22,8 @@ export const WorkflowActionMenuItems = ({
         const Icon = getIcon(action.icon);
 
         return (
-          <MenuItemCommand
+          <MenuItem
+            withIconContainer={true}
             key={action.type}
             LeftIcon={() => (
               <Icon

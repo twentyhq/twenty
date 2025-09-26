@@ -15,7 +15,7 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { useTheme } from '@emotion/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -71,7 +71,8 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItemCommand
+          <MenuItem
+            withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.blue} />}
             text={action.defaultLabel}
@@ -86,7 +87,8 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItemCommand
+          <MenuItem
+            withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.purple} />}
             text={action.defaultLabel}

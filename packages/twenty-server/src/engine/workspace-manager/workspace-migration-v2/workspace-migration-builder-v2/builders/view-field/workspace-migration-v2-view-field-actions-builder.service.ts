@@ -13,10 +13,6 @@ import {
   UpdateViewFieldAction,
   WorkspaceMigrationViewFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
-import {
-  getWorkspaceMigrationV2ViewFieldCreateAction,
-  getWorkspaceMigrationV2ViewFieldDeleteAction,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-view-field-action';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
 
 @Injectable()
@@ -60,9 +56,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2ViewFieldCreateAction(
-        flatViewFieldToValidate,
-      ),
+      action: {
+        type: 'create_view_field',
+        viewField: flatViewFieldToValidate,
+      },
     };
   }
 
@@ -95,9 +92,10 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     return {
       status: 'success',
-      action: getWorkspaceMigrationV2ViewFieldDeleteAction(
-        flatViewFieldToValidate,
-      ),
+      action: {
+        type: 'delete_view_field',
+        viewFieldId: flatViewFieldToValidate.id,
+      },
     };
   }
 

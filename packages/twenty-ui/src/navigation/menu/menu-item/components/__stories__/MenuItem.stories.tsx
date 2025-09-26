@@ -53,6 +53,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'accents',
           values: ['default', 'danger'] satisfies MenuItemAccent[],
           props: (accent: MenuItemAccent) => ({ accent }),
@@ -104,6 +113,145 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
           name: 'disabled',
           values: [true, false],
           props: (disabled: boolean) => ({ disabled }),
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 200,
+        },
+      },
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with hotkeys',
+    LeftIcon: IconBell,
+    hotKeys: ['⌘', 'K'],
+  },
+  argTypes: {
+    className: { control: false },
+    iconButtons: { control: false },
+  },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'hotKeyTypes',
+          values: ['no hotkeys', 'single key', 'modifier + key'],
+          props: (choice: string) => {
+            switch (choice) {
+              case 'no hotkeys':
+                return { hotKeys: undefined };
+              case 'single key':
+                return { hotKeys: ['K'] };
+              case 'modifier + key':
+                return { hotKeys: ['⌘', 'K'] };
+              default:
+                return {};
+            }
+          },
+          labels: (choice: string) => {
+            switch (choice) {
+              case 'no hotkeys':
+                return 'No hotkeys';
+              case 'single key':
+                return 'Single key (K)';
+              case 'modifier + key':
+                return 'Modifier + key (⌘K)';
+              default:
+                return choice;
+            }
+          },
+        },
+        {
+          name: 'states',
+          values: ['default', 'hover'],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+                return { className: 'hover' };
+              default:
+                return {};
+            }
+          },
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 300,
+        },
+      },
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with contextual text',
+  },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'contextualTextPosition',
+          values: ['left', 'right'],
+          props: (contextualTextPosition: 'left' | 'right') => ({
+            contextualTextPosition,
+          }),
+          labels: (contextualTextPosition: 'left' | 'right') =>
+            contextualTextPosition === 'left' ? 'Left' : 'Right',
+        },
+        {
+          name: 'contextualText',
+          values: [
+            'Contextual text',
+            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.',
+          ],
+          props: (contextualText: string) => ({ contextualText }),
+          labels: (contextualText: string) => {
+            switch (contextualText) {
+              case 'Contextual text':
+                return 'Contextual text';
+              case 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.':
+                return 'Long contextual text';
+              default:
+                return contextualText;
+            }
+          },
+        },
+      ],
+      options: {
+        elementContainer: {
+          style: { width: '400px', overflow: 'hidden' },
+        },
+      },
+    },
+  },
+};
+
+export const SubMenuCatalog: CatalogStory<Story, typeof MenuItem> = {
+  args: {
+    text: 'Menu item with sub menu',
+    LeftIcon: IconBell,
+    hasSubMenu: true,
+  },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'isSubMenuOpened',
+          values: [true, false],
+          props: (isSubMenuOpened: boolean) => ({ isSubMenuOpened }),
+          labels: (isSubMenuOpened: boolean) =>
+            isSubMenuOpened ? 'Opened' : 'Closed',
         },
       ],
       options: {

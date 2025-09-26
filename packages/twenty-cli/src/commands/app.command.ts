@@ -2,11 +2,13 @@ import { Command } from 'commander';
 import { AppSyncCommand } from './app-sync.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
+import { AppAddCommand } from './app-add.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
   private initCommand = new AppInitCommand();
+  private addCommand = new AppAddCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -42,6 +44,17 @@ export class AppCommand {
       .option('-n, --name <name>', 'Application name')
       .action(async (options) => {
         await this.initCommand.execute(options);
+      });
+
+    appCommand
+      .command('add')
+      .description('Add a new entity to your application')
+      .option(
+        '-p, --path <path>',
+        'Application directory path (auto-detected if not specified)',
+      )
+      .action(async (options) => {
+        await this.addCommand.execute(options);
       });
 
     return appCommand;

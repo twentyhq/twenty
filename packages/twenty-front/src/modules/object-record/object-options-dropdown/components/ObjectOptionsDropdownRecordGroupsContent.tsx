@@ -125,6 +125,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}
+                  contextualTextPosition="right"
                   hasSubMenu
                 />
               </SelectableListItem>
@@ -138,6 +139,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   LeftIcon={IconSortDescending}
                   text={t`Sort`}
                   contextualText={recordGroupSort}
+                  contextualTextPosition="right"
                   hasSubMenu
                 />
               </SelectableListItem>

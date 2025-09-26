@@ -36,14 +36,35 @@ import { type SearchCursor } from 'src/engine/core-modules/search/services/searc
 
 describe('SearchResolver', () => {
   const persons = [
-    { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
-    { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
+    {
+      id: TEST_PERSON_1_ID,
+      name: { firstName: 'searchInput1' },
+      phones: {
+        primaryPhoneNumber: '2071234567',
+        primaryPhoneCallingCode: '+44',
+        primaryPhoneCountryCode: 'GB',
+      },
+    },
+    {
+      id: TEST_PERSON_2_ID,
+      name: { firstName: 'searchInput2' },
+      phones: {
+        primaryPhoneNumber: '5551234567',
+        primaryPhoneCallingCode: '+1',
+        primaryPhoneCountryCode: 'US',
+      },
+    },
     { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
     {
       id: TEST_PERSON_4_ID,
       name: { firstName: 'José', lastName: 'García' },
       jobTitle: 'Café Manager',
       emails: { primaryEmail: 'josé@café.com' },
+      phones: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'FR',
+      },
     },
     {
       id: TEST_PERSON_5_ID,
@@ -678,6 +699,207 @@ describe('SearchResolver', () => {
               lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
               lastRecordIdsPerObject: {
                 person: francoisPersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by raw phone number',
+      context: {
+        input: {
+          searchInput: '2071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by international phone number with plus',
+      context: {
+        input: {
+          searchInput: '+442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by international phone number without plus',
+      context: {
+        input: {
+          searchInput: '442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by trunk prefix phone number (UK)',
+      context: {
+        input: {
+          searchInput: '02071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by trunk prefix phone number (France)',
+      context: {
+        input: {
+          searchInput: '0123456789',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by US phone number (raw national)',
+      context: {
+        input: {
+          searchInput: '5551234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput2Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput2Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by partial phone number',
+      context: {
+        input: {
+          searchInput: '555123',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput2Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput2Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find multiple persons when phone search matches multiple records',
+      context: {
+        input: {
+          searchInput: '123456789',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should rank phone search results appropriately vs other field matches',
+      context: {
+        input: {
+          searchInput: 'searchInput1',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id, searchInput1Pet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+                pet: searchInput1Pet.id,
               },
             },
           },

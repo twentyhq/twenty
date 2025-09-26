@@ -4,7 +4,7 @@
   "title": "Twenty Agent Manifest",
   "description": "Schema for Twenty AI agent configuration files",
   "type": "object",
-  "required": ["standardId", "name", "label", "prompt"],
+  "required": ["standardId", "name", "label", "prompt", "modelId"],
   "properties": {
     "$schema": {
       "type": "string",

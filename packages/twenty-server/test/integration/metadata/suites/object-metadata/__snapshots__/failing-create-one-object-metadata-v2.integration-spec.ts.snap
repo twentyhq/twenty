@@ -44,6 +44,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -298,6 +299,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -353,6 +355,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -607,6 +610,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -662,6 +666,7 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -916,6 +921,7 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -971,6 +977,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -1225,6 +1232,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -1280,6 +1288,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -1534,6 +1543,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -1589,6 +1599,7 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -1843,6 +1854,7 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -1899,6 +1911,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -2153,6 +2166,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -2209,6 +2223,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -2463,6 +2478,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -2598,6 +2614,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -2852,6 +2869,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -2907,6 +2925,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -3161,6 +3180,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -3216,6 +3236,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -3470,6 +3491,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -3530,6 +3552,7 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -3784,6 +3807,7 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -3844,6 +3868,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -4098,6 +4123,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -4268,6 +4294,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -4522,6 +4549,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -4692,6 +4720,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -4946,6 +4975,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -5081,6 +5111,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -5335,6 +5366,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -5470,6 +5502,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -5724,6 +5757,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -5894,6 +5928,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -6148,6 +6183,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -6318,6 +6354,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create_field",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -6572,6 +6609,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -6628,6 +6666,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -6882,6 +6921,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -6938,6 +6978,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create_object",
         },
       ],
+      "serverlessFunction": [],
       "view": [
         {
           "errors": [
@@ -7192,6 +7233,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
