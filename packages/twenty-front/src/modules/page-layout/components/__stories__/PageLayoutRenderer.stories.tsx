@@ -6,10 +6,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import { RecoilRoot } from 'recoil';
-import { WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 const validatePageLayoutContent = async (canvasElement: HTMLElement) => {

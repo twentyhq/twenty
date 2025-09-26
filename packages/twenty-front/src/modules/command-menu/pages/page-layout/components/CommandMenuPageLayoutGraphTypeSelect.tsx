@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import styled from '@emotion/styled';
 
 import {
@@ -12,7 +12,6 @@ import {
   IconNumber,
 } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;

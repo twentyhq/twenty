@@ -1,5 +1,8 @@
-import { type IframeWidget } from '@/page-layout/widgets/iframe/types/IframeWidget';
-import { type GridPosition, WidgetType } from '~/generated/graphql';
+import {
+  type GridPosition,
+  type PageLayoutWidget,
+  WidgetType,
+} from '~/generated/graphql';
 
 export const createDefaultIframeWidget = (
   id: string,
@@ -8,7 +11,7 @@ export const createDefaultIframeWidget = (
   url: string,
   gridPosition: GridPosition,
   objectMetadataId?: string | null,
-): IframeWidget => {
+): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,

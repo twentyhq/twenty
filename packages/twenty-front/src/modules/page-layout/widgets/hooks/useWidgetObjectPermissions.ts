@@ -1,14 +1,14 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 type UseWidgetObjectPermissionsReturn = {
   haveAccessToWidgetsObject: boolean;
 };
 
 export const useWidgetObjectPermissions = (
-  widget: Widget,
+  widget: PageLayoutWidget,
 ): UseWidgetObjectPermissionsReturn => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

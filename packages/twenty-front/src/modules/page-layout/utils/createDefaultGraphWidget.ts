@@ -1,13 +1,15 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
-import { type GraphWidgetConfiguration } from '@/page-layout/widgets/graph/types/GraphWidgetConfiguration';
-import { type GridPosition, WidgetType } from '~/generated/graphql';
+import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
+import {
+  type GridPosition,
+  type PageLayoutWidget,
+  type WidgetConfiguration,
+  WidgetType,
+} from '~/generated/graphql';
 
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
-): GraphWidgetConfiguration => {
+): WidgetConfiguration => {
   switch (graphType) {
     case GraphType.NUMBER:
       return {
@@ -68,7 +70,7 @@ export const createDefaultGraphWidget = (
   graphType: GraphType,
   gridPosition: GridPosition,
   objectMetadataId?: string | null,
-): GraphWidget => {
+): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,

@@ -1,10 +1,12 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { GraphOrderBy } from '@/page-layout/widgets/graph/types/GraphOrderBy';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
-import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
+import {
+  GraphOrderBy,
+  GraphType,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {
@@ -36,7 +38,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
-            } as GraphWidget,
+            },
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-2',
@@ -55,7 +57,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
               deletedAt: null,
-            } as GraphWidget,
+            },
           ],
           createdAt: '2025-01-01T00:00:00.000Z',
           updatedAt: '2025-01-01T00:00:00.000Z',

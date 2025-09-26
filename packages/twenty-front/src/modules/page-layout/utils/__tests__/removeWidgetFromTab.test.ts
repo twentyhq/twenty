@@ -1,8 +1,10 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { GraphOrderBy } from '../../widgets/graph/types/GraphOrderBy';
 import { removeWidgetFromTab } from '../removeWidgetFromTab';
 
 describe('removeWidgetFromTab', () => {

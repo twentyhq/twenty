@@ -3,7 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -34,30 +33,20 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   aggregateOperation: AggregateOperations;
 
-  @Field(() => Number)
-  @IsNumber()
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  maxValue: number;
+  aggregateOperationTotal: AggregateOperations;
 
-  @Field(() => Number, { nullable: true })
-  @IsNumber()
-  @IsOptional()
-  minValue?: number;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  label?: string;
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  @IsNotEmpty()
+  aggregateFieldMetadataIdTotal: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   description?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  color?: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()

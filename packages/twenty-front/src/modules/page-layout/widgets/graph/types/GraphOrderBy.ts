@@ -1,6 +1,0 @@
-export enum GraphOrderBy {
-  FIELD_ASC = 'FIELD_ASC',
-  FIELD_DESC = 'FIELD_DESC',
-  VALUE_ASC = 'VALUE_ASC',
-  VALUE_DESC = 'VALUE_DESC',
-}

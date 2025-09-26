@@ -1,9 +1,8 @@
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { lazy, Suspense } from 'react';
+import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(
@@ -38,11 +37,17 @@ const GraphWidgetGaugeChart = lazy(() =>
 );
 
 type GraphWidgetRendererProps = {
-  widget: GraphWidget;
+  widget: PageLayoutWidget;
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  const graphType = widget.configuration?.graphType;
+  // This component is only called after parent has verified it's a graph widget
+  // Double-check for type safety
+  if (!widget.configuration || !('graphType' in widget.configuration)) {
+    return null;
+  }
+
+  const graphType = widget.configuration.graphType;
 
   if (!Object.values(GraphType).includes(graphType)) {
     return null;

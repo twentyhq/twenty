@@ -1,6 +1,8 @@
-import { type Widget } from '@/page-layout/widgets/types/Widget';
-import { type PageLayoutTab as PageLayoutTabGenerated } from '~/generated/graphql';
+import {
+  type PageLayoutTab as PageLayoutTabGenerated,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
 
 export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
-  widgets: Widget[];
+  widgets: PageLayoutWidget[];
 };

@@ -1,12 +1,11 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { GraphType } from '@/page-layout/widgets/graph/types/GraphType';
-import { WidgetType } from '~/generated-metadata/graphql';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { type GraphWidget } from '../../widgets/graph/types/GraphWidget';
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { addWidgetToTab } from '../addWidgetToTab';
 
 describe('addWidgetToTab', () => {
-  const mockWidget: GraphWidget = {
+  const mockWidget: PageLayoutWidget = {
     __typename: 'PageLayoutWidget',
     id: 'widget-1',
     pageLayoutTabId: 'tab-1',
@@ -71,7 +70,7 @@ describe('addWidgetToTab', () => {
   });
 
   it('should add multiple widgets to the same tab', () => {
-    const secondWidget: GraphWidget = {
+    const secondWidget: PageLayoutWidget = {
       ...mockWidget,
       id: 'widget-2',
       title: 'Second Widget',

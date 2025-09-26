@@ -1,10 +1,9 @@
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
-import { type Widget } from '@/page-layout/widgets/types/Widget';
-import { WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 type WidgetContentRendererProps = {
-  widget: Widget;
+  widget: PageLayoutWidget;
 };
 
 export const WidgetContentRenderer = ({
@@ -12,12 +11,19 @@ export const WidgetContentRenderer = ({
 }: WidgetContentRendererProps) => {
   switch (widget.type) {
     case WidgetType.GRAPH:
+      // Check if configuration exists and has graphType (all graph configs have it)
+      if (!widget.configuration || !('graphType' in widget.configuration)) {
+        return null;
+      }
       return <GraphWidgetRenderer widget={widget} />;
 
-    case WidgetType.IFRAME:
-      return (
-        <IframeWidget url={widget.configuration.url} title={widget.title} />
-      );
+    case WidgetType.IFRAME: {
+      const configuration = widget.configuration;
+      if (!configuration || !('url' in configuration)) {
+        return null;
+      }
+      return <IframeWidget url={configuration.url} title={widget.title} />;
+    }
 
     default:
       return null;

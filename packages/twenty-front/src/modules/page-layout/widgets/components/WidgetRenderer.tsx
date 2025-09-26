@@ -6,12 +6,12 @@ import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContaine
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
 import { useWidgetObjectPermissions } from '@/page-layout/widgets/hooks/useWidgetObjectPermissions';
-import { type Widget as WidgetType } from '@/page-layout/widgets/types/Widget';
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
 type WidgetRendererProps = {
-  widget: WidgetType;
+  widget: PageLayoutWidget;
 };
 
 const StyledContent = styled.div`

@@ -61,15 +61,6 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => Boolean, { nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  isStacked?: boolean;
-
-  @Field(() => Boolean, { nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  isSmooth?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()

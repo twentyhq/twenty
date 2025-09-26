@@ -1259,14 +1259,12 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateFieldMetadataIdTotal: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
-  color?: Maybe<Scalars['String']>;
+  aggregateOperationTotal: AggregateOperations;
   description?: Maybe<Scalars['String']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
-  label?: Maybe<Scalars['String']>;
-  maxValue: Scalars['Float'];
-  minValue?: Maybe<Scalars['Float']>;
 };
 
 export type GetApiKeyDto = {
@@ -1487,8 +1485,6 @@ export type LineChartConfiguration = {
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
   groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
-  isSmooth?: Maybe<Scalars['Boolean']>;
-  isStacked?: Maybe<Scalars['Boolean']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   orderByX: GraphOrderBy;
   orderByY?: Maybe<GraphOrderBy>;
@@ -2771,9 +2767,7 @@ export type PieChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
-  omitNullValues?: Maybe<Scalars['Boolean']>;
   orderBy: GraphOrderBy;
-  showLegend?: Maybe<Scalars['Boolean']>;
 };
 
 export type PlaceDetailsResultDto = {
