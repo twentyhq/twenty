@@ -23,7 +23,10 @@ import {
   type WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { 
+  type UpdateEventTriggerSettings,
+  type UpsertEventTriggerSettings,
+} from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
@@ -334,20 +337,16 @@ export class WorkflowDatabaseEventTriggerListener {
     }
 
     if (action === DatabaseEventAction.UPSERTED) {
-      const settings = eventListener.settings as UpdateEventTriggerSettings;
+      const settings = eventListener.settings as UpsertEventTriggerSettings;
       const upsertEventPayload = eventPayload as ObjectRecordUpsertEvent;
 
-      if (!settings.fields || settings.fields.length === 0) {
-        return true;
-      }
-
-      if (upsertEventPayload.properties.updatedFields) {
-        return settings.fields.some((field) =>
-          upsertEventPayload.properties.updatedFields?.includes(field),
-        );
-      }
-
-      return false;
+      return (
+        !settings.fields ||
+        settings.fields.length === 0 ||
+        settings.fields.some((field) =>
+          upsertEventPayload?.properties?.updatedFields?.includes(field),
+        )
+      );
     }
 
     return true;
