@@ -41,8 +41,6 @@ export class WorkspaceMigrationRunnerV2Service {
 
     let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
 
-    const invertedActions = actions.reverse();
-
     try {
       for (const action of actions) {
         const partialOptimisticCache =
@@ -91,6 +89,8 @@ export class WorkspaceMigrationRunnerV2Service {
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }
+
+      const invertedActions = actions.reverse();
 
       for (const invertedAction of invertedActions) {
         await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(

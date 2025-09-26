@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
@@ -70,7 +72,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
       );
     }
 
-    if (rollback) {
+    if (isDefined(rollback) && rollback) {
       await handler.rollback(context);
 
       return {};
