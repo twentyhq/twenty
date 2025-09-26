@@ -3,11 +3,12 @@ import styled from '@emotion/styled';
 import {
   type MessageChannel,
   type MessageChannelContactAutoCreationPolicy,
+  type MessageFolderImportPolicy,
 } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
-import { SettingsAccountsMessageFoldersCard } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard';
+import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -29,6 +30,7 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'excludeGroupEmails'
     | 'isSyncEnabled'
     | 'messageFolders'
+    | 'messageFolderImportPolicy'
   >;
 };
 
@@ -87,17 +89,26 @@ export const SettingsAccountsMessageChannelDetails = ({
     });
   };
 
+  const handleMessageFolderImportPolicyChange = (
+    value: MessageFolderImportPolicy,
+  ) => {
+    updateOneRecord({
+      idToUpdate: messageChannel.id,
+      updateOneRecordInput: { messageFolderImportPolicy: value },
+    });
+  };
+
   return (
     <StyledDetailsContainer>
       {isFolderControlEnabled && messageChannel.messageFolders && (
         <Section>
           <H2Title
-            title={t`Folder Management`}
-            description={t`Control which folders are synced`}
+            title={t`Import`}
+            description={t`Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page.`}
           />
-          <SettingsAccountsMessageFoldersCard
-            messageChannelId={messageChannel.id}
-            messageFolders={messageChannel.messageFolders}
+          <SettingsAccountsMessageFolderCard
+            onChange={handleMessageFolderImportPolicyChange}
+            value={messageChannel.messageFolderImportPolicy}
           />
         </Section>
       )}

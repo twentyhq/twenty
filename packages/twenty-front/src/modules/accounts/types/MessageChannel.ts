@@ -9,6 +9,11 @@ export enum MessageChannelContactAutoCreationPolicy {
   NONE = 'NONE',
 }
 
+export enum MessageFolderImportPolicy {
+  ALL_FOLDERS = 'ALL_FOLDERS',
+  SELECTED_FOLDERS = 'SELECTED_FOLDERS',
+}
+
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
@@ -38,6 +43,7 @@ export type MessageChannel = {
   isSyncEnabled: boolean;
   messageFolders: MessageFolder[];
   visibility: MessageChannelVisibility;
+  messageFolderImportPolicy: MessageFolderImportPolicy;
   syncStatus: MessageChannelSyncStatus;
   syncStage: MessageChannelSyncStage;
   syncCursor: string;

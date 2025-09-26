@@ -1,75 +1,50 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon';
+import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName.util';
+
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconFolder, IconSend } from 'twenty-ui/display';
-import { Toggle } from 'twenty-ui/input';
+import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 
 const StyledFolderNameCell = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
+const StyledTableRow = styled(TableRow)``;
+
+const StyledCheckboxCell = styled(TableCell)`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 type SettingsMessageFoldersTableRowProps = {
   folder: MessageFolder;
+  onSyncToggle: () => void;
 };
 
 export const SettingsMessageFoldersTableRow = ({
   folder,
+  onSyncToggle,
 }: SettingsMessageFoldersTableRowProps) => {
-  const theme = useTheme();
-  const { updateOneRecord } = useUpdateOneRecord<MessageFolder>({
-    objectNameSingular: CoreObjectNameSingular.MessageFolder,
-  });
-
-  const handleSyncToggle = (value: boolean) => {
-    updateOneRecord({
-      idToUpdate: folder.id,
-      updateOneRecordInput: {
-        isSynced: value,
-      },
-    });
-  };
-
-  const formatName = (name: string) => {
-    return name
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  };
-
   return (
-    <StyledTableRow gridAutoColumns="1fr 120px 70px">
+    <StyledTableRow gridAutoColumns="1fr 120px">
       <TableCell>
         <StyledFolderNameCell>
-          {folder.isSentFolder ? (
-            <IconSend size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-          ) : (
-            <IconFolder
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-          {formatName(folder.name)}
+          <SettingsAccountsMessageFolderIcon folder={folder} />
+          {formatFolderName(folder.name)}
         </StyledFolderNameCell>
       </TableCell>
-      <TableCell align="center">
-        <Toggle
-          value={folder.isSynced}
-          onChange={handleSyncToggle}
-          toggleSize="small"
+      <StyledCheckboxCell>
+        <Checkbox
+          checked={folder.isSynced}
+          onChange={onSyncToggle}
+          size={CheckboxSize.Small}
         />
-      </TableCell>
+      </StyledCheckboxCell>
     </StyledTableRow>
   );
 };
