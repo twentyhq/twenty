@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { UIMessage } from 'ai';
 import { Response } from 'express';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -63,7 +64,7 @@ export class AgentChatController {
     @Body()
     body: {
       threadId: string;
-      userMessage: string;
+      messages: UIMessage[];
       fileIds?: string[];
       recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
     },
@@ -73,7 +74,7 @@ export class AgentChatController {
   ) {
     this.agentStreamingService.streamAgentChat({
       threadId: body.threadId,
-      userMessage: body.userMessage,
+      messages: body.messages,
       userWorkspaceId,
       workspace,
       fileIds: body.fileIds || [],
