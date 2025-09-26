@@ -1,4 +1,9 @@
-import { type ToolUIPart, type UIMessagePart, type UITool } from 'ai';
+import {
+  type ReasoningUIPart,
+  type ToolUIPart,
+  type UIMessagePart,
+  type UITool,
+} from 'ai';
 import { type AgentChatMessagePart } from '~/generated/graphql';
 
 export const mapDBPartToUIMessagePart = (
@@ -14,6 +19,7 @@ export const mapDBPartToUIMessagePart = (
       return {
         type: 'reasoning',
         text: part.reasoningContent!,
+        state: part.state as ReasoningUIPart['state'],
       };
     case 'file':
       return {
@@ -52,7 +58,7 @@ export const mapDBPartToUIMessagePart = (
             input: part.toolInput,
             output: part.toolOutput,
             errorText: part.errorMessage!,
-            state: part.toolState,
+            state: part.state,
           } as ToolUIPart;
         }
       }
