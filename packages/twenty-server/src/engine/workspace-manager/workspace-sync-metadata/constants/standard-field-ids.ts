@@ -42,6 +42,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
   workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
+  timelineActivities: '20202020-9a1b-4c2d-8e3f-1a2b3c4d5e6f',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 
@@ -192,6 +193,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
   note: '20202020-ec55-4135-8da5-3a20badc0156',
+  attachment: '20202020-8f45-4c23-a891-d5e7b8c9f0a1',
   workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
   workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
   workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',

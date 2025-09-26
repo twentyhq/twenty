@@ -25,15 +25,16 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
-  labelSingular: msg`Attachment`,
-  labelPlural: msg`Attachments`,
-  description: msg`An attachment`,
+  labelSingular: msg`File`,
+  labelPlural: msg`Files`,
+  description: msg`A file`,
   icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })
@@ -59,10 +60,35 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: msg`Type`,
     description: msg`Attachment type`,
     icon: 'IconList',
+    options: [
+      { value: 'ARCHIVE', label: 'Archive', position: 0, color: 'orange' },
+      { value: 'AUDIO', label: 'Audio', position: 1, color: 'purple' },
+      { value: 'IMAGE', label: 'Image', position: 2, color: 'green' },
+      {
+        value: 'PRESENTATION',
+        label: 'Presentation',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: 'SPREADSHEET',
+        label: 'Spreadsheet',
+        position: 4,
+        color: 'turquoise',
+      },
+      {
+        value: 'TEXT_DOCUMENT',
+        label: 'Text Document',
+        position: 5,
+        color: 'yellow',
+      },
+      { value: 'VIDEO', label: 'Video', position: 6, color: 'red' },
+      { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
+    ],
   })
   type: string;
 
@@ -199,6 +225,17 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflow')
   workflowId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the attachment`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'attachment',
+  })
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

@@ -11,11 +11,11 @@ export type Attachment = {
 };
 
 export type AttachmentType =
-  | 'Archive'
-  | 'Audio'
-  | 'Image'
-  | 'Presentation'
-  | 'Spreadsheet'
-  | 'TextDocument'
-  | 'Video'
-  | 'Other';
+  | 'ARCHIVE'
+  | 'AUDIO'
+  | 'IMAGE'
+  | 'PRESENTATION'
+  | 'SPREADSHEET'
+  | 'TEXT_DOCUMENT'
+  | 'VIDEO'
+  | 'OTHER';
