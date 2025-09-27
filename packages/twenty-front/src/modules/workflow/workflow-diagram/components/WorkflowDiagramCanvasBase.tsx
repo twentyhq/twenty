@@ -190,7 +190,6 @@ export const WorkflowDiagramCanvasBase = ({
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
-  const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
 
   const { nodes, edges } = useMemo(() => {
     if (isDefined(workflowDiagram)) {
@@ -467,12 +466,10 @@ export const WorkflowDiagramCanvasBase = ({
   };
 
   const handleReconnectStart = useCallback(() => {
-    setIsReconnecting(true);
     onReconnectStart?.();
   }, [onReconnectStart]);
 
   const handleReconnectEnd = useCallback(() => {
-    setIsReconnecting(false);
     onReconnectEnd?.();
   }, [onReconnectEnd]);
 

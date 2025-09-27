@@ -40,7 +40,8 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const { i18n } = useLingui();
 
   const { isEdgeHovered } = useEdgeState();
-  const { setArrowMarkerHovered, clearArrowMarkerHover } = useArrowMarkerHover();
+  const { setArrowMarkerHovered, clearArrowMarkerHover } =
+    useArrowMarkerHover();
 
   const {
     segments,
@@ -172,7 +173,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
-
       </EdgeLabelRenderer>
 
       <EdgeLabelRenderer>
@@ -188,10 +188,12 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           }}
           onMouseEnter={(e) => {
             e.stopPropagation();
+            e.preventDefault();
             handleArrowHover();
           }}
           onMouseLeave={(e) => {
             e.stopPropagation();
+            e.preventDefault();
             handleArrowLeave();
           }}
         />

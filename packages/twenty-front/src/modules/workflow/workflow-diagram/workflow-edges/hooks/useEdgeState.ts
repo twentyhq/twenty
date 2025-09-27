@@ -120,8 +120,6 @@ export const useEdgeState = () => {
     setWorkflowHoveredEdge(undefined);
   };
 
-
-
   return {
     isEdgeSelected,
     isSourceSelected,

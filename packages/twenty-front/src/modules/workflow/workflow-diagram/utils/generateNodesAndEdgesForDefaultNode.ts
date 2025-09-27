@@ -80,8 +80,8 @@ export const generateNodesAndEdgesForDefaultNode = ({
           }),
         },
         ...(edgeTypeBetweenTwoNodes.includes('editable')
-          ? { 
-              deletable: true, 
+          ? {
+              deletable: true,
               selectable: true,
               reconnectable: workflowContext === 'workflow' ? 'target' : false,
             }
