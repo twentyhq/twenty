@@ -17,6 +17,7 @@ export const AgentChatFilePreview = ({
   isUploading?: boolean;
 }) => {
   const theme = useTheme();
+
   const attachmentTypeColors = useAttachmentTypeColors();
 
   return (
@@ -29,7 +30,9 @@ export const AgentChatFilePreview = ({
         ) : (
           <AvatarChip
             Icon={IconMapping[getFileType(file.name)]}
-            IconBackgroundColor={attachmentTypeColors[getFileType(file.name)]}
+            IconBackgroundColor={
+              theme.color[attachmentTypeColors[getFileType(file.name)]]
+            }
           />
         )
       }
