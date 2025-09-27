@@ -2,6 +2,7 @@ enum EdgeBranchArrowState {
   Default = 'Default',
   Hover = 'Hover',
   Selected = 'Selected',
+  Reconnecting = 'Reconnecting',
 }
 
 export const EDGE_BRANCH_ARROW_MARKER: Record<
@@ -19,5 +20,9 @@ export const EDGE_BRANCH_ARROW_MARKER: Record<
   [EdgeBranchArrowState.Selected]: {
     markerEnd: 'edge-branch-arrow-selected',
     zIndex: 0,
+  },
+  [EdgeBranchArrowState.Reconnecting]: {
+    markerEnd: 'edge-branch-arrow-reconnecting',
+    zIndex: 1,
   },
 };
