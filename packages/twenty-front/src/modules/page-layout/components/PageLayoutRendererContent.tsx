@@ -1,6 +1,7 @@
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayoutTabs';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -34,6 +35,9 @@ export const PageLayoutRendererContent = () => {
   );
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
+  const { handleReorderTabs } = useReorderPageLayoutTabs(
+    currentPageLayout?.id ?? '',
+  );
 
   const handleAddTab = isPageLayoutInEditMode ? createPageLayoutTab : undefined;
 
@@ -41,15 +45,23 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(
+    currentPageLayout.id,
+  );
+
+  const sortedTabs = [...currentPageLayout.tabs].sort(
+    (a, b) => a.position - b.position,
+  );
+
   return (
     <StyledContainer>
       <StyledTabList
-        tabs={currentPageLayout.tabs}
+        tabs={sortedTabs}
         behaveAsLinks={false}
-        componentInstanceId={getTabListInstanceIdFromPageLayoutId(
-          currentPageLayout.id,
-        )}
+        componentInstanceId={tabListInstanceId}
         onAddTab={handleAddTab}
+        isDraggable={isPageLayoutInEditMode}
+        onDragEnd={isPageLayoutInEditMode ? handleReorderTabs : undefined}
       />
       <StyledScrollWrapper
         componentInstanceId={`scroll-wrapper-page-layout-${currentPageLayout.id}`}

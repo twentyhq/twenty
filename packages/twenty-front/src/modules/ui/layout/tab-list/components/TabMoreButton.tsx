@@ -10,9 +10,11 @@ const StyledTabMoreButton = styled(TabButton)`
 export const TabMoreButton = ({
   hiddenTabsCount,
   active,
+  onClick,
 }: {
   hiddenTabsCount: number;
   active: boolean;
+  onClick?: () => void;
 }) => {
   return (
     <StyledTabMoreButton
@@ -20,6 +22,7 @@ export const TabMoreButton = ({
       active={active}
       title={`+${hiddenTabsCount} ${t`More`}`}
       RightIcon={IconChevronDown}
+      onClick={onClick}
     />
   );
 };
