@@ -75,7 +75,6 @@ export const AIChatTab = ({
     messages,
     handleSendMessage,
     isStreaming,
-    error,
   } = useAgentChat(agentId, uiMessages);
   const { uploadFiles } = useAIChatFileUpload({ agentId });
 
