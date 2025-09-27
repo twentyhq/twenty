@@ -1,0 +1,1 @@
+export const IMPERSONATION_BANNER_HEIGHT = '40px';
