@@ -1,6 +1,9 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import {
+  InputLabel,
+  StyledExpressionLabel,
+} from '@/ui/input/components/InputLabel';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import styled from '@emotion/styled';
@@ -61,18 +64,28 @@ const getNextExecutions = (cronExpression: string): Date[] => {
     return [];
   }
 };
-
 const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledExecutionItem = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-family: monospace;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledScheduleDescription = styled.div`
@@ -84,13 +97,6 @@ const StyledScheduleDescription = styled.div`
 const StyledScheduleSubtext = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xs};
-`;
-
-const StyledExecutionItem = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-family: monospace;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 type CronExpressionHelperProps = {
@@ -155,7 +161,7 @@ export const CronExpressionHelper = ({
 
       {nextExecutions.length > 0 && (
         <StyledSection>
-          <InputLabel>{t`Upcoming execution times (${timeZone})`}</InputLabel>
+          <StyledExpressionLabel>{t`Upcoming execution times (${timeZone})`}</StyledExpressionLabel>
           {nextExecutions.slice(0, 3).map((execution, index) => (
             <StyledExecutionItem key={index}>
               {formatDateTimeString({
