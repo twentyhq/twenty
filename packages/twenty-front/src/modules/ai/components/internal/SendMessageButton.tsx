@@ -1,20 +1,16 @@
-import { Button } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
-import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { Button } from 'twenty-ui/input';
 
 export const SendMessageButton = ({
-  records,
-  agentId,
+  handleSendMessage,
+  input,
+  isLoading,
 }: {
   agentId: string;
-  records?: ObjectRecord[];
+  handleSendMessage: () => void;
+  input: string;
+  isLoading: boolean;
 }) => {
-  const { isLoading, handleSendMessage, input } = useAgentChat(
-    agentId,
-    records,
-  );
-
   return (
     <Button
       variant="primary"

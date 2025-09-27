@@ -2,12 +2,9 @@ import { AgentChatContextRecordPreview } from '@/ai/components/internal/AgentCha
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
 import { agentChatUploadedFilesComponentState } from '@/ai/states/agentChatUploadedFilesComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useDeleteFileMutation } from '~/generated-metadata/graphql';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 
 const StyledContainer = styled.div`
@@ -25,31 +22,15 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
-  const { t } = useLingui();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] =
     useRecoilComponentState(agentChatSelectedFilesComponentState, agentId);
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] =
     useRecoilComponentState(agentChatUploadedFilesComponentState, agentId);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
-  const [deleteFile] = useDeleteFileMutation();
-
-  const handleRemoveUploadedFile = async (fileId: string) => {
-    const originalFiles = agentChatUploadedFiles;
-
+  const handleRemoveUploadedFile = async (fileIndex: number) => {
     setAgentChatUploadedFiles(
-      agentChatUploadedFiles.filter((f) => f.id !== fileId),
+      agentChatUploadedFiles.filter((f, index) => fileIndex !== index),
     );
-
-    try {
-      await deleteFile({ variables: { fileId } });
-    } catch {
-      setAgentChatUploadedFiles(originalFiles);
-      enqueueErrorSnackBar({
-        message: t`Failed to remove file`,
-      });
-    }
   };
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
@@ -71,11 +52,11 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
             isUploading
           />
         ))}
-        {agentChatUploadedFiles.map((file) => (
+        {agentChatUploadedFiles.map((file, index) => (
           <AgentChatFilePreview
             file={file}
-            key={file.id}
-            onRemove={() => handleRemoveUploadedFile(file.id)}
+            key={index}
+            onRemove={() => handleRemoveUploadedFile(index)}
             isUploading={false}
           />
         ))}
