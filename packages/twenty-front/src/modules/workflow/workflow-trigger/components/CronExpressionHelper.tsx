@@ -1,6 +1,9 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel, StyledExpressionLabel } from '@/ui/input/components/InputLabel';
+import {
+  InputLabel,
+  StyledExpressionLabel,
+} from '@/ui/input/components/InputLabel';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import styled from '@emotion/styled';
@@ -62,10 +65,10 @@ const getNextExecutions = (cronExpression: string): Date[] => {
   }
 };
 const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  background: ${({ theme }) => theme.background.primary};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSection = styled.div`
@@ -75,7 +78,7 @@ const StyledSection = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledExecutionItem = styled.div`
@@ -83,6 +86,17 @@ const StyledExecutionItem = styled.div`
   font-family: monospace;
   font-size: ${({ theme }) => theme.font.size.xs};
   margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const StyledScheduleDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledScheduleSubtext = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
 type CronExpressionHelperProps = {
@@ -135,7 +149,15 @@ export const CronExpressionHelper = ({
 
   return (
     <StyledContainer>
-      
+      <StyledSection>
+        <InputLabel>{t`Schedule`}</InputLabel>
+        <StyledScheduleDescription>
+          {customDescription}
+        </StyledScheduleDescription>
+        <StyledScheduleSubtext>
+          {t`Schedule runs in UTC timezone.`}
+        </StyledScheduleSubtext>
+      </StyledSection>
 
       {nextExecutions.length > 0 && (
         <StyledSection>

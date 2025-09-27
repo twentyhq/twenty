@@ -15,8 +15,8 @@ export const InputLabel = StyledInputLabel;
 
 export const StyledExpressionLabel = styled(Label)<InputLabelProps>`
   display: block;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   color: ${({ theme }) => theme.font.color.primary};
-  margin-bottom:  ${({ theme }) => theme.spacing(4)}
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
