@@ -209,6 +209,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     t`Create Select...`
                   ) : undefined
                 }
+                contextualTextPosition="right"
                 selected={currentView?.type === ViewType.Kanban}
                 onClick={handleSelectKanbanViewType}
               />
@@ -228,6 +229,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     LeftIcon={IconCalendar}
                     text={t`Date field`}
                     contextualText={calendarFieldMetadata?.label}
+                    contextualTextPosition="right"
                     hasSubMenu
                   />
                 </SelectableListItem>
@@ -247,6 +249,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                           ? t`Week`
                           : t`Day`
                     }
+                    contextualTextPosition="right"
                     hasSubMenu
                   />
                 </SelectableListItem>
@@ -274,6 +277,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     ? t`Side Panel`
                     : t`Record Page`
                 }
+                contextualTextPosition="right"
                 hasSubMenu
               />
             </SelectableListItem>
@@ -296,6 +300,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   LeftIcon={IconLayoutList}
                   text={t`Group`}
                   contextualText={recordGroupFieldMetadata?.label}
+                  contextualTextPosition="right"
                   hasSubMenu
                 />
               </SelectableListItem>

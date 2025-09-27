@@ -200,20 +200,6 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
-export type Application = {
-  __typename?: 'Application';
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  sourcePath: Scalars['String'];
-  sourceType: Scalars['String'];
-  standardId?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-  version?: Maybe<Scalars['String']>;
-  workspaceId: Scalars['UUID'];
-};
-
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -487,6 +473,8 @@ export type ClientAiModelConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+  /** Workflow version ID */
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export enum ConfigSource {
@@ -1214,6 +1202,7 @@ export enum FileFolder {
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
+  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -1584,7 +1573,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Application;
+  syncApplication: Scalars['Boolean'];
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;

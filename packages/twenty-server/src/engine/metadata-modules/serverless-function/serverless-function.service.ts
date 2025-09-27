@@ -420,7 +420,7 @@ export class ServerlessFunctionService {
     const newServerlessFunction = await this.createOneServerlessFunction(
       {
         name: serverlessFunctionToDuplicate.name,
-        description: serverlessFunctionToDuplicate.description,
+        description: serverlessFunctionToDuplicate.description ?? undefined,
         timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
       },
       workspaceId,

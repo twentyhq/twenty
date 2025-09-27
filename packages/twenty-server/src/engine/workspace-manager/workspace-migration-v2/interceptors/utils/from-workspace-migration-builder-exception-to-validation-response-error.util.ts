@@ -10,6 +10,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidView: 0,
       invalidViewField: 0,
       invalidIndex: 0,
+      invalidServerlessFunction: 0,
       totalErrors: 0,
     },
     errors: {
@@ -17,6 +18,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       objectMetadata: [],
       view: [],
       viewField: [],
+      serverlessFunction: [],
     },
   };
 

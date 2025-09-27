@@ -12,10 +12,12 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -32,6 +34,9 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     workflowSelectedNodeComponentState,
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
 
   const handleTriggerTypeClick = ({
     type,
@@ -48,6 +53,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           defaultLabel,
           type,
           activeNonSystemObjectMetadataItems,
+          isIteratorEnabled,
         }),
       );
 
@@ -71,7 +77,8 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItemCommand
+          <MenuItem
+            withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.blue} />}
             text={action.defaultLabel}
@@ -86,7 +93,8 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItemCommand
+          <MenuItem
+            withIconContainer={true}
             key={action.defaultLabel}
             LeftIcon={() => <Icon color={theme.color.purple} />}
             text={action.defaultLabel}

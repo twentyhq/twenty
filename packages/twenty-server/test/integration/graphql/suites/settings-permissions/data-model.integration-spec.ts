@@ -7,6 +7,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -43,6 +44,15 @@ describe('datamodel permissions', () => {
       testFieldId = createdFieldData.createOneField.id;
     });
     afterAll(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         input: { idToDelete: listingObjectId },
       });
@@ -184,6 +194,15 @@ describe('datamodel permissions', () => {
         listingObjectId = data.createOneObject.id;
       });
       afterAll(async () => {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: listingObjectId,
+            updatePayload: {
+              isActive: false,
+            },
+          },
+        });
         await deleteOneObjectMetadata({
           input: { idToDelete: listingObjectId },
         });

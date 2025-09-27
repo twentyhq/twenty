@@ -3,7 +3,6 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -13,9 +12,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 type FailingTestCases = EachTestingContext<
   (args: {
@@ -351,13 +348,6 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
   let createdObjectMetadataCompanyId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-
     const {
       data: {
         createOneObject: { id: objectMetadataPersonId },
@@ -417,25 +407,17 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       createdObjectMetadataCompanyId,
     ];
 
-    try {
-      for (const objectMetadataId of createdObjectMetadataIds) {
-        await updateOneObjectMetadata({
-          expectToFail: false,
-          input: {
-            idToUpdate: objectMetadataId,
-            updatePayload: { isActive: false },
-          },
-        });
-        await deleteOneObjectMetadata({
-          expectToFail: false,
-          input: { idToDelete: objectMetadataId },
-        });
-      }
-    } finally {
-      await updateFeatureFlag({
+    for (const objectMetadataId of createdObjectMetadataIds) {
+      await updateOneObjectMetadata({
         expectToFail: false,
-        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        value: false,
+        input: {
+          idToUpdate: objectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: objectMetadataId },
       });
     }
   });

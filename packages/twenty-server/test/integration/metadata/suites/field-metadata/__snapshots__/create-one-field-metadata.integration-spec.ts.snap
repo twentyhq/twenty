@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createOne FieldMetadataService name/label sync should return an error when name and label are not synced but isLabelSyncedWithName is true 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "index": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NAME_NOT_SYNCED_WITH_LABEL",
+              "message": "Name is not synced with label",
+              "userFriendlyMessage": "Field name is not synced with field label",
+              "value": "Different Label",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+          },
+          "type": "create_field",
+        },
+      ],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
