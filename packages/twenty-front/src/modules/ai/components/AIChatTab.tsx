@@ -82,8 +82,6 @@ export const AIChatTab = ({
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
   const { navigateCommandMenu } = useCommandMenu();
 
-  console.log(error);
-
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
