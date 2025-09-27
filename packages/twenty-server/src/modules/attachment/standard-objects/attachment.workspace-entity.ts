@@ -6,12 +6,14 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -25,20 +27,31 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
-  labelSingular: msg`Attachment`,
-  labelPlural: msg`Attachments`,
-  description: msg`An attachment`,
+  labelSingular: msg`File`,
+  labelPlural: msg`Files`,
+  description: msg`A file`,
   icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: msg`Created by`,
+    icon: 'IconCreativeCommonsSa',
+    description: msg`The creator of the record`,
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  createdBy: ActorMetadata;
+
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -55,15 +68,42 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment full path`,
     icon: 'IconLink',
   })
+  @WorkspaceIsFieldUIReadOnly()
   fullPath: string;
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: msg`Type`,
     description: msg`Attachment type`,
     icon: 'IconList',
+    options: [
+      { value: 'ARCHIVE', label: 'Archive', position: 0, color: 'gray' },
+      { value: 'AUDIO', label: 'Audio', position: 1, color: 'pink' },
+      { value: 'IMAGE', label: 'Image', position: 2, color: 'yellow' },
+      {
+        value: 'PRESENTATION',
+        label: 'Presentation',
+        position: 3,
+        color: 'orange',
+      },
+      {
+        value: 'SPREADSHEET',
+        label: 'Spreadsheet',
+        position: 4,
+        color: 'turquoise',
+      },
+      {
+        value: 'TEXT_DOCUMENT',
+        label: 'Text Document',
+        position: 5,
+        color: 'blue',
+      },
+      { value: 'VIDEO', label: 'Video', position: 6, color: 'purple' },
+      { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
+    ],
   })
+  @WorkspaceIsFieldUIReadOnly()
   type: string;
 
   @WorkspaceRelation({
@@ -76,10 +116,12 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'authoredAttachments',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('author')
+  @WorkspaceIsFieldUIReadOnly()
   authorId: string | null;
 
   @WorkspaceRelation({
@@ -199,6 +241,17 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflow')
   workflowId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the attachment`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'attachment',
+  })
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

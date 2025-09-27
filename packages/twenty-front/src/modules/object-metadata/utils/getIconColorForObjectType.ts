@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type Theme } from '@emotion/react';
 
 export const getIconColorForObjectType = ({
@@ -8,9 +9,9 @@ export const getIconColorForObjectType = ({
   theme: Theme;
 }): string => {
   switch (objectType) {
-    case 'note':
+    case CoreObjectNameSingular.Note:
       return theme.color.yellow;
-    case 'task':
+    case CoreObjectNameSingular.Task:
       return theme.color.blue;
     default:
       return 'currentColor';

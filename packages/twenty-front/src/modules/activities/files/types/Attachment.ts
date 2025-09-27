@@ -5,17 +5,21 @@ export type Attachment = {
   type: AttachmentType;
   companyId: string;
   personId: string;
-  authorId: string;
+  createdBy: {
+    source: string;
+    workspaceMemberId: string;
+    name: string;
+  };
   createdAt: string;
   __typename: string;
 };
 
 export type AttachmentType =
-  | 'Archive'
-  | 'Audio'
-  | 'Image'
-  | 'Presentation'
-  | 'Spreadsheet'
-  | 'TextDocument'
-  | 'Video'
-  | 'Other';
+  | 'ARCHIVE'
+  | 'AUDIO'
+  | 'IMAGE'
+  | 'PRESENTATION'
+  | 'SPREADSHEET'
+  | 'TEXT_DOCUMENT'
+  | 'VIDEO'
+  | 'OTHER';

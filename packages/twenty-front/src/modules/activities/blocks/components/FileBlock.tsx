@@ -47,7 +47,7 @@ export const FileBlock = createReactBlockSpec(
         default: '' as string,
       },
       fileType: {
-        default: 'Other' as AttachmentType,
+        default: 'OTHER' as AttachmentType,
       },
     },
     content: 'none',

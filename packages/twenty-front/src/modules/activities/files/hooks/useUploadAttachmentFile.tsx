@@ -49,7 +49,15 @@ export const useUploadAttachmentFile = () => {
     });
 
     const attachmentToCreate = {
-      authorId: currentWorkspaceMember?.id,
+      createdBy: {
+        source: 'MANUAL',
+        workspaceMemberId: currentWorkspaceMember?.id || '',
+        name:
+          currentWorkspaceMember?.name?.firstName &&
+          currentWorkspaceMember?.name?.lastName
+            ? `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`
+            : 'Unknown User',
+      },
       name: file.name,
       fullPath: attachmentPath,
       type: getFileType(file.name),
