@@ -74,7 +74,8 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 
   p {
-    margin: ${({ theme }) => theme.spacing(1)} 0;
+    margin-block: ${({ isUser, theme }) =>
+      isUser ? '0' : `${theme.spacing(1)}`};
     line-height: 1.5;
   }
 
