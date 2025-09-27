@@ -4,7 +4,6 @@ import { type BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dt
 import { type BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
 import { type BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
@@ -14,23 +13,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
 ): BillingPlanOutput => {
   return {
     planKey: plan.planKey,
-    baseProduct: {
-      ...plan.baseProduct,
-      metadata: {
-        ...plan.baseProduct.metadata,
-        priceUsageBased: BillingUsageType.LICENSED,
-      },
-      prices: plan.baseProduct.billingPrices.map(
-        formatBillingDatabasePriceToLicensedPriceDTO,
-      ),
-    },
-    otherLicensedProducts: plan.otherLicensedProducts.map((product) => {
+    licensedProducts: plan.licensedProducts.map((product) => {
       return {
         ...product,
-        metadata: {
-          ...product.metadata,
-          priceUsageBased: BillingUsageType.LICENSED,
-        },
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToLicensedPriceDTO,
         ),
@@ -55,10 +40,6 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
   billingPrice: BillingPrice,
 ): BillingPriceMeteredDTO => {
   return {
-    tiersMode:
-      billingPrice?.tiersMode === BillingPriceTiersMode.GRADUATED
-        ? BillingPriceTiersMode.GRADUATED
-        : null,
     tiers:
       billingPrice?.tiers?.map((tier) => ({
         upTo: tier.up_to,

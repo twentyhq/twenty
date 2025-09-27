@@ -15,15 +15,16 @@ import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-action
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
+import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
@@ -185,7 +186,7 @@ export const WorkflowDropdownStepOutputItems = ({
       subStepObjectMetadataItem.labelSingular
         .toLowerCase()
         .includes(searchInputValue.toLowerCase())
-    : true;
+    : isDefined(displayedSubStepObject);
 
   const objectLabel = subStepObjectMetadataItem?.labelSingular;
 
@@ -236,7 +237,15 @@ export const WorkflowDropdownStepOutputItems = ({
             onClick={() => handleSelectField(key)}
             text={subStep.label || key}
             hasSubMenu={!subStep.isLeaf}
-            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            LeftIcon={
+              subStep.icon
+                ? getIcon(subStep.icon)
+                : getIcon(
+                    getStepItemIcon({
+                      itemType: subStep.type,
+                    }),
+                  )
+            }
             contextualText={
               subStep.isLeaf ? subStep?.value?.toString() : undefined
             }

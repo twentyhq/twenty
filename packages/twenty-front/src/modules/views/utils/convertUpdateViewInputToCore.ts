@@ -23,7 +23,7 @@ export const convertUpdateViewInputToCore = (
     ...(view.name && { name: view.name }),
     ...(view.icon && { icon: view.icon }),
     ...(view.position && { position: view.position }),
-    ...(view.isCompact && { isCompact: view.isCompact }),
+    ...(isDefined(view.isCompact) && { isCompact: view.isCompact }),
     ...(view.kanbanAggregateOperation && {
       kanbanAggregateOperation: view.kanbanAggregateOperation,
     }),
@@ -37,5 +37,11 @@ export const convertUpdateViewInputToCore = (
     ...(convertedKey && { key: convertedKey }),
     ...(convertedOpenRecordIn && { openRecordIn: convertedOpenRecordIn }),
     ...(convertedType && { type: convertedType }),
+    ...(isDefined(view.calendarLayout) && {
+      calendarLayout: view.calendarLayout,
+    }),
+    ...(isDefined(view.calendarFieldMetadataId) && {
+      calendarFieldMetadataId: view.calendarFieldMetadataId,
+    }),
   };
 };

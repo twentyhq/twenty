@@ -4,6 +4,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-temporary-error.utils';
 import { parseMicrosoftMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/parse-microsoft-messages-import.util';
 
@@ -12,10 +13,20 @@ export class MicrosoftHandleErrorService {
   private readonly logger = new Logger(MicrosoftHandleErrorService.name);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleMicrosoftMessageFetchByBatchError(error: any): void {
-    // TODO: remove this log once we catch better the error codes
-    this.logger.error(`Error temporary (${error.code}) fetching messages`);
-    this.logger.log(error);
+  public handleMicrosoftGetMessageListError(error: any): void {
+    this.logger.log(`Error fetching message list`, error);
+    throw parseMicrosoftMessagesImportError(error);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public handleMicrosoftGetMessagesError(error: any): void {
+    this.logger.log(`Error fetching messages`, error);
+    if (isAccessTokenRefreshingError(error?.body)) {
+      throw new MessageImportDriverException(
+        error.message,
+        MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+      );
+    }
 
     const isBodyString = error.body && typeof error.body === 'string';
     const isTemporaryError =
@@ -28,71 +39,6 @@ export class MicrosoftHandleErrorService {
       );
     }
 
-    if (!error.statusCode) {
-      throw new MessageImportDriverException(
-        `Microsoft Graph API unknown error: ${error}`,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
-    }
-
-    const exception = parseMicrosoftMessagesImportError(error);
-
-    if (exception) {
-      throw exception;
-    }
-
-    throw new MessageImportDriverException(
-      `Microsoft driver error: ${error.message}`,
-      MessageImportDriverExceptionCode.UNKNOWN,
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleMicrosoftGetMessageListError(error: any): void {
-    if (!error.statusCode) {
-      throw new MessageImportDriverException(
-        `Microsoft Graph API unknown error: ${error}`,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
-    }
-
-    const exception = parseMicrosoftMessagesImportError(error);
-
-    if (exception) {
-      throw exception;
-    }
-
-    throw new MessageImportDriverException(
-      `Microsoft driver error: ${error.message}`,
-      MessageImportDriverExceptionCode.UNKNOWN,
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleMicrosoftGetMessagesError(error: any): void {
-    if (
-      error instanceof MessageImportDriverException &&
-      error.code === MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE
-    ) {
-      throw error;
-    }
-
-    if (!error.statusCode) {
-      throw new MessageImportDriverException(
-        `Microsoft Graph API unknown error: ${error}`,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
-    }
-
-    const exception = parseMicrosoftMessagesImportError(error);
-
-    if (exception) {
-      throw exception;
-    }
-
-    throw new MessageImportDriverException(
-      `Microsoft driver error: ${error.message}`,
-      MessageImportDriverExceptionCode.UNKNOWN,
-    );
+    throw parseMicrosoftMessagesImportError(error);
   }
 }

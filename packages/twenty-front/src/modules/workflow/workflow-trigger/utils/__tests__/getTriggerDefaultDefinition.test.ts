@@ -10,6 +10,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: [],
+        isIteratorEnabled: false,
       });
     }).toThrow();
   });
@@ -20,6 +21,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -41,6 +43,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -62,6 +65,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -83,6 +87,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -104,6 +109,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'MANUAL',
@@ -127,6 +133,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'On a schedule',
         type: 'CRON',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'CRON',
@@ -149,6 +156,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Webhook',
         type: 'WEBHOOK',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'WEBHOOK',
@@ -171,6 +179,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       });
     }).toThrow('Unknown type: unknown');
   });

@@ -1,8 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { openai } from '@ai-sdk/openai';
+
+import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 import { AiController } from './ai.controller';
 
@@ -11,6 +15,7 @@ describe('AiController', () => {
   let aiService: jest.Mocked<AiService>;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
   let aiBillingService: jest.Mocked<AIBillingService>;
+  let aiModelRegistryService: jest.Mocked<AiModelRegistryService>;
 
   beforeEach(async () => {
     const mockAiService = {
@@ -24,6 +29,14 @@ describe('AiController', () => {
 
     const mockAIBillingService = {
       calculateAndBillUsage: jest.fn(),
+    };
+
+    const mockAiModelRegistryService = {
+      getDefaultModel: jest.fn().mockReturnValue({
+        modelId: 'gpt-4o',
+        provider: ModelProvider.OPENAI,
+        model: openai('gpt-4o'),
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -41,6 +54,10 @@ describe('AiController', () => {
           provide: AIBillingService,
           useValue: mockAIBillingService,
         },
+        {
+          provide: AiModelRegistryService,
+          useValue: mockAiModelRegistryService,
+        },
       ],
     }).compile();
 
@@ -48,6 +65,7 @@ describe('AiController', () => {
     aiService = module.get(AiService);
     featureFlagService = module.get(FeatureFlagService);
     aiBillingService = module.get(AIBillingService);
+    aiModelRegistryService = module.get(AiModelRegistryService);
   });
 
   it('should be defined', () => {
@@ -61,7 +79,7 @@ describe('AiController', () => {
       const mockRequest = {
         messages: [{ role: 'user' as const, content: 'Hello' }],
         temperature: 0.7,
-        maxTokens: 100,
+        maxOutputTokens: 100,
       };
 
       const mockRes = {
@@ -70,19 +88,23 @@ describe('AiController', () => {
         end: jest.fn(),
       } as any;
 
-      const mockModel = { modelId: 'gpt-4o' } as any;
+      const mockModel = openai('gpt-4o');
 
-      aiService.getModel.mockReturnValue(mockModel);
+      aiModelRegistryService.getDefaultModel.mockReturnValue({
+        modelId: 'gpt-4o',
+        provider: ModelProvider.OPENAI,
+        model: mockModel,
+      });
 
       const mockUsage = {
-        promptTokens: 10,
-        completionTokens: 20,
+        inputTokens: 10,
+        outputTokens: 20,
         totalTokens: 30,
       };
 
       const mockStreamTextResult = {
         usage: Promise.resolve(mockUsage),
-        pipeDataStreamToResponse: jest.fn(),
+        pipeUIMessageStreamToResponse: jest.fn(),
       };
 
       aiService.streamText.mockReturnValue(mockStreamTextResult as any);
@@ -96,12 +118,12 @@ describe('AiController', () => {
         messages: mockRequest.messages,
         options: {
           temperature: 0.7,
-          maxTokens: 100,
+          maxOutputTokens: 100,
           model: mockModel,
         },
       });
       expect(
-        mockStreamTextResult.pipeDataStreamToResponse,
+        mockStreamTextResult.pipeUIMessageStreamToResponse,
       ).toHaveBeenCalledWith(mockRes);
       expect(aiBillingService.calculateAndBillUsage).toHaveBeenCalledWith(
         mockModel.modelId,
@@ -131,7 +153,11 @@ describe('AiController', () => {
 
       const mockRes = {} as any;
 
-      aiService.getModel.mockReturnValue({ modelId: 'gpt-4o' } as any);
+      aiModelRegistryService.getDefaultModel.mockReturnValue({
+        modelId: 'gpt-4o',
+        provider: ModelProvider.OPENAI,
+        model: openai('gpt-4o'),
+      });
       aiService.streamText.mockImplementation(() => {
         throw new Error('Service error');
       });

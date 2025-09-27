@@ -1,40 +1,40 @@
 import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
 import { lazy, Suspense } from 'react';
 
 const GraphWidgetBarChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetBarChart').then(
-    (module) => ({
-      default: module.GraphWidgetBarChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
+  ).then((module) => ({
+    default: module.GraphWidgetBarChart,
+  })),
 );
 
 const GraphWidgetLineChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetLineChart').then(
-    (module) => ({
-      default: module.GraphWidgetLineChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
+  ).then((module) => ({
+    default: module.GraphWidgetLineChart,
+  })),
 );
 
 const GraphWidgetPieChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetPieChart').then(
-    (module) => ({
-      default: module.GraphWidgetPieChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
+  ).then((module) => ({
+    default: module.GraphWidgetPieChart,
+  })),
 );
 
 const GraphWidgetGaugeChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetGaugeChart').then(
-    (module) => ({
-      default: module.GraphWidgetGaugeChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart'
+  ).then((module) => ({
+    default: module.GraphWidgetGaugeChart,
+  })),
 );
 
 type GraphWidgetRendererProps = {
@@ -48,7 +48,7 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     return null;
   }
 
-  const data = widget.data ?? getDefaultWidgetData(graphType);
+  const data: any = getDefaultWidgetData(graphType);
 
   if (!data) {
     return null;

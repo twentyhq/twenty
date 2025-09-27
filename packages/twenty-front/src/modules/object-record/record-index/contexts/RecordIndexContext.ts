@@ -17,6 +17,7 @@ export type RecordIndexContextValue = {
     ObjectPermissions & { objectMetadataId: string }
   >;
   recordIndexId: string;
+  viewBarInstanceId: string;
   recordFieldByFieldMetadataItemId: Record<string, RecordField>;
   labelIdentifierFieldMetadataItem: FieldMetadataItem | undefined;
   fieldMetadataItemByFieldMetadataItemId: Record<string, FieldMetadataItem>;

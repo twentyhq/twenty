@@ -23,14 +23,14 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
     authProvider: AuthProviderEnum,
-    options?: { impersonatorUserId?: string },
+    options?: { impersonatorUserWorkspaceId?: string },
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
       authProvider,
-      impersonatorUserId: options?.impersonatorUserId,
+      impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
     };
 
     const secret = this.jwtWrapperService.generateAppSecret(

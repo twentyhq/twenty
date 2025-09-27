@@ -122,7 +122,8 @@ export const WorkflowRunDiagramStepNode = ({
               {capitalize(data.nodeType)}
             </WorkflowNodeLabel>
 
-            {data.runStatus === StepStatus.SUCCESS && (
+            {(data.runStatus === StepStatus.SUCCESS ||
+              data.runStatus === StepStatus.STOPPED) && (
               <StyledNodeCounter>
                 <StyledColorIcon color={theme.tag.background.turquoise}>
                   <IconCheck color={theme.tag.text.turquoise} size={14} />
@@ -160,6 +161,17 @@ export const WorkflowRunDiagramStepNode = ({
         selected={selected}
         runStatus={data.runStatus}
       />
+
+      {isDefined(data.rightHandleOptions) && (
+        <WorkflowDiagramHandleSource
+          id={data.rightHandleOptions.id}
+          type="source"
+          position={Position.Right}
+          disableHoverEffect
+          selected={selected}
+          runStatus={data.runStatus}
+        />
+      )}
     </>
   );
 };

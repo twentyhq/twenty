@@ -8,8 +8,8 @@ import { useRecoilValue } from 'recoil';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { SettingsCustomDomainRecords } from '@/settings/domains/components/SettingsCustomDomainRecords';
-import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/CheckCustomDomainValidRecordsEffect';
+import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
+import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/components/CheckCustomDomainValidRecordsEffect';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 
@@ -99,9 +99,7 @@ export const SettingsCustomDomain = () => {
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
           {customDomainRecords && (
-            <SettingsCustomDomainRecords
-              records={customDomainRecords.records}
-            />
+            <SettingsDomainRecords records={customDomainRecords.records} />
           )}
         </StyledRecordsWrapper>
       )}

@@ -1,29 +1,33 @@
 import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
-import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
-import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
-import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
   assertGraphQLSuccessfulResponse,
 } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateViewFieldOperationFactory } from 'test/integration/graphql/utils/update-view-field-operation-factory.util';
 import {
   createViewFieldData,
   updateViewFieldData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
+import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
+import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import {
   assertViewFieldStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
@@ -33,6 +37,14 @@ describe('View Field Resolver', () => {
   let testViewId: string;
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
 
   beforeAll(async () => {
     const {
@@ -79,11 +91,28 @@ describe('View Field Resolver', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
     await cleanupViewRecords();
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
   });
 
   beforeEach(async () => {
@@ -113,11 +142,11 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
-      });
 
-      await makeGraphqlAPIRequest(createOperation);
+      await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
+      });
 
       const getOperation = findViewFieldsOperationFactory({
         viewId: testViewId,
@@ -145,11 +174,13 @@ describe('View Field Resolver', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 1,
         isVisible: true,
@@ -167,11 +198,13 @@ describe('View Field Resolver', () => {
         viewId: testViewId,
       };
 
-      const operation = createViewFieldOperationFactory({ data: fieldData });
-      const response = await makeGraphqlAPIRequest(operation);
+      const response = await createOneCoreViewField({
+        input: fieldData,
+        expectToFail: false,
+      });
 
-      assertGraphQLSuccessfulResponse(response);
-      assertViewFieldStructure(response.body.data.createCoreViewField, {
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      assertViewFieldStructure(response.data.createCoreViewField, {
         fieldMetadataId: testFieldMetadataId,
         position: 2,
         isVisible: false,
@@ -189,27 +222,27 @@ describe('View Field Resolver', () => {
         size: 150,
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
       const updateInput = updateViewFieldData({
         position: 5,
         isVisible: false,
         size: 300,
       });
-      const updateOperation = updateViewFieldOperationFactory({
+      const response = await updateOneCoreViewField({
         input: {
           id: viewField.id,
           update: updateInput,
         },
+        expectToFail: false,
       });
-      const response = await makeGraphqlAPIRequest(updateOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updateCoreViewField).toMatchObject({
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      expect(response.data.updateCoreViewField).toMatchObject({
         id: viewField.id,
         position: 5,
         isVisible: false,
@@ -218,18 +251,18 @@ describe('View Field Resolver', () => {
     });
 
     it('should throw an error when updating non-existent view field', async () => {
-      const operation = updateViewFieldOperationFactory({
+      const response = await updateOneCoreViewField({
         input: {
           id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
           update: {
             position: 1,
           },
         },
+        expectToFail: true,
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLErrorResponse(
-        response,
+        { body: response, status: 200 },
         ErrorCode.NOT_FOUND,
         generateViewFieldExceptionMessage(
           ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
@@ -244,31 +277,31 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
-      const deleteOperation = deleteViewFieldOperationFactory({
-        viewFieldId: viewField.id,
+      const response = await deleteOneCoreViewField({
+        input: { id: viewField.id },
+        expectToFail: false,
       });
-      const response = await makeGraphqlAPIRequest(deleteOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewField).toMatchObject({
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      expect(response.data.deleteCoreViewField).toMatchObject({
         id: viewField.id,
       });
     });
 
     it('should throw an error when deleting non-existent view field', async () => {
-      const operation = deleteViewFieldOperationFactory({
-        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      const response = await deleteOneCoreViewField({
+        input: { id: TEST_NOT_EXISTING_VIEW_FIELD_ID },
+        expectToFail: true,
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLErrorResponse(
-        response,
+        { body: response, status: 200 },
         ErrorCode.NOT_FOUND,
         generateViewFieldExceptionMessage(
           ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
@@ -283,31 +316,35 @@ describe('View Field Resolver', () => {
       const fieldData = createViewFieldData(testViewId, {
         fieldMetadataId: testFieldMetadataId,
       });
-      const createOperation = createViewFieldOperationFactory({
-        data: fieldData,
+      const createResponse = await createOneCoreViewField({
+        input: fieldData as CreateViewFieldInput,
+        expectToFail: false,
       });
-      const createResponse = await makeGraphqlAPIRequest(createOperation);
-      const viewField = createResponse.body.data.createCoreViewField;
+      const viewField = createResponse.data.createCoreViewField;
 
-      const destroyOperation = destroyViewFieldOperationFactory({
-        viewFieldId: viewField.id,
+      const response = await destroyOneCoreViewField({
+        input: {
+          id: viewField.id,
+        },
+        expectToFail: false,
       });
-      const response = await makeGraphqlAPIRequest(destroyOperation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewField).toMatchObject({
+      assertGraphQLSuccessfulResponse({ body: response, status: 200 });
+      expect(response.data.destroyCoreViewField).toMatchObject({
         id: viewField.id,
       });
     });
 
     it('should throw an error when destroying non-existent view field', async () => {
-      const operation = destroyViewFieldOperationFactory({
-        viewFieldId: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+      const response = await destroyOneCoreViewField({
+        input: {
+          id: TEST_NOT_EXISTING_VIEW_FIELD_ID,
+        },
+        expectToFail: true,
       });
-      const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLErrorResponse(
-        response,
+        { body: response, status: 200 },
         ErrorCode.NOT_FOUND,
         generateViewFieldExceptionMessage(
           ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
