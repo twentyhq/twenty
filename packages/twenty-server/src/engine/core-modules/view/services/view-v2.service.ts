@@ -281,17 +281,6 @@ export class ViewV2Service {
       );
     }
 
-    const { flatViewMaps: recomputedExistingFlatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatEntities: ['flatViewMaps'],
-        },
-      );
-
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: destroyViewInput.id,
-      flatEntityMaps: recomputedExistingFlatViewMaps,
-    });
+    return flatViewFromDestroyInput;
   }
 }

@@ -68,7 +68,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
       },
     );
 
-  // We should maintain a idsByObjectMetadataId maps in the index
+  // TODO We should maintain a idsByObjectMetadataId in the flatIndexMaps
   const flatIndexMetadataToDelete = Object.values(
     existingFlatIndexMaps.byId,
   ).filter(

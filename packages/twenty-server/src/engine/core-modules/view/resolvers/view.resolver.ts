@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
@@ -36,7 +37,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 @Resolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -161,7 +161,7 @@ export class ViewResolver {
 
     if (isWorkspaceMigrationV2Enabled) {
       return await this.viewV2Service.updateOne({
-        updateViewInput: input,
+        updateViewInput: { ...input, id },
         workspaceId: workspace.id,
       });
     }
