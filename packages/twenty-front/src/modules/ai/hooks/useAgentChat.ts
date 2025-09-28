@@ -15,6 +15,7 @@ import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -69,6 +70,8 @@ export const useAgentChat = (
   const { scrollWrapperHTMLElement } =
     useScrollWrapperHTMLElement(scrollWrapperId);
 
+  const { enqueueErrorSnackBar } = useSnackBar();
+
   const { sendMessage, messages, status, error } = useChat({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
@@ -78,6 +81,9 @@ export const useAgentChat = (
     }),
     messages: uiMessages,
     id: currentThreadId as string,
+    onError: (error) => {
+      enqueueErrorSnackBar({ message: error.message });
+    },
   });
 
   const isStreaming = status === 'streaming';
