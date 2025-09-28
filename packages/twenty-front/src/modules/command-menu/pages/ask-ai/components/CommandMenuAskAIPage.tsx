@@ -4,6 +4,7 @@ import { mapDBPartToUIMessagePart } from '@/ai/utils/mapDBPartToUIMessagePart';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { type UIMessage } from 'ai';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,10 +51,14 @@ export const CommandMenuAskAIPage = () => {
     skip: !isDefined(currentThreadId),
   });
 
-  if (!agentId || loading || !currentThreadId || threadsLoading) {
+  const isLoading = loading || !currentThreadId || threadsLoading;
+
+  if (!agentId || isLoading) {
     return (
       <StyledContainer>
-        <StyledEmptyState>No AI Agent found.</StyledEmptyState>
+        <StyledEmptyState>
+          {isLoading ? t`Loading...` : t`No AI Agent found.`}
+        </StyledEmptyState>
       </StyledContainer>
     );
   }
