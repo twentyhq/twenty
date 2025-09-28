@@ -1,11 +1,10 @@
 import { AIChatTab } from '@/ai/components/AIChatTab';
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
-import { mapDBPartToUIMessagePart } from '@/ai/utils/mapDBPartToUIMessagePart';
+import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { type UIMessage } from 'ai';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -68,14 +67,7 @@ export const CommandMenuAskAIPage = () => {
       <AIChatTab
         agentId={agentId}
         key={currentThreadId}
-        uiMessages={(data?.agentChatMessages || []).map((message) => ({
-          id: message.id,
-          role: message.role as UIMessage['role'],
-          parts: message.parts.map(mapDBPartToUIMessagePart),
-          metadata: {
-            createdAt: message.createdAt,
-          },
-        }))}
+        uiMessages={mapDBMessagesToUIMessages(data?.agentChatMessages || [])}
       />
     </StyledContainer>
   );
