@@ -54,7 +54,7 @@ export const useAgentChat = (
     agentId,
   );
 
-  const [currentThreadId] = useRecoilComponentState(
+  const currentThreadId = useRecoilComponentValue(
     currentAIChatThreadComponentState,
     agentId,
   );
