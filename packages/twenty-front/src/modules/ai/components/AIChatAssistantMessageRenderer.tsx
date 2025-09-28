@@ -56,10 +56,10 @@ const LoadingDotsIcon = () => {
 
 export const AIChatAssistantMessageRenderer = ({
   messageParts,
-  isStreaming,
+  isLastMessageStreaming,
 }: {
   messageParts: UIMessagePart<UIDataTypes, UITools>[];
-  isStreaming: boolean;
+  isLastMessageStreaming: boolean;
 }) => {
   const renderStep = (
     step: UIMessagePart<UIDataTypes, UITools>,
@@ -103,7 +103,7 @@ export const AIChatAssistantMessageRenderer = ({
       <StyledStepsContainer>
         {messageParts.map(renderStep)}
       </StyledStepsContainer>
-      {isStreaming && <StyledToolCallContainer />}
+      {isLastMessageStreaming && <StyledToolCallContainer />}
     </div>
   );
 };

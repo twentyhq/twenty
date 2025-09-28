@@ -98,7 +98,7 @@ export const AIChatTab = ({
             <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
               {messages.map((message) => (
                 <AIChatMessage
-                  isStreaming={
+                  isLastMessageStreaming={
                     isStreaming &&
                     message.id === messages[messages.length - 1].id
                   }

@@ -138,10 +138,10 @@ const StyledFilesContainer = styled.div`
 
 export const AIChatMessage = ({
   message,
-  isStreaming,
+  isLastMessageStreaming,
 }: {
   message: UIMessageWithMetadata;
-  isStreaming: boolean;
+  isLastMessageStreaming: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
@@ -172,8 +172,8 @@ export const AIChatMessage = ({
             isUser={message.role === AgentChatMessageRole.USER}
           >
             <AIChatAssistantMessageRenderer
+              isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
-              isStreaming={isStreaming}
             />
           </StyledMessageText>
           {message.parts.length > 0 && (
