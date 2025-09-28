@@ -30,7 +30,7 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'int' })
   orderIndex: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar' })
   type: string;
 
   @Column({ type: 'text', nullable: true })
@@ -39,10 +39,10 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'text', nullable: true })
   reasoningContent: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   toolName: string | null;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   toolCallId: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -51,7 +51,7 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'jsonb', nullable: true })
   toolOutput: unknown | null;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   state: string | null;
 
   @Column({ type: 'text', nullable: true })
@@ -60,34 +60,34 @@ export class AgentChatMessagePartEntity {
   @Column({ type: 'jsonb', nullable: true })
   errorDetails: Record<string, unknown> | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceUrlSourceId: string | null;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceUrlUrl: string | null;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceUrlTitle: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceDocumentSourceId: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceDocumentMediaType: string | null;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceDocumentTitle: string | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sourceDocumentFilename: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   fileMediaType: string | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   fileFilename: string | null;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   fileUrl: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
