@@ -6,8 +6,9 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { type ToolInput } from '@/ai/types/ToolInput';
+import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -71,8 +72,8 @@ export const ToolStepRenderer = ({
   output,
   toolName,
 }: {
-  input: ToolUIPart['input'];
-  output: ToolUIPart['output'];
+  input: ToolInput;
+  output: ToolOutput;
   toolName: string;
 }) => {
   const theme = useTheme();

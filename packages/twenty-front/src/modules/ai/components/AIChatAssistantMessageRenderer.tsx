@@ -3,6 +3,8 @@ import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { type ToolInput } from '@/ai/types/ToolInput';
+import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { ToolUIPart, UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -83,8 +85,8 @@ export const AIChatAssistantMessageRenderer = ({
             return (
               <ToolStepRenderer
                 key={index}
-                input={input}
-                output={output}
+                input={input as ToolInput}
+                output={output as ToolOutput}
                 toolName={type.split('-')[1]}
               />
             );
