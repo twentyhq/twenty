@@ -86,9 +86,7 @@ export const ToolStepRenderer = ({
       <StyledContainer>
         <StyledLoadingContainer>
           <ShimmeringText>
-            <StyledDisplayMessage>
-              {(input as { loadingMessage: string })?.loadingMessage}
-            </StyledDisplayMessage>
+            <StyledDisplayMessage>{input?.loadingMessage}</StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
       </StyledContainer>
