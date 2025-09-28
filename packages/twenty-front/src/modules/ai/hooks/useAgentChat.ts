@@ -128,10 +128,7 @@ export const useAgentChat = (
     );
 
     setAgentChatUploadedFiles([]);
-
     setTimeout(scrollToBottom, 100);
-
-    scrollToBottom();
   };
 
   const handleSendMessage = async () => {
