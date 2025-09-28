@@ -176,7 +176,7 @@ export const AIChatMessage = ({
               isStreaming={isStreaming}
             />
           </StyledMessageText>
-          {message.parts?.length > 0 && (
+          {message.parts.length > 0 && (
             <StyledFilesContainer>
               {message.parts
                 .filter((part) => part.type === 'file')
