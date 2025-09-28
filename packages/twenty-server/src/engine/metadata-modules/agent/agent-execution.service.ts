@@ -195,44 +195,59 @@ export class AgentExecutionService {
     messages: UIMessage[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
-    const agent = await this.agentRepository.findOneOrFail({
-      where: { id: agentId },
-    });
+    try {
+      const agent = await this.agentRepository.findOneOrFail({
+        where: { id: agentId },
+      });
 
-    let contextString = '';
+      let contextString = '';
 
-    if (recordIdsByObjectMetadataNameSingular.length > 0) {
-      const contextPart = await this.getContextForSystemPrompt(
-        workspace,
-        recordIdsByObjectMetadataNameSingular,
-        userWorkspaceId,
+      if (recordIdsByObjectMetadataNameSingular.length > 0) {
+        const contextPart = await this.getContextForSystemPrompt(
+          workspace,
+          recordIdsByObjectMetadataNameSingular,
+          userWorkspaceId,
+        );
+
+        contextString = `\n\nCONTEXT:\n${contextPart}`;
+      }
+
+      const aiRequestConfig = await this.prepareAIRequestConfig({
+        system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
+        agent,
+        messages,
+      });
+
+      this.logger.log(
+        `Sending request to AI model with ${messages.length} messages`,
       );
 
-      contextString = `\n\nCONTEXT:\n${contextPart}`;
+      const model =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
+
+      const stream = streamText(aiRequestConfig);
+
+      stream.usage
+        .then((usage) => {
+          this.aiBillingService.calculateAndBillUsage(
+            model.modelId,
+            usage,
+            workspace.id,
+          );
+        })
+        .catch((usageError) => {
+          this.logger.error('Failed to get usage information:', usageError);
+        });
+
+      return stream;
+    } catch (error) {
+      this.logger.error('Error in streamChatResponse:', error);
+      throw new AgentException(
+        error instanceof Error
+          ? error.message
+          : 'Failed to stream chat response',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
     }
-
-    const aiRequestConfig = await this.prepareAIRequestConfig({
-      system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
-      agent,
-      messages,
-    });
-
-    this.logger.log(
-      `Sending request to AI model with ${messages.length} messages`,
-    );
-
-    const model = await this.aiModelRegistryService.resolveModelForAgent(agent);
-
-    const stream = streamText(aiRequestConfig);
-
-    stream.usage.then((usage) => {
-      this.aiBillingService.calculateAndBillUsage(
-        model.modelId,
-        usage,
-        workspace.id,
-      );
-    });
-
-    return stream;
   }
 }
