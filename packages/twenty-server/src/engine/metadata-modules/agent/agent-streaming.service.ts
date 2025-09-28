@@ -80,6 +80,10 @@ export class AgentStreamingService {
                 return error instanceof Error ? error.message : String(error);
               },
               onFinish: async ({ responseMessage }) => {
+                if (responseMessage.parts.length === 0) {
+                  return;
+                }
+
                 await this.agentChatService.addMessage({
                   threadId,
                   uiMessage: {
