@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import type { UIMessage, UIMessagePart } from 'ai';
 
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
   AgentChatMessageEntity,
@@ -29,8 +28,6 @@ export class AgentChatService {
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
     @InjectRepository(AgentChatMessagePartEntity)
     private readonly messagePartRepository: Repository<AgentChatMessagePartEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
@@ -74,12 +71,10 @@ export class AgentChatService {
   async addMessage({
     threadId,
     uiMessage,
-    fileIds,
   }: {
     threadId: string;
     uiMessage: Omit<UIMessage, 'id'>;
     uiMessageParts?: UIMessagePart<never, never>[];
-    fileIds?: string[];
   }) {
     const message = this.messageRepository.create({
       threadId,
@@ -95,14 +90,6 @@ export class AgentChatService {
       );
 
       await this.messagePartRepository.save(dbParts);
-    }
-
-    if (fileIds && fileIds.length > 0) {
-      for (const fileId of fileIds) {
-        await this.fileRepository.update(fileId, {
-          messageId: savedMessage.id,
-        });
-      }
     }
 
     this.generateTitleIfNeeded(
