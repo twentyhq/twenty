@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   convertToModelMessages,
   LanguageModelUsage,
+  stepCountIs,
   streamText,
   ToolSet,
   UIMessage,
@@ -97,7 +98,7 @@ export class AgentExecutionService {
         tools,
         model: registeredModel.model,
         messages: convertToModelMessages(messages),
-        maxSteps: AGENT_CONFIG.MAX_STEPS,
+        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         ...(registeredModel.doesSupportThinking && {
           providerOptions: {
             anthropic: {
