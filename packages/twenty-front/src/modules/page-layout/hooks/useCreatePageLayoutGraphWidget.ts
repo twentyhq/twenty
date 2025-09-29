@@ -1,9 +1,9 @@
-import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 import {
   getWidgetSize,
   getWidgetTitle,
@@ -11,12 +11,13 @@ import {
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
+import { type GraphType } from '~/generated-metadata/graphql';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
+import { type WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,
@@ -72,7 +73,10 @@ export const useCreatePageLayoutGraphWidget = (
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
           (w) =>
-            w.type === widgetType && w.configuration.graphType === graphType,
+            w.type === widgetType &&
+            w.configuration &&
+            'graphType' in w.configuration &&
+            w.configuration.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
         const widgetId = uuidv4();
@@ -83,25 +87,18 @@ export const useCreatePageLayoutGraphWidget = (
           defaultSize,
         );
 
-        const newWidget: PageLayoutWidget = {
-          id: widgetId,
-          pageLayoutTabId: activeTabId,
+        const newWidget = createDefaultGraphWidget(
+          widgetId,
+          activeTabId,
           title,
-          type: widgetType,
-          gridPosition: {
+          graphType,
+          {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
-          configuration: {
-            graphType,
-          },
-          objectMetadataId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
+        );
 
         const newLayout = {
           i: widgetId,

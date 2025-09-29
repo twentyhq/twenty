@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
-import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import styled from '@emotion/styled';
 
 import {

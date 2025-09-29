@@ -269,6 +269,25 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   tokens: AuthTokenPair;
 };
 
+export type BarChartConfiguration = {
+  __typename?: 'BarChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
+  xAxisName?: Maybe<Scalars['String']>;
+  yAxisName?: Maybe<Scalars['String']>;
+};
+
 export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
@@ -1270,6 +1289,17 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
+export type GaugeChartConfiguration = {
+  __typename?: 'GaugeChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateFieldMetadataIdTotal: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  aggregateOperationTotal: AggregateOperations;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+};
+
 export type GetApiKeyDto = {
   id: Scalars['UUID'];
 };
@@ -1303,6 +1333,23 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+/** Order by options for graph widgets */
+export enum GraphOrderBy {
+  FIELD_ASC = 'FIELD_ASC',
+  FIELD_DESC = 'FIELD_DESC',
+  VALUE_ASC = 'VALUE_ASC',
+  VALUE_DESC = 'VALUE_DESC'
+}
+
+/** Type of graph widget */
+export enum GraphType {
+  BAR = 'BAR',
+  GAUGE = 'GAUGE',
+  LINE = 'LINE',
+  NUMBER = 'NUMBER',
+  PIE = 'PIE'
+}
+
 export type GridPosition = {
   __typename?: 'GridPosition';
   column: Scalars['Float'];
@@ -1330,6 +1377,11 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type IframeConfiguration = {
+  __typename?: 'IframeConfiguration';
+  url: Scalars['String'];
+};
 
 export type ImapSmtpCaldavConnectionParameters = {
   __typename?: 'ImapSmtpCaldavConnectionParameters';
@@ -1454,6 +1506,25 @@ export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type LineChartConfiguration = {
+  __typename?: 'LineChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
+  xAxisName?: Maybe<Scalars['String']>;
+  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -2476,6 +2547,18 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
   otp: Scalars['String'];
 };
 
+export type NumberChartConfiguration = {
+  __typename?: 'NumberChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
@@ -2674,7 +2757,7 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  configuration?: Maybe<Scalars['JSON']>;
+  configuration?: Maybe<WidgetConfiguration>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
@@ -2707,6 +2790,18 @@ export enum PermissionFlagType {
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
+
+export type PieChartConfiguration = {
+  __typename?: 'PieChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataId: Scalars['UUID'];
+  orderBy: GraphOrderBy;
+};
 
 export type PlaceDetailsResultDto = {
   __typename?: 'PlaceDetailsResultDto';
@@ -3692,7 +3787,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
-  configuration: Scalars['JSON'];
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -4046,6 +4141,8 @@ export type Webhook = {
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
 };
+
+export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
 
 export enum WidgetType {
   FIELDS = 'FIELDS',

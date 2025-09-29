@@ -186,7 +186,7 @@ describe('Page Layout Widget Resolver', () => {
         pageLayoutTabId: testPageLayoutTabId,
         objectMetadataId: testObjectMetadataId,
         gridPosition: { row: 1, column: 1, rowSpan: 1, columnSpan: 2 },
-        configuration: {},
+        configuration: null,
       };
 
       const widget = await createTestPageLayoutWidgetWithGraphQL(input);
@@ -212,7 +212,7 @@ describe('Page Layout Widget Resolver', () => {
         pageLayoutTabId: testPageLayoutTabId,
         objectMetadataId: testObjectMetadataId,
         gridPosition: { row: 2, column: 1, rowSpan: 3, columnSpan: 4 },
-        configuration: { theme: 'dark', showBorders: true },
+        configuration: null,
       };
 
       const operation = createPageLayoutWidgetOperationFactory({ data: input });
@@ -257,7 +257,7 @@ describe('Page Layout Widget Resolver', () => {
         title: 'Updated Widget',
         type: WidgetType.IFRAME,
         gridPosition: { row: 1, column: 2, rowSpan: 2, columnSpan: 3 },
-        configuration: { url: 'https://twenty.com' },
+        configuration: null,
       };
 
       const operation = updatePageLayoutWidgetOperationFactory({
@@ -414,7 +414,7 @@ describe('Page Layout Widget Resolver', () => {
         type: WidgetType.GRAPH,
         pageLayoutTabId: testPageLayoutTabId,
         gridPosition: { row: 2, column: 1, rowSpan: 1, columnSpan: 2 },
-        configuration: {},
+        configuration: null,
       };
 
       const widget = await createTestPageLayoutWidgetWithGraphQL(input);
@@ -477,7 +477,7 @@ describe('Page Layout Widget Resolver', () => {
         type: WidgetType.GRAPH,
         pageLayoutTabId: separateTab.id,
         gridPosition: { row: 1, column: 1, rowSpan: 1, columnSpan: 1 },
-        configuration: {},
+        configuration: null,
       };
 
       const widget = await createTestPageLayoutWidgetWithGraphQL(input);

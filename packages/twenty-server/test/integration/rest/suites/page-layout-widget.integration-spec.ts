@@ -179,7 +179,7 @@ describe('Page Layout Widget REST API', () => {
           rowSpan: 2,
           columnSpan: 2,
         },
-        configuration: { theme: 'dark', showLegend: true },
+        configuration: null,
       };
 
       const pageLayoutWidget =
@@ -358,7 +358,7 @@ describe('Page Layout Widget REST API', () => {
           rowSpan: 2,
           columnSpan: 3,
         },
-        configuration: { updated: true },
+        configuration: null,
       };
 
       const response = await makeRestAPIRequest({
