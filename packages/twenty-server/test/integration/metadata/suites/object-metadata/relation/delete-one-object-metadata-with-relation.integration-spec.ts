@@ -1,10 +1,13 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -42,14 +45,10 @@ const successfulDeleteTargetUseCase: DeleteOneObjectMetadataItemTestingContext =
   ];
 
 describe('Delete Object metadata with relation should succeed', () => {
-  let createdObjectMetadataPersonId = '';
-  let createdObjectMetadataOpportunityId = '';
-  let globalTestContext: {
-    opportunityMetadataId: string;
-    personMetadataId: string;
-    relationField: FieldMetadataDTO & {
-      relation: RelationDTO;
-    };
+  let createdObjectMetadataPersonId: undefined | string;
+  let createdObjectMetadataOpportunityId: undefined | string;
+  let relationField: FieldMetadataDTO & {
+    relation: RelationDTO;
   };
 
   beforeEach(async () => {
@@ -58,6 +57,7 @@ describe('Delete Object metadata with relation should succeed', () => {
         createOneObject: { id: objectMetadataPersonId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'personForRelation',
         namePlural: 'peopleForRelation',
@@ -74,6 +74,7 @@ describe('Delete Object metadata with relation should succeed', () => {
         createOneObject: { id: objectMetadataOpportunityId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'opportunityForRelation',
         namePlural: 'opportunitiesForRelation',
@@ -85,38 +86,70 @@ describe('Delete Object metadata with relation should succeed', () => {
 
     createdObjectMetadataOpportunityId = objectMetadataOpportunityId;
 
-    globalTestContext = {
-      opportunityMetadataId: createdObjectMetadataOpportunityId,
-      personMetadataId: createdObjectMetadataPersonId,
-      relationField:
-        await createRelationBetweenObjects<FieldMetadataType.RELATION>({
-          objectMetadataId: createdObjectMetadataOpportunityId,
-          targetObjectMetadataId: createdObjectMetadataPersonId,
-          type: FieldMetadataType.RELATION,
-          relationType: RelationType.MANY_TO_ONE,
-        }),
-    };
+    relationField =
+      await createRelationBetweenObjects<FieldMetadataType.RELATION>({
+        objectMetadataId: createdObjectMetadataOpportunityId,
+        targetObjectMetadataId: createdObjectMetadataPersonId,
+        type: FieldMetadataType.RELATION,
+        relationType: RelationType.MANY_TO_ONE,
+      });
   });
 
   afterEach(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataPersonId },
-    });
-    await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataOpportunityId },
-    });
+    if (isDefined(createdObjectMetadataPersonId)) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataPersonId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: createdObjectMetadataPersonId },
+      });
+    }
+
+    if (isDefined(createdObjectMetadataOpportunityId)) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataOpportunityId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: createdObjectMetadataOpportunityId },
+      });
+    }
   });
 
   it.each(successfulDeleteSourceUseCase)('$title', async ({ context }) => {
+    jestExpectToBeDefined(createdObjectMetadataPersonId);
     const computedContext = context({
-      objectMetadataIdToDelete: globalTestContext.personMetadataId,
-      relationFieldId: globalTestContext.relationField.id,
+      objectMetadataIdToDelete: createdObjectMetadataPersonId,
+      relationFieldId: relationField.id,
     });
 
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: computedContext.objectMetadataIdToDelete,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: computedContext.objectMetadataIdToDelete },
     });
 
+    createdObjectMetadataPersonId = undefined;
     const opportunityFieldOnPersonAfterDeletion = await findFieldMetadata({
       fieldMetadataId: computedContext.relationFieldId,
     });
@@ -125,15 +158,27 @@ describe('Delete Object metadata with relation should succeed', () => {
   });
 
   it.each(successfulDeleteTargetUseCase)('$title', async ({ context }) => {
+    jestExpectToBeDefined(createdObjectMetadataOpportunityId);
     const computedContext = context({
-      objectMetadataIdToDelete: globalTestContext.opportunityMetadataId,
-      relationFieldId: globalTestContext.relationField.id,
+      objectMetadataIdToDelete: createdObjectMetadataOpportunityId,
+      relationFieldId: relationField.id,
     });
 
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: computedContext.objectMetadataIdToDelete,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: computedContext.objectMetadataIdToDelete },
     });
 
+    createdObjectMetadataOpportunityId = undefined;
     const personFieldOnOpportunityAfterDeletion = await findFieldMetadata({
       fieldMetadataId: computedContext.relationFieldId,
     });

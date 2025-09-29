@@ -13,7 +13,7 @@ import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metad
 export const createOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail,
+  expectToFail = false,
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>): CommonResponseBody<{
   createOneObject: ObjectMetadataDTO;
 }> => {

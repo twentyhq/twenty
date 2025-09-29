@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne failing update should not update a field name if it is not synced correctly with label and labelSync is true 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Name is not synced with label.",
+                "userFriendlyMessage": "Updated field name is not synced with label",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "newName",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+        ],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`updateOne failing update should throw if the field name is not available because of other field with the same name 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "otherTestName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "otherTestName" is not available as it is already used by another field",
+                "value": "otherTestName",
+              },
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Name is not synced with label.",
+                "userFriendlyMessage": "Updated field name is not synced with label",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "otherTestName",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+        ],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
