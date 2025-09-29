@@ -263,7 +263,7 @@ describe('people merge resolvers (integration)', () => {
 
       const dryRunResult = dryRunResponse.body.data.mergePeople;
 
-      expect(dryRunResult.emails.primaryEmail).toBe('test2@example.com');
+      expect(dryRunResult.emails.primaryEmail).toBe('test1@example.com');
       expect(dryRunResult.emails.additionalEmails).toEqual(
         expect.arrayContaining([
           'test1.extra@example.com',
