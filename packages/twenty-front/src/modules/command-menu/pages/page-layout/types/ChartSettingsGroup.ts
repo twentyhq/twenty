@@ -10,8 +10,5 @@ export type ChartSettingsItem = {
   label: string;
   id: string;
   description?: string;
-  contextualTextPosition?: 'left' | 'right';
-  hasSubMenu?: boolean;
-  isSubMenuOpened?: boolean;
-  onClick?: () => void;
+  isBoolean: boolean;
 };

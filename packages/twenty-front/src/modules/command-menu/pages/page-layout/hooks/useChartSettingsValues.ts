@@ -40,7 +40,9 @@ export const useChartSettingsValues = (
     (option) => option.value === xAxisOrderBy,
   )?.label;
 
-  const getChartSettingsValues = (itemId: string) => {
+  const getChartSettingsValues = (
+    itemId: string,
+  ): boolean | string | undefined => {
     switch (itemId) {
       case 'source':
         return objectMetadataItem?.labelPlural;
@@ -56,6 +58,8 @@ export const useChartSettingsValues = (
         return getChartAxisNameOptions(configuration.axisNameDisplay);
       case 'sort-by-x':
         return xAxisOrderByLabel;
+      case 'data-labels':
+        return configuration.dataLabels;
       default:
         return '';
     }
