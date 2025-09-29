@@ -1,3 +1,4 @@
+import { useGraphSortOptions } from '@/command-menu/pages/page-layout/hooks/useGraphSortOptions';
 import { getChartAxisNameOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameOptions';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -31,6 +32,14 @@ export const useChartSettingsValues = (
       fieldMetadataItem.id === configuration.groupByFieldMetadataIdY,
   );
 
+  const xAxisOrderBy = configuration.orderByX;
+
+  const graphSortOptions = useGraphSortOptions(configuration);
+
+  const xAxisOrderByLabel = graphSortOptions.sortOptions.find(
+    (option) => option.value === xAxisOrderBy,
+  )?.label;
+
   const getChartSettingsValues = (itemId: string) => {
     switch (itemId) {
       case 'source':
@@ -45,6 +54,8 @@ export const useChartSettingsValues = (
         return groupByFieldY?.label;
       case 'axis-name':
         return getChartAxisNameOptions(configuration.axisNameDisplay);
+      case 'sort-by-x':
+        return xAxisOrderByLabel;
       default:
         return '';
     }

@@ -2,6 +2,7 @@ import { ChartAxisNameSelectionDropdownContent } from '@/command-menu/pages/page
 import { ChartColorSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartColorSelectionDropdownContent';
 import { ChartDataSourceDropdownContent } from '@/command-menu/pages/page-layout/components/ChartDataSourceDropdownContent';
 import { ChartXAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartXAxisFieldSelectionDropdownContent';
+import { ChartXAxisSortBySelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartXAxisSortBySelectionDropdownContent';
 import { ChartYAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisFieldSelectionDropdownContent';
 import { ChartYAxisGroupByFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisGroupByFieldSelectionDropdownContent';
 
@@ -11,6 +12,8 @@ export const getChartSettingsDropdownContent = (itemId: string) => {
       return <ChartDataSourceDropdownContent />;
     case 'data-on-display-x':
       return <ChartXAxisFieldSelectionDropdownContent />;
+    case 'sort-by-x':
+      return <ChartXAxisSortBySelectionDropdownContent />;
     case 'data-on-display-y':
       return <ChartYAxisFieldSelectionDropdownContent />;
     case 'group-by-y':

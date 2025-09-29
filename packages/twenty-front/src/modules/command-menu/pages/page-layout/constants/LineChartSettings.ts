@@ -6,7 +6,7 @@ import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constan
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
-import { SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortBySetting';
+import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortBySetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
 export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
@@ -16,7 +16,7 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
   },
   {
     heading: 'X axis',
-    items: [DATA_DISPLAY_X_SETTING, SORT_BY_SETTING],
+    items: [DATA_DISPLAY_X_SETTING, SORT_BY_X_SETTING],
   },
   {
     heading: 'Y axis',
