@@ -16,6 +16,7 @@ export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
+export { CustomError } from './errors/CustomError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';

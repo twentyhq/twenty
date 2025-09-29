@@ -25,13 +25,11 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   fields,
   recordFilterGroups,
   currentRecordFilterGroupId,
-  throwCustomError,
 }: {
   filterValueDependencies: RecordFilterValueDependencies,
   filters: RecordFilterShared[],
   fields: PartialFieldMetadataItem[],
   recordFilterGroups: RecordFilterGroupShared[],
-  throwCustomError: (message: string, code?: string) => never,
   currentRecordFilterGroupId?: string,
 }): RecordGqlOperationFilter | undefined => {
   const currentRecordFilterGroup = recordFilterGroups.find(
@@ -52,7 +50,6 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
         filterValueDependencies,
         recordFilter: recordFilter,
         fieldMetadataItems: fields,
-        throwCustomError,
       }),
     )
     .filter(isDefined);
@@ -70,8 +67,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
         fields,
         recordFilterGroups,
         currentRecordFilterGroupId: subRecordFilterGroup.id,
-        throwCustomError,}
-      ),
+      }),
     )
     .filter(isDefined);
 

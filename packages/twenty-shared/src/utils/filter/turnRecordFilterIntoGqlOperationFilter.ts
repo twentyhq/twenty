@@ -38,7 +38,7 @@ import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateView
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
-import { checkIfShouldComputeEmptinessFilter, checkIfShouldSkipFiltering, isDefined } from '@/utils';
+import { checkIfShouldComputeEmptinessFilter, checkIfShouldSkipFiltering, CustomError, isDefined } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
@@ -55,7 +55,6 @@ type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   recordFilter: RecordFilterShared;
   fieldMetadataItems: FieldShared[];
   recordIdsForUuid?: string[];
-  throwCustomError: (message: string, code?: string) => never;
 };
 
 
@@ -64,7 +63,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   fieldMetadataItems,
   recordIdsForUuid,
   filterValueDependencies,
-  throwCustomError = (errorMessage: string) => {throw new Error(errorMessage);},
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
@@ -92,7 +90,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       operand: recordFilter.operand,
       correspondingField: correspondingFieldMetadataItem,
       recordFilter: recordFilter,
-      throwCustomError,
     });
 
     return emptinessFilter;
@@ -124,8 +121,9 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             },
           };
         default:
-          return throwCustomError(
+          throw new CustomError(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+            'UNKNOWN_OPERAND_FOR_FILTER',
           );
       }
     case 'TS_VECTOR':
@@ -459,7 +457,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         correspondingFieldMetadataItem,
         recordFilter,
         subFieldName,
-        throwCustomError,
       });
     }
     case 'FULL_NAME': {
@@ -1006,7 +1003,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         correspondingFieldMetadataItem,
         recordFilter,
         subFieldName,
-        throwCustomError,
       });
     }
     case 'PHONES': {

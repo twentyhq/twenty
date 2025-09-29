@@ -15,9 +15,9 @@ import {
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CustomError } from '@/error-handler/CustomError';
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
+import { CustomError } from 'twenty-shared/utils';
 import { logError } from './logError';
 
 export const parseDate = (dateToParse: Date | string | number): Date => {

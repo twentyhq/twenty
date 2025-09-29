@@ -1,4 +1,3 @@
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -25,7 +24,6 @@ export const getQueryVariablesFromFiltersAndSorts = ({
     filterValueDependencies,
     recordFilterGroups,
     recordFilters,
-    throwCustomError,
   });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordSorts);

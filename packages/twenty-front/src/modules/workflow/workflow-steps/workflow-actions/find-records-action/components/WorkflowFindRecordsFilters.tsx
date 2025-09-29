@@ -1,4 +1,3 @@
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
@@ -92,7 +91,6 @@ export const WorkflowFindRecordsFilters = ({
           filterValueDependencies: {},
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
-          throwCustomError,
         });
 
         const newFilter = {

@@ -1,8 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
-import { CustomError } from '@/error-handler/CustomError';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useObjectMetadataItemById = ({
   objectId,

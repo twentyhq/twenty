@@ -1,4 +1,5 @@
 import { ViewFilterOperand as RecordFilterOperand, type CompositeFieldSubFieldName, type LinksFilter, type PartialFieldMetadataItem } from '@/types';
+import { CustomError } from '@/utils/errors';
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -6,12 +7,10 @@ export const computeGqlOperationFilterForLinks = ({
   recordFilter,
   correspondingFieldMetadataItem,
   subFieldName,
-  throwCustomError,
 }: {
   recordFilter: RecordFilterShared;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>
   subFieldName: CompositeFieldSubFieldName | null | undefined;
-  throwCustomError: (message: string, code?: string) => never;
 }) => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
@@ -39,8 +38,9 @@ export const computeGqlOperationFilterForLinks = ({
               },
             };
           default:
-            return throwCustomError(
+            throw new CustomError(
               `Unknown operand ${recordFilter.operand} for ${correspondingFieldMetadataItem.type} filter`,
+              'UNKNOWN_OPERAND_FOR_FILTER',
             );
         }
       }

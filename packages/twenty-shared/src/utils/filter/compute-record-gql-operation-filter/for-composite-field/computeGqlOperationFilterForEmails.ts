@@ -5,6 +5,7 @@ import {
   ViewFilterOperand as RecordFilterOperand,
   type RecordGqlOperationFilter,
 } from '@/types';
+import { CustomError } from '@/utils/errors';
 
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -13,12 +14,10 @@ export const computeGqlOperationFilterForEmails = ({
   recordFilter,
   correspondingFieldMetadataItem,
   subFieldName,
-  throwCustomError,
 }: {
   recordFilter: RecordFilterShared;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
   subFieldName: CompositeFieldSubFieldName | null | undefined;
-  throwCustomError: (message: string, code?: string) => never;
 }): RecordGqlOperationFilter => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
@@ -82,14 +81,14 @@ export const computeGqlOperationFilterForEmails = ({
               ],
             };
           default:
-            return throwCustomError(
+            throw new CustomError(
               `Unknown operand ${recordFilter.operand} for ${correspondingFieldMetadataItem.type} filter`,
               'UNKNOWN_OPERAND_FOR_FILTER',
             );
         }
       }
       default: {
-        throwCustomError(
+        throw new CustomError(
           `Unknown subfield name ${subFieldName}`,
           'UNKNOWN_SUBFIELD_NAME',
         );

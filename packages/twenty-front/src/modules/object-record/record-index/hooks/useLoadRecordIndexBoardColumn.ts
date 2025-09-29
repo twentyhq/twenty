@@ -14,7 +14,6 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -67,7 +66,6 @@ export const useLoadRecordIndexBoardColumn = ({
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
-    throwCustomError,
   });
 
   const anyFieldFilterValue = useRecoilComponentValue(
@@ -78,7 +76,6 @@ export const useLoadRecordIndexBoardColumn = ({
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
-      throwCustomError,
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);

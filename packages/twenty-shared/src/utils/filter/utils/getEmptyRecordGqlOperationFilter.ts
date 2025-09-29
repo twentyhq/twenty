@@ -16,6 +16,7 @@ import {
   type SelectFilter,
   type StringFilter,
 } from '@/types';
+import { CustomError } from '@/utils/errors';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
@@ -27,14 +28,12 @@ type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
   correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
   recordFilter: RecordFilterShared;
-  throwCustomError: (message: string, code?: string) => never;
 };
 
 export const getEmptyRecordGqlOperationFilter = ({
   operand,
   correspondingField,
   recordFilter,
-  throwCustomError,
 }: GetEmptyRecordGqlOperationFilterParams) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
@@ -192,7 +191,6 @@ export const getEmptyRecordGqlOperationFilter = ({
       emptyRecordFilter = computeEmptyGqlOperationFilterForLinks({
         correspondingFieldMetadataItem: correspondingField,
         recordFilter,
-        throwCustomError,
       });
       break;
     }
@@ -384,11 +382,10 @@ export const getEmptyRecordGqlOperationFilter = ({
       emptyRecordFilter = computeEmptyGqlOperationFilterForEmails({
         correspondingFieldMetadataItem: correspondingField,
         recordFilter,
-        throwCustomError,
       });
       break;
     default:
-      return throwCustomError( 
+      throw new CustomError( 
         `Unsupported empty filter type ${filterType}`,
         'UNSUPPORTED_EMPTY_FILTER_TYPE',
       );
@@ -402,7 +399,7 @@ export const getEmptyRecordGqlOperationFilter = ({
         not: emptyRecordFilter,
       };
     default:
-      return throwCustomError( 
+      throw new CustomError( 
         `Unknown operand ${operand} for ${filterType} filter`,
         'UNKNOWN_OPERAND_FOR_FILTER',
       );

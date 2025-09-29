@@ -1,5 +1,4 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -31,7 +30,6 @@ export const useGetRecordIndexTotalCount = () => {
     recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
     recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
-    throwCustomError,
   });
 
   const anyFieldFilterValue = useRecoilComponentValue(
@@ -42,7 +40,6 @@ export const useGetRecordIndexTotalCount = () => {
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
-      throwCustomError,
     });
 
   const { data, loading } = useAggregateRecords<{

@@ -3,6 +3,7 @@ import {
   type PartialFieldMetadataItem,
   type RecordGqlOperationFilter,
 } from '@/types';
+import { CustomError } from '@/utils/errors';
 
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -10,11 +11,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 export const computeEmptyGqlOperationFilterForEmails = ({
   recordFilter,
   correspondingFieldMetadataItem,
-  throwCustomError,
 }: {
   recordFilter: RecordFilterShared;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
-  throwCustomError: (message: string, code?: string) => never;
 }): RecordGqlOperationFilter => {
   const subFieldName = recordFilter.subFieldName;
   const isSubFieldFilter = isNonEmptyString(subFieldName);
@@ -54,7 +53,7 @@ export const computeEmptyGqlOperationFilterForEmails = ({
         };
       }
       default: {
-        return throwCustomError( 
+       throw new CustomError( 
           `Unknown subfield name ${subFieldName}`,
           'UNKNOWN_SUBFIELD_NAME',
         );

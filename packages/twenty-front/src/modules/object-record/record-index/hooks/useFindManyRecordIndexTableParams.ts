@@ -1,4 +1,3 @@
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -46,7 +45,6 @@ export const useFindManyRecordIndexTableParams = (
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
     filterValueDependencies,
-    throwCustomError,
   });
 
   const anyFieldFilterValue = useRecoilComponentValue(
@@ -57,7 +55,6 @@ export const useFindManyRecordIndexTableParams = (
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
-      throwCustomError,
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);

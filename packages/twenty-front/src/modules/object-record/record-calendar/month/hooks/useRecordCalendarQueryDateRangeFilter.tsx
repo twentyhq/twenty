@@ -1,4 +1,3 @@
-import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -55,7 +54,6 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     recordFilters: [dateRangeFilterAfter, dateRangeFilterBefore],
     recordFilterGroups: [],
     fields: objectMetadataItem.fields,
-    throwCustomError,
   });
 
   return {
