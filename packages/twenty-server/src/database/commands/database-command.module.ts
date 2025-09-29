@@ -23,6 +23,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     FeatureFlagModule,
     TriggerModule,
     WorkspaceCleanerModule,
+    PublicDomainModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

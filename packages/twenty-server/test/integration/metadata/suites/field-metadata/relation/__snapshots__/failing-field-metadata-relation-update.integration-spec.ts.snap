@@ -5,11 +5,57 @@ exports[`Field metadata relation update should fail relation when name is change
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Forbidden updated properties for relation field metadata: name",
+                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "newName",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Forbidden updated properties for relation field metadata: name",
+                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "newName",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+        ],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "Name cannot be changed for relation fields",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -19,11 +65,81 @@ exports[`Field metadata relation update should fail relation when name is not in
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "errors": {
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Forbidden updated properties for relation field metadata: name",
+                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name should be in camelCase",
+                "userFriendlyMessage": "Name should be in camelCase",
+                "value": "New Name",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "New Name",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "New Name",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_MUTATION_NOT_ALLOWED",
+                "message": "Forbidden updated properties for relation field metadata: name",
+                "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name should be in camelCase",
+                "userFriendlyMessage": "Name should be in camelCase",
+                "value": "New Name",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "New Name",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "New Name",
+              "objectMetadataId": Any<String>,
+            },
+            "type": "update_field",
+          },
+        ],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "New Name should be in camelCase",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
   },
 ]
 `;

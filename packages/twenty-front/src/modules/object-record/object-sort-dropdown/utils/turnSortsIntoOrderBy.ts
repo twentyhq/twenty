@@ -10,6 +10,7 @@ import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasO
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type OrderBy } from '@/types/OrderBy';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewSortDirection } from '~/generated/graphql';
 
 export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,
@@ -29,7 +30,9 @@ export const turnSortsIntoOrderBy = (
       }
 
       const direction: OrderBy =
-        sort.direction === 'asc' ? 'AscNullsFirst' : 'DescNullsLast';
+        sort.direction === ViewSortDirection.ASC
+          ? 'AscNullsFirst'
+          : 'DescNullsLast';
 
       return getOrderByForFieldMetadataType(correspondingField, direction);
     })

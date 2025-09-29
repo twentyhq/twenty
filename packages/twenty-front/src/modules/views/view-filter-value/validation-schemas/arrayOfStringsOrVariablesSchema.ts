@@ -14,6 +14,6 @@ export const arrayOfStringsOrVariablesSchema = z
     (parsed) =>
       Array.isArray(parsed) && parsed.every((item) => typeof item === 'string'),
     {
-      message: 'Expected an array of strings',
+      error: 'Expected an array of strings',
     },
   );

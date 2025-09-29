@@ -1,7 +1,6 @@
 import { type DataSource } from 'typeorm';
 
-import { getPageLayoutDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-data-seeds.constant';
-import { getPageLayoutTabDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-data-seeds.constant';
+import { getPageLayoutDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-data-seeds.util';
 
 export const seedPageLayouts = async (
   dataSource: DataSource,
@@ -22,24 +21,6 @@ export const seedPageLayouts = async (
         'workspaceId',
       ])
       .values(pageLayouts)
-      .orIgnore()
-      .execute();
-  }
-
-  const pageLayoutTabs = getPageLayoutTabDataSeeds(workspaceId);
-
-  if (pageLayoutTabs.length > 0) {
-    await dataSource
-      .createQueryBuilder()
-      .insert()
-      .into(`${schemaName}.pageLayoutTab`, [
-        'id',
-        'title',
-        'position',
-        'pageLayoutId',
-        'workspaceId',
-      ])
-      .values(pageLayoutTabs)
       .orIgnore()
       .execute();
   }

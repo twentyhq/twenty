@@ -6,6 +6,7 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { isDefined } from 'twenty-shared/utils';
 import { useSetIsRecordTableCellFocusActive } from './useSetIsRecordTableCellFocusActive';
 
 export const useUnfocusRecordTableCell = (recordTableId?: string) => {
@@ -31,6 +32,10 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
         const currentPosition = snapshot
           .getLoadable(focusPositionState)
           .getValue();
+
+        if (!isDefined(currentPosition)) {
+          return;
+        }
 
         const currentCellFocusId = getRecordTableCellFocusId({
           recordTableId: recordTableIdFromProps,

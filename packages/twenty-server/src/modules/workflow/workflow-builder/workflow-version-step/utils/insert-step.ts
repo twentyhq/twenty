@@ -83,6 +83,7 @@ const updateParentStep = ({
       insertedStepId,
       parentStepConnectionOptions,
       trigger,
+      nextStepId,
     });
   } else {
     return updateParentStepNextStepIds({
@@ -162,18 +163,20 @@ const updateStepsWithOptions = ({
   steps,
   parentStepConnectionOptions,
   trigger,
+  nextStepId,
 }: {
   parentStepId: string;
   insertedStepId: string;
   steps: WorkflowAction[];
   parentStepConnectionOptions: WorkflowStepConnectionOptions;
   trigger: WorkflowTrigger | null;
+  nextStepId?: string;
 }) => {
   let updatedSteps = steps;
 
   switch (parentStepConnectionOptions.connectedStepType) {
     case WorkflowActionType.ITERATOR:
-      if (!parentStepConnectionOptions.settings.shouldInsertToLoop) {
+      if (!parentStepConnectionOptions.settings.isConnectedToLoop) {
         break;
       }
 
@@ -193,8 +196,12 @@ const updateStepsWithOptions = ({
               input: {
                 ...step.settings.input,
                 initialLoopStepIds: [
-                  ...(step.settings.input.initialLoopStepIds || []),
-                  insertedStepId,
+                  ...new Set([
+                    ...(step.settings.input.initialLoopStepIds?.filter(
+                      (id) => id !== nextStepId,
+                    ) || []),
+                    insertedStepId,
+                  ]),
                 ],
               },
             } satisfies WorkflowIteratorActionSettings,

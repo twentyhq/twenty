@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { basename, dirname, extname } from 'path';
-import { type Stream } from 'stream';
+import { type Readable } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { buildSignedPath } from 'twenty-shared/utils';
@@ -28,7 +28,7 @@ export class FileService {
     folderPath: string,
     filename: string,
     workspaceId: string,
-  ): Promise<Stream> {
+  ): Promise<Readable> {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
     return await this.fileStorageService.read({

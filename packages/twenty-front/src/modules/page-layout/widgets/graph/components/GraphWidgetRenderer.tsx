@@ -1,60 +1,67 @@
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/components/GraphWidgetNumberChart';
-import { type GraphWidget } from '@/page-layout/widgets/graph/types/GraphWidget';
+import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { lazy, Suspense } from 'react';
+import { GraphType, type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetBarChart').then(
-    (module) => ({
-      default: module.GraphWidgetBarChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart'
+  ).then((module) => ({
+    default: module.GraphWidgetBarChart,
+  })),
 );
 
 const GraphWidgetLineChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetLineChart').then(
-    (module) => ({
-      default: module.GraphWidgetLineChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart'
+  ).then((module) => ({
+    default: module.GraphWidgetLineChart,
+  })),
 );
 
 const GraphWidgetPieChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetPieChart').then(
-    (module) => ({
-      default: module.GraphWidgetPieChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart'
+  ).then((module) => ({
+    default: module.GraphWidgetPieChart,
+  })),
 );
 
 const GraphWidgetGaugeChart = lazy(() =>
-  import('@/page-layout/widgets/graph/components/GraphWidgetGaugeChart').then(
-    (module) => ({
-      default: module.GraphWidgetGaugeChart,
-    }),
-  ),
+  import(
+    '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart'
+  ).then((module) => ({
+    default: module.GraphWidgetGaugeChart,
+  })),
 );
 
 type GraphWidgetRendererProps = {
-  widget: GraphWidget;
+  widget: PageLayoutWidget;
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  const graphType = widget.configuration?.graphType;
-
-  if (!Object.values(GraphType).includes(graphType)) {
-    return null;
+  if (!widget.configuration || !('graphType' in widget.configuration)) {
+    throw new Error(
+      `Invalid configuration for widget ${widget.id}: missing graphType`,
+    );
   }
 
-  const data = widget.data ?? getDefaultWidgetData(graphType);
+  const graphType = widget.configuration.graphType;
+
+  if (!Object.values(GraphType).includes(graphType)) {
+    throw new Error(
+      `Unsupported graph type ${graphType} for widget ${widget.id}`,
+    );
+  }
+
+  const data: any = getDefaultWidgetData(graphType);
 
   if (!data) {
     return null;
   }
 
-  switch (graphType as GraphType) {
+  switch (graphType) {
     case GraphType.NUMBER:
       return (
         <GraphWidgetNumberChart

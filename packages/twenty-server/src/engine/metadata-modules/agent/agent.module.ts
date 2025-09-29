@@ -21,6 +21,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
+import { AgentChatMessagePartEntity } from './agent-chat-message-part.entity';
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
@@ -45,6 +46,7 @@ import { AgentService } from './agent.service';
       RoleEntity,
       RoleTargetsEntity,
       AgentChatMessageEntity,
+      AgentChatMessagePartEntity,
       AgentChatThreadEntity,
       FileEntity,
       UserWorkspace,
@@ -89,6 +91,7 @@ import { AgentService } from './agent.service';
     TypeOrmModule.forFeature([
       AgentEntity,
       AgentChatMessageEntity,
+      AgentChatMessagePartEntity,
       AgentChatThreadEntity,
     ]),
     AgentHandoffExecutorService,

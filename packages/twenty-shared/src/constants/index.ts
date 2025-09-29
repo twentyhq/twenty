@@ -13,6 +13,7 @@ export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestric
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
+export { QUERY_DEFAULT_LIMIT_RECORDS } from './QueryDefaultLimitRecords';
 export { QUERY_MAX_RECORDS } from './QueryMaxRecords';
 export { QUOTED_STRING_REGEX } from './QuotedStringRegex';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';

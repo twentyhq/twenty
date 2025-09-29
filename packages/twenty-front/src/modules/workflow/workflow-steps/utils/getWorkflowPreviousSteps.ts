@@ -1,12 +1,23 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { isParentStep } from '@/workflow/workflow-diagram/utils/isParentStep';
 
-export const getPreviousSteps = (
-  steps: WorkflowStep[],
-  currentStepId: string,
-  visitedSteps: Set<string> = new Set([currentStepId]),
-): WorkflowStep[] => {
+export const getPreviousSteps = ({
+  steps,
+  currentStep,
+  visitedSteps = new Set([currentStep.id]),
+}: {
+  steps: WorkflowStep[];
+  currentStep: WorkflowStep;
+  visitedSteps?: Set<string>;
+}): WorkflowStep[] => {
   const parentSteps = steps
-    .filter((step) => step.nextStepIds?.includes(currentStepId))
+    .filter((step) =>
+      isParentStep({
+        currentStep,
+        potentialParentStep: step,
+        steps,
+      }),
+    )
     .filter((step) => !visitedSteps.has(step.id));
 
   const grandParentSteps = parentSteps
@@ -15,7 +26,7 @@ export const getPreviousSteps = (
         return [];
       }
       visitedSteps.add(step.id);
-      return getPreviousSteps(steps, step.id, visitedSteps);
+      return getPreviousSteps({ steps, currentStep: step, visitedSteps });
     })
     .flat();
 

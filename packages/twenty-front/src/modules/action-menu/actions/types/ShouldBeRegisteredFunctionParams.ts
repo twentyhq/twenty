@@ -25,4 +25,5 @@ export type ShouldBeRegisteredFunctionParams = {
   getTargetObjectWritePermission: (
     objectMetadataItemNameSingular: string,
   ) => boolean;
+  forceRegisteredActionsByKey: Record<string, boolean | undefined>;
 };

@@ -3,7 +3,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
+import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
@@ -38,8 +38,9 @@ export const RecordTableBodyLoading = () => {
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
+              isFirstRowOfGroup={rowIndex === 0}
             >
-              <RecordTableCellGrip />
+              <RecordTableCellDragAndDrop />
               <RecordTableCellCheckbox />
               {visibleRecordFields.map((recordField, index) => (
                 <RecordTableCellLoading

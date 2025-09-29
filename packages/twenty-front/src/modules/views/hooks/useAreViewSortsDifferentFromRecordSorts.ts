@@ -6,6 +6,7 @@ import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAreViewSortsDifferentFromRecordSorts = () => {
   const { currentView } = useGetCurrentViewOnly();
@@ -15,8 +16,11 @@ export const useAreViewSortsDifferentFromRecordSorts = () => {
 
   const viewSortsAreDifferentFromRecordSorts = useMemo(() => {
     const currentViewSorts = currentView?.viewSorts ?? [];
+    if (!isDefined(currentView)) {
+      return false;
+    }
     const viewSortsFromCurrentRecordSorts = currentRecordSorts.map(
-      mapRecordSortToViewSort,
+      (recordSort) => mapRecordSortToViewSort(recordSort, currentView.id),
     );
 
     const viewSortsToCreate = getViewSortsToCreate(

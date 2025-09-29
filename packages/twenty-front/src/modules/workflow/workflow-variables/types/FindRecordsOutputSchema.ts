@@ -1,10 +1,4 @@
-import { type RecordOutputSchemaV2 } from './RecordOutputSchemaV2';
-
-type RecordNode = {
-  isLeaf: false;
-  label: string;
-  value: RecordOutputSchemaV2;
-};
+import { type RecordNode } from '@/workflow/workflow-variables/types/RecordNode';
 
 export type FindRecordsOutputSchema = {
   first: RecordNode;

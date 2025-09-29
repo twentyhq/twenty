@@ -11,19 +11,25 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
+import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
-import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
-import { WorkflowDiagramIteratorEmptyActionEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { addEdge, ReactFlowProvider } from '@xyflow/react';
-import React from 'react';
+import {
+  addEdge,
+  ReactFlowProvider,
+  type Connection,
+  type Edge,
+} from '@xyflow/react';
+import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -65,15 +71,43 @@ export const WorkflowDiagramCanvasEditable = () => {
       };
     });
 
-    createEdge(edgeConnect);
+    createEdge({
+      source: edgeConnect.source,
+      target: edgeConnect.target,
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId: edgeConnect.sourceHandle,
+      }),
+    });
   };
+
+  const handleReconnect = useCallback(
+    async (oldEdge: Edge, connection: Connection) => {
+      assertEdgeHasDefinedHandlesOrThrow(oldEdge);
+      assertWorkflowConnectionOrThrow(connection);
+
+      await deleteEdge({
+        source: oldEdge.source,
+        target: oldEdge.target,
+        sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: oldEdge.sourceHandle,
+        }),
+      });
+
+      await createEdge({
+        source: connection.source,
+        target: connection.target,
+        connectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: connection.sourceHandle,
+        }),
+      });
+    },
+    [deleteEdge, createEdge],
+  );
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
     await deleteEdge({
       source: edge.source,
       target: edge.target,
-      sourceHandle: edge.sourceHandle,
-      targetHandle: edge.targetHandle,
     });
   };
 
@@ -128,17 +162,16 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
-          'iterator-empty-action': WorkflowDiagramIteratorEmptyActionEditable,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
-          'empty-filter--editable': WorkflowDiagramDefaultEdgeEditable,
-          'filter--editable': WorkflowDiagramFilterEdgeEditable,
+          editable: WorkflowDiagramDefaultEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}
         tagText={tagProps.text}
         onConnect={onConnect}
+        onReconnect={handleReconnect}
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable

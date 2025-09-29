@@ -7,17 +7,61 @@ import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthClassName';
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
+import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
+import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
+import { css, type Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+
+const VerticalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
+  &::before {
+    bottom: -1px;
+    box-shadow:
+      0px 2px 4px 0px ${theme.boxShadow.color},
+      0px 0px 4px 0px ${theme.boxShadow.color};
+    clip-path: inset(0px 0px -4px 0px);
+    content: '';
+    height: 4px;
+    position: absolute;
+    visibility: var(
+      ${RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME},
+      hidden
+    );
+    width: 100%;
+  }
+`;
+
+const HorizontalScrollBoxShadowCSS = ({ theme }: { theme: Theme }) => css`
+  &::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    height: calc(100% + 2px);
+    width: 4px;
+    right: -1px;
+    box-shadow:
+      2px 0px 4px 0px ${theme.boxShadow.color},
+      0px 0px 4px 0px ${theme.boxShadow.color};
+    clip-path: inset(0px -4px 0px 0px);
+    visibility: var(
+      ${RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME},
+      hidden
+    );
+  }
+`;
 
 const StyledTable = styled.div<{
   isDragging?: boolean;
   visibleRecordFields: RecordField[];
   lastColumnWidth: number;
+  hasRecordGroups: boolean;
 }>`
   & > * {
     pointer-events: ${({ isDragging }) =>
@@ -31,10 +75,15 @@ const StyledTable = styled.div<{
   div.header-cell {
     position: sticky;
     top: 0;
+
+    ${VerticalScrollBoxShadowCSS}
   }
 
   div.header-cell:nth-of-type(n + 5) {
-    z-index: ${TABLE_Z_INDEX.headerColumnsNormal};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsNormal
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsNormal};
   }
 
   div.header-cell:nth-of-type(1) {
@@ -42,96 +91,81 @@ const StyledTable = styled.div<{
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(2) {
-    left: 16px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     top: 0;
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(3) {
-    left: 48px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     right: 0;
 
     background-color: ${({ theme }) => theme.background.primary};
 
-    z-index: ${TABLE_Z_INDEX.headerColumnsSticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
+        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
 
-    // &::after {
-    //   content: '';
-    //   position: absolute;
-    //   top: -1px;
-    //   height: calc(100% + 2px);
-    //   width: 4px;
-    //   right: 0px;
-    //   box-shadow: ${({ theme }) => theme.boxShadow.light};
-    //   clip-path: inset(0px -4px 0px 0px);
-    // }
+    ${HorizontalScrollBoxShadowCSS}
 
     @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: 38px;
-      max-width: 38px;
-      min-width: 38px;
+      width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
     }
   }
 
   div.table-cell:nth-of-type(1) {
     position: sticky;
     left: 0px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.table-cell:nth-of-type(2) {
     position: sticky;
-    left: 16px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.table-cell-0-0 {
     position: sticky;
-    left: 48px;
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${38}px;
-      max-width: ${38}px;
-    }
+    ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell:nth-of-type(3) {
     position: sticky;
-    left: 48px;
-    z-index: ${TABLE_Z_INDEX.cell.sticky};
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    z-index: ${({ hasRecordGroups }) =>
+      hasRecordGroups
+        ? TABLE_Z_INDEX.cell.withGroups.sticky
+        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
 
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${38}px;
-      max-width: ${38}px;
-    }
-  }
-
-  div.footer-cell:nth-of-type(n + 3) {
-    z-index: ${TABLE_Z_INDEX.footer.default};
-
-    position: sticky;
-    bottom: 0;
-  }
-
-  div.footer-cell:nth-of-type(1) {
-    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-    left: 0px;
-    bottom: 0;
-    position: sticky;
-  }
-
-  div.footer-cell:nth-of-type(2) {
-    z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-    left: 48px;
-    bottom: 0;
-    position: sticky;
+    ${HorizontalScrollBoxShadowCSS}
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
@@ -165,9 +199,22 @@ const StyledTable = styled.div<{
         min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
         max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
       } \n`;
+
+      const isLabelIdentifierColumn = i === 0;
+
+      if (isLabelIdentifierColumn) {
+        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
+          @media (max-width: ${MOBILE_VIEWPORT}px) {
+            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+          }
+        } \n`;
+      }
     }
 
     returnedCSS += `${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
+    returnedCSS += `${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}: ${lastColumnWidth}px;`;
 
     return returnedCSS;
   }};
@@ -179,6 +226,18 @@ const StyledTable = styled.div<{
     );
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+  }
+
+  div.${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
+    width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    min-width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    max-width: var(
+      ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
   }
 `;

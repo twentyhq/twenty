@@ -14,6 +14,7 @@ export { AppPath } from './AppPath';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
+export type { ExcludeFunctions } from './ExcludeFunctions';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FromTo } from './FromToType';
 export type { IsExactly } from './IsExactly';

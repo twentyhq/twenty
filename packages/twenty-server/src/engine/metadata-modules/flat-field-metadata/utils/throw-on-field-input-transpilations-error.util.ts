@@ -23,13 +23,19 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
       // We should create a dedicated exceptions instead of hacking through the WorkspaceMigrationBuilderExceptionV2
       throw new WorkspaceMigrationBuilderExceptionV2(
         {
-          errors: [
-            {
-              errors: failedInputTranspilationErrors,
-              type: 'create_field',
-              fieldMinimalInformation: {},
-            },
-          ],
+          report: {
+            index: [],
+            view: [],
+            viewField: [],
+            objectMetadata: [
+              {
+                errors: failedInputTranspilationErrors,
+                type: 'create_field',
+                flatEntityMinimalInformation: {},
+              },
+            ],
+            serverlessFunction: [],
+          },
           status: 'fail',
         },
         errorLabel,

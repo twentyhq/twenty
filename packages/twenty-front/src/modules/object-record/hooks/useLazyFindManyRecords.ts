@@ -15,6 +15,7 @@ import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
+import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -25,7 +26,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
-  limit,
+  limit = QUERY_DEFAULT_LIMIT_RECORDS,
   recordGqlFields,
   fetchPolicy = 'cache-first',
 }: UseLazyFindManyRecordsParams<T>) => {

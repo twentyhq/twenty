@@ -41,6 +41,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
+  workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 
@@ -464,6 +465,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
+  attachments: '20202020-4a8c-4e2d-9b1c-7e5f3a2b4c6d',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
   searchVector: '20202020-535d-4ffa-b7f3-4fa0d5da1b7a',
 } as const;
@@ -526,6 +528,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+  numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

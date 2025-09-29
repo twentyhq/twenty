@@ -3,6 +3,8 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
+import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
@@ -29,13 +31,15 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  if (!isDefined(workflowRun?.state?.stepInfos)) {
+  const stepInfo = useWorkflowRunStepInfo({ stepId });
+
+  if (!isDefined(workflowRun?.state) || !isDefined(stepInfo)) {
     return null;
   }
 
-  const stepInfo = workflowRun.state.stepInfos[stepId];
-
-  const { status: _, ...stepInfoWithoutStatus } = stepInfo ?? {};
+  const stepInfoToDisplay = getWorkflowRunStepInfoToDisplayAsOutput({
+    stepInfo,
+  });
 
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
@@ -89,7 +93,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
 
       <WorkflowRunStepJsonContainer>
         <JsonTree
-          value={stepInfoWithoutStatus ?? t`No output available`}
+          value={stepInfoToDisplay ?? t`No output available`}
           shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}

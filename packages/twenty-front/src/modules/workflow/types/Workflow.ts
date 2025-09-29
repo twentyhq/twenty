@@ -1,4 +1,7 @@
 import {
+  type BulkRecordsAvailability,
+  type GlobalAvailability,
+  type SingleRecordAvailability,
   type workflowAiAgentActionSchema,
   type workflowCodeActionSchema,
   type workflowCreateOrUpdateRecordActionSchema,
@@ -86,6 +89,11 @@ export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';
+
+export type WorkflowManualTriggerAvailabilityV2 =
+  | GlobalAvailability
+  | SingleRecordAvailability
+  | BulkRecordsAvailability;
 
 export type WorkflowTrigger = z.infer<typeof workflowTriggerSchema>;
 export type WorkflowTriggerType = WorkflowTrigger['type'];

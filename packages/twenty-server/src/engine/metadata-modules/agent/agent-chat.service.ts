@@ -3,16 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from 'ai';
+
+import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
   AgentChatMessageEntity,
-  type AgentChatMessageRole,
+  AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/agent/utils/mapUIMessagePartsToDBParts';
 
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
@@ -23,8 +26,8 @@ export class AgentChatService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     @InjectRepository(AgentChatMessageEntity)
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(AgentChatMessagePartEntity)
+    private readonly messagePartRepository: Repository<AgentChatMessagePartEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
@@ -67,32 +70,32 @@ export class AgentChatService {
 
   async addMessage({
     threadId,
-    role,
-    content,
-    fileIds,
+    uiMessage,
   }: {
     threadId: string;
-    role: AgentChatMessageRole;
-    content: string;
-    fileIds?: string[];
+    uiMessage: Omit<UIMessage<unknown, UIDataTypes, UITools>, 'id'>;
+    uiMessageParts?: UIMessagePart<UIDataTypes, UITools>[];
   }) {
     const message = this.messageRepository.create({
       threadId,
-      role,
-      content,
+      role: uiMessage.role as AgentChatMessageRole,
     });
 
     const savedMessage = await this.messageRepository.save(message);
 
-    if (fileIds && fileIds.length > 0) {
-      for (const fileId of fileIds) {
-        await this.fileRepository.update(fileId, {
-          messageId: savedMessage.id,
-        });
-      }
+    if (uiMessage.parts && uiMessage.parts.length > 0) {
+      const dbParts = mapUIMessagePartsToDBParts(
+        uiMessage.parts,
+        savedMessage.id,
+      );
+
+      await this.messagePartRepository.save(dbParts);
     }
 
-    this.generateTitleIfNeeded(threadId, content);
+    this.generateTitleIfNeeded(
+      threadId,
+      uiMessage.parts.find((part) => part.type === 'text')?.text,
+    );
 
     return savedMessage;
   }
@@ -115,20 +118,20 @@ export class AgentChatService {
     return this.messageRepository.find({
       where: { threadId },
       order: { createdAt: 'ASC' },
-      relations: ['files'],
+      relations: ['parts', 'files'],
     });
   }
 
   private async generateTitleIfNeeded(
     threadId: string,
-    messageContent: string,
+    messageContent?: string | null,
   ) {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
       select: ['id', 'title'],
     });
 
-    if (!thread || thread.title) {
+    if (!thread || thread.title || !messageContent) {
       return;
     }
 
