@@ -1,5 +1,5 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { SingleRecordPickerLoadingEffect } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerLoadingEffect';
 import {
   SingleRecordPickerMenuItems,
@@ -62,15 +62,20 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     excludedRecordIds,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: objectNameSingulars[0],
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
+  const { objectMetadataItems: allObjectMetadataItems } =
+    useObjectMetadataItems();
+  const objectMetadataItems = allObjectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectNameSingulars.includes(objectMetadataItem.nameSingular),
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasUpdatePermissions = objectMetadataItems.every(
+    (objectMetadataItem) =>
+      objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+        ?.canUpdateObjectRecords,
+  );
 
   const handleCreateNew = () => {
     onCreate?.(recordPickerSearchFilter);
@@ -81,7 +86,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
       <SingleRecordPickerLoadingEffect loading={records.loading} />
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && hasObjectUpdatePermissions && (
+          {isDefined(onCreate) && hasUpdatePermissions && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
                 <CreateNewButton
@@ -133,7 +138,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               }}
             />
           </DropdownMenuItemsContainer>
-          {isDefined(onCreate) && hasObjectUpdatePermissions && (
+          {isDefined(onCreate) && hasUpdatePermissions && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
