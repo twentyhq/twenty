@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
@@ -18,7 +18,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     super();
   }
 
-  async handle(request: Request) {
+  async handle(request: AuthenticatedRequest) {
     try {
       const { args, options } =
         await this.buildCommonArgsAndOptionsFromRestRequest(request);
@@ -40,8 +40,10 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     }
   }
 
-  private async buildCommonArgsAndOptionsFromRestRequest(request: Request) {
-    const { id: recordId } = parseCorePath(request);
+  private async buildCommonArgsAndOptionsFromRestRequest(
+    request: AuthenticatedRequest,
+  ) {
+    const { id: recordId, object: parsedObject } = parseCorePath(request);
 
     if (!isDefined(recordId)) {
       throw new BadRequestException(
@@ -49,26 +51,33 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       );
     }
 
-    const {
-      objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-      authContext,
-      objectsPermissions,
-    } = await this.getRepositoryAndMetadataOrFail(request);
+    const depth = this.depthInputFactory.create(request);
+
+    const { objectMetadataMaps, objectMetadataMapItem } =
+      await this.restApiRequestContextService.getObjectMetadata(
+        request,
+        parsedObject,
+      );
+
+    const objectsPermissions =
+      await this.restApiRequestContextService.getObjectsRecordPermissions(
+        request,
+      );
 
     const selectedFieldsResult =
       this.computeSelectedFieldsService.computeSelectedFields({
         objectsPermissions,
-        objectsMetadataMaps: objectMetadata.objectMetadataMaps,
-        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
-        depth: this.depthInputFactory.create(request),
+        objectMetadataMaps,
+        objectMetadataMapItem,
+        depth,
       });
 
-    const { filter } = this.getVariablesFactory.create(
-      recordId,
-      request,
-      objectMetadata,
-    );
+    const { filter } = this.getVariablesFactory.create(recordId, request, {
+      objectMetadataMaps,
+      objectMetadataMapItem,
+    });
+
+    const authContext = this.getAuthContextFromRequest(request);
 
     return {
       args: {
@@ -77,8 +86,8 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
       },
       options: {
         authContext: authContext,
-        objectMetadataItemWithFieldMaps: objectMetadataItemWithFieldsMaps,
-        objectMetadataMaps: objectMetadata.objectMetadataMaps,
+        objectMetadataItemWithFieldMaps: objectMetadataMapItem,
+        objectMetadataMaps: objectMetadataMaps,
       },
     };
   }

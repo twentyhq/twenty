@@ -17,12 +17,12 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 export class ComputeSelectedFieldsService {
   computeSelectedFields = ({
     objectsPermissions,
-    objectsMetadataMaps,
+    objectMetadataMaps,
     objectMetadataMapItem,
     depth,
   }: {
     objectsPermissions: ObjectsPermissions;
-    objectsMetadataMaps: ObjectMetadataMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     depth: Depth | undefined;
   }): CommonSelectedFieldsResult => {
@@ -31,7 +31,7 @@ export class ComputeSelectedFieldsService {
 
     const { relations, relationsSelectFields } =
       this.getRelationsAndRelationsSelectFields({
-        objectsMetadataMaps,
+        objectMetadataMaps,
         objectMetadataMapItem,
         objectsPermissions,
         depth,
@@ -55,12 +55,12 @@ export class ComputeSelectedFieldsService {
   };
 
   private getRelationsAndRelationsSelectFields({
-    objectsMetadataMaps,
+    objectMetadataMaps,
     objectMetadataMapItem,
     objectsPermissions,
     depth,
   }: {
-    objectsMetadataMaps: ObjectMetadataMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     objectsPermissions: ObjectsPermissions;
     depth: Depth | undefined;
@@ -85,7 +85,7 @@ export class ComputeSelectedFieldsService {
         continue;
 
       const relationTargetObjectMetadata =
-        objectsMetadataMaps.byId[field.relationTargetObjectMetadataId];
+        objectMetadataMaps.byId[field.relationTargetObjectMetadataId];
 
       if (!isDefined(relationTargetObjectMetadata)) {
         throw new BadRequestException(
@@ -110,7 +110,7 @@ export class ComputeSelectedFieldsService {
           relations: depth2Relations,
           relationsSelectFields: depth2RelationsSelectFields,
         } = this.getRelationsAndRelationsSelectFields({
-          objectsMetadataMaps: objectsMetadataMaps,
+          objectMetadataMaps,
           objectMetadataMapItem: relationTargetObjectMetadata,
           objectsPermissions,
           depth: 1,

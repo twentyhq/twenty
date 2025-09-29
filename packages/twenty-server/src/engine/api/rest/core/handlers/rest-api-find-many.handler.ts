@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Request } from 'express';
-
+import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 @Injectable()
 export class RestApiFindManyHandler extends RestApiBaseHandler {
-  async handle(request: Request) {
+  async handle(request: AuthenticatedRequest) {
     const {
       repository,
       objectMetadata,

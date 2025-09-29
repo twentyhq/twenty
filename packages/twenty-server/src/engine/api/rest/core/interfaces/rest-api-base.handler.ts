@@ -14,11 +14,13 @@ import {
   type ObjectRecord,
   type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
+import { RestApiRequestContextService } from 'src/engine/api/rest/core/query-builder/rest-api-request-context.service';
 import { ComputeSelectedFieldsService } from 'src/engine/api/rest/core/query-builder/services/compute-selected-fields.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
@@ -98,21 +100,17 @@ export abstract class RestApiBaseHandler {
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
   protected readonly computeSelectedFieldsService: ComputeSelectedFieldsService;
+  @Inject()
+  protected readonly restApiRequestContextService: RestApiRequestContextService;
 
   protected abstract handle(
-    request: Request,
+    request: AuthenticatedRequest,
   ): Promise<FormatResult | { data: FormatResult[] } | undefined>;
 
-  public async getRepositoryAndMetadataOrFail(request: Request) {
+  //TODO : Refacto-common - Remove this method and use RestApiRequestContextService instead
+  public async getRepositoryAndMetadataOrFail(request: AuthenticatedRequest) {
     const { workspace, apiKey, userWorkspaceId } = request;
     const { object: parsedObject } = parseCorePath(request);
-
-    if (!isDefined(apiKey) && !isDefined(userWorkspaceId)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
-        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-      );
-    }
 
     const objectMetadata = await this.coreQueryBuilderFactory.getObjectMetadata(
       request,
@@ -121,10 +119,6 @@ export abstract class RestApiBaseHandler {
 
     if (!objectMetadata) {
       throw new BadRequestException('Object metadata not found');
-    }
-
-    if (!workspace?.id) {
-      throw new BadRequestException('Workspace not found');
     }
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();

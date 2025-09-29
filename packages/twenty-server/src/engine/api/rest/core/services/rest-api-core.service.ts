@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
-import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
-import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
-import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
-import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
+import { AuthenticatedRequest } from 'src/engine/api/rest/core/interfaces/authenticated-request.interface';
+
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
+import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
+import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
 import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
+import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
+import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
+import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
+import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 
 @Injectable()
 export class RestApiCoreService {
@@ -24,27 +25,27 @@ export class RestApiCoreService {
     private readonly restApiFindDuplicatesHandler: RestApiFindDuplicatesHandler,
   ) {}
 
-  async delete(request: Request) {
+  async delete(request: AuthenticatedRequest) {
     return await this.restApiDeleteOneHandler.handle(request);
   }
 
-  async createOne(request: Request) {
+  async createOne(request: AuthenticatedRequest) {
     return await this.restApiCreateOneHandler.handle(request);
   }
 
-  async createMany(request: Request) {
+  async createMany(request: AuthenticatedRequest) {
     return await this.restApiCreateManyHandler.handle(request);
   }
 
-  async findDuplicates(request: Request) {
+  async findDuplicates(request: AuthenticatedRequest) {
     return await this.restApiFindDuplicatesHandler.handle(request);
   }
 
-  async update(request: Request) {
+  async update(request: AuthenticatedRequest) {
     return await this.restApiUpdateOneHandler.handle(request);
   }
 
-  async get(request: Request) {
+  async get(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
 
     if (isDefined(recordId)) {

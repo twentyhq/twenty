@@ -18,8 +18,10 @@ import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -44,9 +46,11 @@ const restApiCoreResolvers = [
     TwentyORMModule,
     RecordTransformerModule,
     WorkspacePermissionsCacheModule,
+    WorkspaceMetadataCacheModule,
     ActorModule,
     FeatureFlagModule,
     CoreCommonApiModule,
+    DomainManagerModule,
   ],
   controllers: [RestApiCoreController],
   providers: [
