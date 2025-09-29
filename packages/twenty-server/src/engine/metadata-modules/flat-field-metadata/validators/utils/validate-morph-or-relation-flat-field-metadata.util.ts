@@ -50,8 +50,9 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   }
 
   const targetRelationFlatFieldMetadata =
-    otherFlatFieldMetadataMapsToValidate?.byId[relationTargetFieldMetadataId] ??
-    optimisticFlatFieldMetadataMaps?.byId[relationTargetFieldMetadataId];
+    otherFlatFieldMetadataMapsToValidate?.find(
+      (field) => field.id === relationTargetFieldMetadataId,
+    ) ?? optimisticFlatFieldMetadataMaps?.byId[relationTargetFieldMetadataId];
 
   if (
     isDefined(targetRelationFlatObjectMetadata) &&

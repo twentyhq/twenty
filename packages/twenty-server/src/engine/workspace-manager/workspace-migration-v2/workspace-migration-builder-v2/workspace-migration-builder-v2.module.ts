@@ -6,7 +6,6 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/f
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
-import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
@@ -28,7 +27,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     FlatFieldMetadataTypeValidatorService,
     WorkspaceMigrationV2ObjectActionsBuilderService,
     FlatObjectMetadataValidatorService,
-    WorkspaceMigrationV2FieldActionsBuilderService,
     WorkspaceMigrationV2ViewActionsBuilderService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
     WorkspaceMigrationV2IndexActionsBuilderService,

@@ -4,8 +4,9 @@ import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all
 export const EMPTY_ALL_FLAT_ENTITY_MAPS = {
   flatObjectMetadataMaps: {
     ...EMPTY_FLAT_ENTITY_MAPS,
-    idByNameSingular: {},
+    // idByNameSingular: {}, // TODO
   },
+  flatFieldMetadataMaps: EMPTY_FLAT_ENTITY_MAPS, // Could be cool to have too fieldIdsByObjectId
   flatIndexMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatViewFieldMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatViewMaps: EMPTY_FLAT_ENTITY_MAPS,

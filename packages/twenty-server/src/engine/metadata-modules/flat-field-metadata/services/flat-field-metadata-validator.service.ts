@@ -30,7 +30,7 @@ export type ValidateOneFieldMetadataArgs<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps'
   >;
-  otherFlatFieldMetadataMapsToValidate?: FlatEntityMaps<FlatFieldMetadataSecond>;
+  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadataSecond[];
   flatFieldMetadataToValidate: FlatFieldMetadataSecond<T>;
   optimisticFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
   workspaceId: string;
@@ -164,8 +164,6 @@ export class FlatFieldMetadataValidatorService {
     dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
     flatFieldMetadataToValidate: { id: flatFieldMetadataToDeleteId },
     optimisticFlatFieldMetadataMaps,
-    workspaceId,
-    otherFlatFieldMetadataMapsToValidate,
   }: ValidateOneFieldMetadataArgs): FailedFlatEntityValidation<FlatFieldMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'delete_field',

@@ -59,7 +59,7 @@ describe.each(allWorkspaceBuilderTestCases)(
         new WorkspaceMigrationV2ObjectActionsBuilderService(
           flatObjectMetadataValidatorService,
         );
-      fieldActionsBuilder = new WorkspaceMigrationV2FieldActionsBuilderService(
+      fieldActionsBuilder = new WorkspaceMigrationV2FieldActionsBuilderServiceOld(
         flatFieldMetadataValidatorService,
       );
       service = new WorkspaceMigrationBuilderV2Service(
