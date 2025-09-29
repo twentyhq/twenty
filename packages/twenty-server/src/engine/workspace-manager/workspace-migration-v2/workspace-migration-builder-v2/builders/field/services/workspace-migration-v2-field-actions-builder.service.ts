@@ -66,7 +66,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       status: 'success',
       action: {
         type: 'create_field',
-        flatFieldMetadata: flatFieldMetadataToValidate,
+        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+        flatFieldMetadatas: [flatFieldMetadataToValidate],
       },
     };
   }

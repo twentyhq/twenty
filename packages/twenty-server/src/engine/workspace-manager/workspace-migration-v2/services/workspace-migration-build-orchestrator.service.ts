@@ -19,6 +19,8 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
+import { CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -333,6 +335,68 @@ export class WorkspaceMigrationBuildOrchestratorService {
     const relatedFlatEntityMapsKeys = Object.keys(
       fromToAllFlatEntityMaps,
     ) as (keyof AllFlatEntityMaps)[];
+
+    // Create util
+    const { createFieldActions, createObjectActions } = (
+      orchestratorActionsReport.fieldMetadata.created as CreateFieldAction[]
+    ).reduce<{
+      createFieldActions: Record<string, CreateFieldAction>;
+      createObjectActions: Record<string, CreateObjectAction>;
+    }>(
+      (acc, createFieldAction) => {
+        const createObjectOccurence =
+          acc.createObjectActions[createFieldAction.objectMetadataId];
+        if (isDefined(createObjectOccurence)) {
+          return {
+            ...acc,
+            createObjectActions: {
+              ...acc.createObjectActions,
+              [createFieldAction.objectMetadataId]: {
+                ...createObjectOccurence,
+                flatFieldMetadatas: [
+                  ...createObjectOccurence.flatFieldMetadatas,
+                  ...createFieldAction.flatFieldMetadatas,
+                ],
+              },
+            },
+          };
+        }
+
+        const createFieldOccurence =
+          acc.createFieldActions[createFieldAction.objectMetadataId] ?? {};
+        return {
+          ...acc,
+          createFieldActions: {
+            ...acc.createFieldActions,
+            [createFieldAction.objectMetadataId]: {
+              ...createFieldOccurence,
+              flatFieldMetadatas: [
+                ...createFieldOccurence.flatFieldMetadatas,
+                ...createFieldAction.flatFieldMetadatas,
+              ],
+            },
+          },
+        };
+      },
+      {
+        createFieldActions: {},
+        createObjectActions: (
+          orchestratorActionsReport.objectMetadata
+            .created as CreateObjectAction[]
+        ).reduce(
+          (acc, createObjectAction) => ({
+            ...acc,
+            [createObjectAction.flatObjectMetadata.id]: createObjectAction,
+          }),
+          {},
+        ),
+      },
+    );
+    orchestratorActionsReport.fieldMetadata.created =
+      Object.values(createFieldActions);
+    orchestratorActionsReport.objectMetadata.created =
+      Object.values(createObjectActions);
+    ///
 
     return {
       status: 'success',

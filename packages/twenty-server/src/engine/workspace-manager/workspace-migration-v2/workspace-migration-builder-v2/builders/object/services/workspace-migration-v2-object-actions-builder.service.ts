@@ -53,6 +53,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       status: 'success',
       action: {
         type: 'create_object',
+        flatFieldMetadatas: [],
         flatObjectMetadata: flatObjectMetadataToValidate, // We will need to make some aggreg here afterwards if necessary
       },
     };
