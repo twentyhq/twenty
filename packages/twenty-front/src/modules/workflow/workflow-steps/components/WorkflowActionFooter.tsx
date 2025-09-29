@@ -30,58 +30,53 @@ export const WorkflowActionFooter = ({
   const workflowId = useCommandMenuWorkflowIdOrThrow();
   const { openWorkflowEditStepTypeInCommandMenu } = useWorkflowCommandMenu();
 
-  const OptionsDropdown = () => {
-    return (
-      <Dropdown
-        dropdownId={dropdownId}
-        data-select-disable
-        clickableComponent={
-          <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
-        }
-        dropdownPlacement="top-end"
-        dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
-        globalHotkeysConfig={{
-          enableGlobalHotkeysWithModifiers: true,
-          enableGlobalHotkeysConflictingWithKeyboard: false,
-        }}
-        dropdownComponents={
-          <DropdownContent>
-            <DropdownMenuItemsContainer>
-              <SelectableList
-                selectableListInstanceId={dropdownId}
-                focusId={dropdownId}
-                selectableItemIdArray={['change-node-type', 'duplicate']}
-              >
-                <MenuItem
-                  onClick={() => {
-                    closeDropdown(dropdownId);
-                    openWorkflowEditStepTypeInCommandMenu(workflowId);
-                  }}
-                  text={t`Change node type`}
-                  LeftIcon={IconPencil}
-                />
-                <MenuItem
-                  onClick={() => {
-                    closeDropdown(dropdownId);
-                    duplicateStep({ stepId });
-                  }}
-                  text={t`Duplicate node`}
-                  LeftIcon={IconCopyPlus}
-                />
-              </SelectableList>
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
-        }
-      />
-    );
-  };
+  const OptionsDropdown = (
+    <Dropdown
+      dropdownId={dropdownId}
+      data-select-disable
+      clickableComponent={
+        <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
+      }
+      dropdownPlacement="top-end"
+      dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
+      globalHotkeysConfig={{
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      }}
+      dropdownComponents={
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            <SelectableList
+              selectableListInstanceId={dropdownId}
+              focusId={dropdownId}
+              selectableItemIdArray={['change-node-type', 'duplicate']}
+            >
+              <MenuItem
+                onClick={() => {
+                  closeDropdown(dropdownId);
+                  openWorkflowEditStepTypeInCommandMenu(workflowId);
+                }}
+                text={t`Change node type`}
+                LeftIcon={IconPencil}
+              />
+              <MenuItem
+                onClick={() => {
+                  closeDropdown(dropdownId);
+                  duplicateStep({ stepId });
+                }}
+                text={t`Duplicate node`}
+                LeftIcon={IconCopyPlus}
+              />
+            </SelectableList>
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
+      }
+    />
+  );
 
   return (
     <RightDrawerFooter
-      actions={[
-        <OptionsDropdown key="options" />,
-        ...(additionalActions ?? []),
-      ]}
+      actions={[OptionsDropdown, ...(additionalActions ?? [])]}
     />
   );
 };
