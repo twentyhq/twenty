@@ -14,9 +14,9 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 const getReservedCompositeFieldNames = (
-  flatFieldMetadatas: FlatFieldMetadataSecond[],
+  objectFlatFieldMetadatas: FlatFieldMetadataSecond[],
 ): string[] => {
-  return flatFieldMetadatas.flatMap((flatFieldMetadata) => {
+  return objectFlatFieldMetadatas.flatMap((flatFieldMetadata) => {
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
       const base = flatFieldMetadata.name;
       const compositeType = compositeTypeDefinitions.get(
@@ -39,14 +39,14 @@ const getReservedCompositeFieldNames = (
 // Should implement Morph relation nameObjectId col availability
 export const validateFlatFieldMetadataNameAvailability = ({
   flatFieldMetadata,
-  otherObjectFlatFieldMetadatas,
+  objectFlatFieldMetadatas,
 }: {
   flatFieldMetadata: FlatFieldMetadataSecond;
-  otherObjectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+  objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
-    otherObjectFlatFieldMetadatas,
+    objectFlatFieldMetadatas,
   );
   const flatFieldMetadataName = flatFieldMetadata.name;
 
@@ -55,7 +55,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
       flatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
     ) &&
-    otherObjectFlatFieldMetadatas.some((existingFlatFieldMetadata) => {
+    objectFlatFieldMetadatas.some((existingFlatFieldMetadata) => {
       const firstDegreeCollision =
         existingFlatFieldMetadata.name === flatFieldMetadataName;
       const relationJoinColumnCollision =

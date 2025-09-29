@@ -6,13 +6,13 @@ type FindOtherObjectFieldsFromFlatFieldMetadataMapsArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
   objectMetadataId: string;
 };
-export const findOtherObjectFieldsFromFlatFieldMetadataMapsUtil = ({
+export const findObjectFieldsInFlatFieldMetadataMaps = ({
   flatFieldMetadataMaps,
   objectMetadataId,
 }: FindOtherObjectFieldsFromFlatFieldMetadataMapsArgs) => {
   return Object.values(flatFieldMetadataMaps.byId).reduce<{
-    flatFieldMetadataById: Record<string, FlatFieldMetadataSecond>;
-    allObjectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+    objectFlatFieldMetadataById: Record<string, FlatFieldMetadataSecond>;
+    objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
   }>(
     (acc, flatFieldMetadata) => {
       if (
@@ -23,19 +23,19 @@ export const findOtherObjectFieldsFromFlatFieldMetadataMapsUtil = ({
       }
 
       return {
-        flatFieldMetadataById: {
-          ...acc.flatFieldMetadataById,
+        objectFlatFieldMetadataById: {
+          ...acc.objectFlatFieldMetadataById,
           [flatFieldMetadata.id]: flatFieldMetadata,
         },
-        allObjectFlatFieldMetadatas: [
-          ...acc.allObjectFlatFieldMetadatas,
+        objectFlatFieldMetadatas: [
+          ...acc.objectFlatFieldMetadatas,
           flatFieldMetadata,
         ],
       };
     },
     {
-      flatFieldMetadataById: {},
-      allObjectFlatFieldMetadatas: [],
+      objectFlatFieldMetadataById: {},
+      objectFlatFieldMetadatas: [],
     },
   );
 };
