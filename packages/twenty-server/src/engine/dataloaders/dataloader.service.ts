@@ -337,7 +337,6 @@ export class DataloaderService {
     >(async (dataLoaderParams: IndexFieldMetadataLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
 
-      // This computes the old cache :thinking:
       const { objectMetadataMaps } =
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
           { workspaceId },

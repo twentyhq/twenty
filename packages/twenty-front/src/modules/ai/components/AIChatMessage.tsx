@@ -5,10 +5,10 @@ import { Avatar, IconSparkles } from 'twenty-ui/display';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
-import { type AgentChatMessage } from '~/generated/graphql';
+import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -74,7 +74,8 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 
   p {
-    margin: ${({ theme }) => theme.spacing(1)} 0;
+    margin-block: ${({ isUser, theme }) =>
+      isUser ? '0' : `${theme.spacing(1)}`};
     line-height: 1.5;
   }
 
@@ -137,10 +138,10 @@ const StyledFilesContainer = styled.div`
 
 export const AIChatMessage = ({
   message,
-  agentStreamingMessage,
+  isLastMessageStreaming,
 }: {
-  message: AgentChatMessage;
-  agentStreamingMessage: string;
+  message: UIMessageWithMetadata;
+  isLastMessageStreaming: boolean;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
@@ -170,30 +171,33 @@ export const AIChatMessage = ({
           <StyledMessageText
             isUser={message.role === AgentChatMessageRole.USER}
           >
-            {message.role === AgentChatMessageRole.ASSISTANT ? (
-              <AIChatAssistantMessageRenderer
-                streamData={message.rawContent || agentStreamingMessage}
-              />
-            ) : (
-              message.rawContent
-            )}
+            <AIChatAssistantMessageRenderer
+              isLastMessageStreaming={isLastMessageStreaming}
+              messageParts={message.parts}
+            />
           </StyledMessageText>
-          {message.files.length > 0 && (
+          {message.parts.length > 0 && (
             <StyledFilesContainer>
-              {message.files.map((file) => (
-                <AgentChatFilePreview key={file.id} file={file} />
-              ))}
+              {message.parts
+                .filter((part) => part.type === 'file')
+                .map((file) => (
+                  <AgentChatFilePreview key={file.filename} file={file} />
+                ))}
             </StyledFilesContainer>
           )}
-          {message.rawContent && (
+          {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>
                 {beautifyPastDateRelativeToNow(
-                  message.createdAt,
+                  message.metadata?.createdAt,
                   localeCatalog,
                 )}
               </span>
-              <LightCopyIconButton copyText={message.rawContent} />
+              <LightCopyIconButton
+                copyText={
+                  message.parts.find((part) => part.type === 'text')?.text ?? ''
+                }
+              />
             </StyledMessageFooter>
           )}
         </StyledMessageContainer>

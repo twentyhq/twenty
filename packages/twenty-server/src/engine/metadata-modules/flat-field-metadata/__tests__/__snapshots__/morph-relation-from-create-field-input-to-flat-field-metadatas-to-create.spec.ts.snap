@@ -99,6 +99,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
             "description": "new field description",
             "flatRelationTargetFieldMetadata": null,
             "flatRelationTargetObjectMetadata": {
+              "applicationId": null,
               "createdAt": Any<String>,
               "description": null,
               "duplicateCriteria": null,
@@ -154,6 +155,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
             "workspaceId": Any<String>,
           },
           "flatRelationTargetObjectMetadata": {
+            "applicationId": null,
             "createdAt": Any<String>,
             "description": "A rocket",
             "duplicateCriteria": null,
@@ -211,6 +213,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": null,
           "duplicateCriteria": null,
@@ -275,6 +278,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "description": "new field description",
           "flatRelationTargetFieldMetadata": null,
           "flatRelationTargetObjectMetadata": {
+            "applicationId": null,
             "createdAt": Any<String>,
             "description": null,
             "duplicateCriteria": null,
@@ -330,6 +334,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": "A rocket",
           "duplicateCriteria": null,
@@ -400,6 +405,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
             "description": "new field description",
             "flatRelationTargetFieldMetadata": null,
             "flatRelationTargetObjectMetadata": {
+              "applicationId": null,
               "createdAt": Any<String>,
               "description": "A company",
               "duplicateCriteria": null,
@@ -455,6 +461,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
             "workspaceId": Any<String>,
           },
           "flatRelationTargetObjectMetadata": {
+            "applicationId": null,
             "createdAt": Any<String>,
             "description": "A rocket",
             "duplicateCriteria": null,
@@ -512,6 +519,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": "A company",
           "duplicateCriteria": null,
@@ -576,6 +584,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "description": "new field description",
           "flatRelationTargetFieldMetadata": null,
           "flatRelationTargetObjectMetadata": {
+            "applicationId": null,
             "createdAt": Any<String>,
             "description": "A company",
             "duplicateCriteria": null,
@@ -631,6 +640,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "workspaceId": Any<String>,
         },
         "flatRelationTargetObjectMetadata": {
+          "applicationId": null,
           "createdAt": Any<String>,
           "description": "A rocket",
           "duplicateCriteria": null,

@@ -7,6 +7,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "errors": {
       "index": [],
       "objectMetadata": [],
+      "serverlessFunction": [],
       "view": [],
       "viewField": [
         {
@@ -31,6 +32,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,
@@ -49,6 +51,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "errors": {
       "index": [],
       "objectMetadata": [],
+      "serverlessFunction": [],
       "view": [],
       "viewField": [
         {
@@ -73,6 +76,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "summary": {
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidServerlessFunction": 0,
       "invalidView": 0,
       "invalidViewField": 0,
       "totalErrors": 0,

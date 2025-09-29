@@ -1,16 +1,13 @@
-import { ErrorStepRenderer } from '@/ai/components/ErrorStepRenderer';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
-import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import type { ParsedStep } from '@/ai/types/ParsedStep';
-import { hasStructuredStreamData } from '@/ai/utils/hasStructuredStreamData';
-import { parseStream } from '@/ai/utils/parseStream';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { agentStreamingMessageState } from '@/ai/states/agentStreamingMessageState';
+import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { type ToolInput } from '@/ai/types/ToolInput';
+import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import type { ToolUIPart, UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 const StyledStepsContainer = styled.div`
   display: flex;
@@ -60,60 +57,55 @@ const LoadingDotsIcon = () => {
 };
 
 export const AIChatAssistantMessageRenderer = ({
-  streamData,
+  messageParts,
+  isLastMessageStreaming,
 }: {
-  streamData: string;
+  messageParts: UIMessagePart<UIDataTypes, UITools>[];
+  isLastMessageStreaming: boolean;
 }) => {
-  const agentStreamingMessage = useRecoilValue(agentStreamingMessageState);
-  const isStreaming = streamData === agentStreamingMessage;
-
-  if (!streamData) {
-    return <LoadingDotsIcon />;
-  }
-
-  const hasStructuredData = hasStructuredStreamData(streamData);
-
-  if (!hasStructuredData) {
-    return <LazyMarkdownRenderer text={streamData} />;
-  }
-
-  const steps = parseStream(streamData);
-
-  if (!steps.length) {
-    return <LoadingDotsIcon />;
-  }
-
-  const renderStep = (step: ParsedStep, index: number) => {
+  const renderStep = (
+    step: UIMessagePart<UIDataTypes, UITools>,
+    index: number,
+  ) => {
     switch (step.type) {
-      case 'tool':
-        return <ToolStepRenderer key={index} events={step.events} />;
       case 'reasoning':
         return (
           <ReasoningSummaryDisplay
             key={index}
-            content={step.content}
-            isThinking={step.isThinking}
+            content={step.text}
+            isThinking={step.state === 'streaming'}
           />
         );
       case 'text':
-        return <LazyMarkdownRenderer key={index} text={step.content} />;
-      case 'error':
-        return (
-          <ErrorStepRenderer
-            key={index}
-            message={step.message}
-            error={step.error}
-          />
-        );
+        return <LazyMarkdownRenderer key={index} text={step.text} />;
       default:
+        {
+          if (step.type.includes('tool-')) {
+            const { output, input, type } = step as ToolUIPart;
+            return (
+              <ToolStepRenderer
+                key={index}
+                input={input as ToolInput}
+                output={output as ToolOutput}
+                toolName={type.split('-')[1]}
+              />
+            );
+          }
+        }
         return null;
     }
   };
 
+  if (!messageParts.length) {
+    return <LoadingDotsIcon />;
+  }
+
   return (
     <div>
-      <StyledStepsContainer>{steps.map(renderStep)}</StyledStepsContainer>
-      {isStreaming && <StyledToolCallContainer />}
+      <StyledStepsContainer>
+        {messageParts.map(renderStep)}
+      </StyledStepsContainer>
+      {isLastMessageStreaming && <StyledToolCallContainer />}
     </div>
   );
 };

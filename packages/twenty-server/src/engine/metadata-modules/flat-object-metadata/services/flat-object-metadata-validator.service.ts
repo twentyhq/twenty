@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isLabelIdentifierFieldMetadataTypes,
+} from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -71,6 +74,12 @@ export class FlatObjectMetadataValidatorService {
 
     validationResult.errors.push(
       ...validateFlatObjectMetadataIdentifiers(existingFlatObjectMetadata),
+    );
+
+    validationResult.errors.push(
+      ...this.validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
+        flatObjectMetadata: updatedFlatObjectMetadata,
+      }),
     );
 
     return validationResult;
@@ -189,6 +198,12 @@ export class FlatObjectMetadataValidatorService {
     }
 
     objectValidationResult.errors.push(
+      ...this.validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
+        flatObjectMetadata: flatObjectMetadataToValidate,
+      }),
+    );
+
+    objectValidationResult.errors.push(
       ...this.validateFlatObjectMetadataNameAndLabels({
         existingFlatObjectMetadataMaps,
         flatObjectMetadataToValidate,
@@ -291,6 +306,51 @@ export class FlatObjectMetadataValidatorService {
         message: 'Object already exists',
         userFriendlyMessage: t`Object already exists`,
       });
+    }
+
+    return errors;
+  }
+
+  private validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
+    flatObjectMetadata,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+  }) {
+    const errors: FlatObjectMetadataValidationError[] = [];
+
+    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
+      errors.push({
+        code: ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
+        message: t`Label identifier field metadata is required`,
+        userFriendlyMessage: t`Label identifier field metadata is required`,
+      });
+    } else {
+      const relatedFlatFieldMetadata =
+        flatObjectMetadata.flatFieldMetadatas.find(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.id ===
+            flatObjectMetadata.labelIdentifierFieldMetadataId,
+        );
+
+      if (!relatedFlatFieldMetadata) {
+        errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message: t`Label identifier field metadata not found in field metadata list`,
+          userFriendlyMessage: t`Label identifier field metadata not found in field metadata list`,
+          value: flatObjectMetadata.labelIdentifierFieldMetadataId,
+        });
+      } else {
+        if (
+          !isLabelIdentifierFieldMetadataTypes(relatedFlatFieldMetadata.type)
+        ) {
+          errors.push({
+            code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+            message: t`Label identifier field metadata must be a TEXT or FULL_NAME field type`,
+            userFriendlyMessage: t`Label identifier field metadata must be a TEXT or FULL_NAME field type`,
+            value: relatedFlatFieldMetadata.type,
+          });
+        }
+      }
     }
 
     return errors;

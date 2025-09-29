@@ -1,3 +1,4 @@
+import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -7,7 +8,9 @@ import {
   type ManualTriggerWorkflowVersion,
   type Workflow,
 } from '@/workflow/types/Workflow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
@@ -16,6 +19,10 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
 }) => {
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
+
   const filters = [
     {
       status: {
@@ -29,12 +36,20 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
     },
   ];
 
+  const objectTypeFilter = isIteratorEnabled
+    ? {
+        trigger: {
+          like: `%"objectNameSingular": "${objectMetadataItem?.nameSingular}"%`,
+        },
+      }
+    : {
+        trigger: {
+          like: `%"objectType": "${objectMetadataItem?.nameSingular}"%`,
+        },
+      };
+
   if (isDefined(objectMetadataItem)) {
-    filters.push({
-      trigger: {
-        like: `%"objectType": "${objectMetadataItem.nameSingular}"%`,
-      },
-    });
+    filters.push(objectTypeFilter);
   }
 
   const { objectMetadataItem: workflowVersionObjectMetadataItem } =
@@ -64,8 +79,8 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
       records: records.filter(
         (record) =>
           record.status === 'ACTIVE' &&
-          record.trigger?.type === 'MANUAL' &&
-          !isDefined(record.trigger?.settings.objectType),
+          isDefined(record.trigger) &&
+          isGlobalManualTrigger(record.trigger, isIteratorEnabled),
       ),
     };
   }
