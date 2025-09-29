@@ -106,9 +106,6 @@ export const ChartDataSourceDropdownContent = () => {
                   source: objectMetadataItem.id,
                 });
                 closeDropdown();
-
-                console.log('objectMetadataItem', objectMetadataItem);
-                console.log('selectedItemId', selectedItemId);
               }}
             >
               <MenuItemSelect
