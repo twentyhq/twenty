@@ -13,11 +13,10 @@ import {
 } from 'date-fns';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
-import { CustomError } from 'twenty-shared/utils';
 import { logError } from './logError';
 
 export const parseDate = (dateToParse: Date | string | number): Date => {
