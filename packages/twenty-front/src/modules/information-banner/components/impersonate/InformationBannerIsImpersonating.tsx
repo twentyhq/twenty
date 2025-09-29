@@ -18,7 +18,7 @@ export const InformationBannerIsImpersonating = () => {
 
   return (
     <InformationBanner
-      message={t`View as ${impersonatedUser}`}
+      message={t`Logged in as ${impersonatedUser}`}
       buttonTitle={t`Stop impersonating`}
       buttonIcon={IconLogout}
       buttonOnClick={signOut}
