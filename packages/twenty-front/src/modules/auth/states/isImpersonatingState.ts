@@ -8,8 +8,9 @@ export const isImpersonatingState = selector<boolean>({
   get: ({ get }) => {
     const tokenPair = get(tokenPairState);
 
-    if (!isDefined(tokenPair?.accessOrWorkspaceAgnosticToken?.token))
+    if (!isDefined(tokenPair?.accessOrWorkspaceAgnosticToken?.token)) {
       return false;
+    }
 
     try {
       const decodedToken = jwtDecode<{ isImpersonating: boolean }>(
