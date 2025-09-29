@@ -2,6 +2,7 @@ import { ChartColorSelectionDropdownContent } from '@/command-menu/pages/page-la
 import { ChartDataSourceDropdownContent } from '@/command-menu/pages/page-layout/components/ChartDataSourceDropdownContent';
 import { ChartXAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartXAxisFieldSelectionDropdownContent';
 import { ChartYAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisFieldSelectionDropdownContent';
+import { ChartYAxisGroupByFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisGroupByFieldSelectionDropdownContent';
 
 export const getChartSettingsDropdownContent = (itemId: string) => {
   switch (itemId) {
@@ -11,6 +12,8 @@ export const getChartSettingsDropdownContent = (itemId: string) => {
       return <ChartXAxisFieldSelectionDropdownContent />;
     case 'data-on-display-y':
       return <ChartYAxisFieldSelectionDropdownContent />;
+    case 'group-by-y':
+      return <ChartYAxisGroupByFieldSelectionDropdownContent />;
     case 'colors':
       return <ChartColorSelectionDropdownContent />;
     default:

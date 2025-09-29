@@ -13,31 +13,35 @@ export const useChartSettingsValues = (
     (objectMetadataItem) => objectMetadataItem.id === configuration.source,
   );
 
-  const groupByFieldMetadataIdX = objectMetadataItem?.fields.find(
+  const groupByFieldX = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
       fieldMetadataItem.id === configuration.groupByFieldMetadataIdX,
   );
 
-  const groupByFieldMetadataIdY = objectMetadataItem?.fields.find(
+  const aggregateField = objectMetadataItem?.fields.find(
     (fieldMetadataItem) =>
-      fieldMetadataItem.id === configuration.groupByFieldMetadataIdY,
+      fieldMetadataItem.id === configuration.aggregateFieldMetadataId,
   );
 
   const yAxisAggregateOperation = configuration.aggregateOperation;
+
+  const groupByFieldY = objectMetadataItem?.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.id === configuration.groupByFieldMetadataIdY,
+  );
 
   const getChartSettingsValues = (itemId: string) => {
     switch (itemId) {
       case 'source':
         return objectMetadataItem?.labelPlural;
       case 'data-on-display-x':
-        return (
-          groupByFieldMetadataIdX?.label ||
-          configuration.groupByFieldMetadataIdX
-        );
+        return groupByFieldX?.label;
       case 'colors':
         return capitalize(configuration.color);
       case 'data-on-display-y':
-        return `${groupByFieldMetadataIdY?.label ?? ''}${yAxisAggregateOperation ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
+        return `${aggregateField?.label ?? ''}${aggregateField?.label ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
+      case 'group-by-y':
+        return groupByFieldY?.label;
       default:
         return '';
     }
