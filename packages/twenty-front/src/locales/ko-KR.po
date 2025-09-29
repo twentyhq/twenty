@@ -3397,11 +3397,6 @@ msgstr "핸드오프 생성 실패"
 msgid "Failed to load webhook"
 msgstr "웹훅을 불러오지 못했습니다"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "파일 제거 실패"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -4521,6 +4516,7 @@ msgstr "메트릭스 데이터 로딩 중..."
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "로딩 중..."
@@ -5034,6 +5030,11 @@ msgstr "핸드오프 가능한 에이전트가 없습니다"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
 msgstr "검색 조건에 맞는 에이전트 없음"
+
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx

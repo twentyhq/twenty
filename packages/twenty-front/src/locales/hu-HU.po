@@ -3397,11 +3397,6 @@ msgstr "Nem sikerült létrehozni az átadást"
 msgid "Failed to load webhook"
 msgstr "Nem sikerült betölteni a webhookot"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "Nem sikerült eltávolítani a fájlt"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -4521,6 +4516,7 @@ msgstr "Metrikai adatok betöltése..."
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "Betöltés..."
@@ -5034,6 +5030,11 @@ msgstr "Nincsenek elérhető ügynökök az átadáshoz"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
 msgstr "Nincs olyan ügynök, amely megfelel a keresésének"
+
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
