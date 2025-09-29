@@ -220,6 +220,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         filterValueDependencies: {},
         fieldMetadataItems: objectMetadataItem.fields,
         recordFilter,
+        throwCustomError: () => {
+          throw new Error('Custom error');
+        },
       }),
     )
     .filter(isDefined);
