@@ -42,10 +42,6 @@ export class BackfillWorkflowManualTriggerAvailabilityCommand extends ActiveOrSu
       const { trigger } = workflowVersion;
 
       if (trigger.type !== WorkflowTriggerType.MANUAL) {
-        this.logger.log(
-          `Skipping workflow version ${workflowVersion.id} because it is not a manual trigger`,
-        );
-
         continue;
       }
 
@@ -53,10 +49,6 @@ export class BackfillWorkflowManualTriggerAvailabilityCommand extends ActiveOrSu
       const objectType = trigger.settings.objectType;
 
       if (isDefined(availability)) {
-        this.logger.log(
-          `Skipping workflow version ${workflowVersion.id} because it already has availability`,
-        );
-
         continue;
       }
 
