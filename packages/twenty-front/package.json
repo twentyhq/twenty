@@ -29,6 +29,7 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@ai-sdk/react": "^2.0.51",
     "@apollo/client": "^3.7.17",
     "@blocknote/mantine": "^0.31.1",
     "@blocknote/react": "^0.31.1",
@@ -67,6 +68,7 @@
     "@tiptap/extensions": "^3.4.2",
     "@tiptap/react": "^3.4.2",
     "@xyflow/react": "^12.4.2",
+    "ai": "^5.0.49",
     "apollo-link-rest": "^0.9.0",
     "apollo-upload-client": "^17.0.0",
     "buffer": "^6.0.3",

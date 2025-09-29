@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { CreateWebhookDTO } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
 import { DeleteWebhookDTO } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
 import { GetWebhookDTO } from 'src/engine/core-modules/webhook/dtos/get-webhook.dto';
@@ -56,7 +58,7 @@ export class WebhookResolver {
     @Args('input') input: UpdateWebhookDTO,
   ): Promise<Webhook | null> {
     try {
-      const updateData: Partial<Webhook> = {};
+      const updateData: QueryDeepPartialEntity<Webhook> = {};
 
       if (input.targetUrl !== undefined) updateData.targetUrl = input.targetUrl;
       if (input.operations !== undefined)

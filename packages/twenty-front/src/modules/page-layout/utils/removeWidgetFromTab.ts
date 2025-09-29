@@ -1,4 +1,4 @@
-import { type PageLayoutTab } from '../types/pageLayoutTypes';
+import { type PageLayoutTab } from '../types/PageLayoutTab';
 
 export const removeWidgetFromTab = (
   tabs: PageLayoutTab[],

@@ -48,6 +48,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/gateway@npm:1.0.26":
+  version: 1.0.26
+  resolution: "@ai-sdk/gateway@npm:1.0.26"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.0"
+    "@ai-sdk/provider-utils": "npm:3.0.9"
+  peerDependencies:
+    zod: ^3.25.76 || ^4
+  checksum: 10c0/bb61342d1827838139b81c8c2cb21e455f422b438cd0791d3d3cf30f58726c853644d9e5b85bc9faa7104bce4816b878c09ea0af65c69e13871ff08ae40a56ec
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/gateway@npm:1.0.28":
+  version: 1.0.28
+  resolution: "@ai-sdk/gateway@npm:1.0.28"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.0"
+    "@ai-sdk/provider-utils": "npm:3.0.9"
+  peerDependencies:
+    zod: ^3.25.76 || ^4
+  checksum: 10c0/3c5d0c1e0a957353fc848ae498e136302bddce4b99ef66b68f29566fdc31e0f7f98bb182cfd546998a3b08651e97a28c9ec1cfc4da31fffca35618ae2c13b323
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/openai-compatible@npm:1.0.18":
   version: 1.0.18
   resolution: "@ai-sdk/openai-compatible@npm:1.0.18"
@@ -91,6 +115,24 @@ __metadata:
   dependencies:
     json-schema: "npm:^0.4.0"
   checksum: 10c0/e50e520016c9fc0a8b5009cadd47dae2f1c81ec05c1792b9e312d7d15479f024ca8039525813a33425c884e3449019fed21043b1bfabd6a2626152ca9a388199
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/react@npm:^2.0.51":
+  version: 2.0.51
+  resolution: "@ai-sdk/react@npm:2.0.51"
+  dependencies:
+    "@ai-sdk/provider-utils": "npm:3.0.9"
+    ai: "npm:5.0.51"
+    swr: "npm:^2.2.5"
+    throttleit: "npm:2.1.0"
+  peerDependencies:
+    react: ^18 || ^19 || ^19.0.0-rc
+    zod: ^3.25.76 || ^4
+  peerDependenciesMeta:
+    zod:
+      optional: true
+  checksum: 10c0/2ae48e67ecd9efcbd725f4d84850601b58ab93f1fda67ca282cccf7e734b465d3aad702a047cedf88ae0a697f99a5e593f2a6efac372123ae832ef8bcc1980a1
   languageName: node
   linkType: hard
 
@@ -23889,6 +23931,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ai@npm:5.0.51":
+  version: 5.0.51
+  resolution: "ai@npm:5.0.51"
+  dependencies:
+    "@ai-sdk/gateway": "npm:1.0.28"
+    "@ai-sdk/provider": "npm:2.0.0"
+    "@ai-sdk/provider-utils": "npm:3.0.9"
+    "@opentelemetry/api": "npm:1.9.0"
+  peerDependencies:
+    zod: ^3.25.76 || ^4
+  checksum: 10c0/47bf8b5195d5175810e7311e670f40da233d3fba8117949c51dcb8b5214a926bccb98d1ed0e0da98d572f9818349026427adcc4259ecbfcd4d4d1d19992d1cb5
+  languageName: node
+  linkType: hard
+
 "ai@npm:^5.0.44":
   version: 5.0.44
   resolution: "ai@npm:5.0.44"
@@ -23900,6 +23956,20 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4
   checksum: 10c0/528c7e165f75715194204051ce0aa341d8dca7d5536c2abcf3df83ccda7399ed5d91deaa45a81340f93d2461b1c2fc5f740f7804dfd396927c71b0667403569b
+  languageName: node
+  linkType: hard
+
+"ai@npm:^5.0.49":
+  version: 5.0.49
+  resolution: "ai@npm:5.0.49"
+  dependencies:
+    "@ai-sdk/gateway": "npm:1.0.26"
+    "@ai-sdk/provider": "npm:2.0.0"
+    "@ai-sdk/provider-utils": "npm:3.0.9"
+    "@opentelemetry/api": "npm:1.9.0"
+  peerDependencies:
+    zod: ^3.25.76 || ^4
+  checksum: 10c0/781393542d263f3f9ecd26798253746c4d46743440fb8ebe129239134fbf5e789d599762b8b8a0a05c25194b5be686b912a947db8c013c2840f0d1e3a27888b8
   languageName: node
   linkType: hard
 
@@ -51291,6 +51361,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"swr@npm:^2.2.5":
+  version: 2.3.6
+  resolution: "swr@npm:2.3.6"
+  dependencies:
+    dequal: "npm:^2.0.3"
+    use-sync-external-store: "npm:^1.4.0"
+  peerDependencies:
+    react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/9534f350982e36a3ae0a13da8c0f7da7011fc979e77f306e60c4e5db0f9b84f17172c44f973441ba56bb684b69b0d9838ab40011a6b6b3e32d0cd7f3d5405f99
+  languageName: node
+  linkType: hard
+
 "symbol-observable@npm:4.0.0, symbol-observable@npm:^4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
@@ -51538,6 +51620,13 @@ __metadata:
   dependencies:
     real-require: "npm:^0.2.0"
   checksum: 10c0/c36118379940b77a6ef3e6f4d5dd31e97b8210c3f7b9a54eb8fe6358ab173f6d0acfaf69b9c3db024b948c0c5fd2a7df93e2e49151af02076b35ada3205ec9a6
+  languageName: node
+  linkType: hard
+
+"throttleit@npm:2.1.0":
+  version: 2.1.0
+  resolution: "throttleit@npm:2.1.0"
+  checksum: 10c0/1696ae849522cea6ba4f4f3beac1f6655d335e51b42d99215e196a718adced0069e48deaaf77f7e89f526ab31de5b5c91016027da182438e6f9280be2f3d5265
   languageName: node
   linkType: hard
 
@@ -52400,6 +52489,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
+    "@ai-sdk/react": "npm:^2.0.51"
     "@apollo/client": "npm:^3.7.17"
     "@blocknote/mantine": "npm:^0.31.1"
     "@blocknote/react": "npm:^0.31.1"
@@ -52448,6 +52538,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.39.0"
     "@typescript-eslint/utils": "npm:^8.39.0"
     "@xyflow/react": "npm:^12.4.2"
+    ai: "npm:^5.0.49"
     apollo-link-rest: "npm:^0.9.0"
     apollo-upload-client: "npm:^17.0.0"
     buffer: "npm:^6.0.3"
