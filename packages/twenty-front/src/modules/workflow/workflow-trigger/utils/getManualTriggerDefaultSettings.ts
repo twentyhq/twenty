@@ -42,6 +42,7 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'BULK_RECORDS': {
       return {
+        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         availability: {
           type: 'BULK_RECORDS',
           objectNameSingular:

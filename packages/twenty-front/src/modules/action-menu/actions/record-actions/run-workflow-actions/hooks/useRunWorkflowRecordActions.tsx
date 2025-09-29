@@ -8,11 +8,23 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  type WorkflowTrigger,
+  type WorkflowVersion,
+} from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated/graphql';
+
+const isManualBulkTrigger = (trigger: WorkflowTrigger) => {
+  return (
+    trigger.type === 'MANUAL' &&
+    trigger?.settings?.availability?.type === 'BULK_RECORDS'
+  );
+};
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -22,6 +34,9 @@ export const useRunWorkflowRecordActions = ({
   skip?: boolean;
 }) => {
   const { getIcon } = useIcons();
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -45,23 +60,44 @@ export const useRunWorkflowRecordActions = ({
         selectedRecordIds: string[],
         activeWorkflowVersion: WorkflowVersion,
       ) => {
-        for (const selectedRecordId of selectedRecordIds) {
-          const selectedRecord = snapshot
-            .getLoadable(recordStoreFamilyState(selectedRecordId))
-            .getValue();
-
-          if (!isDefined(selectedRecord)) {
-            continue;
-          }
+        if (
+          isIteratorEnabled &&
+          isDefined(activeWorkflowVersion?.trigger) &&
+          isManualBulkTrigger(activeWorkflowVersion.trigger)
+        ) {
+          const objectNamePlural = objectMetadataItem.namePlural;
+          const selectedRecords = selectedRecordIds
+            .map((recordId) =>
+              snapshot.getLoadable(recordStoreFamilyState(recordId)).getValue(),
+            )
+            .filter(isDefined);
 
           await runWorkflowVersion({
             workflowId: activeWorkflowVersion.workflowId,
             workflowVersionId: activeWorkflowVersion.id,
-            payload: selectedRecord,
+            payload: {
+              [objectNamePlural]: selectedRecords,
+            },
           });
+        } else {
+          for (const selectedRecordId of selectedRecordIds) {
+            const selectedRecord = snapshot
+              .getLoadable(recordStoreFamilyState(selectedRecordId))
+              .getValue();
+
+            if (!isDefined(selectedRecord)) {
+              continue;
+            }
+
+            await runWorkflowVersion({
+              workflowId: activeWorkflowVersion.workflowId,
+              workflowVersionId: activeWorkflowVersion.id,
+              payload: selectedRecord,
+            });
+          }
         }
       },
-    [runWorkflowVersion],
+    [runWorkflowVersion, isIteratorEnabled, objectMetadataItem],
   );
 
   return activeWorkflowVersions
