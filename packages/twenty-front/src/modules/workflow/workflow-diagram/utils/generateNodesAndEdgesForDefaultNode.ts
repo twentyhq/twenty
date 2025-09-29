@@ -79,11 +79,11 @@ export const generateNodesAndEdgesForDefaultNode = ({
             nextStepId,
           }),
         },
-        ...(edgeTypeBetweenTwoNodes.includes('editable')
+        ...(workflowContext === 'workflow'
           ? {
               deletable: true,
               selectable: true,
-              reconnectable: workflowContext === 'workflow' ? 'target' : false,
+              reconnectable: 'target',
             }
           : {}),
       });

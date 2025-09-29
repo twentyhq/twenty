@@ -11,6 +11,8 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
+import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
@@ -80,25 +82,24 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const handleReconnect = useCallback(
     async (oldEdge: Edge, connection: Connection) => {
-      try {
-        await deleteEdge({
-          source: oldEdge.source,
-          target: oldEdge.target,
-          sourceConnectionOptions: getConnectionOptionsForSourceHandle({
-            sourceHandleId: oldEdge.sourceHandle || '',
-          }),
-        });
+      assertEdgeHasDefinedHandlesOrThrow(oldEdge);
+      assertWorkflowConnectionOrThrow(connection);
 
-        await createEdge({
-          source: connection.source || '',
-          target: connection.target || '',
-          connectionOptions: getConnectionOptionsForSourceHandle({
-            sourceHandleId: connection.sourceHandle || '',
-          }),
-        });
-      } catch (error) {
-        throw new Error(`Failed to reconnect edge: ${error}`);
-      }
+      await deleteEdge({
+        source: oldEdge.source,
+        target: oldEdge.target,
+        sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: oldEdge.sourceHandle,
+        }),
+      });
+
+      await createEdge({
+        source: connection.source,
+        target: connection.target,
+        connectionOptions: getConnectionOptionsForSourceHandle({
+          sourceHandleId: connection.sourceHandle,
+        }),
+      });
     },
     [deleteEdge, createEdge],
   );

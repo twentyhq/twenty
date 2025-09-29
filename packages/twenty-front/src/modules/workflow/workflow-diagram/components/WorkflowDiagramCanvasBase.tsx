@@ -34,7 +34,6 @@ import {
   applyNodeChanges,
   useReactFlow,
   type Connection,
-  type Edge,
   type EdgeChange,
   type FitViewOptions,
   type NodeChange,
@@ -465,21 +464,6 @@ export const WorkflowDiagramCanvasBase = ({
     onConnect?.(connection);
   };
 
-  const handleReconnectStart = useCallback(() => {
-    onReconnectStart?.();
-  }, [onReconnectStart]);
-
-  const handleReconnectEnd = useCallback(() => {
-    onReconnectEnd?.();
-  }, [onReconnectEnd]);
-
-  const handleReconnect = useCallback(
-    (oldEdge: Edge, connection: Connection) => {
-      onReconnect?.(oldEdge, connection);
-    },
-    [onReconnect],
-  );
-
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <WorkflowDiagramCustomMarkers />
@@ -499,9 +483,9 @@ export const WorkflowDiagramCanvasBase = ({
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onConnect={handleConnect}
-        onReconnect={handleReconnect}
-        onReconnectStart={handleReconnectStart}
-        onReconnectEnd={handleReconnectEnd}
+        onReconnect={onReconnect}
+        onReconnectStart={onReconnectStart}
+        onReconnectEnd={onReconnectEnd}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}

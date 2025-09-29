@@ -52,11 +52,11 @@ export const generateWorkflowDiagram = ({
       source: TRIGGER_STEP_ID,
       sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
       target: stepLinkToTriggerId,
-      ...(edgeTypeBetweenTwoNodes.includes('editable')
+      ...(workflowContext === 'workflow'
         ? {
             deletable: true,
             selectable: true,
-            reconnectable: workflowContext === 'workflow' ? 'target' : false,
+            reconnectable: 'target',
           }
         : {}),
       targetHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID,
