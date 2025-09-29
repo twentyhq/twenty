@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import {
+  CompositeFieldSubFieldName,
+  RecordFilterGroupLogicalOperator,
+} from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   combineFilters,
@@ -247,7 +250,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
         operand: convertViewFilterOperand(viewFilter.operand),
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
-        subFieldName: viewFilter.subFieldName,
+        subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
       };
     });
 
