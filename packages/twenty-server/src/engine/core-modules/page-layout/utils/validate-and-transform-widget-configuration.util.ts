@@ -9,6 +9,7 @@ import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
+import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 const formatValidationErrors = (errors: ValidationError[]): string => {
@@ -44,7 +45,7 @@ const validateGraphConfiguration = (
 
       return {
         ...instance,
-        __typename: 'BarChartConfiguration',
+        configurationType: WidgetConfigurationType.BAR_CHART_CONFIG,
       } as WidgetConfigurationInterface;
     }
     case GraphType.LINE: {
@@ -61,7 +62,7 @@ const validateGraphConfiguration = (
 
       return {
         ...instance,
-        __typename: 'LineChartConfiguration',
+        configurationType: WidgetConfigurationType.LINE_CHART_CONFIG,
       } as WidgetConfigurationInterface;
     }
     case GraphType.PIE: {
@@ -75,7 +76,7 @@ const validateGraphConfiguration = (
 
       return {
         ...instance,
-        __typename: 'PieChartConfiguration',
+        configurationType: WidgetConfigurationType.PIE_CHART_CONFIG,
       } as WidgetConfigurationInterface;
     }
     case GraphType.NUMBER: {
@@ -92,7 +93,7 @@ const validateGraphConfiguration = (
 
       return {
         ...instance,
-        __typename: 'NumberChartConfiguration',
+        configurationType: WidgetConfigurationType.NUMBER_CHART_CONFIG,
       } as WidgetConfigurationInterface;
     }
     case GraphType.GAUGE: {
@@ -109,7 +110,7 @@ const validateGraphConfiguration = (
 
       return {
         ...instance,
-        __typename: 'GaugeChartConfiguration',
+        configurationType: WidgetConfigurationType.GAUGE_CHART_CONFIG,
       } as WidgetConfigurationInterface;
     }
     default:
@@ -130,7 +131,7 @@ const validateIframeConfiguration = (
 
   return {
     ...instance,
-    __typename: 'IframeConfiguration',
+    configurationType: WidgetConfigurationType.IFRAME_CONFIG,
   } as WidgetConfigurationInterface;
 };
 
