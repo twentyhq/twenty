@@ -17,9 +17,11 @@ import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 export const turnAnyFieldFilterIntoRecordGqlFilter = ({
   filterValue,
   objectMetadataItem,
+  throwCustomError,
 }: {
   filterValue: string;
   objectMetadataItem: ObjectMetadataItem;
+  throwCustomError: (message: string, code?: string) => never;
 }) => {
   const fieldMetadataItems = objectMetadataItem.fields;
 
@@ -220,9 +222,7 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         filterValueDependencies: {},
         fieldMetadataItems: objectMetadataItem.fields,
         recordFilter,
-        throwCustomError: () => {
-          throw new Error('Custom error');
-        },
+        throwCustomError,
       }),
     )
     .filter(isDefined);

@@ -78,6 +78,7 @@ export const useLoadRecordIndexBoardColumn = ({
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
+      throwCustomError,
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);

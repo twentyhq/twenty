@@ -169,11 +169,6 @@ export type ResolvedDateViewFilterValue<O extends ViewFilterOperand> =
     ? ReturnType<typeof resolveVariableDateViewFilterValue>
     : Date | null;
 
-// type PartialViewFilter<O extends ViewFilterOperand> = Pick<
-//   ViewFilter,
-//   'value'
-// > & { operand: O };
-
 type PartialViewFilter<O extends ViewFilterOperand> = {value: string, operand: O} // TODO, was done to avoid ViewFilter export
 
 export const resolveDateViewFilterValue = <O extends ViewFilterOperand>(

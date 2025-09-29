@@ -68,6 +68,7 @@ export const useAggregateRecordsForHeader = ({
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
+      throwCustomError,
     });
 
   const { data } = useAggregateRecords({

@@ -1,3 +1,4 @@
+import { throwCustomError } from '@/error-handler/utils/throwCustomError';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
@@ -171,6 +172,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [textFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -191,6 +193,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [addressFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -252,6 +255,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [linksFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -292,6 +296,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [fullNameFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -325,6 +330,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [arrayFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -345,6 +351,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [emailsFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -378,6 +385,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [phonesFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -418,6 +426,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [numberFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -436,6 +445,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [numberFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -452,6 +462,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [currencyFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -472,6 +483,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [currencyFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(
@@ -492,6 +504,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [selectFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -516,6 +529,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [selectFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -532,6 +546,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [multiSelectFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -556,6 +571,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
           ...mockObjectMetadataItem,
           fields: [multiSelectFieldMetadataItem],
         },
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -569,6 +585,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: mockObjectMetadataItemWithAllFields,
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toHaveProperty('or');
@@ -584,6 +601,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
         objectMetadataItem: mockObjectMetadataItemWithAllFields,
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -598,6 +616,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue: 'test',
         objectMetadataItem: emptyObjectMetadata,
+        throwCustomError,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});

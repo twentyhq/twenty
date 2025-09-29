@@ -100,6 +100,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
+      throwCustomError,
     });
 
   const { data, loading } = useAggregateRecords({

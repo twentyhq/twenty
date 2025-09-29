@@ -42,6 +42,7 @@ export const useGetRecordIndexTotalCount = () => {
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
+      throwCustomError,
     });
 
   const { data, loading } = useAggregateRecords<{

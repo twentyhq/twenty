@@ -57,6 +57,7 @@ export const useFindManyRecordIndexTableParams = (
     turnAnyFieldFilterIntoRecordGqlFilter({
       objectMetadataItem,
       filterValue: anyFieldFilterValue,
+      throwCustomError,
     });
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
