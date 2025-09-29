@@ -4,10 +4,10 @@ import { v4 } from 'uuid';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -35,8 +35,8 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
-  targetFlatObjectMetadata: FlatObjectMetadata;
-  sourceFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatObjectMetadata: FlatObjectMetadataSecond;
+  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
   sourceFlatObjectMetadataJoinColumnName: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
     Required<
@@ -47,7 +47,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
-  flatFieldMetadatas: FlatFieldMetadata[];
+  flatFieldMetadatas: FlatFieldMetadataSecond[];
   indexMetadatas: FlatIndexMetadata[];
 };
 
@@ -69,7 +69,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: Omit<
-    FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+    FlatFieldMetadataSecond<MorphOrRelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
   > = {
     ...getDefaultFlatFieldMetadata({
@@ -86,7 +86,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     options: null,
     relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId,
     relationTargetObjectMetadataId: targetFlatObjectMetadata.id,
-    flatRelationTargetObjectMetadata: targetFlatObjectMetadata,
   };
 
   const targetCreateFieldInput: CreateFieldInput = {
@@ -109,7 +108,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
           ? RelationType.MANY_TO_ONE
           : RelationType.ONE_TO_MANY,
     });
-  const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
+  const targetFlatFieldMetadata: FlatFieldMetadataSecond<FieldMetadataType.RELATION> =
     {
       ...getDefaultFlatFieldMetadata({
         createFieldInput: targetCreateFieldInput,
@@ -122,14 +121,16 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       options: null,
       relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
       relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
-      flatRelationTargetFieldMetadata: sourceFlatFieldMetadata,
-      flatRelationTargetObjectMetadata: sourceFlatObjectMetadata,
     };
 
   const indexId = v4();
   const createdAt = new Date();
   const indexMetadata: FlatIndexMetadata =
     generateFlatIndexMetadataWithNameOrThrow({
+      objectFlatFieldMetadatas:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? [sourceFlatFieldMetadata]
+          : [targetFlatFieldMetadata],
       flatIndex: {
         createdAt,
         flatIndexFieldMetadatas: [
@@ -158,32 +159,14 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         updatedAt: createdAt,
         workspaceId,
       },
-      flatObjectMetadata: (relationCreationPayload.type ===
-      RelationType.MANY_TO_ONE
-        ? {
-            ...sourceFlatObjectMetadata,
-            flatFieldMetadatas: [
-              ...sourceFlatObjectMetadata.flatFieldMetadatas,
-              sourceFlatFieldMetadata,
-            ],
-          }
-        : {
-            ...targetFlatObjectMetadata,
-            flatFieldMetadatas: [
-              ...targetFlatObjectMetadata.flatFieldMetadatas,
-              targetFlatFieldMetadata,
-            ],
-          }) as FlatObjectMetadata,
+      flatObjectMetadata:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? sourceFlatObjectMetadata
+          : targetFlatObjectMetadata,
     });
 
   return {
-    flatFieldMetadatas: [
-      {
-        ...sourceFlatFieldMetadata,
-        flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
-      },
-      targetFlatFieldMetadata,
-    ],
+    flatFieldMetadatas: [sourceFlatFieldMetadata, targetFlatFieldMetadata],
     indexMetadatas: [indexMetadata],
   };
 };

@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { type RelationCreationPayload } from 'twenty-shared/types';
 
+import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
   type FailedFieldInputTranspilation,
@@ -9,17 +10,16 @@ import {
   type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type RelationCreationPayloadAndObjectMetadata = {
   relationCreationPayload: RelationCreationPayload;
-  targetFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatObjectMetadata: FlatObjectMetadataSecond;
 };
 
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
   objectMetadataId: string;
 };
 export const validateMorphRelationCreationPayload = async ({

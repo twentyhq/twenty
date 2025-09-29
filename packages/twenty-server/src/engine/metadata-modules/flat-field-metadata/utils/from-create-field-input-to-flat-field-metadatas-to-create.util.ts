@@ -9,31 +9,32 @@ import { v4 } from 'uuid';
 
 import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import {
+  FlatFieldMetadataSecond,
+  type FlatFieldMetadata,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 
 type FromCreateFieldInputToFlatObjectMetadataArgs = {
-  rawCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
-};
+} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
-  rawCreateFieldInput,
+  createFieldInput: rawCreateFieldInput,
   workspaceId,
-  existingFlatObjectMetadataMaps,
+  flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
-    flatFieldMetadatas: FlatFieldMetadata[];
+    flatFieldMetadatas: FlatFieldMetadataSecond[];
     indexMetadatas: FlatIndexMetadata[];
   }>
 > => {
@@ -46,15 +47,16 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       },
     };
   }
+
   const createFieldInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateFieldInput,
       ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
     );
-  const parentFlatObjectMetadataWithFlatFieldMaps =
+  const parentFlatObjectMetadata =
     existingFlatObjectMetadataMaps.byId[createFieldInput.objectMetadataId];
 
-  if (!isDefined(parentFlatObjectMetadataWithFlatFieldMaps)) {
+  if (!isDefined(parentFlatObjectMetadata)) {
     return {
       status: 'fail',
       error: {
@@ -64,11 +66,6 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       },
     };
   }
-
-  const parentFlatObjectMetadata =
-    fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata(
-      parentFlatObjectMetadataWithFlatFieldMaps,
-    );
 
   const fieldMetadataId = v4();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
