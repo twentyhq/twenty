@@ -1,4 +1,5 @@
 import { Action } from '@/action-menu/actions/components/Action';
+import { isBulkRecordsManualTrigger } from '@/action-menu/actions/record-actions/utils/isBulkRecordsManualTrigger';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -8,23 +9,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
-import {
-  type WorkflowTrigger,
-  type WorkflowVersion,
-} from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
-
-const isManualBulkTrigger = (trigger: WorkflowTrigger) => {
-  return (
-    trigger.type === 'MANUAL' &&
-    trigger?.settings?.availability?.type === 'BULK_RECORDS'
-  );
-};
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -63,7 +54,7 @@ export const useRunWorkflowRecordActions = ({
         if (
           isIteratorEnabled &&
           isDefined(activeWorkflowVersion?.trigger) &&
-          isManualBulkTrigger(activeWorkflowVersion.trigger)
+          isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
         ) {
           const objectNamePlural = objectMetadataItem.namePlural;
           const selectedRecords = selectedRecordIds
