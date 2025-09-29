@@ -1,76 +1,23 @@
+import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
+import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
+import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
+import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
+import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
+import { SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortBySetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
-import {
-  IconArrowsSort,
-  IconColorSwatch,
-  IconDatabase,
-  IconFilter,
-  IconFilters,
-  IconTag,
-} from 'twenty-ui/display';
 
 export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
   {
     heading: 'Data',
     items: [
-      {
-        Icon: IconDatabase,
-        label: 'Source',
-        id: 'source',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconFilter,
-        label: 'Filter',
-        id: 'filter',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconFilters,
-        label: 'Group by',
-        id: 'group-by',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconArrowsSort,
-        label: 'Sort by',
-        id: 'sort-by',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
+      CHART_DATA_SOURCE_SETTING,
+      FILTER_SETTING,
+      GROUP_BY_SETTING,
+      SORT_BY_SETTING,
     ],
   },
   {
     heading: 'Style',
-    items: [
-      {
-        Icon: IconColorSwatch,
-        label: 'Colors',
-        id: 'colors',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconTag,
-        label: 'Data labels',
-        id: 'data-labels',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-    ],
+    items: [COLORS_SETTING, DATA_LABELS_SETTING],
   },
 ];

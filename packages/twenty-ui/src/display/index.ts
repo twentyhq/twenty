@@ -238,6 +238,7 @@ export {
   IconGauge,
   IconGitBranchDeleted,
   IconGitCommit,
+  IconGizmo,
   IconGripVertical,
   IconH1,
   IconH2,

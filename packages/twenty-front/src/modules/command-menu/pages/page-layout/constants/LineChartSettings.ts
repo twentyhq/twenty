@@ -1,116 +1,29 @@
+import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
+import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
+import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
+import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayXSetting';
+import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
+import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
+import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
+import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
+import { SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortBySetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
-import {
-  IconArrowsSort,
-  IconAxisX,
-  IconAxisY,
-  IconColorSwatch,
-  IconDatabase,
-  IconFilter,
-  IconFilters,
-  IconMathXy,
-  IconTag,
-} from 'twenty-ui/display';
 
 export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
   {
     heading: 'Data',
-    items: [
-      {
-        Icon: IconDatabase,
-        label: 'Source',
-        id: 'source',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconFilter,
-        label: 'Filter',
-        id: 'filter',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-    ],
+    items: [CHART_DATA_SOURCE_SETTING, FILTER_SETTING],
   },
   {
     heading: 'X axis',
-    items: [
-      {
-        Icon: IconAxisX,
-        label: 'Data on display',
-        id: 'data-on-display-x',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconArrowsSort,
-        label: 'Sort by',
-        id: 'sort-by',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-    ],
+    items: [DATA_DISPLAY_X_SETTING, SORT_BY_SETTING],
   },
   {
     heading: 'Y axis',
-    items: [
-      {
-        Icon: IconAxisY,
-        label: 'Data on display',
-        id: 'data-on-display-y',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconFilters,
-        label: 'Group by',
-        id: 'group-by-y',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-    ],
+    items: [DATA_DISPLAY_Y_SETTING, GROUP_BY_SETTING],
   },
   {
     heading: 'Style',
-    items: [
-      {
-        Icon: IconColorSwatch,
-        label: 'Colors',
-        id: 'colors',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconMathXy,
-        label: 'Axis name',
-        id: 'axis-name',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-      {
-        Icon: IconTag,
-        label: 'Data labels',
-        id: 'data-labels',
-        contextualTextPosition: 'right',
-        hasSubMenu: true,
-        isSubMenuOpened: false,
-        onClick: () => {},
-      },
-    ],
+    items: [COLORS_SETTING, AXIS_NAME_SETTING, DATA_LABELS_SETTING],
   },
 ];
