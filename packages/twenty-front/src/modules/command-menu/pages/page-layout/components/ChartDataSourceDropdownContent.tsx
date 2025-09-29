@@ -66,6 +66,13 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
+  const handleSelectSource = (objectMetadataId: string) => {
+    updateCurrentWidgetConfig({
+      source: objectMetadataId,
+    });
+    closeDropdown();
+  };
+
   return (
     <>
       <DropdownMenuHeader>Source</DropdownMenuHeader>
@@ -89,10 +96,7 @@ export const ChartDataSourceDropdownContent = () => {
               key={objectMetadataItem.id}
               itemId={objectMetadataItem.id}
               onEnter={() => {
-                updateCurrentWidgetConfig({
-                  source: objectMetadataItem.id,
-                });
-                closeDropdown();
+                handleSelectSource(objectMetadataItem.id);
               }}
             >
               <MenuItemSelect
@@ -101,10 +105,7 @@ export const ChartDataSourceDropdownContent = () => {
                 focused={selectedItemId === objectMetadataItem.id}
                 LeftIcon={getIcon(objectMetadataItem.icon)}
                 onClick={() => {
-                  updateCurrentWidgetConfig({
-                    source: objectMetadataItem.id,
-                  });
-                  closeDropdown();
+                  handleSelectSource(objectMetadataItem.id);
                 }}
               />
             </SelectableListItem>

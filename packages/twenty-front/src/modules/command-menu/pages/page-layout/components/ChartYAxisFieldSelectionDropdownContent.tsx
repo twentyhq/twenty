@@ -1,12 +1,11 @@
+import { ChartYAxisAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -18,15 +17,20 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartXAxisFieldSelectionDropdownContent = () => {
+export const ChartYAxisFieldSelectionDropdownContent = () => {
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const currentSource = widgetInEditMode?.configuration?.source;
-  const currentXAxisFieldMetadataId =
-    widgetInEditMode?.configuration?.groupByFieldMetadataIdX;
+  const currentYAxisFieldMetadataId =
+    widgetInEditMode?.configuration?.groupByFieldMetadataIdY;
+
+  const [selectedYAxisFieldMetadataId, setSelectedYAxisFieldMetadataId] =
+    useState(currentYAxisFieldMetadataId);
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === currentSource,
@@ -55,27 +59,24 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
       return matchesSearch;
     }) || [];
 
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
-
   const { getIcon } = useIcons();
 
   if (!isDefined(sourceObjectMetadataItem)) {
     return;
   }
 
-  const handleSelectField = (fieldMetadataId: string) => {
-    updateCurrentWidgetConfig({
-      groupByFieldMetadataIdX: fieldMetadataId,
-    });
-    closeDropdown();
-  };
+  if (isSubMenuOpen) {
+    return (
+      <ChartYAxisAggregateOperationSelectionDropdownContent
+        currentYAxisFieldMetadataId={selectedYAxisFieldMetadataId}
+        setIsSubMenuOpen={setIsSubMenuOpen}
+      />
+    );
+  }
 
   return (
     <>
-      <DropdownMenuHeader>X-Axis Field</DropdownMenuHeader>
+      <DropdownMenuHeader>Y-Axis Field</DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -96,16 +97,19 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
               key={fieldMetadataItem.id}
               itemId={fieldMetadataItem.id}
               onEnter={() => {
-                handleSelectField(fieldMetadataItem.id);
+                setIsSubMenuOpen(true);
+                setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
               }}
             >
               <MenuItemSelect
                 text={fieldMetadataItem.label}
-                selected={currentXAxisFieldMetadataId === fieldMetadataItem.id}
+                selected={selectedYAxisFieldMetadataId === fieldMetadataItem.id}
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
+                hasSubMenu={true}
                 onClick={() => {
-                  handleSelectField(fieldMetadataItem.id);
+                  setIsSubMenuOpen(true);
+                  setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
                 }}
               />
             </SelectableListItem>
