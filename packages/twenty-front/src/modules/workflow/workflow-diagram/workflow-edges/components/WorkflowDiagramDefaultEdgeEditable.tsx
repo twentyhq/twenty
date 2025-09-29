@@ -6,10 +6,8 @@ import { WorkflowDiagramEdgeLabelContainer } from '@/workflow/workflow-diagram/w
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useArrowMarkerHover } from '@/workflow/workflow-diagram/workflow-edges/hooks/useArrowMarkerHover';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
-import { getArrowTipPosition } from '@/workflow/workflow-diagram/workflow-edges/utils/getArrowTipPosition';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
@@ -40,8 +38,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const { i18n } = useLingui();
 
   const { isEdgeHovered } = useEdgeState();
-  const { setArrowMarkerHovered, clearArrowMarkerHover } =
-    useArrowMarkerHover();
 
   const {
     segments,
@@ -88,32 +84,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
         sourceHandleId,
       }),
     });
-  };
-
-  const arrowTipPosition = getArrowTipPosition({
-    targetX,
-    targetY,
-    targetPosition,
-  });
-
-  const handleArrowHover = () => {
-    const edgeDescriptor = {
-      source,
-      target,
-      sourceHandle: sourceHandleId,
-      targetHandle: targetHandleId,
-    };
-    setArrowMarkerHovered(edgeDescriptor);
-  };
-
-  const handleArrowLeave = () => {
-    const edgeDescriptor = {
-      source,
-      target,
-      sourceHandle: sourceHandleId,
-      targetHandle: targetHandleId,
-    };
-    clearArrowMarkerHover(edgeDescriptor);
   };
 
   return (
@@ -173,30 +143,6 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             />
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
-      </EdgeLabelRenderer>
-
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: 'absolute',
-            transform: `translate(${arrowTipPosition.x - 12}px, ${arrowTipPosition.y - 12}px)`,
-            width: 24,
-            height: 24,
-            pointerEvents: 'auto',
-            cursor: 'pointer',
-            zIndex: 1000,
-          }}
-          onMouseEnter={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            handleArrowHover();
-          }}
-          onMouseLeave={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            handleArrowLeave();
-          }}
-        />
       </EdgeLabelRenderer>
     </>
   );
