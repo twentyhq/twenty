@@ -28,7 +28,8 @@ export const getLayerDependencies = async (
   }
 
   return {
-    packageJson: serverlessFunction.application.packageJson,
-    yarnLock: serverlessFunction.application.yarnLock,
+    packageJson:
+      serverlessFunction.application.serverlessFunctionLayer.packageJson,
+    yarnLock: serverlessFunction.application.serverlessFunctionLayer.yarnLock,
   };
 };

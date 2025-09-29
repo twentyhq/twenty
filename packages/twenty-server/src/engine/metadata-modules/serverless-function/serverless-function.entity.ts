@@ -21,6 +21,7 @@ import { Route } from 'src/engine/metadata-modules/route/route.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -77,6 +78,17 @@ export class ServerlessFunctionEntity
 
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  serverlessFunctionLayerId: string | null;
+
+  @ManyToOne(
+    () => ServerlessFunctionLayerEntity,
+    (serverlessFunctionLayer) => serverlessFunctionLayer.serverlessFunctions,
+    { nullable: true },
+  )
+  @JoinColumn({ name: 'serverlessFunctionLayerId' })
+  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity> | null;
 
   @ManyToOne(
     () => ApplicationEntity,

@@ -30,8 +30,10 @@ export const copyAndBuildDependencies = async (
       },
     );
   } else {
-    const packageJson = serverlessFunction.application?.packageJson;
-    const yarnLock = serverlessFunction.application?.yarnLock;
+    const packageJson =
+      serverlessFunction.application?.serverlessFunctionLayer.packageJson;
+    const yarnLock =
+      serverlessFunction.application?.serverlessFunctionLayer.yarnLock;
 
     if (!isDefined(packageJson) || !isDefined(yarnLock)) {
       return;

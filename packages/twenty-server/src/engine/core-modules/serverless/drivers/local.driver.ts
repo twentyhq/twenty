@@ -36,7 +36,7 @@ export class LocalDriver implements ServerlessDriver {
   private getInMemoryLayerFolderPath = (
     serverlessFunction: ServerlessFunctionEntity,
   ) => {
-    if (!isDefined(serverlessFunction.application?.packageChecksum)) {
+    if (!isDefined(serverlessFunction?.serverlessFunctionLayer?.checksum)) {
       return join(
         SERVERLESS_TMPDIR_FOLDER,
         COMMON_LAYER_NAME,
@@ -47,7 +47,7 @@ export class LocalDriver implements ServerlessDriver {
     return join(
       SERVERLESS_TMPDIR_FOLDER,
       APPLICATION_LAYER_FOLDER_NAME,
-      serverlessFunction.application.packageChecksum,
+      serverlessFunction.serverlessFunctionLayer?.checksum,
     );
   };
 

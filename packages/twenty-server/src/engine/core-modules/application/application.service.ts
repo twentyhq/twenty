@@ -33,9 +33,7 @@ export class ApplicationService {
     label: string;
     description?: string;
     version?: string;
-    packageJson?: PackageJson;
-    yarnLock?: string;
-    packageChecksum?: string;
+    serverlessFunctionLayerId: string;
     sourcePath: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {

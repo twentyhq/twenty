@@ -1,14 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import crypto from 'crypto';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   AgentManifest,
-  AppManifest,
   ObjectManifest,
-  PackageJson,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
@@ -20,6 +16,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -27,6 +25,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -38,11 +37,8 @@ export class ApplicationSyncService {
     manifest,
     packageJson,
     yarnLock,
-  }: {
+  }: ApplicationInput & {
     workspaceId: string;
-    manifest: AppManifest;
-    packageJson: PackageJson;
-    yarnLock?: string;
   }) {
     const applicationId = await this.syncApplication({
       workspaceId,
@@ -66,55 +62,53 @@ export class ApplicationSyncService {
     this.logger.log('✅ Application sync from manifest completed');
   }
 
-  private computePackageChecksum(yarnLock?: string) {
-    if (!isDefined(yarnLock)) {
-      return;
-    }
-
-    return crypto.createHash('sha256').update(yarnLock).digest('hex');
-  }
-
   private async syncApplication({
     workspaceId,
     manifest,
     packageJson,
     yarnLock,
-  }: {
+  }: ApplicationInput & {
     workspaceId: string;
-    manifest: AppManifest;
-    packageJson: PackageJson;
-    yarnLock?: string;
   }): Promise<string> {
     const application = await this.applicationService.findByStandardId(
       manifest.standardId,
       workspaceId,
     );
 
-    const packageChecksum = this.computePackageChecksum(yarnLock);
-
     if (!isDefined(application)) {
+      const serverlessFunctionLayer =
+        await this.serverlessFunctionLayerService.create(
+          {
+            packageJson,
+            yarnLock,
+          },
+          workspaceId,
+        );
       const createdApplication = await this.applicationService.create({
         standardId: manifest.standardId,
         label: manifest.label,
         description: manifest.description,
         version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        packageJson,
-        yarnLock,
-        packageChecksum,
+        serverlessFunctionLayerId: serverlessFunctionLayer.id,
         workspaceId,
       });
 
       return createdApplication.id;
     }
 
+    await this.serverlessFunctionLayerService.update(
+      application.serverlessFunctionLayerId,
+      {
+        packageJson,
+        yarnLock,
+      },
+    );
+
     await this.applicationService.update(application.id, {
       label: manifest.label,
       description: manifest.description,
       version: manifest.version,
-      packageJson,
-      yarnLock,
-      packageChecksum,
     });
 
     return application.id;

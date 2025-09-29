@@ -94,7 +94,7 @@ export class ApiService {
   }): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String) {
+        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
           syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
         }
       `;

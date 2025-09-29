@@ -31,6 +31,8 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
     layerVersion: LAST_LAYER_VERSION,
+    serverlessFunctionLayerId:
+      createServerlessFunctionInput.serverlessFunctionLayerId ?? null,
     workspaceId,
     checksum: null,
   };

@@ -116,7 +116,7 @@ export class ServerlessFunctionService {
           id,
           workspaceId,
         },
-        relations: ['application'],
+        relations: ['serverlessFunctionLayer'],
       });
 
     const resultServerlessFunction = await this.serverlessService.execute(
@@ -307,7 +307,7 @@ export class ServerlessFunctionService {
     const serverlessFunction =
       await this.serverlessFunctionRepository.findOneOrFail({
         where: { id: serverlessFunctionId },
-        relations: ['application'],
+        relations: ['serverlessFunctionLayer'],
       });
 
     const { packageJson, yarnLock } =

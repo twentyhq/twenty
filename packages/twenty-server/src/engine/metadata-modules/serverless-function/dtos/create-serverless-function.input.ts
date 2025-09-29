@@ -30,4 +30,7 @@ export class CreateServerlessFunctionInput {
 
   @HideField()
   applicationId?: string;
+
+  @HideField()
+  serverlessFunctionLayerId?: string;
 }
