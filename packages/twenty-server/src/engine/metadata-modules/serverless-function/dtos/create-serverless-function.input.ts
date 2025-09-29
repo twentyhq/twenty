@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
   IsNotEmpty,
@@ -27,4 +27,7 @@ export class CreateServerlessFunctionInput {
   @Max(900)
   @IsOptional()
   timeoutSeconds?: number;
+
+  @HideField()
+  applicationId?: string;
 }

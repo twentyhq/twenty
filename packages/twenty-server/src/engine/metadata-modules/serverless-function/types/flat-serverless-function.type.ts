@@ -4,11 +4,12 @@ import { type DatabaseEventTrigger } from 'src/engine/metadata-modules/database-
 import { type Route } from 'src/engine/metadata-modules/route/route.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 export type ServerlessFunctionEntityRelationProperties =
   ExtractRecordTypeOrmRelationProperties<
     ServerlessFunctionEntity,
-    CronTrigger | DatabaseEventTrigger | Route | Workspace
+    CronTrigger | DatabaseEventTrigger | Route | Workspace | ApplicationEntity
   >;
 
 export type FlatServerlessFunction = Omit<
