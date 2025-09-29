@@ -24,6 +24,10 @@ export const getManualTriggerDefaultSettingsDeprecated = ({
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
         isPinned: isPinned || false,
+        availability: {
+          type: 'GLOBAL',
+          locations: [],
+        },
       };
     }
     case 'WHEN_RECORD_SELECTED': {
@@ -32,6 +36,11 @@ export const getManualTriggerDefaultSettingsDeprecated = ({
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
         isPinned: isPinned || false,
+        availability: {
+          type: 'SINGLE_RECORD',
+          objectNameSingular:
+            activeNonSystemObjectMetadataItems[0].nameSingular,
+        },
       };
     }
   }

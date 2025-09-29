@@ -12,6 +12,8 @@ import {
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -38,6 +40,7 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeStepOutputSchema({
@@ -59,19 +62,25 @@ export class WorkflowSchemaWorkspaceService {
         });
       }
       case WorkflowTriggerType.MANUAL: {
+        const isIteratorEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+            workspaceId,
+          );
+
         const { objectType, availability } = step.settings;
+
+        if (isDefined(availability) && isIteratorEnabled) {
+          return this.computeTriggerOutputSchemaFromAvailability({
+            availability,
+            workspaceId,
+          });
+        }
 
         // TODO: to be deprecated once all triggers are migrated to the new availability type
         if (isDefined(objectType)) {
           return this.computeRecordOutputSchema({
             objectType,
-            workspaceId,
-          });
-        }
-
-        if (isDefined(availability)) {
-          return this.computeTriggerOutputSchemaFromAvailability({
-            availability,
             workspaceId,
           });
         }
@@ -291,7 +300,7 @@ export class WorkflowSchemaWorkspaceService {
         );
 
       return {
-        [availability.objectNameSingular]: {
+        [objectMetadataInfo.objectMetadataItemWithFieldsMaps.namePlural]: {
           label:
             objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
           isLeaf: true,
