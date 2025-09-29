@@ -1,0 +1,3 @@
+export const DEFAULT_MAX_NUMBER_OF_VALUES = 10;
+
+export const MIN_MAX_NUMBER_OF_VALUES = 1;
