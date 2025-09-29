@@ -7,9 +7,10 @@ import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/f
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateMorphOrRelationFlatFieldMetadata = async ({
-  existingFlatObjectMetadataMaps,
+  dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
   flatFieldMetadataToValidate,
-  otherFlatObjectMetadataMapsToValidate,
+  optimisticFlatFieldMetadataMaps,
+  otherFlatFieldMetadataMapsToValidate,
 }: ValidateOneFieldMetadataArgs<MorphOrRelationFieldMetadataType>): Promise<
   FlatFieldMetadataValidationError[]
 > => {
@@ -37,23 +38,20 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   const errors: FlatFieldMetadataValidationError[] = [];
 
   const targetRelationFlatObjectMetadata =
-    otherFlatObjectMetadataMapsToValidate?.byId[
-      relationTargetObjectMetadataId
-    ] ?? existingFlatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
+    flatObjectMetadataMaps?.byId[relationTargetObjectMetadataId];
 
   if (!isDefined(targetRelationFlatObjectMetadata)) {
     errors.push({
       code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      message: isDefined(otherFlatObjectMetadataMapsToValidate)
-        ? 'Relation target object metadata not found in both existing and about to be created object metadatas'
-        : 'Relation target object metadata not found',
+      message: 'Relation target object metadata not found',
       userFriendlyMessage: t`Object targeted by the relation not found`,
       value: relationTargetObjectMetadataId,
     });
   }
 
   const targetRelationFlatFieldMetadata =
-    targetRelationFlatObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
+    otherFlatFieldMetadataMapsToValidate?.byId[relationTargetFieldMetadataId] ??
+    optimisticFlatFieldMetadataMaps?.byId[relationTargetFieldMetadataId];
 
   if (
     isDefined(targetRelationFlatObjectMetadata) &&
@@ -61,7 +59,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      message: isDefined(otherFlatObjectMetadataMapsToValidate)
+      message: isDefined(otherFlatFieldMetadataMapsToValidate)
         ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
         : 'Relation field target metadata not found',
       userFriendlyMessage: t`Relation field target metadata not found`,

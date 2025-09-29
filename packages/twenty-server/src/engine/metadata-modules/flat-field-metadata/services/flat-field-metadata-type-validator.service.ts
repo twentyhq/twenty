@@ -49,10 +49,11 @@ export class FlatFieldMetadataTypeValidatorService {
         return [];
       },
       MORPH_RELATION: async ({
-        workspaceId,
-        existingFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
-        otherFlatObjectMetadataMapsToValidate,
+        optimisticFlatFieldMetadataMaps,
+        otherFlatFieldMetadataMapsToValidate,
+        workspaceId,
       }) => {
         const isMorphRelationEnabled =
           await this.featureFlagService.isFeatureEnabled(
@@ -71,23 +72,26 @@ export class FlatFieldMetadataTypeValidatorService {
         }
 
         return validateMorphOrRelationFlatFieldMetadata({
-          existingFlatObjectMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
+          optimisticFlatFieldMetadataMaps,
+          otherFlatFieldMetadataMapsToValidate,
           workspaceId,
-          otherFlatObjectMetadataMapsToValidate,
         });
       },
       MULTI_SELECT: ({
-        existingFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        otherFlatFieldMetadataMapsToValidate,
         workspaceId,
-        otherFlatObjectMetadataMapsToValidate,
       }) =>
         validateEnumSelectFlatFieldMetadata({
-          existingFlatObjectMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
+          optimisticFlatFieldMetadataMaps,
+          otherFlatFieldMetadataMapsToValidate,
           workspaceId,
-          otherFlatObjectMetadataMapsToValidate,
         }),
 
       NUMBER: async (_args) => {
@@ -103,31 +107,35 @@ export class FlatFieldMetadataTypeValidatorService {
         return [];
       },
       RATING: ({
-        existingFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        otherFlatFieldMetadataMapsToValidate,
         workspaceId,
-        otherFlatObjectMetadataMapsToValidate,
       }) =>
         validateEnumSelectFlatFieldMetadata({
-          existingFlatObjectMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
+          optimisticFlatFieldMetadataMaps,
+          otherFlatFieldMetadataMapsToValidate,
           workspaceId,
-          otherFlatObjectMetadataMapsToValidate,
         }),
       RAW_JSON: async (_args) => {
         return [];
       },
       RELATION: ({
-        existingFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        otherFlatFieldMetadataMapsToValidate,
         workspaceId,
-        otherFlatObjectMetadataMapsToValidate,
       }) =>
         validateMorphOrRelationFlatFieldMetadata({
-          existingFlatObjectMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
+          optimisticFlatFieldMetadataMaps,
+          otherFlatFieldMetadataMapsToValidate,
           workspaceId,
-          otherFlatObjectMetadataMapsToValidate,
         }),
       RICH_TEXT: async (_args) => {
         return [];
@@ -136,16 +144,18 @@ export class FlatFieldMetadataTypeValidatorService {
         return [];
       },
       SELECT: ({
-        existingFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
+        optimisticFlatFieldMetadataMaps,
+        otherFlatFieldMetadataMapsToValidate,
         workspaceId,
-        otherFlatObjectMetadataMapsToValidate,
       }) =>
         validateEnumSelectFlatFieldMetadata({
-          existingFlatObjectMetadataMaps,
+          dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
+          optimisticFlatFieldMetadataMaps,
+          otherFlatFieldMetadataMapsToValidate,
           workspaceId,
-          otherFlatObjectMetadataMapsToValidate,
         }),
       TEXT: async (_args) => {
         return [];
@@ -161,11 +171,12 @@ export class FlatFieldMetadataTypeValidatorService {
   public async validateFlatFieldMetadataTypeSpecificities<
     T extends FieldMetadataType = FieldMetadataType,
   >({
-    existingFlatObjectMetadataMaps,
+    dependencyOptimisticFlatEntityMaps,
     flatFieldMetadataToValidate,
+    optimisticFlatFieldMetadataMaps,
+    otherFlatFieldMetadataMapsToValidate,
     workspaceId,
-    otherFlatObjectMetadataMapsToValidate,
-  }: ValidateOneFieldMetadataArgs<T>): Promise<
+  }: ValidateOneFieldMetadataArgs<T> & { workspaceId: string }): Promise<
     FlatFieldMetadataValidationError[]
   > {
     const fieldMetadataTypeValidator =
@@ -187,10 +198,11 @@ export class FlatFieldMetadataTypeValidatorService {
     }
 
     return await fieldMetadataTypeValidator({
-      existingFlatObjectMetadataMaps,
+      dependencyOptimisticFlatEntityMaps,
       flatFieldMetadataToValidate,
+      optimisticFlatFieldMetadataMaps,
+      otherFlatFieldMetadataMapsToValidate,
       workspaceId,
-      otherFlatObjectMetadataMapsToValidate,
     });
   }
 }

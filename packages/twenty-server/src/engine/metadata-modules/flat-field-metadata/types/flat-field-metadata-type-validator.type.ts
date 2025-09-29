@@ -5,7 +5,7 @@ import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modul
 
 export type FlatFieldMetadataTypeValidator = {
   [P in FieldMetadataType]: (
-    args: ValidateOneFieldMetadataArgs<P>,
+    args: ValidateOneFieldMetadataArgs<P> & { workspaceId: string },
   ) =>
     | FlatFieldMetadataValidationError[]
     | Promise<FlatFieldMetadataValidationError[]>;
