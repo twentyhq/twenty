@@ -150,7 +150,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       };
     }
 
-    const updateViewFieldAction: UpdateFieldAction = {
+    const updateFieldAction: UpdateFieldAction = {
       type: 'update_field',
       fieldMetadataId: toFlatFieldMetadata.id,
       objectMetadataId: toFlatFieldMetadata.objectMetadataId,
@@ -159,7 +159,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     return {
       status: 'success',
-      action: updateViewFieldAction,
+      action: updateFieldAction,
     };
   }
 }

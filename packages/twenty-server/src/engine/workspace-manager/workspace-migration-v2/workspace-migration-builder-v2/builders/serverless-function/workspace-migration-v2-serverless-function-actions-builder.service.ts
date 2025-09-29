@@ -12,16 +12,12 @@ import {
   UpdateServerlessFunctionAction,
   WorkspaceMigrationServerlessFunctionActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-serverless-function-action-v2.type';
-import {
-  FlatServerlessFunctionValidatorService,
-  ServerlessFunctionRelatedFlatEntityMaps,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
+import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 
 @Injectable()
 export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatServerlessFunction,
-  WorkspaceMigrationServerlessFunctionActionV2,
-  ServerlessFunctionRelatedFlatEntityMaps
+  WorkspaceMigrationServerlessFunctionActionV2
 > {
   constructor(
     private readonly flatServerlessFunctionValidatorService: FlatServerlessFunctionValidatorService,
@@ -30,13 +26,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
   }
 
   protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
       FlatServerlessFunction
@@ -47,7 +39,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -68,13 +59,9 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
   }
 
   protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
       FlatServerlessFunction
@@ -85,7 +72,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -112,10 +98,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       to: toFlatServerlessFunction,
     },
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatServerlessFunction,
-    ServerlessFunctionRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityUpdateValidationArgs<FlatServerlessFunction>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationServerlessFunctionActionV2,
         FlatServerlessFunction
@@ -137,7 +120,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         {
           flatServerlessFunctionToValidate: toFlatServerlessFunction,
           optimisticFlatServerlessFunctionMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 

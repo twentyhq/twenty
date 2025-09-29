@@ -15,10 +15,10 @@ import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
+import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -27,7 +27,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
   );
 
   constructor(
-    private readonly workspaceMigrationBuilderV2Service: WorkspaceMigrationBuilderV2Service,
+    private readonly workspaceMigrationV2ObjectActionsBuilderService: WorkspaceMigrationV2ObjectActionsBuilderService,
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
@@ -111,20 +111,23 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatObjectMetadataMaps;
 
       const objectResult =
-        await this.workspaceMigrationBuilderV2Service.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
-          buildOptions,
-        });
+        await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
+          {
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            from: fromFlatObjectMetadataMaps,
+            to: toFlatObjectMetadataMaps,
+            workspaceId,
+          },
+        );
 
       optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
-        objectResult.optimisticFlatObjectMetadataMaps;
+        objectResult.optimisticFlatEntityMaps;
 
       if (objectResult.status === 'fail') {
         orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
       } else {
-        orchestratorActionsReport.fieldMetadata = objectResult.fieldsActions;
-        orchestratorActionsReport.objectMetadata = objectResult.objectActions;
+        orchestratorActionsReport.objectMetadata = objectResult.actions;
       }
     }
 
@@ -247,7 +250,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatServerlessFunctionMaps,
             to: toFlatServerlessFunctionMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps, // TODO
+            dependencyOptimisticFlatEntityMaps: undefined,
             workspaceId,
           },
         );

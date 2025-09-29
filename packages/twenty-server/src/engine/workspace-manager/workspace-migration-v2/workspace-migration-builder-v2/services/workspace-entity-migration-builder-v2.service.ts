@@ -42,7 +42,7 @@ export type FailedEntityMigrationBuildResult<TFlatEntity extends FlatEntity> = {
 
 export type ValidateAndBuildArgs<
   T extends FlatEntity,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps> | undefined,
 > = {
   buildOptions: WorkspaceMigrationV2BuilderOptions;
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
@@ -71,18 +71,21 @@ export type ValidateAndBuilActionsReturnType<
 
 export type FlatEntityValidationArgs<
   TFlatEntity extends FlatEntity,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > = {
   flatEntityToValidate: TFlatEntity;
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
   workspaceId: string;
   otherFlatEntitiesToValidate: TFlatEntity[];
+  buildOptions: WorkspaceMigrationV2BuilderOptions;
 };
 
 export type FlatEntityUpdateValidationArgs<
   TFlatEntity extends FlatEntity,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps> | undefined = undefined,
 > = Omit<
   FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
   'flatEntityToValidate' | 'otherFlatEntitiesToValidate'
@@ -106,7 +109,9 @@ export type FlatEntityValidationReturnType<
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
   TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
-  TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > {
   public async validateAndBuild({
     buildOptions,
@@ -149,6 +154,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         optimisticFlatEntityMaps,
         workspaceId,
         otherFlatEntitiesToValidate: created.slice(index),
+        buildOptions
       });
 
       if (validationResult.status === 'fail') {
@@ -180,6 +186,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
         otherFlatEntitiesToValidate: deleted.slice(index),
+        buildOptions
       });
 
       if (validationResult.status === 'fail') {
@@ -206,6 +213,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
         otherFlatEntitiesToValidate: updated.slice(index),
+        buildOptions
       });
 
       if (validationResult === undefined) {

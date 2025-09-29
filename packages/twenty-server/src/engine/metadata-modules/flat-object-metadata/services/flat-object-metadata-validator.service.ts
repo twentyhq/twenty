@@ -1,22 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import {
-  isDefined,
-  isLabelIdentifierFieldMetadataTypes,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  FlatObjectMetadata,
+  FlatObjectMetadataSecond,
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
-import { computeMorphOrRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-morph-or-relation-target-flat-object-metadata-maps.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
@@ -26,19 +20,21 @@ import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/u
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 
+export type ValidateOneObjectMetadataArgs = {
+  flatObjectMetadataToValidate: FlatObjectMetadataSecond;
+  optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+  buildOptions: WorkspaceMigrationV2BuilderOptions;
+};
+
 @Injectable()
 export class FlatObjectMetadataValidatorService {
   constructor(
-    private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
 
   public validateFlatObjectMetadataUpdate({
-    existingFlatObjectMetadataMaps,
-    updatedFlatObjectMetadata,
-  }: {
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    updatedFlatObjectMetadata: FlatObjectMetadata;
-  }): FailedFlatEntityValidation<FlatObjectMetadata> {
+    optimisticFlatObjectMetadataMaps,
+    flatObjectMetadataToValidate: updatedFlatObjectMetadata,
+  }: ValidateOneObjectMetadataArgs): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'update_object',
       errors: [],
@@ -48,7 +44,7 @@ export class FlatObjectMetadataValidatorService {
     };
 
     const existingFlatObjectMetadata =
-      existingFlatObjectMetadataMaps.byId[updatedFlatObjectMetadata.id];
+      optimisticFlatObjectMetadataMaps.byId[updatedFlatObjectMetadata.id];
 
     if (!isDefined(existingFlatObjectMetadata)) {
       validationResult.errors.push({
@@ -67,33 +63,24 @@ export class FlatObjectMetadataValidatorService {
 
     validationResult.errors.push(
       ...this.validateFlatObjectMetadataNameAndLabels({
-        existingFlatObjectMetadataMaps,
+        optimisticFlatObjectMetadataMaps,
         flatObjectMetadataToValidate: updatedFlatObjectMetadata,
       }),
     );
 
+    // Issue here TODO
     validationResult.errors.push(
       ...validateFlatObjectMetadataIdentifiers(existingFlatObjectMetadata),
-    );
-
-    validationResult.errors.push(
-      ...this.validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
-        flatObjectMetadata: updatedFlatObjectMetadata,
-      }),
     );
 
     return validationResult;
   }
 
   public validateFlatObjectMetadataDeletion({
-    existingFlatObjectMetadataMaps,
-    objectMetadataToDeleteId,
+    flatObjectMetadataToValidate: { id: objectMetadataToDeleteId },
+    optimisticFlatObjectMetadataMaps,
     buildOptions,
-  }: {
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    objectMetadataToDeleteId: string;
-    buildOptions: WorkspaceMigrationV2BuilderOptions;
-  }): FailedFlatEntityValidation<FlatObjectMetadata> {
+  }: ValidateOneObjectMetadataArgs): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'delete_object',
       errors: [],
@@ -103,7 +90,7 @@ export class FlatObjectMetadataValidatorService {
     };
 
     const flatObjectMetadataToDelete =
-      existingFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
+      optimisticFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
 
     if (!isDefined(flatObjectMetadataToDelete)) {
       validationResult.errors.push({
@@ -151,17 +138,11 @@ export class FlatObjectMetadataValidatorService {
   }
 
   public async validateFlatObjectMetadataCreation({
-    existingFlatObjectMetadataMaps,
+    optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
-    otherFlatObjectMetadataMapsToValidate,
-  }: {
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    flatObjectMetadataToValidate: FlatObjectMetadata;
-    otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
-  }): Promise<{
-    objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata>;
-    fieldValidationResults: FailedFlatEntityValidation<FlatFieldMetadata>[];
-  }> {
+  }: ValidateOneObjectMetadataArgs): Promise<
+    FailedFlatEntityValidation<FlatObjectMetadata>
+  > {
     const objectValidationResult: FailedFlatEntityValidation<
       FlatObjectMetadata | FlatFieldMetadata
     > = {
@@ -176,10 +157,7 @@ export class FlatObjectMetadataValidatorService {
 
     if (
       isDefined(
-        findFlatObjectMetadataInFlatObjectMetadataMaps({
-          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          objectMetadataId: flatObjectMetadataToValidate.id,
-        }),
+        optimisticFlatObjectMetadataMaps.byId[flatObjectMetadataToValidate.id],
       )
     ) {
       objectValidationResult.errors.push({
@@ -197,74 +175,26 @@ export class FlatObjectMetadataValidatorService {
       });
     }
 
+    // Issue here TODO
     objectValidationResult.errors.push(
-      ...this.validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
-        flatObjectMetadata: flatObjectMetadataToValidate,
-      }),
+      ...validateFlatObjectMetadataIdentifiers(flatObjectMetadataToValidate),
     );
-
     objectValidationResult.errors.push(
       ...this.validateFlatObjectMetadataNameAndLabels({
-        existingFlatObjectMetadataMaps,
+        optimisticFlatObjectMetadataMaps,
         flatObjectMetadataToValidate,
       }),
     );
 
-    const fieldValidationResults: FailedFlatEntityValidation<FlatFieldMetadata>[] =
-      [];
-    let optimisticFlatObjectMetadataMaps =
-      addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadata: {
-          ...flatObjectMetadataToValidate,
-          flatFieldMetadatas: [],
-        },
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      });
-
-    for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
-      const relationTargetFlatObjectMetadataMaps =
-        isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate) &&
-        isDefined(otherFlatObjectMetadataMapsToValidate)
-          ? computeMorphOrRelationTargetFlatObjectMetadataMaps({
-              flatFieldMetadata: flatFieldMetadataToValidate,
-              flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
-            })
-          : undefined;
-      const flatFieldValidatorErrors =
-        await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
-          {
-            existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-            flatFieldMetadataToValidate,
-            workspaceId: flatObjectMetadataToValidate.workspaceId,
-            otherFlatObjectMetadataMapsToValidate:
-              relationTargetFlatObjectMetadataMaps,
-          },
-        );
-
-      if (flatFieldValidatorErrors.errors.length > 0) {
-        fieldValidationResults.push(flatFieldValidatorErrors);
-        continue;
-      }
-
-      optimisticFlatObjectMetadataMaps =
-        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatFieldMetadata: flatFieldMetadataToValidate,
-          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-        });
-    }
-
-    return {
-      fieldValidationResults,
-      objectValidationResult,
-    };
+    return objectValidationResult;
   }
 
   private validateFlatObjectMetadataNameAndLabels({
-    existingFlatObjectMetadataMaps,
+    optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
   }: {
-    flatObjectMetadataToValidate: FlatObjectMetadata;
-    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatObjectMetadataToValidate: FlatObjectMetadataSecond;
+    optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
   }): FlatObjectMetadataValidationError[] {
     const errors: FlatObjectMetadataValidationError[] = [];
 
@@ -297,7 +227,7 @@ export class FlatObjectMetadataValidatorService {
       doesOtherObjectWithSameNameExists({
         objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
         objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
-        objectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataMaps: optimisticFlatObjectMetadataMaps,
         existingObjectMetadataId: flatObjectMetadataToValidate.id,
       })
     ) {
@@ -306,51 +236,6 @@ export class FlatObjectMetadataValidatorService {
         message: 'Object already exists',
         userFriendlyMessage: t`Object already exists`,
       });
-    }
-
-    return errors;
-  }
-
-  private validateFlatObjectMetadataLabelIdentifierFieldMetadataId({
-    flatObjectMetadata,
-  }: {
-    flatObjectMetadata: FlatObjectMetadata;
-  }) {
-    const errors: FlatObjectMetadataValidationError[] = [];
-
-    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
-      errors.push({
-        code: ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
-        message: t`Label identifier field metadata is required`,
-        userFriendlyMessage: t`Label identifier field metadata is required`,
-      });
-    } else {
-      const relatedFlatFieldMetadata =
-        flatObjectMetadata.flatFieldMetadatas.find(
-          (flatFieldMetadata) =>
-            flatFieldMetadata.id ===
-            flatObjectMetadata.labelIdentifierFieldMetadataId,
-        );
-
-      if (!relatedFlatFieldMetadata) {
-        errors.push({
-          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message: t`Label identifier field metadata not found in field metadata list`,
-          userFriendlyMessage: t`Label identifier field metadata not found in field metadata list`,
-          value: flatObjectMetadata.labelIdentifierFieldMetadataId,
-        });
-      } else {
-        if (
-          !isLabelIdentifierFieldMetadataTypes(relatedFlatFieldMetadata.type)
-        ) {
-          errors.push({
-            code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-            message: t`Label identifier field metadata must be a TEXT or FULL_NAME field type`,
-            userFriendlyMessage: t`Label identifier field metadata must be a TEXT or FULL_NAME field type`,
-            value: relatedFlatFieldMetadata.type,
-          });
-        }
-      }
     }
 
     return errors;

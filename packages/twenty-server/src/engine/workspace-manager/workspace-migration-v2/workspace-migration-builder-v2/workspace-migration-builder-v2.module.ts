@@ -43,6 +43,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationBuilderV2Service,
     WorkspaceMigrationV2ViewActionsBuilderService,
     WorkspaceMigrationV2IndexActionsBuilderService,
+    WorkspaceMigrationV2ObjectActionsBuilderService,
     WorkspaceMigrationV2ViewFieldActionsBuilderService,
     WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
