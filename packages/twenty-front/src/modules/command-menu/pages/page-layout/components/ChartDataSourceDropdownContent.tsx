@@ -17,6 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ChartDataSourceDropdownContent = () => {
@@ -76,6 +77,8 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
+  const { getIcon } = useIcons();
+
   return (
     <>
       <DropdownMenuHeader>Source</DropdownMenuHeader>
@@ -109,6 +112,7 @@ export const ChartDataSourceDropdownContent = () => {
                 text={objectMetadataItem.labelPlural}
                 selected={currentSource === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
+                LeftIcon={getIcon(objectMetadataItem.icon)}
                 onClick={() => {
                   updateCurrentWidgetConfig({
                     source: objectMetadataItem.id,
