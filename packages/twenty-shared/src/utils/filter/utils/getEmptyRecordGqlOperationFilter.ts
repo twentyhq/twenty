@@ -16,8 +16,8 @@ import {
   type SelectFilter,
   type StringFilter,
 } from '@/types';
-import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/compute-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
-import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/compute-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
+import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
+import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
