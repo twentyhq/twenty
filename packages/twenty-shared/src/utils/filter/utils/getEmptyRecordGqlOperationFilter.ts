@@ -19,7 +19,7 @@ import {
 import { CustomError } from '@/utils/errors';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
-import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,7 +27,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
   correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
-  recordFilter: RecordFilterShared;
+  recordFilter: RecordFilter;
 };
 
 export const getEmptyRecordGqlOperationFilter = ({

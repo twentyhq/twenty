@@ -1,6 +1,6 @@
 import { ViewFilterOperand as RecordFilterOperand, type CompositeFieldSubFieldName, type LinksFilter, type PartialFieldMetadataItem } from '@/types';
 import { CustomError } from '@/utils/errors';
-import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeGqlOperationFilterForLinks = ({
@@ -8,7 +8,7 @@ export const computeGqlOperationFilterForLinks = ({
   correspondingFieldMetadataItem,
   subFieldName,
 }: {
-  recordFilter: RecordFilterShared;
+  recordFilter: RecordFilter;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>
   subFieldName: CompositeFieldSubFieldName | null | undefined;
 }) => {

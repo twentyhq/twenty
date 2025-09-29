@@ -29,16 +29,15 @@ import {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
-  generateILikeFiltersForCompositeFields, getEmptyRecordGqlOperationFilter, getFilterTypeFromFieldType,
+  generateILikeFiltersForCompositeFields, getEmptyRecordGqlOperationFilter,
   isExpectedSubFieldName,
-  type RecordFilterShared
 } from '@/utils/filter';
 
 import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateViewFilterValue';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
-import { checkIfShouldComputeEmptinessFilter, checkIfShouldSkipFiltering, CustomError, isDefined } from '@/utils';
+import { checkIfShouldComputeEmptinessFilter, checkIfShouldSkipFiltering, CustomError, getFilterTypeFromFieldType, isDefined, type RecordFilter } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
@@ -52,7 +51,7 @@ type FieldShared = {
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies?: RecordFilterValueDependencies;
-  recordFilter: RecordFilterShared;
+  recordFilter: RecordFilter;
   fieldMetadataItems: FieldShared[];
   recordIdsForUuid?: string[];
 };

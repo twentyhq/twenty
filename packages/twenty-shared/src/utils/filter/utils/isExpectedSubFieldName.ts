@@ -1,7 +1,7 @@
-import { COMPOSITE_FIELD_TYPE_SUB_FIELDS } from '@/constants/CompositeFieldTypeSubFields';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from '@/constants/CompositeFieldTypeSubFieldsNames';
 import { type CompositeFieldSubFieldName } from '@/types';
 
-type CompositeMap = typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS;
+type CompositeMap = typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES;
 
 export const isExpectedSubFieldName = <
   FieldMetadataType extends keyof CompositeMap,
@@ -11,9 +11,9 @@ export const isExpectedSubFieldName = <
   subFieldName: PossibleSubFieldName,
   subFieldNameToCheck: string | null | undefined,
 ): subFieldNameToCheck is PossibleSubFieldName => {
-  const allowedSubFields = COMPOSITE_FIELD_TYPE_SUB_FIELDS[
+  const allowedSubFields = Object.values(COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[
     fieldMetadataType
-  ] as readonly string[];
+  ]) as readonly string[];
 
   return (
     allowedSubFields.includes(subFieldName as string) &&

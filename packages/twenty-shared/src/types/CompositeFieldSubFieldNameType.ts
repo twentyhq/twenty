@@ -1,3 +1,6 @@
-import { type COMPOSITE_FIELD_TYPE_SUB_FIELDS } from '@/constants/CompositeFieldTypeSubFields';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from '@/constants/CompositeFieldTypeSubFieldsNames';
 
-export type CompositeFieldSubFieldName = typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS[keyof typeof COMPOSITE_FIELD_TYPE_SUB_FIELDS][number];
+const _allSubFieldValues = Object.values(COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES)
+  .flatMap(obj => Object.values(obj));
+
+export type CompositeFieldSubFieldName = typeof _allSubFieldValues[number];

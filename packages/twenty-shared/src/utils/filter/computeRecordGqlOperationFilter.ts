@@ -8,8 +8,8 @@ import {
   isDefined,
   turnRecordFilterGroupsIntoGqlOperationFilter,
   turnRecordFilterIntoRecordGqlOperationFilter,
-  type RecordFilterGroupShared,
-  type RecordFilterShared,
+  type RecordFilter,
+  type RecordFilterGroup,
 } from '@/utils';
 
 export const computeRecordGqlOperationFilter = ({
@@ -18,9 +18,9 @@ export const computeRecordGqlOperationFilter = ({
   recordFilterGroups,
   filterValueDependencies,
 }: {
-  recordFilters: RecordFilterShared[];
+  recordFilters: RecordFilter[];
   fields: PartialFieldMetadataItem[];
-  recordFilterGroups: RecordFilterGroupShared[];
+  recordFilterGroups: RecordFilterGroup[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): RecordGqlOperationFilter => {
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =

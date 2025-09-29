@@ -3,7 +3,7 @@ import { type CompositeFieldSubFieldName, type FilterableAndTSVectorFieldType, t
 import { isDefined } from '@/utils';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
-export type RecordFilterShared = {
+export type RecordFilter = {
   id: string;
   fieldMetadataId: string;
   value: string;
@@ -13,7 +13,7 @@ export type RecordFilterShared = {
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 
-export type RecordFilterGroupShared = {
+export type RecordFilterGroup = {
   id: string;
   parentRecordFilterGroupId?: string | null;
   logicalOperator: RecordFilterGroupLogicalOperator;
@@ -27,9 +27,9 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   currentRecordFilterGroupId,
 }: {
   filterValueDependencies: RecordFilterValueDependencies,
-  filters: RecordFilterShared[],
+  filters: RecordFilter[],
   fields: PartialFieldMetadataItem[],
-  recordFilterGroups: RecordFilterGroupShared[],
+  recordFilterGroups: RecordFilterGroup[],
   currentRecordFilterGroupId?: string,
 }): RecordGqlOperationFilter | undefined => {
   const currentRecordFilterGroup = recordFilterGroups.find(

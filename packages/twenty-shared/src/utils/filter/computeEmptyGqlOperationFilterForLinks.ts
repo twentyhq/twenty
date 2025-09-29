@@ -5,14 +5,14 @@ import {
 } from '@/types';
 import { CustomError } from '@/utils/errors';
 
-import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeEmptyGqlOperationFilterForLinks = ({
   recordFilter,
   correspondingFieldMetadataItem,
 }: {
-  recordFilter: RecordFilterShared;
+  recordFilter: RecordFilter;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name'>;
 }): RecordGqlOperationFilter => {
   const subFieldName = recordFilter.subFieldName;

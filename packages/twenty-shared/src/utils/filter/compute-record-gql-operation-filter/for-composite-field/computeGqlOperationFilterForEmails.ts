@@ -7,7 +7,7 @@ import {
 } from '@/types';
 import { CustomError } from '@/utils/errors';
 
-import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeGqlOperationFilterForEmails = ({
@@ -15,7 +15,7 @@ export const computeGqlOperationFilterForEmails = ({
   correspondingFieldMetadataItem,
   subFieldName,
 }: {
-  recordFilter: RecordFilterShared;
+  recordFilter: RecordFilter;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
   subFieldName: CompositeFieldSubFieldName | null | undefined;
 }): RecordGqlOperationFilter => {

@@ -28,8 +28,8 @@ export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGql
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export type {
-  RecordFilterShared,
-  RecordFilterGroupShared,
+  RecordFilter,
+  RecordFilterGroup,
 } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';

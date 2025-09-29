@@ -1,5 +1,6 @@
 import { type FieldMetadataType, type FilterableAndTSVectorFieldType, type ViewFilterOperand } from '@/types';
-import { getFilterTypeFromFieldType, isEmptinessOperand } from '@/utils/filter';
+import { isEmptinessOperand } from '@/utils/filter/isEmptinessOperand';
+import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 
 export const checkIfShouldComputeEmptinessFilter = ({
   recordFilterOperand,

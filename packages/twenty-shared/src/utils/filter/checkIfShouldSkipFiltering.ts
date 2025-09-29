@@ -1,9 +1,9 @@
 import { ViewFilterOperand as RecordFilterOperand } from '@/types';
 import { isDefined } from '@/utils';
-import { isEmptinessOperand, type RecordFilterShared } from '@/utils/filter';
+import { isEmptinessOperand, type RecordFilter } from '@/utils/filter';
 
 type CheckIfShouldSkipFilteringParams = {
-  recordFilter: Pick<RecordFilterShared, 'operand' | 'value'>;
+  recordFilter: Pick<RecordFilter, 'operand' | 'value'>;
 };
 
 export const checkIfShouldSkipFiltering = ({
