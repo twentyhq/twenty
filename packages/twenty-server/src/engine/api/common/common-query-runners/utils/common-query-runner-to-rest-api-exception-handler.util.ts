@@ -1,5 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import {
   CommonQueryRunnerExceptionCode,
   type CommonQueryRunnerException,
@@ -9,9 +11,12 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
   error: CommonQueryRunnerException,
 ) => {
   switch (error.code) {
+    case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+      throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new BadRequestException('Record not found');
-    default:
-      throw error;
+    default: {
+      return assertUnreachable(error.code);
+    }
   }
 };

@@ -4,4 +4,5 @@ export class CommonQueryRunnerException extends CustomException<CommonQueryRunne
 
 export enum CommonQueryRunnerExceptionCode {
   RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
+  INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
 }

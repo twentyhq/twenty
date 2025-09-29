@@ -20,10 +20,6 @@ import { FindOneQueryArgs } from 'src/engine/api/common/types/common-query-args.
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import {
-  WorkspaceQueryRunnerException,
-  WorkspaceQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -117,9 +113,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new WorkspaceQueryRunnerException(
+      throw new CommonQueryRunnerException(
         'Missing filter argument',
-        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
   }
