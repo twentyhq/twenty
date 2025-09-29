@@ -133,6 +133,10 @@ export const useEdgeState = () => {
         ...EDGE_BRANCH_ARROW_MARKER.Default,
       })),
     );
+  };
+
+  const clearEdgeHover = () => {
+    setWorkflowHoveredEdge(undefined);
 
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
@@ -146,10 +150,6 @@ export const useEdgeState = () => {
         return edge;
       }),
     );
-  };
-
-  const clearEdgeHover = () => {
-    setWorkflowHoveredEdge(undefined);
   };
 
   return {
