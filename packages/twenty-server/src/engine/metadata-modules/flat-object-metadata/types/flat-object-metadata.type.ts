@@ -31,3 +31,10 @@ export type FlatObjectMetadataWithoutFields = Omit<
   FlatObjectMetadata,
   'flatFieldMetadatas' | 'flatIndexMetadatas'
 >;
+
+export type FlatObjectMetadataSecond = Omit<
+  ObjectMetadataEntity,
+  ObjectMetadataRelationProperties | 'dataSourceId'
+> & {
+  universalIdentifier: string;
+};
