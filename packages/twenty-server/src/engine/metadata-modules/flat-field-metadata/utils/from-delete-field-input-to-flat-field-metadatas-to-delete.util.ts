@@ -3,32 +3,34 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
-import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  existingFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   deleteOneFieldInput: DeleteOneFieldInput;
-};
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatIndexMaps' | 'flatObjectMetadataMaps'
+>;
 // TODO refactor as a side effect service
 export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
-  existingFlatObjectMetadataMaps,
+  flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   deleteOneFieldInput: rawDeleteOneInput,
-  existingFlatIndexMaps,
+  flatIndexMaps: existingFlatIndexMaps,
+  flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
 }: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
-  flatFieldMetadatasToDelete: FlatFieldMetadata[];
+  flatFieldMetadatasToDelete: FlatFieldMetadataSecond[];
   flatIndexesToUpdate: FlatIndexMetadata[];
   flatIndexesToDelete: FlatIndexMetadata[];
 } => {
@@ -38,11 +40,10 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       ['id'],
     );
 
-  const flatFieldMetadataToDelete =
-    findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
-      fieldMetadataId: fieldMetadataToDeleteId,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+  const flatFieldMetadataToDelete = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldMetadataToDeleteId,
+    flatEntityMaps: existingFlatfieldMetadataMaps,
+  });
 
   if (!isDefined(flatFieldMetadataToDelete)) {
     throw new FieldMetadataException(
@@ -54,7 +55,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   const relatedFlatFieldMetadataToDelete =
     computeFlatFieldMetadataRelatedFlatFieldMetadata({
       flatFieldMetadata: flatFieldMetadataToDelete,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
     });
 
   const flatFieldMetadatasToDelete = [
@@ -122,15 +123,20 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
         };
       }
 
-      const flatObjectMetadata =
-        findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        flatEntityId: flatIndex.objectMetadataId,
+      });
+      const { objectFlatFieldMetadatas } =
+        findObjectFieldsInFlatFieldMetadataMaps({
+          flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
           objectMetadataId: flatIndex.objectMetadataId,
         });
 
       const newIndex = generateFlatIndexMetadataWithNameOrThrow({
         flatObjectMetadata,
         flatIndex,
+        objectFlatFieldMetadatas,
       });
 
       return {
