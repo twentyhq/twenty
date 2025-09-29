@@ -6,8 +6,10 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { COMPANY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/company-flat-fields.mock';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { OPPORTUNITY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/opportunity-flat-fields.mock';
 import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/pet-flat-fields.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -17,9 +19,6 @@ import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 
-// TODO prastoin test defaultValue and settings updates
-// TODO prastoin test standard abstraction in TDD style
-
 const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
   {
     title: 'It should build an create_field action for a RELATION field',
@@ -27,39 +26,54 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
       input: () => {
         const targetRelationId = faker.string.uuid();
         const sourceRelationId = faker.string.uuid();
-        const sourceRelationFlatField = getFlatFieldMetadataMock({
-          id: sourceRelationId,
-          uniqueIdentifier: 'field-metadata-unique-identifier-1',
-          objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
-          type: FieldMetadataType.RELATION,
-          relationTargetFieldMetadataId: targetRelationId,
-          relationTargetObjectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-          flatRelationTargetFieldMetadata: undefined,
-          flatRelationTargetObjectMetadata:
-            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-              ROCKET_FLAT_OBJECT_MOCK,
-            ),
-        });
+        const draftSourceRelationFlatField =
+          getRelationTargetFlatFieldMetadataMock({
+            id: sourceRelationId,
+            universalIdentifier: 'field-metadata-unique-identifier-1',
+            objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+            type: FieldMetadataType.RELATION,
+            settings: {
+              relationType: RelationType.MANY_TO_ONE,
+              joinColumnName: 'whatever',
+              onDelete: undefined,
+            },
+            relationTargetFieldMetadataId: targetRelationId,
+            relationTargetObjectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+            flatRelationTargetObjectMetadata:
+              fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+                ROCKET_FLAT_OBJECT_MOCK,
+              ),
+          });
 
         const targetRelationFlatField = getFlatFieldMetadataMock({
           id: targetRelationId,
-          uniqueIdentifier: 'field-metadata-unique-identifier-2',
+          universalIdentifier: 'field-metadata-unique-identifier-2',
           objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
+          settings: {
+            relationType: RelationType.ONE_TO_MANY,
+            joinColumnName: 'sourceWhatever',
+            onDelete: undefined,
+          },
           relationTargetFieldMetadataId: sourceRelationId,
           relationTargetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
-          flatRelationTargetFieldMetadata: sourceRelationFlatField,
+          flatRelationTargetFieldMetadata: draftSourceRelationFlatField,
           flatRelationTargetObjectMetadata:
             fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
               PET_FLAT_OBJECT_MOCK,
             ),
         });
 
-        sourceRelationFlatField.flatRelationTargetFieldMetadata =
-          removePropertiesFromRecord(targetRelationFlatField, [
-            'flatRelationTargetFieldMetadata',
-            'flatRelationTargetObjectMetadata',
-          ]);
+        const sourceRelationFlatField = getFlatFieldMetadataMock({
+          ...draftSourceRelationFlatField,
+          flatRelationTargetFieldMetadata: removePropertiesFromRecord(
+            targetRelationFlatField as FlatFieldMetadata<FieldMetadataType.RELATION>,
+            [
+              'flatRelationTargetFieldMetadata',
+              'flatRelationTargetObjectMetadata',
+            ],
+          ),
+        });
         const toFlatObjectMetadataMaps = [
           sourceRelationFlatField,
           targetRelationFlatField,
@@ -74,9 +88,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           toFlatObjectMetadataMaps,
         };
-      },
-      expectedActionsTypeCounter: {
-        createField: 2,
       },
     },
   },
@@ -94,9 +105,6 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
             }),
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           }),
-      },
-      expectedActionsTypeCounter: {
-        updateField: 1,
       },
     },
   },
@@ -135,15 +143,12 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         toFlatObjectMetadataMaps:
           addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
             flatFieldMetadata: getFlatFieldMetadataMock({
-              uniqueIdentifier: 'field-metadata-unique-identifier-1',
+              universalIdentifier: 'field-metadata-unique-identifier-1',
               type: FieldMetadataType.TEXT,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
             }),
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           }),
-      },
-      expectedActionsTypeCounter: {
-        createField: 1,
       },
     },
   },
@@ -164,9 +169,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
             }),
           }),
       },
-      expectedActionsTypeCounter: {
-        updateField: 1,
-      },
     },
   },
   {
@@ -183,9 +185,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
               icon: 'new icon',
             }),
           }),
-      },
-      expectedActionsTypeCounter: {
-        updateField: 1,
       },
     },
   },
@@ -206,9 +205,6 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
           objectMetadataId: PET_FLAT_FIELDS_MOCK.species.objectMetadataId,
           flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
         }),
-      },
-      expectedActionsTypeCounter: {
-        deleteField: 1,
       },
     },
   },

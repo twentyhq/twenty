@@ -26,7 +26,7 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMaps', () => {
             flatFieldMetadata: getFlatFieldMetadataMock({
               objectMetadataId: 'non-existent',
               type: FieldMetadataType.TEXT,
-              uniqueIdentifier: 'unique-id-1',
+              universalIdentifier: 'unique-id-1',
               id: 'unique-id-1',
             }),
           },

@@ -9,6 +9,7 @@ import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
+import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
@@ -138,6 +139,29 @@ export const WorkflowEditActionFormFiller = ({
                 }}
                 objectNameSingulars={[objectNameSingular]}
                 disabled={actionOptions.readonly}
+              />
+            );
+          }
+
+          if (field.type === 'SELECT') {
+            const selectedFieldId = field.settings?.selectedFieldId;
+
+            if (!isDefined(selectedFieldId)) {
+              return null;
+            }
+
+            return (
+              <WorkflowFormFieldInput
+                key={field.id}
+                fieldMetadataId={selectedFieldId}
+                defaultValue={field.value}
+                readonly={actionOptions.readonly}
+                onChange={(value) => {
+                  onFieldUpdate({
+                    fieldId: field.id,
+                    value,
+                  });
+                }}
               />
             );
           }

@@ -11,7 +11,7 @@ const RenderWithModal = (
 ) => {
   return (
     <Modal
-      modalId={'email-verification-sent-modal'}
+      modalId="email-verification-sent-modal"
       padding="none"
       modalVariant="primary"
     >

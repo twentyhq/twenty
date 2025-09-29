@@ -1,18 +1,30 @@
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
-import { DataSource, type DataSourceOptions } from 'typeorm';
+import { DataSource, type DataSourceOptions, type LogLevel } from 'typeorm';
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
 });
+
+const getLoggingConfig = (): LogLevel[] => {
+  if (process.env.NODE_ENV === 'development') {
+    return ['query', 'error'];
+  }
+
+  if (process.env.NODE_ENV === 'test') {
+    return [];
+  }
+
+  return ['error'];
+};
 
 const isJest = process.argv.some((arg) => arg.includes('jest'));
 
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  logging: ['error'],
+  logging: getLoggingConfig(),
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'
@@ -43,6 +55,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
           rejectUnauthorized: false,
         }
       : undefined,
+  extra: {
+    query_timeout: 15000,
+  },
 };
 
 export const connectionSource = new DataSource(

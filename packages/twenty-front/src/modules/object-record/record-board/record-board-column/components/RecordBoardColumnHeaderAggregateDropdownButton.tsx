@@ -32,8 +32,8 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
       <>
         <StyledTag
           text={value ? value.toString() : '-'}
-          color={'transparent'}
-          weight={'regular'}
+          color="transparent"
+          weight="regular"
         />
         {!isDropdownOpen && (
           <AppTooltip

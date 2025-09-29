@@ -78,6 +78,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
                   kanbanAggregateOperation: aggregateOperation,
+                  objectMetadataId: objectMetadataItem.id,
                 });
                 closeDropdown();
               }}

@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
@@ -26,7 +23,6 @@ export class PermissionsService {
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
@@ -85,35 +81,16 @@ export class PermissionsService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
-
-    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
-      {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-      };
+    const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     return {
       permissionFlags,
-      objectRecordsPermissions,
-      objectPermissions,
+      objectsPermissions,
     };
   }
 
   public getDefaultUserWorkspacePermissions = () =>
     ({
-      objectRecordsPermissions: {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
-      },
       permissionFlags: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
@@ -126,8 +103,9 @@ export class PermissionsService {
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
+        [PermissionFlagType.IMPERSONATE]: false,
       },
-      objectPermissions: {},
+      objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
   public async userHasWorkspaceSettingPermission({
@@ -142,16 +120,6 @@ export class PermissionsService {
     apiKeyId?: string;
   }): Promise<boolean> {
     if (apiKeyId) {
-      const isApiKeyRolesEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-          workspaceId,
-        );
-
-      if (!isApiKeyRolesEnabled) {
-        return true;
-      }
-
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKeyId,
         workspaceId,

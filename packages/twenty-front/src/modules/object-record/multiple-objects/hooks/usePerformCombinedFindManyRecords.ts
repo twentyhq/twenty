@@ -51,13 +51,6 @@ export const usePerformCombinedFindManyRecords = () => {
       )
       .join(', ');
 
-    const limitPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
-          `$limit${capitalize(objectNameSingular)}: Int`,
-      )
-      .join(', ');
-
     const queryOperationSignatureWithObjectMetadataItemArray =
       operationSignatures.map((operationSignature) => {
         const objectMetadataItem = objectMetadataItemsValue.find(
@@ -80,7 +73,6 @@ export const usePerformCombinedFindManyRecords = () => {
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
       ${cursorFilteringPerMetadataItemArray}, 
-      ${limitPerMetadataItemArray}
     ) {
       ${queryOperationSignatureWithObjectMetadataItemArray
         .map(

@@ -14,6 +14,7 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
+import { WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -32,11 +33,13 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersionId,
     workspaceId,
+    sourceConnectionOptions,
   }: {
     source: string;
     target: string;
     workflowVersionId: string;
     workspaceId: string;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
@@ -81,6 +84,7 @@ export class WorkflowVersionEdgeWorkspaceService {
         steps,
         source,
         target,
+        sourceConnectionOptions,
         workflowVersion,
         workflowVersionRepository,
       });
@@ -92,11 +96,13 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersionId,
     workspaceId,
+    sourceConnectionOptions,
   }: {
     source: string;
     target: string;
     workflowVersionId: string;
     workspaceId: string;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
@@ -143,6 +149,7 @@ export class WorkflowVersionEdgeWorkspaceService {
         target,
         workflowVersion,
         workflowVersionRepository,
+        sourceConnectionOptions,
       });
     }
   }
@@ -169,8 +176,8 @@ export class WorkflowVersionEdgeWorkspaceService {
 
     if (trigger.nextStepIds?.includes(target)) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -184,8 +191,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedTrigger,
     });
   }
 
@@ -196,6 +204,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersion,
     workflowVersionRepository,
+    sourceConnectionOptions,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
@@ -203,6 +212,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const sourceStep = steps.find((step) => step.id === source);
 
@@ -213,17 +223,25 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    if (sourceStep.nextStepIds?.includes(target)) {
+    if (
+      sourceStep.nextStepIds?.includes(target) &&
+      !isDefined(sourceConnectionOptions)
+    ) {
       return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
-    };
+    const { updatedSourceStep, shouldPersist } = isDefined(
+      sourceConnectionOptions,
+    )
+      ? this.buildUpdatedSourceStepWithConnectionOptions({
+          sourceStep,
+          target,
+          sourceConnectionOptions,
+        })
+      : this.buildUpdatedSourceStep({ sourceStep, target });
 
     const updatedSteps = steps.map((step) => {
       if (step.id === source) {
@@ -233,14 +251,108 @@ export class WorkflowVersionEdgeWorkspaceService {
       return step;
     });
 
-    await workflowVersionRepository.update(workflowVersion.id, {
-      steps: updatedSteps,
-    });
+    if (shouldPersist) {
+      await workflowVersionRepository.update(workflowVersion.id, {
+        steps: updatedSteps,
+      });
+    }
 
     return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedSteps,
     });
+  }
+
+  private buildUpdatedSourceStepWithConnectionOptions({
+    sourceStep,
+    target,
+    sourceConnectionOptions,
+  }: {
+    sourceStep: WorkflowAction;
+    target: string;
+    sourceConnectionOptions: WorkflowStepConnectionOptions;
+  }): {
+    updatedSourceStep: WorkflowAction;
+    shouldPersist: boolean;
+  } {
+    switch (sourceConnectionOptions.connectedStepType) {
+      case WorkflowActionType.ITERATOR:
+        if (sourceStep.type !== WorkflowActionType.ITERATOR) {
+          throw new WorkflowVersionEdgeException(
+            `Source step '${sourceStep.id}' is not an iterator`,
+            WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        if (sourceConnectionOptions.settings.isConnectedToLoop) {
+          const currentInitialLoopStepIds =
+            sourceStep.settings.input.initialLoopStepIds;
+
+          if (currentInitialLoopStepIds?.includes(target)) {
+            return {
+              updatedSourceStep: sourceStep,
+              shouldPersist: false,
+            };
+          }
+
+          return {
+            updatedSourceStep: {
+              ...sourceStep,
+              settings: {
+                ...sourceStep.settings,
+                input: {
+                  ...sourceStep.settings.input,
+                  initialLoopStepIds: [
+                    ...(currentInitialLoopStepIds ?? []),
+                    target,
+                  ],
+                },
+              },
+            },
+            shouldPersist: true,
+          };
+        } else {
+          return this.buildUpdatedSourceStep({
+            sourceStep,
+            target,
+          });
+        }
+
+      default:
+        return this.buildUpdatedSourceStep({
+          sourceStep,
+          target,
+        });
+    }
+  }
+
+  private buildUpdatedSourceStep({
+    sourceStep,
+    target,
+  }: {
+    sourceStep: WorkflowAction;
+    target: string;
+  }): {
+    updatedSourceStep: WorkflowAction;
+    shouldPersist: boolean;
+  } {
+    if (sourceStep.nextStepIds?.includes(target)) {
+      return {
+        updatedSourceStep: sourceStep,
+        shouldPersist: false,
+      };
+    }
+
+    const updatedSourceStep = {
+      ...sourceStep,
+      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
+    };
+
+    return {
+      updatedSourceStep,
+      shouldPersist: true,
+    };
   }
 
   private async deleteTriggerEdge({
@@ -264,12 +376,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     }
 
     if (!trigger.nextStepIds?.includes(target)) {
-      return this.handleFilterBetweenTriggerAndTarget({
-        trigger,
-        steps,
-        target,
-        workflowVersionId: workflowVersion.id,
-        workflowVersionRepository,
+      return computeWorkflowVersionStepChanges({
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
@@ -285,8 +394,9 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedTrigger,
     });
   }
 
@@ -297,6 +407,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target,
     workflowVersion,
     workflowVersionRepository,
+    sourceConnectionOptions,
   }: {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
@@ -304,6 +415,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     target: string;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const sourceStep = steps.find((step) => step.id === source);
 
@@ -314,23 +426,40 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    if (!sourceStep.nextStepIds?.includes(target)) {
-      return await this.handleFilterBetweenSourceAndTarget({
-        trigger,
-        steps,
-        sourceStep,
-        target,
-        workflowVersionId: workflowVersion.id,
-        workflowVersionRepository,
+    if (
+      !sourceStep.nextStepIds?.includes(target) &&
+      !isDefined(sourceConnectionOptions)
+    ) {
+      return computeWorkflowVersionStepChanges({
+        existingTrigger: trigger,
+        existingSteps: steps,
       });
     }
 
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: sourceStep.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== target,
-      ),
-    };
+    const { updatedSourceStep, shouldPersist } = isDefined(
+      sourceConnectionOptions,
+    )
+      ? this.buildUpdatedSourceStepWithOptions({
+          sourceStep,
+          target,
+          sourceConnectionOptions,
+        })
+      : {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter(
+              (nextStepId: string) => nextStepId !== target,
+            ),
+          },
+          shouldPersist: true,
+        };
+
+    if (!shouldPersist) {
+      return computeWorkflowVersionStepChanges({
+        existingTrigger: trigger,
+        existingSteps: steps,
+      });
+    }
 
     const updatedSteps = steps.map((step) => {
       if (step.id === source) {
@@ -345,129 +474,77 @@ export class WorkflowVersionEdgeWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
+      existingTrigger: trigger,
+      existingSteps: steps,
+      updatedSteps,
     });
   }
 
-  private async handleFilterBetweenTriggerAndTarget({
-    trigger,
-    steps,
-    target,
-    workflowVersionId,
-    workflowVersionRepository,
-  }: {
-    trigger: WorkflowTrigger;
-    steps: WorkflowAction[];
-    target: string;
-    workflowVersionId: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-  }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenTriggerAndTarget = this.findFilterBetweenNodes({
-      steps,
-      sourceNextStepIds: trigger.nextStepIds,
-      target,
-    });
-
-    if (!isDefined(filterBetweenTriggerAndTarget)) {
-      return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
-      });
-    }
-
-    const updatedTrigger = {
-      ...trigger,
-      nextStepIds: trigger.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== filterBetweenTriggerAndTarget.id,
-      ),
-    };
-
-    const updatedSteps = steps.filter(
-      (step) => step.id !== filterBetweenTriggerAndTarget.id,
-    );
-
-    await workflowVersionRepository.update(workflowVersionId, {
-      trigger: updatedTrigger,
-      steps: updatedSteps,
-    });
-
-    return computeWorkflowVersionStepChanges({
-      trigger: updatedTrigger,
-      steps: updatedSteps,
-    });
-  }
-
-  private async handleFilterBetweenSourceAndTarget({
-    trigger,
-    steps,
+  private buildUpdatedSourceStepWithOptions({
     sourceStep,
     target,
-    workflowVersionRepository,
-    workflowVersionId,
+    sourceConnectionOptions,
   }: {
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[];
     sourceStep: WorkflowAction;
     target: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-    workflowVersionId: string;
-  }): Promise<WorkflowVersionStepChangesDTO> {
-    const filterBetweenSourceAndTarget = this.findFilterBetweenNodes({
-      steps,
-      sourceNextStepIds: sourceStep.nextStepIds,
-      target,
-    });
-
-    if (!isDefined(filterBetweenSourceAndTarget)) {
-      return computeWorkflowVersionStepChanges({
-        trigger,
-        steps,
-      });
-    }
-
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: sourceStep.nextStepIds?.filter(
-        (nextStepId: string) => nextStepId !== filterBetweenSourceAndTarget.id,
-      ),
-    };
-
-    const updatedSteps = steps
-      .map((step) => {
-        if (step.id === sourceStep.id) {
-          return updatedSourceStep;
+    sourceConnectionOptions: WorkflowStepConnectionOptions;
+  }): {
+    updatedSourceStep: WorkflowAction;
+    shouldPersist: boolean;
+  } {
+    switch (sourceConnectionOptions.connectedStepType) {
+      case WorkflowActionType.ITERATOR:
+        if (sourceStep.type !== WorkflowActionType.ITERATOR) {
+          throw new WorkflowVersionEdgeException(
+            `Source step '${sourceStep.id}' is not an iterator`,
+            WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+          );
         }
 
-        return step;
-      })
-      .filter((step) => step.id !== filterBetweenSourceAndTarget.id);
+        if (sourceConnectionOptions.settings.isConnectedToLoop) {
+          const currentInitialLoopStepIds =
+            sourceStep.settings.input.initialLoopStepIds;
 
-    await workflowVersionRepository.update(workflowVersionId, {
-      steps: updatedSteps,
-    });
+          if (!currentInitialLoopStepIds?.includes(target)) {
+            return {
+              updatedSourceStep: sourceStep,
+              shouldPersist: false,
+            };
+          }
 
-    return computeWorkflowVersionStepChanges({
-      trigger,
-      steps: updatedSteps,
-    });
-  }
+          return {
+            updatedSourceStep: {
+              ...sourceStep,
+              settings: {
+                ...sourceStep.settings,
+                input: {
+                  ...sourceStep.settings.input,
+                  initialLoopStepIds: currentInitialLoopStepIds.filter(
+                    (id) => id !== target,
+                  ),
+                },
+              },
+            },
+            shouldPersist: true,
+          };
+        }
 
-  private findFilterBetweenNodes({
-    steps,
-    sourceNextStepIds,
-    target,
-  }: {
-    steps: WorkflowAction[];
-    sourceNextStepIds: string[] | undefined;
-    target: string;
-  }) {
-    const nextStepFilters = steps.filter(
-      (step) =>
-        sourceNextStepIds?.includes(step.id) &&
-        step.type === WorkflowActionType.FILTER,
-    );
+        return {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
+          },
+          shouldPersist: true,
+        };
 
-    return nextStepFilters.find((step) => step.nextStepIds?.includes(target));
+      default:
+        return {
+          updatedSourceStep: {
+            ...sourceStep,
+            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
+          },
+          shouldPersist: true,
+        };
+    }
   }
 }

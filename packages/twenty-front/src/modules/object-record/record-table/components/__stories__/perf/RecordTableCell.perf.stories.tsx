@@ -142,6 +142,11 @@ const meta: Meta = {
             // TODO: update performance mocks with new data, and merge with common mocks if possible
             objectMetadataItem: mockPerformance.objectMetadataItem as any,
             recordIndexId: 'recordIndexId',
+            viewBarInstanceId: 'recordIndexId',
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
           }}
         >
           <RecordComponentInstanceContextsWrapper componentInstanceId="recordTableId">
@@ -156,14 +161,12 @@ const meta: Meta = {
                 objectPermissions: {
                   objectMetadataId: mockPerformance.objectMetadataItem.id,
                 },
-                fieldDefinitionByFieldMetadataItemId,
-                fieldMetadataItemByFieldMetadataItemId,
-                labelIdentifierFieldMetadataItem,
-                recordFieldByFieldMetadataItemId,
                 visibleRecordFields,
+                onRecordIdentifierClick: () => {},
+                triggerEvent: 'CLICK',
               }}
             >
-              <RecordTableComponentInstance recordTableId={'recordTableId'}>
+              <RecordTableComponentInstance recordTableId="recordTableId">
                 <RecordTableBodyContextProvider
                   value={{
                     onOpenTableCell: () => {},
@@ -171,7 +174,6 @@ const meta: Meta = {
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
                     onActionMenuDropdownOpened: () => {},
-                    onCellMouseEnter: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider

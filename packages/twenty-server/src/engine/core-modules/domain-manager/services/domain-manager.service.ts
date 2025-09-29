@@ -1,23 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { type CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { generateRandomSubdomain } from 'src/engine/core-modules/domain-manager/utils/generate-random-subdomain';
 import { getSubdomainFromEmail } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-from-email';
 import { getSubdomainNameFromDisplayName } from 'src/engine/core-modules/domain-manager/utils/get-subdomain-name-from-display-name';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class DomainManagerService {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(PublicDomain)
+    private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -39,6 +41,10 @@ export class DomainManagerService {
     }
 
     return baseUrl;
+  }
+
+  getPublicDomainUrl(): URL {
+    return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
   }
 
   private appendSearchParams(
@@ -94,7 +100,7 @@ export class DomainManagerService {
     return url;
   }
 
-  getSubdomainAndCustomDomainFromUrl = (url: string) => {
+  getSubdomainAndDomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
@@ -108,7 +114,7 @@ export class DomainManagerService {
         isFrontdomain && !this.isDefaultSubdomain(subdomain)
           ? subdomain
           : undefined,
-      customDomain: isFrontdomain ? null : originHostname,
+      domain: isFrontdomain ? null : originHostname,
     };
   };
 
@@ -152,7 +158,7 @@ export class DomainManagerService {
 
     const foundWorkspace = workspaces[0];
 
-    workspaceValidator.assertIsDefinedOrThrow(foundWorkspace);
+    assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 
     return foundWorkspace;
   }
@@ -162,19 +168,31 @@ export class DomainManagerService {
       return this.getDefaultWorkspace();
     }
 
-    const { subdomain, customDomain } =
-      this.getSubdomainAndCustomDomainFromUrl(origin);
+    const { subdomain, domain } = this.getSubdomainAndDomainFromUrl(origin);
 
-    if (!customDomain && !subdomain) return;
+    if (!domain && !subdomain) return;
 
-    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
+    const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
 
-    return (
+    const workspaceFromCustomDomainOrSubdomain =
       (await this.workspaceRepository.findOne({
         where,
         relations: ['workspaceSSOIdentityProviders'],
-      })) ?? undefined
-    );
+      })) ?? undefined;
+
+    if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
+      return workspaceFromCustomDomainOrSubdomain;
+    }
+
+    const publicDomainFromCustomDomain =
+      await this.publicDomainRepository.findOne({
+        where: {
+          domain,
+        },
+        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+      });
+
+    return publicDomainFromCustomDomain?.workspace;
   }
 
   private extractSubdomain(params?: { email?: string; displayName?: string }) {
@@ -234,12 +252,6 @@ export class DomainManagerService {
     }
 
     return workspace;
-  }
-
-  isCustomDomainWorking(customDomainDetails: CustomDomainValidRecords) {
-    return customDomainDetails.records.every(
-      ({ status }) => status === 'success',
-    );
   }
 
   getWorkspaceUrls({

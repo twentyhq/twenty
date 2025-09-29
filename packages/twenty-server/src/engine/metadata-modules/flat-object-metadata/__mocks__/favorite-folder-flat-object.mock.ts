@@ -23,7 +23,6 @@ export const FAVORITE_FOLDER_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: null,
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-  uniqueIdentifier: '20202020-7cf8-401f-8211-a9587d27fd2d',
-  flatIndexMetadatas: [],
+  universalIdentifier: '20202020-7cf8-401f-8211-a9587d27fd2d',
   flatFieldMetadatas: Object.values(FAVORITE_FOLDER_FLAT_FIELDS_MOCK),
 });

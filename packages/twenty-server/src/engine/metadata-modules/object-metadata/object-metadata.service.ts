@@ -40,6 +40,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { validateMetadataIdentifierFieldMetadataIds } from 'src/engine/metadata-modules/utils/validate-metadata-identifier-field-metadata-id.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { validatesNoOtherObjectWithSameNameExistsOrThrows } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
@@ -61,6 +62,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -221,10 +224,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       if (createObjectInput.isRemote) {
         throw new Error('Remote objects are not supported yet');
       } else {
+        const fieldsById = createdObjectMetadata.fields.reduce(
+          (acc, field) => ({
+            ...acc,
+            [field.id]: field,
+          }),
+          {},
+        );
+
         const createdRelatedObjectMetadataCollection =
           await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
             createObjectInput.workspaceId,
-            createdObjectMetadata,
+            { ...createdObjectMetadata, fieldsById },
             objectMetadataMaps,
             queryRunner,
           );
@@ -277,7 +288,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return createdObjectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {
@@ -374,17 +390,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
 
       const { didUpdateLabelOrIcon } =
-        await this.handleObjectNameAndLabelUpdates(
+        await this.handleObjectNameAndLabelUpdates({
           existingObjectMetadata,
-          existingObjectMetadataCombinedWithUpdateInput,
+          objectMetadataForUpdate:
+            existingObjectMetadataCombinedWithUpdateInput,
           inputPayload,
           queryRunner,
-        );
+          objectMetadataMaps,
+        });
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrationsWithinTransaction(
         workspaceId,
         queryRunner,
       );
+
       if (inputPayload.labelIdentifierFieldMetadataId) {
         const labelIdentifierFieldMetadata =
           existingObjectMetadata.fieldsById[
@@ -426,6 +445,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         );
       }
 
+      if (
+        isDefined(inputPayload.labelIdentifierFieldMetadataId) &&
+        inputPayload.labelIdentifierFieldMetadataId !==
+          existingObjectMetadata.labelIdentifierFieldMetadataId
+      ) {
+        const labelIdentifierFieldMetadata =
+          existingObjectMetadata.fieldsById[
+            inputPayload.labelIdentifierFieldMetadataId
+          ];
+
+        await this.objectMetadataRelatedRecordsService.updateLabelMetadataIdentifierInObjectViews(
+          {
+            newLabelMetadataIdentifierFieldMetadata:
+              labelIdentifierFieldMetadata,
+          },
+        );
+      }
+
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
@@ -439,7 +476,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return formattedUpdatedObject;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {
@@ -551,7 +593,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return objectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {
@@ -599,14 +646,35 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {
-    await this.objectMetadataRepository.delete({ workspaceId });
+    const objectsMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+    });
+
+    await this.fieldMetadataRepository.delete({
+      workspaceId,
+      type: In([FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION]),
+    });
+
+    for (const objectMetadata of objectsMetadata) {
+      await this.objectMetadataRepository.delete({
+        id: objectMetadata.id,
+      });
+    }
   }
 
-  private async handleObjectNameAndLabelUpdates(
+  private async handleObjectNameAndLabelUpdates({
+    existingObjectMetadata,
+    objectMetadataForUpdate,
+    inputPayload,
+    queryRunner,
+    objectMetadataMaps,
+  }: {
     existingObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon' | 'fieldsById'
-    >,
+    >;
     objectMetadataForUpdate: Pick<
       ObjectMetadataItemWithFieldMaps,
       | 'nameSingular'
@@ -617,10 +685,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       | 'labelPlural'
       | 'icon'
       | 'fieldsById'
-    >,
-    inputPayload: UpdateObjectPayload,
-    queryRunner: QueryRunner,
-  ): Promise<{ didUpdateLabelOrIcon: boolean }> {
+    >;
+    inputPayload: UpdateObjectPayload;
+    queryRunner: QueryRunner;
+    objectMetadataMaps: ObjectMetadataMaps;
+  }): Promise<{ didUpdateLabelOrIcon: boolean }> {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
     );
@@ -638,9 +707,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       const relationMetadataCollection =
         await this.objectMetadataFieldRelationService.updateRelationsAndForeignKeysMetadata(
-          objectMetadataForUpdate.workspaceId,
-          objectMetadataForUpdate,
-          queryRunner,
+          {
+            workspaceId: objectMetadataForUpdate.workspaceId,
+            updatedObjectMetadata: objectMetadataForUpdate,
+            queryRunner,
+            objectMetadataMaps,
+          },
         );
 
       await this.objectMetadataMigrationService.updateRelationMigrations(

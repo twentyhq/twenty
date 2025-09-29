@@ -7,18 +7,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
 export type ValidateOneFieldMetadataArgs<
   T extends FieldMetadataType = FieldMetadataType,
@@ -39,11 +38,13 @@ export class FlatFieldMetadataValidatorService {
     existingFlatObjectMetadataMaps,
     flatFieldMetadataToValidate: updatedFlatFieldMetadata,
     workspaceId,
-  }: ValidateOneFieldMetadataArgs<T>): Promise<FailedFlatFieldMetadataValidation> {
-    const validationResult: FailedFlatFieldMetadataValidation = {
+  }: ValidateOneFieldMetadataArgs<T>): Promise<
+    FailedFlatEntityValidation<FlatFieldMetadata>
+  > {
+    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'update_field',
       errors: [],
-      fieldMinimalInformation: {
+      flatEntityMinimalInformation: {
         id: updatedFlatFieldMetadata.id,
         name: updatedFlatFieldMetadata.name,
         objectMetadataId: updatedFlatFieldMetadata.objectMetadataId,
@@ -96,16 +97,7 @@ export class FlatFieldMetadataValidatorService {
       toFlatFieldMetadata: updatedFlatFieldMetadata,
     });
 
-    if (
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
+    if (isMorphOrRelationFlatFieldMetadata(updatedFlatFieldMetadata)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
           !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
@@ -133,7 +125,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataName(updatedFlatFieldMetadata.name),
         ...validateFlatFieldMetadataNameAvailability({
-          name: updatedFlatFieldMetadata.name,
+          flatFieldMetadata: updatedFlatFieldMetadata,
           flatObjectMetadata: flatObjectMetadata,
         }),
       );
@@ -172,11 +164,11 @@ export class FlatFieldMetadataValidatorService {
   }: {
     flatFieldMetadataToDelete: FlatFieldMetadata;
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  }): FailedFlatFieldMetadataValidation {
-    const validationResult: FailedFlatFieldMetadataValidation = {
+  }): FailedFlatEntityValidation<FlatFieldMetadata> {
+    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'delete_field',
       errors: [],
-      fieldMinimalInformation: {
+      flatEntityMinimalInformation: {
         id: flatFieldMetadataToDelete.id,
         name: flatFieldMetadataToDelete.name,
         objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
@@ -209,7 +201,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     const isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted =
-      isRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
         existingFlatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
@@ -248,10 +240,12 @@ export class FlatFieldMetadataValidatorService {
     flatFieldMetadataToValidate,
     otherFlatObjectMetadataMapsToValidate,
     workspaceId,
-  }: ValidateOneFieldMetadataArgs<T>): Promise<FailedFlatFieldMetadataValidation> {
-    const validationResult: FailedFlatFieldMetadataValidation = {
+  }: ValidateOneFieldMetadataArgs<T>): Promise<
+    FailedFlatEntityValidation<FlatFieldMetadata>
+  > {
+    const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       errors: [],
-      fieldMinimalInformation: {
+      flatEntityMinimalInformation: {
         id: flatFieldMetadataToValidate.id,
         name: flatFieldMetadataToValidate.name,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
@@ -298,7 +292,7 @@ export class FlatFieldMetadataValidatorService {
 
       validationResult.errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          name: flatFieldMetadataToValidate.name,
+          flatFieldMetadata: flatFieldMetadataToValidate,
           flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );

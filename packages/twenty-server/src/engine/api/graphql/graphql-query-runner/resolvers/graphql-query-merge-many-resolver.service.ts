@@ -26,6 +26,7 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
+import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -188,15 +189,19 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       } else if (recordsWithValues.length === 1) {
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const priorityValue = recordsWithValues.find(
-          (item) => item.recordId === priorityRecordId,
-        );
+        const fieldMetadata = Object.values(
+          objectMetadataItemWithFieldMaps.fieldsById,
+        ).find((field) => field?.name === fieldName);
 
-        if (priorityValue) {
-          mergedResult[fieldName] = priorityValue.value;
-        } else {
-          mergedResult[fieldName] = recordsWithValues[0].value;
+        if (!fieldMetadata) {
+          return;
         }
+
+        mergedResult[fieldName] = mergeFieldValues(
+          fieldMetadata.type,
+          recordsWithValues,
+          priorityRecordId,
+        );
       }
     });
 
@@ -211,11 +216,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.fieldsById,
     ).find((field) => field?.name === fieldName);
 
-    if (fieldMetadata?.isSystem) {
-      return true;
-    }
-
-    return false;
+    return fieldMetadata?.isSystem ?? false;
   }
 
   private createDryRunResponse(

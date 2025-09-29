@@ -1,1 +1,1 @@
-export type RecordDragContext = 'board' | 'table';
+export type RecordDragContext = 'board' | 'table' | 'calendar';

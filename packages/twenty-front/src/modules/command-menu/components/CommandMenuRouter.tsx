@@ -19,7 +19,6 @@ const StyledCommandMenuContent = styled.div`
 
 export const CommandMenuRouter = () => {
   const commandMenuPage = useRecoilValue(commandMenuPageState);
-
   const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
 
   const commandMenuPageComponent = isDefined(commandMenuPage) ? (

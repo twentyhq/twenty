@@ -4,6 +4,7 @@ import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-e
 import { type WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
+import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
   type WorkflowCreateRecordActionSettings,
@@ -34,4 +35,5 @@ export type WorkflowActionSettings =
   | WorkflowFormActionSettings
   | WorkflowFilterActionSettings
   | WorkflowHttpRequestActionSettings
-  | WorkflowAiAgentActionSettings;
+  | WorkflowAiAgentActionSettings
+  | WorkflowIteratorActionSettings;

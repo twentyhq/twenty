@@ -1,9 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import {
+  createUIMessageStream,
+  pipeUIMessageStreamToResponse,
+  UIDataTypes,
+  UIMessage,
+  UITools,
+} from 'ai';
 import { type Response } from 'express';
 import { Repository } from 'typeorm';
 
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
@@ -12,17 +20,15 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 
 export type StreamAgentChatOptions = {
   threadId: string;
-  userMessage: string;
   userWorkspaceId: string;
   workspace: Workspace;
-  fileIds: string[];
   recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
-  res: Response;
+  response: Response;
+  messages: UIMessage<unknown, UIDataTypes, UITools>[];
 };
 
 @Injectable()
@@ -38,12 +44,11 @@ export class AgentStreamingService {
 
   async streamAgentChat({
     threadId,
-    userMessage,
     userWorkspaceId,
     workspace,
-    fileIds,
+    messages,
     recordIdsByObjectMetadataNameSingular,
-    res,
+    response,
   }: StreamAgentChatOptions) {
     try {
       const thread = await this.threadRepository.findOne({
@@ -61,110 +66,56 @@ export class AgentStreamingService {
         );
       }
 
-      this.setupStreamingHeaders(res);
+      const stream = createUIMessageStream({
+        execute: async ({ writer }) => {
+          const result = await this.agentExecutionService.streamChatResponse({
+            workspace,
+            agentId: thread.agent.id,
+            userWorkspaceId,
+            messages,
+            recordIdsByObjectMetadataNameSingular,
+          });
 
-      const { fullStream } =
-        await this.agentExecutionService.streamChatResponse({
-          workspace,
-          agentId: thread.agent.id,
-          userWorkspaceId,
-          userMessage,
-          messages: thread.messages,
-          fileIds,
-          recordIdsByObjectMetadataNameSingular,
-        });
+          writer.merge(
+            result.toUIMessageStream({
+              onError: (error) => {
+                return error instanceof Error ? error.message : String(error);
+              },
+              onFinish: async ({ responseMessage }) => {
+                if (responseMessage.parts.length === 0) {
+                  return;
+                }
 
-      let aiResponse = '';
-
-      for await (const chunk of fullStream) {
-        switch (chunk.type) {
-          case 'text-delta':
-            aiResponse += chunk.textDelta;
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.textDelta,
-            });
-            break;
-          case 'tool-call':
-            this.sendStreamEvent(res, {
-              type: chunk.type,
-              message: chunk.args?.toolDescription,
-            });
-            break;
-          case 'error':
-            {
-              const errorMessage =
-                chunk.error &&
-                typeof chunk.error === 'object' &&
-                'message' in chunk.error
-                  ? chunk.error.message
-                  : 'Something went wrong. Please try again.';
-
-              this.sendStreamEvent(res, {
-                type: 'error',
-                message: errorMessage as string,
-              });
-              res.end();
-            }
-            this.logger.error(`Stream error: ${JSON.stringify(chunk)}`);
-            break;
-          default:
-            this.logger.log(`Unknown chunk type: ${chunk.type}`);
-            break;
-        }
-      }
-
-      if (!aiResponse) {
-        res.end();
-
-        return;
-      }
-
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.USER,
-        content: userMessage,
-        fileIds,
+                await this.agentChatService.addMessage({
+                  threadId,
+                  uiMessage: {
+                    role: AgentChatMessageRole.USER,
+                    parts: [
+                      {
+                        type: 'text',
+                        text:
+                          messages[messages.length - 1].parts.find(
+                            (part) => part.type === 'text',
+                          )?.text ?? '',
+                      },
+                    ],
+                  },
+                });
+                await this.agentChatService.addMessage({
+                  threadId,
+                  uiMessage: responseMessage,
+                });
+              },
+              sendReasoning: true,
+            }),
+          );
+        },
       });
 
-      await this.agentChatService.addMessage({
-        threadId,
-        role: AgentChatMessageRole.ASSISTANT,
-        content: aiResponse,
-      });
-
-      res.end();
+      pipeUIMessageStreamToResponse({ stream, response });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error occurred';
-
-      if (error instanceof AgentException) {
-        this.logger.error(`Agent Exception Code: ${error.code}`);
-      }
-
-      if (!res.headersSent) {
-        this.setupStreamingHeaders(res);
-      }
-
-      this.sendStreamEvent(res, {
-        type: 'error',
-        message: errorMessage,
-      });
-
-      res.end();
+      this.logger.error(error.message);
+      response.end();
     }
-  }
-
-  private sendStreamEvent(
-    res: Response,
-    event: { type: string; message: string },
-  ): void {
-    res.write(JSON.stringify(event) + '\n');
-  }
-
-  private setupStreamingHeaders(res: Response): void {
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('Cache-Control', 'no-cache');
   }
 }

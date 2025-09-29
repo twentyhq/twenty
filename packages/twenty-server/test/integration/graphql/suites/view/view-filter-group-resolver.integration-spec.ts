@@ -17,6 +17,7 @@ import {
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   assertViewFilterGroupStructure,
   cleanupViewRecords,
@@ -40,11 +41,12 @@ describe('View Filter Group Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myFilterGroupTestObject',
+        namePlural: 'myFilterGroupTestObjects',
+        labelSingular: 'My Filter Group Test Object',
+        labelPlural: 'My Filter Group Test Objects',
         icon: 'Icon123',
       },
     });
@@ -53,9 +55,20 @@ describe('View Filter Group Resolver', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -67,10 +80,6 @@ describe('View Filter Group Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewFilterGroups', () => {

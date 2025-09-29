@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
 import { type OpenAPIV3_1 } from 'openapi-types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
@@ -38,12 +43,12 @@ import {
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class OpenApiService {
@@ -59,7 +64,7 @@ export class OpenApiService {
       const { workspace } =
         await this.accessTokenService.validateTokenByRequest(request);
 
-      workspaceValidator.assertIsDefinedOrThrow(workspace);
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
       return workspace;
     } catch {
@@ -189,6 +194,12 @@ export class OpenApiService {
       return schema;
     }
 
+    const workspaceFeatureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
+
+    const isPageLayoutEnabled =
+      workspaceFeatureFlagsMap[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED];
+
     const metadata = [
       {
         nameSingular: 'object',
@@ -230,6 +241,22 @@ export class OpenApiService {
         nameSingular: 'viewFilterGroup',
         namePlural: 'viewFilterGroups',
       },
+      ...(isPageLayoutEnabled
+        ? [
+            {
+              nameSingular: 'pageLayout',
+              namePlural: 'pageLayouts',
+            },
+            {
+              nameSingular: 'pageLayoutTab',
+              namePlural: 'pageLayoutTabs',
+            },
+            {
+              nameSingular: 'pageLayoutWidget',
+              namePlural: 'pageLayoutWidgets',
+            },
+          ]
+        : []),
     ];
 
     schema.paths = metadata.reduce((path, item) => {

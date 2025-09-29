@@ -1,9 +1,8 @@
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissionsObjectLevelObjectForm } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Navigate, useParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 export const SettingsRoleObjectLevel = () => {
   const { roleId, objectMetadataId } = useParams();

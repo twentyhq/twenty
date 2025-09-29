@@ -2,11 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-
 export const buildColumnsToSelect = ({
   select,
   relations,
@@ -84,13 +82,7 @@ const getRequiredRelationColumns = (
         continue;
       }
 
-      const morphRelationFieldName = computeMorphRelationFieldName({
-        fieldName: fieldMetadata.name,
-        relationDirection: fieldMetadata.settings.relationType,
-        targetObjectMetadata,
-      });
-
-      const relationValue = relations[morphRelationFieldName];
+      const relationValue = relations[fieldMetadata.name];
 
       if (
         !isDefined(relationValue) ||

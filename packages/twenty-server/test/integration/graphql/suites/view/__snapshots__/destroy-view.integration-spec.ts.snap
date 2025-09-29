@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Destroy core view should throw an error when destroying non-existent view 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View to destroy not found",
+  "name": "NotFoundError",
+}
+`;

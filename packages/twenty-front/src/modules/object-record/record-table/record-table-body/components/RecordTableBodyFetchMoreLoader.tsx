@@ -3,10 +3,11 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilState } from 'recoil';
 
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { hasRecordTableFetchedAllRecordsComponentState } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { GRAY_SCALE } from 'twenty-ui/theme';
 
@@ -15,7 +16,7 @@ const StyledText = styled.div`
   box-shadow: none;
   color: ${GRAY_SCALE.gray40};
   display: flex;
-  height: 32px;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   margin-left: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
@@ -30,7 +31,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     isFetchingMoreRecordsFamilyState(recordTableId),
   );
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValue(
     hasRecordTableFetchedAllRecordsComponentState,
@@ -56,13 +57,14 @@ export const RecordTableBodyFetchMoreLoader = () => {
   if (!showLoadingMoreRow) {
     return <></>;
   }
+  // TODO: fix here styling
 
   return (
-    <tr ref={tbodyRef}>
-      <td colSpan={7}>
+    <div ref={tbodyRef}>
+      <div>
         <StyledText>Loading more...</StyledText>
-      </td>
-      <td colSpan={7} />
-    </tr>
+      </div>
+      <div />
+    </div>
   );
 };

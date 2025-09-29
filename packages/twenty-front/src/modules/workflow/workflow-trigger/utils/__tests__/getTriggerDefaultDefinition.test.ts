@@ -10,6 +10,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: [],
+        isIteratorEnabled: false,
       });
     }).toThrow();
   });
@@ -20,6 +21,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -28,7 +30,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -42,6 +43,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -50,7 +52,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -64,6 +65,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -72,7 +74,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -86,6 +87,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -94,7 +96,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -108,6 +109,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'MANUAL',
@@ -118,7 +120,6 @@ describe('getTriggerDefaultDefinition', () => {
         icon: COMMAND_MENU_DEFAULT_ICON,
         isPinned: false,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -132,6 +133,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'On a schedule',
         type: 'CRON',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'CRON',
@@ -141,7 +143,6 @@ describe('getTriggerDefaultDefinition', () => {
         schedule: { day: 1, hour: 0, minute: 0 },
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -155,6 +156,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Webhook',
         type: 'WEBHOOK',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'WEBHOOK',
@@ -164,7 +166,6 @@ describe('getTriggerDefaultDefinition', () => {
         httpMethod: 'GET',
         authentication: null,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -178,6 +179,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
+        isIteratorEnabled: false,
       });
     }).toThrow('Unknown type: unknown');
   });

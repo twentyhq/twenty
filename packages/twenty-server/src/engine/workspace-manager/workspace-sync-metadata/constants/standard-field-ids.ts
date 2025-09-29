@@ -40,6 +40,8 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
+  dashboard: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
+  workflow: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 
@@ -193,6 +195,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
   workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
   workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
+  dashboard: '20202020-7864-48f5-af7c-9e4b60140948',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -213,6 +216,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
   favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
+  dashboard: '20202020-6ef9-45e4-b440-cc986f687c91',
 } as const;
 
 export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
@@ -253,6 +257,9 @@ export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   name: '20202020-7cf8-40bc-a681-b80b771449b7',
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
   syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
+  isSentFolder: '20202020-2af5-4a25-b2de-3c9386da941b',
+  isSynced: '20202020-764f-4e09-8f95-cd46b6bfe3c4',
+  externalId: '20202020-f3a8-4d2b-9c7e-1b5f9a8e4c6d',
 } as const;
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -458,6 +465,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
+  attachments: '20202020-4a8c-4e2d-9b1c-7e5f3a2b4c6d',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
   searchVector: '20202020-535d-4ffa-b7f3-4fa0d5da1b7a',
 } as const;
@@ -520,6 +528,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+  numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
@@ -538,7 +547,13 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
 
 export const DASHBOARD_STANDARD_FIELD_IDS = {
   title: '20202020-20ee-4091-95dc-44b57eda3a89',
+  position: '20202020-38af-409b-95f0-7f08aa5f420f',
   pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
+  createdBy: '20202020-ff32-4fa1-b7ad-407cc6aa0734',
+  timelineActivities: '20202020-9b0c-5d6e-7f8a-9b0c1d2e3f4a',
+  favorites: '20202020-f032-478f-88fa-6426ff6f1e4c',
+  attachments: '20202020-bf6f-4220-8c55-2764f1175870',
+  searchVector: '20202020-0bcc-47a4-8360-2e35a7133f7a',
 } as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {

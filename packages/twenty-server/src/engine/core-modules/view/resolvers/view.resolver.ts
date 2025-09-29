@@ -9,12 +9,13 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
@@ -28,9 +29,11 @@ import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/vi
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
+import { ViewV2Service } from 'src/engine/core-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
@@ -44,9 +47,11 @@ export class ViewResolver {
     private readonly viewFieldService: ViewFieldService,
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewGroupService: ViewGroupService,
     private readonly viewSortService: ViewSortService,
+    private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly viewV2Service: ViewV2Service,
   ) {}
 
   @ResolveField(() => String)
@@ -62,6 +67,7 @@ export class ViewResolver {
       });
 
       if (objectMetadata) {
+        const i18n = this.i18nService.getI18nInstance(context.req.locale);
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {
             labelPlural: objectMetadata.labelPlural,
@@ -73,36 +79,24 @@ export class ViewResolver {
           },
           'labelPlural',
           context.req.locale,
+          i18n,
         );
 
-        const messageId = generateMessageId(view.name);
-        const translatedTemplate = this.i18nService.translateMessage({
-          messageId,
-          values: {
-            objectLabelPlural: translatedObjectLabel,
-          },
-          locale: context.req.locale,
-        });
-
-        if (translatedTemplate !== messageId) {
-          return translatedTemplate;
-        }
-
-        return view.name.replace('{objectLabelPlural}', translatedObjectLabel);
+        return this.viewService.processViewNameWithTemplate(
+          view.name,
+          view.isCustom,
+          translatedObjectLabel,
+          context.req.locale,
+        );
       }
     }
 
-    if (view.isCustom) {
-      return view.name;
-    }
-
-    const messageId = generateMessageId(view.name);
-    const translatedMessage = this.i18nService.translateMessage({
-      messageId,
-      locale: context.req.locale,
-    });
-
-    return translatedMessage !== messageId ? translatedMessage : view.name;
+    return this.viewService.processViewNameWithTemplate(
+      view.name,
+      view.isCustom,
+      undefined,
+      context.req.locale,
+    );
   }
 
   @Query(() => [ViewDTO])
@@ -134,6 +128,19 @@ export class ViewResolver {
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewV2Service.createOne({
+        createViewInput: input,
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.viewService.create({
       ...input,
       workspaceId: workspace.id,
@@ -146,6 +153,19 @@ export class ViewResolver {
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.viewV2Service.updateOne({
+        updateViewInput: { ...input, id },
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.viewService.update(id, workspace.id, input);
   }
 
@@ -154,6 +174,21 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const deletedView = await this.viewV2Service.deleteOne({
+        deleteViewInput: { id },
+        workspaceId: workspace.id,
+      });
+
+      return isDefined(deletedView);
+    }
+
     const deletedView = await this.viewService.delete(id, workspace.id);
 
     return isDefined(deletedView);
@@ -164,6 +199,21 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      const deletedView = await this.viewV2Service.destroyOne({
+        destroyViewInput: { id },
+        workspaceId: workspace.id,
+      });
+
+      return isDefined(deletedView);
+    }
+
     const deletedView = await this.viewService.destroy(id, workspace.id);
 
     return isDefined(deletedView);
@@ -174,6 +224,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: Workspace,
   ) {
+    if (isArray(view.viewFields)) {
+      return view.viewFields;
+    }
+
     return this.viewFieldService.findByViewId(workspace.id, view.id);
   }
 
@@ -182,6 +236,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: Workspace,
   ) {
+    if (isArray(view.viewFilters)) {
+      return view.viewFilters;
+    }
+
     return this.viewFilterService.findByViewId(workspace.id, view.id);
   }
 
@@ -190,6 +248,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: Workspace,
   ) {
+    if (isArray(view.viewFilterGroups)) {
+      return view.viewFilterGroups;
+    }
+
     return this.viewFilterGroupService.findByViewId(workspace.id, view.id);
   }
 
@@ -198,6 +260,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: Workspace,
   ) {
+    if (isArray(view.viewSorts)) {
+      return view.viewSorts;
+    }
+
     return this.viewSortService.findByViewId(workspace.id, view.id);
   }
 
@@ -206,6 +272,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: Workspace,
   ) {
+    if (isArray(view.viewGroups)) {
+      return view.viewGroups;
+    }
+
     return this.viewGroupService.findByViewId(workspace.id, view.id);
   }
 }

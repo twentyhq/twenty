@@ -1,17 +1,12 @@
 import { useCallback } from 'react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
-import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { CREATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/createCoreViewGroup';
 import { DESTROY_CORE_VIEW_GROUP } from '@/views/graphql/mutations/destroyCoreViewGroup';
 import { UPDATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/updateCoreViewGroup';
+import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { type CoreViewGroup } from '~/generated/graphql';
 
 type CreateViewGroupRecordsArgs = {
   viewGroupsToCreate: ViewGroup[];
@@ -19,95 +14,10 @@ type CreateViewGroupRecordsArgs = {
 };
 
 export const usePersistViewGroupRecords = () => {
-  const featureFlags = useFeatureFlagsMap();
-  const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-
-  const apolloCoreClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
 
-  const { createManyRecords } = useCreateManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-    shouldMatchRootQueryFilter: true,
-  });
-
-  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-  });
-
-  const { destroyManyRecords } = useDestroyManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ViewGroup,
-  });
-
-  const createViewGroupRecords = useCallback(
-    ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
-      if (viewGroupsToCreate.length === 0) return;
-
-      return createManyRecords({
-        recordsToCreate: viewGroupsToCreate.map((viewGroup) => ({
-          ...viewGroup,
-          viewId,
-        })),
-      });
-    },
-    [createManyRecords],
-  );
-
-  const updateViewGroupRecords = useCallback(
-    async (viewGroupsToUpdate: ViewGroup[]) => {
-      if (!viewGroupsToUpdate.length) return;
-
-      const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
-        apolloCoreClient.mutate<{ updateViewGroup: ViewGroup }>({
-          mutation: updateOneRecordMutation,
-          variables: {
-            id: viewGroup.id,
-            input: {
-              isVisible: viewGroup.isVisible,
-              position: viewGroup.position,
-            },
-          },
-          // Avoid cache being updated with stale data
-          fetchPolicy: 'no-cache',
-        }),
-      );
-
-      const mutationResults = await Promise.all(mutationPromises);
-
-      // FixMe: Using useUpdateOneRecord hook that call triggerUpdateRecordsOptimisticEffect is actaully causing multiple records to be created
-      // This is a temporary fix
-      mutationResults.forEach(({ data }) => {
-        const record = data?.['updateViewGroup'];
-
-        if (!record) return;
-
-        apolloCoreClient.cache.modify({
-          id: apolloCoreClient.cache.identify({
-            __typename: 'ViewGroup',
-            id: record.id,
-          }),
-          fields: {
-            isVisible: () => record.isVisible,
-            position: () => record.position,
-          },
-        });
-      });
-    },
-    [apolloCoreClient, updateOneRecordMutation],
-  );
-
-  const deleteViewGroupRecords = useCallback(
-    async (viewGroupsToDelete: ViewGroup[]) => {
-      if (!viewGroupsToDelete.length) return;
-
-      const recordIdsToDestroy = viewGroupsToDelete.map(
-        (viewGroup) => viewGroup.id,
-      );
-      return destroyManyRecords({
-        recordIdsToDestroy,
-      });
-    },
-    [destroyManyRecords],
-  );
+  const { triggerViewGroupOptimisticEffect } =
+    useTriggerViewGroupOptimisticEffect();
 
   const createCoreViewGroupRecords = useCallback(
     ({ viewGroupsToCreate, viewId }: CreateViewGroupRecordsArgs) => {
@@ -127,11 +37,19 @@ export const usePersistViewGroupRecords = () => {
                 position: viewGroup.position,
               },
             },
+            update: (_cache, { data }) => {
+              const record = data?.['createCoreViewGroup'];
+              if (!record) return;
+
+              triggerViewGroupOptimisticEffect({
+                createdViewGroups: [record],
+              });
+            },
           }),
         ),
       );
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   const updateCoreViewGroupRecords = useCallback(
@@ -139,10 +57,10 @@ export const usePersistViewGroupRecords = () => {
       if (!viewGroupsToUpdate.length) return;
 
       const mutationPromises = viewGroupsToUpdate.map((viewGroup) =>
-        apolloClient.mutate<{ updateCoreViewGroup: ViewGroup }>({
+        apolloClient.mutate<{ updateCoreViewGroup: CoreViewGroup }>({
           mutation: UPDATE_CORE_VIEW_GROUP,
           variables: {
-            idToUpdate: viewGroup.id,
+            id: viewGroup.id,
             input: {
               isVisible: viewGroup.isVisible,
               position: viewGroup.position,
@@ -150,35 +68,24 @@ export const usePersistViewGroupRecords = () => {
           },
           // Avoid cache being updated with stale data
           fetchPolicy: 'no-cache',
+          update: (_cache, { data }) => {
+            const record = data?.['updateCoreViewGroup'];
+            if (!record) return;
+
+            triggerViewGroupOptimisticEffect({
+              updatedViewGroups: [record],
+            });
+          },
         }),
       );
 
-      const mutationResults = await Promise.all(mutationPromises);
-
-      // FixMe: Using useUpdateOneRecord hook that call triggerUpdateRecordsOptimisticEffect is actaully causing multiple records to be created
-      // This is a temporary fix
-      mutationResults.forEach(({ data }) => {
-        const record = data?.['updateCoreViewGroup'];
-
-        if (!record) return;
-
-        apolloClient.cache.modify({
-          id: apolloClient.cache.identify({
-            __typename: 'CoreViewGroup',
-            id: record.id,
-          }),
-          fields: {
-            isVisible: () => record.isVisible,
-            position: () => record.position,
-          },
-        });
-      });
+      return Promise.all(mutationPromises);
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   const deleteCoreViewGroupRecords = useCallback(
-    async (viewGroupsToDelete: ViewGroup[]) => {
+    async (viewGroupsToDelete: Pick<CoreViewGroup, 'id' | 'viewId'>[]) => {
       if (!viewGroupsToDelete.length) return;
 
       return Promise.all(
@@ -188,22 +95,21 @@ export const usePersistViewGroupRecords = () => {
             variables: {
               id: viewGroup.id,
             },
+            update: () => {
+              triggerViewGroupOptimisticEffect({
+                deletedViewGroups: [viewGroup],
+              });
+            },
           }),
         ),
       );
     },
-    [apolloClient],
+    [apolloClient, triggerViewGroupOptimisticEffect],
   );
 
   return {
-    createViewGroupRecords: isCoreViewEnabled
-      ? createCoreViewGroupRecords
-      : createViewGroupRecords,
-    updateViewGroupRecords: isCoreViewEnabled
-      ? updateCoreViewGroupRecords
-      : updateViewGroupRecords,
-    deleteViewGroupRecords: isCoreViewEnabled
-      ? deleteCoreViewGroupRecords
-      : deleteViewGroupRecords,
+    createViewGroupRecords: createCoreViewGroupRecords,
+    updateViewGroupRecords: updateCoreViewGroupRecords,
+    deleteViewGroupRecords: deleteCoreViewGroupRecords,
   };
 };

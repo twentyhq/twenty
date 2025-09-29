@@ -1,7 +1,7 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionsKeys';
+import { NoSelectionWorkflowRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/workflow-actions/types/NoSelectionWorkflowRecordActionKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/ActivateWorkflowSingleRecordAction';
 import { DeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordAction';
@@ -16,13 +16,13 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { AppPath } from '@/types/AppPath';
 import {
   type WorkflowStep,
   type WorkflowTrigger,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { msg } from '@lingui/core/macro';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconHistoryToggle,
@@ -202,8 +202,8 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconHistoryToggle,
       accent: 'default',
       isPinned: true,
-      shouldBeRegistered: ({ isSoftDeleteFilterActive }) =>
-        !isSoftDeleteFilterActive,
+      shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+        !hasAnySoftDeleteFilterOnView,
       availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
       component: (
         <ActionLink

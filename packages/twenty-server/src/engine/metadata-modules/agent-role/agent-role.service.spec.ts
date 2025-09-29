@@ -87,6 +87,9 @@ describe('AgentRoleService', () => {
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToAgents: true,
+      canBeAssignedToUsers: true,
+      canBeAssignedToApiKeys: true,
       workspaceId: testWorkspaceId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -102,6 +105,9 @@ describe('AgentRoleService', () => {
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToAgents: true,
+      canBeAssignedToUsers: true,
+      canBeAssignedToApiKeys: true,
       workspaceId: testWorkspaceId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -288,7 +294,7 @@ describe('AgentRoleService', () => {
           roleId: nonExistentRoleId,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        code: AgentExceptionCode.ROLE_NOT_FOUND,
         message: `Role with id ${nonExistentRoleId} not found in workspace`,
       });
     });

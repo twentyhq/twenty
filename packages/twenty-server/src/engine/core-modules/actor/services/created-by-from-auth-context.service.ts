@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
@@ -9,9 +9,11 @@ import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/acto
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CreateInput = Record<string, any>;
@@ -24,6 +26,7 @@ export class CreatedByFromAuthContextService {
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async injectCreatedBy(
@@ -33,20 +36,33 @@ export class CreatedByFromAuthContextService {
   ): Promise<CreateInput[]> {
     const workspace = authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    // TODO: Once all objects have it, we can remove this check
-    const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: {
-        object: {
-          nameSingular: objectMetadataNameSingular,
+    const { objectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId: workspace.id,
         },
-        name: 'createdBy',
-        workspaceId: workspace.id,
-      },
-    });
+      );
 
-    if (!createdByFieldMetadata) {
+    this.logger.log(
+      `Injecting createdBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
+    );
+
+    const objectMetadata = getObjectMetadataMapItemByNameSingular(
+      objectMetadataMaps,
+      objectMetadataNameSingular,
+    );
+
+    this.logger.log(
+      `Object metadata found with fields: ${Object.keys(objectMetadata?.fieldIdByName ?? {})}`,
+    );
+
+    if (!isDefined(objectMetadata?.fieldIdByName['createdBy'])) {
+      this.logger.log(
+        `CreatedBy field not found in object metadata, skipping injection`,
+      );
+
       return records;
     }
 
@@ -83,7 +99,7 @@ export class CreatedByFromAuthContextService {
   ): Promise<ActorMetadata> {
     const { workspace, workspaceMemberId, user, apiKey } = authContext;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     // TODO: remove that code once we have the workspace member id in all tokens
     if (isDefined(workspaceMemberId) && isDefined(user)) {

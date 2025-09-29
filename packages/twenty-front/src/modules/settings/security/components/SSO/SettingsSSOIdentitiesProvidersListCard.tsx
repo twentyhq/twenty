@@ -2,7 +2,7 @@
 
 import { Link } from 'react-router-dom';
 
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -14,9 +14,9 @@ import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
 import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledLink = styled(Link, {
   shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',

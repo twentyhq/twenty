@@ -77,7 +77,7 @@ const StyledContainer = withTheme(styled.div<
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
-      : '200px'};
+      : '100%'};
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
@@ -166,7 +166,7 @@ export const Chip = ({
       {leftComponent}
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
-      ) : !forceEmptyText ? (
+      ) : !forceEmptyText && !isLabelHidden ? (
         <StyledDiv>Untitled</StyledDiv>
       ) : (
         ''

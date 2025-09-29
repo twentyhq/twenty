@@ -112,7 +112,7 @@ export const CurrencyInput = ({
       </StyledIcon>
       <StyledIMaskInput
         mask={Number}
-        thousandsSeparator={','}
+        thousandsSeparator=","
         radix="."
         onAccept={(value: string) => handleChange(value)}
         inputRef={wrapperRef}

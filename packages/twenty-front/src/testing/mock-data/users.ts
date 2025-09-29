@@ -13,6 +13,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 
 type MockedUser = Pick<
   User,
@@ -41,6 +42,17 @@ export const avatarUrl =
 export const workspaceLogoUrl =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACb0lEQVR4nO2VO4taQRTHr3AblbjxEVlwCwVhg7BoqqCIjy/gAyyFWNlYBOxsfH0KuxgQGwXRUkGuL2S7i1barGAgiwbdW93SnGOc4BonPiKahf3DwXFmuP/fPM4ZlvmlTxAhCBdzHnEQWYiv7Mr4C3NeuVYhQYDPzOUUQgDLBQGcLHNhvQK8DACPx8PTxiqVyvISG43GbyaT6Qfpn06n0m63e/tPAPF4vJ1MJu8kEsnWTCkWi1yr1RKGw+GDRqPBOTfr44vFQvD7/Q/lcpmaaVQAr9fLp1IpO22c47hGOBz+MB6PH+Vy+VYDAL8qlUoGtVotzOfzq4MAgsHgE/6KojiQyWR/bKVSqbSszHFM8Pl8z1YK48JsNltCOBwOnrYLO+8AAIjb+nHbycoTiUQfDJ7tFq4YAHiVSmXBxcD41u8flQU8z7fhzO0r83atVns3Go3u9Xr9x0O/RQXo9/tsIBBg6vX606a52Wz+bZ7P5/WwG29gxSJzhKgA6XTaDoFNF+krFAocmC//4yWEcSf2wTm7mCO19xFgSsKOLI16vV7b7XY7mRNoLwA0JymJ5uQIzgIAuX5PzDElT2m+E8BqtQ4ymcx7Yq7T6a6ZE4sKgOadTucaCwkxp1UzlEKh0GDxIXOwDWHAdi6Xe3swQDQa/Q7mywoolUpvsaptymazDWKxmBHTlWXZm405BFZoNpuGgwEmk4mE2SGtVivii4f1AO7J3ZopkQCQj7Ar1FeRChCJRJzVapX6DKNIfSc1Ax+wtQWQ55h6bH8FWDfYV4fO3wlwDr0C/BcADYiTPCxHqIEA2QsCZAkAKnRGkMbKN/sTX5YHPQ1e7SkAAAAASUVORK5CYII=';
 
+// Extract Pro monthly base product from mockBillingPlans to use in workspace billing mocks
+const PRO_PLAN = mockBillingPlans.listPlans.find((p) => p.planKey === 'PRO')!;
+const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.licensedProducts?.[0]!;
+const PRO_BASE_MONTHLY_PRICE = PRO_BASE_LICENSED_PRODUCT?.prices?.find(
+  (pr) => pr.recurringInterval === 'Month',
+)!;
+const PRO_METERED_PRODUCT = PRO_PLAN?.meteredProducts?.[0]!;
+const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
+  (pr) => pr.recurringInterval === 'Month',
+)!;
+
 export const mockCurrentWorkspace: Workspace = {
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
@@ -68,10 +80,6 @@ export const mockCurrentWorkspace: Workspace = {
       key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
-    {
-      key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-      value: true,
-    },
   ],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -81,7 +89,39 @@ export const mockCurrentWorkspace: Workspace = {
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
-    metadata: {},
+    currentPeriodEnd: new Date().toString(),
+    metadata: {
+      plan: PRO_PLAN.planKey,
+    },
+    phases: [],
+    billingSubscriptionItems: [
+      {
+        __typename: 'BillingSubscriptionItemDTO',
+        id: '11111111-1111-4111-8111-111111111111',
+        hasReachedCurrentPeriodCap: false,
+        quantity: 1,
+        stripePriceId: PRO_BASE_MONTHLY_PRICE.stripePriceId,
+        billingProduct: {
+          name: PRO_BASE_LICENSED_PRODUCT.name,
+          description: PRO_BASE_LICENSED_PRODUCT.description,
+          images: PRO_BASE_LICENSED_PRODUCT.images,
+          metadata: PRO_BASE_LICENSED_PRODUCT.metadata,
+        },
+      },
+      {
+        __typename: 'BillingSubscriptionItemDTO',
+        id: '11111111-1111-4111-8111-111111111112',
+        hasReachedCurrentPeriodCap: false,
+        quantity: null,
+        stripePriceId: PRO_METERED_MONTHLY_PRICE.stripePriceId,
+        billingProduct: {
+          name: PRO_METERED_PRODUCT.name,
+          description: PRO_METERED_PRODUCT.description,
+          images: PRO_METERED_PRODUCT.images,
+          metadata: PRO_METERED_PRODUCT.metadata,
+        },
+      },
+    ],
   },
   billingSubscriptions: [
     {
@@ -89,6 +129,22 @@ export const mockCurrentWorkspace: Workspace = {
       id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
       status: SubscriptionStatus.Active,
       metadata: {},
+      phases: [],
+      billingSubscriptionItems: [
+        {
+          __typename: 'BillingSubscriptionItemDTO',
+          id: '22222222-2222-4222-8222-222222222222',
+          hasReachedCurrentPeriodCap: false,
+          quantity: 1,
+          stripePriceId: PRO_BASE_MONTHLY_PRICE.stripePriceId,
+          billingProduct: {
+            name: PRO_BASE_LICENSED_PRODUCT.name,
+            description: PRO_BASE_LICENSED_PRODUCT.description,
+            images: PRO_BASE_LICENSED_PRODUCT.images,
+            metadata: PRO_BASE_LICENSED_PRODUCT.metadata,
+          },
+        },
+      ],
     },
   ],
   workspaceMembersCount: 1,
@@ -130,7 +186,7 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-    objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
+    objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
@@ -154,7 +210,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectPermissions: generatedMockObjectMetadataItems
+    objectsPermissions: generatedMockObjectMetadataItems
       .filter(
         (objectMetadata) =>
           objectMetadata.nameSingular !== 'task' &&

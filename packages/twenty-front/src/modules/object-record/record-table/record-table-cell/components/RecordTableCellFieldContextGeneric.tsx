@@ -22,13 +22,13 @@ export const RecordTableCellFieldContextGeneric = ({
 }: RecordTableCellFieldContextGenericProps) => {
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
+  const { objectMetadataItem, objectPermissions } =
+    useRecordTableContextOrThrow();
+
   const {
-    objectMetadataItem,
-    objectPermissions,
+    objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
-  } = useRecordTableContextOrThrow();
-  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
-    useRecordIndexContextOrThrow();
+  } = useRecordIndexContextOrThrow();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -36,6 +36,7 @@ export const RecordTableCellFieldContextGeneric = ({
   const updateRecord = useContext(RecordUpdateContext);
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
     isFieldRelationToOneObject(fieldDefinition) ||
@@ -55,10 +56,10 @@ export const RecordTableCellFieldContextGeneric = ({
   return (
     <FieldContext.Provider
       value={{
+        fieldMetadataItemId: recordField.fieldMetadataItemId,
         recordId,
         fieldDefinition: fieldDefinition,
         useUpdateRecord: () => [updateRecord, {}],
-        labelIdentifierLink: indexIdentifierUrl(recordId),
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {
             id: fieldDefinition.fieldMetadataId,

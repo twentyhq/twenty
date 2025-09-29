@@ -153,7 +153,7 @@ export const WorkflowStepFilterValueInput = ({
   if (isFilterableByMultiSelectValue) {
     return (
       <FormMultiSelectFieldInput
-        label={''}
+        label=""
         defaultValue={stepFilter.value}
         onChange={handleValueChange}
         readonly={readonly}

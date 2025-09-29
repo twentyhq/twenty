@@ -4,20 +4,12 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
-import { detectDateFormat } from '@/localization/utils/detectDateFormat';
-import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
-import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
-import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { AppPath } from '@/types/AppPath';
+import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -26,7 +18,7 @@ import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type WorkspaceMember,
@@ -47,7 +39,7 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
-  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
   const updateLocaleCatalog = useRecoilCallback(
@@ -119,9 +111,9 @@ export const UserProviderEffect = () => {
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
         ...queryData.currentUser.currentUserWorkspace,
-        objectPermissions:
+        objectsPermissions:
           (queryData.currentUser.currentUserWorkspace
-            .objectPermissions as Array<
+            .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });
@@ -156,19 +148,8 @@ export const UserProviderEffect = () => {
 
       updateLocaleCatalog(updatedWorkspaceMember.locale);
 
-      // TODO: factorize
-      setDateTimeFormat({
-        timeZone:
-          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
-            ? workspaceMember.timeZone
-            : detectTimeZone(),
-        dateFormat: isDefined(workspaceMember.dateFormat)
-          ? getDateFormatFromWorkspaceDateFormat(workspaceMember.dateFormat)
-          : DateFormat[detectDateFormat()],
-        timeFormat: isDefined(workspaceMember.timeFormat)
-          ? getTimeFormatFromWorkspaceTimeFormat(workspaceMember.timeFormat)
-          : TimeFormat[detectTimeFormat()],
-      });
+      // Initialize format preferences from workspace member
+      initializeFormatPreferences(updatedWorkspaceMember);
 
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
@@ -176,10 +157,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
-      setCurrentWorkspaceMembers(
-        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
-          [],
-      );
+      setCurrentWorkspaceMembers(workspaceMembers);
     }
 
     if (isDefined(deletedWorkspaceMembers)) {
@@ -199,7 +177,7 @@ export const UserProviderEffect = () => {
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setIsCurrentUserLoaded,
-    setDateTimeFormat,
+    initializeFormatPreferences,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
     setCoreViews,

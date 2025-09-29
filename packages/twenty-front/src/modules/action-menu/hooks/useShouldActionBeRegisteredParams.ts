@@ -1,3 +1,4 @@
+import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/forceRegisteredActionsMapComponentState';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -10,8 +11,8 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -51,8 +52,8 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const isSoftDeleteFilterActive = useRecoilComponentValue(
-    isSoftDeleteFilterActiveComponentState,
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+    hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
   const isShowPage =
@@ -100,18 +101,23 @@ export const useShouldActionBeRegisteredParams = ({
     [],
   );
 
+  const forceRegisteredActionsByKey = useRecoilValue(
+    forceRegisteredActionsByKeyState,
+  );
+
   return {
     objectMetadataItem,
     isFavorite,
     objectPermissions,
     isNoteOrTask,
     isInRightDrawer,
-    isSoftDeleteFilterActive,
+    hasAnySoftDeleteFilterOnView,
     isShowPage,
     selectedRecord,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
+    forceRegisteredActionsByKey,
   };
 };

@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -20,18 +21,24 @@ import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/vie
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewCalendarLayout } from 'src/engine/core-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+// We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
   'workspaceId',
   'objectMetadataId',
 ])
-export class ViewEntity extends SyncableEntity {
+@Check(
+  'CHK_VIEW_CALENDAR_INTEGRITY',
+  `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
+)
+export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -66,7 +73,7 @@ export class ViewEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({ nullable: false, default: false, type: 'boolean' })
@@ -89,10 +96,21 @@ export class ViewEntity extends SyncableEntity {
     nullable: true,
     default: null,
   })
-  kanbanAggregateOperation?: AggregateOperations | null;
+  kanbanAggregateOperation: AggregateOperations | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  kanbanAggregateOperationFieldMetadataId?: string | null;
+  kanbanAggregateOperationFieldMetadataId: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewCalendarLayout),
+    nullable: true,
+    default: null,
+  })
+  calendarLayout: ViewCalendarLayout | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  calendarFieldMetadataId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -104,10 +122,10 @@ export class ViewEntity extends SyncableEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })
-  anyFieldFilterValue?: string | null;
+  anyFieldFilterValue: string | null;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',

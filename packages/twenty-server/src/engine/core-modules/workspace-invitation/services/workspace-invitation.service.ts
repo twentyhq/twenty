@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -21,6 +22,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -44,6 +46,7 @@ export class WorkspaceInvitationService {
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async validatePersonalInvitation({
@@ -278,7 +281,9 @@ export class WorkspaceInvitationService {
       if (invitation.status === 'fulfilled') {
         const link = this.domainManagerService.buildWorkspaceURL({
           workspace,
-          pathname: `invite/${workspace?.inviteHash}`,
+          pathname: getAppPath(AppPath.Invite, {
+            workspaceInviteHash: workspace?.inviteHash,
+          }),
           searchParams: invitation.value.isPersonalInvitation
             ? {
                 inviteToken: invitation.value.appToken.value,
@@ -300,17 +305,19 @@ export class WorkspaceInvitationService {
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);
-        const html = render(emailTemplate);
-        const text = render(emailTemplate, {
+        const html = await render(emailTemplate);
+        const text = await render(emailTemplate, {
           plainText: true,
         });
 
-        i18n.activate(sender.locale);
+        const joinTeamMsg = msg`Join your team on Twenty`;
+        const i18n = this.i18nService.getI18nInstance(sender.locale);
+        const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
           from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
-          subject: t`Join your team on Twenty`,
+          subject,
           text,
           html,
         });

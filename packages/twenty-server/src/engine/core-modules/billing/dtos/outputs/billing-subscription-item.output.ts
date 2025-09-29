@@ -7,7 +7,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingProductDTO } from 'src/engine/core-modules/billing/dtos/billing-product.dto';
 
-@ObjectType('BillingSubscriptionItem')
+@ObjectType()
 export class BillingSubscriptionItemDTO {
   @IDField(() => UUIDScalarType)
   id: string;
@@ -18,6 +18,9 @@ export class BillingSubscriptionItemDTO {
   @Field(() => Number, { nullable: true })
   quantity: number | null;
 
-  @Field(() => BillingProductDTO, { nullable: true })
+  @Field(() => String)
+  stripePriceId: string;
+
+  @Field(() => BillingProductDTO)
   billingProduct: BillingProductDTO;
 }

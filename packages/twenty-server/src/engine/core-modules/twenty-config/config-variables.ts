@@ -580,7 +580,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 5000;
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD = 500_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
@@ -589,7 +589,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 10000;
+  BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD = 5_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
@@ -894,6 +894,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Base URL for public domains',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  PUBLIC_DOMAIN_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     isSensitive: true,
     description: 'Secret key for the application',
     isEnvOnly: true,
@@ -962,6 +971,14 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
   CLOUDFLARE_ZONE_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CloudflareConfig,
+    description: 'Zone ID for public domain Cloudflare integration',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.PUBLIC_DOMAIN_URL)
+  CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Other,
@@ -1035,6 +1052,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   OPENAI_COMPATIBLE_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for xAI integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  XAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
@@ -1185,6 +1211,50 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS region',
+    type: ConfigVariableType.STRING,
+  })
+  @IsAWSRegion()
+  @IsOptional()
+  AWS_SES_REGION: AwsRegion;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS access key ID',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCESS_KEY_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS session token',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SESSION_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    isSensitive: true,
+    description: 'AWS secret access key',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AwsSesSettings,
+    description: 'AWS Account ID for SES ARN construction',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_SES_ACCOUNT_ID: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

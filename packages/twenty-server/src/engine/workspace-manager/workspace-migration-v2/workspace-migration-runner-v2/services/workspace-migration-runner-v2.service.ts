@@ -3,83 +3,114 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/registry/workspace-migration-runner-action-handler-registry.service';
-import { applyWorkspaceMigrationActionOnFlatObjectMetadataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/apply-workspace-migration-action-on-flat-object-metadata-maps';
 
 @Injectable()
 export class WorkspaceMigrationRunnerV2Service {
   constructor(
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
   ) {}
 
-  run = async (
-    workspaceMigration: WorkspaceMigrationV2,
-  ): Promise<FlatObjectMetadataMaps> => {
+  run = async ({
+    actions,
+    workspaceId,
+    relatedFlatEntityMapsKeys,
+  }: WorkspaceMigrationV2): Promise<AllFlatEntityMaps> => {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+    let allFlatEntityMaps =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
-          workspaceId: workspaceMigration.workspaceId,
+          workspaceId,
+          flatEntities: relatedFlatEntityMapsKeys,
         },
       );
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    let optimisticFlatObjectMetadataMaps = structuredClone(
-      existingFlatObjectMetadataMaps,
-    );
+
+    let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
 
     try {
-      for (const action of workspaceMigration.actions) {
-        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
-          action.type,
-          {
-            action,
-            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-            queryRunner,
-            workspaceId: workspaceMigration.workspaceId,
-          },
-        );
+      for (const action of actions) {
+        const partialOptimisticCache =
+          await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+            {
+              actionType: action.type,
+              context: {
+                action,
+                allFlatEntityMaps,
+                queryRunner,
+                workspaceId,
+              },
+            },
+          );
+        const optimisticallyUpdatedFlatEntityMapsKeys = Object.keys(
+          partialOptimisticCache,
+        ) as (keyof AllFlatEntityMaps)[];
 
-        optimisticFlatObjectMetadataMaps =
-          applyWorkspaceMigrationActionOnFlatObjectMetadataMaps({
-            action,
-            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-            workspaceId: workspaceMigration.workspaceId,
-          });
+        flatEntityMapsToInvalidate = [
+          ...new Set([
+            ...optimisticallyUpdatedFlatEntityMapsKeys,
+            ...flatEntityMapsToInvalidate,
+          ]),
+        ];
+
+        allFlatEntityMaps = {
+          ...allFlatEntityMaps,
+          ...partialOptimisticCache,
+        };
       }
 
       await queryRunner.commitTransaction();
-      const { workspaceId } = workspaceMigration;
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
-      );
+        flatEntities: flatEntityMapsToInvalidate,
+      });
 
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId,
-        },
-      );
-
-      return optimisticFlatObjectMetadataMaps;
+      return allFlatEntityMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
 
-      throw error;
+      const invertedActions = actions.reverse();
+
+      for (const invertedAction of invertedActions) {
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+          {
+            actionType: invertedAction.type,
+            context: {
+              action: invertedAction,
+              allFlatEntityMaps: allFlatEntityMaps,
+              queryRunner,
+              workspaceId,
+            },
+            rollback: true,
+          },
+        );
+      }
+
+      throw new WorkspaceQueryRunnerException(
+        error.message,
+        WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       await queryRunner.release();
     }

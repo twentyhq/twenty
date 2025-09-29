@@ -1,83 +1,54 @@
 import styled from '@emotion/styled';
 
+import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
-import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
-import { isUndefined } from '@sniptt/guards';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
-const StyledTd = styled.td`
+const StyledPlaceholderDragAndDropFooterCell = styled.div<{
+  isTableWithGroups: boolean;
+}>`
   background-color: ${({ theme }) => theme.background.primary};
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  position: sticky;
+  left: 0px;
+  bottom: 0;
+
+  z-index: ${({ isTableWithGroups }) =>
+    isTableWithGroups
+      ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn
+      : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn};
 `;
 
-const StyledTableRow = styled.tr<{
-  hasHorizontalOverflow?: boolean;
+const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
+  isTableWithGroups: boolean;
 }>`
-  z-index: ${TABLE_Z_INDEX.footer.default};
+  background-color: ${({ theme }) => theme.background.primary};
+  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   position: sticky;
-  border: none;
+  bottom: 0;
+  z-index: ${({ isTableWithGroups }) =>
+    isTableWithGroups
+      ? TABLE_Z_INDEX.footer.tableWithGroups.default
+      : TABLE_Z_INDEX.footer.tableWithoutGroups.default};
+`;
 
-  &.footer-sticky {
-    td {
-      border-top: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-      z-index: ${TABLE_Z_INDEX.footer.default};
-      position: sticky;
-      bottom: 0;
-    }
-  }
-  cursor: pointer;
-  td:nth-of-type(1) {
-    width: ${FIRST_TH_WIDTH};
-    left: 0;
-    border-top: none;
-  }
-  &.first-columns-sticky {
-    td:nth-of-type(1) {
-      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-    }
-    td:nth-of-type(2) {
-      position: sticky;
-      z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
-      transition: 0.3s ease;
-      &::after {
-        content: '';
-        position: absolute;
-        top: -1px;
-        height: calc(100% + 2px);
-        width: 4px;
-        right: 0px;
-        box-shadow: ${({ theme }) => theme.boxShadow.light};
-        clip-path: inset(0px -4px 0px 0px);
-      }
-      @media (max-width: ${MOBILE_VIEWPORT}px) {
-        width: 34px;
-        max-width: 34px;
-      }
-    }
-  }
-  background: ${({ theme }) => theme.background.primary};
-  ${({ hasHorizontalOverflow }) =>
-    `.footer-sticky {
-        bottom: ${hasHorizontalOverflow ? '10px' : '0'};
-        ${
-          hasHorizontalOverflow &&
-          `
-          &::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: inherit;
-          }
-        }
-      `
-        }
-    `}
+const StyledPlaceholderLastColumnEmptyFooterCell = styled.div<{
+  isTableWithGroups: boolean;
+}>`
+  background-color: ${({ theme }) => theme.background.primary};
+  position: sticky;
+  bottom: 0;
+  z-index: ${({ isTableWithGroups }) =>
+    isTableWithGroups
+      ? TABLE_Z_INDEX.footer.tableWithGroups.default
+      : TABLE_Z_INDEX.footer.tableWithoutGroups.default};
 `;
 
 export const RecordTableAggregateFooter = ({
@@ -87,21 +58,13 @@ export const RecordTableAggregateFooter = ({
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement();
-
-  const hasHorizontalOverflow =
-    (scrollWrapperHTMLElement?.scrollWidth ?? 0) >
-    (scrollWrapperHTMLElement?.clientWidth ?? 0);
+  const isTableWithGroups = isDefined(currentRecordGroupId);
 
   return (
-    <StyledTableRow
-      id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
-      data-select-disable
-      hasHorizontalOverflow={
-        hasHorizontalOverflow && isUndefined(currentRecordGroupId)
-      }
-    >
-      <StyledTd />
+    <>
+      <StyledPlaceholderDragAndDropFooterCell
+        isTableWithGroups={isTableWithGroups}
+      />
       {visibleRecordFields.map((recordField, index) => {
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
@@ -113,14 +76,18 @@ export const RecordTableAggregateFooter = ({
           >
             <RecordTableAggregateFooterCell
               currentRecordGroupId={currentRecordGroupId}
-              isFirstCell={index === 0}
+              columnIndex={index}
             />
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );
       })}
-      <td colSpan={visibleRecordFields.length - 1} />
-      <td />
-      <td />
-    </StyledTableRow>
+      <StyledPlaceholderAddButtonPlaceholderFooterCell
+        isTableWithGroups={isTableWithGroups}
+      />
+      <StyledPlaceholderLastColumnEmptyFooterCell
+        isTableWithGroups={isTableWithGroups}
+        className={RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME}
+      />
+    </>
   );
 };

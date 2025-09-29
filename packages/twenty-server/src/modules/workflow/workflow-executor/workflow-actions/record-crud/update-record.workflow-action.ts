@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import deepEqual from 'deep-equal';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -15,6 +16,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
@@ -36,14 +38,10 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     steps,
     context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const step = steps.find((step) => step.id === currentStepId);
-
-    if (!step) {
-      throw new WorkflowStepExecutorException(
-        'Step not found',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-      );
-    }
+    const step = findStepOrThrow({
+      steps,
+      stepId: currentStepId,
+    });
 
     if (!isWorkflowUpdateRecordAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -108,6 +106,18 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
         workflowActionInput.objectName,
         workspaceId,
       );
+
+    if (
+      !canObjectBeManagedByWorkflow({
+        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
+        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+      })
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to update: Object cannot be updated by workflow',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const objectRecordWithFilteredFields = Object.keys(
       workflowActionInput.objectRecord,

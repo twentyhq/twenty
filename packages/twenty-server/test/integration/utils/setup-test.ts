@@ -7,8 +7,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 
 import { createApp } from './create-app';
 
-// @ts-expect-error legacy noImplicitAny
-export default async (_, projectConfig: JestConfigWithTsJest) => {
+export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
   const app = await createApp({});
 
   if (!projectConfig.globals) {
@@ -17,14 +16,10 @@ export default async (_, projectConfig: JestConfigWithTsJest) => {
 
   await rawDataSource.initialize();
 
-  await app.listen(projectConfig.globals.APP_PORT);
+  await app.listen(projectConfig.globals.APP_PORT as number);
 
-  // @ts-expect-error legacy noImplicitAny
   global.app = app;
-  // @ts-expect-error legacy noImplicitAny
   global.testDataSource = rawDataSource;
-  // @ts-expect-error legacy noImplicitAny
   global.dataSourceService = app.get(DataSourceService);
-  // @ts-expect-error legacy noImplicitAny
   global.dataSeedWorkspaceCommand = app.get(DataSeedWorkspaceCommand);
 };

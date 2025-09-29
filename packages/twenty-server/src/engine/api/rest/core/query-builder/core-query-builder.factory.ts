@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { SettingsPath } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, getSettingsPath } from 'twenty-shared/utils';
 
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-many-query.factory';
 import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
@@ -13,7 +15,6 @@ import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
@@ -22,6 +23,7 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -47,7 +49,7 @@ export class CoreQueryBuilderFactory {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
@@ -70,7 +72,7 @@ export class CoreQueryBuilderFactory {
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
           .buildWorkspaceURL({
             workspace,
-            pathname: '/settings/apis',
+            pathname: getSettingsPath(SettingsPath.ApiWebhooks),
           })
           .toString()}`,
       );

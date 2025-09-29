@@ -742,10 +742,11 @@ describe('evaluateFilterConditions', () => {
 
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
 
+        const otherDate = new Date('2023-01-16');
         const differentFilter = createFilter(
           ViewFilterOperand.Is,
           sameDate1,
-          now,
+          otherDate,
           'DATE',
         );
 

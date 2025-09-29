@@ -161,6 +161,7 @@ export class StandardFieldFactory {
         relationTargetFieldMetadataId: null,
         relationTargetObjectMetadata: null,
         relationTargetObjectMetadataId: null,
+        morphId: null,
       },
     ];
   }
@@ -210,6 +211,7 @@ export class StandardFieldFactory {
       relationTargetObjectMetadataId: null,
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
       standardOverrides: null,
+      morphId: null,
     });
 
     return fieldMetadataCollection;

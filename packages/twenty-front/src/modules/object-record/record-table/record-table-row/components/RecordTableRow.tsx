@@ -1,9 +1,11 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
+import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
+import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
+import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTrFirstRowOfGroup';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
@@ -17,12 +19,14 @@ type RecordTableRowProps = {
   recordId: string;
   rowIndexForFocus: number;
   rowIndexForDrag: number;
+  isFirstRowOfGroup: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
   rowIndexForFocus,
   rowIndexForDrag,
+  isFirstRowOfGroup,
 }: RecordTableRowProps) => {
   const { objectNameSingular } = useRecordIndexContextOrThrow();
   const listenedFields = getDefaultRecordFieldsToListen({
@@ -36,7 +40,30 @@ export const RecordTableRow = ({
     isRecordTableRowFocusActiveComponentState,
   );
 
-  return (
+  return isFirstRowOfGroup ? (
+    <RecordTableDraggableTrFirstRowOfGroup
+      recordId={recordId}
+      draggableIndex={rowIndexForDrag}
+      focusIndex={rowIndexForFocus}
+    >
+      {isRowFocusActive && isFocused && (
+        <>
+          <RecordTableRowHotkeyEffect />
+          <RecordTableRowArrowKeysEffect />
+        </>
+      )}
+      <RecordTableCellDragAndDrop />
+      <RecordTableCellCheckbox />
+      <RecordTableCells />
+      <RecordTablePlusButtonCellPlaceholder />
+      <RecordTableLastEmptyCell />
+      <ListenRecordUpdatesEffect
+        objectNameSingular={objectNameSingular}
+        recordId={recordId}
+        listenedFields={listenedFields}
+      />
+    </RecordTableDraggableTrFirstRowOfGroup>
+  ) : (
     <RecordTableDraggableTr
       recordId={recordId}
       draggableIndex={rowIndexForDrag}
@@ -48,9 +75,10 @@ export const RecordTableRow = ({
           <RecordTableRowArrowKeysEffect />
         </>
       )}
-      <RecordTableCellGrip />
+      <RecordTableCellDragAndDrop />
       <RecordTableCellCheckbox />
       <RecordTableCells />
+      <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
       <ListenRecordUpdatesEffect
         objectNameSingular={objectNameSingular}

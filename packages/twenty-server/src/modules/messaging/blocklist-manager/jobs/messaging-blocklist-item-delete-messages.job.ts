@@ -140,6 +140,6 @@ export class BlocklistItemDeleteMessagesJob {
       }
     }
 
-    await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
+    await this.threadCleanerService.cleanOrphanMessagesAndThreads(workspaceId);
   }
 }

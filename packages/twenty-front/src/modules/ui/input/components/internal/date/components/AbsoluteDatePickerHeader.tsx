@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
+import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import {
@@ -54,17 +56,18 @@ export const AbsoluteDatePickerHeader = ({
   isDateTimeInput,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
-  const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
-    day: date.getDate(),
-    month: date.getMonth() + 1,
-    year: date.getFullYear(),
-    hour: 23,
-    minute: 59,
-    second: 59,
-    millisecond: 999,
-  });
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const endOfDayInLocalTimezone = endOfDayDateTimeInLocalTimezone.toJSDate();
+  const endOfDayInLocalTimezone = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    23,
+    59,
+    59,
+    999,
+  );
 
   return (
     <>
@@ -84,7 +87,7 @@ export const AbsoluteDatePickerHeader = ({
         >
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-            options={getMonthSelectOptions()}
+            options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
             value={endOfDayInLocalTimezone.getMonth()}
             fullWidth

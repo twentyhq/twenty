@@ -2,7 +2,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 
 export type StandardAgentDefinition = Omit<
   FlatAgent,
-  'id' | 'workspaceId' | 'uniqueIdentifier' | 'standardId'
+  'id' | 'workspaceId' | 'universalIdentifier' | 'standardId'
 > & {
   standardId: string;
+  standardRoleId?: string;
 };

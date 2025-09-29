@@ -7,10 +7,13 @@ import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilterOff } from 'twenty-ui/display';
 
 export const RecordTableEmptyStateSoftDelete = () => {
+  const { t } = useLingui();
+
   const { objectMetadataItem, objectNameSingular, recordTableId } =
     useRecordTableContextOrThrow();
 
@@ -25,10 +28,12 @@ export const RecordTableEmptyStateSoftDelete = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const { checkIsSoftDeleteFilter } = useCheckIsSoftDeleteFilter();
+  const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
 
   const handleButtonClick = async () => {
-    const deletedFilter = currentRecordFilters.find(checkIsSoftDeleteFilter);
+    const deletedFilter = currentRecordFilters.find(
+      isRecordFilterAboutSoftDelete,
+    );
 
     if (!isDefined(deletedFilter)) {
       throw new Error('Deleted filter not found');
@@ -43,9 +48,9 @@ export const RecordTableEmptyStateSoftDelete = () => {
 
   return (
     <RecordTableEmptyStateDisplay
-      buttonTitle={'Remove Deleted filter'}
-      subTitle={'No deleted records matching the filter criteria were found.'}
-      title={`No Deleted ${objectLabelSingular} found`}
+      buttonTitle={t`Remove Deleted filter`}
+      subTitle={t`No deleted records matching the filter criteria were found.`}
+      title={t`No Deleted ${objectLabelSingular} found`}
       ButtonIcon={IconFilterOff}
       animatedPlaceholderType="noDeletedRecord"
       onClick={handleButtonClick}

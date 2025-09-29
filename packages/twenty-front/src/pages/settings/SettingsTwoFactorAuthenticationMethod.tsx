@@ -13,14 +13,14 @@ import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-f
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useTheme } from '@emotion/react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledQRCodeContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(4)} 0;
@@ -38,6 +38,10 @@ const StyledQRCodeWrapper = styled.div`
   display: flex;
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledOTPContainer = styled.div`
+  width: fit-content;
 `;
 
 const StyledQRCode = styled(QRCode)`
@@ -174,7 +178,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 title={t`Verify the code from the app`}
                 description={t`Copy paste the code below`}
               />
-              <TwoFactorAuthenticationVerificationForSettings />
+              <StyledOTPContainer>
+                <TwoFactorAuthenticationVerificationForSettings />
+              </StyledOTPContainer>
             </Section>
           )}
         </SettingsPageContainer>

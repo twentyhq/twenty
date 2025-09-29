@@ -58,7 +58,7 @@ export class WorkspaceDataSourceService {
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.dropSchema(schemaName, true);
+    await queryRunner.dropSchema(schemaName, true, true);
 
     await queryRunner.release();
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   type ObjectRecord,
@@ -23,9 +23,9 @@ import {
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -114,6 +114,7 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
@@ -132,6 +133,7 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
@@ -157,7 +159,7 @@ export class QueryRunnerArgsFactory {
 
     const workspace = options.authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const overriddenPositionRecords =
       await this.recordPositionService.overridePositionOnRecords({
@@ -191,13 +193,14 @@ export class QueryRunnerArgsFactory {
             case FieldMetadataType.RICH_TEXT_V2:
             case FieldMetadataType.LINKS:
             case FieldMetadataType.EMAILS: {
-              const transformedValue =
-                await this.recordInputTransformerService.transformFieldValue(
-                  fieldMetadata.type,
-                  value,
-                );
+              const transformedRecord =
+                await this.recordInputTransformerService.process({
+                  recordInput: { [key]: value },
+                  objectMetadataMapItem:
+                    options.objectMetadataItemWithFieldMaps,
+                });
 
-              return [key, transformedValue];
+              return [key, transformedRecord[key]];
             }
             default:
               return [key, value];
@@ -283,6 +286,7 @@ export class QueryRunnerArgsFactory {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
     const fieldMetadata = fieldMetadataMapByName[key];
 
@@ -290,9 +294,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    return this.recordInputTransformerService.transformFieldValue(
-      fieldMetadata.type,
-      value,
-    );
+    return this.recordInputTransformerService.process({
+      recordInput: { [key]: value },
+      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+    });
   }
 }

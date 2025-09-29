@@ -23,11 +23,12 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+    key: FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
     metadata: {
-      label: 'Workflow Branches',
-      description: 'Create multiple branches on your workflows',
-      imagePath: 'https://twenty.com/images/lab/is-workflow-branch-enabled.png',
+      label: 'Message Folder Control',
+      description: 'Control which folders are synced',
+      imagePath:
+        'https://twenty.com/images/lab/is-message-folder-control-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

@@ -1,11 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
 import chalk from 'chalk';
 import { SemVer } from 'semver';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, Repository } from 'typeorm';
 
 import {
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -24,6 +29,8 @@ export type VersionCommands = {
   afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
 };
 export type AllCommands = Record<string, VersionCommands>;
+const execPromise = promisify(exec);
+
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private fromWorkspaceVersion: SemVer;
   private currentAppVersion: SemVer;
@@ -41,14 +48,99 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
+  private async loadActiveOrSuspendedWorkspace() {
+    return await this.workspaceRepository.find({
+      select: ['id', 'version', 'displayName'],
+      where: {
+        activationStatus: In([
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
+        ]),
+      },
+      order: {
+        id: 'ASC',
+      },
+    });
+  }
+
+  private async shouldSkipUpgradeIfFreshInstallation(): Promise<boolean> {
+    const activeWorkspaceOrSuspendedWorkspaceCount =
+      await this.loadActiveOrSuspendedWorkspace();
+
+    return activeWorkspaceOrSuspendedWorkspaceCount.length === 0;
+  }
+
+  async runCoreMigrations(): Promise<void> {
+    this.logger.log('Running global database migrations');
+
+    try {
+      this.logger.log('Running core datasource migrations...');
+      const coreResult = await execPromise(
+        'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
+      );
+
+      this.logger.log(coreResult.stdout);
+
+      this.logger.log('Database migrations completed successfully');
+    } catch (error) {
+      this.logger.error('Error running database migrations:', error);
+      throw error;
+    }
+  }
+
+  private async workspacesThatAreBelowFromWorkspaceVersion(
+    fromWorkspaceVersion: SemVer,
+  ): Promise<Pick<Workspace, 'id' | 'displayName' | 'version'>[]> {
+    try {
+      const allActiveOrSuspendedWorkspaces =
+        await this.loadActiveOrSuspendedWorkspace();
+
+      if (allActiveOrSuspendedWorkspaces.length === 0) {
+        this.logger.log(
+          'No workspaces found. Running migrations for fresh installation.',
+        );
+
+        return [];
+      }
+
+      const workspacesThatAreBelowFromWorkspaceVersion =
+        allActiveOrSuspendedWorkspaces.filter((workspace) => {
+          if (!isDefined(workspace.version)) {
+            return true;
+          }
+
+          try {
+            const versionCompareResult = compareVersionMajorAndMinor(
+              workspace.version,
+              fromWorkspaceVersion.version,
+            );
+
+            return versionCompareResult === 'lower';
+          } catch (error) {
+            this.logger.error(
+              `Error checking workspace ${workspace.id} version: ${error.message}`,
+            );
+
+            return true;
+          }
+        });
+
+      return workspacesThatAreBelowFromWorkspaceVersion;
+    } catch (error) {
+      this.logger.error('Error checking workspaces below version:', error);
+
+      throw error;
+    }
+  }
+
   private setUpgradeContextVersionsAndCommandsForCurrentAppVersion() {
-    const ugpradeContextIsAlreadyDefined = [
+    const upgradeContextIsAlreadyDefined = [
       this.currentAppVersion,
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
 
-    if (ugpradeContextIsAlreadyDefined) {
+    if (upgradeContextIsAlreadyDefined) {
       return;
     }
 
@@ -85,6 +177,62 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     ];
 
     this.logger.log(chalk.blue(message.join('\n   ')));
+  }
+
+  override async runMigrationCommand(
+    passedParams: string[],
+    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  ): Promise<void> {
+    try {
+      this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
+
+      const shouldSkipUpgradeIfFreshInstallation =
+        await this.shouldSkipUpgradeIfFreshInstallation();
+
+      if (shouldSkipUpgradeIfFreshInstallation) {
+        this.logger.log(
+          chalk.blue('Fresh installation detected, skipping migration'),
+        );
+
+        return;
+      }
+
+      const workspacesThatAreBelowFromWorkspaceVersion =
+        await this.workspacesThatAreBelowFromWorkspaceVersion(
+          this.fromWorkspaceVersion,
+        );
+
+      if (workspacesThatAreBelowFromWorkspaceVersion.length > 0) {
+        this.migrationReport.fail.push(
+          ...workspacesThatAreBelowFromWorkspaceVersion.map((workspace) => ({
+            error: new Error(
+              `Unable to run the upgrade command. Aborting the upgrade process.
+Please ensure that all workspaces are on at least the previous minor version (${this.fromWorkspaceVersion.version}).
+If any workspaces are not on the previous minor version, roll back to that version and run the upgrade command again.`,
+            ),
+            workspaceId: workspace.id,
+          })),
+        );
+      }
+    } catch (error) {
+      this.migrationReport.fail.push({
+        error,
+        workspaceId: 'global',
+      });
+    }
+
+    if (this.migrationReport.fail.length > 0) {
+      this.migrationReport.fail.forEach(({ error, workspaceId }) =>
+        this.logger.error(
+          `Error in workspace ${workspaceId}: ${error.message}`,
+        ),
+      );
+
+      return;
+    }
+
+    await this.runCoreMigrations();
+    await super.runMigrationCommand(passedParams, options);
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {

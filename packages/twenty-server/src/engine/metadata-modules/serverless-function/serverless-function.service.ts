@@ -214,7 +214,7 @@ export class ServerlessFunctionService {
     if (!isDefined(publishedServerlessFunction.latestVersion)) {
       throw new WorkflowVersionStepException(
         `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
-        WorkflowVersionStepExceptionCode.FAILURE,
+        WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
       );
     }
 
@@ -363,7 +363,7 @@ export class ServerlessFunctionService {
     });
   }
 
-  async usePublishedVersionAsDraft({
+  async createDraftFromPublishedVersion({
     id,
     version,
     workspaceId,
@@ -398,6 +398,57 @@ export class ServerlessFunctionService {
         }),
       },
     });
+  }
+
+  async duplicateServerlessFunction({
+    id,
+    version,
+    workspaceId,
+  }: {
+    id: string;
+    version: string;
+    workspaceId: string;
+  }) {
+    const serverlessFunctionToDuplicate =
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
+      });
+
+    const newServerlessFunction = await this.createOneServerlessFunction(
+      {
+        name: serverlessFunctionToDuplicate.name,
+        description: serverlessFunctionToDuplicate.description ?? undefined,
+        timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
+      },
+      workspaceId,
+    );
+
+    if (!isDefined(newServerlessFunction)) {
+      throw new ServerlessFunctionException(
+        'Failed to create new serverless function',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_CREATE_FAILED,
+      );
+    }
+
+    await this.fileStorageService.copy({
+      from: {
+        folderPath: getServerlessFolder({
+          serverlessFunction: serverlessFunctionToDuplicate,
+          version,
+        }),
+      },
+      to: {
+        folderPath: getServerlessFolder({
+          serverlessFunction: newServerlessFunction,
+          version: 'draft',
+        }),
+      },
+    });
+
+    return newServerlessFunction;
   }
 
   private async throttleExecution(workspaceId: string) {

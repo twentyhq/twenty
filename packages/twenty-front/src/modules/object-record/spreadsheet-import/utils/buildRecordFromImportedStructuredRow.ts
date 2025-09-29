@@ -287,19 +287,27 @@ export const buildRecordFromImportedStructuredRow = ({
         break;
       }
       case FieldMetadataType.BOOLEAN:
-        recordToBuild[field.name] =
-          importedFieldValue === 'true' || importedFieldValue === true;
+        if (isDefined(importedFieldValue)) {
+          recordToBuild[field.name] =
+            importedFieldValue === 'true' || importedFieldValue === true;
+        }
         break;
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
-        recordToBuild[field.name] = Number(importedFieldValue);
+        if (isDefined(importedFieldValue)) {
+          recordToBuild[field.name] = Number(importedFieldValue);
+        }
         break;
       case FieldMetadataType.RELATION: {
-        recordToBuild[field.name] = buildRelationConnectFieldRecord(
+        const relationConnectFieldValue = buildRelationConnectFieldRecord(
           field,
           importedStructuredRow,
           spreadsheetImportFields,
         );
+        if (isDefined(relationConnectFieldValue)) {
+          recordToBuild[field.name] = relationConnectFieldValue;
+        }
+
         break;
       }
       case FieldMetadataType.ACTOR:
@@ -310,8 +318,10 @@ export const buildRecordFromImportedStructuredRow = ({
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {
-        recordToBuild[field.name] =
-          stringArrayJSONSchema.parse(importedFieldValue);
+        if (isDefined(importedFieldValue)) {
+          recordToBuild[field.name] =
+            stringArrayJSONSchema.parse(importedFieldValue);
+        }
         break;
       }
       case FieldMetadataType.RAW_JSON: {

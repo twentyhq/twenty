@@ -2,42 +2,40 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
-import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
-import { buildWorkspaceMigrationViewActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder';
-import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { CreatedDeletedUpdatedActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { WorkspaceMigrationFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { WorkspaceMigrationObjectActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
-import { computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
-import { getWorkspaceMigrationV2CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 
 export type WorkspaceMigrationV2BuilderOptions = {
-  inferDeletionFromMissingObjectFieldIndex: boolean;
+  inferDeletionFromMissingEntities: boolean;
   isSystemBuild: boolean;
 };
 
-type SuccessfulWorkspaceMigrationBuildResult = {
+export type SuccessfulWorkspaceMigrationBuildResult = {
   status: 'success';
-  workspaceMigration: WorkspaceMigrationV2;
+  objectActions: CreatedDeletedUpdatedActions<WorkspaceMigrationObjectActionV2>;
+  fieldsActions: CreatedDeletedUpdatedActions<WorkspaceMigrationFieldActionV2>;
+  optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
 
 export type FailedWorkspaceMigrationBuildResult = {
   status: 'fail';
-  errors: (
-    | FailedFlatObjectMetadataValidation
-    | FailedFlatFieldMetadataValidation
-  )[];
+  optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  errors: FailedFlatEntityValidation<FlatEntity>[];
 };
 
 export type WorkspaceMigrationBuildArgs = {
-  workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
 } & FromTo<FlatObjectMetadataMaps, 'FlatObjectMetadataMaps'>;
+// TODO deprecate this file
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
   constructor(
@@ -48,11 +46,10 @@ export class WorkspaceMigrationBuilderV2Service {
   public async validateAndBuild({
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
-    workspaceId,
     buildOptions,
   }: WorkspaceMigrationBuildArgs): Promise<
-    | SuccessfulWorkspaceMigrationBuildResult
     | FailedWorkspaceMigrationBuildResult
+    | SuccessfulWorkspaceMigrationBuildResult
   > {
     const fromFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(
@@ -71,11 +68,7 @@ export class WorkspaceMigrationBuilderV2Service {
       to: toFlatObjectMetadatas,
     });
 
-    const objectMetadataDeletedCreatedUpdatedIndex =
-      computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
-        updatedFlatObjectMetadatas,
-      );
-
+    // Should be handled separately from objects
     const objectMetadataDeletedCreatedUpdatedFields =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
         updatedFlatObjectMetadatas,
@@ -106,24 +99,6 @@ export class WorkspaceMigrationBuilderV2Service {
         },
       );
 
-    const createdObjectMetadataCreateIndexActions =
-      createdFlatObjectMetadatas.flatMap((objectMetadata) =>
-        objectMetadata.flatIndexMetadatas.map(
-          getWorkspaceMigrationV2CreateIndexAction,
-        ),
-      );
-
-    const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
-      objectMetadataDeletedCreatedUpdatedIndex,
-      inferDeletionFromMissingObjectFieldIndex:
-        buildOptions.inferDeletionFromMissingObjectFieldIndex,
-    });
-
-    // TODO: Remove this from here when we have a proper builder that handles views diffing independently
-    const viewWorkspaceMigrationActions = buildWorkspaceMigrationViewActions({
-      createdFlatObjectMetadatas, // should be flatViews, not objects.
-    });
-
     const allValidateAndBuildResultFailures = [
       ...objectActionsValidateAndBuildResult.failed,
       ...fieldActionsValidateAndBuildResult.failed,
@@ -133,25 +108,25 @@ export class WorkspaceMigrationBuilderV2Service {
       return {
         status: 'fail',
         errors: allValidateAndBuildResultFailures,
+        optimisticFlatObjectMetadataMaps:
+          fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
       };
     }
 
     return {
       status: 'success',
-      workspaceMigration: {
-        workspaceId,
-        actions: [
-          ...fieldActionsValidateAndBuildResult.deleted,
-          ...objectActionsValidateAndBuildResult.deleted,
-          ...objectActionsValidateAndBuildResult.created,
-          ...objectActionsValidateAndBuildResult.updated,
-          ...fieldActionsValidateAndBuildResult.created,
-          ...fieldActionsValidateAndBuildResult.updated,
-          ...createdObjectMetadataCreateIndexActions,
-          ...indexWorkspaceMigrationActions,
-          ...viewWorkspaceMigrationActions,
-        ],
+      fieldsActions: {
+        created: fieldActionsValidateAndBuildResult.created,
+        deleted: fieldActionsValidateAndBuildResult.deleted,
+        updated: fieldActionsValidateAndBuildResult.updated,
       },
+      objectActions: {
+        created: objectActionsValidateAndBuildResult.created,
+        deleted: objectActionsValidateAndBuildResult.deleted,
+        updated: objectActionsValidateAndBuildResult.updated,
+      },
+      optimisticFlatObjectMetadataMaps:
+        fieldActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
     };
   }
 }

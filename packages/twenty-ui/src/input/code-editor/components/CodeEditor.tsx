@@ -27,7 +27,8 @@ const StyledEditorLoader = styled.div<{
 }>`
   align-items: center;
   display: flex;
-  height: ${({ height }) => height}px;
+  height: ${({ height }) =>
+    typeof height === 'number' ? `${height}px` : height};
   justify-content: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background-color: ${({ theme }) => theme.background.transparent.lighter};

@@ -1,6 +1,5 @@
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
-import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -9,10 +8,11 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();

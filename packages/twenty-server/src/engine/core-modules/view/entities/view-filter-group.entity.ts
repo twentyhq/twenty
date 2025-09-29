@@ -21,6 +21,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'], {
+  where: '"deletedAt" IS NULL',
+})
 export class ViewFilterGroupEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -36,8 +39,8 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   })
   logicalOperator: ViewFilterGroupLogicalOperator;
 
-  @Column({ nullable: true, type: 'int' })
-  positionInViewFilterGroup?: number | null;
+  @Column({ nullable: true, type: 'double precision' })
+  positionInViewFilterGroup: number | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

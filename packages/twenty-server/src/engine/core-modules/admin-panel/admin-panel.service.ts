@@ -11,6 +11,7 @@ import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-pan
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -32,47 +33,10 @@ export class AdminPanelService {
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly auditService: AuditService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
-  async impersonate(userId: string, workspaceId: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-        userWorkspaces: {
-          workspaceId,
-          workspace: {
-            allowImpersonation: true,
-          },
-        },
-      },
-      relations: { userWorkspaces: { workspace: true } },
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException(
-        'User not found or impersonation not enable on workspace',
-        AuthExceptionCode.INVALID_INPUT,
-      ),
-    );
-
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      user.userWorkspaces[0].workspace.id,
-    );
-
-    return {
-      workspace: {
-        id: user.userWorkspaces[0].workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-          user.userWorkspaces[0].workspace,
-        ),
-      },
-      loginToken,
-    };
-  }
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');

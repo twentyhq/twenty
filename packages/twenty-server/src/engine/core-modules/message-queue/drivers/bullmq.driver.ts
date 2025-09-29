@@ -1,4 +1,4 @@
-import { type OnModuleDestroy } from '@nestjs/common';
+import { Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import {
   type JobsOptions,
@@ -26,6 +26,7 @@ export type BullMQDriverOptions = QueueOptions;
 const V4_LENGTH = 36;
 
 export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
+  private logger = new Logger(BullMQDriver.name);
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
     MessageQueue,
     Queue
@@ -71,7 +72,18 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
+        const timeStart = performance.now();
+
+        this.logger.log(
+          `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
+        );
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
+        const timeEnd = performance.now();
+        const executionTime = timeEnd - timeStart;
+
+        this.logger.log(
+          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
+        );
       },
       workerOptions,
     );

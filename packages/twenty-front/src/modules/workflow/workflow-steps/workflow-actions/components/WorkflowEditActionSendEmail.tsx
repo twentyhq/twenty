@@ -6,20 +6,21 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -220,6 +221,7 @@ export const WorkflowEditActionSendEmail = ({
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
+
   return (
     !loading && (
       <>
@@ -283,7 +285,8 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <FormTextFieldInput
+          <WorkflowSendEmailBody
+            action={action}
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
@@ -292,9 +295,9 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
-            multiline
           />
         </WorkflowStepBody>
+        {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
       </>
     )
   );

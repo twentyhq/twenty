@@ -4,17 +4,17 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
+import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -51,7 +51,7 @@ export const WorkflowStepFilterFieldSelect = ({
       : undefined;
 
   const [selectedStep, setSelectedStep] = useState<
-    StepOutputSchema | undefined
+    StepOutputSchemaV2 | undefined
   >(initialStep);
 
   const stepId = extractRawVariableNamePart({
@@ -137,7 +137,7 @@ export const WorkflowStepFilterFieldSelect = ({
       }
       dropdownComponents={
         !isDefined(selectedStep) ? (
-          <WorkflowVariablesDropdownWorkflowStepItems
+          <WorkflowVariablesDropdownSteps
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}

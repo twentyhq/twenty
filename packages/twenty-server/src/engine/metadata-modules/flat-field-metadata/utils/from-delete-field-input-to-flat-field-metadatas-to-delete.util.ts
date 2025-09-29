@@ -1,29 +1,37 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
-import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
+import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  existingFlatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   deleteOneFieldInput: DeleteOneFieldInput;
 };
+// TODO refactor as a side effect service
 export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   existingFlatObjectMetadataMaps,
   deleteOneFieldInput: rawDeleteOneInput,
-}: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): FlatFieldMetadata[] => {
+  existingFlatIndexMaps,
+}: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
+  flatFieldMetadatasToDelete: FlatFieldMetadata[];
+  flatIndexesToUpdate: FlatIndexMetadata[];
+  flatIndexesToDelete: FlatIndexMetadata[];
+} => {
   const { id: fieldMetadataToDeleteId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawDeleteOneInput,
@@ -43,53 +51,102 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
-    return findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+  const relatedFlatFieldMetadataToDelete =
+    computeFlatFieldMetadataRelatedFlatFieldMetadata({
       flatFieldMetadata: flatFieldMetadataToDelete,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    });
+
+  const flatFieldMetadatasToDelete = [
+    flatFieldMetadataToDelete,
+    ...relatedFlatFieldMetadataToDelete,
+  ];
+
+  const flatIndexMap = new Map<string, FlatIndexMetadata>();
+  const allFlatIndexes = Object.values(existingFlatIndexMaps.byId).filter(
+    isDefined,
+  );
+
+  for (const flatFieldMetadata of flatFieldMetadatasToDelete) {
+    allFlatIndexes.forEach((flatIndex) => {
+      const flatIndexFromMap = flatIndexMap.get(flatIndex.id);
+
+      if (isDefined(flatIndexFromMap)) {
+        const updatedFlatIndexFields =
+          flatIndexFromMap.flatIndexFieldMetadatas.filter(
+            (flatIndexField) =>
+              flatIndexField.fieldMetadataId !== flatFieldMetadata.id,
+          );
+
+        flatIndexMap.set(flatIndexFromMap.id, {
+          ...flatIndexFromMap,
+          flatIndexFieldMetadatas: updatedFlatIndexFields,
+        });
+
+        return;
+      }
+
+      if (
+        flatIndex.objectMetadataId !== flatFieldMetadata.objectMetadataId ||
+        !flatIndex.flatIndexFieldMetadatas.some(
+          (flatIndexField) =>
+            flatIndexField.fieldMetadataId === flatFieldMetadata.id,
+        )
+      ) {
+        return;
+      }
+
+      const updatedFlatIndexFields = flatIndex.flatIndexFieldMetadatas.filter(
+        (flatIndexField) =>
+          flatIndexField.fieldMetadataId !== flatFieldMetadata.id,
+      );
+
+      flatIndexMap.set(flatIndex.id, {
+        ...flatIndex,
+        flatIndexFieldMetadatas: updatedFlatIndexFields,
+      });
     });
   }
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete,
-      FieldMetadataType.RELATION,
-    ) &&
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
-      FieldMetadataType.RELATION,
-    )
-  ) {
-    const relationTargetFlatFieldMetadata =
-      findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        flatFieldMetadata: flatFieldMetadataToDelete,
+  const { flatIndexesToDelete, flatIndexesToUpdate } = [
+    ...flatIndexMap.values(),
+  ].reduce<{
+    flatIndexesToUpdate: FlatIndexMetadata[];
+    flatIndexesToDelete: FlatIndexMetadata[];
+  }>(
+    (acc, flatIndex) => {
+      if (flatIndex.flatIndexFieldMetadatas.length === 0) {
+        return {
+          ...acc,
+          flatIndexesToDelete: [...acc.flatIndexesToDelete, flatIndex],
+        };
+      }
+
+      const flatObjectMetadata =
+        findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          objectMetadataId: flatIndex.objectMetadataId,
+        });
+
+      const newIndex = generateFlatIndexMetadataWithNameOrThrow({
+        flatObjectMetadata,
+        flatIndex,
       });
 
-    return [flatFieldMetadataToDelete, relationTargetFlatFieldMetadata];
-  }
+      return {
+        ...acc,
+        flatIndexesToUpdate: [...acc.flatIndexesToUpdate, newIndex],
+      };
+    },
+    {
+      flatIndexesToDelete: [],
+      flatIndexesToUpdate: [],
+    },
+  );
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete,
-      FieldMetadataType.RELATION,
-    ) &&
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
-    return findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatFieldMetadata:
-        flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
-    });
-  }
-
-  return [flatFieldMetadataToDelete];
+  return {
+    flatFieldMetadatasToDelete,
+    flatIndexesToDelete,
+    flatIndexesToUpdate,
+  };
 };

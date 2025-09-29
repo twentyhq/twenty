@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
@@ -10,12 +11,16 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
-  objectMetadataId: string;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
 };
 
+export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
+  typeof buildDefaultFlatFieldMetadatasForCustomObject
+>;
+// This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  objectMetadataId,
+  flatObjectMetadata: { id: objectMetadataId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
@@ -24,7 +29,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: true,
     objectMetadataId,
-    uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.id,
+    universalIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     name: 'id',
@@ -47,6 +52,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
@@ -55,7 +61,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     name: 'name',
@@ -67,7 +73,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isCustom: false,
     isSystem: false,
     isUIReadOnly: false,
-    defaultValue: "'Untitled'",
+    defaultValue: "''",
 
     createdAt,
     updatedAt: createdAt,
@@ -78,6 +84,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -86,7 +93,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+    universalIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     name: 'createdAt',
@@ -109,6 +116,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -117,7 +125,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+    universalIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     name: 'updatedAt',
@@ -140,6 +148,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -148,7 +157,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+    universalIdentifier: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     name: 'deletedAt',
@@ -171,6 +180,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
@@ -179,7 +189,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     name: 'createdBy',
@@ -202,6 +212,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
@@ -210,7 +221,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     name: 'position',
@@ -233,6 +244,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
@@ -241,7 +253,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     name: 'searchVector',
@@ -267,16 +279,21 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       asExpression: getTsVectorColumnExpressionFromFields([nameField]),
       generatedType: 'STORED',
     },
+    morphId: null,
   };
 
   return {
-    idField,
-    nameField,
-    createdAtField,
-    updatedAtField,
-    deletedAtField,
-    createdByField,
-    positionField,
-    searchVectorField,
-  } as const;
+    fields: {
+      idField,
+      nameField,
+      createdAtField,
+      updatedAtField,
+      deletedAtField,
+      createdByField,
+      positionField,
+      searchVectorField,
+    },
+  } as const satisfies {
+    fields: Record<string, FlatFieldMetadata>;
+  };
 };

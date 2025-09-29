@@ -1,11 +1,17 @@
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 
 export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
-  const isRecordTableFocusActiveState = useRecoilComponentCallbackState(
+  const isRecordTableFocusActiveCallbackState = useRecoilComponentCallbackState(
     isRecordTableCellFocusActiveComponentState,
+    recordTableId,
+  );
+
+  const recordTableFocusPositionCallbackState = useRecoilComponentCallbackState(
+    recordTableFocusPositionComponentState,
     recordTableId,
   );
 
@@ -18,21 +24,18 @@ export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
         isRecordTableFocusActive: boolean;
         cellPosition: TableCellPosition;
       }) => {
-        const cellId = `record-table-cell-${cellPosition.column}-${cellPosition.row}`;
-
-        const cellElement = document.getElementById(cellId);
-
         if (isRecordTableFocusActive) {
-          cellElement?.classList.add('focus-active');
+          set(isRecordTableFocusActiveCallbackState, true);
+          set(recordTableFocusPositionCallbackState, cellPosition);
+        } else {
+          set(isRecordTableFocusActiveCallbackState, false);
+          set(recordTableFocusPositionCallbackState, null);
         }
-
-        if (!isRecordTableFocusActive) {
-          cellElement?.classList.remove('focus-active');
-        }
-
-        set(isRecordTableFocusActiveState, isRecordTableFocusActive);
       },
-    [isRecordTableFocusActiveState],
+    [
+      isRecordTableFocusActiveCallbackState,
+      recordTableFocusPositionCallbackState,
+    ],
   );
 
   return {

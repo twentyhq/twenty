@@ -6,15 +6,13 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
-import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
+import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import {
-  type TimelineThread,
-  type TimelineThreadsWithTotal,
-} from '~/generated/graphql';
+import { Trans } from '@lingui/react/macro';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -24,7 +22,10 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+import {
+  type TimelineThread,
+  type TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -94,10 +95,10 @@ export const EmailThreads = ({
         <AnimatedPlaceholder type="emptyInbox" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Empty Inbox
+            <Trans>Empty Inbox</Trans>
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No email exchange has occurred with this record yet.
+            <Trans>No email exchange has occurred with this record yet.</Trans>
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
@@ -110,7 +111,8 @@ export const EmailThreads = ({
         <StyledH1Title
           title={
             <>
-              Inbox <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
+              <Trans>Inbox</Trans>{' '}
+              <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}

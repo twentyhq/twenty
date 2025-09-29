@@ -8,7 +8,9 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { SettingsDataModelLabelIdentifierPreviewContextWrapper } from '@/settings/data-model/fields/preview/components/SettingsDataModelLabelIdentifierPreviewContextWrapper';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
+import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -57,7 +59,7 @@ export const SettingsDataModelFieldPreview = ({
   const theme = useTheme();
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
-      objectNameSingular,
+      objectNameSingular: objectNameSingular,
     });
 
   const { getIcon } = useIcons();
@@ -83,56 +85,68 @@ export const SettingsDataModelFieldPreview = ({
 
   return (
     <>
-      <RecordFieldComponentInstanceContext.Provider
-        value={{
-          instanceId: 'record-field-component-instance-id',
-        }}
+      <SettingsDataModelLabelIdentifierPreviewContextWrapper
+        objectNameSingular={objectNameSingular}
+        labelIdentifierFieldMetadataItem={labelIdentifierFieldMetadataItem}
       >
-        <SettingsDataModelSetFieldValueEffect
-          recordId={recordId}
-          gqlFieldName={fieldMetadataItem.name ?? ''}
-          value={fieldPreviewValue}
-        />
-        <StyledFieldPreview shrink={shrink}>
-          {!!withFieldLabel && (
-            <StyledFieldLabel>
-              <FieldIcon
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-              {fieldMetadataItem.label}:
-            </StyledFieldLabel>
+        <RecordFieldComponentInstanceContext.Provider
+          value={{
+            instanceId: 'record-field-component-instance-id',
+          }}
+        >
+          {isLabelIdentifier ? (
+            <SettingsDataModelSetLabelIdentifierRecordEffect
+              objectNameSingular={objectNameSingular}
+              recordId={recordId}
+            />
+          ) : (
+            <SettingsDataModelSetFieldValueEffect
+              recordId={recordId}
+              gqlFieldName={fieldMetadataItem.name ?? ''}
+              value={fieldPreviewValue}
+            />
           )}
-          <FieldContext.Provider
-            value={{
-              recordId,
-              isLabelIdentifier,
-              fieldDefinition: {
-                type: fieldMetadataItem.type,
-                iconName: 'FieldIcon',
-                fieldMetadataId: '',
-                label: fieldMetadataItem.label,
-                metadata,
-                defaultValue: fieldMetadataItem.defaultValue,
-              },
-              isRecordFieldReadOnly:
-                fieldMetadataItem.type === FieldMetadataType.BOOLEAN ||
-                fieldMetadataItem.type === FieldMetadataType.RATING
-                  ? true
-                  : false,
-              disableChipClick: true,
-            }}
-          >
-            {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
-              <BooleanFieldInput />
-            ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
-              <RatingFieldInput />
-            ) : (
-              <FieldDisplay />
+          <StyledFieldPreview shrink={shrink}>
+            {!!withFieldLabel && (
+              <StyledFieldLabel>
+                <FieldIcon
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+                {fieldMetadataItem.label}:
+              </StyledFieldLabel>
             )}
-          </FieldContext.Provider>
-        </StyledFieldPreview>
-      </RecordFieldComponentInstanceContext.Provider>
+            <FieldContext.Provider
+              value={{
+                recordId,
+                isLabelIdentifier,
+                fieldDefinition: {
+                  type: fieldMetadataItem.type,
+                  iconName: 'FieldIcon',
+                  fieldMetadataId: '',
+                  label: fieldMetadataItem.label,
+                  metadata,
+                  defaultValue: fieldMetadataItem.defaultValue,
+                },
+                isRecordFieldReadOnly:
+                  fieldMetadataItem.type === FieldMetadataType.BOOLEAN ||
+                  fieldMetadataItem.type === FieldMetadataType.RATING
+                    ? true
+                    : false,
+                disableChipClick: true,
+              }}
+            >
+              {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
+                <BooleanFieldInput />
+              ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
+                <RatingFieldInput />
+              ) : (
+                <FieldDisplay />
+              )}
+            </FieldContext.Provider>
+          </StyledFieldPreview>
+        </RecordFieldComponentInstanceContext.Provider>
+      </SettingsDataModelLabelIdentifierPreviewContextWrapper>
     </>
   );
 };

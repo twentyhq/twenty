@@ -1,3 +1,8 @@
+import {
+  QUERY_DEFAULT_LIMIT_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
@@ -21,8 +26,8 @@ describe('computeParameters', () => {
         schema: {
           type: 'integer',
           minimum: 0,
-          maximum: 60,
-          default: 60,
+          maximum: QUERY_MAX_RECORDS,
+          default: QUERY_DEFAULT_LIMIT_RECORDS,
         },
       });
     });
@@ -63,7 +68,7 @@ describe('computeParameters', () => {
         required: false,
         schema: {
           type: 'integer',
-          enum: [0, 1, 2],
+          enum: [0, 1],
           default: 1,
         },
       });

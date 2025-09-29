@@ -1,17 +1,19 @@
-import { Test, type TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { jsonSchema } from 'ai';
+
+import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
+import { type JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
-import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 describe('McpService', () => {
   let service: McpService;
@@ -197,7 +199,7 @@ describe('McpService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        parameters: { jsonSchema: { type: 'object', properties: {} } },
+        inputSchema: jsonSchema({ type: 'object', properties: {} }),
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -245,7 +247,7 @@ describe('McpService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        parameters: { jsonSchema: { type: 'object', properties: {} } },
+        inputSchema: jsonSchema({ type: 'object', properties: {} }),
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -299,7 +301,7 @@ describe('McpService', () => {
       const mockToolsMap = {
         testTool: {
           description: 'Test tool',
-          parameters: { jsonSchema: { type: 'object', properties: {} } },
+          inputSchema: jsonSchema({ type: 'object', properties: {} }),
         },
       };
 
@@ -328,7 +330,7 @@ describe('McpService', () => {
             {
               name: 'testTool',
               description: 'Test tool',
-              inputSchema: { type: 'object', properties: {} },
+              inputSchema: jsonSchema({ type: 'object', properties: {} }),
             },
           ],
         }),

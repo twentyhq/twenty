@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { type StringKeyOf } from 'type-fest';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -149,7 +149,7 @@ export const SettingsDataModelObjectAboutForm = ({
         </StyledInputContainer>
         <Controller
           key={`object-labelSingular-text-input`}
-          name={'labelSingular'}
+          name="labelSingular"
           control={control}
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
@@ -159,7 +159,7 @@ export const SettingsDataModelObjectAboutForm = ({
               noErrorHelper={true}
               error={errors.labelSingular?.message}
               label={t`Singular`}
-              placeholder={'Listing'}
+              placeholder={t`Listing`}
               value={value}
               onChange={(value) => {
                 onChange(capitalize(value));
@@ -181,7 +181,7 @@ export const SettingsDataModelObjectAboutForm = ({
         />
         <Controller
           key={`object-labelPlural-text-input`}
-          name={'labelPlural'}
+          name="labelPlural"
           control={control}
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (

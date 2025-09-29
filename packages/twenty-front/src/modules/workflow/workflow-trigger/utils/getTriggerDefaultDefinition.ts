@@ -1,25 +1,24 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  type WorkflowAction,
   type WorkflowTrigger,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { getManualTriggerDefaultSettingsDeprecated } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettingsDeprecated';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
   activeNonSystemObjectMetadataItems,
-  steps,
+  isIteratorEnabled,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
-  steps?: WorkflowAction[] | null;
+  isIteratorEnabled: boolean;
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
@@ -27,12 +26,9 @@ export const getTriggerDefaultDefinition = ({
     );
   }
 
-  const nextStepIds = isDefined(steps) ? getRootStepIds(steps) : [];
-
   const baseTriggerDefinition = {
     name: defaultLabel,
     position: { x: 0, y: 0 },
-    nextStepIds,
   };
 
   switch (type) {
@@ -51,10 +47,20 @@ export const getTriggerDefaultDefinition = ({
       };
     }
     case 'MANUAL': {
+      if (isIteratorEnabled) {
+        return {
+          ...baseTriggerDefinition,
+          type,
+          settings: getManualTriggerDefaultSettings({
+            availabilityType: 'GLOBAL',
+            activeNonSystemObjectMetadataItems,
+          }),
+        };
+      }
       return {
         ...baseTriggerDefinition,
         type,
-        settings: getManualTriggerDefaultSettings({
+        settings: getManualTriggerDefaultSettingsDeprecated({
           availability: 'WHEN_RECORD_SELECTED',
           activeNonSystemObjectMetadataItems,
         }),

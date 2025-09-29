@@ -39,56 +39,56 @@ const isUniqueFieldFormSchema = z.object({
 
 const booleanFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.BOOLEAN) })
-  .merge(settingsDataModelFieldBooleanFormSchema);
+  .extend(settingsDataModelFieldBooleanFormSchema.shape);
 
 const currencyFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.CURRENCY) })
-  .merge(settingsDataModelFieldCurrencyFormSchema);
+  .extend(settingsDataModelFieldCurrencyFormSchema.shape);
 
 const dateFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE) })
-  .merge(settingsDataModelFieldDateFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldDateFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
-  .merge(settingsDataModelFieldDateFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldDateFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
-  .merge(settingsDataModelFieldRelationFormSchema);
+  .extend(settingsDataModelFieldRelationFormSchema.shape);
 
 const morphRelationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.MORPH_RELATION) })
-  .merge(settingsDataModelFieldMorphRelationFormSchema);
+  .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
 
 const selectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.SELECT) })
-  .merge(settingsDataModelFieldSelectFormSchema);
+  .extend(settingsDataModelFieldSelectFormSchema.shape);
 
 const multiSelectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.MULTI_SELECT) })
-  .merge(settingsDataModelFieldMultiSelectFormSchema);
+  .extend(settingsDataModelFieldMultiSelectFormSchema.shape);
 
 const numberFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.NUMBER) })
-  .merge(settingsDataModelFieldNumberFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldNumberFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.TEXT) })
-  .merge(settingsDataModelFieldTextFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldTextFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
-  .merge(settingsDataModelFieldAddressFormSchema);
+  .extend(settingsDataModelFieldAddressFormSchema.shape);
 
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
-  .merge(settingsDataModelFieldPhonesFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldPhonesFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const otherFieldsFormSchema = z
   .object({
@@ -111,7 +111,7 @@ const otherFieldsFormSchema = z
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
   })
-  .merge(isUniqueFieldFormSchema);
+  .extend(isUniqueFieldFormSchema.shape);
 
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',

@@ -41,17 +41,19 @@ const StyledLabelAndIconContainer = styled.div`
   height: 24px;
 `;
 
-const StyledValueContainer = styled.div<{
-  readonly: boolean;
-}>`
+const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   min-width: 0;
   position: relative;
   width: 100%;
 
-  &:hover .record-inline-cell-value-display {
-    opacity: 0;
-  }
+  ${({ readonly }) =>
+    !readonly &&
+    `
+    &:hover .record-inline-cell-value-display {
+      opacity: 0;
+    }
+  `}
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -127,7 +129,7 @@ export const RecordInlineCellContainer = () => {
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
-          {!showLabel && !fieldDefinition?.disableTooltip && (
+          {!showLabel && (
             <AppTooltip
               anchorSelect={`#${labelId}`}
               content={label}

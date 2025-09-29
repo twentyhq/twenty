@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FlatObjectMetadataOverrides = Required<
-  Pick<FlatObjectMetadata, 'uniqueIdentifier'>
+  Pick<FlatObjectMetadata, 'universalIdentifier'>
 > &
   Partial<FlatObjectMetadata>;
 export const getFlatObjectMetadataMock = (
@@ -13,7 +13,7 @@ export const getFlatObjectMetadataMock = (
 
   return {
     flatFieldMetadatas: [],
-    flatIndexMetadatas: [],
+
     description: 'default flat object metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
@@ -33,6 +33,7 @@ export const getFlatObjectMetadataMock = (
     nameSingular: 'defaultflatObjectMetadataNameSingular',
     shortcut: 'shortcut',
     standardId: null,
+    applicationId: null,
     standardOverrides: null,
     targetTableName: '',
     workspaceId: faker.string.uuid(),

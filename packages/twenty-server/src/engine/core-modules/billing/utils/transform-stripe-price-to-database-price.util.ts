@@ -4,7 +4,6 @@ import type Stripe from 'stripe';
 
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
@@ -36,9 +35,6 @@ export const transformStripePriceToDatabasePrice = (data: Stripe.Price) => {
     currencyOptions:
       data.currency_options === null ? undefined : data.currency_options,
     tiers: data.tiers === null ? undefined : data.tiers,
-    tiersMode: data.tiers_mode
-      ? getBillingPriceTiersMode(data.tiers_mode)
-      : undefined,
     recurring: data.recurring === null ? undefined : data.recurring,
   };
 };
@@ -81,23 +77,10 @@ const getBillingPriceUsageType = (data: Stripe.Price.Recurring.UsageType) => {
   }
 };
 
-const getBillingPriceTiersMode = (data: Stripe.Price.TiersMode) => {
-  switch (data) {
-    case 'graduated':
-      return BillingPriceTiersMode.GRADUATED;
-    case 'volume':
-      return BillingPriceTiersMode.VOLUME;
-  }
-};
-
 const getBillingPriceInterval = (data: Stripe.Price.Recurring.Interval) => {
   switch (data) {
     case 'month':
       return SubscriptionInterval.Month;
-    case 'day':
-      return SubscriptionInterval.Day;
-    case 'week':
-      return SubscriptionInterval.Week;
     case 'year':
       return SubscriptionInterval.Year;
   }

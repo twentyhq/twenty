@@ -4,6 +4,7 @@ import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/in
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
@@ -30,7 +31,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: true,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-5278-4bde-8909-2cec74d43744',
+    universalIdentifier: '20202020-5278-4bde-8909-2cec74d43744',
     flatRelationTargetFieldMetadata: null,
   }),
   name: getFlatFieldMetadataMock({
@@ -55,7 +56,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: true,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-82a3-4537-8ff0-dbce7eec35d6',
+    universalIdentifier: '20202020-82a3-4537-8ff0-dbce7eec35d6',
     flatRelationTargetFieldMetadata: null,
   }),
   id: getFlatFieldMetadataMock({
@@ -80,7 +81,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: true,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
+    universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
     flatRelationTargetFieldMetadata: null,
   }),
   createdAt: getFlatFieldMetadataMock({
@@ -105,7 +106,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
+    universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
     flatRelationTargetFieldMetadata: null,
   }),
   updatedAt: getFlatFieldMetadataMock({
@@ -130,7 +131,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
+    universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
     flatRelationTargetFieldMetadata: null,
   }),
   deletedAt: getFlatFieldMetadataMock({
@@ -155,7 +156,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: true,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
+    universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     flatRelationTargetFieldMetadata: null,
   }),
   favorites: getFlatFieldMetadataMock({
@@ -180,8 +181,8 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: true,
     relationTargetFieldMetadataId: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
     relationTargetObjectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
-    uniqueIdentifier: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    universalIdentifier: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
       standardId: '20202020-f658-4d12-8b4d-248356aa4bd9',
       objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
@@ -207,7 +208,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: true,
       relationTargetFieldMetadataId: '71b95076-6b8d-45c9-9a7c-ab981b81bd1b',
       relationTargetObjectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
-      uniqueIdentifier: '20202020-f658-4d12-8b4d-248356aa4bd9',
+      universalIdentifier: '20202020-f658-4d12-8b4d-248356aa4bd9',
     }),
   }),
 } as const satisfies Record<string, FlatFieldMetadata>;

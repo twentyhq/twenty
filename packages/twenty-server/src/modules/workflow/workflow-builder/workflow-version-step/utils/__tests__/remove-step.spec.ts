@@ -151,100 +151,6 @@ describe('removeStep', () => {
     });
   });
 
-  it('should remove step child that is a filter', () => {
-    const step1 = createMockAction('1', ['2']);
-    const step2 = createMockAction('2', ['3']);
-    const step3 = {
-      id: '3',
-      name: 'Step 3',
-      type: WorkflowActionType.FILTER,
-      nextStepIds: ['4'],
-    } as WorkflowAction;
-    const step4 = createMockAction('4');
-
-    const result = removeStep({
-      existingTrigger: mockTrigger,
-      existingSteps: [step1, step2, step3, step4],
-      stepIdToDelete: '2',
-      stepToDeleteChildrenIds: ['3'],
-    });
-
-    expect(result.updatedTrigger).toEqual(mockTrigger);
-    expect(result.updatedSteps).toEqual([
-      { ...step1, nextStepIds: ['4'] },
-      step4,
-    ]);
-  });
-
-  it('should remove trigger children that is a filter', () => {
-    const step1 = {
-      id: '1',
-      name: 'Step 1',
-      type: WorkflowActionType.FILTER,
-      nextStepIds: ['2'],
-    } as WorkflowAction;
-    const step2 = createMockAction('2', ['3']);
-    const step3 = createMockAction('3');
-
-    const result = removeStep({
-      existingTrigger: mockTrigger,
-      existingSteps: [step1, step2, step3],
-      stepIdToDelete: TRIGGER_STEP_ID,
-      stepToDeleteChildrenIds: ['1'],
-    });
-
-    expect(result.updatedTrigger).toEqual(null);
-    expect(result.updatedSteps).toEqual([step2, step3]);
-  });
-
-  it('should remove filter step if it has no children', () => {
-    const step1 = {
-      id: '1',
-      name: 'Step 1',
-      type: WorkflowActionType.FILTER,
-      nextStepIds: ['2'],
-    } as WorkflowAction;
-    const step2 = createMockAction('2', ['3']);
-    const step3 = {
-      id: '3',
-      name: 'Step 3',
-      type: WorkflowActionType.FILTER,
-      nextStepIds: ['4'],
-    } as WorkflowAction;
-    const step4 = createMockAction('4');
-
-    const result = removeStep({
-      existingTrigger: mockTrigger,
-      existingSteps: [step1, step2, step3, step4],
-      stepIdToDelete: '4',
-    });
-
-    expect(result.updatedTrigger).toEqual(mockTrigger);
-    expect(result.updatedSteps).toEqual([step1, { ...step2, nextStepIds: [] }]);
-  });
-
-  it('should remove filter step if it is the last step', () => {
-    const step1 = {
-      id: '1',
-      name: 'Step 1',
-      type: WorkflowActionType.FILTER,
-      nextStepIds: ['2'],
-    } as WorkflowAction;
-    const step2 = createMockAction('2');
-
-    const result = removeStep({
-      existingTrigger: mockTrigger,
-      existingSteps: [step1, step2],
-      stepIdToDelete: '2',
-    });
-
-    expect(result.updatedTrigger).toEqual({
-      ...mockTrigger,
-      nextStepIds: [],
-    });
-    expect(result.updatedSteps).toEqual([]);
-  });
-
   it('should remove trigger if steps are null', () => {
     const result = removeStep({
       existingTrigger: { ...mockTrigger, nextStepIds: [] },
@@ -253,6 +159,56 @@ describe('removeStep', () => {
     });
 
     expect(result.updatedTrigger).toEqual(null);
-    expect(result.updatedSteps).toEqual([]);
+    expect(result.updatedSteps).toEqual(null);
+  });
+
+  it('should handle removing a step that is part of iteratorLoopStepIds', () => {
+    const step1 = createMockAction('1', ['2']);
+    const iteratorStep = {
+      id: '2',
+      name: 'Iterator Step',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          initialLoopStepIds: ['3'],
+          iterableValue: { value: [] },
+          iteratorKey: 'item',
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: ['4'],
+    } as WorkflowAction;
+    const step3 = createMockAction('3', ['5']);
+    const step4 = createMockAction('4');
+    const step5 = createMockAction('5');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, iteratorStep, step3, step4, step5],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['5'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      step1,
+      {
+        ...iteratorStep,
+        settings: {
+          ...iteratorStep.settings,
+          input: {
+            ...iteratorStep.settings.input,
+            initialLoopStepIds: ['5'],
+          },
+        },
+      },
+      step4,
+      step5,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
   });
 });

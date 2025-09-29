@@ -5,6 +5,7 @@ import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-t
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
+import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -28,6 +29,9 @@ export const RecordTableNoRecordGroupBody = () => {
           <RecordTableNoRecordGroupRows />
           <RecordTableCellPortals />
         </RecordTableBodyDroppable>
+        {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
+          <RecordTableAggregateFooter />
+        )}
       </RecordTableBodyDragDropContextProvider>
     </RecordTableNoRecordGroupBodyContextProvider>
   );

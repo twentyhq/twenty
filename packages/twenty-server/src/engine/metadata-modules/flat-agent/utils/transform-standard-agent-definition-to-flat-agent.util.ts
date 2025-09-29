@@ -11,6 +11,6 @@ export const transformStandardAgentDefinitionToFlatAgent = (
     ...standardAgentDefinition,
     id: v4(),
     workspaceId,
-    uniqueIdentifier: standardAgentDefinition.standardId || v4(),
+    universalIdentifier: standardAgentDefinition.standardId || v4(),
   };
 };

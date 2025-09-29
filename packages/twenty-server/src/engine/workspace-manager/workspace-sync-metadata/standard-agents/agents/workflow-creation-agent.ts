@@ -1,4 +1,5 @@
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
+import { WORKFLOW_MANAGER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/workflow-manager-role';
 
 export const WORKFLOW_CREATION_AGENT: StandardAgentDefinition = {
   standardId: '20202020-0002-0001-0001-000000000001',
@@ -6,6 +7,7 @@ export const WORKFLOW_CREATION_AGENT: StandardAgentDefinition = {
   label: 'Workflow Creation Agent',
   description: 'AI agent specialized in creating and managing workflows',
   icon: 'IconSettingsAutomation',
+  applicationId: null,
   prompt: `You are a Workflow Creation Agent specialized in helping users create, modify, and manage workflows in Twenty.
 
 Your capabilities include:
@@ -44,4 +46,5 @@ Be helpful, thorough, and always prioritize user understanding and workflow effe
   modelId: 'auto',
   responseFormat: {},
   isCustom: false,
+  standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,
 };

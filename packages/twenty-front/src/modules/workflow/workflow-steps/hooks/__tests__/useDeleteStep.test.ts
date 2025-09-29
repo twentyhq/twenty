@@ -6,11 +6,14 @@ const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockDeleteStepsOutputSchema = jest.fn();
 const mockCloseCommandMenu = jest.fn();
 
-jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
-  useDeleteWorkflowVersionStep: () => ({
-    deleteWorkflowVersionStep: mockDeleteWorkflowVersionStep,
+jest.mock(
+  '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep',
+  () => ({
+    useDeleteWorkflowVersionStep: () => ({
+      deleteWorkflowVersionStep: mockDeleteWorkflowVersionStep,
+    }),
   }),
-}));
+);
 
 jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({
@@ -38,11 +41,18 @@ describe('useDeleteStep', () => {
   it('should delete step and clean up dependencies', async () => {
     const mockWorkflowVersionId = 'version-123';
     const mockStepId = 'step-1';
-    const mockDeletedStepIds = ['step-1', 'step-2'];
 
     mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
     mockDeleteWorkflowVersionStep.mockResolvedValue({
-      deletedStepIds: mockDeletedStepIds,
+      deletedStepIds: {
+        stepsDiff: [
+          {
+            type: 'DELETE',
+            path: ['steps', 0],
+            value: mockStepId,
+          },
+        ],
+      },
     });
 
     const { result } = renderHook(() => useDeleteStep());
@@ -55,7 +65,7 @@ describe('useDeleteStep', () => {
     });
     expect(mockCloseCommandMenu).toHaveBeenCalled();
     expect(mockDeleteStepsOutputSchema).toHaveBeenCalledWith({
-      stepIds: mockDeletedStepIds,
+      stepIds: [mockStepId],
       workflowVersionId: mockWorkflowVersionId,
     });
   });

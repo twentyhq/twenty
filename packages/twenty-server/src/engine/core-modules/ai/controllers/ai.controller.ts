@@ -8,9 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type CoreMessage } from 'ai';
+import { type ModelMessage } from 'ai';
 import { Response } from 'express';
 
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AiService } from 'src/engine/core-modules/ai/services/ai.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -19,9 +21,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 export interface ChatRequest {
-  messages: CoreMessage[];
+  messages: ModelMessage[];
   temperature?: number;
-  maxTokens?: number;
+  maxOutputTokens?: number;
 }
 
 @Controller('chat')
@@ -30,6 +32,8 @@ export class AiController {
   constructor(
     private readonly aiService: AiService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly aiBillingService: AIBillingService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
   @Post()
@@ -50,7 +54,7 @@ export class AiController {
       );
     }
 
-    const { messages, temperature, maxTokens } = request;
+    const { messages, temperature, maxOutputTokens } = request;
 
     if (!messages || messages.length === 0) {
       throw new HttpException(
@@ -60,12 +64,26 @@ export class AiController {
     }
 
     try {
-      const result = this.aiService.streamText(messages, {
-        temperature,
-        maxTokens,
+      const registeredModel = this.aiModelRegistryService.getDefaultModel();
+
+      const result = this.aiService.streamText({
+        messages,
+        options: {
+          temperature,
+          maxOutputTokens,
+          model: registeredModel.model,
+        },
       });
 
-      result.pipeDataStreamToResponse(res);
+      result.usage.then((usage) => {
+        this.aiBillingService.calculateAndBillUsage(
+          registeredModel.modelId,
+          usage,
+          workspace.id,
+        );
+      });
+
+      result.pipeUIMessageStreamToResponse(res);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';

@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
 
 export const useDeleteStep = () => {
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
@@ -14,7 +14,7 @@ export const useDeleteStep = () => {
   const deleteStep = async (stepId: string) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const workflowVersionStepChanges = await deleteWorkflowVersionStep({
+    await deleteWorkflowVersionStep({
       workflowVersionId,
       stepId,
     });
@@ -22,7 +22,7 @@ export const useDeleteStep = () => {
     closeCommandMenu();
 
     deleteStepsOutputSchema({
-      stepIds: workflowVersionStepChanges?.deletedStepIds ?? [],
+      stepIds: [stepId],
       workflowVersionId,
     });
   };

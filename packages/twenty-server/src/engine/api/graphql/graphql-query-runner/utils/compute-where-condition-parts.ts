@@ -101,8 +101,8 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `(
-          "${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid}Ts) OR
-          "${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}Like
+          "${objectNameSingular}"."${key}" @@ to_tsquery('simple', public.unaccent_immutable(:${key}${uuid}Ts)) OR
+          public.unaccent_immutable("${objectNameSingular}"."${key}"::text) ILIKE public.unaccent_immutable(:${key}${uuid}Like)
         )`,
         params: {
           [`${key}${uuid}Ts`]: tsQuery,

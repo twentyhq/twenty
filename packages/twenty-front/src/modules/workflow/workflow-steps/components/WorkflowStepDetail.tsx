@@ -7,17 +7,22 @@ import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-ac
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
+import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormBuilder } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder';
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
+import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
-import { WorkflowEditTriggerManualForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm';
+import { WorkflowEditTriggerManual } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManual';
+import { WorkflowEditTriggerManualDeprecated } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated';
 import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowStepDetailProps = {
   stepId: string;
@@ -43,6 +48,9 @@ export const WorkflowStepDetail = ({
   steps,
   ...props
 }: WorkflowStepDetailProps) => {
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
     trigger,
@@ -66,8 +74,18 @@ export const WorkflowStepDetail = ({
           );
         }
         case 'MANUAL': {
+          if (isIteratorEnabled) {
+            return (
+              <WorkflowEditTriggerManual
+                key={stepId}
+                trigger={stepDefinition.definition}
+                triggerOptions={props}
+              />
+            );
+          }
+
           return (
-            <WorkflowEditTriggerManualForm
+            <WorkflowEditTriggerManualDeprecated
               key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={props}
@@ -196,7 +214,24 @@ export const WorkflowStepDetail = ({
             />
           );
         }
-
+        case 'ITERATOR': {
+          return (
+            <WorkflowEditActionIterator
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+        case 'EMPTY': {
+          return (
+            <WorkflowEditActionEmpty
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
         default:
           return assertUnreachable(
             stepDefinition.definition,

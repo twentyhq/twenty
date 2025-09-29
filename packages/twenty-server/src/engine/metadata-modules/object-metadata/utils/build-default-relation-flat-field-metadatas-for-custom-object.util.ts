@@ -90,8 +90,9 @@ const generateSourceFlatFieldMetadata = ({
     standardId,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
-    uniqueIdentifier: standardId,
+    universalIdentifier: standardId,
     workspaceId,
+    morphId: null,
   };
 };
 
@@ -124,6 +125,7 @@ const generateTargetFlatFieldMetadata = ({
   });
 
   return {
+    morphId: null,
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
     label: sourceFlatObjectMetadata.labelSingular,
@@ -152,7 +154,7 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
-    uniqueIdentifier: standardId,
+    universalIdentifier: standardId,
   };
 };
 
@@ -237,7 +239,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
             flatRelationTargetObjectMetadata:
               fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                sourceFlatObjectMetadata,
+                targetFlatObjectMetadata,
               ),
           },
         ],
@@ -252,7 +254,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
             flatRelationTargetObjectMetadata:
               fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-                targetFlatObjectMetadata,
+                sourceFlatObjectMetadata,
               ),
           },
         ],

@@ -4,8 +4,10 @@ import {
 } from 'test/integration/constants/test-view-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertRestApiErrorNotFoundResponse,
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -30,10 +32,6 @@ describe('View Filter Group REST API', () => {
   let testObjectMetadataId: string;
 
   beforeAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-
     const {
       data: {
         createOneObject: { id: objectMetadataId },
@@ -52,6 +50,15 @@ describe('View Filter Group REST API', () => {
   });
 
   afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
@@ -316,8 +323,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -464,8 +470,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(response);
     });
 
     it('should return 404 error when deleting non-existent filter group', async () => {
@@ -475,14 +480,7 @@ describe('View Filter Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 });

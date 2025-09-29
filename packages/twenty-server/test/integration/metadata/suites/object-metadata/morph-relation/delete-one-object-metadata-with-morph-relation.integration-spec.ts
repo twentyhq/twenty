@@ -1,14 +1,17 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('Delete Object metadata with morph relation should succeed', () => {
-  let opportunityId = '';
+  let opportunityId: undefined | string;
   let personId = '';
   let companyId = '';
   let morphRelationField: { id: string };
@@ -62,12 +65,45 @@ describe('Delete Object metadata with morph relation should succeed', () => {
   });
 
   afterEach(async () => {
-    await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
+    if (isDefined(opportunityId)) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: opportunityId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+      await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
+      opportunityId = undefined;
+    }
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: personId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({ input: { idToDelete: personId } });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: companyId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({ input: { idToDelete: companyId } });
   });
 
   it('When deleting source object, the relation on the target should be deleted', async () => {
+    jestExpectToBeDefined(opportunityId);
     morphRelationField = await createMorphRelationBetweenObjects({
       objectMetadataId: opportunityId,
       firstTargetObjectMetadataId: personId,
@@ -76,12 +112,22 @@ describe('Delete Object metadata with morph relation should succeed', () => {
       relationType: RelationType.MANY_TO_ONE,
     });
 
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: opportunityId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({ input: { idToDelete: opportunityId } });
     const fieldAfterDeletion = await findFieldMetadata({
       fieldMetadataId: morphRelationField.id,
     });
 
     expect(fieldAfterDeletion).toBeUndefined();
+    opportunityId = undefined;
   });
 });
 

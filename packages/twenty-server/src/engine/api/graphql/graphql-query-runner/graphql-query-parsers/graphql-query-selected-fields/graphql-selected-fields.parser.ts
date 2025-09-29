@@ -5,7 +5,6 @@ import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphq
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -134,14 +133,8 @@ export class GraphqlQuerySelectedFieldsParser {
           accumulator.select[joinColumnName] = true;
         }
 
-        const morphRelationFieldName = computeMorphRelationFieldName({
-          fieldName: fieldMetadata.name,
-          relationDirection: fieldMetadata.settings.relationType,
-          targetObjectMetadata,
-        });
-
         const graphqlSelectedFieldValue =
-          graphqlSelectedFields[morphRelationFieldName];
+          graphqlSelectedFields[fieldMetadata.name];
 
         if (!isDefined(graphqlSelectedFieldValue)) {
           continue;
@@ -149,7 +142,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
         this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
           fieldMetadata,
-          morphRelationFieldName,
+          fieldMetadata.name,
           graphqlSelectedFieldValue,
           accumulator,
         );

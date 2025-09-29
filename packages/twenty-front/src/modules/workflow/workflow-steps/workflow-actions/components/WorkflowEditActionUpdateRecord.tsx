@@ -9,6 +9,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
+import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
@@ -16,6 +17,7 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -53,11 +55,18 @@ export const WorkflowEditActionUpdateRecord = ({
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
-      label: item.labelPlural,
-      value: item.nameSingular,
-    }));
+    activeNonSystemObjectMetadataItems
+      .filter((objectMetadataItem) =>
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadataItem.nameSingular,
+          isSystem: objectMetadataItem.isSystem,
+        }),
+      )
+      .map((item) => ({
+        Icon: getIcon(item.icon),
+        label: item.labelPlural,
+        value: item.nameSingular,
+      }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({
     objectNameSingular: action.settings.input.objectName,
@@ -257,6 +266,7 @@ export const WorkflowEditActionUpdateRecord = ({
           );
         })}
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
     </>
   );
 };

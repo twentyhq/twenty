@@ -12,10 +12,10 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   useCreateWebhookMutation,
   useDeleteWebhookMutation,
@@ -100,7 +100,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
 
       navigate(
-        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.Webhooks,
+        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
       );
     } catch (error) {
@@ -188,7 +188,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         message: t`Webhook deleted successfully`,
       });
 
-      navigate(SettingsPath.Webhooks);
+      navigate(SettingsPath.ApiWebhooks);
     } catch (error) {
       enqueueErrorSnackBar({
         apolloError: error instanceof ApolloError ? error : undefined,

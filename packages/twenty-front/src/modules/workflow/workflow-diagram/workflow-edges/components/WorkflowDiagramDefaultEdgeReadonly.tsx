@@ -1,32 +1,63 @@
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
+import { WorkflowDiagramEdgeLabelContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabelContainer';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
 import { useTheme } from '@emotion/react';
-import { BaseEdge, type EdgeProps, getBezierPath } from '@xyflow/react';
+import { i18n } from '@lingui/core';
+import { BaseEdge, EdgeLabelRenderer } from '@xyflow/react';
+import { isDefined } from 'twenty-shared/utils';
 
-type WorkflowDiagramDefaultEdgeReadonlyProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramDefaultEdgeReadonlyProps =
+  WorkflowDiagramEdgeComponentProps;
 
 export const WorkflowDiagramDefaultEdgeReadonly = ({
   sourceX,
   sourceY,
+  sourcePosition,
   targetX,
   targetY,
+  targetPosition,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeReadonlyProps) => {
   const theme = useTheme();
 
-  const [edgePath] = getBezierPath({
+  const { segments } = getEdgePath({
     sourceX,
     sourceY,
+    sourcePosition,
     targetX,
     targetY,
+    targetPosition,
+    markerStart,
+    markerEnd,
+    strategy: data?.edgePathStrategy,
   });
 
   return (
-    <BaseEdge
-      markerStart={markerStart}
-      markerEnd={markerEnd}
-      path={edgePath}
-      style={{ stroke: theme.border.color.strong }}
-    />
+    <>
+      {segments.map((segment) => (
+        <BaseEdge
+          key={segment.path}
+          markerStart={segment.markerStart}
+          markerEnd={segment.markerEnd}
+          path={segment.path}
+          style={{ stroke: theme.border.color.strong }}
+        />
+      ))}
+
+      <EdgeLabelRenderer>
+        {isDefined(data?.labelOptions) && (
+          <WorkflowDiagramEdgeLabelContainer
+            sourceX={sourceX}
+            sourceY={sourceY}
+            position={data.labelOptions.position}
+          >
+            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
+          </WorkflowDiagramEdgeLabelContainer>
+        )}
+      </EdgeLabelRenderer>
+    </>
   );
 };

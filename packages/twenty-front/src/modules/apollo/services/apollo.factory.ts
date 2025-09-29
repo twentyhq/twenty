@@ -22,6 +22,7 @@ import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
@@ -35,7 +36,6 @@ import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type ApolloManager } from '../types/apolloManager.interface';
-import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
 
@@ -156,6 +156,64 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         ).flatMap(() => forward(operation));
       };
 
+      const sendToSentry = ({
+        graphQLError,
+        operation,
+      }: {
+        graphQLError: GraphQLFormattedError;
+        operation: Operation;
+      }) => {
+        if (isDebugMode === true) {
+          logDebug(
+            `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
+              graphQLError.locations
+                ? JSON.stringify(graphQLError.locations)
+                : graphQLError.locations
+            }, Path: ${graphQLError.path}`,
+          );
+        }
+        import('@sentry/react')
+          .then(({ captureException, withScope }) => {
+            withScope((scope) => {
+              const error = new Error(graphQLError.message);
+
+              error.name = graphQLError.message;
+
+              const fingerPrint: string[] = [];
+              if (isDefined(graphQLError.extensions)) {
+                scope.setExtra('extensions', graphQLError.extensions);
+                if (isDefined(graphQLError.extensions.subCode)) {
+                  fingerPrint.push(graphQLError.extensions.subCode as string);
+                }
+              }
+
+              if (isDefined(operation.operationName)) {
+                scope.setExtra('operation', operation.operationName);
+                const genericOperationName = getGenericOperationName(
+                  operation.operationName,
+                );
+
+                if (isDefined(genericOperationName)) {
+                  fingerPrint.push(genericOperationName);
+                }
+              }
+
+              if (!isEmpty(fingerPrint)) {
+                scope.setFingerprint(fingerPrint);
+              }
+
+              captureException(error); // Sentry expects a JS error
+            });
+          })
+          .catch((sentryError) => {
+            // eslint-disable-next-line no-console
+            console.error(
+              'Failed to capture GraphQL error with Sentry:',
+              sentryError,
+            );
+          });
+      };
+
       const errorLink = onError(
         ({ graphQLErrors, networkError, forward, operation }) => {
           if (isDefined(graphQLErrors)) {
@@ -179,63 +237,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 case 'FORBIDDEN': {
                   return;
                 }
+                case 'USER_INPUT_ERROR': {
+                  if (graphQLError.extensions?.isExpected === true) {
+                    return;
+                  }
+                  sendToSentry({ graphQLError, operation });
+                  return;
+                }
                 case 'INTERNAL_SERVER_ERROR': {
                   return; // already caught in BE
                 }
                 default:
-                  if (isDebugMode === true) {
-                    logDebug(
-                      `[GraphQL error]: Message: ${
-                        graphQLError.message
-                      }, Location: ${
-                        graphQLError.locations
-                          ? JSON.stringify(graphQLError.locations)
-                          : graphQLError.locations
-                      }, Path: ${graphQLError.path}`,
-                    );
-                  }
-                  import('@sentry/react')
-                    .then(({ captureException, withScope }) => {
-                      withScope((scope) => {
-                        const error = new Error(graphQLError.message);
-
-                        error.name = graphQLError.message;
-
-                        const fingerPrint: string[] = [];
-                        if (isDefined(graphQLError.extensions)) {
-                          scope.setExtra('extensions', graphQLError.extensions);
-                          if (isDefined(graphQLError.extensions.subCode)) {
-                            fingerPrint.push(
-                              graphQLError.extensions.subCode as string,
-                            );
-                          }
-                        }
-
-                        if (isDefined(operation.operationName)) {
-                          scope.setExtra('operation', operation.operationName);
-                          const genericOperationName = getGenericOperationName(
-                            operation.operationName,
-                          );
-
-                          if (isDefined(genericOperationName)) {
-                            fingerPrint.push(genericOperationName);
-                          }
-                        }
-
-                        if (!isEmpty(fingerPrint)) {
-                          scope.setFingerprint(fingerPrint);
-                        }
-
-                        captureException(error); // Sentry expects a JS error
-                      });
-                    })
-                    .catch((sentryError) => {
-                      // eslint-disable-next-line no-console
-                      console.error(
-                        'Failed to capture GraphQL error with Sentry:',
-                        sentryError,
-                      );
-                    });
+                  sendToSentry({ graphQLError, operation });
               }
             }
           }

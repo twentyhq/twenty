@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -18,6 +18,7 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { useRemoveAgentHandoffMutation } from '~/generated-metadata/graphql';
 import { type AgentHandoffDto } from '~/generated/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const AGENT_HANDOFF_DELETION_MODAL_ID = 'agent-handoff-deletion-modal';
 
@@ -67,15 +68,17 @@ export const SettingsAgentHandoffTable = ({
 
   const [removeAgentHandoff] = useRemoveAgentHandoffMutation();
 
-  const filteredHandoffTargets = !searchFilter
-    ? handoffTargets
-    : handoffTargets.filter((handoff) => {
-        const searchTerm = searchFilter.toLowerCase();
-        const label = handoff.toAgent.label?.toLowerCase() || '';
-        const description = handoff.description?.toLowerCase() || '';
+  const filteredHandoffTargets = useMemo(() => {
+    if (!searchFilter) return handoffTargets;
 
-        return label.includes(searchTerm) || description.includes(searchTerm);
-      });
+    const searchTerm = normalizeSearchText(searchFilter);
+    return handoffTargets.filter((handoff) => {
+      const label = normalizeSearchText(handoff.toAgent.label);
+      const description = normalizeSearchText(handoff.description);
+
+      return label.includes(searchTerm) || description.includes(searchTerm);
+    });
+  }, [handoffTargets, searchFilter]);
 
   const handleRemoveHandoff = async () => {
     if (!handoffToDelete) {
@@ -126,7 +129,7 @@ export const SettingsAgentHandoffTable = ({
           <TableHeader>
             <Trans>Description</Trans>
           </TableHeader>
-          <TableHeader align={'right'} />
+          <TableHeader align="right" />
         </TableRow>
         <StyledTableRows>
           {filteredHandoffTargets.length > 0 ? (
@@ -141,7 +144,7 @@ export const SettingsAgentHandoffTable = ({
                     text={handoff.description || t`No description`}
                   />
                 </StyledTableCell>
-                <TableCell align={'right'}>
+                <TableCell align="right">
                   <StyledButtonContainer>
                     <IconButton
                       onClick={() => {

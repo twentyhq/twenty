@@ -1,14 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {

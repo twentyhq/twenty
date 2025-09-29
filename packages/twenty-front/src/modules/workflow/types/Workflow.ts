@@ -1,14 +1,19 @@
 import {
+  type BulkRecordsAvailability,
+  type GlobalAvailability,
+  type SingleRecordAvailability,
   type workflowAiAgentActionSchema,
   type workflowCodeActionSchema,
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
   type workflowDeleteRecordActionSchema,
+  type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
   type workflowFindRecordsActionSchema,
   type workflowFormActionSchema,
   type workflowHttpRequestActionSchema,
+  type workflowIteratorActionSchema,
   type workflowManualTriggerSchema,
   type workflowRunSchema,
   type workflowRunStateSchema,
@@ -42,8 +47,11 @@ export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
 export type WorkflowHttpRequestAction = z.infer<
   typeof workflowHttpRequestActionSchema
 >;
-
+export type WorkflowIteratorAction = z.infer<
+  typeof workflowIteratorActionSchema
+>;
 export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
+export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
 export type WorkflowAction =
   | WorkflowCodeAction
@@ -55,7 +63,9 @@ export type WorkflowAction =
   | WorkflowFilterAction
   | WorkflowFormAction
   | WorkflowHttpRequestAction
-  | WorkflowAiAgentAction;
+  | WorkflowAiAgentAction
+  | WorkflowIteratorAction
+  | WorkflowEmptyAction;
 
 export type WorkflowActionType = WorkflowAction['type'];
 export type WorkflowStep = WorkflowAction;
@@ -74,6 +84,11 @@ export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 export type WorkflowManualTriggerAvailability =
   | 'EVERYWHERE'
   | 'WHEN_RECORD_SELECTED';
+
+export type WorkflowManualTriggerAvailabilityV2 =
+  | GlobalAvailability
+  | SingleRecordAvailability
+  | BulkRecordsAvailability;
 
 export type WorkflowTrigger = z.infer<typeof workflowTriggerSchema>;
 export type WorkflowTriggerType = WorkflowTrigger['type'];

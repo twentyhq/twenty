@@ -11,6 +11,7 @@ import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
@@ -52,6 +53,16 @@ export const RecordIndexContainerGater = () => {
 
   const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
+  const {
+    fieldDefinitionByFieldMetadataItemId,
+    fieldMetadataItemByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+    recordFieldByFieldMetadataItemId,
+  } = useRecordIndexFieldMetadataDerivedStates(
+    objectMetadataItem,
+    recordIndexId,
+  );
+
   if (!hasObjectReadPermissions) {
     return <NotFound />;
   }
@@ -62,11 +73,16 @@ export const RecordIndexContainerGater = () => {
         value={{
           objectPermissionsByObjectMetadataId,
           recordIndexId,
+          viewBarInstanceId: recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,
           objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
           indexIdentifierUrl,
+          recordFieldByFieldMetadataItemId,
+          labelIdentifierFieldMetadataItem,
+          fieldMetadataItemByFieldMetadataItemId,
+          fieldDefinitionByFieldMetadataItemId,
         }}
       >
         <ViewComponentInstanceContext.Provider

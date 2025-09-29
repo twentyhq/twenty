@@ -2,7 +2,6 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
 import { type UpdateOneInputType } from '@ptc-org/nestjs-query-graphql';
 import { type Repository } from 'typeorm';
 
@@ -11,12 +10,7 @@ import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-met
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-
-jest.mock('@lingui/core', () => ({
-  i18n: {
-    _: jest.fn().mockImplementation((messageId) => `translated:${messageId}`),
-  },
-}));
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 
 type UpdateObjectPayloadForTest = Omit<
   UpdateObjectPayload,
@@ -45,6 +39,14 @@ describe('BeforeUpdateOneObject', () => {
           provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             findBy: jest.fn(),
+          },
+        },
+        {
+          provide: I18nService,
+          useValue: {
+            getI18nInstance: jest.fn().mockReturnValue({
+              _: jest.fn().mockReturnValue('mocked-translation'),
+            }),
           },
         },
       ],
@@ -511,9 +513,7 @@ describe('BeforeUpdateOneObject', () => {
   });
 
   it('should reset locale-specific translations when they match translated defaults', async () => {
-    const translatedLabel = 'translated:msg-label';
-
-    (i18n._ as jest.Mock).mockImplementation(() => translatedLabel);
+    const translatedLabel = 'mocked-translation';
 
     const instance: UpdateOneInputType<UpdateObjectPayloadForTest> = {
       id: mockObjectId,

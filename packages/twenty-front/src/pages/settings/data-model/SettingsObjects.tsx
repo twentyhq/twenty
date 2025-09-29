@@ -10,7 +10,6 @@ import {
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -23,6 +22,8 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   H2Title,
   IconChevronRight,
@@ -34,7 +35,7 @@ import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { type SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -124,21 +125,25 @@ export const SettingsObjects = () => {
 
   const filteredActiveObjectSettingsItems = useMemo(
     () =>
-      sortedActiveObjectSettingsItems.filter(
-        (item) =>
-          item.labelPlural.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.objectTypeLabel.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
+      sortedActiveObjectSettingsItems.filter((item) => {
+        const searchNormalized = normalizeSearchText(searchTerm);
+        return (
+          normalizeSearchText(item.labelPlural).includes(searchNormalized) ||
+          normalizeSearchText(item.objectTypeLabel).includes(searchNormalized)
+        );
+      }),
     [sortedActiveObjectSettingsItems, searchTerm],
   );
 
   const filteredInactiveObjectSettingsItems = useMemo(
     () =>
-      sortedInactiveObjectSettingsItems.filter(
-        (item) =>
-          item.labelPlural.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.objectTypeLabel.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
+      sortedInactiveObjectSettingsItems.filter((item) => {
+        const searchNormalized = normalizeSearchText(searchTerm);
+        return (
+          normalizeSearchText(item.labelPlural).includes(searchNormalized) ||
+          normalizeSearchText(item.objectTypeLabel).includes(searchNormalized)
+        );
+      }),
     [sortedInactiveObjectSettingsItems, searchTerm],
   );
 

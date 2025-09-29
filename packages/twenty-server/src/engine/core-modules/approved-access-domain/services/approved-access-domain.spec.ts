@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { type DeleteResult, type Repository } from 'typeorm';
 
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -15,6 +17,17 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
+
+// To avoid dynamic import issues in Jest
+jest.mock('@react-email/render', () => ({
+  render: jest.fn().mockImplementation(async (template, options) => {
+    if (options?.plainText) {
+      return 'Plain Text Email';
+    }
+
+    return '<html><body>HTML email content</body></html>';
+  }),
+}));
 
 describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
@@ -247,6 +260,7 @@ describe('ApprovedAccessDomainService', () => {
       const sender = {
         userEmail: 'sender@example.com',
         name: { firstName: 'John', lastName: 'Doe' },
+        locale: 'en',
       } as WorkspaceMemberWorkspaceEntity;
       const workspace = {
         displayName: 'Test Workspace',
@@ -282,7 +296,7 @@ describe('ApprovedAccessDomainService', () => {
 
       expect(domainManagerService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
-        pathname: 'settings/security',
+        pathname: getSettingsPath(SettingsPath.Domains),
         searchParams: { validationToken: expect.any(String) },
       });
 

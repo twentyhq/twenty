@@ -163,32 +163,19 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
-
-    const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
-
-    const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
-      // @ts-expect-error legacy noImplicitAny
-      (field) => field.node,
-    );
-
-    // standard relations have been updated
-    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // relation field
-      const relationFieldMetadataId =
-        // @ts-expect-error legacy noImplicitAny
-        standardObjectRelationsMap[relation].relationFieldMetadataId;
-
-      const updatedRelationFieldMetadata = fieldsMetadata.find(
-        // @ts-expect-error legacy noImplicitAny
-        (field) => field.id === relationFieldMetadataId,
-      );
-
-      expect(updatedRelationFieldMetadata.name).toBe(HOUSE_NAME_SINGULAR);
-      expect(updatedRelationFieldMetadata.label).toBe(HOUSE_LABEL_SINGULAR);
-    });
   });
 
   it('3. should delete custom object', async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: listingObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,

@@ -7,8 +7,6 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
-import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
-import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 import { SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
@@ -27,7 +25,6 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -49,15 +46,7 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Mutation(() => ImpersonateOutput)
-  async impersonate(
-    @Args() { workspaceId, userId }: ImpersonateInput,
-  ): Promise<ImpersonateOutput> {
-    return await this.adminService.impersonate(userId, workspaceId);
-  }
-
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, AdminPanelGuard)
   @Mutation(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
@@ -65,7 +54,7 @@ export class AdminPanelResolver {
     return await this.adminService.userLookup(userLookupInput.userIdentifier);
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   @Mutation(() => Boolean)
   async updateWorkspaceFeatureFlag(
     @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,

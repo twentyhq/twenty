@@ -19,6 +19,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'], {
+  where: '"deletedAt" IS NULL',
+})
 export class ViewGroupEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -38,7 +41,7 @@ export class ViewGroupEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text' })
   fieldValue: string;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({ nullable: false, type: 'uuid' })

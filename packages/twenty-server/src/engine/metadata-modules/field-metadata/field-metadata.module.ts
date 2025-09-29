@@ -9,7 +9,9 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -35,7 +37,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
-import { ViewModule } from 'src/modules/view/view.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -60,12 +61,13 @@ import { FieldMetadataService } from './services/field-metadata.service';
         TypeORMModule,
         ActorModule,
         FeatureFlagModule,
-        ViewModule,
+        CoreViewModule,
         PermissionsModule,
         WorkspaceMetadataCacheModule,
         WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
+        WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

@@ -3,20 +3,21 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
@@ -31,9 +32,11 @@ export const RecordTableHeaderPlusButtonContent = () => {
     useChangeRecordFieldVisibility(recordTableId);
 
   const handleAddColumn = useCallback(
-    (column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>) => {
+    async (
+      column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>,
+    ) => {
       closeDropdown();
-      changeRecordFieldVisibility({ ...column, isVisible: true });
+      await changeRecordFieldVisibility({ ...column, isVisible: true });
     },
     [changeRecordFieldVisibility, closeDropdown],
   );
@@ -54,6 +57,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
         .includes(fieldMetadataItemToFilter.id),
   );
 
+  const handleFieldMetadataItemMenuItemClick = async (
+    fieldMetadataItem: FieldMetadataItem,
+  ) => {
+    await handleAddColumn({
+      fieldMetadataId: fieldMetadataItem.id,
+    });
+  };
+
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
@@ -61,9 +72,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
           <MenuItem
             key={fieldMetadataItem.id}
             onClick={() =>
-              handleAddColumn({
-                fieldMetadataId: fieldMetadataItem.id,
-              })
+              handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
             }
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}

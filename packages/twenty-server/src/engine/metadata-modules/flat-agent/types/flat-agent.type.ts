@@ -5,6 +5,7 @@ export const agentEntityRelationProperties = [
   'chatThreads',
   'outgoingHandoffs',
   'incomingHandoffs',
+  'application',
 ] as const;
 
 export type AgentEntityRelationProperties =
@@ -14,5 +15,5 @@ export type FlatAgent = Omit<
   AgentEntity,
   AgentEntityRelationProperties | 'createdAt' | 'updatedAt' | 'deletedAt'
 > & {
-  uniqueIdentifier: string;
+  universalIdentifier: string;
 };

@@ -1,64 +1,58 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
+import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
+import { WorkflowDiagramEdgeLabelContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabelContainer';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
-import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  EdgeLabelRenderer,
-  type EdgeProps,
-  getBezierPath,
-} from '@xyflow/react';
-import { type MouseEvent, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
+import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
+import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/getEdgePath';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
+import { useLingui } from '@lingui/react/macro';
+import { EdgeLabelRenderer } from '@xyflow/react';
+import { type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus, IconTrash } from 'twenty-ui/display';
 
-type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramDefaultEdgeEditableProps =
+  WorkflowDiagramEdgeComponentProps;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
   source,
+  sourceHandleId,
+  sourcePosition,
   target,
+  targetHandleId,
+  targetPosition,
   sourceX,
   sourceY,
   targetX,
   targetY,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { i18n } = useLingui();
 
   const { isEdgeHovered } = useEdgeState();
 
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const {
+    segments,
+    labelPosition: [labelX, labelY],
+  } = getEdgePath({
     sourceX,
     sourceY,
+    sourcePosition,
     targetX,
     targetY,
+    targetPosition,
+    markerStart,
+    markerEnd,
+    strategy: data?.edgePathStrategy,
   });
-
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-
-  const { createStep } = useCreateStep({ workflow });
 
   const { deleteEdge } = useDeleteEdge();
 
@@ -69,59 +63,55 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     nextStepId: target,
   });
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
-    commandMenuNavigationStackState,
-  );
-
-  const { openWorkflowEditFilterInCommandMenu } =
-    useOpenWorkflowEditFilterInCommandMenu();
-
-  const handleCreateFilter = async () => {
-    const createdStep = await createStep({
-      newStepType: 'FILTER',
-      parentStepId: source,
-      nextStepId: target,
-    });
-
-    if (!isDefined(createdStep)) {
-      return;
-    }
-
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
-    }
-
-    openWorkflowEditFilterInCommandMenu({
-      stepId: createdStep.id,
-      stepName: createdStep.name,
-    });
-  };
-
   const handleNodeButtonClick = () => {
     startNodeCreation({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
+      connectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
     });
   };
 
   const handleDeleteBranch = async (event: MouseEvent) => {
     event.stopPropagation();
 
-    await deleteEdge({ source, target });
+    await deleteEdge({
+      source,
+      target,
+      sourceConnectionOptions: getConnectionOptionsForSourceHandle({
+        sourceHandleId,
+      }),
+    });
   };
 
   return (
     <>
-      <WorkflowDiagramBaseEdge
-        source={source}
-        target={target}
-        path={edgePath}
-        markerStart={markerStart}
-        markerEnd={markerEnd}
-      />
+      {segments.map((segment) => (
+        <WorkflowDiagramBaseEdge
+          key={segment.path}
+          source={source}
+          sourceHandleId={sourceHandleId}
+          target={target}
+          targetHandleId={targetHandleId}
+          path={segment.path}
+          markerStart={segment.markerStart}
+          markerEnd={segment.markerEnd}
+        />
+      ))}
 
       <EdgeLabelRenderer>
+        {isDefined(data?.labelOptions) && (
+          <WorkflowDiagramEdgeLabelContainer
+            sourceX={sourceX}
+            sourceY={sourceY}
+            position={data.labelOptions.position}
+          >
+            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
+          </WorkflowDiagramEdgeLabelContainer>
+        )}
+
         <WorkflowDiagramEdgeV2Container
           data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
           labelX={labelX}
@@ -129,27 +119,25 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
             shouldDisplay={
-              nodeCreationStarted || isEdgeHovered({ source, target })
+              nodeCreationStarted ||
+              isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              })
             }
           >
             <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
                 {
-                  Icon: IconFilter,
-                  onClick: handleCreateFilter,
-                },
-                {
                   Icon: IconPlus,
                   onClick: handleNodeButtonClick,
                 },
-                ...(isWorkflowBranchEnabled
-                  ? [
-                      {
-                        Icon: IconTrash,
-                        onClick: handleDeleteBranch,
-                      },
-                    ]
-                  : []),
+                {
+                  Icon: IconTrash,
+                  onClick: handleDeleteBranch,
+                },
               ]}
               selected={nodeCreationStarted}
             />

@@ -1,14 +1,11 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ViewField } from '@/views/types/ViewField';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { type ViewSort } from '@/views/types/ViewSort';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -21,27 +18,6 @@ const baseFieldMetadataItem = {
   label: 'Name',
   type: FieldMetadataType.FULL_NAME,
 };
-
-describe('mapViewSortsToSorts', () => {
-  it('should map each ViewSort object to a corresponding Sort object', () => {
-    const viewSorts: ViewSort[] = [
-      {
-        __typename: 'ViewSort',
-        id: 'id',
-        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
-        direction: 'asc',
-      },
-    ];
-    const expectedSorts: RecordSort[] = [
-      {
-        id: 'id',
-        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
-        direction: 'asc',
-      },
-    ];
-    expect(mapViewSortsToSorts(viewSorts)).toEqual(expectedSorts);
-  });
-});
 
 describe('mapViewFiltersToFilters', () => {
   it('should map each ViewFilter object to a corresponding Filter object', () => {
@@ -89,7 +65,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           fieldMetadataId: '1',
           label: 'label 1',
           metadata: { fieldName: 'fieldName 1' },
-          infoTooltipContent: 'infoTooltipContent 1',
           iconName: 'iconName 1',
           type: FieldMetadataType.TEXT,
           position: 1,
@@ -109,7 +84,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           fieldMetadataId: '2',
           label: 'label 2',
           metadata: { fieldName: 'fieldName 2' },
-          infoTooltipContent: 'infoTooltipContent 2',
           iconName: 'iconName 2',
           type: FieldMetadataType.TEXT,
           position: 2,
@@ -129,7 +103,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
           fieldMetadataId: '3',
           label: 'label 3',
           metadata: { fieldName: 'fieldName 3' },
-          infoTooltipContent: 'infoTooltipContent 3',
           iconName: 'iconName 3',
           type: FieldMetadataType.TEXT,
           position: 3,
@@ -146,7 +119,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         label: 'label 1',
         position: 1,
         metadata: { fieldName: 'fieldName 1' },
-        infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
         type: FieldMetadataType.TEXT,
         size: 1,
@@ -156,7 +128,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         label: 'label 3',
         position: 3,
         metadata: { fieldName: 'fieldName 3' },
-        infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
         type: FieldMetadataType.TEXT,
         size: 3,
@@ -168,7 +139,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         fieldMetadataId: '1',
         label: 'label 1',
         metadata: { fieldName: 'fieldName 1' },
-        infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
         type: FieldMetadataType.TEXT,
         size: 1,
@@ -180,7 +150,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         fieldMetadataId: '3',
         label: 'label 3',
         metadata: { fieldName: 'fieldName 3' },
-        infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
         type: FieldMetadataType.TEXT,
         size: 3,

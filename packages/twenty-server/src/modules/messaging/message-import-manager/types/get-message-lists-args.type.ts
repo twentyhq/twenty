@@ -10,6 +10,6 @@ export type GetMessageListsArgs = {
   >;
   messageFolders: Pick<
     MessageFolderWorkspaceEntity,
-    'name' | 'syncCursor' | 'id'
+    'name' | 'syncCursor' | 'id' | 'isSynced' | 'isSentFolder' | 'externalId'
   >[];
 };

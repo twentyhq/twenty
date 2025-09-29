@@ -2,18 +2,18 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { prefetchViewsFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchViewsFromObjectMetadataItemFamilySelector';
-import { AppPath } from '@/types/AppPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { getAppPath } from '~/utils/navigation/getAppPath';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -23,7 +23,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const views = useRecoilValue(
-    prefetchViewsFromObjectMetadataItemFamilySelector({
+    coreViewsFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
     }),
   );

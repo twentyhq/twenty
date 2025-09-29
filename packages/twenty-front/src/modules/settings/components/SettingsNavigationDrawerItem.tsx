@@ -4,8 +4,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { type SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { isDefined } from 'twenty-shared/utils';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;

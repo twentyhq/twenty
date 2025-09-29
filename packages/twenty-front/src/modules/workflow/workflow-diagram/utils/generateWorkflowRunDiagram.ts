@@ -11,7 +11,6 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
-import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
@@ -19,12 +18,10 @@ export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
   stepInfos,
-  isWorkflowBranchEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
-  isWorkflowBranchEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -44,7 +41,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
-    defaultEdgeType: 'empty-filter--readonly',
+    workflowContext: 'workflow-run',
   });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
@@ -89,11 +86,9 @@ export const generateWorkflowRunDiagram = ({
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    const edgeType: WorkflowDiagramEdgeType = 'empty-filter--run';
-
     return {
       ...edge,
-      type: edgeType,
+      type: 'readonly' satisfies WorkflowDiagramEdgeType,
       data: {
         ...edge.data,
         edgeType: 'default',
@@ -103,12 +98,10 @@ export const generateWorkflowRunDiagram = ({
   });
 
   return {
-    diagram: transformFilterNodesAsEdges({
+    diagram: {
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
-      defaultFilterEdgeType: 'filter--run',
-      isWorkflowBranchEnabled,
-    }),
+    },
     stepToOpenByDefault,
   };
 };

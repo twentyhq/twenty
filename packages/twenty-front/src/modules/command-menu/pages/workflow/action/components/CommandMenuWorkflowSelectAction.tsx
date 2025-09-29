@@ -1,27 +1,75 @@
-import { CommandMenuWorkflowSelectActionContent } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent';
-import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
-import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
-import { isDefined } from 'twenty-shared/utils';
+import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
+import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
+import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
+import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
+import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
+import { FeatureFlagKey } from '~/generated/graphql';
 
-export const CommandMenuWorkflowSelectAction = () => {
-  const workflowId = useCommandMenuWorkflowIdOrThrow();
-  const workflow = useWorkflowWithCurrentVersion(workflowId);
+export const CommandMenuWorkflowSelectAction = ({
+  onActionSelected,
+}: {
+  onActionSelected: (actionType: WorkflowActionType) => void;
+}) => {
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
 
-  if (!isDefined(workflow)) {
-    return null;
-  }
+  const { t } = useLingui();
 
   return (
-    <WorkflowVisualizerComponentInstanceContext.Provider
-      value={{
-        instanceId: getWorkflowVisualizerComponentInstanceId({
-          recordId: workflowId,
-        }),
-      }}
-    >
-      <CommandMenuWorkflowSelectActionContent workflow={workflow} />
-    </WorkflowVisualizerComponentInstanceContext.Provider>
+    <RightDrawerStepListContainer>
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Data`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={RECORD_ACTIONS}
+        onClick={onActionSelected}
+      />
+
+      {isAiEnabled && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`AI`}
+          </RightDrawerWorkflowSelectStepTitle>
+          <WorkflowActionMenuItems
+            actions={AI_ACTIONS}
+            onClick={onActionSelected}
+          />
+        </>
+      )}
+
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Flow`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={FLOW_ACTIONS.filter(
+          (action) => action.type !== 'ITERATOR' || isIteratorEnabled,
+        )}
+        onClick={onActionSelected}
+      />
+
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Core`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={CORE_ACTIONS}
+        onClick={onActionSelected}
+      />
+
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Human Input`}
+      </RightDrawerWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={HUMAN_INPUT_ACTIONS}
+        onClick={onActionSelected}
+      />
+    </RightDrawerStepListContainer>
   );
 };

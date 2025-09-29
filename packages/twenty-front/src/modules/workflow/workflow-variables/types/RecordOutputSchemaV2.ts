@@ -28,6 +28,7 @@ export type RecordOutputSchemaV2 = {
     label: string;
     objectMetadataId: string;
     isRelationField?: boolean;
+    fieldIdName?: string;
   };
   fields: Record<string, FieldOutputSchemaV2>;
   _outputSchemaType: 'RECORD';
