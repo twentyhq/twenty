@@ -4533,6 +4533,11 @@ msgstr "Ladataan..."
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
+#. js-lingui-id: hykMbH
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Logged in as {impersonatedUser}"
+msgstr ""
+
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
 msgid "Login token missing. Two Factor Authentication setup can not be initiated."
@@ -6916,6 +6921,11 @@ msgstr "Tila"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Tila"
+
+#. js-lingui-id: I8EmDx
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Stop impersonating"
+msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts

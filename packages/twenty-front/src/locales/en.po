@@ -4528,6 +4528,11 @@ msgstr "Loading..."
 msgid "Log out"
 msgstr "Log out"
 
+#. js-lingui-id: hykMbH
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Logged in as {impersonatedUser}"
+msgstr "Logged in as {impersonatedUser}"
+
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
 msgid "Login token missing. Two Factor Authentication setup can not be initiated."
@@ -6911,6 +6916,11 @@ msgstr "State"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Status"
+
+#. js-lingui-id: I8EmDx
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Stop impersonating"
+msgstr "Stop impersonating"
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
