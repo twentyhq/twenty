@@ -213,7 +213,7 @@ export const FormSingleRecordPicker = ({
                 emptyLabel={'No ' + objectNameSingulars.join(' or ')}
                 onCancel={() => closeDropdown(dropdownId)}
                 onRecordSelected={handleRecordSelected}
-                objectNameSingular={objectNameSingulars[0]}
+                objectNameSingulars={objectNameSingulars}
                 recordPickerInstanceId={dropdownId}
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
