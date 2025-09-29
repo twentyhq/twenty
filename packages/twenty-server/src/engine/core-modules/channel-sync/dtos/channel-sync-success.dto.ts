@@ -1,10 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class ImapSmtpCaldavConnectionSuccess {
+export class ChannelSyncSuccess {
   @Field(() => Boolean)
   success: boolean;
-
-  @Field(() => String)
-  connectedAccountId: string;
 }

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { type MessageChannel, MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -52,6 +52,9 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       },
       isSyncEnabled: {
         eq: true,
+      },
+      syncStage: {
+        neq: MessageChannelSyncStage.PENDING_CONFIGURATION,
       },
     },
     recordGqlFields: generateDepthOneRecordGqlFields(

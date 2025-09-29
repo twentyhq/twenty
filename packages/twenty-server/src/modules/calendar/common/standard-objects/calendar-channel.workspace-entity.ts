@@ -35,6 +35,7 @@ export enum CalendarChannelSyncStatus {
 }
 
 export enum CalendarChannelSyncStage {
+  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION',
   FULL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING', // WILL BE DEPRECATED
   PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING', // DEPRECATED
   CALENDAR_EVENT_LIST_FETCH_PENDING = 'CALENDAR_EVENT_LIST_FETCH_PENDING',
@@ -194,8 +195,14 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
         position: 8,
         color: 'blue',
       },
+      {
+        value: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+        label: 'Pending configuration',
+        position: 9,
+        color: 'gray',
+      },
     ],
-    defaultValue: `'${CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING}'`,
+    defaultValue: `'${CalendarChannelSyncStage.PENDING_CONFIGURATION}'`,
   })
   syncStage: CalendarChannelSyncStage;
 
