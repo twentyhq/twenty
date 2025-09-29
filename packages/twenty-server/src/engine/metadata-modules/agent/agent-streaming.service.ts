@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-    createUIMessageStream,
-    pipeUIMessageStreamToResponse,
-    UIDataTypes,
-    UIMessage,
-    UITools,
+  createUIMessageStream,
+  pipeUIMessageStreamToResponse,
+  UIDataTypes,
+  UIMessage,
+  UITools,
 } from 'ai';
 import { type Response } from 'express';
 import { Repository } from 'typeorm';
@@ -17,8 +17,8 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-c
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/agent/agent-execution.service';
 import {
-    AgentException,
-    AgentExceptionCode,
+  AgentException,
+  AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 

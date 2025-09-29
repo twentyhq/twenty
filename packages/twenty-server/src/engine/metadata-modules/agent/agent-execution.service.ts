@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-    convertToModelMessages,
-    LanguageModelUsage,
-    stepCountIs,
-    streamText,
-    ToolSet,
-    UIDataTypes,
-    UIMessage,
-    UITools,
+  convertToModelMessages,
+  LanguageModelUsage,
+  stepCountIs,
+  streamText,
+  ToolSet,
+  UIDataTypes,
+  UIMessage,
+  UITools,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';

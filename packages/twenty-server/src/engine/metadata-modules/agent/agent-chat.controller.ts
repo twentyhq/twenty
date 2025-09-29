@@ -1,12 +1,12 @@
 import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Post,
-    Res,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { UIDataTypes, UIMessage, UITools } from 'ai';
