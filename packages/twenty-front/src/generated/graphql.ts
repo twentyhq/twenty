@@ -71,9 +71,38 @@ export type AgentChatMessage = {
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
-  rawContent?: Maybe<Scalars['String']>;
+  parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
+};
+
+export type AgentChatMessagePart = {
+  __typename?: 'AgentChatMessagePart';
+  createdAt: Scalars['DateTime'];
+  errorDetails?: Maybe<Scalars['JSON']>;
+  errorMessage?: Maybe<Scalars['String']>;
+  fileFilename?: Maybe<Scalars['String']>;
+  fileMediaType?: Maybe<Scalars['String']>;
+  fileUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  messageId: Scalars['UUID'];
+  orderIndex: Scalars['Int'];
+  providerMetadata?: Maybe<Scalars['JSON']>;
+  reasoningContent?: Maybe<Scalars['String']>;
+  sourceDocumentFilename?: Maybe<Scalars['String']>;
+  sourceDocumentMediaType?: Maybe<Scalars['String']>;
+  sourceDocumentSourceId?: Maybe<Scalars['String']>;
+  sourceDocumentTitle?: Maybe<Scalars['String']>;
+  sourceUrlSourceId?: Maybe<Scalars['String']>;
+  sourceUrlTitle?: Maybe<Scalars['String']>;
+  sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
+  toolCallId?: Maybe<Scalars['String']>;
+  toolInput?: Maybe<Scalars['JSON']>;
+  toolName?: Maybe<Scalars['String']>;
+  toolOutput?: Maybe<Scalars['JSON']>;
+  type: Scalars['String'];
 };
 
 export type AgentChatThread = {
@@ -1167,6 +1196,7 @@ export type File = {
 };
 
 export enum FileFolder {
+  AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   File = 'File',
   PersonPicture = 'PersonPicture',
