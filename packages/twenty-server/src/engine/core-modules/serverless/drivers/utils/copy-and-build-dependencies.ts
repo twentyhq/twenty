@@ -19,7 +19,7 @@ export const copyAndBuildDependencies = async (
     recursive: true,
   });
 
-  if (!isDefined(serverlessFunction.applicationId)) {
+  if (!isDefined(serverlessFunction.application)) {
     await fs.cp(
       getLayerDependenciesDirName(
         serverlessFunction.layerVersion || LAST_LAYER_VERSION,

@@ -51,7 +51,6 @@ import {
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
-const LAMBDA_EXECUTOR_DESCRIPTION = 'User script executor';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -135,25 +134,31 @@ export class LambdaDriver implements ServerlessDriver {
     );
   }
 
+  private getLayerName(serverlessFunction: ServerlessFunctionEntity) {
+    if (isDefined(serverlessFunction.application?.packageChecksum)) {
+      return serverlessFunction.application?.packageChecksum;
+    }
+
+    return COMMON_LAYER_NAME;
+  }
+
   private async createLayerIfNotExists(
     serverlessFunction: ServerlessFunctionEntity,
   ): Promise<string> {
+    const layerName = this.getLayerName(serverlessFunction);
+
     const listLayerParams: ListLayerVersionsCommandInput = {
-      LayerName: COMMON_LAYER_NAME,
+      LayerName: layerName,
       MaxItems: 1,
     };
+
     const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
+
     const listLayerResult = await (
       await this.getLambdaClient()
     ).send(listLayerCommand);
 
-    if (
-      isDefined(listLayerResult.LayerVersions) &&
-      listLayerResult.LayerVersions.length > 0 &&
-      listLayerResult.LayerVersions?.[0].Description ===
-        `${serverlessFunction.layerVersion}` &&
-      isDefined(listLayerResult.LayerVersions[0].LayerVersionArn)
-    ) {
+    if (isDefined(listLayerResult.LayerVersions?.[0]?.LayerVersionArn)) {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
@@ -171,7 +176,7 @@ export class LambdaDriver implements ServerlessDriver {
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
     const params: PublishLayerVersionCommandInput = {
-      LayerName: COMMON_LAYER_NAME,
+      LayerName: layerName,
       Content: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
@@ -179,7 +184,6 @@ export class LambdaDriver implements ServerlessDriver {
         ServerlessFunctionRuntime.NODE18,
         ServerlessFunctionRuntime.NODE22,
       ],
-      Description: `${serverlessFunction.layerVersion}`,
     };
 
     const command = new PublishLayerVersionCommand(params);
@@ -223,17 +227,35 @@ export class LambdaDriver implements ServerlessDriver {
     }
   }
 
-  private async build(serverlessFunction: ServerlessFunctionEntity) {
+  private async isAlreadyBuilt(serverlessFunction: ServerlessFunctionEntity) {
     const lambdaExecutor = await this.getLambdaExecutor(serverlessFunction);
 
-    if (isDefined(lambdaExecutor)) {
-      if (
-        lambdaExecutor.Configuration?.Description ===
-        LAMBDA_EXECUTOR_DESCRIPTION
-      ) {
-        return;
-      }
+    if (!isDefined(lambdaExecutor)) {
+      return false;
+    }
+
+    const layers = lambdaExecutor.Configuration?.Layers;
+
+    if (!isDefined(layers) || layers.length !== 1) {
       await this.delete(serverlessFunction);
+
+      return false;
+    }
+
+    const layerName = this.getLayerName(serverlessFunction);
+
+    if (layers[0].Arn?.includes(layerName)) {
+      return true;
+    }
+
+    await this.delete(serverlessFunction);
+
+    return false;
+  }
+
+  private async build(serverlessFunction: ServerlessFunctionEntity) {
+    if (await this.isAlreadyBuilt(serverlessFunction)) {
+      return;
     }
 
     const layerArn = await this.createLayerIfNotExists(serverlessFunction);
@@ -256,7 +278,6 @@ export class LambdaDriver implements ServerlessDriver {
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: serverlessFunction.runtime,
-      Description: LAMBDA_EXECUTOR_DESCRIPTION,
       Timeout: serverlessFunction.timeoutSeconds,
     };
 

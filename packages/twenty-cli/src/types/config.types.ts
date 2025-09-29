@@ -10,6 +10,11 @@ export type PackageJson = {
   label: string;
   license: string;
   description?: string;
+  engines: {
+    node: string;
+    npm: string;
+    yarn: string;
+  };
   icon?: string;
   version: string;
   dependencies?: object;

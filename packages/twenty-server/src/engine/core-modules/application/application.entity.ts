@@ -49,13 +49,13 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
 
-  @Column({ nullable: true, type: 'jsonb' })
-  packageJson: PackageJson | null;
+  @Column({ type: 'jsonb' })
+  packageJson: PackageJson;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ type: 'text' })
   yarnLock: string;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ type: 'text' })
   packageChecksum: string;
 
   @Column({ nullable: false, type: 'uuid' })

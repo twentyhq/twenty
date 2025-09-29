@@ -305,14 +305,16 @@ export class ServerlessFunctionService {
 
   async getAvailablePackages(serverlessFunctionId: string) {
     const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneBy({
-        id: serverlessFunctionId,
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: { id: serverlessFunctionId },
+        relations: ['application'],
       });
-    const { packageJson, yarnLock } = await getLayerDependencies(
-      serverlessFunction?.layerVersion || LAST_LAYER_VERSION,
-    );
+
+    const { packageJson, yarnLock } =
+      await getLayerDependencies(serverlessFunction);
 
     const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+
     const versions: Record<string, string> = {};
 
     let match: RegExpExecArray | null;
@@ -322,7 +324,7 @@ export class ServerlessFunctionService {
       const version = match[2];
 
       // @ts-expect-error legacy noImplicitAny
-      if (packageJson.dependencies[packageName]) {
+      if (packageJson.dependencies?.[packageName]) {
         versions[packageName] = version;
       }
     }
