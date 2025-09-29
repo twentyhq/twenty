@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 
-export function SentryCronMonitor(monitorSlug: string, schedule: string) {
+export function SentryCronMonitor(monitorSlug: string, schedule: string, maxRuntime: number = 5) {
   return function (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     _target: any,
@@ -29,7 +29,7 @@ export function SentryCronMonitor(monitorSlug: string, schedule: string) {
               value: schedule,
             },
             checkinMargin: 1,
-            maxRuntime: 5,
+            maxRuntime,
             timezone: 'UTC',
           },
         );
