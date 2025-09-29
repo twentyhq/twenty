@@ -31,6 +31,7 @@ export const WorkflowActionMenuItems = ({
                   theme,
                   actionType: action.type,
                 })}
+                size={16}
               />
             )}
             text={action.label}
