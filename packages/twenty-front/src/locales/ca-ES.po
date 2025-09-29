@@ -3397,11 +3397,6 @@ msgstr "No s'ha pogut crear la transferència"
 msgid "Failed to load webhook"
 msgstr "No s'ha pogut carregar el webhook"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "No s'ha pogut eliminar el fitxer"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -4521,6 +4516,7 @@ msgstr "S'estan carregant les dades de mètriques..."
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "Carregant..."
@@ -5034,6 +5030,11 @@ msgstr "No hi ha agents disponibles per a transferència"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
 msgstr "Cap agent concorda amb la teva cerca"
+
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
