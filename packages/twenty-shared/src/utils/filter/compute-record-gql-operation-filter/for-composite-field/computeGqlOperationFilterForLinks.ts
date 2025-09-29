@@ -1,4 +1,4 @@
-import { ViewFilterOperand as RecordFilterOperand, type LinksFilter, type PartialFieldMetadataItem } from '@/types';
+import { ViewFilterOperand as RecordFilterOperand, type CompositeFieldSubFieldName, type LinksFilter, type PartialFieldMetadataItem } from '@/types';
 import { type RecordFilterShared } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -10,7 +10,7 @@ export const computeGqlOperationFilterForLinks = ({
 }: {
   recordFilter: RecordFilterShared;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>
-  subFieldName: string | null | undefined; // TODO, should be CompositeFieldSubFieldName instead of string
+  subFieldName: CompositeFieldSubFieldName | null | undefined;
   throwCustomError: (message: string, code?: string) => never;
 }) => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);

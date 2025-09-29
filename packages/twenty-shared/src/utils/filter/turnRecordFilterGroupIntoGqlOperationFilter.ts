@@ -1,4 +1,4 @@
-import { type FilterableAndTSVectorFieldType, type PartialFieldMetadataItem, RecordFilterGroupLogicalOperator, type RecordFilterValueDependencies, type RecordGqlOperationFilter, type ViewFilterOperand } from '@/types';
+import { type CompositeFieldSubFieldName, type FilterableAndTSVectorFieldType, type PartialFieldMetadataItem, RecordFilterGroupLogicalOperator, type RecordFilterValueDependencies, type RecordGqlOperationFilter, type ViewFilterOperand } from '@/types';
 
 import { isDefined } from '@/utils';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
@@ -10,7 +10,7 @@ export type RecordFilterShared = {
   type: FilterableAndTSVectorFieldType;
   recordFilterGroupId?: string | null;
   operand: ViewFilterOperand;
-  subFieldName?: string | null | undefined; // TODO - should be CompositeFieldSubFieldName instead of string
+  subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 
 export type RecordFilterGroupShared = {

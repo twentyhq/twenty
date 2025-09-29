@@ -26,45 +26,40 @@ export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGq
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
-export type {
-  RecordFilterShared,
-  RecordFilterGroupShared,
-} from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export type {
+  RecordFilterGroupShared, RecordFilterShared
+} from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
   convertLessThanOrEqualRatingToArrayOfRatingValues,
-  convertRatingToRatingValue,
+  convertRatingToRatingValue
 } from './filter/utils/fieldRatingConvertors';
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
-export type {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
-  ResolvedDateViewFilterValue,
-} from './filter/utils/resolveDateViewFilterValue';
+export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export {
-  variableDateViewFilterValueUnitSchema,
-  variableDateViewFilterValuePartsSchema,
-  resolveDateViewFilterValue,
+  resolveDateViewFilterValue, variableDateViewFilterValuePartsSchema, variableDateViewFilterValueUnitSchema
+} from './filter/utils/resolveDateViewFilterValue';
+export type {
+  ResolvedDateViewFilterValue, VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit
 } from './filter/utils/resolveDateViewFilterValue';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export {
-  relationFilterValueSchemaObject,
-  jsonRelationFilterValueSchema,
+  jsonRelationFilterValueSchema, relationFilterValueSchemaObject
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
-  sanitizeURL,
-  getLogoUrlFromDomainName,
+  getLogoUrlFromDomainName, sanitizeURL
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { getAppPath } from './navigation/getAppPath';
@@ -76,19 +71,16 @@ export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterV
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
-export type {
-  TipTapMarkType,
-  TipTapNodeType,
-  LinkMarkAttributes,
-  TipTapMark,
-} from './tiptap/tiptap-marks';
 export {
-  TIPTAP_MARK_TYPES,
-  TIPTAP_NODE_TYPES,
-  TIPTAP_MARKS_RENDER_ORDER,
+  TIPTAP_MARK_TYPES, TIPTAP_MARKS_RENDER_ORDER, TIPTAP_NODE_TYPES
 } from './tiptap/tiptap-marks';
-export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export type {
+  LinkMarkAttributes,
+  TipTapMark, TipTapMarkType,
+  TipTapNodeType
+} from './tiptap/tiptap-marks';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
@@ -110,3 +102,4 @@ export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
 export { resolveInput } from './variable-resolver';
+

@@ -1,4 +1,5 @@
 import {
+  type CompositeFieldSubFieldName,
   type EmailsFilter,
   type PartialFieldMetadataItem,
   ViewFilterOperand as RecordFilterOperand,
@@ -12,10 +13,12 @@ export const computeGqlOperationFilterForEmails = ({
   recordFilter,
   correspondingFieldMetadataItem,
   subFieldName,
+  throwCustomError,
 }: {
   recordFilter: RecordFilterShared;
   correspondingFieldMetadataItem: Pick<PartialFieldMetadataItem, 'name' | 'type'>;
-  subFieldName: string | null | undefined; // TODO, should be  instead of string
+  subFieldName: CompositeFieldSubFieldName | null | undefined;
+  throwCustomError: (message: string, code?: string) => never;
 }): RecordGqlOperationFilter => {
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
@@ -79,16 +82,16 @@ export const computeGqlOperationFilterForEmails = ({
               ],
             };
           default:
-            throw new Error( // TODO
+            return throwCustomError(
               `Unknown operand ${recordFilter.operand} for ${correspondingFieldMetadataItem.type} filter`,
-              // 'UNKNOWN_OPERAND_FOR_FILTER',
+              'UNKNOWN_OPERAND_FOR_FILTER',
             );
         }
       }
       default: {
-        throw new Error( // TODO
+        throwCustomError(
           `Unknown subfield name ${subFieldName}`,
-          // 'UNKNOWN_SUBFIELD_NAME',
+          'UNKNOWN_SUBFIELD_NAME',
         );
       }
     }

@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
+  FieldMetadataType,
   ViewFilterOperand as RecordFilterOperand,
   type ActorFilter,
   type AddressFilter,
@@ -8,7 +9,6 @@ import {
   type BooleanFilter,
   type CurrencyFilter,
   type DateFilter,
-  type FieldMetadataType,
   type FloatFilter,
   type MultiSelectFilter,
   type PhonesFilter,
@@ -30,6 +30,7 @@ import {
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
   generateILikeFiltersForCompositeFields, getEmptyRecordGqlOperationFilter, getFilterTypeFromFieldType,
+  isExpectedSubFieldName,
   type RecordFilterShared
 } from '@/utils/filter';
 
@@ -57,7 +58,6 @@ type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   throwCustomError: (message: string, code?: string) => never;
 };
 
-const isExpectedSubFieldName = () => true; // TODO
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
@@ -376,11 +376,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     }
     case 'CURRENCY': {
       if (
-        isExpectedSubFieldName()
-          // FieldMetadataType.CURRENCY, // TODO
-          // 'currencyCode',
-          // subFieldName,
-        // )
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'currencyCode',
+          subFieldName,
+        )
       ) {
         const parsedCurrencyCodes = arrayOfStringsOrVariablesSchema.parse(
           recordFilter.value,
@@ -407,11 +407,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             );
         }
       } else if (
-        isExpectedSubFieldName() ||
-        //   FieldMetadataType.CURRENCY, // TODO
-        //   'amountMicros',
-        //   subFieldName,
-        // ) ||
+        isExpectedSubFieldName(
+          FieldMetadataType.CURRENCY,
+          'amountMicros',
+          subFieldName,
+        ) ||
         !isSubFieldFilter
       ) {
         switch (recordFilter.operand) {
@@ -1006,6 +1006,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         correspondingFieldMetadataItem,
         recordFilter,
         subFieldName,
+        throwCustomError,
       });
     }
     case 'PHONES': {
