@@ -11,6 +11,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       invalidViewField: 0,
       invalidIndex: 0,
       invalidServerlessFunction: 0,
+      invalidDatabaseEventTrigger: 0,
       totalErrors: 0,
     },
     errors: {
@@ -19,6 +20,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
       view: [],
       viewField: [],
       serverlessFunction: [],
+      databaseEventTrigger: [],
     },
   };
 

@@ -720,6 +720,11 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateDatabaseEventTriggerInput = {
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -945,6 +950,18 @@ export enum DatabaseEventAction {
   RESTORED = 'RESTORED',
   UPDATED = 'UPDATED'
 }
+
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type DatabaseEventTriggerIdInput = {
+  id: Scalars['String'];
+};
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
@@ -1597,6 +1614,7 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
   createOneObject: Object;
   createOneRemoteServer: RemoteServer;
@@ -1623,6 +1641,7 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteOneAgent: Agent;
+  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRemoteServer: RemoteServer;
@@ -1704,6 +1723,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
@@ -1877,6 +1897,11 @@ export type MutationCreateOneAppTokenArgs = {
 };
 
 
+export type MutationCreateOneDatabaseEventTriggerArgs = {
+  input: CreateDatabaseEventTriggerInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -1999,6 +2024,11 @@ export type MutationDeleteFileArgs = {
 
 export type MutationDeleteOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type MutationDeleteOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -2395,6 +2425,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
+};
+
+
+export type MutationUpdateOneDatabaseEventTriggerArgs = {
+  input: UpdateDatabaseEventTriggerInput;
 };
 
 
@@ -2873,10 +2908,12 @@ export type Query = {
   findAgentHandoffs: Array<AgentHandoffDto>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
+  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
+  findOneDatabaseEventTrigger: DatabaseEventTrigger;
   findOneRemoteServerById: RemoteServer;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
@@ -3004,6 +3041,11 @@ export type QueryFindManyRemoteServersByTypeArgs = {
 
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
+};
+
+
+export type QueryFindOneDatabaseEventTriggerArgs = {
+  input: DatabaseEventTriggerIdInput;
 };
 
 
@@ -3710,6 +3752,11 @@ export type UpdateApiKeyDto = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateDatabaseEventTriggerInput = {
+  id: Scalars['String'];
+  settings: Scalars['JSON'];
 };
 
 export type UpdateFieldInput = {

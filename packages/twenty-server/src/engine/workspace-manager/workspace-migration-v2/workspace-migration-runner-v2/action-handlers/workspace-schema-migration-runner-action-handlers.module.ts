@@ -9,6 +9,9 @@ import { DeleteIndexActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/create-object-action-handler.service';
 import { DeleteObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/delete-object-action-handler.service';
 import { UpdateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/update-object-action-handler.service';
+import { CreateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/create-database-event-trigger-action-handler.service';
+import { DeleteDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/delete-database-event-trigger-action-handler.service';
+import { UpdateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/update-database-event-trigger-action-handler.service';
 import { CreateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/create-serverless-function-action-handler.service';
 import { DeleteServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/delete-serverless-function-action-handler.service';
 import { UpdateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/serverless-function/services/update-serverless-function-action-handler.service';
@@ -44,6 +47,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateServerlessFunctionActionHandlerService,
     DeleteServerlessFunctionActionHandlerService,
     UpdateServerlessFunctionActionHandlerService,
+
+    CreateDatabaseEventTriggerActionHandlerService,
+    DeleteDatabaseEventTriggerActionHandlerService,
+    UpdateDatabaseEventTriggerActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

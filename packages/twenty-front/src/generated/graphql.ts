@@ -910,6 +910,14 @@ export enum DatabaseEventAction {
   UPDATED = 'UPDATED'
 }
 
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
   gt?: InputMaybe<Scalars['Date']>;
