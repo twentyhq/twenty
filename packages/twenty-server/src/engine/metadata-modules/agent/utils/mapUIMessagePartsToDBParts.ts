@@ -1,9 +1,20 @@
-import { type ToolUIPart, type UIMessagePart, type UITool } from 'ai';
+import {
+  type ToolUIPart,
+  type UIDataTypes,
+  type UIMessagePart,
+  type UITools,
+} from 'ai';
 
 import { type AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 
+const isToolPart = (
+  part: UIMessagePart<UIDataTypes, UITools>,
+): part is ToolUIPart => {
+  return part.type.includes('tool-') && 'toolCallId' in part;
+};
+
 export const mapUIMessagePartsToDBParts = (
-  uiMessageParts: UIMessagePart<never, Record<string, UITool>>[],
+  uiMessageParts: UIMessagePart<UIDataTypes, UITools>[],
   messageId: string,
 ): Partial<AgentChatMessagePartEntity>[] => {
   return uiMessageParts.map((part, index) => {
@@ -52,8 +63,8 @@ export const mapUIMessagePartsToDBParts = (
         return basePart;
       default:
         {
-          if (part.type.includes('tool-')) {
-            const { toolCallId, input, output, errorText } = part as ToolUIPart;
+          if (isToolPart(part)) {
+            const { toolCallId, input, output, errorText } = part;
 
             return {
               ...basePart,

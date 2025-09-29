@@ -1,15 +1,15 @@
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Res,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Res,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
-import { UIMessage } from 'ai';
+import { UIDataTypes, UIMessage, UITools } from 'ai';
 import { Response } from 'express';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -64,7 +64,7 @@ export class AgentChatController {
     @Body()
     body: {
       threadId: string;
-      messages: UIMessage[];
+      messages: UIMessage<unknown, UIDataTypes, UITools>[];
       recordIdsByObjectMetadataNameSingular?: RecordIdsByObjectMetadataNameSingularType;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,

@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ArrayContains, IsNull, Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { ArrayContains, DeepPartial, IsNull, Repository } from 'typeorm';
 
 import { Webhook } from './webhook.entity';
 import { WebhookException, WebhookExceptionCode } from './webhook.exception';
@@ -94,7 +93,7 @@ export class WebhookService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: QueryDeepPartialEntity<Webhook>,
+    updateData: DeepPartial<Webhook>,
   ): Promise<Webhook | null> {
     const webhook = await this.findById(id, workspaceId);
 
@@ -103,9 +102,7 @@ export class WebhookService {
     }
 
     if (isDefined(updateData.targetUrl)) {
-      const normalizedTargetUrl = this.normalizeTargetUrl(
-        updateData.targetUrl as string,
-      );
+      const normalizedTargetUrl = this.normalizeTargetUrl(updateData.targetUrl);
 
       if (!this.validateTargetUrl(normalizedTargetUrl)) {
         throw new WebhookException(

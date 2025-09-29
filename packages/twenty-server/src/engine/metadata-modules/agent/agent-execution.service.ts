@@ -2,12 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  convertToModelMessages,
-  LanguageModelUsage,
-  stepCountIs,
-  streamText,
-  ToolSet,
-  UIMessage,
+    convertToModelMessages,
+    LanguageModelUsage,
+    stepCountIs,
+    streamText,
+    ToolSet,
+    UIDataTypes,
+    UIMessage,
+    UITools,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -61,7 +63,7 @@ export class AgentExecutionService {
   }: {
     system: string;
     agent: AgentEntity | null;
-    messages: UIMessage[];
+    messages: UIMessage<unknown, UIDataTypes, UITools>[];
   }) {
     try {
       if (agent) {
@@ -193,7 +195,7 @@ export class AgentExecutionService {
     workspace: Workspace;
     userWorkspaceId: string;
     agentId: string;
-    messages: UIMessage[];
+    messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
   }) {
     try {

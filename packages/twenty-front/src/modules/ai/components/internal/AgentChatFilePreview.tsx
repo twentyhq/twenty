@@ -18,7 +18,8 @@ export const AgentChatFilePreview = ({
   const theme = useTheme();
   const iconColors = useFileTypeColors();
 
-  const fileName = (file instanceof File ? file.name : file.filename) as string;
+  const fileName =
+    file instanceof File ? file.name : (file.filename ?? 'Unknown file');
 
   return (
     <Chip

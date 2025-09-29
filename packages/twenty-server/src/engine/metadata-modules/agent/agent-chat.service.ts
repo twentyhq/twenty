@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import type { UIMessage, UIMessagePart } from 'ai';
+import type { UIDataTypes, UIMessage, UIMessagePart, UITools } from 'ai';
 
 import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 import {
   AgentChatMessageEntity,
-  type AgentChatMessageRole,
+  AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/agent/agent-chat-thread.entity';
 import {
@@ -73,8 +73,8 @@ export class AgentChatService {
     uiMessage,
   }: {
     threadId: string;
-    uiMessage: Omit<UIMessage, 'id'>;
-    uiMessageParts?: UIMessagePart<never, never>[];
+    uiMessage: Omit<UIMessage<unknown, UIDataTypes, UITools>, 'id'>;
+    uiMessageParts?: UIMessagePart<UIDataTypes, UITools>[];
   }) {
     const message = this.messageRepository.create({
       threadId,
@@ -85,7 +85,7 @@ export class AgentChatService {
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
-        uiMessage.parts as UIMessagePart<never, never>[],
+        uiMessage.parts,
         savedMessage.id,
       );
 
