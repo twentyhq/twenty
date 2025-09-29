@@ -1,3 +1,4 @@
+import { getChartAxisNameOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameOptions';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
@@ -42,6 +43,8 @@ export const useChartSettingsValues = (
         return `${aggregateField?.label ?? ''}${aggregateField?.label ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
       case 'group-by-y':
         return groupByFieldY?.label;
+      case 'axis-name':
+        return getChartAxisNameOptions(configuration.axisNameDisplay);
       default:
         return '';
     }
