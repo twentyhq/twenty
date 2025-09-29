@@ -5,10 +5,10 @@ import { IsDateString, IsNotEmpty, IsObject, IsUUID } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { DatabaseEventTriggerSettings } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { CronTriggerSettings } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 
-@ObjectType('DatabaseEventTrigger')
-export class DatabaseEventTriggerDTO {
+@ObjectType('CronTrigger')
+export class CronTriggerDTO {
   @IsUUID()
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
@@ -16,7 +16,7 @@ export class DatabaseEventTriggerDTO {
 
   @IsObject()
   @Field(() => GraphQLJSON)
-  settings: DatabaseEventTriggerSettings;
+  settings: CronTriggerSettings;
 
   @HideField()
   workspaceId: string;

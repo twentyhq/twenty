@@ -43,6 +43,9 @@ export class DatabaseEventTrigger
   @JoinColumn({ name: 'serverlessFunctionId' })
   serverlessFunction: Relation<ServerlessFunctionEntity>;
 
+  @Column({ nullable: true, type: 'uuid' })
+  serverlessFunctionId: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 

@@ -36,6 +36,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
             ],
             serverlessFunction: [],
             databaseEventTrigger: [],
+            cronTrigger: [],
           },
           status: 'fail',
         },

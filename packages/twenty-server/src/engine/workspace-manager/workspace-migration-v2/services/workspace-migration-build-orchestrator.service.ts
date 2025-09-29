@@ -11,6 +11,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
+import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
@@ -31,6 +32,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2ViewFieldActionsBuilderService: WorkspaceMigrationV2ViewFieldActionsBuilderService,
     private readonly workspaceMigrationV2ServerlessFunctionActionsBuilderService: WorkspaceMigrationV2ServerlessFunctionActionsBuilderService,
     private readonly workspaceMigrationV2DatabaseEventTriggerActionsBuilderService: WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService,
+    private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -83,6 +85,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       index: [],
       serverlessFunction: [],
       databaseEventTrigger: [],
+      cronTrigger: [],
     };
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -96,6 +99,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatIndexMaps,
       flatServerlessFunctionMaps,
       flatDatabaseEventTriggerMaps,
+      flatCronTriggerMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -255,6 +259,30 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatCronTriggerMaps)) {
+      const { from: fromFlatCronTriggerMaps, to: toFlatCronTriggerMaps } =
+        flatCronTriggerMaps;
+
+      const cronTriggerResult =
+        await this.workspaceMigrationV2CronTriggerActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatCronTriggerMaps,
+            to: toFlatCronTriggerMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+          },
+        );
+
+      optimisticAllFlatEntityMaps.flatCronTriggerMaps =
+        cronTriggerResult.optimisticFlatEntityMaps;
+
+      if (cronTriggerResult.status === 'fail') {
+        orchestratorFailureReport.cronTrigger.push(...cronTriggerResult.errors);
+      } else {
+        orchestratorActionsReport.cronTrigger = cronTriggerResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -304,6 +332,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...orchestratorActionsReport.databaseEventTrigger.deleted,
           ...orchestratorActionsReport.databaseEventTrigger.created,
           ...orchestratorActionsReport.databaseEventTrigger.updated,
+          ///
+
+          // Cron triggers
+          ...orchestratorActionsReport.cronTrigger.deleted,
+          ...orchestratorActionsReport.cronTrigger.created,
+          ...orchestratorActionsReport.cronTrigger.updated,
           ///
         ],
         workspaceId,

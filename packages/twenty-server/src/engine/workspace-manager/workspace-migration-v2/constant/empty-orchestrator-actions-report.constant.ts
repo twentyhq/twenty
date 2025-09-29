@@ -17,4 +17,5 @@ export const EMPTY_ORCHESTRATOR_ACTIONS_REPORT = {
   fieldMetadata: emptyCreatedDeletedUpdated,
   serverlessFunction: emptyCreatedDeletedUpdated,
   databaseEventTrigger: emptyCreatedDeletedUpdated,
+  cronTrigger: emptyCreatedDeletedUpdated,
 } as const satisfies OrchestratorActionsReport;
