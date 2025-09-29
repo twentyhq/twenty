@@ -2,7 +2,6 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -19,15 +18,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartDataSourceDropdownContent = () => {
+export const ChartXAxisFieldSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
-
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const currentSource = widgetInEditMode?.configuration?.source;
+  const currentXAxisFieldMetadataId =
+    widgetInEditMode?.configuration?.groupByFieldMetadataIdX;
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === currentSource,
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -38,26 +41,19 @@ export const ChartDataSourceDropdownContent = () => {
     dropdownId,
   );
 
-  const availableObjectMetadataItems = objectMetadataItems.filter(
-    (objectMetadataItem) => {
-      const objectPermissions =
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id];
-
-      const hasReadAccess =
-        isDefined(objectPermissions) && objectPermissions.canReadObjectRecords;
-
+  const availableFieldMetadataItems =
+    sourceObjectMetadataItem?.fields.filter((fieldMetadataItem) => {
       const matchesSearch =
         !isNonEmptyString(searchQuery) ||
-        objectMetadataItem.labelPlural
+        fieldMetadataItem.label
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        objectMetadataItem.namePlural
+        fieldMetadataItem.name
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
 
-      return hasReadAccess && matchesSearch;
-    },
-  );
+      return matchesSearch;
+    }) || [];
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -66,13 +62,17 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
+  if (!isDefined(sourceObjectMetadataItem)) {
+    return;
+  }
+
   return (
     <>
-      <DropdownMenuHeader>Source</DropdownMenuHeader>
+      <DropdownMenuHeader>X-Axis Field</DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        placeholder="Search objects"
+        placeholder="Search fields"
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
@@ -80,29 +80,29 @@ export const ChartDataSourceDropdownContent = () => {
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={availableObjectMetadataItems.map(
+          selectableItemIdArray={availableFieldMetadataItems.map(
             (item) => item.id,
           )}
         >
-          {availableObjectMetadataItems.map((objectMetadataItem) => (
+          {availableFieldMetadataItems.map((fieldMetadataItem) => (
             <SelectableListItem
-              key={objectMetadataItem.id}
-              itemId={objectMetadataItem.id}
+              key={fieldMetadataItem.id}
+              itemId={fieldMetadataItem.id}
               onEnter={() => {
                 updateCurrentWidgetConfig({
-                  source: objectMetadataItem.id,
+                  groupByFieldMetadataIdX: fieldMetadataItem.id,
                 });
                 closeDropdown();
               }}
             >
               <MenuItemSelect
-                text={objectMetadataItem.labelPlural}
-                selected={currentSource === objectMetadataItem.id}
-                focused={selectedItemId === objectMetadataItem.id}
-                LeftIcon={getIcon(objectMetadataItem.icon)}
+                text={fieldMetadataItem.label}
+                selected={currentXAxisFieldMetadataId === fieldMetadataItem.id}
+                focused={selectedItemId === fieldMetadataItem.id}
+                LeftIcon={getIcon(fieldMetadataItem.icon)}
                 onClick={() => {
                   updateCurrentWidgetConfig({
-                    source: objectMetadataItem.id,
+                    groupByFieldMetadataIdX: fieldMetadataItem.id,
                   });
                   closeDropdown();
                 }}

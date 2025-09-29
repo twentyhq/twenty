@@ -32,6 +32,7 @@ export const NUMBER_CHART_SETTINGS: ChartSettingsGroup[] = [
         Icon: IconTag,
         label: 'Data labels',
         id: 'data-labels',
+        contextualTextPosition: 'right',
         hasSubMenu: true,
         isSubMenuOpened: false,
         onClick: () => {},
