@@ -12,10 +12,10 @@ import {
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
+import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { Route } from 'src/engine/metadata-modules/route/route.entity';
 import { ServerlessFunctionEntityRelationProperties } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { CronTrigger } from 'src/engine/metadata-modules/trigger/entities/cron-trigger.entity';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/trigger/entities/database-event-trigger.entity';
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
