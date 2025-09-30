@@ -18,7 +18,6 @@ import { In, Repository } from 'typeorm';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
@@ -28,6 +27,7 @@ import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metad
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
+import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
@@ -49,11 +49,10 @@ export class AgentExecutionService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
+    private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   async prepareAIRequestConfig({
@@ -76,6 +75,7 @@ export class AgentExecutionService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
+      let providerOptions;
 
       if (agent) {
         const baseTools =
@@ -89,28 +89,29 @@ export class AgentExecutionService {
             agent.id,
             agent.workspaceId,
           );
+        const nativeModelTools =
+          this.agentModelConfigService.getNativeModelTools(
+            registeredModel,
+            agent,
+          );
 
-        tools = { ...baseTools, ...handoffTools };
+        tools = { ...baseTools, ...handoffTools, ...nativeModelTools };
+
+        providerOptions = this.agentModelConfigService.getProviderOptions(
+          registeredModel,
+          agent,
+        );
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       return {
         system,
-        tools,
+        tools: tools,
         model: registeredModel.model,
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
-        ...(registeredModel.doesSupportThinking && {
-          providerOptions: {
-            anthropic: {
-              thinking: {
-                type: 'enabled',
-                budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-              },
-            },
-          },
-        }),
+        providerOptions,
       };
     } catch (error) {
       this.logger.error(
