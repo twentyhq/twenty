@@ -203,7 +203,7 @@ describe('evaluateFilterConditions', () => {
         );
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Operand contains not supported for relation filter',
+          'Operand CONTAINS not supported for relation filter',
         );
       });
     });
@@ -307,7 +307,7 @@ describe('evaluateFilterConditions', () => {
         );
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
-          'Operand contains not supported for uuid filter',
+          'Operand CONTAINS not supported for uuid filter',
         );
       });
     });
