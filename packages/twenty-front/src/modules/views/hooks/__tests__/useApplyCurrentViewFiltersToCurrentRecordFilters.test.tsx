@@ -45,7 +45,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     __typename: 'ViewFilter',
     id: 'filter-1',
     fieldMetadataId: mockFieldMetadataItem.id,
-    operand: ViewFilterOperand.Contains,
+    operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     displayValue: 'test',
     viewFilterGroupId: 'group-1',

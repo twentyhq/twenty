@@ -165,7 +165,7 @@ const resolveVariableDateViewFilterValue = (value?: string | null) => {
 };
 
 export type ResolvedDateViewFilterValue<O extends ViewFilterOperand> =
-  O extends ViewFilterOperand.IsRelative
+  O extends ViewFilterOperand.IS_RELATIVE
     ? ReturnType<typeof resolveVariableDateViewFilterValue>
     : Date | null;
 
@@ -176,7 +176,7 @@ export const resolveDateViewFilterValue = <O extends ViewFilterOperand>(
 ): ResolvedDateViewFilterValue<O> => {
   if (!viewFilter.value) return null;
 
-  if (viewFilter.operand === ViewFilterOperand.IsRelative) {
+  if (viewFilter.operand === ViewFilterOperand.IS_RELATIVE) {
     return resolveVariableDateViewFilterValue(
       viewFilter.value,
     ) as ResolvedDateViewFilterValue<O>;

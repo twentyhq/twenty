@@ -32,7 +32,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { convertViewFilterOperand } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-view-filter-operands';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
@@ -252,7 +251,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: convertViewFilterValueToString(viewFilter.value),
         type: getFilterTypeFromFieldType(fieldMetadataItem.type),
-        operand: convertViewFilterOperand(viewFilter.operand),
+        operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,

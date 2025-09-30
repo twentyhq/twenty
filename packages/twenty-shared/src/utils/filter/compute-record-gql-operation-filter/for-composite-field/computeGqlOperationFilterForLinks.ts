@@ -19,7 +19,7 @@ export const computeGqlOperationFilterForLinks = ({
       case 'primaryLinkLabel':
       case 'primaryLinkUrl': {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Contains:
+          case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
                 [subFieldName]: {
@@ -27,7 +27,7 @@ export const computeGqlOperationFilterForLinks = ({
                 },
               } satisfies LinksFilter,
             };
-          case RecordFilterOperand.DoesNotContain:
+          case RecordFilterOperand.DOES_NOT_CONTAIN:
             return {
               not: {
                 [correspondingFieldMetadataItem.name]: {
@@ -46,7 +46,7 @@ export const computeGqlOperationFilterForLinks = ({
       }
       case 'secondaryLinks': {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Contains:
+          case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
                 secondaryLinks: {
@@ -54,7 +54,7 @@ export const computeGqlOperationFilterForLinks = ({
                 },
               } satisfies LinksFilter,
             };
-          case RecordFilterOperand.DoesNotContain:
+          case RecordFilterOperand.DOES_NOT_CONTAIN:
             return {
               or: [
                 {
@@ -91,7 +91,7 @@ export const computeGqlOperationFilterForLinks = ({
   }
 
   switch (recordFilter.operand) {
-    case RecordFilterOperand.Contains:
+    case RecordFilterOperand.CONTAINS:
       return {
         or: [
           {
@@ -117,7 +117,7 @@ export const computeGqlOperationFilterForLinks = ({
           },
         ],
       };
-    case RecordFilterOperand.DoesNotContain:
+    case RecordFilterOperand.DOES_NOT_CONTAIN:
       return {
         and: [
           {
