@@ -1,6 +1,7 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -13,7 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
@@ -23,8 +24,6 @@ export const ChartColorSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentColorScheme = widgetInEditMode?.configuration?.color;
-
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -33,6 +32,23 @@ export const ChartColorSelectionDropdownContent = () => {
     selectedItemIdComponentState,
     dropdownId,
   );
+
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const { closeDropdown } = useCloseDropdown();
+
+  if (!isDefined(widgetInEditMode)) {
+    return;
+  }
+
+  if (widgetInEditMode.configuration?.__typename === 'IframeConfiguration') {
+    throw new Error('Invalid configuration type');
+  }
+
+  const configuration = widgetInEditMode.configuration as ChartConfiguration;
+
+  const currentColor = configuration.color;
 
   const colorOptions = MAIN_COLOR_NAMES.map((colorName) => ({
     id: colorName,
@@ -47,11 +63,6 @@ export const ChartColorSelectionDropdownContent = () => {
 
     return matchesSearch;
   });
-
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
 
   const handleSelectColor = (colorName: ThemeColor) => {
     updateCurrentWidgetConfig({
@@ -90,7 +101,7 @@ export const ChartColorSelectionDropdownContent = () => {
             >
               <MenuItemSelect
                 text={colorOption.name}
-                selected={currentColorScheme === colorOption.id}
+                selected={currentColor === colorOption.id}
                 focused={selectedItemId === colorOption.id}
                 LeftIcon={() => (
                   <ColorSample colorName={colorOption.colorName} />
