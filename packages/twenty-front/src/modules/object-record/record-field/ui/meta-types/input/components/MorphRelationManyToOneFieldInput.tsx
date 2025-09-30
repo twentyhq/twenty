@@ -8,6 +8,7 @@ import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-r
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
@@ -17,6 +18,7 @@ export const MorphRelationManyToOneFieldInput = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
   const { onCancel } = useContext(FieldInputEventContext);
+  const { onCloseTableCell } = useRecordTableBodyContextOrThrow();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -29,6 +31,7 @@ export const MorphRelationManyToOneFieldInput = () => {
     selectedRecord: SingleRecordPickerRecord | null | undefined,
   ) => {
     persistFieldForMorphRelationManyToOne(selectedRecord);
+    onCloseTableCell();
   };
 
   const layoutDirection = useRecoilComponentValue(
