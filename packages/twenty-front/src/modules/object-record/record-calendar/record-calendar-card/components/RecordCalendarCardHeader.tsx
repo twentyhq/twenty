@@ -5,9 +5,8 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
