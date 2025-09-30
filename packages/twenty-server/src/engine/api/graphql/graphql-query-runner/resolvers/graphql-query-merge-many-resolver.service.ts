@@ -128,7 +128,14 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       );
     }
 
-    return recordsToMerge as ObjectRecord[];
+    const recordsMap = new Map(
+      recordsToMerge.map((record) => [record.id, record]),
+    );
+    const sortedRecords = ids
+      .map((id) => recordsMap.get(id))
+      .filter((record): record is ObjectRecord => record !== undefined);
+
+    return sortedRecords;
   }
 
   private validateAndGetPriorityRecord(
