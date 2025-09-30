@@ -1,11 +1,11 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsUUID,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -58,7 +58,7 @@ export class CreateAgentInput {
   @IsObject()
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  modelCofinguration?: ModelConfiguration;
+  modelConfiguration?: ModelConfiguration;
 
   @HideField()
   standardId?: string;

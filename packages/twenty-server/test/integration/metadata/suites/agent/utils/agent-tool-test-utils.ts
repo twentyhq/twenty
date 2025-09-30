@@ -191,7 +191,7 @@ export const createAgentToolTestModule =
       chatThreads: [],
       incomingHandoffs: [],
       outgoingHandoffs: [],
-      modelCofinguration: {},
+      modelConfiguration: {},
     };
 
     const testRole: RoleEntity = {

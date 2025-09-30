@@ -7,8 +7,8 @@ import { ToolSet } from 'ai';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import {
-  AiModelRegistryService,
-  RegisteredAIModel,
+    AiModelRegistryService,
+    RegisteredAIModel,
 } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 
@@ -37,18 +37,18 @@ export class AgentModelConfigService {
   getNativeModelTools(model: RegisteredAIModel, agent: AgentEntity): ToolSet {
     const tools: ToolSet = {};
 
-    if (!agent.modelCofinguration) {
+    if (!agent.modelConfiguration) {
       return tools;
     }
 
     switch (model.provider) {
       case ModelProvider.ANTHROPIC:
-        if (agent.modelCofinguration.webSearch?.enabled) {
+        if (agent.modelConfiguration.webSearch?.enabled) {
           tools.web_search = anthropic.tools.webSearch_20250305();
         }
         break;
       case ModelProvider.OPENAI:
-        if (agent.modelCofinguration.webSearch?.enabled) {
+        if (agent.modelConfiguration.webSearch?.enabled) {
           tools.web_search = openai.tools.webSearch();
         }
         break;
@@ -59,19 +59,19 @@ export class AgentModelConfigService {
 
   private getXaiProviderOptions(agent: AgentEntity): ProviderOptions {
     if (
-      !agent.modelCofinguration.webSearch?.enabled &&
-      !agent.modelCofinguration.twitterSearch?.enabled
+      !agent.modelConfiguration.webSearch?.enabled &&
+      !agent.modelConfiguration.twitterSearch?.enabled
     ) {
       return {};
     }
 
     const sources: Array<{ type: string }> = [];
 
-    if (agent.modelCofinguration.webSearch?.enabled) {
+    if (agent.modelConfiguration.webSearch?.enabled) {
       sources.push({ type: 'web' });
     }
 
-    if (agent.modelCofinguration.twitterSearch?.enabled) {
+    if (agent.modelConfiguration.twitterSearch?.enabled) {
       sources.push({ type: 'x' });
     }
 

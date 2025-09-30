@@ -12,7 +12,7 @@ export const AGENT_FRAGMENT = gql`
     responseFormat
     roleId
     isCustom
-    modelCofinguration
+    modelConfiguration
     createdAt
     updatedAt
   }

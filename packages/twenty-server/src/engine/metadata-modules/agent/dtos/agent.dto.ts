@@ -1,11 +1,11 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
-  IsBoolean,
-  IsDateString,
-  IsNotEmpty,
-  IsString,
-  IsUUID,
+    IsBoolean,
+    IsDateString,
+    IsNotEmpty,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -69,5 +69,5 @@ export class AgentDTO {
   updatedAt: Date;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  modelCofinguration: ModelConfiguration;
+  modelConfiguration: ModelConfiguration;
 }

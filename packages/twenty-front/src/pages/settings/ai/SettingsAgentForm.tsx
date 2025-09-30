@@ -74,7 +74,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           role: agent.roleId ?? undefined,
           prompt: agent.prompt,
           isCustom: agent.isCustom,
-          modelConfiguration: agent.modelCofinguration || {},
+          modelConfiguration: agent.modelConfiguration || {},
         });
       } else {
         enqueueErrorSnackBar({
@@ -121,7 +121,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           modelId: formValues.modelId,
           roleId: formValues.role || undefined,
           prompt: formValues.prompt,
-          modelCofinguration: formValues.modelConfiguration,
+          modelConfiguration: formValues.modelConfiguration,
         };
 
         await createAgent({
@@ -146,7 +146,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             modelId: formValues.modelId,
             roleId: formValues.role || undefined,
             prompt: formValues.prompt,
-            modelCofinguration: formValues.modelConfiguration,
+            modelConfiguration: formValues.modelConfiguration,
           },
         },
       });
