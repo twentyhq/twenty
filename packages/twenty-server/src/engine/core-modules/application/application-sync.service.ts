@@ -77,13 +77,10 @@ export class ApplicationSyncService {
 
     if (!isDefined(application)) {
       const serverlessFunctionLayer =
-        await this.serverlessFunctionLayerService.create(
-          {
-            packageJson,
-            yarnLock,
-          },
-          workspaceId,
-        );
+        await this.serverlessFunctionLayerService.create({
+          packageJson,
+          yarnLock,
+        });
       const createdApplication = await this.applicationService.create({
         standardId: manifest.standardId,
         label: manifest.label,

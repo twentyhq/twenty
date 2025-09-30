@@ -9,17 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Entity('serverlessFunctionLayer')
-export class ServerlessFunctionLayerEntity
-  extends SyncableEntity
-  implements Required<ServerlessFunctionLayerEntity>
-{
+export class ServerlessFunctionLayerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,9 +26,6 @@ export class ServerlessFunctionLayerEntity
 
   @Column({ type: 'text' })
   checksum: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
 
   @OneToMany(
     () => ServerlessFunctionEntity,
