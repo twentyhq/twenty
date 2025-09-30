@@ -3,11 +3,11 @@ import isEmpty from 'lodash.isempty';
 import pickBy from 'lodash.pickby';
 import { z } from 'zod';
 
-import { CustomError } from '@/error-handler/CustomError';
 import {
   settingsIntegrationPostgreSQLConnectionFormSchema,
   settingsIntegrationStripeConnectionFormSchema,
 } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
+import { CustomError } from 'twenty-shared/utils';
 import { type RemoteServer } from '~/generated-metadata/graphql';
 
 export const getEditionSchemaForForm = (databaseKey: string) => {

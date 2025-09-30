@@ -1,6 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  CompositeFieldSubFieldName,
+  RecordFilterGroupLogicalOperator,
+} from 'twenty-shared/types';
+import {
+  assertIsDefinedOrThrow,
+  combineFilters,
+  computeRecordGqlOperationFilter,
+  convertViewFilterValueToString,
+  getFilterTypeFromFieldType,
+} from 'twenty-shared/utils';
+
+import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
@@ -18,7 +30,11 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { convertViewFilterOperand } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-view-filter-operands';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
+import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
@@ -28,6 +44,13 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
   GroupByResolverArgs,
   IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[]
 > {
+  constructor(
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewFilterGroupService: ViewFilterGroupService,
+  ) {
+    super();
+  }
+
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>,
     _featureFlagsMap: Record<FeatureFlagKey, boolean>,
@@ -43,6 +66,14 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     let appliedFilters =
       executionArgs.args.filter ?? ({} as ObjectRecordFilter);
+
+    if (executionArgs.args.viewId) {
+      appliedFilters = await this.addFiltersFromView({
+        executionArgs,
+        objectMetadataItemWithFieldMaps,
+        appliedFilters,
+      });
+    }
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
@@ -180,6 +211,77 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     }
 
     return groupByFields;
+  }
+
+  private async addFiltersFromView({
+    executionArgs,
+    objectMetadataItemWithFieldMaps,
+    appliedFilters,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    appliedFilters: ObjectRecordFilter;
+  }): Promise<ObjectRecordFilter> {
+    assertIsDefinedOrThrow(executionArgs.args.viewId);
+
+    const workspaceId = executionArgs.options.authContext.workspace?.id;
+
+    assertIsDefinedOrThrow(workspaceId, WorkspaceNotFoundDefaultError);
+
+    const viewFilters = await this.viewFilterService.findByViewId(
+      workspaceId,
+      executionArgs.args.viewId,
+    );
+
+    const viewFilterGroups = await this.viewFilterGroupService.findByViewId(
+      workspaceId,
+      executionArgs.args.viewId,
+    );
+
+    const recordFilters = viewFilters.map((viewFilter) => {
+      const fieldMetadataItem =
+        objectMetadataItemWithFieldMaps.fieldsById[viewFilter.fieldMetadataId];
+
+      return {
+        id: viewFilter.id,
+        fieldMetadataId: viewFilter.fieldMetadataId,
+        value: convertViewFilterValueToString(viewFilter.value),
+        type: getFilterTypeFromFieldType(fieldMetadataItem.type),
+        operand: convertViewFilterOperand(viewFilter.operand),
+        recordFilterGroupId: viewFilter.viewFilterGroupId,
+        positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
+        subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
+      };
+    });
+
+    const recordFilterGroups = viewFilterGroups.map((viewFilterGroup) => {
+      return {
+        id: viewFilterGroup.id,
+        logicalOperator:
+          viewFilterGroup.logicalOperator as unknown as RecordFilterGroupLogicalOperator, // TODO - https://github.com/twentyhq/twenty/issues/14746
+        parentRecordFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
+      };
+    });
+
+    const fields = Object.values(
+      objectMetadataItemWithFieldMaps.fieldsById,
+    ).map((field) => ({
+      id: field.id,
+      name: field.name,
+      type: field.type,
+      label: field.label,
+    }));
+
+    const filtersFromView = computeRecordGqlOperationFilter({
+      recordFilters,
+      recordFilterGroups: recordFilterGroups,
+      fields,
+      filterValueDependencies: {},
+    });
+
+    appliedFilters = combineFilters([appliedFilters, filtersFromView]);
+
+    return appliedFilters;
   }
 
   async validate(

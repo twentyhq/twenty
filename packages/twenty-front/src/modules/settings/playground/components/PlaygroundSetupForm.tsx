@@ -1,4 +1,3 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
@@ -11,6 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
+import { CustomError } from 'twenty-shared/utils';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { z } from 'zod';

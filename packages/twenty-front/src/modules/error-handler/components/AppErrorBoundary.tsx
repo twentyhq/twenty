@@ -1,9 +1,8 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
-import { type CustomError } from '@/error-handler/CustomError';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import { isDefined } from 'twenty-shared/utils';
+import { type CustomError, isDefined } from 'twenty-shared/utils';
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
