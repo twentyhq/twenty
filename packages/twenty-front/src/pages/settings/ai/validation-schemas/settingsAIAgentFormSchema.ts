@@ -10,6 +10,22 @@ export const settingsAIAgentFormSchema = z.object({
   role: z.string().optional(),
   prompt: zodNonEmptyString,
   isCustom: z.boolean().default(true),
+  modelConfiguration: z
+    .object({
+      webSearch: z
+        .object({
+          enabled: z.boolean(),
+          configuration: z.record(z.string(), z.unknown()).optional(),
+        })
+        .optional(),
+      twitterSearch: z
+        .object({
+          enabled: z.boolean(),
+          configuration: z.record(z.string(), z.unknown()).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
 });
 
 export type SettingsAIAgentFormValues = z.infer<
