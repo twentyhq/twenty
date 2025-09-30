@@ -1,3 +1,4 @@
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,31 +6,29 @@ import { AppTooltip } from 'twenty-ui/display';
 
 type PageLayoutWidgetForbiddenDisplayProps = {
   widgetId: string;
-  restrictionType: 'object' | 'field' | null;
-  restrictedObjectName?: string;
-  restrictedFieldNames?: string[];
+  restriction: WidgetAccessDenialInfo;
 };
 
 export const PageLayoutWidgetForbiddenDisplay = ({
   widgetId,
-  restrictionType,
-  restrictedObjectName,
-  restrictedFieldNames,
+  restriction,
 }: PageLayoutWidgetForbiddenDisplayProps) => {
   const tooltipId = `widget-forbidden-tooltip-${widgetId}`;
 
   const getTooltipContent = () => {
-    if (restrictionType === 'object' && isDefined(restrictedObjectName)) {
-      return t`You do not have permission to access the ${restrictedObjectName} object`;
+    if (restriction.type === 'object' && isDefined(restriction.objectName)) {
+      const objectName = restriction.objectName;
+      return t`You do not have permission to access the ${objectName} object`;
     }
 
     if (
-      restrictionType === 'field' &&
-      isDefined(restrictedFieldNames) &&
-      restrictedFieldNames.length > 0
+      restriction.type === 'field' &&
+      isDefined(restriction.fieldNames) &&
+      restriction.fieldNames.length > 0
     ) {
-      const fieldsList = restrictedFieldNames.join(', ');
-      const fieldWord = restrictedFieldNames.length === 1 ? 'field' : 'fields';
+      const fieldsList = restriction.fieldNames.join(', ');
+      const fieldWord =
+        restriction.fieldNames.length === 1 ? 'field' : 'fields';
       return t`You do not have permission to access the ${fieldsList} ${fieldWord}`;
     }
 

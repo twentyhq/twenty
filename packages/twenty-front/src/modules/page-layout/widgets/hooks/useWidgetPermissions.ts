@@ -3,14 +3,13 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { checkFieldPermissions } from '@/page-layout/utils/checkFieldPermissions';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 export type UseWidgetPermissionsReturn = {
   hasAccess: boolean;
-  restrictionType: 'object' | 'field' | null;
-  restrictedObjectName?: string;
-  restrictedFieldNames?: string[];
+  restriction: WidgetAccessDenialInfo;
 };
 
 export const useWidgetPermissions = (
@@ -22,7 +21,9 @@ export const useWidgetPermissions = (
   if (!isDefined(widget.objectMetadataId)) {
     return {
       hasAccess: true,
-      restrictionType: null,
+      restriction: {
+        type: null,
+      },
     };
   }
 
@@ -40,8 +41,10 @@ export const useWidgetPermissions = (
   if (!hasObjectAccess) {
     return {
       hasAccess: false,
-      restrictionType: 'object',
-      restrictedObjectName: objectMetadata?.labelSingular,
+      restriction: {
+        type: 'object',
+        objectName: objectMetadata?.labelSingular,
+      },
     };
   }
 
@@ -65,14 +68,18 @@ export const useWidgetPermissions = (
 
     return {
       hasAccess: false,
-      restrictionType: 'field',
-      restrictedObjectName: objectMetadata?.labelSingular,
-      restrictedFieldNames,
+      restriction: {
+        type: 'field',
+        objectName: objectMetadata?.labelSingular,
+        fieldNames: restrictedFieldNames,
+      },
     };
   }
 
   return {
     hasAccess: true,
-    restrictionType: null,
+    restriction: {
+      type: null,
+    },
   };
 };
