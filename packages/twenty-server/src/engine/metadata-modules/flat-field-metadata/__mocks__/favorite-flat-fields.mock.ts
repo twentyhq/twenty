@@ -31,7 +31,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-dd26-42c6-8c3c-2a7598c204f6',
-    
   }),
   id: getFlatFieldMetadataMock({
     id: '49f58497-4e7c-49e6-b3bc-c91d4b8a8ddc',
@@ -56,7 +55,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
-    
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '0606a76c-8a72-48ca-90c6-526c729c25eb',
@@ -81,7 +79,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
-    
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: 'fb202982-0c8e-4917-8dda-acb8248be749',
@@ -106,7 +103,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
-    
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'ef52e151-a974-470f-bbe7-f345fd4eca65',
@@ -131,7 +127,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-    
   }),
   forWorkspaceMember: getFlatFieldMetadataMock({
     id: '07f2c3ba-63d1-4e44-bac4-bc4591e51bac',

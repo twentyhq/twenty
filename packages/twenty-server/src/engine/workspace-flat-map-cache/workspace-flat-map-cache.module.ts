@@ -28,7 +28,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
       ViewFieldEntity,
       IndexMetadataEntity,
       FieldMetadataEntity,
-      ObjectMetadataEntity
+      ObjectMetadataEntity,
     ]),
   ],
   providers: [

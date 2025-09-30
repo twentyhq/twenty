@@ -31,7 +31,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-87a5-48f8-bbf7-ade388825a57',
-    
   }),
   fullPath: getFlatFieldMetadataMock({
     id: '38207e43-a958-4058-bc32-36f838d102d3',
@@ -56,7 +55,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-0d19-453d-8e8d-fbcda8ca3747',
-    
   }),
   type: getFlatFieldMetadataMock({
     id: '840360e7-efa6-4ca2-a0d6-113b79474b98',
@@ -81,7 +79,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-a417-49b8-a40b-f6a7874caa0d',
-    
   }),
   id: getFlatFieldMetadataMock({
     id: '8662ced6-5e48-4576-993f-1be479dba176',
@@ -106,7 +103,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
-    
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '367923d5-658b-4b7b-9381-6f8e6cf84c85',
@@ -131,7 +127,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
-    
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: 'b81f8f1b-4173-4176-bc3c-fe1b6a45a0dc',
@@ -156,7 +151,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
-    
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'eab57da6-41ae-45e8-a5ee-014cfcab450f',
@@ -181,7 +175,6 @@ export const ATTACHMENT_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-    
   }),
   author: getFlatFieldMetadataMock({
     id: '99724bb6-7a84-4b54-9b3f-dab730ab445a',

@@ -31,7 +31,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-8609-4f65-a2d9-44009eb422b5',
-    
   }),
   amount: getFlatFieldMetadataMock({
     id: '2713c658-cfad-4bc2-a6a0-adc4815185a1',
@@ -56,7 +55,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-583e-4642-8533-db761d5fa82f',
-    
   }),
   closeDate: getFlatFieldMetadataMock({
     id: '1d15aa71-38ea-473f-aac9-e4519882213f',
@@ -81,7 +79,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-527e-44d6-b1ac-c4158d307b97',
-    
   }),
   stage: getFlatFieldMetadataMock({
     id: '4642f809-f302-4525-8af1-3f3ad79998fb',
@@ -142,7 +139,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-6f76-477d-8551-28cd65b2b4b9',
-    
   }),
   position: getFlatFieldMetadataMock({
     id: 'd4ca6cb7-fbdb-4e27-b5be-ac9f3a17cf0a',
@@ -167,7 +163,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-806d-493a-bbc6-6313e62958e2',
-    
   }),
   createdBy: getFlatFieldMetadataMock({
     id: '29222276-99f1-4443-b5d6-6ea6aa16f28a',
@@ -196,7 +191,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-a63e-4a62-8e63-42a51828f831',
-    
   }),
   searchVector: getFlatFieldMetadataMock({
     id: '0ba0c3f0-41f1-4c49-b28b-0a04adddbc7c',
@@ -221,7 +215,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
-    
   }),
   id: getFlatFieldMetadataMock({
     id: '06f91646-dd7c-481d-b2d9-6dc02b9b6ca8',
@@ -246,7 +239,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
-    
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '9cc5c7c6-d9eb-46aa-b4a9-e5a922749b14',
@@ -271,7 +263,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
-    
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '04629f30-4fdc-4084-bf3f-7f254acc6cf8',
@@ -296,7 +287,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
-    
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '07435758-30b2-4d10-a2c3-947b8db7797f',
@@ -321,7 +311,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-    
   }),
   pointOfContact: getFlatFieldMetadataMock({
     id: '0e55bf63-1ffb-4f74-89f2-edd5a6a6686c',

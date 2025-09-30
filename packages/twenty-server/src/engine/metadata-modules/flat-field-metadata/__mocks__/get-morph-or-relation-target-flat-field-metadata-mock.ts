@@ -4,7 +4,7 @@ import {
   type NonNullableRequired,
 } from 'twenty-shared/types';
 
-import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type GetMorphOrRelationFlatFieldMetadataMockArgs = NonNullableRequired<

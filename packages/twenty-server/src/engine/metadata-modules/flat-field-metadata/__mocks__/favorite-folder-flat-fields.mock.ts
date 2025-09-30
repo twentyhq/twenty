@@ -30,7 +30,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-5278-4bde-8909-2cec74d43744',
-    
   }),
   name: getFlatFieldMetadataMock({
     id: '1502abe0-b2f8-43a7-ae55-91c826b34ffe',
@@ -55,7 +54,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-82a3-4537-8ff0-dbce7eec35d6',
-    
   }),
   id: getFlatFieldMetadataMock({
     id: '85ab1864-0a92-4682-8583-82e8b696410b',
@@ -80,7 +78,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
-    
   }),
   createdAt: getFlatFieldMetadataMock({
     id: 'a92b4b66-c2de-483e-8973-6f12bf36ac1a',
@@ -105,7 +102,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
-    
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '3907fc24-3bf0-4f0b-88be-f9635e473145',
@@ -130,7 +126,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
-    
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '52dcb335-5ce1-4165-a30b-4a61e84af21f',
@@ -155,7 +150,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
-    
   }),
   favorites: getFlatFieldMetadataMock({
     id: '71b95076-6b8d-45c9-9a7c-ab981b81bd1b',
