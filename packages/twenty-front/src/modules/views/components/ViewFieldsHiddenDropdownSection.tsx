@@ -50,11 +50,27 @@ export const ViewFieldsHiddenDropdownSection = () => {
 
   const { getIcon } = useIcons();
 
+  // --- New Helper Function for Truncation ---
+  const truncateFieldLabel = (label: string, maxLength = 15): string => {
+    if (label.length <= maxLength) {
+      return label;
+    }
+    const trimmedString = label.substring(0, maxLength);
+    const lastSpace = trimmedString.lastIndexOf(' ');
+    const finalString = lastSpace > 0 ? trimmedString.substring(0, lastSpace) : trimmedString;
+
+    return finalString + '...';
+  };
+
   return (
     <>
       <DropdownMenuItemsContainer>
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
+            
+            // Apply the truncation here
+            const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
+            
             return (
               <MenuItem
                 key={fieldMetadataItem.id}
@@ -69,7 +85,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
                       }),
                   },
                 ]}
-                text={fieldMetadataItem.label}
+                text={displayLabel}
               />
             );
           })}

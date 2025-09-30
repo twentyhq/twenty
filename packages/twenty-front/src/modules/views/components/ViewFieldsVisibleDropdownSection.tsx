@@ -18,6 +18,21 @@ import { IconEyeOff, useIcons } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
+
+
+const truncateFieldLabel = (label: string, maxLength = 15): string => {
+  if (label.length <= maxLength) {
+    return label;
+  }
+  const trimmedString = label.substring(0, maxLength);
+  const lastSpace = trimmedString.lastIndexOf(' ');
+  
+  const finalString = lastSpace > 0 ? trimmedString.substring(0, lastSpace) : trimmedString;
+
+  return finalString + '...';
+};
+
+
 export const ViewFieldsVisibleDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
     ObjectOptionsDropdownContext,
@@ -82,7 +97,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
         {fieldMetadataItemLabelIdentifier && (
           <MenuItemDraggable
             LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
-            text={fieldMetadataItemLabelIdentifier.label}
+            text={truncateFieldLabel(fieldMetadataItemLabelIdentifier.label)}
             accent="placeholder"
             showGrip={true}
             isDragDisabled
@@ -101,6 +116,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
+                  
+                  const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
 
                   return (
                     <DraggableItem
@@ -123,7 +140,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                               },
                             },
                           ]}
-                          text={fieldMetadataItem.label}
+                          text={displayLabel}
                           showGrip
                         />
                       }
