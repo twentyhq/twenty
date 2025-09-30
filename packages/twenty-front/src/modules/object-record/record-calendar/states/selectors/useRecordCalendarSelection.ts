@@ -6,8 +6,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { RecordCalendarComponentInstanceContext } from '../contexts/RecordCalendarComponentInstanceContext';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '../../record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
+import { RecordCalendarComponentInstanceContext } from '../contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedRecordIdsComponentSelector } from './recordCalendarSelectedRecordIdsComponentSelector';
 
 export const useRecordCalendarSelection = (recordCalendarId?: string) => {
@@ -56,39 +56,7 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
     ],
   );
 
-  const setRecordAsSelected = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (recordId: string, isSelected: boolean) => {
-        const isRecordCurrentlySelected = snapshot
-          .getLoadable(isRecordCalendarCardSelectedFamilyState(recordId))
-          .getValue();
-
-        if (isRecordCurrentlySelected === isSelected) {
-          return;
-        }
-
-        set(isRecordCalendarCardSelectedFamilyState(recordId), isSelected);
-      },
-    [isRecordCalendarCardSelectedFamilyState],
-  );
-
-  const checkIfLastUnselectAndCloseDropdown = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const recordIds = getSnapshotValue(
-          snapshot,
-          recordCalendarSelectedRecordIdsSelector,
-        );
-        if (recordIds.length === 0) {
-          closeDropdown(dropdownId);
-        }
-      },
-    [recordCalendarSelectedRecordIdsSelector, closeDropdown, dropdownId],
-  );
-
   return {
     resetRecordSelection,
-    setRecordAsSelected,
-    checkIfLastUnselectAndCloseDropdown,
   };
 };

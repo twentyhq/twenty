@@ -7,14 +7,13 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
-import { useRecordCalendarSelection } from '../../states/selectors/useRecordCalendarSelection';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '../states/isRecordCalendarCardSelectedComponentFamilyState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
@@ -48,9 +47,6 @@ export const RecordCalendarCardHeader = ({
   const isCompactModeActive = currentView?.isCompact ?? false;
 
   const dragState = useRecordDragState('calendar', viewBarInstanceId);
-
-  const { checkIfLastUnselectAndCloseDropdown } =
-    useRecordCalendarSelection(viewBarInstanceId);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
     useRecoilComponentFamilyState(
@@ -90,7 +86,6 @@ export const RecordCalendarCardHeader = ({
             checked={isCurrentCardSelected}
             onChange={(value) => {
               setIsCurrentCardSelected(value.target.checked);
-              checkIfLastUnselectAndCloseDropdown();
             }}
             variant={CheckboxVariant.Secondary}
           />

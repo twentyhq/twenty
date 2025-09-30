@@ -6,7 +6,7 @@ import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-ca
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
@@ -27,7 +27,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
-  const [isCurrentCardSelected] = useRecoilComponentFamilyState(
+  const isCurrentCardSelected = useRecoilComponentFamilyValue(
     isRecordCalendarCardSelectedComponentFamilyState,
     recordId,
   );
