@@ -12,6 +12,7 @@ export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
+export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
@@ -27,6 +28,7 @@ export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGq
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,
   RecordFilterGroup,
@@ -35,11 +37,13 @@ export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecor
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
+export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
 export {
   convertGreaterThanOrEqualRatingToArrayOfRatingValues,
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from './filter/utils/fieldRatingConvertors';
+export { filterSelectOptionsOfFieldMetadataItem } from './filter/utils/filterSelectOptionsOfFieldMetadataItem';
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';

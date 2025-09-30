@@ -1,95 +1,90 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
-import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, type PartialFieldMetadataItem } from "@/types";
+import { turnAnyFieldFilterIntoRecordGqlFilter } from "@/utils/filter/turnAnyFieldFilterIntoRecordGqlFilter";
+import { filterSelectOptionsOfFieldMetadataItem } from "@/utils/filter/utils/filterSelectOptionsOfFieldMetadataItem";
 
-const baseFieldMetadataItem: FieldMetadataItem = {
+
+const baseFieldMetadataItem: PartialFieldMetadataItem = {
   id: 'base-field-metadata-item-id',
-  createdAt: new Date().toISOString(),
   label: 'Test',
   name: 'test',
   type: FieldMetadataType.TEXT,
-  updatedAt: new Date().toISOString(),
 };
 
-const textFieldMetadataItem: FieldMetadataItem = {
+const textFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'text-field-id',
   name: 'textField',
 };
 
-const addressFieldMetadataItem: FieldMetadataItem = {
+const addressFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'address-field-id',
   type: FieldMetadataType.ADDRESS,
   name: 'addressField',
 };
 
-const linksFieldMetadataItem: FieldMetadataItem = {
+const linksFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'links-field-id',
   type: FieldMetadataType.LINKS,
   name: 'linksField',
 };
 
-const fullNameFieldMetadataItem: FieldMetadataItem = {
+const fullNameFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'full-name-field-id',
   type: FieldMetadataType.FULL_NAME,
   name: 'fullNameField',
 };
 
-const arrayFieldMetadataItem: FieldMetadataItem = {
+const arrayFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'array-field-id',
   type: FieldMetadataType.ARRAY,
   name: 'arrayField',
 };
 
-const emailsFieldMetadataItem: FieldMetadataItem = {
+const emailsFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'emails-field-id',
   type: FieldMetadataType.EMAILS,
   name: 'emailsField',
 };
 
-const phonesFieldMetadataItem: FieldMetadataItem = {
+const phonesFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'phones-field-id',
   type: FieldMetadataType.PHONES,
   name: 'phonesField',
 };
 
-const numberFieldMetadataItem: FieldMetadataItem = {
+const numberFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'number-field-id',
   type: FieldMetadataType.NUMBER,
   name: 'numberField',
 };
 
-const currencyFieldMetadataItem: FieldMetadataItem = {
+const currencyFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'currency-field-id',
   type: FieldMetadataType.CURRENCY,
   name: 'currencyField',
 };
 
-const selectFieldMetadataItem: FieldMetadataItem = {
+const selectFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'select-field-id',
   type: FieldMetadataType.SELECT,
   name: 'selectField',
   options: [
     {
-      color: 'blue',
       id: '1',
       label: 'blue',
       position: 1,
       value: 'BLUE',
     },
     {
-      color: 'red',
       id: '2',
       label: 'red',
       position: 2,
@@ -98,21 +93,19 @@ const selectFieldMetadataItem: FieldMetadataItem = {
   ],
 };
 
-const multiSelectFieldMetadataItem: FieldMetadataItem = {
+const multiSelectFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'multi-select-field-id',
   type: FieldMetadataType.MULTI_SELECT,
   name: 'multiSelect',
   options: [
     {
-      color: 'blue',
       id: '1',
       label: 'blue',
       position: 1,
       value: 'BLUE',
     },
     {
-      color: 'red',
       id: '2',
       label: 'red',
       position: 2,
@@ -121,7 +114,7 @@ const multiSelectFieldMetadataItem: FieldMetadataItem = {
   ],
 };
 
-const mockObjectMetadataItem: ObjectMetadataItem = {
+const mockObjectMetadataItem = {
   id: 'mock-object-metadata-item',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -143,7 +136,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   updatableFields: [],
 };
 
-const mockObjectMetadataItemWithAllFields: ObjectMetadataItem = {
+const mockObjectMetadataItemWithAllFields = {
   ...mockObjectMetadataItem,
   fields: [
     textFieldMetadataItem,
@@ -167,10 +160,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [textFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -187,10 +178,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [addressFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -248,10 +237,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [linksFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -288,10 +275,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [fullNameFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -321,10 +306,9 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [arrayFieldMetadataItem],
-        },
+        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -341,10 +325,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
-          fields: [emailsFieldMetadataItem],
-        },
+        fields: [emailsFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -374,10 +355,9 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [phonesFieldMetadataItem],
-        },
+        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -414,10 +394,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
           fields: [numberFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -432,10 +409,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [numberFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -448,10 +423,9 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [currencyFieldMetadataItem],
-        },
+        
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -468,10 +442,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [currencyFieldMetadataItem],
-        },
       });
 
       expect(
@@ -488,10 +460,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [selectFieldMetadataItem],
-        },
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -512,10 +482,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [selectFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -528,10 +496,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [multiSelectFieldMetadataItem],
-        },
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -552,10 +518,8 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: {
-          ...mockObjectMetadataItem,
+        
           fields: [multiSelectFieldMetadataItem],
-        },
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -568,7 +532,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: mockObjectMetadataItemWithAllFields,
+        fields: mockObjectMetadataItemWithAllFields.fields,
       });
 
       expect(result.recordGqlOperationFilter).toHaveProperty('or');
@@ -583,7 +547,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        objectMetadataItem: mockObjectMetadataItemWithAllFields,
+        fields: mockObjectMetadataItemWithAllFields.fields,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -597,7 +561,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue: 'test',
-        objectMetadataItem: emptyObjectMetadata,
+        fields: emptyObjectMetadata.fields,
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});

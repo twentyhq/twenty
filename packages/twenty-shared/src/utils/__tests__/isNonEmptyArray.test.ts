@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '../isNonEmptyArray';
+import { isNonEmptyArray } from "@sniptt/guards";
 
 describe('isNonEmptyArray', () => {
   it('should return true for a non empty array', () => {
