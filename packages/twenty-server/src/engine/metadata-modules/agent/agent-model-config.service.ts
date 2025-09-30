@@ -40,18 +40,18 @@ export class AgentModelConfigService {
   getNativeModelTools(model: RegisteredAIModel, agent: AgentEntity): ToolSet {
     const tools: ToolSet = {};
 
-    if (!agent.modelCapabilities) {
+    if (!agent.modelCofinguration) {
       return tools;
     }
 
     switch (model.provider) {
       case ModelProvider.ANTHROPIC:
-        if (agent.modelCapabilities.webSearch) {
+        if (agent.modelCofinguration.webSearch?.enabled) {
           tools.web_search = anthropic.tools.webSearch_20250305();
         }
         break;
       case ModelProvider.OPENAI:
-        if (agent.modelCapabilities.webSearch) {
+        if (agent.modelCofinguration.webSearch?.enabled) {
           tools.web_search = openai.tools.webSearch();
         }
         break;
@@ -61,7 +61,7 @@ export class AgentModelConfigService {
   }
 
   private getXaiProviderOptions(agent: AgentEntity): ProviderOptions {
-    if (!agent.modelCapabilities.webSearch) {
+    if (!agent.modelCofinguration.webSearch) {
       return {};
     }
 

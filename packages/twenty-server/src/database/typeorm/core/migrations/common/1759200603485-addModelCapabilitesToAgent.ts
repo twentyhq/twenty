@@ -7,13 +7,13 @@ export class AddNativeCapabilitesToAgent1759200603485
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD "modelCapabilities" jsonb`,
+      `ALTER TABLE "core"."agent" ADD "modelCofinguration" jsonb`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP COLUMN "modelCapabilities"`,
+      `ALTER TABLE "core"."agent" DROP COLUMN "modelCofinguration"`,
     );
   }
 }
