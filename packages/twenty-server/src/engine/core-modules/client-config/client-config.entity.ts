@@ -20,6 +20,15 @@ registerEnumType(ModelProvider, {
 });
 
 @ObjectType()
+class NativeModelCapabilities {
+  @Field(() => Boolean, { nullable: true })
+  webSearch?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  twitterSearch?: boolean;
+}
+
+@ObjectType()
 export class ClientAIModelConfig {
   @Field(() => String)
   modelId: ModelId;
@@ -35,6 +44,9 @@ export class ClientAIModelConfig {
 
   @Field(() => Number)
   outputCostPer1kTokensInCredits: number;
+
+  @Field(() => NativeModelCapabilities, { nullable: true })
+  nativeCapabilities?: NativeModelCapabilities;
 }
 
 @ObjectType()
