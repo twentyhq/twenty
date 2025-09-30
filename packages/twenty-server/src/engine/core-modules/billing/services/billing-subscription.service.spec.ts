@@ -1426,10 +1426,6 @@ describe('BillingSubscriptionService', () => {
             meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
             quantity: 7,
           });
-        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
-          LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          METER_PRICE_ENTERPRISE_YEAR_ID,
-        );
         const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeInterval({ id: 'ws_1' } as Workspace);
@@ -2085,8 +2081,6 @@ describe('BillingSubscriptionService', () => {
 
         const spyGetSubWithSchedule =
           arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        const spySubFindByOrFail =
-          arrangeBillingSubscriptionRepositoryFindOneOrFail();
         const spyUpdateSubscription =
           arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
         const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
@@ -2508,8 +2502,6 @@ describe('BillingSubscriptionService', () => {
 
         const spyGetSubWithSchedule =
           arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        const spyUpdateSubscription =
-          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
         const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
