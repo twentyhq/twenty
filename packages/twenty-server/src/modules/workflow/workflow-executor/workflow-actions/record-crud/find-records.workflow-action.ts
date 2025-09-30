@@ -107,7 +107,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     return {
       result: {
         first: objectRecords[0],
-        last: objectRecords[objectRecords.length - 1],
+        all: objectRecords,
         totalCount,
       },
     };
@@ -144,7 +144,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     );
 
     return withOrderByQueryBuilder
-      .take(workflowActionInput.limit ?? QUERY_MAX_RECORDS)
+      .take(
+        workflowActionInput.limit
+          ? Math.min(workflowActionInput.limit, QUERY_MAX_RECORDS)
+          : QUERY_MAX_RECORDS,
+      )
       .getMany();
   }
 

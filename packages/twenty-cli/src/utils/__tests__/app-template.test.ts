@@ -23,6 +23,12 @@ describe('app-template', () => {
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
         version: '0.0.1',
+        engines: {
+          node: '^24.5.0',
+          npm: 'please-use-yarn',
+          yarn: '>=4.0.2',
+        },
+        license: 'MIT',
       });
     });
 

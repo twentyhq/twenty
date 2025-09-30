@@ -215,20 +215,37 @@ export class WorkflowSchemaWorkspaceService {
       maxDepth: 0,
     });
 
-    return {
-      first: {
-        isLeaf: false,
-        icon: 'IconAlpha',
-        value: recordOutputSchema,
-      },
-      last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
-      totalCount: {
-        isLeaf: true,
-        icon: 'IconSum',
-        type: 'number',
-        value: generateFakeValue('number'),
-      },
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        objectType,
+        workspaceId,
+      );
+
+    const first: Node = {
+      isLeaf: false,
+      label: `First ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular ?? 'Record'}`,
+      icon: 'IconAlpha',
+      type: 'object',
+      value: recordOutputSchema,
     };
+
+    const all: Leaf = {
+      isLeaf: true,
+      label: `All ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural ?? 'Records'}`,
+      type: 'array',
+      icon: 'IconListDetails',
+      value: 'Returns an array of records',
+    };
+
+    const totalCount: Leaf = {
+      isLeaf: true,
+      label: 'Total Count',
+      icon: 'IconSum',
+      type: 'number',
+      value: 'Count of matching records',
+    };
+
+    return { first, all, totalCount } satisfies OutputSchema;
   }
 
   private async computeRecordOutputSchema({
@@ -403,8 +420,36 @@ export class WorkflowSchemaWorkspaceService {
       }
     }
 
-    // TODO(t.trompette): handle other step types
+    const step = workflowVersion.steps?.find((step) => step.id === stepId);
 
-    return DEFAULT_ITERATOR_CURRENT_ITEM;
+    if (!isDefined(step)) {
+      return DEFAULT_ITERATOR_CURRENT_ITEM;
+    }
+
+    switch (step.type) {
+      case WorkflowActionType.FIND_RECORDS: {
+        const objectMetadataInfo =
+          await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+            step.settings.input.objectName,
+            workspaceId,
+          );
+
+        return {
+          label:
+            'Current Item (' +
+            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular +
+            ')',
+          isLeaf: false,
+          type: 'object',
+          value: await this.computeRecordOutputSchema({
+            objectType: step.settings.input.objectName,
+            workspaceId,
+          }),
+        };
+      }
+      default: {
+        return DEFAULT_ITERATOR_CURRENT_ITEM;
+      }
+    }
   }
 }

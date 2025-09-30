@@ -26,11 +26,13 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],
-    applicationId: null,
+    applicationId: createServerlessFunctionInput.applicationId ?? null,
     latestVersionInputSchema: null,
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: createServerlessFunctionInput.timeoutSeconds ?? 300,
     layerVersion: LAST_LAYER_VERSION,
+    serverlessFunctionLayerId:
+      createServerlessFunctionInput.serverlessFunctionLayerId ?? null,
     workspaceId,
     checksum: null,
   };
