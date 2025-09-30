@@ -11,9 +11,9 @@ export const getInitialFilterValue = (
     case 'DATE':
     case 'DATE_TIME': {
       const activeDatePickerOperands = [
-        RecordFilterOperand.IsBefore,
-        RecordFilterOperand.Is,
-        RecordFilterOperand.IsAfter,
+        RecordFilterOperand.IS_BEFORE,
+        RecordFilterOperand.IS,
+        RecordFilterOperand.IS_AFTER,
       ];
 
       if (activeDatePickerOperands.includes(newOperand)) {
@@ -25,7 +25,7 @@ export const getInitialFilterValue = (
         return { value, displayValue };
       }
 
-      if (newOperand === RecordFilterOperand.IsRelative) {
+      if (newOperand === RecordFilterOperand.IS_RELATIVE) {
         return { value: '', displayValue: '' };
       }
 

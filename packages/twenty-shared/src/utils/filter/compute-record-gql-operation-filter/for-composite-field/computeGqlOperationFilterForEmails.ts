@@ -25,7 +25,7 @@ export const computeGqlOperationFilterForEmails = ({
     switch (subFieldName) {
       case 'primaryEmail': {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Contains:
+          case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
                 primaryEmail: {
@@ -33,7 +33,7 @@ export const computeGqlOperationFilterForEmails = ({
                 },
               } satisfies EmailsFilter,
             };
-          case RecordFilterOperand.DoesNotContain:
+          case RecordFilterOperand.DOES_NOT_CONTAIN:
             return {
               not: {
                 [correspondingFieldMetadataItem.name]: {
@@ -51,7 +51,7 @@ export const computeGqlOperationFilterForEmails = ({
       }
       case 'additionalEmails': {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Contains:
+          case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
                 additionalEmails: {
@@ -59,7 +59,7 @@ export const computeGqlOperationFilterForEmails = ({
                 },
               } satisfies EmailsFilter,
             };
-          case RecordFilterOperand.DoesNotContain:
+          case RecordFilterOperand.DOES_NOT_CONTAIN:
             return {
               or: [
                 {
@@ -97,7 +97,7 @@ export const computeGqlOperationFilterForEmails = ({
   }
 
   switch (recordFilter.operand) {
-    case RecordFilterOperand.Contains:
+    case RecordFilterOperand.CONTAINS:
       return {
         or: [
           {
@@ -116,7 +116,7 @@ export const computeGqlOperationFilterForEmails = ({
           },
         ],
       };
-    case RecordFilterOperand.DoesNotContain:
+    case RecordFilterOperand.DOES_NOT_CONTAIN:
       return {
         and: [
           {

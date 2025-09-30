@@ -105,13 +105,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   switch (filterType) {
     case 'TEXT':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           return {
             [correspondingFieldMetadataItem.name]: {
               ilike: `%${recordFilter.value}%`,
             } as StringFilter,
           };
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             not: {
               [correspondingFieldMetadataItem.name]: {
@@ -127,7 +127,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'TS_VECTOR':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.VectorSearch:
+        case RecordFilterOperand.VECTOR_SEARCH:
           return {
             [correspondingFieldMetadataItem.name]: {
               search: recordFilter.value,
@@ -140,13 +140,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'RAW_JSON':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           return {
             [correspondingFieldMetadataItem.name]: {
               like: `%${recordFilter.value}%`,
             } as RawJsonFilter,
           };
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             not: {
               [correspondingFieldMetadataItem.name]: {
@@ -167,28 +167,28 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.IsAfter: {
+        case RecordFilterOperand.IS_AFTER: {
           return {
             [correspondingFieldMetadataItem.name]: {
               gt: date.toISOString(),
             } as DateFilter,
           };
         }
-        case RecordFilterOperand.IsBefore: {
+        case RecordFilterOperand.IS_BEFORE: {
           return {
             [correspondingFieldMetadataItem.name]: {
               lt: date.toISOString(),
             } as DateFilter,
           };
         }
-        case RecordFilterOperand.IsRelative: {
+        case RecordFilterOperand.IS_RELATIVE: {
           const dateRange = z
             .object({ start: z.date(), end: z.date() })
             .safeParse(resolvedFilterValue).data;
 
           const defaultDateRange = resolveDateViewFilterValue({
             value: 'PAST_1_DAY',
-            operand: RecordFilterOperand.IsRelative,
+            operand: RecordFilterOperand.IS_RELATIVE,
           });
 
           if (!defaultDateRange) {
@@ -212,7 +212,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             ],
           };
         }
-        case RecordFilterOperand.Is: {
+        case RecordFilterOperand.IS: {
           const isValid = resolvedFilterValue instanceof Date;
           const date = isValid ? resolvedFilterValue : now;
 
@@ -231,19 +231,19 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             ],
           };
         }
-        case RecordFilterOperand.IsInPast:
+        case RecordFilterOperand.IS_IN_PAST:
           return {
             [correspondingFieldMetadataItem.name]: {
               lte: now.toISOString(),
             } as DateFilter,
           };
-        case RecordFilterOperand.IsInFuture:
+        case RecordFilterOperand.IS_IN_FUTURE:
           return {
             [correspondingFieldMetadataItem.name]: {
               gte: now.toISOString(),
             } as DateFilter,
           };
-        case RecordFilterOperand.IsToday: {
+        case RecordFilterOperand.IS_TODAY: {
           return {
             and: [
               {
@@ -267,13 +267,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     }
     case 'RATING':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Is:
+        case RecordFilterOperand.IS:
           return {
             [correspondingFieldMetadataItem.name]: {
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
-        case RecordFilterOperand.GreaterThanOrEqual:
+        case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [correspondingFieldMetadataItem.name]: {
               in: convertGreaterThanOrEqualRatingToArrayOfRatingValues(
@@ -281,7 +281,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               ),
             } as RatingFilter,
           };
-        case RecordFilterOperand.LessThanOrEqual:
+        case RecordFilterOperand.LESS_THAN_OR_EQUAL:
           return {
             [correspondingFieldMetadataItem.name]: {
               in: convertLessThanOrEqualRatingToArrayOfRatingValues(
@@ -296,19 +296,19 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'NUMBER':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.GreaterThanOrEqual:
+        case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [correspondingFieldMetadataItem.name]: {
               gte: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
-        case RecordFilterOperand.LessThanOrEqual:
+        case RecordFilterOperand.LESS_THAN_OR_EQUAL:
           return {
             [correspondingFieldMetadataItem.name]: {
               lte: parseFloat(recordFilter.value),
             } as FloatFilter,
           };
-        case RecordFilterOperand.Is:
+        case RecordFilterOperand.IS:
           return {
             [correspondingFieldMetadataItem.name]: {
               eq: parseFloat(recordFilter.value),
@@ -340,13 +340,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       if (!isDefined (recordIds) || recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Is:
+        case RecordFilterOperand.IS:
           return {
             [correspondingFieldMetadataItem.name + 'Id']: {
               in: recordIds,
             } as RelationFilter,
           };
-        case RecordFilterOperand.IsNot: {
+        case RecordFilterOperand.IS_NOT: {
           if (!isDefined (recordIds) || recordIds.length === 0) return;
           return {
             or: [
@@ -392,9 +392,9 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         };
 
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Is:
+          case RecordFilterOperand.IS:
             return gqlFilter;
-          case RecordFilterOperand.IsNot:
+          case RecordFilterOperand.IS_NOT:
             return {
               not: gqlFilter,
             };
@@ -412,25 +412,25 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         !isSubFieldFilter
       ) {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.GreaterThanOrEqual:
+          case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { gte: parseFloat(recordFilter.value) * 1000000 },
               } as CurrencyFilter,
             };
-          case RecordFilterOperand.LessThanOrEqual:
+          case RecordFilterOperand.LESS_THAN_OR_EQUAL:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { lte: parseFloat(recordFilter.value) * 1000000 },
               } as CurrencyFilter,
             };
-          case RecordFilterOperand.Is:
+          case RecordFilterOperand.IS:
             return {
               [correspondingFieldMetadataItem.name]: {
                 amountMicros: { eq: parseFloat(recordFilter.value) * 1000000 },
               } as CurrencyFilter,
             };
-          case RecordFilterOperand.IsNot:
+          case RecordFilterOperand.IS_NOT:
             return {
               not: {
                 [correspondingFieldMetadataItem.name]: {
@@ -465,7 +465,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         ['firstName', 'lastName'],
       );
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           if (!isSubFieldFilter) {
             return {
               or: fullNameFilters,
@@ -479,7 +479,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             };
           }
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           if (!isSubFieldFilter) {
             return {
               and: fullNameFilters.map((filter) => {
@@ -507,7 +507,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     }
     case 'ADDRESS':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           if (!isSubFieldFilter) {
             return {
               or: [
@@ -582,7 +582,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             };
           }
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           if (!isSubFieldFilter) {
             return {
               and: [
@@ -778,7 +778,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       const nonEmptyOptions = options.filter((option: string) => option !== '');
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains: {
+        case RecordFilterOperand.CONTAINS: {
           const conditions = [];
 
           if (nonEmptyOptions.length > 0) {
@@ -799,7 +799,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
           return conditions.length === 1 ? conditions[0] : { or: conditions };
         }
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             or: [
               {
@@ -836,7 +836,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       const nonEmptyOptions = options.filter((option: string) => option !== '');
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Is: {
+        case RecordFilterOperand.IS: {
           const conditions = [];
 
           if (nonEmptyOptions.length > 0) {
@@ -857,7 +857,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
           return conditions.length === 1 ? conditions[0] : { or: conditions };
         }
-        case RecordFilterOperand.IsNot: {
+        case RecordFilterOperand.IS_NOT: {
           const conditions = [];
 
           if (nonEmptyOptions.length > 0) {
@@ -890,13 +890,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     }
     case 'ARRAY': {
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           return {
             [correspondingFieldMetadataItem.name]: {
               containsIlike: `%${recordFilter.value}%`,
             } as ArrayFilter,
           };
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             not: {
               [correspondingFieldMetadataItem.name]: {
@@ -913,7 +913,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     case 'ACTOR': {
       if (subFieldName === 'source') {
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Is: {
+          case RecordFilterOperand.IS: {
             if (recordFilter.value === '[]') {
               return;
             }
@@ -928,7 +928,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             };
           }
-          case RecordFilterOperand.IsNot: {
+          case RecordFilterOperand.IS_NOT: {
             if (recordFilter.value === '[]') {
               return;
             }
@@ -960,7 +960,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Contains:
+        case RecordFilterOperand.CONTAINS:
           return {
             or: [
               {
@@ -972,7 +972,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             ],
           };
-        case RecordFilterOperand.DoesNotContain:
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
             and: [
               {
@@ -1013,7 +1013,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
 
         switch (recordFilter.operand) {
-          case RecordFilterOperand.Contains:
+          case RecordFilterOperand.CONTAINS:
             return {
               or: [
                 {
@@ -1039,7 +1039,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                 },
               ],
             };
-          case RecordFilterOperand.DoesNotContain:
+          case RecordFilterOperand.DOES_NOT_CONTAIN:
             return {
               and: [
                 {
@@ -1094,7 +1094,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       switch (subFieldName) {
         case 'additionalPhones': {
           switch (recordFilter.operand) {
-            case RecordFilterOperand.Contains:
+            case RecordFilterOperand.CONTAINS:
               return {
                 or: [
                   {
@@ -1106,7 +1106,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                   },
                 ],
               };
-            case RecordFilterOperand.DoesNotContain:
+            case RecordFilterOperand.DOES_NOT_CONTAIN:
               return {
                 or: [
                   {
@@ -1135,7 +1135,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case 'primaryPhoneNumber': {
           switch (recordFilter.operand) {
-            case RecordFilterOperand.Contains:
+            case RecordFilterOperand.CONTAINS:
               return {
                 [correspondingFieldMetadataItem.name]: {
                   primaryPhoneNumber: {
@@ -1143,7 +1143,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                   },
                 } as PhonesFilter,
               };
-            case RecordFilterOperand.DoesNotContain:
+            case RecordFilterOperand.DOES_NOT_CONTAIN:
               return {
                 not: {
                   [correspondingFieldMetadataItem.name]: {
@@ -1161,7 +1161,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case 'primaryPhoneCallingCode': {
           switch (recordFilter.operand) {
-            case RecordFilterOperand.Contains:
+            case RecordFilterOperand.CONTAINS:
               return {
                 [correspondingFieldMetadataItem.name]: {
                   primaryPhoneCallingCode: {
@@ -1169,7 +1169,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                   },
                 } as PhonesFilter,
               };
-            case RecordFilterOperand.DoesNotContain:
+            case RecordFilterOperand.DOES_NOT_CONTAIN:
               return {
                 not: {
                   [correspondingFieldMetadataItem.name]: {
@@ -1204,7 +1204,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       if (!isDefined (recordIds) || recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Is:
+        case RecordFilterOperand.IS:
           return {
             [correspondingFieldMetadataItem.name]: {
               in: recordIds,
