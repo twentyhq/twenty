@@ -37,11 +37,12 @@ export class WorkflowBuilderResolver {
   @Mutation(() => graphqlTypeJson)
   async computeStepOutputSchema(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('input') { step }: ComputeStepOutputSchemaInput,
+    @Args('input') { step, workflowVersionId }: ComputeStepOutputSchemaInput,
   ): Promise<OutputSchema> {
     return this.workflowSchemaWorkspaceService.computeStepOutputSchema({
       step,
       workspaceId,
+      workflowVersionId,
     });
   }
 }

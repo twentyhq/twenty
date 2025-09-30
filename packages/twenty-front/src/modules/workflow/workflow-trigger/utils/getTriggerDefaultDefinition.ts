@@ -5,6 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
+import { getManualTriggerDefaultSettingsDeprecated } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettingsDeprecated';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 // TODO: This needs to be migrated to the server
@@ -12,10 +13,12 @@ export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
   activeNonSystemObjectMetadataItems,
+  isIteratorEnabled,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  isIteratorEnabled: boolean;
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
@@ -44,10 +47,20 @@ export const getTriggerDefaultDefinition = ({
       };
     }
     case 'MANUAL': {
+      if (isIteratorEnabled) {
+        return {
+          ...baseTriggerDefinition,
+          type,
+          settings: getManualTriggerDefaultSettings({
+            availabilityType: 'GLOBAL',
+            activeNonSystemObjectMetadataItems,
+          }),
+        };
+      }
       return {
         ...baseTriggerDefinition,
         type,
-        settings: getManualTriggerDefaultSettings({
+        settings: getManualTriggerDefaultSettingsDeprecated({
           availability: 'WHEN_RECORD_SELECTED',
           activeNonSystemObjectMetadataItems,
         }),

@@ -43,6 +43,15 @@ export const Catalog: Story = {
     catalog: {
       dimensions: [
         {
+          name: 'withIconContainer',
+          values: [true, false],
+          props: (withIconContainer: boolean) => ({ withIconContainer }),
+          labels: (withIconContainer: boolean) =>
+            withIconContainer
+              ? 'With icon container'
+              : 'Without icon container',
+        },
+        {
           name: 'isDragDisabled',
           values: [true, false],
           props: (isDragDisabled: boolean) => ({

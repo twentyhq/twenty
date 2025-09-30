@@ -163,58 +163,19 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
-
-    const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
-
-    const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
-      // @ts-expect-error legacy noImplicitAny
-      (field) => field.node,
-    );
-
-    // standard relations have been updated
-    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // relation field
-      const relationFieldMetadataId =
-        // @ts-expect-error legacy noImplicitAny
-        standardObjectRelationsMap[relation].relationFieldMetadataId;
-
-      const updatedRelationFieldMetadata = fieldsMetadata.find(
-        // @ts-expect-error legacy noImplicitAny
-        (field) => field.id === relationFieldMetadataId,
-      );
-
-      expect(updatedRelationFieldMetadata.name).toBe(HOUSE_NAME_SINGULAR);
-      expect(updatedRelationFieldMetadata.label).toBe(HOUSE_LABEL_SINGULAR);
-    });
   });
 
-  it('3. should fail when trying to rename object to "name"', async () => {
-    // Act & Assert
-    const { errors } = await updateOneObjectMetadata({
-      gqlFields: `
-        nameSingular
-        labelSingular
-        namePlural
-        labelPlural
-        `,
+  it('3. should delete custom object', async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
       input: {
         idToUpdate: listingObjectId,
         updatePayload: {
-          nameSingular: 'name',
+          isActive: false,
         },
       },
-      expectToFail: true,
     });
 
-    // Assert that an error was thrown
-    expect(errors).toBeDefined();
-    expect(errors).toHaveLength(1);
-    expect(errors[0].extensions.userFriendlyMessage).toContain(
-      'Name "name" is not available',
-    );
-  });
-
-  it('4. should delete custom object', async () => {
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,

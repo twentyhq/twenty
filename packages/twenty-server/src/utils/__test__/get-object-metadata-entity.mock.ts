@@ -41,6 +41,8 @@ export const getMockObjectMetadataEntity = (
     objectPermissions: [],
     shortcut: null,
     standardId: null,
+    applicationId: null,
+    application: null,
     targetRelationFields: [],
     standardOverrides: null,
     targetTableName: faker.string.uuid(),

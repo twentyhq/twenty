@@ -1,4 +1,9 @@
-import { GraphType, WidgetType } from '@/page-layout/mocks/mockWidgets';
+import {
+  GraphOrderBy,
+  GraphType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { act, renderHook } from '@testing-library/react';
 import { PageLayoutType } from '~/generated/graphql';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';
@@ -95,7 +100,13 @@ describe('usePageLayoutDraftState', () => {
                 title: 'New Widget',
                 type: WidgetType.GRAPH,
                 gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-                configuration: { graphType: GraphType.BAR },
+                configuration: {
+                  graphType: GraphType.BAR,
+                  aggregateOperation: AggregateOperations.COUNT,
+                  aggregateFieldMetadataId: 'id',
+                  groupByFieldMetadataIdX: 'createdAt',
+                  orderByX: GraphOrderBy.FIELD_ASC,
+                },
                 objectMetadataId: null,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),

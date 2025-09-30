@@ -1,7 +1,7 @@
-import { type FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
+import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
 
 export const getInitialFilterValue = (
   newType: FilterableAndTSVectorFieldType,
@@ -11,9 +11,9 @@ export const getInitialFilterValue = (
     case 'DATE':
     case 'DATE_TIME': {
       const activeDatePickerOperands = [
-        RecordFilterOperand.IsBefore,
-        RecordFilterOperand.Is,
-        RecordFilterOperand.IsAfter,
+        RecordFilterOperand.IS_BEFORE,
+        RecordFilterOperand.IS,
+        RecordFilterOperand.IS_AFTER,
       ];
 
       if (activeDatePickerOperands.includes(newOperand)) {
@@ -25,7 +25,7 @@ export const getInitialFilterValue = (
         return { value, displayValue };
       }
 
-      if (newOperand === RecordFilterOperand.IsRelative) {
+      if (newOperand === RecordFilterOperand.IS_RELATIVE) {
         return { value: '', displayValue: '' };
       }
 

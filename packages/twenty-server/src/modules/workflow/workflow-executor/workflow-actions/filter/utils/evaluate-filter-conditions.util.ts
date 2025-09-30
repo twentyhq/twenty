@@ -122,14 +122,14 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
 
 function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.CONTAINS:
       return contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return !contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return isNotEmptyTextOrArray(filter.leftOperand);
 
     default:
@@ -145,7 +145,7 @@ function isNotEmptyTextOrArray(value: unknown): boolean {
 
 function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return Boolean(filter.leftOperand) === Boolean(filter.rightOperand);
     default:
       throw new Error(
@@ -158,47 +158,47 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
   const dateLeftValue = new Date(String(filter.leftOperand));
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return (
         dateLeftValue.getDate() ===
         new Date(String(filter.rightOperand)).getDate()
       );
-    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IS_IN_PAST:
       return dateLeftValue.getTime() < Date.now();
 
-    case ViewFilterOperand.IsInFuture:
+    case ViewFilterOperand.IS_IN_FUTURE:
       return dateLeftValue.getTime() > Date.now();
 
-    case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IS_TODAY:
       return dateLeftValue.toDateString() === new Date().toDateString();
 
-    case ViewFilterOperand.IsBefore:
+    case ViewFilterOperand.IS_BEFORE:
       return (
         dateLeftValue.getTime() <
         new Date(String(filter.rightOperand)).getTime()
       );
 
-    case ViewFilterOperand.IsAfter:
+    case ViewFilterOperand.IS_AFTER:
       return (
         dateLeftValue.getTime() >
         new Date(String(filter.rightOperand)).getTime()
       );
 
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return (
         filter.leftOperand === null ||
         filter.leftOperand === undefined ||
         filter.leftOperand === ''
       );
 
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return (
         filter.leftOperand !== null &&
         filter.leftOperand !== undefined &&
         filter.leftOperand !== ''
       );
 
-    case ViewFilterOperand.IsRelative:
+    case ViewFilterOperand.IS_RELATIVE:
       return parseAndEvaluateRelativeDateFilter({
         dateToCheck: dateLeftValue,
         relativeDateString: String(filter.rightOperand),
@@ -213,9 +213,9 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
 
 function evaluateUuidFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return filter.leftOperand === filter.rightOperand;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return filter.leftOperand !== filter.rightOperand;
     default:
       throw new Error(
@@ -237,9 +237,9 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
       : filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return leftValue === rightValue;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return leftValue !== rightValue;
     default:
       throw new Error(
@@ -251,13 +251,13 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
 function evaluateCurrencyFilter(filter: ResolvedFilter): boolean {
   if (filter.compositeFieldSubFieldName === 'currencyCode') {
     switch (filter.operand) {
-      case ViewFilterOperand.Is:
+      case ViewFilterOperand.IS:
         return filter.leftOperand === filter.rightOperand;
-      case ViewFilterOperand.IsNot:
+      case ViewFilterOperand.IS_NOT:
         return filter.leftOperand !== filter.rightOperand;
-      case ViewFilterOperand.IsEmpty:
+      case ViewFilterOperand.IS_EMPTY:
         return !isNonEmptyString(filter.leftOperand);
-      case ViewFilterOperand.IsNotEmpty:
+      case ViewFilterOperand.IS_NOT_EMPTY:
         return isNonEmptyString(filter.leftOperand);
       default:
         throw new Error(
@@ -274,16 +274,16 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
   const rightValue = filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(leftValue) >= Number(rightValue);
 
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(leftValue) <= Number(rightValue);
 
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return !isNonEmptyString(leftValue);
 
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return isNonEmptyString(leftValue);
 
     default:
@@ -298,21 +298,21 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   const rightValue = filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return leftValue == rightValue;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return leftValue != rightValue;
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(leftValue);
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return isNotEmptyTextOrArray(leftValue);
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.CONTAINS:
       return contains(leftValue, rightValue);
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return !contains(leftValue, rightValue);
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(leftValue) >= Number(rightValue);
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(leftValue) <= Number(rightValue);
     default:
       throw new Error(
@@ -323,14 +323,14 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
 
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return !contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return isNotEmptyTextOrArray(filter.leftOperand);
     default:
       throw new Error(

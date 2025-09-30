@@ -1,8 +1,10 @@
+import {
+  workflowActionSchema,
+  workflowTriggerSchema,
+} from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
-import { workflowActionSchema, workflowTriggerSchema } from './workflow.schema';
 
 export const createWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
@@ -94,6 +96,7 @@ export const computeStepOutputSchemaSchema = z.object({
   step: z
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
+  workflowVersionId: z.string().describe('The ID of the workflow version'),
 });
 
 export const createCompleteWorkflowSchema = z.object({

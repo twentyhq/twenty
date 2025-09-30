@@ -71,9 +71,38 @@ export type AgentChatMessage = {
   createdAt: Scalars['DateTime'];
   files: Array<File>;
   id: Scalars['UUID'];
-  rawContent?: Maybe<Scalars['String']>;
+  parts: Array<AgentChatMessagePart>;
   role: Scalars['String'];
   threadId: Scalars['UUID'];
+};
+
+export type AgentChatMessagePart = {
+  __typename?: 'AgentChatMessagePart';
+  createdAt: Scalars['DateTime'];
+  errorDetails?: Maybe<Scalars['JSON']>;
+  errorMessage?: Maybe<Scalars['String']>;
+  fileFilename?: Maybe<Scalars['String']>;
+  fileMediaType?: Maybe<Scalars['String']>;
+  fileUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  messageId: Scalars['UUID'];
+  orderIndex: Scalars['Int'];
+  providerMetadata?: Maybe<Scalars['JSON']>;
+  reasoningContent?: Maybe<Scalars['String']>;
+  sourceDocumentFilename?: Maybe<Scalars['String']>;
+  sourceDocumentMediaType?: Maybe<Scalars['String']>;
+  sourceDocumentSourceId?: Maybe<Scalars['String']>;
+  sourceDocumentTitle?: Maybe<Scalars['String']>;
+  sourceUrlSourceId?: Maybe<Scalars['String']>;
+  sourceUrlTitle?: Maybe<Scalars['String']>;
+  sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
+  toolCallId?: Maybe<Scalars['String']>;
+  toolInput?: Maybe<Scalars['JSON']>;
+  toolName?: Maybe<Scalars['String']>;
+  toolOutput?: Maybe<Scalars['JSON']>;
+  type: Scalars['String'];
 };
 
 export type AgentChatThread = {
@@ -171,20 +200,6 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
-export type Application = {
-  __typename?: 'Application';
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  sourcePath: Scalars['String'];
-  sourceType: Scalars['String'];
-  standardId?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-  version?: Maybe<Scalars['String']>;
-  workspaceId: Scalars['UUID'];
-};
-
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
   createdAt: Scalars['DateTime'];
@@ -252,6 +267,25 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   __typename?: 'AvailableWorkspacesAndAccessTokensOutput';
   availableWorkspaces: AvailableWorkspaces;
   tokens: AuthTokenPair;
+};
+
+export type BarChartConfiguration = {
+  __typename?: 'BarChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
+  xAxisName?: Maybe<Scalars['String']>;
+  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -458,6 +492,8 @@ export type ClientAiModelConfig = {
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
+  /** Workflow version ID */
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export enum ConfigSource {
@@ -854,6 +890,15 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type CronTrigger = {
+  __typename?: 'CronTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -873,6 +918,15 @@ export enum DatabaseEventAction {
   RESTORED = 'RESTORED',
   UPDATED = 'UPDATED'
 }
+
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;
@@ -1179,11 +1233,13 @@ export type File = {
 };
 
 export enum FileFolder {
+  AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   File = 'File',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
+  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -1206,6 +1262,17 @@ export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+};
+
+export type GaugeChartConfiguration = {
+  __typename?: 'GaugeChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateFieldMetadataIdTotal: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  aggregateOperationTotal: AggregateOperations;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
 };
 
 export type GetApiKeyDto = {
@@ -1241,6 +1308,23 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+/** Order by options for graph widgets */
+export enum GraphOrderBy {
+  FIELD_ASC = 'FIELD_ASC',
+  FIELD_DESC = 'FIELD_DESC',
+  VALUE_ASC = 'VALUE_ASC',
+  VALUE_DESC = 'VALUE_DESC'
+}
+
+/** Type of graph widget */
+export enum GraphType {
+  BAR = 'BAR',
+  GAUGE = 'GAUGE',
+  LINE = 'LINE',
+  NUMBER = 'NUMBER',
+  PIE = 'PIE'
+}
+
 export type GridPosition = {
   __typename?: 'GridPosition';
   column: Scalars['Float'];
@@ -1268,6 +1352,11 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type IframeConfiguration = {
+  __typename?: 'IframeConfiguration';
+  url: Scalars['String'];
+};
 
 export type ImapSmtpCaldavConnectionParameters = {
   __typename?: 'ImapSmtpCaldavConnectionParameters';
@@ -1394,6 +1483,25 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type LineChartConfiguration = {
+  __typename?: 'LineChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataIdX: Scalars['UUID'];
+  groupByFieldMetadataIdY?: Maybe<Scalars['UUID']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
+  orderByX: GraphOrderBy;
+  orderByY?: Maybe<GraphOrderBy>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
+  xAxisName?: Maybe<Scalars['String']>;
+  yAxisName?: Maybe<Scalars['String']>;
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String'];
@@ -1468,6 +1576,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -1554,7 +1663,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Application;
+  syncApplication: Scalars['Boolean'];
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
@@ -1745,6 +1854,12 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionLayerArgs = {
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2157,6 +2272,8 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2368,6 +2485,18 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
   otp: Scalars['String'];
 };
 
+export type NumberChartConfiguration = {
+  __typename?: 'NumberChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
+};
+
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
@@ -2566,7 +2695,7 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  configuration?: Maybe<Scalars['JSON']>;
+  configuration?: Maybe<WidgetConfiguration>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
@@ -2599,6 +2728,18 @@ export enum PermissionFlagType {
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
+
+export type PieChartConfiguration = {
+  __typename?: 'PieChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  filter?: Maybe<Scalars['JSON']>;
+  graphType: GraphType;
+  groupByFieldMetadataId: Scalars['UUID'];
+  orderBy: GraphOrderBy;
+};
 
 export type PlaceDetailsResultDto = {
   __typename?: 'PlaceDetailsResultDto';
@@ -3218,6 +3359,14 @@ export type ServerlessFunctionIdInput = {
   id: Scalars['ID'];
 };
 
+export type ServerlessFunctionLayer = {
+  __typename?: 'ServerlessFunctionLayer';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -3519,7 +3668,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
-  configuration: Scalars['JSON'];
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -3856,6 +4005,8 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
+export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
+
 export enum WidgetType {
   FIELDS = 'FIELDS',
   GRAPH = 'GRAPH',
@@ -4069,13 +4220,15 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, xAxisName?: string | null, yAxisName?: string | null, rangeMin?: number | null, rangeMax?: number | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, aggregateOperationTotal: AggregateOperations, aggregateFieldMetadataIdTotal: any, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, orderBy: GraphOrderBy, filter?: any | null } | null };
+
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
   id: Scalars['String'];
   input: UpdatePageLayoutWithTabsInput;
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, pageLayoutTabId: any, objectMetadataId?: any | null, configuration?: any | null, createdAt: string, updatedAt: string, gridPosition: { __typename?: 'GridPosition', row: number, column: number, rowSpan: number, columnSpan: number } }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, omitNullValues?: boolean | null, xAxisName?: string | null, yAxisName?: string | null, rangeMin?: number | null, rangeMax?: number | null, filter?: any | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, aggregateOperationTotal: AggregateOperations, aggregateFieldMetadataIdTotal: any, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupByFieldMetadataIdX: any, orderByX: GraphOrderBy, groupByFieldMetadataIdY?: any | null, orderByY?: GraphOrderBy | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, orderBy: GraphOrderBy, filter?: any | null } | null }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
@@ -4353,6 +4506,78 @@ export type FindOneCoreViewSortQueryVariables = Exact<{
 
 export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } | null };
 
+export const PageLayoutWidgetFragmentFragmentDoc = gql`
+    fragment PageLayoutWidgetFragment on PageLayoutWidget {
+  id
+  title
+  type
+  objectMetadataId
+  createdAt
+  updatedAt
+  deletedAt
+  gridPosition {
+    column
+    columnSpan
+    row
+    rowSpan
+  }
+  configuration {
+    ... on BarChartConfiguration {
+      graphType
+      aggregateFieldMetadataId
+      aggregateOperation
+      groupByFieldMetadataIdX
+      orderByX
+      groupByFieldMetadataIdY
+      orderByY
+      omitNullValues
+      xAxisName
+      yAxisName
+      rangeMin
+      rangeMax
+      filter
+    }
+    ... on LineChartConfiguration {
+      graphType
+      aggregateFieldMetadataId
+      aggregateOperation
+      groupByFieldMetadataIdX
+      orderByX
+      groupByFieldMetadataIdY
+      orderByY
+      filter
+    }
+    ... on PieChartConfiguration {
+      graphType
+      groupByFieldMetadataId
+      aggregateFieldMetadataId
+      aggregateOperation
+      orderBy
+      filter
+    }
+    ... on NumberChartConfiguration {
+      graphType
+      aggregateFieldMetadataId
+      aggregateOperation
+      description
+      filter
+    }
+    ... on GaugeChartConfiguration {
+      graphType
+      aggregateFieldMetadataId
+      aggregateOperation
+      aggregateOperationTotal
+      aggregateFieldMetadataIdTotal
+      description
+      filter
+    }
+    ... on IframeConfiguration {
+      url
+    }
+  }
+  pageLayoutTabId
+}
+    `;
 export const ViewFieldFragmentFragmentDoc = gql`
     fragment ViewFieldFragment on CoreViewField {
   id
@@ -4520,27 +4745,14 @@ export const UpdatePageLayoutWithTabsAndWidgetsDocument = gql`
       position
       pageLayoutId
       widgets {
-        id
-        title
-        type
-        pageLayoutTabId
-        objectMetadataId
-        gridPosition {
-          row
-          column
-          rowSpan
-          columnSpan
-        }
-        configuration
-        createdAt
-        updatedAt
+        ...PageLayoutWidgetFragment
       }
       createdAt
       updatedAt
     }
   }
 }
-    `;
+    ${PageLayoutWidgetFragmentFragmentDoc}`;
 export type UpdatePageLayoutWithTabsAndWidgetsMutationFn = Apollo.MutationFunction<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
 
 /**

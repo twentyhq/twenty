@@ -11,6 +11,7 @@ import { ObjectMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graph
 import { ObjectMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/object-metadata-gql-input-type.generator';
 import { CompositeFieldMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/composite-field-metadata-order-by-gql-input-type.generator';
 import { ObjectMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-gql-input-type.generator';
+import { ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-with-group-by-gql-input-type.generator';
 import { RelationConnectGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-connect-gql-input-type.generator';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import { CompositeFieldMetadataUpdateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/update-input/composite-field-metadata-update-gql-input-type.generator';
@@ -45,6 +46,7 @@ export const workspaceSchemaBuilderTypeGenerators = [
   ObjectMetadataFilterGqlInputTypeGenerator,
   ObjectMetadataOrderByGqlInputTypeGenerator,
   ObjectMetadataGroupByGqlInputTypeGenerator,
+  ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator,
   CompositeFieldMetadataGqlObjectTypeGenerator,
   ObjectMetadataGqlObjectTypeGenerator,
   RelationConnectGqlInputTypeGenerator,

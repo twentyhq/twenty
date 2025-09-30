@@ -1,5 +1,5 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
+import { CustomError } from 'twenty-shared/utils';
 
 export const validateAndExtractFolderId = (
   droppableId: string,

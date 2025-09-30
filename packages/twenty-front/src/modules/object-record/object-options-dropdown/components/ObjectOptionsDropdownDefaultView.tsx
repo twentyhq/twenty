@@ -87,6 +87,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               LeftIcon={IconListDetails}
               text={t`Fields`}
               contextualText={`${visibleBoardFields.length} shown`}
+              contextualTextPosition="right"
               hasSubMenu
             />
           </SelectableListItem>
@@ -119,6 +120,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               onClick={handleCreateCustomView}
               LeftIcon={IconLayout}
               text={t`Create custom view`}
+              contextualTextPosition="right"
             />
           </SelectableListItem>
         </DropdownMenuItemsContainer>
