@@ -52,12 +52,14 @@ import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/c
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { ensureFutureStartDate } from 'src/engine/core-modules/billing/utils/ensure-future-start-date.util';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
   constructor(
     private readonly stripeSubscriptionService: StripeSubscriptionService,
+    private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
     @InjectRepository(BillingEntitlement)
@@ -372,15 +374,20 @@ export class BillingSubscriptionService {
         ],
       });
 
+    const { stripePriceId: meterStripePriceId } = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      (billingSubscriptionItem) =>
+        billingSubscriptionItem.billingProduct.metadata.productKey ===
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    );
+
     await this.stripeSubscriptionService.updateSubscription(
       billingSubscription.stripeSubscriptionId,
       {
-        billing_thresholds: {
-          amount_gte: this.twentyConfigService.get(
-            'BILLING_SUBSCRIPTION_THRESHOLD_AMOUNT',
+        billing_thresholds:
+          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
+            meterStripePriceId,
           ),
-          reset_billing_cycle_anchor: false,
-        },
       },
     );
 
@@ -525,16 +532,6 @@ export class BillingSubscriptionService {
     );
 
     return currentBillingSubscription;
-  }
-
-  private async getBillingThresholdsByPriceId(priceId: string) {
-    const price = await this.billingPriceRepository.findOneByOrFail({
-      stripePriceId: priceId,
-    });
-
-    return this.stripeSubscriptionService.getBillingThresholdsByInterval(
-      price.interval,
-    );
   }
 
   private async loadScheduleEditable(stripeSubscriptionId: string) {
@@ -755,12 +752,11 @@ export class BillingSubscriptionService {
       : currentLicensedId;
     const currentMutated = currentSnap
       ? mutateCurrentNow
-        ? this.billingSubscriptionPhaseService.buildSnapshot(
+        ? await this.billingSubscriptionPhaseService.buildSnapshot(
             currentSnap,
             currentLicensedId,
             currentPhaseDetails.quantity,
             mappedCurrentMeteredId,
-            await this.getBillingThresholdsByPriceId(currentLicensedId),
           )
         : currentSnap
       : undefined;
@@ -784,13 +780,13 @@ export class BillingSubscriptionService {
       items: baseItems,
       proration_behavior: 'none',
     };
-    const nextMutated = this.billingSubscriptionPhaseService.buildSnapshot(
-      nextPhaseBase,
-      nextLicensedId,
-      nextPhaseDetails?.quantity ?? currentPhaseDetails.quantity,
-      mappedNextMeteredId,
-      await this.getBillingThresholdsByPriceId(nextLicensedId),
-    );
+    const nextMutated =
+      await this.billingSubscriptionPhaseService.buildSnapshot(
+        nextPhaseBase,
+        nextLicensedId,
+        nextPhaseDetails?.quantity ?? currentPhaseDetails.quantity,
+        mappedNextMeteredId,
+      );
 
     return {
       currentSnap,
@@ -1018,7 +1014,7 @@ export class BillingSubscriptionService {
           this.billingSubscriptionPhaseService.toSnapshot(currentEditable);
 
         const nextPhaseForYear =
-          this.billingSubscriptionPhaseService.buildSnapshot(
+          await this.billingSubscriptionPhaseService.buildSnapshot(
             {
               start_date: ensureFutureStartDate(
                 (currentSnap?.end_date as number | undefined) ??
@@ -1030,9 +1026,6 @@ export class BillingSubscriptionService {
             mappedNext.targetLicensedPrice.stripePriceId,
             reloadedNextDetails.quantity,
             mappedNext.targetMeteredPrice.stripePriceId,
-            await this.getBillingThresholdsByPriceId(
-              mappedNext.targetLicensedPrice.stripePriceId,
-            ),
           );
 
         return await this.scheduleReplaceNext({
@@ -1205,22 +1198,20 @@ export class BillingSubscriptionService {
         const currentPhaseSnapshot =
           this.billingSubscriptionPhaseService.toSnapshot(currentEditable);
 
-        const nextPhase = this.billingSubscriptionPhaseService.buildSnapshot(
-          {
-            start_date: ensureFutureStartDate(
-              (currentPhaseSnapshot?.end_date as number | undefined) ??
-                subscription.current_period_end,
-            ),
-            items: currentPhaseSnapshot.items,
-            proration_behavior: 'none',
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-          mappedNext.targetLicensedPrice.stripePriceId,
-          nextDetails.quantity,
-          mappedNext.targetMeteredPrice.stripePriceId,
-          await this.getBillingThresholdsByPriceId(
+        const nextPhase =
+          await this.billingSubscriptionPhaseService.buildSnapshot(
+            {
+              start_date: ensureFutureStartDate(
+                (currentPhaseSnapshot?.end_date as number | undefined) ??
+                  subscription.current_period_end,
+              ),
+              items: currentPhaseSnapshot.items,
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
             mappedNext.targetLicensedPrice.stripePriceId,
-          ),
-        );
+            nextDetails.quantity,
+            mappedNext.targetMeteredPrice.stripePriceId,
+          );
 
         return await this.scheduleReplaceNext({
           subscription,
@@ -1306,7 +1297,6 @@ export class BillingSubscriptionService {
       seats,
       anchor,
       proration,
-      thresholdsPriceId,
       metadata,
     } = params;
 
@@ -1319,13 +1309,11 @@ export class BillingSubscriptionService {
         ],
         ...(anchor ? { billing_cycle_anchor: anchor } : {}),
         ...(proration ? { proration_behavior: proration } : {}),
-        ...(thresholdsPriceId
-          ? {
-              billing_thresholds:
-                await this.getBillingThresholdsByPriceId(thresholdsPriceId),
-            }
-          : {}),
         ...(metadata ? { metadata } : {}),
+        billing_thresholds:
+          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
+            meteredPriceId,
+          ),
       },
     );
   }
@@ -1478,7 +1466,7 @@ export class BillingSubscriptionService {
       this.billingSubscriptionPhaseService.toSnapshot(
         currentEditable as Stripe.SubscriptionSchedule.Phase,
       );
-    const next = this.billingSubscriptionPhaseService.buildSnapshot(
+    const next = await this.billingSubscriptionPhaseService.buildSnapshot(
       {
         start_date:
           currentPhaseSnapshot.end_date ?? subscription.current_period_end,
@@ -1488,7 +1476,6 @@ export class BillingSubscriptionService {
       prices.next.licensedPriceId,
       prices.next.seats,
       prices.next.meteredPriceId,
-      await this.getBillingThresholdsByPriceId(prices.next.licensedPriceId),
     );
 
     await this.scheduleReplaceNext({
