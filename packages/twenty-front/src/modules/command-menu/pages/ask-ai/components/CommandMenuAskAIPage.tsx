@@ -47,7 +47,7 @@ export const CommandMenuAskAIPage = () => {
   });
 
   const { loading, data } = useGetAgentChatMessagesQuery({
-    variables: { threadId: currentThreadId as string },
+    variables: { threadId: currentThreadId ?? '' },
     skip: !isDefined(currentThreadId),
   });
 
