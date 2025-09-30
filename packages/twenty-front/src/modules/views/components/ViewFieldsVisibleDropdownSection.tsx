@@ -82,17 +82,15 @@ export const ViewFieldsVisibleDropdownSection = () => {
     <>
       <DropdownMenuItemsContainer>
         {fieldMetadataItemLabelIdentifier && (
-          // FIX: Suppress lint warning for missing 'title' prop, as it breaks TypeScript
-          // You may need to replace 'lint' with a specific rule name if the warning persists.
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore: Assuming MenuItemDraggable doesn't officially support 'title'
-          <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
-            text={truncateFieldLabel(fieldMetadataItemLabelIdentifier.label)}
-            accent="placeholder"
-            showGrip={true}
-            isDragDisabled
-          />
+          <div title={fieldMetadataItemLabelIdentifier.label}>
+            <MenuItemDraggable
+              LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+              text={truncateFieldLabel(fieldMetadataItemLabelIdentifier.label)}
+              accent="placeholder"
+              showGrip={true}
+              isDragDisabled
+            />
+          </div>
         )}
         {draggableRecordFields.length > 0 && (
           <DraggableList
@@ -116,26 +114,27 @@ export const ViewFieldsVisibleDropdownSection = () => {
                       draggableId={recordField.fieldMetadataItemId}
                       index={fieldIndex + 1}
                       itemComponent={
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore: Assuming MenuItemDraggable doesn't officially support 'title'
-                        <MenuItemDraggable
-                          key={recordField.fieldMetadataItemId}
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={[
-                            {
-                              Icon: IconEyeOff,
-                              onClick: () => {
-                                handleChangeFieldVisibility({
-                                  fieldMetadataId:
-                                    recordField.fieldMetadataItemId,
-                                  isVisible: false,
-                                });
+                        // FIX 2: Wrap the draggable item to attach the title attribute externally
+                        <div title={fieldMetadataItem.label}>
+                          <MenuItemDraggable
+                            key={recordField.fieldMetadataItemId}
+                            LeftIcon={getIcon(fieldMetadataItem.icon)}
+                            iconButtons={[
+                              {
+                                Icon: IconEyeOff,
+                                onClick: () => {
+                                  handleChangeFieldVisibility({
+                                    fieldMetadataId:
+                                      recordField.fieldMetadataItemId,
+                                    isVisible: false,
+                                  });
+                                },
                               },
-                            },
-                          ]}
-                          text={displayLabel}
-                          showGrip
-                        />
+                            ]}
+                            text={displayLabel}
+                            showGrip
+                          />
+                        </div>
                       }
                     />
                   );

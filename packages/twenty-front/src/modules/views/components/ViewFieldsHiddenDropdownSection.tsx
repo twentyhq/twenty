@@ -9,9 +9,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { IconEye, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-
-// FIX 1: Import utility function
-import { truncateFieldLabel } from '~/utils/string/truncateText';
+import { truncateFieldLabel } from '~/utils/string/truncateText'; // Assuming this utility function is now available
 
 export const ViewFieldsHiddenDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
@@ -59,27 +57,25 @@ export const ViewFieldsHiddenDropdownSection = () => {
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             
-            // Apply truncation
             const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
             
             return (
-              <MenuItem
-                key={fieldMetadataItem.id}
-                LeftIcon={getIcon(fieldMetadataItem.icon)}
-                iconButtons={[
-                  {
-                    Icon: IconEye,
-                    onClick: () =>
-                      handleChangeFieldVisibility({
-                        fieldMetadataId: fieldMetadataItem.id,
-                        isVisible: true,
-                      }),
-                  },
-                ]}
-                text={displayLabel} 
-                // The 'title' prop has been intentionally removed here and from 
-                // the original version of this fix to resolve the TypeScript/Lint conflict.
-              />
+              <div key={fieldMetadataItem.id} title={fieldMetadataItem.label}>
+                <MenuItem
+                  LeftIcon={getIcon(fieldMetadataItem.icon)}
+                  iconButtons={[
+                    {
+                      Icon: IconEye,
+                      onClick: () =>
+                        handleChangeFieldVisibility({
+                          fieldMetadataId: fieldMetadataItem.id,
+                          isVisible: true,
+                        }),
+                    },
+                  ]}
+                  text={displayLabel} 
+                />
+              </div>
             );
           })}
       </DropdownMenuItemsContainer>
