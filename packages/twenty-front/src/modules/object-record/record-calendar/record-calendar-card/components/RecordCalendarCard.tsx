@@ -36,7 +36,9 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
         instanceId: recordId,
       }}
     >
-      <StyledContainer data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}>
+      <StyledContainer
+        data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
+      >
         <StyledRecordCard>
           <RecordCalendarCardHeader recordId={recordId} />
           <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>

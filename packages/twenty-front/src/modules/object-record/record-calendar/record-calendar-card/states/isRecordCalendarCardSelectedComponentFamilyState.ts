@@ -7,5 +7,3 @@ export const isRecordCalendarCardSelectedComponentFamilyState =
     defaultValue: false,
     componentInstanceContext: RecordCalendarComponentInstanceContext,
   });
-
-
