@@ -5,6 +5,7 @@ import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 export type MetadataEntitiesRelationTarget =
   | ObjectMetadataEntity
@@ -12,5 +13,6 @@ export type MetadataEntitiesRelationTarget =
   | IndexFieldMetadataEntity
   | FieldPermissionEntity
   | DataSourceEntity
+  | ApplicationEntity
   | IndexMetadataEntity
   | ObjectPermissionEntity;

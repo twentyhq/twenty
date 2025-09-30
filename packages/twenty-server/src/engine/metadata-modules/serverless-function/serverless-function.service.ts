@@ -16,7 +16,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
-import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
@@ -34,12 +33,14 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 
 @Injectable()
 export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
+    private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
@@ -116,6 +117,7 @@ export class ServerlessFunctionService {
           id,
           workspaceId,
         },
+        relations: ['serverlessFunctionLayer'],
       });
 
     const resultServerlessFunction = await this.serverlessService.execute(
@@ -304,14 +306,16 @@ export class ServerlessFunctionService {
 
   async getAvailablePackages(serverlessFunctionId: string) {
     const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneBy({
-        id: serverlessFunctionId,
+      await this.serverlessFunctionRepository.findOneOrFail({
+        where: { id: serverlessFunctionId },
+        relations: ['serverlessFunctionLayer'],
       });
-    const { packageJson, yarnLock } = await getLayerDependencies(
-      serverlessFunction?.layerVersion || 'latest',
-    );
+
+    const { packageJson, yarnLock } =
+      await getLayerDependencies(serverlessFunction);
 
     const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+
     const versions: Record<string, string> = {};
 
     let match: RegExpExecArray | null;
@@ -321,7 +325,7 @@ export class ServerlessFunctionService {
       const version = match[2];
 
       // @ts-expect-error legacy noImplicitAny
-      if (packageJson.dependencies[packageName]) {
+      if (packageJson.dependencies?.[packageName]) {
         versions[packageName] = version;
       }
     }
@@ -333,11 +337,16 @@ export class ServerlessFunctionService {
     serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
+    const commonServerlessFunctionLayer =
+      await this.serverlessFunctionLayerService.createCommonLayerIfNotExist(
+        workspaceId,
+      );
+
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
       {
         ...serverlessFunctionInput,
         workspaceId,
-        layerVersion: LAST_LAYER_VERSION,
+        serverlessFunctionLayerId: commonServerlessFunctionLayer.id,
       },
     );
 
@@ -422,6 +431,9 @@ export class ServerlessFunctionService {
         name: serverlessFunctionToDuplicate.name,
         description: serverlessFunctionToDuplicate.description ?? undefined,
         timeoutSeconds: serverlessFunctionToDuplicate.timeoutSeconds,
+        applicationId: serverlessFunctionToDuplicate.applicationId ?? undefined,
+        serverlessFunctionLayerId:
+          serverlessFunctionToDuplicate.serverlessFunctionLayerId ?? undefined,
       },
       workspaceId,
     );
