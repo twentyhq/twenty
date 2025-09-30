@@ -15,7 +15,7 @@ import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspac
 
 export type IndexRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps'
+  'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
 >;
 @Injectable()
 export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<

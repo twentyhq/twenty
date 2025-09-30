@@ -15,7 +15,6 @@ import {
   type FlatFieldMetadata,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
@@ -118,16 +117,11 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (updates.some((update) => update.property === 'name')) {
-      const { objectFlatFieldMetadatas } =
-        findObjectFieldsInFlatFieldMetadataMaps({
-          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
-        });
       validationResult.errors.push(
         ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
         ...validateFlatFieldMetadataNameAvailability({
           flatFieldMetadata: flatFieldMetadataToValidate,
-          objectFlatFieldMetadatas,
+          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
         }),
       );
     }
@@ -276,14 +270,10 @@ export class FlatFieldMetadataValidatorService {
         userFriendlyMessage: t`Field to create related object not found`,
       });
     } else {
-      const { objectFlatFieldMetadataById, objectFlatFieldMetadatas } =
-        findObjectFieldsInFlatFieldMetadataMaps({
-          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
-        });
-
       if (
-        isDefined(objectFlatFieldMetadataById[flatFieldMetadataToValidate.id])
+        isDefined(
+          optimisticFlatFieldMetadataMaps.byId[flatFieldMetadataToValidate.id],
+        )
       ) {
         validationResult.errors.push({
           code: FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
@@ -303,7 +293,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataNameAvailability({
           flatFieldMetadata: flatFieldMetadataToValidate,
-          objectFlatFieldMetadatas,
+          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
         }),
       );
     }

@@ -18,18 +18,17 @@ import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 
 export type ValidateOneObjectMetadataArgs = {
   flatObjectMetadataToValidate: FlatObjectMetadataSecond;
   optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
-  buildOptions: WorkspaceMigrationV2BuilderOptions;
+  buildOptions: WorkspaceMigrationBuilderOptions;
 };
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
-  constructor(
-  ) {}
+  constructor() {}
 
   public validateFlatObjectMetadataUpdate({
     optimisticFlatObjectMetadataMaps,

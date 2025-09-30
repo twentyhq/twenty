@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { FlatViewFieldMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-field-maps.type';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
-import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { ViewFieldRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/view-field-related-flat-entity-maps.type';
 
@@ -108,11 +108,10 @@ export class FlatViewFieldValidatorService {
       });
     }
 
-    const relatedFlatFieldMetadata =
-      findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
-        fieldMetadataId: flatViewFieldToValidate.fieldMetadataId,
-        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      });
+    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.fieldMetadataId,
+      flatEntityMaps: optimisticFlatObjectMetadataMaps,
+    });
 
     if (!isDefined(relatedFlatFieldMetadata)) {
       errors.push({

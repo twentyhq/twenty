@@ -11,7 +11,6 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2ServerlessFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/workspace-migration-v2-serverless-function-actions-builder.service';
 import { WorkspaceMigrationV2ViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-field/workspace-migration-v2-view-field-actions-builder.service';
 import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
@@ -22,7 +21,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
 @Module({
   imports: [FeatureFlagModule, WorkspaceMigrationBuilderValidatorsModule],
   providers: [
-    WorkspaceMigrationBuilderV2Service,
     FlatFieldMetadataValidatorService,
     FlatFieldMetadataTypeValidatorService,
     WorkspaceMigrationV2ObjectActionsBuilderService,
@@ -40,7 +38,6 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     FlatCronTriggerValidatorService,
   ],
   exports: [
-    WorkspaceMigrationBuilderV2Service,
     WorkspaceMigrationV2ViewActionsBuilderService,
     WorkspaceMigrationV2IndexActionsBuilderService,
     WorkspaceMigrationV2ObjectActionsBuilderService,
