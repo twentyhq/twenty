@@ -1,4 +1,5 @@
 import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
+import { type WorkflowRunStepContext } from '@/workflow/workflow-steps/types/WorkflowRunStepContext';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
 import { isDefined } from 'twenty-shared/utils';
@@ -6,12 +7,6 @@ import {
   TRIGGER_STEP_ID,
   type WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
-
-type StepContext = {
-  id: string;
-  name: string;
-  context: unknown;
-};
 
 export const getWorkflowRunStepContext = ({
   stepId,
@@ -41,7 +36,7 @@ export const getWorkflowRunStepContext = ({
 
   const reversedPreviousSteps = previousSteps.toReversed();
 
-  const reversedPreviousStepsContext: StepContext[] = [];
+  const reversedPreviousStepsContext: WorkflowRunStepContext[] = [];
 
   let isInLoop = isDefined(currentLoopIterationIndex);
 
