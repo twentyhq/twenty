@@ -92,10 +92,13 @@ export class AgentChatService {
       await this.messagePartRepository.save(dbParts);
     }
 
-    this.generateTitleIfNeeded(
-      threadId,
-      uiMessage.parts.find((part) => part.type === 'text')?.text,
-    );
+    const messageContent = uiMessage.parts.find(
+      (part) => part.type === 'text',
+    )?.text;
+
+    if (messageContent) {
+      this.generateTitleIfNeeded(threadId, messageContent);
+    }
 
     return savedMessage;
   }
@@ -124,7 +127,7 @@ export class AgentChatService {
 
   private async generateTitleIfNeeded(
     threadId: string,
-    messageContent?: string | null,
+    messageContent: string,
   ) {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
