@@ -1,4 +1,4 @@
-import { AIChatTab } from '@/ai/components/AIChatTab';
+import { LazyAIChatTab } from '@/ai/components/LazyAIChatTab';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
@@ -67,7 +67,7 @@ export const CommandMenuAskAIPage = () => {
 
   return (
     <StyledContainer>
-      <AIChatTab
+      <LazyAIChatTab
         agentId={agentId}
         key={currentThreadId}
         uiMessages={mapDBMessagesToUIMessages(data?.agentChatMessages || [])}
