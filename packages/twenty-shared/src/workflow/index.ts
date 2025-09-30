@@ -8,7 +8,7 @@
  */
 
 export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVariableTagInnerRegex';
-export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/contentTypeValuesHttpRequest';
+export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';

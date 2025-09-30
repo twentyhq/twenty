@@ -62,7 +62,10 @@ export const CommandMenuPageLayoutIframeConfig = () => {
 
   const [title, setTitle] = useState(editingWidget?.title || '');
 
-  const configUrl = editingWidget?.configuration?.url;
+  const configUrl =
+    editingWidget?.configuration && 'url' in editingWidget.configuration
+      ? editingWidget.configuration.url
+      : undefined;
 
   const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
 

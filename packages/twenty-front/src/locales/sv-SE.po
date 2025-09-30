@@ -144,6 +144,11 @@ msgstr "{roleLabel} kan inte {humanReadableAction} {objectLabel} poster"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} kommer att tilldelas rollen \"{newRoleName}\"."
 
+#. js-lingui-id: riMLMq
+#: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
+msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -3397,11 +3402,6 @@ msgstr "Misslyckades med att skapa överlämning"
 msgid "Failed to load webhook"
 msgstr "Det gick inte att ladda webbhook"
 
-#. js-lingui-id: XMjWWv
-#: src/modules/ai/components/internal/AgentChatContextPreview.tsx
-msgid "Failed to remove file"
-msgstr "Misslyckades med att ta bort filen"
-
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
@@ -4521,6 +4521,7 @@ msgstr "Laddar metrikdata..."
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "Laddar..."
@@ -4531,6 +4532,11 @@ msgstr "Laddar..."
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
 msgstr "Logga ut"
+
+#. js-lingui-id: hykMbH
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Logged in as {impersonatedUser}"
+msgstr ""
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -5036,6 +5042,11 @@ msgstr "Inga agenter tillgängliga för överlämning"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
 msgstr "Inga agenter matchar din sökning"
+
+#. js-lingui-id: B85wFV
+#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
+msgid "No AI Agent found."
+msgstr ""
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -6914,6 +6925,11 @@ msgstr "Delstat"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Status"
+
+#. js-lingui-id: I8EmDx
+#: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
+msgid "Stop impersonating"
+msgstr ""
 
 #. js-lingui-id: qn1Xxf
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts

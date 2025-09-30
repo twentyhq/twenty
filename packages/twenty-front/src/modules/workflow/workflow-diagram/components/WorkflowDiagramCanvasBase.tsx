@@ -41,6 +41,7 @@ import {
   type OnBeforeDelete,
   type OnDelete,
   type OnNodeDrag,
+  type OnReconnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -102,6 +103,9 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect,
   onDeleteEdge,
   onNodeDragStop,
+  onReconnect,
+  onReconnectStart,
+  onReconnectEnd,
   handlePaneContextMenu,
   nodesConnectable = false,
   nodesDraggable = false,
@@ -136,6 +140,9 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect?: (params: WorkflowConnection) => void;
   onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
+  onReconnect?: OnReconnect;
+  onReconnectStart?: () => void;
+  onReconnectEnd?: () => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -476,6 +483,9 @@ export const WorkflowDiagramCanvasBase = ({
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
         onConnect={handleConnect}
+        onReconnect={onReconnect}
+        onReconnectStart={onReconnectStart}
+        onReconnectEnd={onReconnectEnd}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}

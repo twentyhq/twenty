@@ -4,11 +4,11 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
+import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();

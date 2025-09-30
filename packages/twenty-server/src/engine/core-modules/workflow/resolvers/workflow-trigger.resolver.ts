@@ -44,7 +44,7 @@ export class WorkflowTriggerResolver {
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
-    return await this.workflowTriggerWorkspaceService.activateWorkflowVersion(
+    return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
     );
   }
@@ -54,7 +54,7 @@ export class WorkflowTriggerResolver {
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
-    return await this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
+    return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
     );
   }
@@ -78,7 +78,7 @@ export class WorkflowTriggerResolver {
       },
     });
 
-    return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
+    return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
       payload: payload ?? {},

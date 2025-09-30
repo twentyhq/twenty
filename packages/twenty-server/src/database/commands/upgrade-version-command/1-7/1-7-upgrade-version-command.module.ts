@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { CleanAttachmentTypeValuesCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-clean-attachment-type-values.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-migrate-attachment-author-to-created-by.command';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-regenerate-person-search-vector-with-phones.command';
@@ -13,11 +14,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     RegeneratePersonSearchVectorWithPhonesCommand,
     CleanAttachmentTypeValuesCommand,
     MigrateAttachmentAuthorToCreatedByCommand,
+    BackfillWorkflowManualTriggerAvailabilityCommand,
   ],
   exports: [
     RegeneratePersonSearchVectorWithPhonesCommand,
     CleanAttachmentTypeValuesCommand,
     MigrateAttachmentAuthorToCreatedByCommand,
+    BackfillWorkflowManualTriggerAvailabilityCommand,
   ],
 })
 export class V1_7_UpgradeVersionCommandModule {}

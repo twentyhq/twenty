@@ -78,7 +78,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_GROUP_BY_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,

@@ -116,6 +116,10 @@ describe('getTriggerDefaultDefinition', () => {
       name: 'Launch manually',
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
+        availability: {
+          objectNameSingular: generatedMockObjectMetadataItems[0].nameSingular,
+          type: 'SINGLE_RECORD',
+        },
         outputSchema: {},
         icon: COMMAND_MENU_DEFAULT_ICON,
         isPinned: false,

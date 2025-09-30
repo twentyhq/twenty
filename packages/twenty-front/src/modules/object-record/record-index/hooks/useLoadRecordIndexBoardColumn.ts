@@ -8,7 +8,6 @@ import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/use
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 
@@ -16,11 +15,14 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  combineFilters,
+  computeRecordGqlOperationFilter,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;

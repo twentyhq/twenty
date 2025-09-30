@@ -76,7 +76,18 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
           }),
           z.object({
             role: z.literal('tool'),
-            content: z.string(),
+            content: z.union([
+              z.string(),
+              z.array(
+                z.object({
+                  type: z.literal('tool-result'),
+                  toolCallId: z.string(),
+                  toolName: z.string(),
+                  result: z.unknown(),
+                  isError: z.boolean().optional(),
+                }),
+              ),
+            ]),
             toolCallId: z.string(),
           }),
         ]),

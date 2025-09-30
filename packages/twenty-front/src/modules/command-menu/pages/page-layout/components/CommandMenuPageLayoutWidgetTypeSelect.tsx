@@ -1,12 +1,12 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { WidgetType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
