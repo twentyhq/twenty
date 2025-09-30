@@ -7,7 +7,13 @@ import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDr
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
+import {
+  Draggable,
+  type DraggableProvided,
+  type DraggableRubric,
+  type DraggableStateSnapshot,
+  Droppable,
+} from '@hello-pangea/dnd';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledDraggableWrapper = styled.div`
@@ -46,9 +52,42 @@ export const TabListDropdown = ({
 }: TabListDropdownProps) => {
   const theme = useTheme();
 
+  const renderClone = (
+    provided: DraggableProvided,
+    _snapshot: DraggableStateSnapshot,
+    rubric: DraggableRubric,
+  ) => {
+    const tab = hiddenTabs[rubric.source.index - (visibleTabCount ?? 0)];
+    if (!tab) return null;
+
+    return (
+      <StyledDraggableWrapper
+        ref={provided.innerRef}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...provided.draggableProps}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...provided.dragHandleProps}
+        style={{
+          ...provided.draggableProps.style,
+          cursor: 'grabbing',
+        }}
+      >
+        <MenuItemSelectAvatar
+          text={tab.title}
+          avatar={<TabAvatar tab={tab} />}
+          selected={tab.id === activeTabId}
+          disabled={tab.disabled ?? loading}
+        />
+      </StyledDraggableWrapper>
+    );
+  };
+
   const dropdownComponents = isDraggable ? (
     <DropdownContent>
-      <Droppable droppableId={TAB_LIST_DROPPABLE_IDS.HIDDEN_TABS}>
+      <Droppable
+        droppableId={TAB_LIST_DROPPABLE_IDS.HIDDEN_TABS}
+        renderClone={renderClone}
+      >
         {(provided) => (
           <div
             ref={provided.innerRef}
