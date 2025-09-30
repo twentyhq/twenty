@@ -1,10 +1,10 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type PartialFieldMetadataItem } from "@/types";
 
 export const filterSelectOptionsOfFieldMetadataItem = ({
   fieldMetadataItem,
   filterValue,
 }: {
-  fieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItem: PartialFieldMetadataItem;
   filterValue: string;
 }) => {
   const selectOptions = fieldMetadataItem.options;

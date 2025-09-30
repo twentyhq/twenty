@@ -15,13 +15,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
   isDefined,
+  turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
@@ -74,7 +74,7 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const { recordGqlOperationFilter: anyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
-      objectMetadataItem,
+      fields: objectMetadataItem.fields,
       filterValue: anyFieldFilterValue,
     });
 

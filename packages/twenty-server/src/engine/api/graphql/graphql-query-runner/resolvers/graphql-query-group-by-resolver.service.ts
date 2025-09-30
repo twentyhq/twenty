@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
+  PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
 import {
@@ -10,6 +11,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
 import {
@@ -31,8 +33,10 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -46,6 +50,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
+    private readonly viewService: ViewService,
   ) {
     super();
   }
@@ -269,6 +274,7 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       name: field.name,
       type: field.type,
       label: field.label,
+      options: field.options as PartialFieldMetadataItemOption[],
     }));
 
     const filtersFromView = computeRecordGqlOperationFilter({
@@ -278,7 +284,26 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       filterValueDependencies: {},
     });
 
-    appliedFilters = combineFilters([appliedFilters, filtersFromView]);
+    let view: ViewEntity | null = viewFilters[0]?.view;
+
+    if (!view) {
+      view = await this.viewService.findById(
+        executionArgs.args.viewId,
+        workspaceId,
+      );
+    }
+
+    const { recordGqlOperationFilter: anyFieldFilter } =
+      turnAnyFieldFilterIntoRecordGqlFilter({
+        fields,
+        filterValue: view?.anyFieldFilterValue ?? '',
+      });
+
+    appliedFilters = combineFilters([
+      appliedFilters,
+      filtersFromView,
+      anyFieldFilter,
+    ]);
 
     return appliedFilters;
   }
