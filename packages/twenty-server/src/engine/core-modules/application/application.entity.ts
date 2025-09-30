@@ -99,5 +99,5 @@ export class ApplicationEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date | null;
+  deletedAt: Date | null;
 }
