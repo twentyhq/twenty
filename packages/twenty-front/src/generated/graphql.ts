@@ -486,6 +486,7 @@ export type ClientAiModelConfig = {
   inputCostPer1kTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
+  nativeCapabilities?: Maybe<ModelCapabilities>;
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
 };
@@ -698,6 +699,7 @@ export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
+  modelCapabilities?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   prompt: Scalars['String'];
@@ -1514,6 +1516,14 @@ export enum MessageChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
 }
+
+export type ModelCapabilities = {
+  __typename?: 'ModelCapabilities';
+  codeExecution?: Maybe<Scalars['Boolean']>;
+  imageGeneration?: Maybe<Scalars['Boolean']>;
+  realTimeData?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
+};
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
@@ -3545,6 +3555,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label: Scalars['String'];
+  modelCapabilities?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
