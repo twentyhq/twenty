@@ -18,6 +18,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceTrashCleanupModule } from 'src/engine/workspace-manager/workspace-trash-cleanup/workspace-trash-cleanup.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
@@ -48,6 +49,7 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
     FeatureFlagModule,
     TriggerModule,
     WorkspaceCleanerModule,
+    WorkspaceTrashCleanupModule,
     PublicDomainModule,
   ],
   providers: [
