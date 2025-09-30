@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export function isFlatFieldMetadataOfType<
   Field extends FlatFieldMetadataSecond<FieldMetadataType>,

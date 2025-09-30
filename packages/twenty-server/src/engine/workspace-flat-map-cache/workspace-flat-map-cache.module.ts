@@ -33,7 +33,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
     WorkspaceFlatViewMapCacheService,
     WorkspaceFlatViewFieldMapCacheService,
     WorkspaceFlatIndexMapCacheService,
-    WorkspaceFlatFieldMetadataMapCacheService
+    WorkspaceFlatFieldMetadataMapCacheService,
   ],
   exports: [
     WorkspaceFlatMapCacheRegistryService,
@@ -41,7 +41,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
     WorkspaceFlatViewMapCacheService,
     WorkspaceFlatViewFieldMapCacheService,
     WorkspaceFlatIndexMapCacheService,
-    WorkspaceFlatFieldMetadataMapCacheService
+    WorkspaceFlatFieldMetadataMapCacheService,
   ],
 })
 export class WorkspaceFlatMapCacheModule {}

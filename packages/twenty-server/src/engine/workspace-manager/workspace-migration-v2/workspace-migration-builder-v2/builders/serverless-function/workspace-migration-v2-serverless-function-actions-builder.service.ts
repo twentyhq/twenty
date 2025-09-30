@@ -92,7 +92,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
   }
 
   protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: {
       from: fromFlatServerlessFunction,
       to: toFlatServerlessFunction,

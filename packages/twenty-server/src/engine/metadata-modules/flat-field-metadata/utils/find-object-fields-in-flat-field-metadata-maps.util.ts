@@ -1,11 +1,13 @@
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type FindOtherObjectFieldsFromFlatFieldMetadataMapsArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
   objectMetadataId: string;
 };
+// Should throw if empty ? TODO DEFINITELY
 export const findObjectFieldsInFlatFieldMetadataMaps = ({
   flatFieldMetadataMaps,
   objectMetadataId,

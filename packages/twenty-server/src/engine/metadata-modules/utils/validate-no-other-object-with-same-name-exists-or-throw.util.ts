@@ -1,19 +1,21 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps: ObjectMetadataMaps | FlatEntityMaps<FlatObjectMetadataSecond>;
+  objectMetadataMaps:
+    | ObjectMetadataMaps
+    | FlatEntityMaps<FlatObjectMetadataSecond>;
 };
 
 export const doesOtherObjectWithSameNameExists = ({

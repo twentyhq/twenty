@@ -136,6 +136,7 @@ export class DataloaderService {
                 sourceFlatFieldMetadata.relationTargetFieldMetadataId,
               flatEntityMaps: flatFieldMetadataMaps,
             });
+
           if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
             relationDtos.push(null);
             continue;
@@ -146,6 +147,7 @@ export class DataloaderService {
               flatEntityId: targetFlatFieldMetadata.objectMetadataId,
               flatEntityMaps: flatObjectMetadataMaps,
             });
+
           if (
             isFlatFieldMetadataOfType(
               targetFlatFieldMetadata,
@@ -251,6 +253,7 @@ export class DataloaderService {
                     sourceFlatFieldMetadata.relationTargetObjectMetadataId,
                   flatEntityMaps: flatObjectMetadataMaps,
                 });
+
               return fromMorphOrRelationFlatFieldMetadataToRelationDto({
                 sourceFlatFieldMetadata,
                 targetFlatFieldMetadata,

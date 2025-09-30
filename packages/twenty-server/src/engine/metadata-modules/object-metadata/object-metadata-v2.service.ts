@@ -196,7 +196,6 @@ export class ObjectMetadataServiceV2 {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       deleteObjectInput,
     });
-    const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
 
     const impactedObjectMetadataIds = Array.from(
       new Set(

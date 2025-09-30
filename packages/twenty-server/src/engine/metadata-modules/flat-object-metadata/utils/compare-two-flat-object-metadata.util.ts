@@ -7,7 +7,10 @@ import { FLAT_OBJECT_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modul
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataEntityJsonbProperties } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-jsonb-properties.type';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
-import { FlatObjectMetadataSecond, type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  type FlatObjectMetadataSecond,
+  type FlatObjectMetadata,
+} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';

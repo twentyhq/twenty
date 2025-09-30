@@ -5,9 +5,9 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import {
-  FlatFieldMetadataSecond,
+  type FlatFieldMetadataSecond,
   type FlatFieldMetadata,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';

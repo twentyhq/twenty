@@ -41,23 +41,23 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
       relations: ['indexFieldMetadatas'],
     });
 
-    const flatFielMetadatadMaps = fieldMetadatas.reduce<FlatEntityMaps<FlatFieldMetadataSecond>>(
-      (flatEntityMaps, field) => {
-        const flatFieldMetadata = fromFieldMetadataEntityToFlatFieldMetadataSecond(field);
+    const flatFielMetadatadMaps = fieldMetadatas.reduce<
+      FlatEntityMaps<FlatFieldMetadataSecond>
+    >((flatEntityMaps, field) => {
+      const flatFieldMetadata =
+        fromFieldMetadataEntityToFlatFieldMetadataSecond(field);
 
-        return {
-          byId: {
-            ...flatEntityMaps.byId,
-            [flatFieldMetadata.id]: flatFieldMetadata,
-          },
-          idByUniversalIdentifier: {
-            ...flatEntityMaps.idByUniversalIdentifier,
-            [flatFieldMetadata.universalIdentifier]: flatFieldMetadata.id,
-          },
-        };
-      },
-      EMPTY_FLAT_ENTITY_MAPS,
-    );
+      return {
+        byId: {
+          ...flatEntityMaps.byId,
+          [flatFieldMetadata.id]: flatFieldMetadata,
+        },
+        idByUniversalIdentifier: {
+          ...flatEntityMaps.idByUniversalIdentifier,
+          [flatFieldMetadata.universalIdentifier]: flatFieldMetadata.id,
+        },
+      };
+    }, EMPTY_FLAT_ENTITY_MAPS);
 
     return flatFielMetadatadMaps;
   }

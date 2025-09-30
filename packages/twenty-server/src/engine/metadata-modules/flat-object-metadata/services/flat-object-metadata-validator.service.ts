@@ -79,6 +79,7 @@ export class FlatObjectMetadataValidatorService {
         flatFieldMetadataMaps,
         objectMetadataId: existingFlatObjectMetadata.id,
       });
+
     validationResult.errors.push(
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: existingFlatObjectMetadata,
@@ -194,6 +195,7 @@ export class FlatObjectMetadataValidatorService {
         flatFieldMetadataMaps,
         objectMetadataId: flatObjectMetadataToValidate.id,
       });
+
     objectValidationResult.errors.push(
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: flatObjectMetadataToValidate,

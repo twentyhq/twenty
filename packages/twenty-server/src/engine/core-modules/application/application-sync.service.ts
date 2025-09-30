@@ -195,6 +195,8 @@ export class ApplicationSyncService {
       existingFlatObjectMetadataMaps.byId,
     ).filter(
       (obj) => isDefined(obj) && obj.applicationId === applicationId,
+      // TODO handle when migrating to trinite usage
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
 
     const objectsToSyncStandardIds = objectsToSync.map((obj) => obj.standardId);

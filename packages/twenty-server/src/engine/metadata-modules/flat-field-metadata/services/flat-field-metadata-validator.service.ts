@@ -169,12 +169,14 @@ export class FlatFieldMetadataValidatorService {
 
     const flatFieldMetadataToDelete =
       optimisticFlatFieldMetadataMaps.byId[flatFieldMetadataToDeleteId];
+
     if (!isDefined(flatFieldMetadataToDelete)) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to delete not found',
         userFriendlyMessage: t`Field metadata to delete not found`,
       });
+
       return validationResult;
     }
 

@@ -353,6 +353,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       (acc, createFieldAction) => {
         const createObjectOccurence =
           acc.createObjectActions[createFieldAction.objectMetadataId];
+
         if (isDefined(createObjectOccurence)) {
           return {
             ...acc,
@@ -371,6 +372,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
         const createFieldOccurence =
           acc.createFieldActions[createFieldAction.objectMetadataId] ?? {};
+
         return {
           ...acc,
           createFieldActions: {
@@ -399,6 +401,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         ),
       },
     );
+
     orchestratorActionsReport.fieldMetadata.created =
       Object.values(createFieldActions);
     orchestratorActionsReport.objectMetadata.created =

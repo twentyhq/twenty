@@ -116,7 +116,6 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     flatEntityUpdate: { from: fromFlatFieldMetadata, to: toFlatFieldMetadata },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
-    otherFlatEntitiesToValidate: otherFlatFieldMetadataMapsToValidate,
   }: FlatEntityUpdateValidationArgs<
     FlatFieldMetadataSecond,
     FieldMetadataRelatedFlatEntityMaps
