@@ -289,7 +289,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatDatabaseEventTriggerMaps,
             to: toFlatDatabaseEventTriggerMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+            workspaceId,
+            dependencyOptimisticFlatEntityMaps: undefined,
           },
         );
 
@@ -316,7 +317,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatCronTriggerMaps,
             to: toFlatCronTriggerMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {} as AllFlatEntityMaps,
+            workspaceId,
+            dependencyOptimisticFlatEntityMaps: undefined,
           },
         );
 

@@ -12,16 +12,12 @@ import {
   UpdateDatabaseEventTriggerAction,
   WorkspaceMigrationDatabaseEventTriggerActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-database-event-trigger-action-v2.type';
-import {
-  DatabaseEventTriggerRelatedFlatEntityMaps,
-  FlatDatabaseEventTriggerValidatorService,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
+import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 
 @Injectable()
 export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatDatabaseEventTrigger,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-  DatabaseEventTriggerRelatedFlatEntityMaps
+  WorkspaceMigrationDatabaseEventTriggerActionV2
 > {
   constructor(
     private readonly flatDatabaseEventTriggerValidatorService: FlatDatabaseEventTriggerValidatorService,
@@ -30,13 +26,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   }
 
   protected async validateFlatEntityCreation({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<FlatDatabaseEventTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationDatabaseEventTriggerActionV2,
       FlatDatabaseEventTrigger
@@ -47,7 +39,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         {
           flatDatabaseEventTriggerToValidate,
           optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -68,13 +59,9 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   }
 
   protected async validateFlatEntityDeletion({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityValidationArgs<FlatDatabaseEventTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationDatabaseEventTriggerActionV2,
       FlatDatabaseEventTrigger
@@ -85,7 +72,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         {
           flatDatabaseEventTriggerToValidate,
           optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
@@ -106,16 +92,12 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   }
 
   protected async validateFlatEntityUpdate({
-    dependencyOptimisticFlatEntityMaps,
     flatEntityUpdate: {
       from: fromFlatDatabaseEventTrigger,
       to: toFlatDatabaseEventTrigger,
     },
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
+  }: FlatEntityUpdateValidationArgs<FlatDatabaseEventTrigger>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationDatabaseEventTriggerActionV2,
         FlatDatabaseEventTrigger
@@ -137,7 +119,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         {
           flatDatabaseEventTriggerToValidate: toFlatDatabaseEventTrigger,
           optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
         },
       );
 
