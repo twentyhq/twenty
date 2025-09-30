@@ -3,7 +3,6 @@ import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { NUMBER_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/NumberChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import {
   IconChartBar,
   IconChartLine,
@@ -11,6 +10,7 @@ import {
   IconGauge,
   IconNumber,
 } from 'twenty-ui/display';
+import { GraphType } from '~/generated-metadata/graphql';
 
 export const GRAPH_TYPE_INFORMATION = {
   [GraphType.BAR]: {
