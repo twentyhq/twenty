@@ -56,9 +56,8 @@ export const ViewFieldsHiddenDropdownSection = () => {
       <DropdownMenuItemsContainer>
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
-            
             const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
-            
+
             return (
               <div key={fieldMetadataItem.id} title={fieldMetadataItem.label}>
                 <MenuItem
@@ -73,7 +72,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
                         }),
                     },
                   ]}
-                  text={displayLabel} 
+                  text={displayLabel}
                 />
               </div>
             );

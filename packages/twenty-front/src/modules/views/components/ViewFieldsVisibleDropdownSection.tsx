@@ -17,8 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, useIcons } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
-import { truncateFieldLabel } from '~/utils/string/truncateText'; 
-
+import { truncateFieldLabel } from '~/utils/string/truncateText';
 
 export const ViewFieldsVisibleDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
@@ -105,8 +104,10 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
-                  
-                  const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
+
+                  const displayLabel = truncateFieldLabel(
+                    fieldMetadataItem.label,
+                  );
 
                   return (
                     <DraggableItem
