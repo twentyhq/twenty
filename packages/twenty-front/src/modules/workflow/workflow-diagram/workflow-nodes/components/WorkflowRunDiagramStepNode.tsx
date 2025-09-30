@@ -161,6 +161,17 @@ export const WorkflowRunDiagramStepNode = ({
         selected={selected}
         runStatus={data.runStatus}
       />
+
+      {isDefined(data.rightHandleOptions) && (
+        <WorkflowDiagramHandleSource
+          id={data.rightHandleOptions.id}
+          type="source"
+          position={Position.Right}
+          disableHoverEffect
+          selected={selected}
+          runStatus={data.runStatus}
+        />
+      )}
     </>
   );
 };

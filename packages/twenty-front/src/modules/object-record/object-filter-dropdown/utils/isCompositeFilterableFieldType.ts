@@ -1,7 +1,7 @@
 import { type CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
-import { FILTERABLE_FIELD_TYPES } from '@/object-record/record-filter/types/FilterableFieldType';
 import { COMPOSITE_FIELD_TYPES } from '@/settings/data-model/types/CompositeFieldType';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { FILTERABLE_FIELD_TYPES } from 'twenty-shared/types';
 
 export const isCompositeFilterableFieldType = (
   type: FieldType,

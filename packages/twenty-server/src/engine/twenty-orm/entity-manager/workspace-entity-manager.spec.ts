@@ -139,8 +139,9 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_ITERATOR_ENABLED: false,
         IS_DATABASE_EVENT_TRIGGER_ENABLED: false,
         IS_CALENDAR_VIEW_ENABLED: false,
-        IS_GROUP_BY_ENABLED: false,
+        IS_GROUP_BY_ENABLED: true,
         IS_PUBLIC_DOMAIN_ENABLED: false,
+        IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
       },
       eventEmitterService: {

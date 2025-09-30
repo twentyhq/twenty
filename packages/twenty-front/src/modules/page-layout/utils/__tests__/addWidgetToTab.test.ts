@@ -1,16 +1,21 @@
-import { WidgetType } from '../../mocks/mockWidgets';
-import {
-  type PageLayoutTabWithData,
-  type PageLayoutWidgetWithData,
-} from '../../types/pageLayoutTypes';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { GraphType, WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '../../types/PageLayoutTab';
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { addWidgetToTab } from '../addWidgetToTab';
 
 describe('addWidgetToTab', () => {
-  const mockWidget: PageLayoutWidgetWithData = {
+  const mockWidget: PageLayoutWidget = {
+    __typename: 'PageLayoutWidget',
     id: 'widget-1',
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
     type: WidgetType.GRAPH,
+    configuration: {
+      graphType: GraphType.NUMBER,
+      aggregateOperation: AggregateOperations.COUNT,
+      aggregateFieldMetadataId: 'id',
+    },
     gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
     objectMetadataId: null,
     createdAt: '2024-01-01T00:00:00Z',
@@ -18,7 +23,7 @@ describe('addWidgetToTab', () => {
     deletedAt: null,
   };
 
-  const mockTabs: PageLayoutTabWithData[] = [
+  const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
       title: 'Tab 1',
@@ -45,7 +50,7 @@ describe('addWidgetToTab', () => {
     const result = addWidgetToTab(mockTabs, 'tab-1', mockWidget);
 
     expect(result[0].widgets).toHaveLength(1);
-    expect(result[0].widgets[0]).toEqual(mockWidget);
+    expect(result[0].widgets?.[0]).toEqual(mockWidget);
     expect(result[1].widgets).toHaveLength(0);
   });
 
@@ -65,7 +70,7 @@ describe('addWidgetToTab', () => {
   });
 
   it('should add multiple widgets to the same tab', () => {
-    const secondWidget: PageLayoutWidgetWithData = {
+    const secondWidget: PageLayoutWidget = {
       ...mockWidget,
       id: 'widget-2',
       title: 'Second Widget',
@@ -75,8 +80,8 @@ describe('addWidgetToTab', () => {
     result = addWidgetToTab(result, 'tab-1', secondWidget);
 
     expect(result[0].widgets).toHaveLength(2);
-    expect(result[0].widgets[0]).toEqual(mockWidget);
-    expect(result[0].widgets[1]).toEqual(secondWidget);
+    expect(result[0].widgets?.[0]).toEqual(mockWidget);
+    expect(result[0].widgets?.[1]).toEqual(secondWidget);
   });
 
   it('should return a new array without mutating the original', () => {

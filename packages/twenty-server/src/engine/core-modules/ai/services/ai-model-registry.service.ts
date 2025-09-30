@@ -138,7 +138,7 @@ export class AiModelRegistryService {
     return Array.from(this.modelRegistry.values());
   }
 
-  getDefaultModel(): RegisteredAIModel | undefined {
+  getDefaultModel(): RegisteredAIModel {
     const defaultModelId = this.twentyConfigService.get('DEFAULT_MODEL_ID');
     let model = this.getModel(defaultModelId);
 

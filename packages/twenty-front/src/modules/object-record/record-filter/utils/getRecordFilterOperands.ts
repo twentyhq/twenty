@@ -1,15 +1,12 @@
-import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
-import {
-  type FilterableAndTSVectorFieldType,
-  type FilterableFieldType,
-} from '@/object-record/record-filter/types/FilterableFieldType';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import {
   FieldMetadataType,
   ViewFilterOperand as RecordFilterOperand,
+  type FilterableAndTSVectorFieldType,
+  type FilterableFieldType,
 } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isExpectedSubFieldName } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
   filterType: FilterableAndTSVectorFieldType;
@@ -168,7 +165,7 @@ export const getRecordFilterOperands = ({
           FieldMetadataType.CURRENCY,
           'currencyCode',
           subFieldName,
-        )
+        ) === true
       ) {
         return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
       } else {

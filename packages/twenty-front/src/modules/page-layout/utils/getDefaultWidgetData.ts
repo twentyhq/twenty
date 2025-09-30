@@ -1,4 +1,4 @@
-import { GraphType } from '../mocks/mockWidgets';
+import { GraphType } from '~/generated-metadata/graphql';
 
 export const getDefaultWidgetData = (graphType: GraphType) => {
   switch (graphType) {

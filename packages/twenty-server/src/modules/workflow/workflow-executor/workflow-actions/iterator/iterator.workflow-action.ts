@@ -105,7 +105,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       hasProcessedAllItems,
     };
 
-    if (!hasProcessedAllItems) {
+    if (!hasProcessedAllItems && currentItemIndex > 0) {
       await this.resetStepsInLoop({
         iteratorStepId,
         initialLoopStepIds,
@@ -140,19 +140,55 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       steps,
     });
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: stepIdsToReset.reduce(
-        (acc, stepId) => {
-          acc[stepId] = {
-            status: StepStatus.NOT_STARTED,
-            result: undefined,
-            error: undefined,
-          };
+    const workflowRunToUpdate =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
 
-          return acc;
-        },
-        {} as Record<string, WorkflowRunStepInfo>,
-      ),
+    const stepInfos = workflowRunToUpdate.state.stepInfos;
+    const subStepsInfos = stepIdsToReset.reduce(
+      (acc, stepId) => {
+        acc[stepId] = {
+          status: StepStatus.NOT_STARTED,
+          result: undefined,
+          error: undefined,
+          history: [
+            ...(stepInfos[stepId]?.history ?? []),
+            {
+              result: stepInfos[stepId]?.result,
+              error: stepInfos[stepId]?.error,
+              status: stepInfos[stepId]?.status,
+            },
+          ],
+        };
+
+        return acc;
+      },
+      {} as Record<string, WorkflowRunStepInfo>,
+    );
+
+    const iteratorStepInfo = stepInfos[iteratorStepId];
+
+    const stepInfosToUpdate = {
+      ...subStepsInfos,
+      [iteratorStepId]: {
+        ...iteratorStepInfo,
+        result: undefined,
+        error: undefined,
+        history: [
+          ...(iteratorStepInfo?.history ?? []),
+          {
+            result: iteratorStepInfo?.result,
+            error: iteratorStepInfo?.error,
+            status: iteratorStepInfo?.status,
+          },
+        ],
+      },
+    };
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+      stepInfos: stepInfosToUpdate,
       workflowRunId,
       workspaceId,
     });

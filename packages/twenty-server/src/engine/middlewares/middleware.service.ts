@@ -163,6 +163,7 @@ export class MiddlewareService {
     request.workspaceMemberId = data.workspaceMemberId;
     request.userWorkspaceId = data.userWorkspaceId;
     request.authProvider = data.authProvider;
+    request.impersonationContext = data.impersonationContext;
 
     request.locale =
       data.userWorkspace?.locale ??

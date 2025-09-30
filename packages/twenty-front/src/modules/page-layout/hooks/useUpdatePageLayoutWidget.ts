@@ -1,6 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { type PageLayoutWidgetWithData } from '@/page-layout/types/pageLayoutTypes';
+import { type PageLayoutWidget } from '~/generated/graphql';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -18,7 +18,7 @@ export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const updatePageLayoutWidget = useRecoilCallback(
     ({ set }) =>
-      (widgetId: string, updates: Partial<PageLayoutWidgetWithData>) => {
+      (widgetId: string, updates: Partial<PageLayoutWidget>) => {
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
           tabs: prev.tabs.map((tab) => ({

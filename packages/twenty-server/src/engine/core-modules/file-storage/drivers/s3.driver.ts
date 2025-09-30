@@ -70,10 +70,7 @@ export class S3Driver implements StorageDriver {
     await this.s3Client.send(command);
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  private async emptyS3Directory(folderPath) {
-    this.logger.log(`${folderPath} - emptying folder`);
-
+  private async fetchS3FolderContents(folderPath: string) {
     const listParams = {
       Bucket: this.bucketName,
       Prefix: folderPath,
@@ -81,6 +78,15 @@ export class S3Driver implements StorageDriver {
 
     const listObjectsCommand = new ListObjectsV2Command(listParams);
     const listedObjects = await this.s3Client.send(listObjectsCommand);
+
+    return listedObjects;
+  }
+
+  // @ts-expect-error legacy noImplicitAny
+  private async emptyS3Directory(folderPath) {
+    this.logger.log(`${folderPath} - emptying folder`);
+
+    const listedObjects = await this.fetchS3FolderContents(folderPath);
 
     this.logger.log(
       `${folderPath} - listed objects`,
@@ -172,9 +178,15 @@ export class S3Driver implements StorageDriver {
   }
 
   async move(params: {
-    from: { folderPath: string; filename: string };
-    to: { folderPath: string; filename: string };
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
   }): Promise<void> {
+    if (!params.from.filename || !params.to.filename) {
+      await this.moveS3Folder(params);
+
+      return;
+    }
+
     const fromKey = `${params.from.folderPath}/${params.from.filename}`;
     const toKey = `${params.to.folderPath}/${params.to.filename}`;
 
@@ -212,6 +224,45 @@ export class S3Driver implements StorageDriver {
       }
       // For other errors, throw the original error
       throw error;
+    }
+  }
+
+  async moveS3Folder(params: {
+    from: { folderPath: string };
+    to: { folderPath: string };
+  }): Promise<void> {
+    const fromKey = `${params.from.folderPath}`;
+
+    const listedObjects = await this.fetchS3FolderContents(fromKey);
+
+    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
+      throw new Error(
+        `No objects found in the source folder ${params.from.folderPath}.`,
+      );
+    }
+
+    for (const object of listedObjects.Contents) {
+      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
+
+      if (!isDefined(folderAndFilePaths)) {
+        continue;
+      }
+
+      const { fromFolderPath, filename } = folderAndFilePaths;
+
+      const toFolderPath = fromFolderPath.replace(
+        params.from.folderPath,
+        params.to.folderPath,
+      );
+
+      if (!isDefined(toFolderPath)) {
+        continue;
+      }
+
+      await this.move({
+        from: { folderPath: fromFolderPath, filename },
+        to: { folderPath: toFolderPath, filename },
+      });
     }
   }
 

@@ -1,5 +1,4 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/ui/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
@@ -251,7 +250,6 @@ export type FieldAddressValue = {
   addressLat: number | null;
   addressLng: number | null;
 };
-export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
@@ -290,7 +288,7 @@ export const FieldActorValueSchema = z.object({
   name: z.string(),
   context: z
     .object({
-      provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+      provider: z.enum(ConnectedAccountProvider).optional(),
     })
     .nullable(),
 });

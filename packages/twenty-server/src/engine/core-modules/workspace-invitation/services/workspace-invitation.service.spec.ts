@@ -23,6 +23,17 @@ import { WorkspaceInvitationService } from './workspace-invitation.service';
 // To fix a circular dependency issue
 jest.mock('src/engine/core-modules/workspace/services/workspace.service');
 
+// To avoid dynamic import issues in Jest
+jest.mock('@react-email/render', () => ({
+  render: jest.fn().mockImplementation(async (template, options) => {
+    if (options?.plainText) {
+      return 'Plain Text Email';
+    }
+
+    return '<html><body>HTML email content</body></html>';
+  }),
+}));
+
 describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;
   let appTokenRepository: Repository<AppToken>;

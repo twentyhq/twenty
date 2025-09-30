@@ -14,7 +14,6 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { type Widget } from '@/page-layout/widgets/types/Widget';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -84,7 +83,7 @@ export const PageLayoutGridLayout = () => {
     return null;
   }
 
-  const activeTabWidgets = currentPageLayout?.tabs.find(
+  const activeTabWidgets = currentPageLayout.tabs.find(
     (tab) => tab.id === activeTabId,
   )?.widgets;
 
@@ -141,7 +140,7 @@ export const PageLayoutGridLayout = () => {
           ) : (
             activeTabWidgets?.map((widget) => (
               <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer widget={widget as Widget} />
+                <WidgetRenderer widget={widget} />
               </div>
             ))
           )}

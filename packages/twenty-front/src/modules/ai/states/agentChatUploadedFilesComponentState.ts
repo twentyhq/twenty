@@ -1,9 +1,9 @@
 import { AgentChatMessagesComponentInstanceContext } from '@/ai/states/agentChatMessagesComponentState';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { type File } from '~/generated-metadata/graphql';
+import { type FileUIPart } from 'ai';
 
 export const agentChatUploadedFilesComponentState = createComponentState<
-  File[]
+  FileUIPart[]
 >({
   key: 'agentChatUploadedFilesComponentState',
   defaultValue: [],

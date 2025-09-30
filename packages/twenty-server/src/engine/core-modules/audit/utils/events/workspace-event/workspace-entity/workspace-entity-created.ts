@@ -4,14 +4,12 @@ import { registerEvent } from 'src/engine/core-modules/audit/utils/events/worksp
 
 export const WORKSPACE_ENTITY_CREATED_EVENT =
   'Workspace Entity Created' as const;
-export const workspaceEntityCreatedSchema = z
-  .object({
-    event: z.literal(WORKSPACE_ENTITY_CREATED_EVENT),
-    properties: z.object({
-      name: z.string(),
-    }),
-  })
-  .strict();
+export const workspaceEntityCreatedSchema = z.strictObject({
+  event: z.literal(WORKSPACE_ENTITY_CREATED_EVENT),
+  properties: z.strictObject({
+    name: z.string(),
+  }),
+});
 
 export type WorkspaceEntityCreatedTrackEvent = z.infer<
   typeof workspaceEntityCreatedSchema

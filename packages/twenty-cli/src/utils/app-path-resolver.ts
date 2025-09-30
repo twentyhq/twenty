@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
@@ -9,17 +8,16 @@ import {
 
 export const resolveAppPath = async (
   providedPath?: string,
-  verbose = false,
 ): Promise<string> => {
   if (providedPath && path.isAbsolute(providedPath)) {
-    return validateAppPath(providedPath, verbose);
+    return validateAppPath(providedPath);
   }
 
   if (providedPath) {
     return resolveRelativePath(providedPath);
   }
 
-  return autoDetectAppPath(verbose);
+  return autoDetectAppPath();
 };
 
 const resolveRelativePath = async (providedPath: string): Promise<string> => {
@@ -36,23 +34,20 @@ const resolveRelativePath = async (providedPath: string): Promise<string> => {
     }
   }
 
-  throw new Error(`Cannot find twenty-app.json at any of these locations:
+  throw new Error(`Cannot find package.json at any of these locations:
   - ${fromCwd}
   - ${projectRoot ? path.resolve(projectRoot, providedPath) : 'N/A (no project root found)'}
   
 Please check the path or run from the correct directory.`);
 };
 
-const autoDetectAppPath = async (verbose = false): Promise<string> => {
+const autoDetectAppPath = async (): Promise<string> => {
   let currentDir = process.cwd();
   const maxDepth = 10;
   let depth = 0;
 
   while (depth < maxDepth) {
     if (await isValidAppPath(currentDir)) {
-      if (verbose) {
-        console.log(chalk.gray(`Auto-detected app path: ${currentDir}`));
-      }
       return currentDir;
     }
 
@@ -65,7 +60,7 @@ const autoDetectAppPath = async (verbose = false): Promise<string> => {
 
   const suggestions = await findNearbyApps(process.cwd());
   let errorMessage =
-    'No twenty-app.json found in current directory or parent directories.';
+    'No package.json found in current directory or parent directories.';
 
   if (suggestions.length > 0) {
     errorMessage += '\n\nFound Twenty applications nearby:';
@@ -81,22 +76,13 @@ const autoDetectAppPath = async (verbose = false): Promise<string> => {
   throw new Error(errorMessage);
 };
 
-const validateAppPath = async (
-  appPath: string,
-  verbose = false,
-): Promise<string> => {
-  if (verbose) {
-    console.log(chalk.gray(`Checking app path: ${appPath}`));
-  }
+const validateAppPath = async (appPath: string): Promise<string> => {
+  const hasPackageJson = await fs.pathExists(
+    path.join(appPath, 'package.json'),
+  );
 
-  const jsoncManifestPath = path.join(appPath, 'twenty-app.jsonc');
-  const jsonManifestPath = path.join(appPath, 'twenty-app.json');
-
-  const hasJsoncManifest = await fs.pathExists(jsoncManifestPath);
-  const hasJsonManifest = await fs.pathExists(jsonManifestPath);
-
-  if (!hasJsoncManifest && !hasJsonManifest) {
-    let errorMessage = `No manifest file found. Expected twenty-app.jsonc or twenty-app.json in: ${appPath}`;
+  if (!hasPackageJson) {
+    let errorMessage = `package.json not found in: ${appPath}`;
 
     if (await fs.pathExists(appPath)) {
       try {

@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   ApiKeyException,
@@ -83,7 +85,7 @@ export class ApiKeyResolver {
     @AuthWorkspace() workspace: Workspace,
     @Args('input') input: UpdateApiKeyDTO,
   ): Promise<ApiKey | null> {
-    const updateData: Partial<ApiKey> = {};
+    const updateData: QueryDeepPartialEntity<ApiKey> = {};
 
     if (input.name !== undefined) updateData.name = input.name;
     if (input.expiresAt !== undefined)

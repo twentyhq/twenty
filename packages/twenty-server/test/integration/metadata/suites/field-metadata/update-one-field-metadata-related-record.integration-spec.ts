@@ -4,6 +4,7 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   createTestViewFilterWithRestApi,
   createTestViewWithRestApi,
@@ -15,7 +16,9 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
@@ -69,6 +72,22 @@ const testFieldMetadataType: EnumFieldMetadataType[] = [
 describe('update-one-field-metadata-related-record', () => {
   let idToDelete: string;
 
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
+
   const createObjectSelectFieldAndView = async ({
     options,
     type: fieldMetadataType,
@@ -78,6 +97,7 @@ describe('update-one-field-metadata-related-record', () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: getMockCreateObjectInput({
         labelSingular: singular,
         labelPlural: plural,
@@ -92,6 +112,7 @@ describe('update-one-field-metadata-related-record', () => {
     const {
       data: { createOneField },
     } = await createOneFieldMetadata<typeof fieldMetadataType>({
+      expectToFail: false,
       input: {
         objectMetadataId: createOneObject.id,
         type: fieldMetadataType,
@@ -118,7 +139,17 @@ describe('update-one-field-metadata-related-record', () => {
 
   afterEach(async () => {
     if (isDefined(idToDelete)) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: idToDelete,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: idToDelete },
       });
     }

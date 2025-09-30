@@ -5,7 +5,7 @@ import { registerEvent } from 'src/engine/core-modules/audit/utils/events/worksp
 export const OBJECT_RECORD_DELETED_EVENT = 'Object Record Deleted' as const;
 export const objectRecordDeletedSchema = z.object({
   event: z.literal(OBJECT_RECORD_DELETED_EVENT),
-  properties: z.object({}).passthrough(),
+  properties: z.looseObject({}),
 });
 
 export type ObjectRecordDeletedTrackEvent = z.infer<

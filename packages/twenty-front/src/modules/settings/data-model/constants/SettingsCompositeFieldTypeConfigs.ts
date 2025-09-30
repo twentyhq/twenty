@@ -12,6 +12,7 @@ import {
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IllustrationIconCurrency,
@@ -51,7 +52,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconCurrency,
     subFields: [
       {
-        subFieldName: 'amountMicros',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.CURRENCY]
+            .amountMicros,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
             .amountMicros,
@@ -60,7 +63,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'currencyCode',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.CURRENCY]
+            .currencyCode,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
             .currencyCode,
@@ -90,7 +95,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconMail,
     subFields: [
       {
-        subFieldName: 'primaryEmail',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.EMAILS]
+            .primaryEmail,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
             .primaryEmail,
@@ -99,7 +106,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: true,
       },
       {
-        subFieldName: 'additionalEmails',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.EMAILS]
+            .additionalEmails,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
             .additionalEmails,
@@ -133,7 +142,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconLink,
     subFields: [
       {
-        subFieldName: 'primaryLinkUrl',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
+            .primaryLinkUrl,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
             .primaryLinkUrl,
@@ -142,7 +153,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: true,
       },
       {
-        subFieldName: 'primaryLinkLabel',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
+            .primaryLinkLabel,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
             .primaryLinkLabel,
@@ -151,7 +164,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'secondaryLinks',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
+            .secondaryLinks,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
             .secondaryLinks,
@@ -184,7 +199,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconPhone,
     subFields: [
       {
-        subFieldName: 'primaryPhoneCallingCode',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
+            .primaryPhoneCallingCode,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
             .primaryPhoneCallingCode,
@@ -193,7 +210,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'primaryPhoneCountryCode',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
+            .primaryPhoneCountryCode,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
             .primaryPhoneCountryCode,
@@ -202,7 +221,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'primaryPhoneNumber',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
+            .primaryPhoneNumber,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
             .primaryPhoneNumber,
@@ -211,7 +232,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: true,
       },
       {
-        subFieldName: 'additionalPhones',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
+            .additionalPhones,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
             .additionalPhones,
@@ -252,7 +275,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconUser,
     subFields: [
       {
-        subFieldName: 'firstName',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.FULL_NAME]
+            .firstName,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
             .firstName,
@@ -261,7 +286,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'lastName',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.FULL_NAME]
+            .lastName,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
             .lastName,
@@ -282,7 +309,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     Icon: IllustrationIconMap,
     subFields: [
       {
-        subFieldName: 'addressStreet1',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressStreet1,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressStreet1,
@@ -291,7 +320,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressStreet2',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressStreet2,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressStreet2,
@@ -300,7 +331,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressCity',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressCity,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressCity,
@@ -309,7 +342,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressState',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressState,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressState,
@@ -318,7 +353,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressCountry',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressCountry,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressCountry,
@@ -327,7 +364,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressPostcode',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressPostcode,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressPostcode,
@@ -336,7 +375,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressLat',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressLat,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressLat,
@@ -345,7 +386,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'addressLng',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
+            .addressLng,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
             .addressLng,
@@ -394,7 +437,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
     subFields: [
       {
-        subFieldName: 'source',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].source,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
         isImportable: true,
@@ -402,7 +446,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'name',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].name,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
         isImportable: true,
@@ -410,7 +455,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'workspaceMemberId',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
+            .workspaceMemberId,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
             .workspaceMemberId,
@@ -419,7 +466,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'context',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
+            .context,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
         isImportable: true,
@@ -454,7 +503,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     category: 'Basic',
     subFields: [
       {
-        subFieldName: 'blocknote',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT_V2]
+            .blocknote,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
             .blocknote,
@@ -463,7 +514,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isIncludedInUniqueConstraint: false,
       },
       {
-        subFieldName: 'markdown',
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT_V2]
+            .markdown,
         subFieldLabel:
           COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
             .markdown,

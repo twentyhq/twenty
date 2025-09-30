@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
+import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -43,23 +44,8 @@ export class WorkflowVersionStepWorkspaceService {
       nextStepId,
       position,
       parentStepConnectionOptions,
+      id,
     } = input;
-
-    const newStep =
-      await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
-        {
-          type: stepType,
-          workspaceId,
-          position,
-          workflowVersionId,
-        },
-      );
-
-    const enrichedNewStep =
-      await this.workflowSchemaWorkspaceService.enrichOutputSchema({
-        step: newStep,
-        workspaceId,
-      });
 
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
@@ -69,18 +55,40 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    const existingSteps = workflowVersion.steps || [];
+    const existingSteps = workflowVersion.steps;
 
     const existingTrigger = workflowVersion.trigger;
 
-    const { updatedSteps, updatedInsertedStep, updatedTrigger } = insertStep({
-      existingSteps,
+    const { builtStep, additionalCreatedSteps } =
+      await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
+        {
+          type: stepType,
+          workspaceId,
+          position,
+          workflowVersionId,
+          id,
+        },
+      );
+
+    const enrichedNewStep =
+      await this.workflowSchemaWorkspaceService.enrichOutputSchema({
+        step: builtStep,
+        workspaceId,
+        workflowVersionId,
+      });
+
+    const { updatedSteps, updatedTrigger } = insertStep({
+      existingSteps: existingSteps ?? [],
       existingTrigger,
       insertedStep: enrichedNewStep,
       parentStepId,
       nextStepId,
       parentStepConnectionOptions,
     });
+
+    if (isDefined(additionalCreatedSteps)) {
+      updatedSteps.push(...additionalCreatedSteps);
+    }
 
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
@@ -95,9 +103,10 @@ export class WorkflowVersionStepWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      createdStep: updatedInsertedStep,
-      trigger: updatedTrigger,
-      steps: updatedSteps,
+      existingTrigger,
+      existingSteps,
+      updatedTrigger,
+      updatedSteps,
     });
   }
 
@@ -109,7 +118,7 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
     step: WorkflowAction;
-  }): Promise<WorkflowAction> {
+  }): Promise<WorkflowActionDTO> {
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
         workflowVersionId,
@@ -148,6 +157,7 @@ export class WorkflowVersionStepWorkspaceService {
       : await this.updateWorkflowVersionStepSettings({
           newStep: step,
           workspaceId,
+          workflowVersionId,
         });
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
@@ -252,9 +262,10 @@ export class WorkflowVersionStepWorkspaceService {
     );
 
     return computeWorkflowVersionStepChanges({
-      steps: updatedSteps,
-      trigger: updatedTrigger,
-      deletedStepIds: removedStepIds,
+      existingTrigger,
+      existingSteps: workflowVersion.steps,
+      updatedTrigger,
+      updatedSteps,
     });
   }
 
@@ -294,7 +305,7 @@ export class WorkflowVersionStepWorkspaceService {
         },
       );
 
-    const { updatedSteps, updatedInsertedStep, updatedTrigger } = insertStep({
+    const { updatedSteps, updatedTrigger } = insertStep({
       existingSteps: workflowVersion.steps ?? [],
       existingTrigger: workflowVersion.trigger,
       insertedStep: duplicatedStep,
@@ -313,9 +324,10 @@ export class WorkflowVersionStepWorkspaceService {
     });
 
     return computeWorkflowVersionStepChanges({
-      createdStep: updatedInsertedStep,
-      trigger: updatedTrigger,
-      steps: updatedSteps,
+      existingTrigger: workflowVersion.trigger,
+      existingSteps: workflowVersion.steps,
+      updatedTrigger,
+      updatedSteps,
     });
   }
 
@@ -350,7 +362,7 @@ export class WorkflowVersionStepWorkspaceService {
       },
     );
 
-    const defaultStep =
+    const { builtStep } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
           type: newStep.type,
@@ -362,25 +374,29 @@ export class WorkflowVersionStepWorkspaceService {
 
     return this.workflowSchemaWorkspaceService.enrichOutputSchema({
       step: {
-        ...defaultStep,
+        ...builtStep,
         id: existingStep.id,
         nextStepIds: existingStep.nextStepIds,
         position: existingStep.position,
       },
       workspaceId,
+      workflowVersionId,
     });
   }
 
   private async updateWorkflowVersionStepSettings({
     newStep,
     workspaceId,
+    workflowVersionId,
   }: {
     newStep: WorkflowAction;
     workspaceId: string;
+    workflowVersionId: string;
   }): Promise<WorkflowAction> {
     return this.workflowSchemaWorkspaceService.enrichOutputSchema({
       step: newStep,
       workspaceId,
+      workflowVersionId,
     });
   }
 }

@@ -1,3 +1,5 @@
+import { InternalServerErrorException } from '@nestjs/common';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -10,11 +12,21 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import {
+  type AggregationField,
+  getAvailableAggregationsFromObjectFields,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+
+type OrderByCondition = {
+  order: 'ASC' | 'DESC';
+  nulls?: 'NULLS FIRST' | 'NULLS LAST';
+};
 
 export class GraphqlQueryOrderFieldParser {
   private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
@@ -27,7 +39,16 @@ export class GraphqlQueryOrderFieldParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, string> {
+    isGroupBy = false,
+  ): Record<string, OrderByCondition> {
+    if (isGroupBy) {
+      return this.parseForGroupBy(
+        orderBy,
+        objectNameSingular,
+        isForwardPagination,
+      );
+    }
+
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
@@ -65,8 +86,52 @@ export class GraphqlQueryOrderFieldParser {
 
         return acc;
       },
-      {} as Record<string, string>,
+      {} as Record<string, OrderByCondition>,
     );
+  }
+
+  private parseForGroupBy(
+    orderBy: ObjectRecordOrderBy,
+    objectNameSingular: string,
+    isForwardPagination = true,
+  ): Record<string, OrderByCondition> {
+    const availableAggregations: Record<string, AggregationField> =
+      getAvailableAggregationsFromObjectFields(
+        Object.values(this.objectMetadataMapItem.fieldsById),
+      );
+
+    let orderByExpressionsAndConditions: Record<string, OrderByCondition> = {};
+
+    for (const orderByCondition of orderBy) {
+      for (const [aggregatedOrderByCondition, direction] of Object.entries(
+        orderByCondition,
+      )) {
+        const selectedAggregation =
+          availableAggregations[aggregatedOrderByCondition];
+
+        if (!selectedAggregation) {
+          throw new InternalServerErrorException(
+            `Selected aggregation not found for ${aggregatedOrderByCondition}`,
+          );
+        }
+
+        const expression = ProcessAggregateHelper.getAggregateExpression(
+          selectedAggregation,
+          objectNameSingular,
+        );
+
+        if (!expression) {
+          throw new InternalServerErrorException(
+            `Aggregate expression not found for ${aggregatedOrderByCondition}`,
+          );
+        }
+
+        orderByExpressionsAndConditions[expression] =
+          this.convertOrderByToFindOptionsOrder(direction, isForwardPagination);
+      }
+    }
+
+    return orderByExpressionsAndConditions;
   }
 
   private getOptionalOrderByCasting(
@@ -88,7 +153,7 @@ export class GraphqlQueryOrderFieldParser {
     value: any,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): Record<string, string> {
+  ): Record<string, OrderByCondition> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
@@ -125,23 +190,35 @@ export class GraphqlQueryOrderFieldParser {
 
         return acc;
       },
-      {} as Record<string, string>,
+      {} as Record<string, OrderByCondition>,
     );
   }
 
   private convertOrderByToFindOptionsOrder(
     direction: OrderByDirection,
     isForwardPagination = true,
-  ): string {
+  ): OrderByCondition {
     switch (direction) {
       case OrderByDirection.AscNullsFirst:
-        return `${isForwardPagination ? 'ASC' : 'DESC'} NULLS FIRST`;
+        return {
+          order: isForwardPagination ? 'ASC' : 'DESC',
+          nulls: 'NULLS FIRST',
+        };
       case OrderByDirection.AscNullsLast:
-        return `${isForwardPagination ? 'ASC' : 'DESC'} NULLS LAST`;
+        return {
+          order: isForwardPagination ? 'ASC' : 'DESC',
+          nulls: 'NULLS LAST',
+        };
       case OrderByDirection.DescNullsFirst:
-        return `${isForwardPagination ? 'DESC' : 'ASC'} NULLS FIRST`;
+        return {
+          order: isForwardPagination ? 'DESC' : 'ASC',
+          nulls: 'NULLS FIRST',
+        };
       case OrderByDirection.DescNullsLast:
-        return `${isForwardPagination ? 'DESC' : 'ASC'} NULLS LAST`;
+        return {
+          order: isForwardPagination ? 'DESC' : 'ASC',
+          nulls: 'NULLS LAST',
+        };
       default:
         throw new GraphqlQueryRunnerException(
           `Invalid direction: ${direction}`,

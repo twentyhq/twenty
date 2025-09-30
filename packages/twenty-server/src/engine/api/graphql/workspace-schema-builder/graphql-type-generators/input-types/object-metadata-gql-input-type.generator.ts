@@ -4,6 +4,7 @@ import { ObjectMetadataCreateGqlInputTypeGenerator } from 'src/engine/api/graphq
 import { ObjectMetadataFilterGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/filter-input/object-metadata-filter-gql-input-type.generator';
 import { ObjectMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/object-metadata-group-by-gql-input-type.generator';
 import { ObjectMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-gql-input-type.generator';
+import { ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-with-group-by-gql-input-type.generator';
 import { ObjectMetadataUpdateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/update-input/object-metadata-update-gql-input-type.generator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -14,6 +15,7 @@ export class ObjectMetadataGqlInputTypeGenerator {
     private readonly objectMetadataUpdateGqlInputTypeGenerator: ObjectMetadataUpdateGqlInputTypeGenerator,
     private readonly objectMetadataFilterGqlInputTypeGenerator: ObjectMetadataFilterGqlInputTypeGenerator,
     private readonly objectMetadataOrderByGqlInputTypeGenerator: ObjectMetadataOrderByGqlInputTypeGenerator,
+    private readonly objectMetadataOrderByWithGroupByGqlInputTypeGenerator: ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator,
     private readonly objectMetadataGroupByGqlInputTypeGenerator: ObjectMetadataGroupByGqlInputTypeGenerator,
   ) {}
 
@@ -27,9 +29,12 @@ export class ObjectMetadataGqlInputTypeGenerator {
     this.objectMetadataFilterGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );
-    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore(
+    this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore({
       objectMetadata,
-    );
+    });
+    this.objectMetadataOrderByWithGroupByGqlInputTypeGenerator.buildAndStore({
+      objectMetadata,
+    });
     this.objectMetadataGroupByGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );
