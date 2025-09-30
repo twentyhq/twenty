@@ -160,8 +160,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [textFieldMetadataItem],
+        fields: [textFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -178,8 +177,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [addressFieldMetadataItem],
+        fields: [addressFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -237,8 +235,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [linksFieldMetadataItem],
+        fields: [linksFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -275,8 +272,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [fullNameFieldMetadataItem],
+        fields: [fullNameFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter.or).toContainEqual({
@@ -306,8 +302,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [arrayFieldMetadataItem],
+        fields: [arrayFieldMetadataItem],
         
       });
 
@@ -355,8 +350,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [phonesFieldMetadataItem],
+        fields: [phonesFieldMetadataItem],
         
       });
 
@@ -409,8 +403,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [numberFieldMetadataItem],
+        fields: [numberFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -423,8 +416,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [currencyFieldMetadataItem],
+        fields: [currencyFieldMetadataItem],
         
       });
 
@@ -442,8 +434,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [currencyFieldMetadataItem],
+        fields: [currencyFieldMetadataItem],
       });
 
       expect(
@@ -460,8 +451,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [selectFieldMetadataItem],
+        fields: [selectFieldMetadataItem],
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -482,8 +472,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [selectFieldMetadataItem],
+        fields: [selectFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});
@@ -496,8 +485,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [multiSelectFieldMetadataItem],
+        fields: [multiSelectFieldMetadataItem],
       });
 
       const { foundCorrespondingSelectOptions: expectedOptions } =
@@ -518,8 +506,7 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
 
       const result = turnAnyFieldFilterIntoRecordGqlFilter({
         filterValue,
-        
-          fields: [multiSelectFieldMetadataItem],
+        fields: [multiSelectFieldMetadataItem],
       });
 
       expect(result.recordGqlOperationFilter).toEqual({});

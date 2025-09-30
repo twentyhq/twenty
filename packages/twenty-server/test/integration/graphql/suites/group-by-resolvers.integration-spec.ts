@@ -272,7 +272,7 @@ describe('group-by resolvers (integration)', () => {
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
-          data: { id: testPerson2Id, city: cityB },
+          data: { id: testPerson3Id, city: cityB },
         }),
       );
 
