@@ -1,26 +1,32 @@
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 
+type FromMorphOrRelationFlatFieldMetadataToRelationDtoArgs = {
+  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
+  targetFlatObjectMetadata: FlatObjectMetadataSecond;
+  sourceFlatFieldMetadata: FlatFieldMetadataSecond<MorphOrRelationFieldMetadataType>;
+  targetFlatFieldMetadata: FlatFieldMetadataSecond<MorphOrRelationFieldMetadataType>;
+};
 export const fromMorphOrRelationFlatFieldMetadataToRelationDto = ({
-  flatFieldMetadata,
+  sourceFlatFieldMetadata,
   sourceFlatObjectMetadata,
-}: {
-  sourceFlatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
-}) => ({
-  type: flatFieldMetadata.settings.relationType,
+  targetFlatFieldMetadata,
+  targetFlatObjectMetadata,
+}: FromMorphOrRelationFlatFieldMetadataToRelationDtoArgs) => ({
+  type: sourceFlatFieldMetadata.settings.relationType,
   sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
     sourceFlatObjectMetadata,
   ),
-  sourceFieldMetadata:
-    fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata),
+  sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
+    sourceFlatFieldMetadata,
+  ),
   targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
-    flatFieldMetadata.flatRelationTargetObjectMetadata,
+    targetFlatObjectMetadata,
   ),
   targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-    flatFieldMetadata.flatRelationTargetFieldMetadata,
+    targetFlatFieldMetadata,
   ),
 });
