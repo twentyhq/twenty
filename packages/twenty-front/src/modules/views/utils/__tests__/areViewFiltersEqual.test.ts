@@ -7,7 +7,7 @@ describe('areViewFiltersEqual', () => {
     __typename: 'ViewFilter',
     id: 'filter-1',
     fieldMetadataId: 'field-1',
-    operand: ViewFilterOperand.Contains,
+    operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     displayValue: 'test',
     viewFilterGroupId: 'group-1',
@@ -46,7 +46,7 @@ describe('areViewFiltersEqual', () => {
     const filterA = { ...baseFilter };
     const filterB = {
       ...baseFilter,
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
     };
 
     expect(areViewFiltersEqual(filterA, filterB)).toBe(false);

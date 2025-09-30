@@ -26,7 +26,7 @@ export const useVectorSearchFilterActions = () => {
       fieldMetadataId: vectorSearchField.id,
       value: value,
       displayValue: value,
-      operand: ViewFilterOperand.VectorSearch,
+      operand: ViewFilterOperand.VECTOR_SEARCH,
       type: getFilterTypeFromFieldType(vectorSearchField.type),
       label: 'Search',
     };
