@@ -5,7 +5,7 @@ import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useOpenMorphRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationFromManyFieldInput';
+import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationToOneFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -15,6 +15,7 @@ import {
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
@@ -32,8 +33,8 @@ export const useOpenFieldInputEditMode = () => {
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
 
-  const { openMorphRelationFromManyFieldInput } =
-    useOpenMorphRelationFromManyFieldInput();
+  const { openMorphRelationOneToManyFieldInput } =
+    useOpenMorphRelationOneToManyFieldInput();
 
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
@@ -106,7 +107,7 @@ export const useOpenFieldInputEditMode = () => {
             throw new Error('Field is not a morph relation one to many');
           }
 
-          openMorphRelationFromManyFieldInput({
+          openMorphRelationOneToManyFieldInput({
             recordId,
             prefix,
             fieldDefinition,
@@ -131,6 +132,15 @@ export const useOpenFieldInputEditMode = () => {
           }
         }
 
+        if (isFieldMorphRelationManyToOne(fieldDefinition)) {
+          openRelationToOneFieldInput({
+            recordId,
+            prefix,
+            fieldName: fieldDefinition.metadata.fieldName,
+          });
+          return;
+        }
+
         pushFocusItemToFocusStack({
           focusId: getRecordFieldInputInstanceId({
             recordId,
@@ -152,7 +162,7 @@ export const useOpenFieldInputEditMode = () => {
       },
     [
       openActivityTargetCellEditMode,
-      openMorphRelationFromManyFieldInput,
+      openMorphRelationOneToManyFieldInput,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,
