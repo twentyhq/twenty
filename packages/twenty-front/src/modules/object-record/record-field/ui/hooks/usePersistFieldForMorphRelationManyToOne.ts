@@ -43,6 +43,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
               objectNameSingulars,
               relatedRecordId: null,
               objectMetadataItem,
+              fieldDefinition,
             },
           ]);
           return;
@@ -59,12 +60,14 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
             objectNameSingulars,
             relatedRecordId: recordFromPicker.id,
             objectMetadataItem,
+            fieldDefinition,
           },
         ];
 
         updateMultipleRecordsManyToOneObjects?.(updatedManyRecordsArgs);
       },
     [
+      fieldDefinition,
       objectMetadataItem,
       objectNameSingulars,
       recordId,

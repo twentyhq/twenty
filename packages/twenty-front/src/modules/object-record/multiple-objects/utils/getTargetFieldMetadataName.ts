@@ -15,7 +15,7 @@ export const getTargetFieldMetadataName = ({
   objectNameSingular: string;
 }) => {
   if (isFieldRelation(fieldDefinition)) {
-    return fieldDefinition.metadata.targetFieldMetadataName;
+    return fieldDefinition.metadata.fieldName;
   } else {
     return fieldDefinition.metadata.morphRelations.find(
       (morphRelation) =>

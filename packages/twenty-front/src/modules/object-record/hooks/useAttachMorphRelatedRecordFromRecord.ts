@@ -5,11 +5,11 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
-import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getRelatedRecordFieldDefinition } from '@/object-record/utils/getRelatedRecordFieldDefinition';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,7 +62,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
         if (isDefined(parentRecord)) {
           relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
             const currentMorphFieldValue =
-              parentRecord[fieldDefinition.metadata.fieldName];
+              parentRecord[fieldDefinition.metadata.fieldName] || [];
 
             const objectRecordFromCache = getRecordFromCache({
               objectMetadataItem: relatedObjectMetadataItem,
@@ -75,7 +75,6 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             if (!isDefined(objectRecordFromCache)) {
               return;
             }
-
             set(recordStoreFamilyState(recordId), {
               ...parentRecord,
               [fieldDefinition.metadata.fieldName]: [
@@ -119,16 +118,22 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
           throw new Error('Could not find cached related record');
         }
 
-        const fieldOnRelatedObject = getTargetFieldMetadataName({
-          fieldDefinition,
-          objectNameSingular: relatedObjectMetadataItem.nameSingular,
-        });
-        if (!isDefined(fieldOnRelatedObject)) {
+        const fieldMetadataOnRelatedObject =
+          fieldDefinition.metadata.morphRelations.find(
+            (morphRelation) =>
+              morphRelation.targetObjectMetadata.nameSingular ===
+              relatedObjectMetadataItem.nameSingular,
+          )?.targetFieldMetadata;
+
+        if (!isDefined(fieldMetadataOnRelatedObject)) {
           throw new Error('Could not find field on related object');
         }
 
+        const fieldMetadataNameOnRelatedObject =
+          fieldMetadataOnRelatedObject.name;
+
         const previousRecordId =
-          cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
+          cachedRelatedRecord?.[`${fieldMetadataNameOnRelatedObject}Id`];
 
         if (isDefined(previousRecordId)) {
           const previousRecord = getRecordFromCache<ObjectRecord>({
@@ -141,7 +146,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
 
           const previousRecordWithRelation = {
             ...cachedRelatedRecord,
-            [fieldOnRelatedObject]: previousRecord,
+            [fieldMetadataNameOnRelatedObject]: previousRecord,
           };
 
           const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
@@ -155,19 +160,33 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             cache: apolloCoreClient.cache,
             record: {
               ...cachedRelatedRecord,
-              [fieldOnRelatedObject]: previousRecord,
+              [fieldMetadataNameOnRelatedObject]: previousRecord,
             },
             recordGqlFields: gqlFields,
             objectPermissionsByObjectMetadataId,
           });
         }
 
+        const sourceObjectMetadataItemName =
+          fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
+            .nameSingular;
+
+        const relatedRecordFieldDefinition = getRelatedRecordFieldDefinition({
+          fieldDefinition,
+          relatedObjectMetadataItem,
+        });
+
+        if (!isDefined(relatedRecordFieldDefinition)) {
+          throw new Error('Could not find related record field definition');
+        }
+
         const updatedManyRecordsArgs = [
           {
             idToUpdate: relatedRecordId,
-            objectNameSingulars,
+            objectMetadataItem: relatedObjectMetadataItem,
+            objectNameSingulars: [sourceObjectMetadataItemName],
             relatedRecordId: recordId,
-            objectMetadataItem,
+            fieldDefinition: relatedRecordFieldDefinition,
             // recordGqlFields: gqlFields,
           },
         ];
@@ -175,11 +194,11 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
         await updateMultipleRecordsManyToOneObjects(updatedManyRecordsArgs);
       },
     [
-      fieldDefinition,
       objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
+      fieldDefinition,
       updateMultipleRecordsManyToOneObjects,
       apolloCoreClient.cache,
+      objectPermissionsByObjectMetadataId,
       objectMetadataItem,
     ],
   );

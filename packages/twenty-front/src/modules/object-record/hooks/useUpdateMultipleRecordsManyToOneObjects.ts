@@ -12,7 +12,8 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -21,7 +22,6 @@ import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryNa
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
@@ -32,10 +32,10 @@ type UpdateManyRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingulars: string[];
   recordGqlFields?: Record<string, any>;
+  fieldDefinition: FieldDefinition<FieldMetadata>;
 };
 
 export const useUpdateMultipleRecordsManyToOneObjects = () => {
-  const { fieldDefinition } = useContext(FieldContext);
   const apolloCoreClient = useApolloCoreClient();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -52,6 +52,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
       objectNameSingulars,
       relatedRecordId,
       recordGqlFields,
+      fieldDefinition,
     } of updatedManyRecordsArgs) {
       if (isNull(idToUpdate)) {
         throw new CustomError(`idToUpdate id is null`, 'ID_TO_UPDATE_IS_NULL');
