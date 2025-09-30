@@ -23,7 +23,7 @@ import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/met
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 
-type FromCreateFieldInputToFlatObjectMetadataArgs = {
+export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
