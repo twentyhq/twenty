@@ -24,13 +24,18 @@ export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.configuration?.source;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
 
   const currentYAxisGroupByFieldMetadataId =
-    widgetInEditMode?.configuration?.groupByFieldMetadataIdY;
+    widgetInEditMode.configuration.groupByFieldMetadataIdY;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === currentSource,
+    (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -69,7 +74,9 @@ export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
 
   const handleSelectField = (fieldMetadataId: string) => {
     updateCurrentWidgetConfig({
-      groupByFieldMetadataIdY: fieldMetadataId,
+      configToUpdate: {
+        groupByFieldMetadataIdY: fieldMetadataId,
+      },
     });
     closeDropdown();
   };

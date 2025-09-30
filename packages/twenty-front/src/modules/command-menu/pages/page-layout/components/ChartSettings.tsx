@@ -8,30 +8,39 @@ import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constan
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
-import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
-  const configuration = widget.configuration;
-
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
-
-  const currentGraphType = widget.configuration.graphType as GraphType;
 
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const { getChartSettingsValues } = useChartSettingsValues(configuration);
+  if (widget.configuration?.__typename === 'IframeConfiguration') {
+    throw new Error('IframeConfiguration is not supported');
+  }
+
+  const configuration = widget.configuration as ChartConfiguration;
+
+  const { getChartSettingsValues } = useChartSettingsValues({
+    objectMetadataId: widget.objectMetadataId,
+    configuration,
+  });
+
+  const currentGraphType = configuration?.graphType;
 
   const handleGraphTypeChange = (graphType: GraphType) => {
     updateCurrentWidgetConfig({
-      graphType,
+      configToUpdate: {
+        graphType,
+      },
     });
 
     updateCommandMenuPageInfo({

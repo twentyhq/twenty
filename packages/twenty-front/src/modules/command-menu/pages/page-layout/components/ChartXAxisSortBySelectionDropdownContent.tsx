@@ -1,7 +1,4 @@
-import {
-  useGraphSortOptions,
-  type SortOption,
-} from '@/command-menu/pages/page-layout/hooks/useGraphSortOptions';
+import { useGraphSortOptions } from '@/command-menu/pages/page-layout/hooks/useGraphSortOptions';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
@@ -16,15 +13,26 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartXAxisSortBySelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const configuration = widgetInEditMode?.configuration;
-  const currentOrderByX = configuration?.orderByX;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
 
-  const { sortOptions } = useGraphSortOptions(configuration);
+  const configuration = widgetInEditMode?.configuration;
+  const currentOrderByX = configuration.orderByX;
+
+  const { sortOptions } = useGraphSortOptions({
+    objectMetadataId: widgetInEditMode?.objectMetadataId,
+    configuration,
+  });
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -40,9 +48,11 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectSortOption = (orderByX: SortOption) => {
+  const handleSelectSortOption = (orderByX: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      orderByX,
+      configToUpdate: {
+        orderByX,
+      },
     });
     closeDropdown();
   };

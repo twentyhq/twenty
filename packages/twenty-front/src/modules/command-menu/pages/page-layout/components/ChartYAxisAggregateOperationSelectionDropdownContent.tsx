@@ -4,7 +4,6 @@ import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useW
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,6 +20,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type ExtendedAggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
   currentYAxisFieldMetadataId,
@@ -34,12 +34,18 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.configuration?.source;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
   const currentYAxisAggregateOperation =
-    widgetInEditMode?.configuration?.aggregateOperation;
+    widgetInEditMode.configuration.aggregateOperation;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === currentSource,
+    (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
   const selectedYAxisField = sourceObjectMetadataItem?.fields.find(
@@ -85,8 +91,10 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
     aggregateOperation: ExtendedAggregateOperations,
   ) => {
     updateCurrentWidgetConfig({
-      aggregateFieldMetadataId: currentYAxisFieldMetadataId,
-      aggregateOperation,
+      configToUpdate: {
+        aggregateFieldMetadataId: currentYAxisFieldMetadataId,
+        aggregateOperation,
+      },
     });
     closeDropdown();
   };
@@ -127,9 +135,7 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
               }}
             >
               <MenuItemSelect
-                text={getAggregateOperationLabel(
-                  aggregateOperation as ExtendedAggregateOperations,
-                )}
+                text={getAggregateOperationLabel(aggregateOperation)}
                 selected={currentYAxisAggregateOperation === aggregateOperation}
                 focused={selectedItemId === aggregateOperation}
                 onClick={() => {

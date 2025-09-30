@@ -1,33 +1,42 @@
+import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowDown,
   IconArrowUp,
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
-
-export type SortOption =
-  | 'FIELD_ASC'
-  | 'FIELD_DESC'
-  | 'VALUE_ASC'
-  | 'VALUE_DESC';
+import { GraphOrderBy } from '~/generated/graphql';
 
 export type SortOptionItem = {
-  value: SortOption;
+  value: GraphOrderBy;
   label: string;
   icon: typeof IconArrowUp;
 };
 
-export const useGraphSortOptions = (
-  configuration: PageLayoutWidget['configuration'],
-) => {
+export const useGraphSortOptions = ({
+  objectMetadataId,
+  configuration,
+}: {
+  objectMetadataId: string;
+  configuration?: ChartConfiguration;
+}) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  if (
+    !isDefined(configuration) ||
+    !('groupByFieldMetadataIdX' in configuration)
+  ) {
+    return {
+      sortOptions: [],
+    };
+  }
+
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === configuration?.source,
+    (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
   );
 
   const groupByFieldX = objectMetadataItem?.fields.find(
@@ -51,22 +60,22 @@ export const useGraphSortOptions = (
 
     return [
       {
-        value: 'FIELD_ASC',
+        value: GraphOrderBy.FIELD_ASC,
         label: `${fieldLabel} Ascending`,
         icon: IconArrowUp,
       },
       {
-        value: 'FIELD_DESC',
+        value: GraphOrderBy.FIELD_DESC,
         label: `${fieldLabel} Descending`,
         icon: IconArrowDown,
       },
       {
-        value: 'VALUE_ASC',
+        value: GraphOrderBy.VALUE_ASC,
         label: `${valueLabel} Ascending`,
         icon: IconTrendingUp,
       },
       {
-        value: 'VALUE_DESC',
+        value: GraphOrderBy.VALUE_DESC,
         label: `${valueLabel} Descending`,
         icon: IconTrendingDown,
       },

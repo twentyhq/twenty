@@ -1,6 +1,6 @@
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
+import { GraphType } from '~/generated-metadata/graphql';
 
 import { MenuPicker } from 'twenty-ui/navigation';
 

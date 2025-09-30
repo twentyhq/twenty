@@ -23,7 +23,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentColorScheme = widgetInEditMode?.configuration?.colorScheme;
+  const currentColorScheme = widgetInEditMode?.configuration?.color;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -55,7 +55,9 @@ export const ChartColorSelectionDropdownContent = () => {
 
   const handleSelectColor = (colorName: ThemeColor) => {
     updateCurrentWidgetConfig({
-      color: colorName,
+      configToUpdate: {
+        color: colorName,
+      },
     });
     closeDropdown();
   };

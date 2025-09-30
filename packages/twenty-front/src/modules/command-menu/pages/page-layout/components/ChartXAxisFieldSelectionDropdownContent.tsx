@@ -24,12 +24,18 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.configuration?.source;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
   const currentXAxisFieldMetadataId =
-    widgetInEditMode?.configuration?.groupByFieldMetadataIdX;
+    widgetInEditMode.configuration.groupByFieldMetadataIdX;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === currentSource,
+    (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -68,7 +74,9 @@ export const ChartXAxisFieldSelectionDropdownContent = () => {
 
   const handleSelectField = (fieldMetadataId: string) => {
     updateCurrentWidgetConfig({
-      groupByFieldMetadataIdX: fieldMetadataId,
+      configToUpdate: {
+        groupByFieldMetadataIdX: fieldMetadataId,
+      },
     });
     closeDropdown();
   };

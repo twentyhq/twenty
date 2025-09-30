@@ -27,7 +27,7 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.configuration?.source;
+  const currentSource = widgetInEditMode?.objectMetadataId;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -68,7 +68,7 @@ export const ChartDataSourceDropdownContent = () => {
 
   const handleSelectSource = (objectMetadataId: string) => {
     updateCurrentWidgetConfig({
-      source: objectMetadataId,
+      objectMetadataId,
     });
     closeDropdown();
   };

@@ -269,12 +269,22 @@ export type AvailableWorkspacesAndAccessTokensOutput = {
   tokens: AuthTokenPair;
 };
 
+/** Which axes should display labels */
+export enum AxisNameDisplay {
+  BOTH = 'BOTH',
+  NONE = 'NONE',
+  X = 'X',
+  Y = 'Y'
+}
+
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -284,8 +294,6 @@ export type BarChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type Billing = {
@@ -1139,6 +1147,23 @@ export type ExecuteServerlessFunctionInput = {
   version?: Scalars['String'];
 };
 
+export enum ExtendedAggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  EARLIEST = 'EARLIEST',
+  LATEST = 'LATEST',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
@@ -1329,9 +1354,11 @@ export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateFieldMetadataIdTotal: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
-  aggregateOperationTotal: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperationTotal: ExtendedAggregateOperations;
+  color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
 };
@@ -1547,9 +1574,11 @@ export type InvalidatePassword = {
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
+  axisNameDisplay: AxisNameDisplay;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataIdX: Scalars['UUID'];
@@ -1559,8 +1588,6 @@ export type LineChartConfiguration = {
   orderByY?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
-  xAxisName?: Maybe<Scalars['String']>;
-  yAxisName?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -2622,9 +2649,10 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type NumberChartConfiguration = {
   __typename?: 'NumberChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
@@ -2866,9 +2894,10 @@ export enum PermissionFlagType {
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
+  aggregateOperation: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  displayDataLabel: Scalars['Boolean'];
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];

@@ -25,15 +25,21 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.configuration?.source;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
   const currentYAxisFieldMetadataId =
-    widgetInEditMode?.configuration?.groupByFieldMetadataIdY;
+    widgetInEditMode.configuration.groupByFieldMetadataIdY;
 
   const [selectedYAxisFieldMetadataId, setSelectedYAxisFieldMetadataId] =
     useState(currentYAxisFieldMetadataId);
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === currentSource,
+    (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(

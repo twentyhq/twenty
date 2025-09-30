@@ -3,16 +3,21 @@ import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
 import { NUMBER_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/NumberChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
+import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import {
   IconChartBar,
   IconChartLine,
   IconChartPie,
+  type IconComponent,
   IconGauge,
   IconNumber,
 } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
-export const GRAPH_TYPE_INFORMATION = {
+export const GRAPH_TYPE_INFORMATION: Record<
+  GraphType,
+  { label: string; icon: IconComponent; settings: ChartSettingsGroup[] }
+> = {
   [GraphType.BAR]: {
     label: 'Bar Chart',
     icon: IconChartBar,

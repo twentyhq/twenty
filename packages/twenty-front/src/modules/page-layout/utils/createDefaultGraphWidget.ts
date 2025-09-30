@@ -1,7 +1,7 @@
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { v4 as uuidv4 } from 'uuid';
 import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
 import {
+  ExtendedAggregateOperations,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -18,51 +18,57 @@ const createDefaultGraphConfiguration = (
     case GraphType.NUMBER:
       return {
         graphType: GraphType.NUMBER,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
+        displayDataLabel: false,
       };
 
     case GraphType.PIE:
       return {
         graphType: GraphType.PIE,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
         groupByFieldMetadataId: placeholderFieldId2,
         orderBy: GraphOrderBy.VALUE_DESC,
+        displayDataLabel: false,
       };
 
     case GraphType.BAR:
       return {
         graphType: GraphType.BAR,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
         groupByFieldMetadataIdX: placeholderFieldId2,
         orderByX: GraphOrderBy.FIELD_ASC,
+        displayDataLabel: false,
       };
 
     case GraphType.LINE:
       return {
         graphType: GraphType.LINE,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
         groupByFieldMetadataIdX: placeholderFieldId2,
         orderByX: GraphOrderBy.FIELD_ASC,
+        displayDataLabel: false,
       };
 
     case GraphType.GAUGE:
       return {
         graphType: GraphType.GAUGE,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
-        aggregateOperationTotal: AggregateOperations.COUNT,
+        aggregateOperationTotal: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataIdTotal: placeholderFieldId2,
+        displayDataLabel: false,
       };
 
     default:
       return {
         graphType: GraphType.NUMBER,
-        aggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
+        displayDataLabel: false,
       };
   }
 };

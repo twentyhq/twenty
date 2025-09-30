@@ -1,10 +1,7 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import {
-  getChartAxisNameOptions,
-  type AxisNameOption,
-} from '@/command-menu/pages/page-layout/utils/getChartAxisNameOptions';
+import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -15,13 +12,20 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { AxisNameDisplay } from '~/generated/graphql';
 
 export const ChartAxisNameSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentAxisNameDisplay =
-    widgetInEditMode?.configuration?.axisNameDisplay;
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
+  const currentAxisNameDisplay = widgetInEditMode.configuration.axisNameDisplay;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -32,16 +36,23 @@ export const ChartAxisNameSelectionDropdownContent = () => {
     dropdownId,
   );
 
-  const axisOptions: AxisNameOption[] = ['NONE', 'X', 'Y', 'BOTH'];
+  const axisOptions: AxisNameDisplay[] = [
+    AxisNameDisplay.NONE,
+    AxisNameDisplay.X,
+    AxisNameDisplay.Y,
+    AxisNameDisplay.BOTH,
+  ];
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectAxisNameOption = (axisNameOption: AxisNameOption) => {
+  const handleSelectAxisNameOption = (axisNameOption: AxisNameDisplay) => {
     updateCurrentWidgetConfig({
-      axisNameDisplay: axisNameOption,
+      configToUpdate: {
+        axisNameDisplay: axisNameOption,
+      },
     });
     closeDropdown();
   };
@@ -64,7 +75,7 @@ export const ChartAxisNameSelectionDropdownContent = () => {
               }}
             >
               <MenuItemSelect
-                text={getChartAxisNameOptions(option)}
+                text={getChartAxisNameDisplayOptions(option)}
                 selected={currentAxisNameDisplay?.toUpperCase() === option}
                 focused={selectedItemId === option}
                 onClick={() => {

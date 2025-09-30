@@ -37,8 +37,8 @@ export const TEST_BAR_CHART_CONFIG = {
   aggregateOperation: AggregateOperations.SUM,
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.FIELD_ASC,
-  xAxisName: 'Month',
-  yAxisName: 'Revenue',
+  displayDataLabel: true,
+  axisNameDisplay: 'BOTH',
   color: 'red',
   description: 'Monthly revenue breakdown',
   omitNullValues: true,
@@ -52,6 +52,7 @@ export const TEST_BAR_CHART_CONFIG_MINIMAL = {
   aggregateOperation: AggregateOperations.COUNT,
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.VALUE_DESC,
+  displayDataLabel: false,
 };
 
 export const TEST_LINE_CHART_CONFIG = {
@@ -62,8 +63,8 @@ export const TEST_LINE_CHART_CONFIG = {
   orderByX: GraphOrderBy.FIELD_ASC,
   groupByFieldMetadataIdY: TEST_FIELD_METADATA_ID_3,
   orderByY: GraphOrderBy.FIELD_DESC,
-  xAxisName: 'Date',
-  yAxisName: 'Average Value',
+  displayDataLabel: true,
+  axisNameDisplay: 'BOTH',
   color: 'cyan',
   description: 'Trend over time',
   omitNullValues: false,
@@ -77,6 +78,7 @@ export const TEST_LINE_CHART_CONFIG_MINIMAL = {
   aggregateOperation: AggregateOperations.MAX,
   groupByFieldMetadataIdX: TEST_FIELD_METADATA_ID_2,
   orderByX: GraphOrderBy.VALUE_ASC,
+  displayDataLabel: false,
 };
 
 export const TEST_PIE_CHART_CONFIG = {
@@ -85,6 +87,7 @@ export const TEST_PIE_CHART_CONFIG = {
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.SUM,
   orderBy: GraphOrderBy.VALUE_DESC,
+  displayDataLabel: true,
   color: 'yellow',
   description: 'Distribution by category',
   filter: {
@@ -104,6 +107,7 @@ export const TEST_PIE_CHART_CONFIG_MINIMAL = {
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.COUNT,
   orderBy: GraphOrderBy.FIELD_ASC,
+  displayDataLabel: false,
 };
 
 export const TEST_GAUGE_CHART_CONFIG = {

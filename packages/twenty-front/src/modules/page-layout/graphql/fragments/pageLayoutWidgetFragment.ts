@@ -25,10 +25,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         groupByFieldMetadataIdY
         orderByY
         omitNullValues
-        xAxisName
-        yAxisName
+        axisNameDisplay
+        displayDataLabel
         rangeMin
         rangeMax
+        color
+        description
         filter
       }
       ... on LineChartConfiguration {
@@ -39,6 +41,13 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         orderByX
         groupByFieldMetadataIdY
         orderByY
+        omitNullValues
+        axisNameDisplay
+        displayDataLabel
+        rangeMin
+        rangeMax
+        color
+        description
         filter
       }
       ... on PieChartConfiguration {
@@ -47,6 +56,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateFieldMetadataId
         aggregateOperation
         orderBy
+        displayDataLabel
+        color
+        description
         filter
       }
       ... on NumberChartConfiguration {
@@ -62,6 +74,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateOperation
         aggregateOperationTotal
         aggregateFieldMetadataIdTotal
+        displayDataLabel
         description
         filter
       }
