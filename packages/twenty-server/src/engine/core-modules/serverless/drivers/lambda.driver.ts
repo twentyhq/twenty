@@ -135,8 +135,8 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private getLayerName(serverlessFunction: ServerlessFunctionEntity) {
-    if (isDefined(serverlessFunction?.serverlessFunctionLayer?.checksum)) {
-      return serverlessFunction?.serverlessFunctionLayer?.checksum;
+    if (isDefined(serverlessFunction?.serverlessFunctionLayer)) {
+      return serverlessFunction?.serverlessFunctionLayer.checksum;
     }
 
     return COMMON_LAYER_NAME;

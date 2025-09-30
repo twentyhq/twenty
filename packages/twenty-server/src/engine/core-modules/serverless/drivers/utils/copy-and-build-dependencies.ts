@@ -19,7 +19,7 @@ export const copyAndBuildDependencies = async (
     recursive: true,
   });
 
-  if (!isDefined(serverlessFunction.application)) {
+  if (!isDefined(serverlessFunction.serverlessFunctionLayer)) {
     await fs.cp(
       getLayerDependenciesDirName(
         serverlessFunction.layerVersion || LAST_LAYER_VERSION,
@@ -30,14 +30,9 @@ export const copyAndBuildDependencies = async (
       },
     );
   } else {
-    const packageJson =
-      serverlessFunction.application?.serverlessFunctionLayer.packageJson;
-    const yarnLock =
-      serverlessFunction.application?.serverlessFunctionLayer.yarnLock;
+    const packageJson = serverlessFunction.serverlessFunctionLayer.packageJson;
 
-    if (!isDefined(packageJson) || !isDefined(yarnLock)) {
-      return;
-    }
+    const yarnLock = serverlessFunction.serverlessFunctionLayer.yarnLock;
 
     await fs.writeFile(
       join(buildDirectory, 'package.json'),

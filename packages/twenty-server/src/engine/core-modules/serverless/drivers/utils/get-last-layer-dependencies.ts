@@ -28,15 +28,14 @@ export const getLastCommonLayerDependencies = async (
 export const getLayerDependencies = async (
   serverlessFunction: ServerlessFunctionEntity,
 ): Promise<LayerDependencies> => {
-  if (!isDefined(serverlessFunction.application)) {
+  if (!isDefined(serverlessFunction.serverlessFunctionLayer)) {
     return getLastCommonLayerDependencies(
       serverlessFunction.layerVersion ?? undefined,
     );
   }
 
   return {
-    packageJson:
-      serverlessFunction.application.serverlessFunctionLayer.packageJson,
-    yarnLock: serverlessFunction.application.serverlessFunctionLayer.yarnLock,
+    packageJson: serverlessFunction.serverlessFunctionLayer.packageJson,
+    yarnLock: serverlessFunction.serverlessFunctionLayer.yarnLock,
   };
 };
