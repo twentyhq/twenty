@@ -27,6 +27,9 @@ export class ServerlessFunctionLayerEntity {
   @Column({ type: 'text', nullable: false })
   checksum: string;
 
+  @Column({ nullable: false, type: 'uuid' })
+  workspaceId: string;
+
   @OneToMany(
     () => ServerlessFunctionEntity,
     (serverlessFunction) => serverlessFunction.serverlessFunctionLayer,

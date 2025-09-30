@@ -1,16 +1,16 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddServerlessFunctionLayerEntity1759221740293
+export class UpdateServerlessFunctionLayerEntity1759236947406
   implements MigrationInterface
 {
-  name = 'AddServerlessFunctionLayerEntity1759221740293';
+  name = 'UpdateServerlessFunctionLayerEntity1759236947406';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_259c48f99f625708723414adb5d"`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."serverlessFunctionLayer" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "packageJson" jsonb NOT NULL, "yarnLock" text NOT NULL, "checksum" text NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_a1077708d1b19463ab2eda7c246" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."serverlessFunctionLayer" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "packageJson" jsonb NOT NULL, "yarnLock" text NOT NULL, "checksum" text NOT NULL, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_a1077708d1b19463ab2eda7c246" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."serverlessFunction" ADD "serverlessFunctionLayerId" uuid`,

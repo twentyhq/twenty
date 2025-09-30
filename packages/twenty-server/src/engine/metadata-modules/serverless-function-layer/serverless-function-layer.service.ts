@@ -23,7 +23,10 @@ export class ServerlessFunctionLayerService {
     return crypto.createHash('sha256').update(yarnLock).digest('hex');
   }
 
-  async create({ packageJson, yarnLock }: CreateServerlessFunctionLayerInput) {
+  async create(
+    { packageJson, yarnLock }: CreateServerlessFunctionLayerInput,
+    workspaceId: string,
+  ) {
     const checksum = this.computeChecksum(yarnLock);
 
     const serverlessFunctionLayer =
@@ -31,6 +34,7 @@ export class ServerlessFunctionLayerService {
         packageJson,
         yarnLock,
         checksum,
+        workspaceId,
       });
 
     return this.serverlessFunctionLayerRepository.save(serverlessFunctionLayer);
@@ -49,12 +53,13 @@ export class ServerlessFunctionLayerService {
     return this.serverlessFunctionLayerRepository.update(id, updateData);
   }
 
-  async createCommonLayerIfNotExist() {
+  async createCommonLayerIfNotExist(workspaceId: string) {
     const { packageJson, yarnLock } = await getLastCommonLayerDependencies();
     const checksum = this.computeChecksum(yarnLock);
     const commonLayer = await this.serverlessFunctionLayerRepository.findOne({
       where: {
         checksum,
+        workspaceId,
       },
     });
 
@@ -62,6 +67,6 @@ export class ServerlessFunctionLayerService {
       return commonLayer;
     }
 
-    return this.create({ packageJson, yarnLock });
+    return this.create({ packageJson, yarnLock }, workspaceId);
   }
 }

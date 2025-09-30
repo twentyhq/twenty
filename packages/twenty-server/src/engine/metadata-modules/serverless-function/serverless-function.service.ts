@@ -338,7 +338,9 @@ export class ServerlessFunctionService {
     workspaceId: string,
   ) {
     const commonServerlessFunctionLayer =
-      await this.serverlessFunctionLayerService.createCommonLayerIfNotExist();
+      await this.serverlessFunctionLayerService.createCommonLayerIfNotExist(
+        workspaceId,
+      );
 
     const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
       {
