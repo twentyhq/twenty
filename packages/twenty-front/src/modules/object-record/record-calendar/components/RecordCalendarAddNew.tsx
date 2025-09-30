@@ -1,12 +1,20 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { IconPlus } from 'twenty-ui/display';
-import { useRecordCalendarContextOrThrow } from '../contexts/RecordCalendarContext';
-import { Button } from 'twenty-ui/input';
+import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { useRecordCalendarContextOrThrow } from '../contexts/RecordCalendarContext';
+
+const StyledButton = styled(Button)`
+  padding: ${({ theme }) => theme.spacing(0.5)};
+  min-width: unset;
+  height: auto;
+`;
 
 type RecordCalendarAddNewProps = {
   cardDate: string;
@@ -16,6 +24,7 @@ export const RecordCalendarAddNew = ({
   cardDate,
 }: RecordCalendarAddNewProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
+  const theme = useTheme();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -47,15 +56,16 @@ export const RecordCalendarAddNew = ({
     return null;
   }
 
+
   return (
-    <Button
+    <StyledButton
       onClick={() => {
         createNewIndexRecord({
-          [calendarFieldMetadataItem?.name]: cardDate,
+          [calendarFieldMetadataItem.name]: cardDate,
         });
       }}
       variant="tertiary"
-      Icon={IconPlus}
+      Icon={() => <IconPlus size={theme.icon.size.sm} />}
     />
   );
 };
