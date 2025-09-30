@@ -157,7 +157,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       if (fieldResult.status === 'fail') {
         orchestratorFailureReport.fieldMetadata.push(...fieldResult.errors);
       } else {
-        orchestratorActionsReport.index = fieldResult.actions;
+        orchestratorActionsReport.fieldMetadata = fieldResult.actions;
       }
     }
 

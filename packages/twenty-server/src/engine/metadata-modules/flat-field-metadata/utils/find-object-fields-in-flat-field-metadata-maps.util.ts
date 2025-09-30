@@ -19,7 +19,7 @@ export const findObjectFieldsInFlatFieldMetadataMaps = ({
     (acc, flatFieldMetadata) => {
       if (
         !isDefined(flatFieldMetadata) ||
-        flatFieldMetadata.objectMetadataId === objectMetadataId
+        flatFieldMetadata.objectMetadataId !== objectMetadataId
       ) {
         return acc;
       }

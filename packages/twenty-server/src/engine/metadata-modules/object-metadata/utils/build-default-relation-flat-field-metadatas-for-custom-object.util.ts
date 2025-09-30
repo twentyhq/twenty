@@ -221,7 +221,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
 
       const sourceFlatFieldMetadata = generateSourceFlatFieldMetadata({
         sourceFlatObjectMetadata,
-        targetFlatObjectMetadata: targetFlatObjectMetadata,
+        targetFlatObjectMetadata,
         workspaceId,
       });
 

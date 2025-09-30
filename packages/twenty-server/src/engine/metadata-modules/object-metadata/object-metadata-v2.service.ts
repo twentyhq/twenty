@@ -310,15 +310,19 @@ export class ObjectMetadataServiceV2 {
 
     const {
       flatObjectMetadataToCreate,
-      flatFieldMetadataToCreate,
       flatIndexMetadataToCreate,
+      flatFieldMetadataToCreateOnObject,
+      relationTargetFlatFieldMetadataToCreate,
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    const toFlatFielMetadatadMaps = flatFieldMetadataToCreate.reduce(
+    const toFlatFielMetadatadMaps = [
+      ...flatFieldMetadataToCreateOnObject,
+      ...relationTargetFlatFieldMetadataToCreate,
+    ].reduce(
       (flatFieldMaps, flatField) =>
         addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: flatField,

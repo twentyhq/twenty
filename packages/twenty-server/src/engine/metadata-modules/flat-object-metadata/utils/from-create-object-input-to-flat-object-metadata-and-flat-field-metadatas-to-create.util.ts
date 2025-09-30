@@ -25,7 +25,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
-    flatFieldMetadataToCreate: FlatFieldMetadata[];
+    relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[]
+    flatFieldMetadataToCreateOnObject: FlatFieldMetadata[]
     flatIndexMetadataToCreate: FlatIndexMetadata[];
   } => {
     const createObjectInput =
@@ -108,9 +109,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       flatIndexMetadataToCreate: Object.values(
         defaultIndexesForCustomObject.indexes,
       ),
-      flatFieldMetadataToCreate: [
-        ...objectFlatFieldMetadatas,
-        ...standardTargetFlatFieldMetadatas,
-      ],
+      relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
+      flatFieldMetadataToCreateOnObject: objectFlatFieldMetadatas,
     };
   };

@@ -41,9 +41,11 @@ const getReservedCompositeFieldNames = (
 export const validateFlatFieldMetadataNameAvailability = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
+  otherFlatFieldMetadataMapsToValidate,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadata[];
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const { objectFlatFieldMetadatas } = findObjectFieldsInFlatFieldMetadataMaps({
@@ -73,12 +75,16 @@ export const validateFlatFieldMetadataNameAvailability = ({
         return false;
       }
 
-      const targetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
-        {
+      const targetFlatFieldMetadata =
+        otherFlatFieldMetadataMapsToValidate?.find(
+          (flatField) =>
+            flatField.id ===
+            existingFlatFieldMetadata.relationTargetFieldMetadataId,
+        ) ??
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: existingFlatFieldMetadata.relationTargetFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
-        },
-      );
+        });
 
       if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
         return false;
