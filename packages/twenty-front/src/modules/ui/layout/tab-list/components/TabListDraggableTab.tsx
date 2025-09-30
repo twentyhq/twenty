@@ -34,12 +34,7 @@ export const TabListDraggableTab = ({
   onSelect,
 }: TabListDraggableTabProps) => {
   return (
-    <Draggable
-      key={tab.id}
-      draggableId={tab.id}
-      index={index}
-      isDragDisabled={isDisabled}
-    >
+    <Draggable draggableId={tab.id} index={index} isDragDisabled={isDisabled}>
       {(draggableProvided, draggableSnapshot) => {
         const draggableStyle = draggableProvided.draggableProps.style;
         return (
@@ -52,7 +47,7 @@ export const TabListDraggableTab = ({
             onClick={draggableSnapshot.isDragging ? undefined : onSelect}
             style={{
               ...draggableStyle,
-              cursor: draggableSnapshot.isDragging ? 'grabbing' : 'grab',
+              cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
             }}
           >
             <StyledTabButtonWrapper>

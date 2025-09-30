@@ -77,7 +77,54 @@ export const TabListContent = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
 
-  const content = (
+  if (isDraggable === true && onDragEnd !== undefined) {
+    return (
+      <DragDropContext onDragEnd={onDragEnd}>
+        <NodeDimension onDimensionChange={onContainerWidthChange}>
+          <StyledContainer className={className}>
+            <TabListVisibleTabsArea
+              visibleTabs={visibleTabs}
+              visibleTabCount={visibleTabCount}
+              activeTabId={activeTabId}
+              loading={loading}
+              isDraggable={isDraggable}
+              behaveAsLinks={behaveAsLinks}
+              onTabSelect={onTabSelect}
+            />
+
+            {hasHiddenTabs && (
+              <TabListDropdown
+                dropdownId={dropdownId}
+                overflow={{
+                  hiddenTabsCount,
+                  isActiveTabHidden,
+                }}
+                hiddenTabs={visibleTabs.slice(visibleTabCount)}
+                activeTabId={activeTabId || ''}
+                onTabSelect={onTabSelectFromDropdown}
+                loading={loading}
+                isDraggable={isDraggable}
+                visibleTabCount={visibleTabCount}
+              />
+            )}
+
+            {onAddTab && (
+              <StyledAddButton>
+                <IconButton
+                  Icon={IconPlus}
+                  size="small"
+                  variant="tertiary"
+                  onClick={() => onAddTab()}
+                />
+              </StyledAddButton>
+            )}
+          </StyledContainer>
+        </NodeDimension>
+      </DragDropContext>
+    );
+  }
+
+  return (
     <NodeDimension onDimensionChange={onContainerWidthChange}>
       <StyledContainer className={className}>
         <TabListVisibleTabsArea
@@ -93,7 +140,6 @@ export const TabListContent = ({
         {hasHiddenTabs && (
           <TabListDropdown
             dropdownId={dropdownId}
-            onClose={() => {}}
             overflow={{
               hiddenTabsCount,
               isActiveTabHidden,
@@ -120,10 +166,4 @@ export const TabListContent = ({
       </StyledContainer>
     </NodeDimension>
   );
-
-  if (isDraggable === true && onDragEnd !== undefined) {
-    return <DragDropContext onDragEnd={onDragEnd}>{content}</DragDropContext>;
-  }
-
-  return content;
 };
