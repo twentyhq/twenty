@@ -15,8 +15,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
-import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {

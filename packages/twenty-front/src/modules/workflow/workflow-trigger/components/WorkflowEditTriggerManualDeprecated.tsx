@@ -197,6 +197,10 @@ export const WorkflowEditTriggerManualDeprecated = ({
                 ...trigger,
                 settings: {
                   ...trigger.settings,
+                  availability: {
+                    objectNameSingular: updatedObject,
+                    type: 'SINGLE_RECORD',
+                  },
                   objectType: updatedObject,
                   outputSchema: {},
                 },

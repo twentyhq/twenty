@@ -6,7 +6,6 @@ import {
   type FieldJsonValue,
   type FieldMultiSelectValue,
   type FieldNumberValue,
-  type FieldRatingValue,
   type FieldRelationValue,
   type FieldSelectValue,
   type FieldTextValue,
@@ -15,6 +14,7 @@ import {
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
+import { type FieldRatingValue } from 'twenty-shared/types';
 import {
   IllustrationIconArray,
   IllustrationIconCalendarEvent,

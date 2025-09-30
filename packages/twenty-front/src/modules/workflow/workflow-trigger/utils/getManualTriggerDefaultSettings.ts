@@ -17,6 +17,7 @@ export const getManualTriggerDefaultSettings = ({
   switch (availabilityType) {
     case 'GLOBAL': {
       return {
+        objectType: undefined,
         availability: {
           type: 'GLOBAL',
           locations: undefined,
@@ -28,6 +29,7 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'SINGLE_RECORD': {
       return {
+        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         availability: {
           type: 'SINGLE_RECORD',
           objectNameSingular:
@@ -40,6 +42,7 @@ export const getManualTriggerDefaultSettings = ({
     }
     case 'BULK_RECORDS': {
       return {
+        objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         availability: {
           type: 'BULK_RECORDS',
           objectNameSingular:

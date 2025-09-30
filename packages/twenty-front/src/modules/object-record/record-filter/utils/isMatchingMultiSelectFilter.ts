@@ -1,4 +1,4 @@
-import { type MultiSelectFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type MultiSelectFilter } from 'twenty-shared/types';
 
 export const isMatchingMultiSelectFilter = ({
   multiSelectFilter,
