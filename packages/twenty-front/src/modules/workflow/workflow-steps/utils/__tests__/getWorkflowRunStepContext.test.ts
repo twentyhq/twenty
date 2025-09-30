@@ -2,486 +2,298 @@ import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
 
-describe('getWorkflowRunStepContext', () => {
-  it('should return an empty array for trigger step', () => {
-    const flow = {
-      trigger: {
-        type: 'DATABASE_EVENT',
-        name: 'Company Created',
-        settings: {
-          eventName: 'company.created',
-          outputSchema: {},
+const mockFlow = {
+  trigger: {
+    type: 'MANUAL',
+    name: 'Trigger',
+    settings: { outputSchema: {} },
+  },
+  steps: [
+    {
+      id: 'step1',
+      name: 'Step 1',
+      type: 'CODE',
+      nextStepIds: ['step2'],
+      valid: true,
+      settings: {
+        input: {
+          serverlessFunctionId: '',
+          serverlessFunctionInput: {},
+          serverlessFunctionVersion: '',
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
         },
       },
-      steps: [],
-  };
-    const stepInfos = {
-      [TRIGGER_STEP_ID]: {
-        result: { company: { id: '123' } },
-        status: StepStatus.SUCCESS,
+    },
+    {
+      id: 'step2',
+      name: 'Step 2',
+      type: 'CODE',
+      nextStepIds: [],
+      valid: true,
+      settings: {
+        input: {
+          serverlessFunctionId: '',
+          serverlessFunctionInput: {},
+          serverlessFunctionVersion: '',
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
       },
-    };
+    },
+  ],
+} satisfies WorkflowRunFlow;
 
+const mockStepInfos = {
+  [TRIGGER_STEP_ID]: { result: 'trigger-result', status: StepStatus.SUCCESS },
+  step1: { result: 'step1-result', status: StepStatus.SUCCESS },
+  step2: { result: 'step2-result', status: StepStatus.SUCCESS },
+};
+
+const mockStepInfosWithHistory = {
+  [TRIGGER_STEP_ID]: { result: 'trigger-result', status: StepStatus.SUCCESS },
+  step1: {
+    result: 'step1-result',
+    status: StepStatus.SUCCESS,
+    history: [
+      { result: 'step1-result', status: StepStatus.SUCCESS },
+      { result: 'step1-result-2', status: StepStatus.SUCCESS },
+    ],
+  },
+  step2: {
+    result: 'step2-result',
+    status: StepStatus.SUCCESS,
+    history: [
+      { result: 'step2-result', status: StepStatus.SUCCESS },
+      { result: 'step2-result-2', status: StepStatus.SUCCESS },
+    ],
+  },
+};
+
+describe('getWorkflowRunStepContext', () => {
+  it('returns empty array for trigger step', () => {
     const result = getWorkflowRunStepContext({
       stepId: TRIGGER_STEP_ID,
-      flow,
-      stepInfos,
+      flow: mockFlow,
+      stepInfos: mockStepInfos,
       currentLoopIterationIndex: undefined,
     });
-
     expect(result).toEqual([]);
   });
 
-  it('should include previous steps context', () => {
-    const flow = {
-      trigger: {
-        name: 'Company Created',
-        type: 'DATABASE_EVENT',
-        settings: {
-          eventName: 'company.created',
-          outputSchema: {},
-        },
-      },
-      steps: [
-        {
-          id: 'iterator1',
-          name: 'Loop Companies',
-          type: 'ITERATOR',
-          settings: {
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              items: ['A', 'B', 'C'],
-              initialLoopStepIds: ['stepA'],
-            },
-          },
-          valid: true,
-          nextStepIds: ['stepA'],
-        },
-        {
-          id: 'step2',
-          name: 'Send Email',
-          type: 'SEND_EMAIL',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              connectedAccountId: '123',
-              email: '',
-            },
-            outputSchema: {},
-          },
-          valid: true,
-          nextStepIds: [],
-        },
-      ],
-  };
-
-    const stepInfos = {
-      [TRIGGER_STEP_ID]: {
-        result: { company: { id: '123' } },
-        status: StepStatus.SUCCESS,
-      },
-      step1: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
-      step2: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
-    };
-
+  it('returns context for previous steps and trigger', () => {
     const result = getWorkflowRunStepContext({
       stepId: 'step2',
-      flow,
-      stepInfos,
+      flow: mockFlow,
+      stepInfos: mockStepInfos,
       currentLoopIterationIndex: undefined,
     });
-
     expect(result).toEqual([
-      {
-        id: TRIGGER_STEP_ID,
-        name: 'Company Created',
-        context: { company: { id: '123' } },
-      },
-        {
-          id: 'iterator1',
-          name: 'Loop Companies',
-          type: 'ITERATOR',
-          settings: {
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              items: ['A', 'B', 'C'],
-              initialLoopStepIds: ['stepA'],
-            },
-          },
-          valid: true,
-          nextStepIds: ['stepA'],
-        },
-        {
-          id: 'step1',
-          name: 'Create company',
-          type: 'CREATE_RECORD',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              objectName: 'Company',
-              objectRecord: {},
-            },
-            outputSchema: {},
-          },
-          valid: true,
-        },
-        {
-          id: 'step2',
-          name: 'Send Email',
-          type: 'SEND_EMAIL',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              connectedAccountId: '123',
-              email: '',
-            },
-            outputSchema: {},
-          },
-          valid: true,
-        },
-      ],
-    } satisfies WorkflowRunFlow;
-    const stepInfos = {
-      [TRIGGER_STEP_ID]: {
-        result: { company: { id: '123' } },
-        status: StepStatus.SUCCESS,
-      },
-      step1: { result: { taskId: '456' }, status: StepStatus.SUCCESS },
-      step2: { result: { emailId: '789' }, status: StepStatus.SUCCESS },
-    };
-
-    const result = getWorkflowRunStepContext({
-      stepId: 'step1',
-      flow,
-      stepInfos,
-      currentLoopIterationIndex: undefined,
-    });
-
-    expect(result).toEqual([
-      {
-        id: TRIGGER_STEP_ID,
-        name: 'Company Created',
-        context: { company: { id: '123' } },
-      },
+      { id: TRIGGER_STEP_ID, name: 'Trigger', context: 'trigger-result' },
+      { id: 'step1', name: 'Step 1', context: 'step1-result' },
     ]);
   });
 
-  it('should handle multiple steps with the same name', () => {
-    const flow = {
-      trigger: {
-        name: 'Company Created',
-        type: 'DATABASE_EVENT',
-        settings: {
-          eventName: 'company.created',
-          outputSchema: {},
-        },
-      },
-      steps: [
-        {
-          id: 'step1',
-          name: 'Create Note',
-          type: 'CREATE_RECORD',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              objectName: 'Note',
-              objectRecord: {},
-            },
-            outputSchema: {},
-          },
-          valid: true,
-          nextStepIds: ['step2'],
-        },
-        {
-          id: 'step2',
-          name: 'Create Note',
-          type: 'CREATE_RECORD',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              objectName: 'Note',
-              objectRecord: {},
-            },
-            outputSchema: {},
-          },
-          valid: true,
-          nextStepIds: ['step3'],
-        },
-        {
-          id: 'step3',
-          name: 'Create Note',
-          type: 'CREATE_RECORD',
-          settings: {
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              objectName: 'Note',
-              objectRecord: {},
-            },
-            outputSchema: {},
-          },
-          valid: true,
-          nextStepIds: [],
-        },
-      ],
-    } satisfies WorkflowRunFlow;
-    const stepInfos = {
-      [TRIGGER_STEP_ID]: {
-        result: { company: { id: '123' } },
-        status: StepStatus.SUCCESS,
-      },
-      step1: { result: { noteId: '456' }, status: StepStatus.SUCCESS },
-      step2: { result: { noteId: '789' }, status: StepStatus.SUCCESS },
-      step3: { result: { noteId: '101' }, status: StepStatus.SUCCESS },
-    };
-
+  it('returns context for previous steps with loop index', () => {
     const result = getWorkflowRunStepContext({
-      stepId: 'step3',
-      flow,
-      stepInfos,
-      currentLoopIterationIndex: undefined,
+      stepId: 'step2',
+      flow: mockFlow,
+      stepInfos: mockStepInfosWithHistory,
+      currentLoopIterationIndex: 1,
     });
-
     expect(result).toEqual([
-      {
-        id: TRIGGER_STEP_ID,
-        name: 'Company Created',
-        context: { company: { id: '123' } },
-      },
-      {
-        id: 'step1',
-        name: 'Create Note',
-        context: { noteId: '456' },
-      },
-      {
-        id: 'step2',
-        name: 'Create Note',
-        context: { noteId: '789' },
-      },
+      { id: TRIGGER_STEP_ID, name: 'Trigger', context: 'trigger-result' },
+      { id: 'step1', name: 'Step 1', context: 'step1-result-2' },
     ]);
   });
-  it('should select correct iteration context for steps inside a loop', () => {
-    const flow = {
+
+  it('returns empty array if step not found', () => {
+    const result = getWorkflowRunStepContext({
+      stepId: 'unknown',
+      flow: mockFlow,
+      stepInfos: mockStepInfos,
+      currentLoopIterationIndex: undefined,
+    });
+    expect(result).toEqual([]);
+  });
+
+  it('handles iterator step type and loop context', () => {
+    const flowWithIterator = {
       trigger: {
-        type: 'DATABASE_EVENT',
+        type: 'MANUAL',
         name: 'Trigger',
-        settings: {
-          eventName: 'event',
-          outputSchema: {},
-        },
+        settings: { outputSchema: {} },
       },
       steps: [
         {
-          id: 'iterator1',
-          name: 'Loop Companies',
-          type: 'ITERATOR',
+          id: 'step1',
+          name: 'Step 1',
+          type: 'CODE',
+          nextStepIds: ['iterator1'],
+          valid: true,
           settings: {
+            input: {
+              serverlessFunctionId: '',
+              serverlessFunctionInput: {},
+              serverlessFunctionVersion: '',
+            },
             outputSchema: {},
             errorHandlingOptions: {
-              continueOnFailure: { value: false },
               retryOnFailure: { value: false },
-            },
-            input: {
-              items: ['A', 'B', 'C'],
-              initialLoopStepIds: ['stepA'],
+              continueOnFailure: { value: false },
             },
           },
-          valid: true,
-          nextStepIds: ['stepA'],
         },
         {
-          id: 'stepA',
-          name: 'Process Company',
-          type: 'CODE',
+          id: 'iterator1',
+          name: 'Iterator',
+          type: 'ITERATOR',
+          nextStepIds: [],
+          valid: true,
           settings: {
+            input: {
+              initialLoopStepIds: ['step2'],
+              items: [1, 2, 3],
+            },
             outputSchema: {},
             errorHandlingOptions: {
-              continueOnFailure: { value: false },
               retryOnFailure: { value: false },
-            },
-            input: {
-              serverlessFunctionId: 'func-id',
-              serverlessFunctionVersion: 'v1',
-              serverlessFunctionInput: {},
+              continueOnFailure: { value: false },
             },
           },
+        },
+        {
+          id: 'step2',
+          name: 'Step 2',
+          type: 'CODE',
+          nextStepIds: ['iterator1'],
           valid: true,
-          nextStepIds: [],
+          settings: {
+            input: {
+              serverlessFunctionId: '',
+              serverlessFunctionInput: {},
+              serverlessFunctionVersion: '',
+            },
+            outputSchema: {},
+            errorHandlingOptions: {
+              retryOnFailure: { value: false },
+              continueOnFailure: { value: false },
+            },
+          },
         },
       ],
     } satisfies WorkflowRunFlow;
 
-    // Simulate stepInfos with multiple histories for stepA (looped)
     const stepInfos = {
       [TRIGGER_STEP_ID]: {
-        result: { trigger: true },
+        result: 'trigger-result',
+        status: StepStatus.SUCCESS,
+      },
+      step1: {
+        result: 'step1-result',
         status: StepStatus.SUCCESS,
       },
       iterator1: {
-        result: { companies: ['A', 'B', 'C'] },
+        result: {
+          currentItemIndex: 2,
+          hasProcessedAllItems: true,
+        },
         status: StepStatus.SUCCESS,
-      },
-      stepA: {
         history: [
           {
-            result: { company: 'A', processed: true },
-            status: StepStatus.SUCCESS,
+            result: {
+              currentItem: 1,
+              currentItemIndex: 0,
+              hasProcessedAllItems: false,
+            },
+            status: StepStatus.RUNNING,
           },
           {
-            result: { company: 'B', processed: false },
-            status: StepStatus.SUCCESS,
-          },
-          {
-            result: { company: 'C', processed: true },
-            status: StepStatus.SUCCESS,
+            result: {
+              currentItem: 2,
+              currentItemIndex: 1,
+              hasProcessedAllItems: false,
+            },
+            status: StepStatus.RUNNING,
           },
         ],
+      },
+      step2: {
+        result: 'step2-result-3',
         status: StepStatus.SUCCESS,
+        history: [
+          { result: 'step2-result-1', status: StepStatus.SUCCESS },
+          { result: 'step2-result-2', status: StepStatus.SUCCESS },
+        ],
       },
     };
 
-    // Test for iteration 1 (company B)
-    const result = getWorkflowRunStepContext({
-      stepId: 'stepA',
-      flow,
+    const step2Iteration0Result = getWorkflowRunStepContext({
+      stepId: 'step2',
+      flow: flowWithIterator,
+      stepInfos,
+      currentLoopIterationIndex: 0,
+    });
+
+    expect(step2Iteration0Result).toMatchInlineSnapshot(`
+[
+  {
+    "context": "trigger-result",
+    "id": "trigger",
+    "name": "Trigger",
+  },
+  {
+    "context": "step1-result",
+    "id": "step1",
+    "name": "Step 1",
+  },
+  {
+    "context": {
+      "currentItem": 1,
+      "currentItemIndex": 0,
+      "hasProcessedAllItems": false,
+    },
+    "id": "iterator1",
+    "name": "Iterator",
+  },
+]
+`);
+
+    const step2Iteration1Result = getWorkflowRunStepContext({
+      stepId: 'step2',
+      flow: flowWithIterator,
       stepInfos,
       currentLoopIterationIndex: 1,
     });
 
-    expect(result).toEqual([
-      {
-        id: TRIGGER_STEP_ID,
-        name: 'Trigger',
-        context: { trigger: true },
-      },
-      {
-        id: 'iterator1',
-        name: 'Loop Companies',
-        context: { companies: ['A', 'B', 'C'] },
-      },
-    ]);
-  });
-
-  it('should select first iteration context when not in a loop', () => {
-    const flow = {
-      trigger: {
-        type: 'DATABASE_EVENT',
-        name: 'Trigger',
-        settings: {
-          eventName: 'event',
-          outputSchema: {},
-        },
-      },
-      steps: [
-        {
-          id: 'iterator1',
-          name: 'Loop Companies',
-          type: 'ITERATOR',
-          settings: {
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {},
-          },
-          valid: true,
-          nextStepIds: ['stepA'],
-        },
-        {
-          id: 'stepA',
-          name: 'Process Company',
-          type: 'CODE',
-          settings: {
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: { value: false },
-              retryOnFailure: { value: false },
-            },
-            input: {
-              serverlessFunctionId: 'func-id',
-              serverlessFunctionVersion: 'v1',
-              serverlessFunctionInput: {},
-            },
-          },
-          valid: true,
-          nextStepIds: [],
-        },
-      ],
-    } satisfies WorkflowRunFlow;
-
-    const stepInfos = {
-      [TRIGGER_STEP_ID]: {
-        result: { trigger: true },
-        status: StepStatus.SUCCESS,
-      },
-      iterator1: {
-        result: { companies: ['A', 'B', 'C'] },
-        status: StepStatus.SUCCESS,
-      },
-      stepA: {
-        history: [
-          {
-            result: { company: 'A', processed: true },
-            status: StepStatus.SUCCESS,
-          },
-          {
-            result: { company: 'B', processed: false },
-            status: StepStatus.SUCCESS,
-          },
-          {
-            result: { company: 'C', processed: true },
-            status: StepStatus.SUCCESS,
-          },
-        ],
-        status: StepStatus.SUCCESS,
-      },
-    };
-
-    // No loop index, should pick first history item
-    const result = getWorkflowRunStepContext({
-      stepId: 'stepA',
-      flow,
-      stepInfos,
-      currentLoopIterationIndex: undefined,
-    });
-
-    expect(result).toEqual([
-      {
-        id: TRIGGER_STEP_ID,
-        name: 'Trigger',
-        context: { trigger: true },
-      },
-      {
-        id: 'iterator1',
-        name: 'Loop Companies',
-        context: { companies: ['A', 'B', 'C'] },
-      },
-    ]);
+    expect(step2Iteration1Result).toMatchInlineSnapshot(`
+[
+  {
+    "context": "trigger-result",
+    "id": "trigger",
+    "name": "Trigger",
+  },
+  {
+    "context": "step1-result",
+    "id": "step1",
+    "name": "Step 1",
+  },
+  {
+    "context": {
+      "currentItem": 2,
+      "currentItemIndex": 1,
+      "hasProcessedAllItems": false,
+    },
+    "id": "iterator1",
+    "name": "Iterator",
+  },
+]
+`);
   });
 });
