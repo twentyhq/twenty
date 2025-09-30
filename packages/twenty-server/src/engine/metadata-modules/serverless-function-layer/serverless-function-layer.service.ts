@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'crypto';
-
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +9,7 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { CreateServerlessFunctionLayerInput } from 'src/engine/metadata-modules/serverless-function-layer/dtos/create-serverless-function-layer.input';
 import { getLastCommonLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
+import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
 @Injectable()
 export class ServerlessFunctionLayerService {
@@ -19,15 +18,11 @@ export class ServerlessFunctionLayerService {
     private readonly serverlessFunctionLayerRepository: Repository<ServerlessFunctionLayerEntity>,
   ) {}
 
-  private computeChecksum(yarnLock: string) {
-    return crypto.createHash('sha256').update(yarnLock).digest('hex');
-  }
-
   async create(
     { packageJson, yarnLock }: CreateServerlessFunctionLayerInput,
     workspaceId: string,
   ) {
-    const checksum = this.computeChecksum(yarnLock);
+    const checksum = serverlessFunctionCreateHash(yarnLock);
 
     const serverlessFunctionLayer =
       this.serverlessFunctionLayerRepository.create({
@@ -45,7 +40,7 @@ export class ServerlessFunctionLayerService {
     data: QueryDeepPartialEntity<ServerlessFunctionLayerEntity>,
   ) {
     const checksum = data.yarnLock
-      ? this.computeChecksum(data.yarnLock as string)
+      ? serverlessFunctionCreateHash(data.yarnLock as string)
       : undefined;
 
     const updateData = { ...data, ...(checksum && { checksum }) };
@@ -55,7 +50,7 @@ export class ServerlessFunctionLayerService {
 
   async createCommonLayerIfNotExist(workspaceId: string) {
     const { packageJson, yarnLock } = await getLastCommonLayerDependencies();
-    const checksum = this.computeChecksum(yarnLock);
+    const checksum = serverlessFunctionCreateHash(yarnLock);
     const commonLayer = await this.serverlessFunctionLayerRepository.findOne({
       where: {
         checksum,
