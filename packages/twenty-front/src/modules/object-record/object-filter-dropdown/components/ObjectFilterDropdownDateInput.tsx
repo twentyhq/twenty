@@ -6,14 +6,13 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
-import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
 import {
   ViewFilterOperand,
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, resolveDateViewFilterValue } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectFilterDropdownDateInput = () => {

@@ -890,6 +890,15 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type CronTrigger = {
+  __typename?: 'CronTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -909,6 +918,15 @@ export enum DatabaseEventAction {
   RESTORED = 'RESTORED',
   UPDATED = 'UPDATED'
 }
+
+export type DatabaseEventTrigger = {
+  __typename?: 'DatabaseEventTrigger';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  serverlessFunctionId: Scalars['String'];
+  settings: Scalars['JSON'];
+  updatedAt: Scalars['DateTime'];
+};
 
 export type DateFilter = {
   eq?: InputMaybe<Scalars['Date']>;

@@ -16,8 +16,50 @@ export { sumByProperty } from './array/sumByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';
+export { CustomError } from './errors/CustomError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
+export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
+export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
+export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
+export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
+export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
+export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
+export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
+export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export type {
+  RecordFilter,
+  RecordFilterGroup,
+} from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
+export { combineFilters } from './filter/utils/combineFilters';
+export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
+export {
+  convertGreaterThanOrEqualRatingToArrayOfRatingValues,
+  convertLessThanOrEqualRatingToArrayOfRatingValues,
+  convertRatingToRatingValue,
+} from './filter/utils/fieldRatingConvertors';
+export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
+export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
+export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
+export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export type {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+  ResolvedDateViewFilterValue,
+} from './filter/utils/resolveDateViewFilterValue';
+export {
+  variableDateViewFilterValueUnitSchema,
+  variableDateViewFilterValuePartsSchema,
+  resolveDateViewFilterValue,
+} from './filter/utils/resolveDateViewFilterValue';
+export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
+export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  relationFilterValueSchemaObject,
+  jsonRelationFilterValueSchema,
+} from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';

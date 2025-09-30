@@ -4,14 +4,15 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-
+import {
+  combineFilters,
+  computeRecordGqlOperationFilter,
+} from 'twenty-shared/utils';
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
 ) => {
@@ -41,9 +42,9 @@ export const useFindManyRecordIndexTableParams = (
 
   const currentFilters = computeRecordGqlOperationFilter({
     fields: objectMetadataItem?.fields ?? [],
-    filterValueDependencies,
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
+    filterValueDependencies,
   });
 
   const anyFieldFilterValue = useRecoilComponentValue(

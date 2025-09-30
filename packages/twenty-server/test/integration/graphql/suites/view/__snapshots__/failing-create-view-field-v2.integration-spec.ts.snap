@@ -5,6 +5,8 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [],
       "serverlessFunction": [],
@@ -30,6 +32,8 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -49,6 +53,8 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [],
       "serverlessFunction": [],
@@ -74,6 +80,8 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,

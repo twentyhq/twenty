@@ -5,6 +5,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [
         {
           "errors": [
@@ -77,6 +79,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -96,6 +100,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -121,6 +127,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -140,6 +148,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -160,6 +170,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -179,6 +191,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -199,6 +213,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -218,6 +234,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [
         {
           "errors": [
@@ -265,6 +283,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -284,6 +304,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [
         {
           "errors": [
@@ -325,6 +347,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -344,6 +368,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [
         {
           "errors": [
@@ -385,6 +411,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -404,6 +432,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [
         {
           "errors": [
@@ -451,6 +481,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -470,6 +502,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -498,6 +532,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -517,6 +553,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -545,6 +583,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -564,6 +604,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -591,6 +633,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -610,6 +654,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -630,6 +676,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -649,6 +697,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -669,6 +719,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -688,6 +740,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -708,6 +762,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -727,6 +783,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -750,6 +808,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -769,6 +829,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -790,6 +852,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,
@@ -809,6 +873,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "extensions": {
     "code": "BAD_USER_INPUT",
     "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
       "index": [],
       "objectMetadata": [
         {
@@ -829,6 +895,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidServerlessFunction": 0,

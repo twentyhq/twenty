@@ -2,9 +2,8 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { parseJson } from 'twenty-shared/utils';
+import { isEmptinessOperand, parseJson } from 'twenty-shared/utils';
 
 export const getRecordFilterLabelValue = ({
   recordFilter,

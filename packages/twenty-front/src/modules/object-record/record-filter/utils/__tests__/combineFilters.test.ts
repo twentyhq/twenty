@@ -1,5 +1,5 @@
-import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { combineFilters } from '../combineFilters';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { combineFilters } from 'twenty-shared/utils';
 
 describe('combineFilters', () => {
   it('should return empty object when all filters are empty', () => {
