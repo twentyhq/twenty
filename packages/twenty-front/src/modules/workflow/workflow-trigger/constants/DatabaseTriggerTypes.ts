@@ -26,7 +26,7 @@ export const DATABASE_TRIGGER_TYPES: Array<{
     event: 'deleted',
   },
   {
-    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED_OR_UPDATED,
+    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_UPSERTED,
     type: 'DATABASE_EVENT',
     icon: 'IconPencilPlus',
     event: 'upserted',

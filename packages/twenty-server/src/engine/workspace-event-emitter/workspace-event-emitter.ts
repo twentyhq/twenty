@@ -160,7 +160,7 @@ export class WorkspaceEventEmitter {
           let updatedFields;
           let diff;
 
-          if (before) {
+          if (isDefined(before)) {
             diff = objectRecordChangedValues(
               before,
               after,
