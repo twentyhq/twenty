@@ -6,7 +6,7 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 export const validateFlatObjectMetadataIdentifiers = ({
@@ -14,7 +14,7 @@ export const validateFlatObjectMetadataIdentifiers = ({
   objectFlatFieldMetadatas,
 }: {
   flatObjectMetadata: Pick<
-    FlatObjectMetadataSecond,
+    FlatObjectMetadata,
     'labelIdentifierFieldMetadataId' | 'imageIdentifierFieldMetadataId'
   >;
   objectFlatFieldMetadatas: FlatFieldMetadata[];

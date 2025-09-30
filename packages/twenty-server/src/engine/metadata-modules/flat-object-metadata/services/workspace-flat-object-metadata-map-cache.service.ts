@@ -8,7 +8,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -19,7 +19,7 @@ import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cach
 @Injectable()
 @WorkspaceFlatMapCache('flatObjectMetadataMaps')
 export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMapCacheService<
-  FlatEntityMaps<FlatObjectMetadataSecond>
+  FlatEntityMaps<FlatObjectMetadata>
 > {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
@@ -59,7 +59,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<FlatEntityMaps<FlatObjectMetadataSecond>> {
+  }): Promise<FlatEntityMaps<FlatObjectMetadata>> {
     const objectMetadatas = await this.fieldMetadataRepository.find({
       where: {
         workspaceId,
@@ -69,7 +69,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
     });
 
     const flatObjectMetadataMaps = objectMetadatas.reduce<
-      FlatEntityMaps<FlatObjectMetadataSecond>
+      FlatEntityMaps<FlatObjectMetadata>
     >((flatEntityMaps, object) => {
       const flatObjectMetadata =
         fromObjectMetadataEntityToFlatObjectMetadata(object);

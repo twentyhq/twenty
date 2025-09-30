@@ -14,7 +14,7 @@ import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
-import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -288,7 +288,7 @@ export class ObjectMetadataServiceV2 {
   }: {
     createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
-  }): Promise<FlatObjectMetadataSecond> {
+  }): Promise<FlatObjectMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
@@ -442,7 +442,7 @@ export class ObjectMetadataServiceV2 {
     objectMetadata,
     workspaceId,
   }: {
-    objectMetadata: FlatObjectMetadataSecond;
+    objectMetadata: FlatObjectMetadata;
     workspaceId: string;
   }) {
     const defaultViewInput = {

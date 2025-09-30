@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
-import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import {
   FlatEntityUpdateValidationArgs,
@@ -21,7 +21,7 @@ export type FieldMetadataRelatedFlatEntityMaps = Pick<
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  FlatObjectMetadataSecond,
+  FlatObjectMetadata,
   WorkspaceMigrationObjectActionV2,
   FieldMetadataRelatedFlatEntityMaps
 > {
@@ -37,12 +37,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     buildOptions,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
-    FlatObjectMetadataSecond,
+    FlatObjectMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadataSecond
+      FlatObjectMetadata
     >
   > {
     const validationResult =
@@ -76,12 +76,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
-    FlatObjectMetadataSecond,
+    FlatObjectMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadataSecond
+      FlatObjectMetadata
     >
   > {
     const validationResult =
@@ -117,12 +117,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
-    FlatObjectMetadataSecond,
+    FlatObjectMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationObjectActionV2,
-        FlatObjectMetadataSecond
+        FlatObjectMetadata
       >
     | undefined
   > {

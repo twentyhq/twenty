@@ -10,7 +10,7 @@ import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-mod
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
   ObjectMetadataException,
@@ -31,7 +31,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   // This should return an AllFlatEntityMaps
 }: FromDeleteObjectInputToFlatFieldMetadatasToDeleteArgs): {
   flatFieldMetadatasToDelete: FlatFieldMetadata[];
-  flatObjectMetadataToDelete: FlatObjectMetadataSecond;
+  flatObjectMetadataToDelete: FlatObjectMetadata;
   flatIndexToDelete: FlatIndexMetadata[];
 } => {
   const { id: objectMetadataToDeleteId } =

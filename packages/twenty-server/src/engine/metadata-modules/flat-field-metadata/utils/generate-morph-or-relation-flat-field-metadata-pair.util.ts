@@ -7,7 +7,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
@@ -35,8 +35,8 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
-  targetFlatObjectMetadata: FlatObjectMetadataSecond;
-  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
+  targetFlatObjectMetadata: FlatObjectMetadata;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadataJoinColumnName: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
     Required<

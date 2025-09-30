@@ -8,7 +8,7 @@ import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-e
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -32,8 +32,8 @@ const generateSourceFlatFieldMetadata = ({
   BuildDefaultRelationFieldsForCustomObjectArgs,
   'existingFlatObjectMetadataMaps'
 > & {
-  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
-  targetFlatObjectMetadata: FlatObjectMetadataSecond;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatObjectMetadata: FlatObjectMetadata;
 }): FlatFieldMetadata<FieldMetadataType.RELATION> => {
   const { description } = buildDescriptionForRelationFieldMetadataOnFromField({
     relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
@@ -100,8 +100,8 @@ const generateTargetFlatFieldMetadata = ({
   BuildDefaultRelationFieldsForCustomObjectArgs,
   'existingFlatObjectMetadataMaps'
 > & {
-  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
-  targetFlatObjectMetadata: FlatObjectMetadataSecond;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
 }): FlatFieldMetadata => {
   const customStandardFieldId =
@@ -162,9 +162,9 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
 
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
-  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceId: string;
-  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
 };
 
 type SourceAndTargetFlatFieldMetadatasRecord = {

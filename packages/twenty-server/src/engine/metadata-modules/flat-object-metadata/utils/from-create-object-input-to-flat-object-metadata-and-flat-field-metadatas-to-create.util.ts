@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { buildDefaultIndexesForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-index-for-custom-object.util';
@@ -24,7 +24,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     workspaceId,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
-    flatObjectMetadataToCreate: FlatObjectMetadataSecond;
+    flatObjectMetadataToCreate: FlatObjectMetadata;
     flatFieldMetadataToCreate: FlatFieldMetadata[];
     flatIndexMetadataToCreate: FlatIndexMetadata[];
   } => {
@@ -51,7 +51,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
         workspaceId,
       });
     const createdAt = new Date();
-    const flatObjectMetadataToCreate: FlatObjectMetadataSecond = {
+    const flatObjectMetadataToCreate: FlatObjectMetadata = {
       createdAt,
       updatedAt: createdAt,
       duplicateCriteria: null,

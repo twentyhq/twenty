@@ -9,7 +9,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
 
 const searchAndReplaceLast = ({
@@ -33,7 +33,7 @@ const searchAndReplaceLast = ({
 };
 
 type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
-  FlatObjectMetadataSecond,
+  FlatObjectMetadata,
   'flatObjectMetadata'
 > &
   Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;

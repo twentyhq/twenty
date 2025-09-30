@@ -12,11 +12,11 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type ValidateRelationCreationPayloadUtilArgs = {
   relationCreationPayload: RelationCreationPayload;
-  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 export const validateRelationCreationPayload = async ({
   existingFlatObjectMetadataMaps,
@@ -24,7 +24,7 @@ export const validateRelationCreationPayload = async ({
 }: ValidateRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<{
     relationCreationPayload: RelationCreationPayload;
-    targetFlatObjectMetadata: FlatObjectMetadataSecond;
+    targetFlatObjectMetadata: FlatObjectMetadata;
   }>
 > => {
   const relationCreationPayload =

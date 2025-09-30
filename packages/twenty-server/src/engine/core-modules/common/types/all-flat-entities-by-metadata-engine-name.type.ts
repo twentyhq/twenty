@@ -4,12 +4,12 @@ import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/t
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export type AllFlatEntitiesByMetadataEngineName = {
   fieldMetadata: FlatFieldMetadata;
-  objectMetadata: FlatObjectMetadataSecond;
+  objectMetadata: FlatObjectMetadata;
   view: FlatView;
   viewField: FlatViewField;
   index: FlatIndexMetadata;

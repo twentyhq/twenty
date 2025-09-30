@@ -13,7 +13,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
@@ -31,7 +31,7 @@ export const generateCompositeColumnDefinition = ({
 }: {
   compositeProperty: CompositeProperty;
   parentFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
-  flatObjectMetadata: FlatObjectMetadataSecond;
+  flatObjectMetadata: FlatObjectMetadata;
 }): WorkspaceSchemaColumnDefinition => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId: flatObjectMetadata.workspaceId,
@@ -166,7 +166,7 @@ export const generateColumnDefinitions = ({
   flatObjectMetadata,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataSecond;
+  flatObjectMetadata: FlatObjectMetadata;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId: flatObjectMetadata.workspaceId,

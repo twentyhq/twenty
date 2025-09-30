@@ -10,16 +10,16 @@ import {
   type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type RelationCreationPayloadAndObjectMetadata = {
   relationCreationPayload: RelationCreationPayload;
-  targetFlatObjectMetadata: FlatObjectMetadataSecond;
+  targetFlatObjectMetadata: FlatObjectMetadata;
 };
 
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
-  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectMetadataId: string;
 };
 export const validateMorphRelationCreationPayload = async ({

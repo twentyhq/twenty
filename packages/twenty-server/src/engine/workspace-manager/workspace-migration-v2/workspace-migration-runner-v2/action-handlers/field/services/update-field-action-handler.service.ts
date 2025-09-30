@@ -22,7 +22,7 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -343,7 +343,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     update,
     flatObjectMetadata,
   }: UpdateFieldPropertyUpdateHandlerArgs<'options'> & {
-    flatObjectMetadata: FlatObjectMetadataSecond;
+    flatObjectMetadata: FlatObjectMetadata;
   }) {
     const fromOptionsById = new Map(
       (update.from ?? [])

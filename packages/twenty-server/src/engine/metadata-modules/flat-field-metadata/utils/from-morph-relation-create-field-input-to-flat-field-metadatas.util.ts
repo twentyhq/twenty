@@ -13,14 +13,14 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
     type: FieldMetadataType.MORPH_RELATION;
   };
-  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
-  sourceFlatObjectMetadata: FlatObjectMetadataSecond;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };
 export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({

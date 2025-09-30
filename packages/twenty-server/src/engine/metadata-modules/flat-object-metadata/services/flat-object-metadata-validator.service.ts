@@ -9,8 +9,7 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import {
-  FlatObjectMetadata,
-  FlatObjectMetadataSecond,
+  FlatObjectMetadata
 } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
@@ -23,8 +22,8 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 
 export type ValidateOneObjectMetadataArgs = {
-  flatObjectMetadataToValidate: FlatObjectMetadataSecond;
-  optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+  flatObjectMetadataToValidate: FlatObjectMetadata;
+  optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   buildOptions: WorkspaceMigrationBuilderOptions;
   dependencyOptimisticFlatEntityMaps: Pick<
     AllFlatEntityMaps,
@@ -216,8 +215,8 @@ export class FlatObjectMetadataValidatorService {
     optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
   }: {
-    flatObjectMetadataToValidate: FlatObjectMetadataSecond;
-    optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
+    flatObjectMetadataToValidate: FlatObjectMetadata;
+    optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): FlatObjectMetadataValidationError[] {
     const errors: FlatObjectMetadataValidationError[] = [];
 
