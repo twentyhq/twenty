@@ -62,7 +62,7 @@ const METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID =
 const METER_PRICE_PRO_MONTH_TIER_LOW_ID = 'METER_PRICE_PRO_MONTH_TIER_LOW_ID';
 const METER_PRICE_PRO_MONTH_TIER_HIGH_ID = 'METER_PRICE_PRO_MONTH_TIER_HIGH_ID';
 
-describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
+describe('BillingSubscriptionService)', () => {
   let module: TestingModule;
   let service: BillingSubscriptionService;
   let billingSubscriptionRepository: Repository<BillingSubscription>;
@@ -790,6 +790,13 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
               quantity: 7,
             },
           },
+          {
+            currentEditable: {
+              licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+              meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+              quantity: 7,
+            },
+          },
         ]);
         arrangeBillingProductServiceGetProductPrices([
           {
@@ -862,14 +869,12 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).not.toHaveBeenCalled();
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
       });
-      // TODO: fix this test it's an issue in the business logic. It should pass as is.
-      // When the update from pro to enterprise with existing phases append the second phase must be updated too.
-      it.skip('PRO -> ENTERPRISE with existing phases', async () => {
+      // When the update from pro to enterprise with existing phases, the second phase must be updated too.
+      it('PRO -> ENTERPRISE with existing phases', async () => {
         arrangeBillingSubscriptionRepositoryFind();
         arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
           [{}, {}],
         );
-
         arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
           {
             planKey: BillingPlanKey.PRO,
@@ -886,26 +891,32 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             quantity: 7,
           },
         ]);
-
         arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
           {
             currentEditable: {
               licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
               meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-              quantity: 7,
             },
             nextEditable: {
               licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
               meteredPriceId: METER_PRICE_PRO_MONTH_ID,
-              quantity: 7,
+            },
+          },
+          {
+            currentEditable: {
+              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            },
+            nextEditable: {
+              licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+              meteredPriceId: METER_PRICE_PRO_MONTH_ID,
             },
           },
         ]);
-
         arrangeBillingProductServiceGetProductPrices([
           {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
+            stripePriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            interval: SubscriptionInterval.Year,
             billingProduct: {
               metadata: {
                 planKey: BillingPlanKey.ENTERPRISE,
@@ -915,8 +926,8 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             },
           } as Partial<BillingPrice>,
           {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
+            stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            interval: SubscriptionInterval.Year,
             tiers: [
               {
                 up_to: 1000,
@@ -942,12 +953,23 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             },
           } as Partial<BillingPrice>,
         ]);
-
+        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+          LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+          METER_PRICE_ENTERPRISE_YEAR_ID,
+        );
         arrangeBillingPriceRepositoryFindOneByOrFail();
+        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
 
+        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
+          items: [
+            { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+            { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+          ],
+        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
         arrangeBillingSubscriptionRepositoryFindOneOrFail();
-
         arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changePlan({ id: 'ws_1' } as Workspace);
 
@@ -957,10 +979,10 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
           items: [
             {
               id: 'si_licensed',
-              price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              price: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
               quantity: 7,
             },
-            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
+            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_YEAR_ID },
           ],
           metadata: { plan: 'ENTERPRISE' },
           proration_behavior: 'create_prorations',
@@ -971,16 +993,16 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: expect.objectContaining({
+            currentPhaseSnapshot: expect.objectContaining({
               items: [
-                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-                { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+                { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_YEAR_ID },
               ],
             }),
             nextPhase: expect.objectContaining({
               items: [
-                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-                { price: METER_PRICE_PRO_MONTH_ID },
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_ID },
               ],
             }),
           }),
@@ -996,7 +1018,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
           meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
         });
         arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
-
         arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Month,
@@ -1004,7 +1025,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
           meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           quantity: 7,
         });
-
         arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
           {
             currentEditable: {
@@ -1021,7 +1041,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             },
           },
         ]);
-
         arrangeBillingProductServiceGetProductPricesSequence(
           [
             {
@@ -1104,11 +1123,9 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             } as Partial<BillingPrice>,
           ],
         );
-
         arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_ID,
-          7,
         );
         arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
           items: [
@@ -1117,7 +1134,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
           ],
           proration_behavior: 'none',
         } as Stripe.SubscriptionScheduleUpdateParams.Phase);
-
         arrangeBillingPriceRepositoryFindOneByOrFail();
         arrangeStripeSubscriptionServiceGetBillingThresholdsByInterval();
         arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
@@ -1131,7 +1147,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: expect.objectContaining({
+            currentPhaseSnapshot: expect.objectContaining({
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_ID },
@@ -1147,7 +1163,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
       });
-      it('ENTERPRISE -> PRO. with existing phases', async () => {
+      it('ENTERPRISE -> PRO with existing phases', async () => {
         arrangeBillingSubscriptionRepositoryFind({
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
@@ -1156,7 +1172,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
           [{}, {}],
         );
-
         arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
           {
             planKey: BillingPlanKey.ENTERPRISE,
@@ -1171,7 +1186,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           },
         ]);
-
         arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
           {
             currentEditable: {
@@ -1187,7 +1201,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             },
           },
         ]);
-
         arrangeBillingProductServiceGetProductPricesSequence(
           [
             {
@@ -1270,7 +1283,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             } as Partial<BillingPrice>,
           ],
         );
-
         arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           METER_PRICE_ENTERPRISE_YEAR_ID,
@@ -1281,7 +1293,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
             { price: METER_PRICE_PRO_MONTH_ID },
           ],
         } as Stripe.SubscriptionScheduleUpdateParams.Phase);
-
         arrangeBillingPriceRepositoryFindOneByOrFail();
         arrangeStripeSubscriptionServiceGetBillingThresholdsByInterval();
         arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
@@ -1297,7 +1308,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         expect(
           stripeSubscriptionScheduleService.replaceEditablePhases,
         ).toHaveBeenCalledWith('scheduleId', {
-          currentSnapshot: expect.objectContaining({
+          currentPhaseSnapshot: expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
               { price: METER_PRICE_ENTERPRISE_YEAR_ID },
@@ -1367,7 +1378,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           METER_PRICE_ENTERPRISE_YEAR_ID,
-          7,
         );
         arrangeServiceSyncSubscriptionToDatabase();
 
@@ -1488,13 +1498,6 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         arrangeStripeSubscriptionServiceGetBillingThresholdsByInterval();
         arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
         arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
-          LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          METER_PRICE_ENTERPRISE_MONTH_ID,
-          7,
-        );
-
         arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
           items: [
             { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
@@ -1502,7 +1505,10 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
           ],
           proration_behavior: 'none',
         } as Stripe.SubscriptionScheduleUpdateParams.Phase);
-
+        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+          LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+          METER_PRICE_ENTERPRISE_MONTH_ID,
+        );
         arrangeServiceSyncSubscriptionToDatabase();
         arrangeBillingSubscriptionRepositoryFindOneOrFail({
           planKey: BillingPlanKey.ENTERPRISE,
@@ -1526,7 +1532,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: expect.objectContaining({
+            currentPhaseSnapshot: expect.objectContaining({
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_ID },
@@ -1654,7 +1660,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         expect(
           stripeSubscriptionScheduleService.replaceEditablePhases,
         ).toHaveBeenCalledWith('scheduleId', {
-          currentSnapshot: expect.objectContaining({
+          currentPhaseSnapshot: expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
               { price: METER_PRICE_ENTERPRISE_YEAR_ID },
@@ -1796,7 +1802,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         expect(
           stripeSubscriptionScheduleService.replaceEditablePhases,
         ).toHaveBeenCalledWith('scheduleId', {
-          currentSnapshot: expect.objectContaining({
+          currentPhaseSnapshot: expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
               { price: METER_PRICE_ENTERPRISE_YEAR_ID },
@@ -2169,7 +2175,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: {
+            currentPhaseSnapshot: {
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
@@ -2326,7 +2332,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: expect.objectContaining({
+            currentPhaseSnapshot: expect.objectContaining({
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
@@ -2539,7 +2545,7 @@ describe('BillingManager scenarios (via BillingSubscriptionService)', () => {
         ).toHaveBeenCalledWith(
           'scheduleId',
           expect.objectContaining({
-            currentSnapshot: expect.objectContaining({
+            currentPhaseSnapshot: expect.objectContaining({
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
