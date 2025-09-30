@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -87,7 +89,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Total Pipeline Value',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-      configuration: opportunityAmountFieldId
+      configuration: isDefined(opportunityAmountFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: opportunityAmountFieldId,
@@ -108,7 +110,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Rocket Count (Object Permission Test)',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
-      configuration: rocketIdFieldId
+      configuration: isDefined(rocketIdFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: rocketIdFieldId,
@@ -130,7 +132,8 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
       configuration:
-        opportunityAmountFieldId && opportunityCloseDateFieldId
+        isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityCloseDateFieldId)
           ? {
               graphType: 'LINE',
               aggregateFieldMetadataId: opportunityAmountFieldId,
@@ -154,7 +157,8 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
       configuration:
-        opportunityAmountFieldId && opportunityStageFieldId
+        isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityStageFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: opportunityAmountFieldId,
@@ -180,7 +184,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
       configuration:
-        rocketIdFieldId && rocketCreatedAtFieldId
+        isDefined(rocketIdFieldId) && isDefined(rocketCreatedAtFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: rocketIdFieldId,
@@ -203,7 +207,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Opportunity Count',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
-      configuration: opportunityIdFieldId
+      configuration: isDefined(opportunityIdFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: opportunityIdFieldId,
@@ -226,7 +230,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Total Customers',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
-      configuration: companyIdFieldId
+      configuration: isDefined(companyIdFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyIdFieldId,
@@ -248,7 +252,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
       configuration:
-        companyIdFieldId && companyCreatedAtFieldId
+        isDefined(companyIdFieldId) && isDefined(companyCreatedAtFieldId)
           ? {
               graphType: 'LINE',
               aggregateFieldMetadataId: companyIdFieldId,
@@ -272,7 +276,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
       configuration:
-        companyIdFieldId && companyEmployeesFieldId
+        isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: companyIdFieldId,
@@ -297,7 +301,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Annual Recurring Revenue',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
-      configuration: companyArrFieldId
+      configuration: isDefined(companyArrFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyArrFieldId,
@@ -319,7 +323,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
       configuration:
-        companyArrFieldId && companyNameFieldId
+        isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
           ? {
               graphType: 'PIE',
               aggregateFieldMetadataId: companyArrFieldId,
@@ -342,7 +346,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Average ARR',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
-      configuration: companyArrFieldId
+      configuration: isDefined(companyArrFieldId)
         ? {
             graphType: 'GAUGE',
             aggregateFieldMetadataId: companyArrFieldId,
@@ -365,7 +369,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'LinkedIn Profiles Count (Field Permission Test)',
       type: WidgetType.GRAPH,
       gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
-      configuration: companyLinkedinLinkFieldId
+      configuration: isDefined(companyLinkedinLinkFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
@@ -387,7 +391,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
       configuration:
-        companyIdFieldId && companyLinkedinLinkFieldId
+        isDefined(companyIdFieldId) && isDefined(companyLinkedinLinkFieldId)
           ? {
               graphType: 'PIE',
               aggregateFieldMetadataId: companyIdFieldId,
@@ -409,7 +413,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Team Size',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
-      configuration: personIdFieldId
+      configuration: isDefined(personIdFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: personIdFieldId,
@@ -431,7 +435,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
       configuration:
-        personIdFieldId && personCityFieldId
+        isDefined(personIdFieldId) && isDefined(personCityFieldId)
           ? {
               graphType: 'BAR',
               aggregateFieldMetadataId: personIdFieldId,
@@ -457,7 +461,7 @@ export const getPageLayoutWidgetDataSeeds = (
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
       configuration:
-        personIdFieldId && personJobTitleFieldId
+        isDefined(personIdFieldId) && isDefined(personJobTitleFieldId)
           ? {
               graphType: 'PIE',
               aggregateFieldMetadataId: personIdFieldId,
@@ -477,7 +481,7 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Open Tasks',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
-      configuration: taskIdFieldId
+      configuration: isDefined(taskIdFieldId)
         ? {
             graphType: 'NUMBER',
             aggregateFieldMetadataId: taskIdFieldId,

@@ -12,35 +12,34 @@ export const extractFieldMetadataIdsFromWidget = (
   }
 
   const config = widget.configuration;
-  const fieldIds: string[] = [];
 
   switch (config.__typename) {
     case 'BarChartConfiguration':
     case 'LineChartConfiguration':
-      fieldIds.push(config.aggregateFieldMetadataId);
-      fieldIds.push(config.groupByFieldMetadataIdX);
-      if (isDefined(config.groupByFieldMetadataIdY)) {
-        fieldIds.push(config.groupByFieldMetadataIdY);
-      }
-      break;
+      return [
+        config.aggregateFieldMetadataId,
+        config.groupByFieldMetadataIdX,
+        ...(isDefined(config.groupByFieldMetadataIdY)
+          ? [config.groupByFieldMetadataIdY]
+          : []),
+      ];
 
     case 'PieChartConfiguration':
-      fieldIds.push(config.aggregateFieldMetadataId);
-      fieldIds.push(config.groupByFieldMetadataId);
-      break;
+      return [config.aggregateFieldMetadataId, config.groupByFieldMetadataId];
 
     case 'NumberChartConfiguration':
-      fieldIds.push(config.aggregateFieldMetadataId);
-      break;
+      return [config.aggregateFieldMetadataId];
 
     case 'GaugeChartConfiguration':
-      fieldIds.push(config.aggregateFieldMetadataId);
-      fieldIds.push(config.aggregateFieldMetadataIdTotal);
-      break;
+      return [
+        config.aggregateFieldMetadataId,
+        config.aggregateFieldMetadataIdTotal,
+      ];
 
     case 'IframeConfiguration':
-      break;
-  }
+      return [];
 
-  return fieldIds;
+    default:
+      return [];
+  }
 };
