@@ -1,14 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 
 export const filterMorphRelationDuplicateFields = (
-  flatFieldMetadatas: FlatFieldMetadata[],
-): FlatFieldMetadata[] => {
+  flatFieldMetadatas: FlatFieldMetadataSecond[],
+): FlatFieldMetadataSecond[] => {
   const initialAccumulator: {
-    morphFlatFieldMetadatas: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
-    otherFlatFieldMetadatas: FlatFieldMetadata[];
+    morphFlatFieldMetadatas: FlatFieldMetadataSecond<FieldMetadataType.MORPH_RELATION>[];
+    otherFlatFieldMetadatas: FlatFieldMetadataSecond[];
   } = {
     morphFlatFieldMetadatas: [],
     otherFlatFieldMetadatas: [],

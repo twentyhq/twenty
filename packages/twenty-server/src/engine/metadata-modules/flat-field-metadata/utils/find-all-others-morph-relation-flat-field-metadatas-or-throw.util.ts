@@ -1,6 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import {
   FlatFieldMetadataSecond,
@@ -8,10 +12,6 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import {
-  FlatObjectMetadataMapsException,
-  FlatObjectMetadataMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 
 export type FindAllMorphRelationFlatFieldMetadatasOrThrowArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
@@ -24,9 +24,9 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
   if (
     !isDefined(flatFieldMetadataMaps.byId[morphRelationFlatFieldMetadata.id])
   ) {
-    throw new FlatObjectMetadataMapsException(
+    throw new FlatEntityMapsException(
       'Morph relation field not found in related object metadata',
-      FlatObjectMetadataMapsExceptionCode.FIELD_METADATA_NOT_FOUND,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
 
