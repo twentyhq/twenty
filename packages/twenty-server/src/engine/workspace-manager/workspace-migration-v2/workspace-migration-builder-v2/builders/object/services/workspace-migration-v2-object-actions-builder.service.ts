@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,11 +14,16 @@ import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+export type FieldMetadataRelatedFlatEntityMaps = Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps'
+>;
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatObjectMetadataSecond,
-  WorkspaceMigrationObjectActionV2
+  WorkspaceMigrationObjectActionV2,
+  FieldMetadataRelatedFlatEntityMaps
 > {
   constructor(
     private readonly flatObjectValidatorService: FlatObjectMetadataValidatorService,
@@ -29,7 +35,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
     buildOptions,
-  }: FlatEntityValidationArgs<FlatObjectMetadataSecond>): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<
+    FlatObjectMetadataSecond,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
       FlatObjectMetadataSecond
@@ -40,6 +50,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         buildOptions,
         flatObjectMetadataToValidate,
         optimisticFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {
@@ -63,7 +74,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     buildOptions,
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-  }: FlatEntityValidationArgs<FlatObjectMetadataSecond>): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityValidationArgs<
+    FlatObjectMetadataSecond,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
       FlatObjectMetadataSecond
@@ -74,6 +89,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         buildOptions,
         flatObjectMetadataToValidate,
         optimisticFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {
@@ -99,7 +115,11 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       to: toFlatObjectMetadata,
     },
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-  }: FlatEntityUpdateValidationArgs<FlatObjectMetadataSecond>): Promise<
+    dependencyOptimisticFlatEntityMaps,
+  }: FlatEntityUpdateValidationArgs<
+    FlatObjectMetadataSecond,
+    FieldMetadataRelatedFlatEntityMaps
+  >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationObjectActionV2,
         FlatObjectMetadataSecond
@@ -120,6 +140,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         buildOptions,
         flatObjectMetadataToValidate: toFlatObjectMetadata,
         optimisticFlatObjectMetadataMaps,
+        dependencyOptimisticFlatEntityMaps,
       });
 
     if (validationResult.errors.length > 0) {

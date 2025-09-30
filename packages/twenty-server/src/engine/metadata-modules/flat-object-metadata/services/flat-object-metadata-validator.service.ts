@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import {
   FlatObjectMetadata,
@@ -24,6 +26,10 @@ export type ValidateOneObjectMetadataArgs = {
   flatObjectMetadataToValidate: FlatObjectMetadataSecond;
   optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadataSecond>;
   buildOptions: WorkspaceMigrationBuilderOptions;
+  dependencyOptimisticFlatEntityMaps: Pick<
+    AllFlatEntityMaps,
+    'flatFieldMetadataMaps'
+  >;
 };
 
 @Injectable()
@@ -33,6 +39,7 @@ export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
     optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate: updatedFlatObjectMetadata,
+    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: ValidateOneObjectMetadataArgs): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'update_object',
@@ -67,9 +74,16 @@ export class FlatObjectMetadataValidatorService {
       }),
     );
 
-    // Issue here TODO
+    const { objectFlatFieldMetadatas } =
+      findObjectFieldsInFlatFieldMetadataMaps({
+        flatFieldMetadataMaps,
+        objectMetadataId: existingFlatObjectMetadata.id,
+      });
     validationResult.errors.push(
-      ...validateFlatObjectMetadataIdentifiers(existingFlatObjectMetadata),
+      ...validateFlatObjectMetadataIdentifiers({
+        flatObjectMetadata: existingFlatObjectMetadata,
+        objectFlatFieldMetadatas,
+      }),
     );
 
     return validationResult;
@@ -139,6 +153,7 @@ export class FlatObjectMetadataValidatorService {
   public async validateFlatObjectMetadataCreation({
     optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
+    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: ValidateOneObjectMetadataArgs): Promise<
     FailedFlatEntityValidation<FlatObjectMetadata>
   > {
@@ -174,9 +189,16 @@ export class FlatObjectMetadataValidatorService {
       });
     }
 
-    // Issue here TODO
+    const { objectFlatFieldMetadatas } =
+      findObjectFieldsInFlatFieldMetadataMaps({
+        flatFieldMetadataMaps,
+        objectMetadataId: flatObjectMetadataToValidate.id,
+      });
     objectValidationResult.errors.push(
-      ...validateFlatObjectMetadataIdentifiers(flatObjectMetadataToValidate),
+      ...validateFlatObjectMetadataIdentifiers({
+        flatObjectMetadata: flatObjectMetadataToValidate,
+        objectFlatFieldMetadatas,
+      }),
     );
     objectValidationResult.errors.push(
       ...this.validateFlatObjectMetadataNameAndLabels({
