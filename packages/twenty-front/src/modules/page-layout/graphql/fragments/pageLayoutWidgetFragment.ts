@@ -65,6 +65,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         graphType
         aggregateFieldMetadataId
         aggregateOperation
+        displayDataLabel
         description
         filter
       }
@@ -73,8 +74,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateFieldMetadataId
         aggregateOperation
         aggregateOperationTotal
-        aggregateFieldMetadataIdTotal
         displayDataLabel
+        color
         description
         filter
       }

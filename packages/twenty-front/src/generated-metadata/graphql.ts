@@ -1353,7 +1353,6 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateFieldMetadataIdTotal: Scalars['UUID'];
   aggregateOperation: ExtendedAggregateOperations;
   aggregateOperationTotal: ExtendedAggregateOperations;
   color?: Maybe<Scalars['String']>;

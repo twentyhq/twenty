@@ -39,11 +39,6 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   aggregateOperationTotal: ExtendedAggregateOperations;
 
-  @Field(() => UUIDScalarType)
-  @IsUUID()
-  @IsNotEmpty()
-  aggregateFieldMetadataIdTotal: string;
-
   @Field(() => Boolean)
   @IsBoolean()
   @IsNotEmpty()

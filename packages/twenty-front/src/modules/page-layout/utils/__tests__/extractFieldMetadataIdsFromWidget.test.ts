@@ -160,7 +160,6 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         graphType: GraphType.GAUGE,
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: ExtendedAggregateOperations.SUM,
-        aggregateFieldMetadataIdTotal: 'field-2',
         aggregateOperationTotal: ExtendedAggregateOperations.COUNT,
         displayDataLabel: false,
       },

@@ -59,7 +59,6 @@ const createDefaultGraphConfiguration = (
         aggregateOperation: ExtendedAggregateOperations.COUNT,
         aggregateFieldMetadataId: placeholderFieldId1,
         aggregateOperationTotal: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataIdTotal: placeholderFieldId2,
         displayDataLabel: false,
       };
 
