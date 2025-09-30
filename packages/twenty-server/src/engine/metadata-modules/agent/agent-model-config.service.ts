@@ -7,8 +7,8 @@ import { ToolSet } from 'ai';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import {
-    AiModelRegistryService,
-    RegisteredAIModel,
+  AiModelRegistryService,
+  RegisteredAIModel,
 } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 
