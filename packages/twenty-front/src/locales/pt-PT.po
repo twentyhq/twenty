@@ -8111,6 +8111,21 @@ msgstr ""
 "Você não pode editar esta conexão porque ela tem tabelas rastreadas.\n"
 "Se precisar fazer alterações, por favor, crie uma nova conexão ou desincronize as tabelas primeiro."
 
+#. js-lingui-id: CjCGSm
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {fieldsList} {fieldWord}"
+msgstr ""
+
+#. js-lingui-id: eqUj2Z
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to access the {objectName} object"
+msgstr ""
+
+#. js-lingui-id: D0mU8n
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "You do not have permission to view this widget"
+msgstr ""
+
 #. js-lingui-id: M2lYgq
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"

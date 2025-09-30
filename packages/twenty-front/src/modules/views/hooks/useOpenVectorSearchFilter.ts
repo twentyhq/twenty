@@ -16,7 +16,7 @@ export const useOpenVectorSearchFilter = (filterDropdownId?: string) => {
 
   const openVectorSearchFilter = () => {
     setObjectFilterDropdownFilterIsSelected(true);
-    setSelectedOperandInDropdown(ViewFilterOperand.VectorSearch);
+    setSelectedOperandInDropdown(ViewFilterOperand.VECTOR_SEARCH);
   };
 
   return {

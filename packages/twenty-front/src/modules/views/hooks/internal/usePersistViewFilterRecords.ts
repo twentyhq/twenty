@@ -13,7 +13,6 @@ import { DESTROY_CORE_VIEW_FILTER } from '@/views/graphql/mutations/destroyCoreV
 import { UPDATE_CORE_VIEW_FILTER } from '@/views/graphql/mutations/updateCoreViewFilter';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { convertViewFilterOperandToCore } from '@/views/utils/convertViewFilterOperandToCore';
 import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,7 +45,7 @@ export const usePersistViewFilterRecords = () => {
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,
-                operand: convertViewFilterOperandToCore(viewFilter.operand),
+                operand: viewFilter.operand,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 subFieldName: viewFilter.subFieldName ?? null,
@@ -87,7 +86,7 @@ export const usePersistViewFilterRecords = () => {
               id: viewFilter.id,
               input: {
                 value: viewFilter.value,
-                operand: convertViewFilterOperandToCore(viewFilter.operand),
+                operand: viewFilter.operand,
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 subFieldName: viewFilter.subFieldName ?? null,
