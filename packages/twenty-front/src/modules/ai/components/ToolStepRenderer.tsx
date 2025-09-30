@@ -9,6 +9,7 @@ import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { type ToolInput } from '@/ai/types/ToolInput';
 import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { getWebSearchToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -72,29 +73,35 @@ export const ToolStepRenderer = ({
   output,
   toolName,
 }: {
-  input: ToolInput;
-  output: ToolOutput;
+  input?: ToolInput;
+  output?: ToolOutput;
   toolName: string;
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isExpandable = isDefined(output);
+  const isWebSearchTool = toolName === 'web_search';
 
   if (!output) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
           <ShimmeringText>
-            <StyledDisplayMessage>{input?.loadingMessage}</StyledDisplayMessage>
+            <StyledDisplayMessage>
+              {isWebSearchTool
+                ? getWebSearchToolDisplayMessage(input, false)
+                : input?.loadingMessage}
+            </StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
       </StyledContainer>
     );
   }
 
-  const displayMessage =
-    output && typeof output === 'object' && 'message' in output
+  const displayMessage = isWebSearchTool
+    ? getWebSearchToolDisplayMessage(input, true)
+    : output && typeof output === 'object' && 'message' in output
       ? (output as { message: string }).message
       : undefined;
 
