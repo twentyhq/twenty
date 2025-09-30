@@ -48,7 +48,6 @@ export const useOpenMorphRelationOneToManyFieldInput = () => {
             recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
               recordId,
               morphRelations: fieldDefinition.metadata.morphRelations,
-              fieldName: fieldDefinition.metadata.fieldName,
             }),
           )
           .getValue();
