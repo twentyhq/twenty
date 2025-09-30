@@ -1,13 +1,15 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/object-record/record-filter/utils/compute-record-gql-operation-filter/turnRecordFilterIntoGqlOperationFilter';
 import { createAnyFieldRecordFilterBaseProperties } from '@/object-record/record-filter/utils/createAnyFieldRecordFilterBaseProperties';
 import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import {
+  isDefined,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
