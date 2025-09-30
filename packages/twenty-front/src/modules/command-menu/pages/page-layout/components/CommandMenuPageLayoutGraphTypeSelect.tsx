@@ -2,7 +2,6 @@ import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { ChartSettings } from '@/command-menu/pages/page-layout/components/ChartSettings';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { type GraphType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -28,12 +27,14 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
 
   const theme = useTheme();
 
-  if (!isDefined(widgetInEditMode)) {
+  if (
+    !isDefined(widgetInEditMode?.configuration) ||
+    !('graphType' in widgetInEditMode.configuration)
+  ) {
     return null;
   }
 
-  const currentGraphType = widgetInEditMode.configuration
-    .graphType as GraphType;
+  const currentGraphType = widgetInEditMode.configuration.graphType;
 
   return (
     <>

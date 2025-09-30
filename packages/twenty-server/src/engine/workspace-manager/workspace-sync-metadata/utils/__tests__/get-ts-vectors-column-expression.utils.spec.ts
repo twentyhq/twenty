@@ -12,6 +12,7 @@ const nameFullNameField = {
 };
 const jobTitleTextField = { name: 'jobTitle', type: FieldMetadataType.TEXT };
 const emailsEmailsField = { name: 'emails', type: FieldMetadataType.EMAILS };
+const phonesPhonesField = { name: 'phones', type: FieldMetadataType.PHONES };
 
 describe('getTsVectorColumnExpressionFromFields', () => {
   it('should generate correct expression for simple text field', () => {
@@ -68,5 +69,44 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     expect(result).toBe(
       "to_tsvector('simple', COALESCE(public.unaccent_immutable(\"bodyV2Markdown\"), ''))",
     );
+  });
+
+  it('should handle phone fields without unaccenting', () => {
+    const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain('COALESCE("phonesPrimaryPhoneNumber", \'\')');
+    expect(result).toContain('COALESCE("phonesPrimaryPhoneCallingCode", \'\')');
+    expect(result).not.toContain('unaccent_immutable');
+  });
+
+  it('should generate international format expressions for phone fields', () => {
+    const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain(
+      'COALESCE("phonesPrimaryPhoneCallingCode" || "phonesPrimaryPhoneNumber", \'\')',
+    );
+    expect(result).toContain(
+      "COALESCE(REPLACE(\"phonesPrimaryPhoneCallingCode\", '+', '') || \"phonesPrimaryPhoneNumber\", '')",
+    );
+  });
+
+  it('should generate trunk prefix format expression for phone fields', () => {
+    const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain(
+      "COALESCE('0' || \"phonesPrimaryPhoneNumber\", '')",
+    );
+  });
+
+  it('should properly index phone subfields', () => {
+    const fields = [phonesPhonesField] as FieldTypeAndNameMetadata[];
+    const result = getTsVectorColumnExpressionFromFields(fields);
+
+    expect(result).toContain('phonesPrimaryPhoneNumber');
+    expect(result).toContain('phonesPrimaryPhoneCallingCode');
+    expect(result).not.toContain('phonesAdditionalPhones');
   });
 });

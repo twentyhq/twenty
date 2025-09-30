@@ -5,11 +5,11 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
-import { GraphType } from '@/page-layout/mocks/mockWidgets';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChartPie, IconFrame } from 'twenty-ui/display';
+import { GraphType } from '~/generated-metadata/graphql';
 import { WidgetType } from '~/generated/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {

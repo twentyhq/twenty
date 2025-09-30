@@ -76,18 +76,6 @@ export class ObjectMetadataServiceV2 {
       flatIndexMaps: existingFlatIndexMaps,
     });
 
-    const impactedObjectMetadataIds = [
-      ...new Set([
-        optimisticallyUpdatedFlatObjectMetadata.id,
-        ...otherObjectFlatFieldMetadatas.map(
-          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
-        ),
-      ]),
-    ];
-    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: impactedObjectMetadataIds,
-    });
     const toFlatObjectMetadataMaps = otherObjectFlatFieldMetadatas.reduce(
       (flatObjectMetadataMaps, flatFieldMetadata) =>
         replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
@@ -96,7 +84,7 @@ export class ObjectMetadataServiceV2 {
         }),
       replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       }),
     );
 
@@ -114,7 +102,7 @@ export class ObjectMetadataServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
-              from: fromFlatObjectMetadataMaps,
+              from: existingFlatObjectMetadataMaps,
               to: toFlatObjectMetadataMaps,
             },
             flatIndexMaps: {

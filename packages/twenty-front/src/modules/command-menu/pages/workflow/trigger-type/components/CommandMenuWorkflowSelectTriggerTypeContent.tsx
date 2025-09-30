@@ -12,10 +12,12 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -32,6 +34,9 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     workflowSelectedNodeComponentState,
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
 
   const handleTriggerTypeClick = ({
     type,
@@ -48,6 +53,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           defaultLabel,
           type,
           activeNonSystemObjectMetadataItems,
+          isIteratorEnabled,
         }),
       );
 
@@ -74,7 +80,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.blue} />}
+            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />
@@ -90,7 +96,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
           <MenuItem
             withIconContainer={true}
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.purple} />}
+            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
             text={action.defaultLabel}
             onClick={handleTriggerTypeClick(action)}
           />
