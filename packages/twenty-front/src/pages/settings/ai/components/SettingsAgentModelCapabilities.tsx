@@ -66,10 +66,7 @@ export const SettingsAgentModelCapabilities = ({
     return null;
   }
 
-  const hasAnyCapabilities =
-    nativeCapabilities.webSearch || nativeCapabilities.twitterSearch;
-
-  if (!hasAnyCapabilities) {
+  if (!nativeCapabilities.webSearch && !nativeCapabilities.twitterSearch) {
     return null;
   }
 
