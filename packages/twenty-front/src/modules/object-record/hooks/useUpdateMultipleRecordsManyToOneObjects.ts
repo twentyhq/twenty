@@ -43,7 +43,7 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const updateMultipleRecordsFromManyObjects = async (
+  const updateMultipleRecordsManyToOneObjects = async (
     updatedManyRecordsArgs: UpdateManyRecordArgs[],
   ) => {
     for (const {
@@ -111,9 +111,13 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
 
         updateOneRecordInput[`${targetFieldName}Id`] = null;
 
+        if (!isDefined(relatedRecordId)) {
+          continue;
+        }
+
         const cachedRelatedRecord = getRecordFromCache({
           objectMetadataItem: objectMetadataItem,
-          recordId: relatedRecordId ?? '',
+          recordId: relatedRecordId,
           cache: apolloCoreClient.cache,
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
@@ -295,6 +299,6 @@ export const useUpdateMultipleRecordsManyToOneObjects = () => {
   };
 
   return {
-    updateMultipleRecordsFromManyObjects,
+    updateMultipleRecordsManyToOneObjects,
   };
 };

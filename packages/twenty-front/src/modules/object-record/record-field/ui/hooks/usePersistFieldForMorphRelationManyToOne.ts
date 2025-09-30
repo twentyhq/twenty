@@ -10,7 +10,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistFieldForMorphRelationManyToOne = () => {
-  const { fieldDefinition, recordId } = useContext(FieldContext); // ba1 pet tob2
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   if (!isFieldMorphRelation(fieldDefinition)) {
     throw new Error('Field is not a morph relation');
   }
@@ -28,7 +28,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
     (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
   );
 
-  const { updateMultipleRecordsFromManyObjects } =
+  const { updateMultipleRecordsManyToOneObjects } =
     useUpdateMultipleRecordsManyToOneObjects();
 
   const persistFieldForMorphRelationManyToOne = useRecoilCallback(
@@ -37,7 +37,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
         singleRecordPickerRecord: SingleRecordPickerRecord | null | undefined,
       ) => {
         if (!isDefined(singleRecordPickerRecord)) {
-          updateMultipleRecordsFromManyObjects?.([
+          updateMultipleRecordsManyToOneObjects?.([
             {
               idToUpdate: recordId,
               objectNameSingulars,
@@ -45,8 +45,9 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
               objectMetadataItem,
             },
           ]);
+          return;
         }
-        const recordFromPicker = singleRecordPickerRecord?.record; // be0f rocket2
+        const recordFromPicker = singleRecordPickerRecord?.record;
 
         if (!isDefined(recordFromPicker?.id)) {
           return;
@@ -82,13 +83,13 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
           },
         ];
 
-        updateMultipleRecordsFromManyObjects?.(updatedManyRecordsArgs);
+        updateMultipleRecordsManyToOneObjects?.(updatedManyRecordsArgs);
       },
     [
       objectMetadataItem,
       objectNameSingulars,
       recordId,
-      updateMultipleRecordsFromManyObjects,
+      updateMultipleRecordsManyToOneObjects,
     ],
   );
 

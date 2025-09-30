@@ -18,7 +18,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { updateMultipleRecordsFromManyObjects } =
+  const { updateMultipleRecordsManyToOneObjects } =
     useUpdateMultipleRecordsManyToOneObjects();
 
   if (!isFieldMorphRelation(fieldDefinition)) {
@@ -172,13 +172,13 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
           },
         ];
 
-        await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
+        await updateMultipleRecordsManyToOneObjects(updatedManyRecordsArgs);
       },
     [
       fieldDefinition,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      updateMultipleRecordsFromManyObjects,
+      updateMultipleRecordsManyToOneObjects,
       apolloCoreClient.cache,
       objectMetadataItem,
     ],
