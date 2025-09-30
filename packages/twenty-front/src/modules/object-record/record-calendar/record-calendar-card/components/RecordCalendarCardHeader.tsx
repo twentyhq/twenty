@@ -1,12 +1,18 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
+import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,6 +52,27 @@ export const RecordCalendarCardHeader = ({
 
   const dragState = useRecordDragState('calendar', viewBarInstanceId);
 
+  const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
+    RecordCalendarComponentInstanceContext,
+  );
+
+  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+    useRecoilComponentFamilyState(
+      isRecordCalendarCardSelectedComponentFamilyState,
+      recordId,
+    );
+
+  useListenClickOutside({
+    excludedClickOutsideIds: [RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID],
+    listenerId: `record-calendar-${recordCalendarId}-selection`,
+    refs: [],
+    callback: () => {
+      if (isCurrentCardSelected) {
+        setIsCurrentCardSelected(false);
+      }
+    },
+  });
+
   const handleChipClick = () => {
     if (dragState.isDragging) {
       return;
@@ -75,8 +102,10 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={false}
-            onChange={() => {}}
+            checked={isCurrentCardSelected}
+            onChange={(value) => {
+              setIsCurrentCardSelected(value.target.checked);
+            }}
             variant={CheckboxVariant.Secondary}
           />
         </StopPropagationContainer>

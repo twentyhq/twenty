@@ -2,6 +2,7 @@ import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-cal
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
 import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardHeader';
+import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -14,6 +15,10 @@ const StyledContainer = styled.div`
 
 const StyledRecordCard = styled(RecordCard)`
   width: calc(100% - 2px);
+
+  .checkbox-container {
+    opacity: 1;
+  }
 `;
 
 type RecordCalendarCardProps = {
@@ -31,7 +36,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
         instanceId: recordId,
       }}
     >
-      <StyledContainer>
+      <StyledContainer data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}>
         <StyledRecordCard>
           <RecordCalendarCardHeader recordId={recordId} />
           <AnimatedEaseInOut isOpen={!isCompactModeActive} initial={false}>
