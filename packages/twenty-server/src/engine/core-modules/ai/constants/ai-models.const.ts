@@ -28,6 +28,7 @@ export interface AIModelConfig {
   doesSupportThinking?: boolean;
   nativeCapabilities?: {
     webSearch?: boolean;
+    twitterSearch?: boolean;
   };
 }
 
@@ -103,6 +104,7 @@ export const AI_MODELS: AIModelConfig[] = [
     outputCostPer1kTokensInCents: 1.5,
     nativeCapabilities: {
       webSearch: true,
+      twitterSearch: true,
     },
   },
   {
@@ -113,6 +115,7 @@ export const AI_MODELS: AIModelConfig[] = [
     outputCostPer1kTokensInCents: 0.05,
     nativeCapabilities: {
       webSearch: true,
+      twitterSearch: true,
     },
   },
   {
@@ -123,6 +126,7 @@ export const AI_MODELS: AIModelConfig[] = [
     outputCostPer1kTokensInCents: 2.5,
     nativeCapabilities: {
       webSearch: true,
+      twitterSearch: true,
     },
   },
 ];
