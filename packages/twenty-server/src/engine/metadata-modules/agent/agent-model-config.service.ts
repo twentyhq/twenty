@@ -29,9 +29,6 @@ export class AgentModelConfigService {
         return this.getXaiProviderOptions(agent);
       case ModelProvider.ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
-      case ModelProvider.OPENAI:
-      case ModelProvider.OPENAI_COMPATIBLE:
-        return {};
       default:
         return {};
     }
