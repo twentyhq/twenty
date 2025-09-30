@@ -11,7 +11,10 @@ import {
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES, CurrencyCode } from 'twenty-shared/constants';
+import {
+  COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
+  CurrencyCode,
+} from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IllustrationIconCurrency,
