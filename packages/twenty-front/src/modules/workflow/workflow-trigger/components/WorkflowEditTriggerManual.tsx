@@ -158,6 +158,7 @@ export const WorkflowEditTriggerManual = ({
                     type: availability.type,
                     objectNameSingular,
                   },
+                  objectType: objectNameSingular,
                   outputSchema: {},
                 },
               });
