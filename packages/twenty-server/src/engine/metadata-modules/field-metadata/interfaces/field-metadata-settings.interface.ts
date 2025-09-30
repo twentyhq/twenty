@@ -3,6 +3,7 @@ import {
   type FieldMetadataType,
   type IsExactly,
 } from 'twenty-shared/types';
+import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 
 import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -62,6 +63,10 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataMultipleValuesSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataMultipleValuesSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataMultipleValuesSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataMultipleValuesSettings | null;
 };
 
 export type AllFieldMetadataSettings =

@@ -17,6 +17,7 @@ import {
   type AllowedAddressSubField,
   FieldMetadataType,
 } from 'twenty-shared/types';
+import { MIN_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -72,6 +73,13 @@ class AddressSettingsValidation {
   @IsEnum(ALLOWED_ADDRESS_SUBFIELDS, { each: true })
   subFields?: AllowedAddressSubField[];
 }
+
+class MultipleValuesSettingsValidation {
+  @IsOptional()
+  @IsInt()
+  @Min(MIN_MAX_NUMBER_OF_VALUES)
+  maxNumberOfValues?: number;
+}
 @Injectable()
 export class FieldMetadataValidationService {
   constructor(
@@ -104,6 +112,16 @@ export class FieldMetadataValidationService {
         await this.validateSettings({
           type: FieldMetadataType.ADDRESS,
           validator: AddressSettingsValidation,
+          settings,
+        });
+        break;
+      case FieldMetadataType.PHONES:
+      case FieldMetadataType.EMAILS:
+      case FieldMetadataType.LINKS:
+      case FieldMetadataType.ARRAY:
+        await this.validateSettings({
+          type: fieldType,
+          validator: MultipleValuesSettingsValidation,
           settings,
         });
         break;
