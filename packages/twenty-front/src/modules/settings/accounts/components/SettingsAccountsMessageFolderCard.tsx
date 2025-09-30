@@ -9,7 +9,7 @@ type SettingsAccountsMessageFolderCardProps = {
   value?: MessageFolderImportPolicy;
 };
 
-const inboxSettingsVisibilityOptions = [
+const INBOX_SETTINGS_VISIBILITY_OPTIONS = [
   {
     title: msg`Everything`,
     description: msg`Import all emails`,
@@ -39,7 +39,7 @@ export const SettingsAccountsMessageFolderCard = ({
 }: SettingsAccountsMessageFolderCardProps) => (
   <SettingsAccountsRadioSettingsCard
     name="message-folder-import-policy"
-    options={inboxSettingsVisibilityOptions}
+    options={INBOX_SETTINGS_VISIBILITY_OPTIONS}
     value={value}
     onChange={onChange}
   />
