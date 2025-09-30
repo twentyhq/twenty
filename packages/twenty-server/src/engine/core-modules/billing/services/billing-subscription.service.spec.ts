@@ -62,7 +62,7 @@ const METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID =
 const METER_PRICE_PRO_MONTH_TIER_LOW_ID = 'METER_PRICE_PRO_MONTH_TIER_LOW_ID';
 const METER_PRICE_PRO_MONTH_TIER_HIGH_ID = 'METER_PRICE_PRO_MONTH_TIER_HIGH_ID';
 
-describe('BillingSubscriptionService)', () => {
+describe('BillingSubscriptionService', () => {
   let module: TestingModule;
   let service: BillingSubscriptionService;
   let billingSubscriptionRepository: Repository<BillingSubscription>;
