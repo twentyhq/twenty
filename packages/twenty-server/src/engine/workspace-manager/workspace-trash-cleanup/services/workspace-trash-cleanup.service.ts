@@ -6,6 +6,7 @@ import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { calculateNextTrashCleanupDate } from 'src/engine/core-modules/workspace/utils/calculate-next-trash-cleanup-date.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceTrashTableDiscoveryService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-table-discovery.service';
 import { WorkspaceTrashDeletionService } from 'src/engine/workspace-manager/workspace-trash-cleanup/services/workspace-trash-deletion.service';
@@ -153,7 +154,7 @@ export class WorkspaceTrashCleanupService {
 
     for (let i = 0; i < workspaces.length; i++) {
       const workspace = workspaces[i];
-      const nextDate = this.calculateNextCleanupDate(
+      const nextDate = calculateNextTrashCleanupDate(
         workspace.trashRetentionDays,
       );
 
@@ -177,15 +178,6 @@ export class WorkspaceTrashCleanupService {
     this.logger.log(
       `Updated next cleanup dates for ${workspaces.length} workspace(s)`,
     );
-  }
-
-  private calculateNextCleanupDate(trashRetentionDays: number): Date {
-    const nextDate = new Date();
-
-    nextDate.setUTCDate(nextDate.getUTCDate() + 1 + trashRetentionDays);
-    nextDate.setUTCHours(0, 0, 0, 0);
-
-    return nextDate;
   }
 
   private sleep(ms: number): Promise<void> {

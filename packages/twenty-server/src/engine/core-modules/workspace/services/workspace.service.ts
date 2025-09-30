@@ -48,6 +48,7 @@ import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/uti
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { calculateNextTrashCleanupDate } from 'src/engine/core-modules/workspace/utils/calculate-next-trash-cleanup-date.util';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -225,6 +226,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       throw new WorkspaceException(
         'Password auth is not enabled in the system.',
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+
+    // Recompute nextTrashCleanupAt if trashRetentionDays changed
+    if (
+      isDefined(payload.trashRetentionDays) &&
+      payload.trashRetentionDays !== workspace.trashRetentionDays
+    ) {
+      payload.nextTrashCleanupAt = calculateNextTrashCleanupDate(
+        payload.trashRetentionDays,
       );
     }
 
@@ -471,7 +482,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       'displayName' in payload ||
       'subdomain' in payload ||
       'customDomain' in payload ||
-      'logo' in payload
+      'logo' in payload ||
+      'trashRetentionDays' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
