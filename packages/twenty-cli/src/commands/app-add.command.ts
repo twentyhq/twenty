@@ -7,14 +7,20 @@ import { resolveAppPath } from '../utils/app-path-resolver';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
 
-type SyncableEntity = 'agent' | 'object';
+enum SyncableEntity {
+  AGENT = 'agent',
+  OBJECT = 'object',
+  SERVERLESS_FUNCTION = 'serverlessFunction',
+}
 
 const getFolderName = (entity: SyncableEntity) => {
   switch (entity) {
-    case 'agent':
+    case SyncableEntity.AGENT:
       return 'agents';
-    case 'object':
+    case SyncableEntity.OBJECT:
       return 'objects';
+    case SyncableEntity.SERVERLESS_FUNCTION:
+      return 'serverlessFunctions';
     default:
       throw new Error(`Unknown entity type: ${entity}`);
   }
@@ -40,13 +46,16 @@ export class AppAddCommand {
 
       const folderName = getFolderName(entity);
 
-      const entitiesDir = path.join(appPath, folderName);
+      const entitiesDir = path.join(appPath, folderName, entityName);
 
       await fs.ensureDir(entitiesDir);
 
-      const entityPath = path.join(entitiesDir, `${entityName}.jsonc`);
+      await writeJsoncFile(
+        path.join(entitiesDir, `${entity}.manifest.jsonc`),
+        entityData,
+      );
 
-      await writeJsoncFile(entityPath, entityData);
+      await this.addEntityInitFiles(entity, entitiesDir);
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -56,13 +65,39 @@ export class AppAddCommand {
     }
   }
 
+  private async addEntityInitFiles(entity: SyncableEntity, entityPath: string) {
+    switch (entity) {
+      case SyncableEntity.SERVERLESS_FUNCTION: {
+        const srcPath = path.join(entityPath, 'src');
+        await fs.ensureDir(srcPath);
+
+        await fs.writeFile(
+          path.join(srcPath, 'index.ts'),
+          `export const handler = async () => {}`,
+        );
+
+        return;
+      }
+      case SyncableEntity.AGENT:
+      case SyncableEntity.OBJECT:
+        return;
+      default:
+        throw new Error(`Unknown entity type: ${entity}`);
+    }
+  }
+
   private async getEntity() {
     const { entity } = await inquirer.prompt([
       {
         type: 'select',
         name: 'entity',
         message: `What entity do you want to create?`,
-        choices: ['agent', 'object'],
+        default: '',
+        choices: [
+          SyncableEntity.AGENT,
+          SyncableEntity.OBJECT,
+          SyncableEntity.SERVERLESS_FUNCTION,
+        ],
       },
     ]);
 
@@ -90,7 +125,7 @@ export class AppAddCommand {
       },
     ]);
 
-    return name;
+    return name as string;
   }
 
   private async getEntityToCreateData(

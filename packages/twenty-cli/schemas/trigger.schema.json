@@ -1,0 +1,32 @@
+{
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/trigger.schema.json",
+  "type": "object",
+  "required": ["type"],
+  "properties": {
+    "type": { "enum": ["cron", "databaseEvent", "route"] },
+
+    "schedule": { "type": "string" },
+
+    "eventName": { "type": "string" },
+
+    "path": { "type": "string" },
+
+    "httpMethod": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+
+    "isAuthRequired": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "cron" } } },
+      "then": { "required": ["schedule"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "databaseEvent" } } },
+      "then": { "required": ["eventName"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "route" } } },
+      "then": { "required": ["path", "httpMethod", "isAuthRequired"] }
+    }
+  ]
+}
