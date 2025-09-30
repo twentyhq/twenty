@@ -13,9 +13,7 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps:
-    | ObjectMetadataMaps
-    | FlatEntityMaps<FlatObjectMetadata>;
+  objectMetadataMaps: ObjectMetadataMaps | FlatEntityMaps<FlatObjectMetadata>;
 };
 
 export const doesOtherObjectWithSameNameExists = ({
