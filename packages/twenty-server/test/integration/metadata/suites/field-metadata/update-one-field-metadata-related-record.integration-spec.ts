@@ -15,6 +15,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import {
   type EnumFieldMetadataType,
   FieldMetadataType,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +26,6 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ViewFilterOperand } from 'twenty-shared/types';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
