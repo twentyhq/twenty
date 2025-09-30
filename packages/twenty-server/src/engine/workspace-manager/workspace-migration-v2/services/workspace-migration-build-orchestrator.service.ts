@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,10 +25,6 @@ import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migra
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
-  private readonly logger = new Logger(
-    WorkspaceMigrationBuildOrchestratorService.name,
-  );
-
   constructor(
     private readonly workspaceMigrationV2ObjectActionsBuilderService: WorkspaceMigrationV2ObjectActionsBuilderService,
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
