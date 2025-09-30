@@ -5,7 +5,7 @@ import {
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -30,7 +30,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   flatIndexMaps,
   // This should return an AllFlatEntityMaps
 }: FromDeleteObjectInputToFlatFieldMetadatasToDeleteArgs): {
-  flatFieldMetadatasToDelete: FlatFieldMetadataSecond[];
+  flatFieldMetadatasToDelete: FlatFieldMetadata[];
   flatObjectMetadataToDelete: FlatObjectMetadataSecond;
   flatIndexToDelete: FlatIndexMetadata[];
 } => {

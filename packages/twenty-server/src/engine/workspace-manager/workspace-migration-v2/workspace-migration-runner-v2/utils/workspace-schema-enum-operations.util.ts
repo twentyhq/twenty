@@ -6,7 +6,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -50,7 +50,7 @@ const collectEnumOperationsForBasicEnumField = ({
   operation,
   options,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond<
+  flatFieldMetadata: FlatFieldMetadata<
     | FieldMetadataType.SELECT
     | FieldMetadataType.MULTI_SELECT
     | FieldMetadataType.RATING
@@ -101,7 +101,7 @@ const collectEnumOperationsForCompositeField = ({
   operation,
   options,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond<CompositeFieldMetadataType>;
+  flatFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
   tableName: string;
   operation: EnumOperation;
   options?: { newTableName?: string; newFieldName?: string };
@@ -155,7 +155,7 @@ export const collectEnumOperationsForField = ({
   operation,
   options,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond;
+  flatFieldMetadata: FlatFieldMetadata;
   tableName: string;
   operation: EnumOperation;
   options?: { newTableName?: string; newFieldName?: string };
@@ -188,7 +188,7 @@ export const collectEnumOperationsForObject = ({
 }: {
   tableName: string;
   operation: EnumOperation;
-  flatFieldMetadatas: FlatFieldMetadataSecond[];
+  flatFieldMetadatas: FlatFieldMetadata[];
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
   return flatFieldMetadatas.flatMap((flatFieldMetadata) =>

@@ -9,7 +9,7 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -30,7 +30,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   workspaceId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
   FieldInputTranspilationResult<{
-    flatFieldMetadatas: FlatFieldMetadataSecond[];
+    flatFieldMetadatas: FlatFieldMetadata[];
     indexMetadatas: FlatIndexMetadata[];
   }>
 > => {

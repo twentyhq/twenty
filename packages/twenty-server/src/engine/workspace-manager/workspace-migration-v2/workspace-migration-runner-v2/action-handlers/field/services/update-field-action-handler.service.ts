@@ -19,8 +19,7 @@ import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metad
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import {
-  FlatFieldMetadataSecond,
-  type FlatFieldMetadata,
+  FlatFieldMetadata
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -53,8 +52,8 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   queryRunner: QueryRunner;
   schemaName: string;
   tableName: string;
-  flatFieldMetadata: FlatFieldMetadataSecond<T>;
-  update: PropertyUpdate<FlatFieldMetadataSecond<T>, P>;
+  flatFieldMetadata: FlatFieldMetadata<T>;
+  update: PropertyUpdate<FlatFieldMetadata<T>, P>;
 };
 
 @Injectable()

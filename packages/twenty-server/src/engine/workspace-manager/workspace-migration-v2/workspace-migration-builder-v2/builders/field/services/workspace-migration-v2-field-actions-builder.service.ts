@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import {
   FlatEntityUpdateValidationArgs,
@@ -21,7 +21,7 @@ export type FieldMetadataRelatedFlatEntityMaps = Pick<
 >;
 @Injectable()
 export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  FlatFieldMetadataSecond,
+  FlatFieldMetadata,
   WorkspaceMigrationFieldActionV2,
   FieldMetadataRelatedFlatEntityMaps
 > {
@@ -38,12 +38,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     workspaceId,
     otherFlatEntitiesToValidate: otherFlatFieldMetadataMapsToValidate,
   }: FlatEntityValidationArgs<
-    FlatFieldMetadataSecond,
+    FlatFieldMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadataSecond
+      FlatFieldMetadata
     >
   > {
     const validationResult =
@@ -78,12 +78,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
   }: FlatEntityValidationArgs<
-    FlatFieldMetadataSecond,
+    FlatFieldMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadataSecond
+      FlatFieldMetadata
     >
   > {
     const validationResult =
@@ -117,12 +117,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
   }: FlatEntityUpdateValidationArgs<
-    FlatFieldMetadataSecond,
+    FlatFieldMetadata,
     FieldMetadataRelatedFlatEntityMaps
   >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationFieldActionV2,
-        FlatFieldMetadataSecond
+        FlatFieldMetadata
       >
     | undefined
   > {

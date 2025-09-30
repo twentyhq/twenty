@@ -12,7 +12,7 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
-import { FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -467,7 +467,7 @@ export class ObjectMetadataServiceV2 {
     viewId,
     workspaceId,
   }: {
-    objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+    objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
   }) {

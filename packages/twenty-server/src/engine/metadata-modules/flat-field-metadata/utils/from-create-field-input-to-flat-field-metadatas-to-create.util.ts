@@ -15,8 +15,7 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import {
-  type FlatFieldMetadataSecond,
-  type FlatFieldMetadata,
+  type FlatFieldMetadata
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
@@ -34,7 +33,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
-    flatFieldMetadatas: FlatFieldMetadataSecond[];
+    flatFieldMetadatas: FlatFieldMetadata[];
     indexMetadatas: FlatIndexMetadata[];
   }>
 > => {

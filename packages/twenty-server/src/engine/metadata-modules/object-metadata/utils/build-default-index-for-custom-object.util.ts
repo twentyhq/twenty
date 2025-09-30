@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
@@ -15,7 +15,7 @@ export const buildDefaultIndexesForCustomObject = ({
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadataSecond;
-  objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+  objectFlatFieldMetadatas: FlatFieldMetadata[];
   defaultFlatFieldForCustomObjectMaps: DefaultFlatFieldForCustomObjectMaps;
 }) => {
   const tsFlatVectorIndexId = v4();

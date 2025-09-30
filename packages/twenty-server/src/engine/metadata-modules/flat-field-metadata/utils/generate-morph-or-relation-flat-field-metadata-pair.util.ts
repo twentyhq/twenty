@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -47,7 +47,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
-  flatFieldMetadatas: FlatFieldMetadataSecond[];
+  flatFieldMetadatas: FlatFieldMetadata[];
   indexMetadatas: FlatIndexMetadata[];
 };
 
@@ -69,7 +69,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: Omit<
-    FlatFieldMetadataSecond<MorphOrRelationFieldMetadataType>,
+    FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
   > = {
     ...getDefaultFlatFieldMetadata({
@@ -108,7 +108,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
           ? RelationType.MANY_TO_ONE
           : RelationType.ONE_TO_MANY,
     });
-  const targetFlatFieldMetadata: FlatFieldMetadataSecond<FieldMetadataType.RELATION> =
+  const targetFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION> =
     {
       ...getDefaultFlatFieldMetadata({
         createFieldInput: targetCreateFieldInput,

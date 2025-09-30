@@ -1,15 +1,15 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 
 export const isFlatFieldMetadataJsonbProperty = ({
   flatFieldMetadata,
   property,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond;
-  property: keyof FlatFieldMetadataSecond;
+  flatFieldMetadata: FlatFieldMetadata;
+  property: keyof FlatFieldMetadata;
 }): boolean => {
   if (property === 'defaultValue') {
     return isFlatFieldMetadataOfTypes(flatFieldMetadata, [

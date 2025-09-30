@@ -7,8 +7,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
-  type FlatFieldMetadataSecond,
-  type FlatFieldMetadata,
+  type FlatFieldMetadata
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -27,7 +26,7 @@ import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace
 import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 type FlatFieldMetadataRelationWithoutRelations = Omit<
-  FlatFieldMetadataSecond<FieldMetadataType.RELATION>,
+  FlatFieldMetadata<FieldMetadataType.RELATION>,
   'flatRelationTargetFieldMetadata' | 'flatRelationTargetObjectMetadata'
 >;
 

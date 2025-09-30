@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -9,8 +9,8 @@ import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-mo
 
 type RecomputeIndexOnFlatFieldMetadataNameUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadataSecond;
-  fromFlatFieldMetadata: FlatFieldMetadataSecond;
-  toFlatFieldMetadata: Pick<FlatFieldMetadataSecond, 'name'>;
+  fromFlatFieldMetadata: FlatFieldMetadata;
+  toFlatFieldMetadata: Pick<FlatFieldMetadata, 'name'>;
 } & Pick<AllFlatEntityMaps, 'flatIndexMaps' | 'flatFieldMetadataMaps'>;
 
 export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({

@@ -1,9 +1,9 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (
-  flatFieldMetadata: FlatFieldMetadataSecond | FlatRelationTargetFieldMetadata,
+  flatFieldMetadata: FlatFieldMetadata | FlatRelationTargetFieldMetadata,
 ): FieldMetadataDTO => {
   const {
     createdAt,

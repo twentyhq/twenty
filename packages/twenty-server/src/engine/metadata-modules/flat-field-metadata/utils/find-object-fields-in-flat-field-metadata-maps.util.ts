@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type FindOtherObjectFieldsFromFlatFieldMetadataMapsArgs = {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectMetadataId: string;
 };
 // Should throw if empty ? TODO DEFINITELY
@@ -13,8 +13,8 @@ export const findObjectFieldsInFlatFieldMetadataMaps = ({
   objectMetadataId,
 }: FindOtherObjectFieldsFromFlatFieldMetadataMapsArgs) => {
   return Object.values(flatFieldMetadataMaps.byId).reduce<{
-    objectFlatFieldMetadataById: Record<string, FlatFieldMetadataSecond>;
-    objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+    objectFlatFieldMetadataById: Record<string, FlatFieldMetadata>;
+    objectFlatFieldMetadatas: FlatFieldMetadata[];
   }>(
     (acc, flatFieldMetadata) => {
       if (

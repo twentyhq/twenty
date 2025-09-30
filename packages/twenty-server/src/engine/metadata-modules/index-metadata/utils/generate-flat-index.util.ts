@@ -4,7 +4,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadataSecond } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -12,7 +12,7 @@ import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/in
 
 type GenerateFlatIndexArgs = {
   flatObjectMetadata: FlatObjectMetadataSecond;
-  objectFlatFieldMetadatas: FlatFieldMetadataSecond[];
+  objectFlatFieldMetadatas: FlatFieldMetadata[];
   flatIndex: Omit<FlatIndexMetadata, 'name'>;
 };
 export const generateFlatIndexMetadataWithNameOrThrow = ({

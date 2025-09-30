@@ -6,7 +6,7 @@ import {
 
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
@@ -41,7 +41,7 @@ const objectMetadataEditableProperties =
 
 type UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
   flatObjectMetadata: FlatObjectMetadataSecond;
-  otherObjectFlatFieldMetadataToUpdate: FlatFieldMetadataSecond[];
+  otherObjectFlatFieldMetadataToUpdate: FlatFieldMetadata[];
   flatIndexMetadataToUpdate: FlatIndexMetadata[];
 };
 

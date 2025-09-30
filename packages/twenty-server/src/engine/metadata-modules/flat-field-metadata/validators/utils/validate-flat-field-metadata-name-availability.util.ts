@@ -9,13 +9,13 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 const getReservedCompositeFieldNames = (
-  objectFlatFieldMetadatas: FlatFieldMetadataSecond[],
+  objectFlatFieldMetadatas: FlatFieldMetadata[],
 ): string[] => {
   return objectFlatFieldMetadatas.flatMap((flatFieldMetadata) => {
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
@@ -42,8 +42,8 @@ export const validateFlatFieldMetadataNameAvailability = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
+  flatFieldMetadata: FlatFieldMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const { objectFlatFieldMetadatas } = findObjectFieldsInFlatFieldMetadataMaps({

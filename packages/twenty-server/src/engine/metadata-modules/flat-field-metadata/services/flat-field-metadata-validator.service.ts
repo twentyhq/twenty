@@ -11,8 +11,7 @@ import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/m
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import {
-  FlatFieldMetadataSecond,
-  type FlatFieldMetadata,
+  FlatFieldMetadata
 } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
@@ -29,9 +28,9 @@ export type ValidateOneFieldMetadataArgs<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps'
   >;
-  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadataSecond[];
-  flatFieldMetadataToValidate: FlatFieldMetadataSecond<T>;
-  optimisticFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadataSecond>;
+  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadata[];
+  flatFieldMetadataToValidate: FlatFieldMetadata<T>;
+  optimisticFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
 };
 

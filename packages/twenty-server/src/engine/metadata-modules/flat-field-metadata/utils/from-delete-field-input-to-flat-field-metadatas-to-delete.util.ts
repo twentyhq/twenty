@@ -11,7 +11,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { findObjectFieldsInFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -30,7 +30,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   flatIndexMaps: existingFlatIndexMaps,
   flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
 }: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
-  flatFieldMetadatasToDelete: FlatFieldMetadataSecond[];
+  flatFieldMetadatasToDelete: FlatFieldMetadata[];
   flatIndexesToUpdate: FlatIndexMetadata[];
   flatIndexesToDelete: FlatIndexMetadata[];
 } => {

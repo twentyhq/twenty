@@ -9,7 +9,7 @@ import {
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { type FlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -30,7 +30,7 @@ export const generateCompositeColumnDefinition = ({
   flatObjectMetadata,
 }: {
   compositeProperty: CompositeProperty;
-  parentFieldMetadata: FlatFieldMetadataSecond<CompositeFieldMetadataType>;
+  parentFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
   flatObjectMetadata: FlatObjectMetadataSecond;
 }): WorkspaceSchemaColumnDefinition => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
@@ -85,7 +85,7 @@ export const generateCompositeColumnDefinition = ({
 };
 
 const generateTsVectorColumnDefinition = (
-  flatFieldMetadata: FlatFieldMetadataSecond<FieldMetadataType.TS_VECTOR>,
+  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>,
 ): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(flatFieldMetadata.name);
 
@@ -102,7 +102,7 @@ const generateTsVectorColumnDefinition = (
 };
 
 const generateRelationColumnDefinition = (
-  flatFieldMetadata: FlatFieldMetadataSecond<
+  flatFieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
 ): WorkspaceSchemaColumnDefinition | null => {
@@ -130,7 +130,7 @@ const generateColumnDefinition = ({
   schemaName,
   tableName,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond;
+  flatFieldMetadata: FlatFieldMetadata;
   tableName: string;
   schemaName: string;
 }): WorkspaceSchemaColumnDefinition => {
@@ -165,7 +165,7 @@ export const generateColumnDefinitions = ({
   flatFieldMetadata,
   flatObjectMetadata,
 }: {
-  flatFieldMetadata: FlatFieldMetadataSecond;
+  flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadataSecond;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
