@@ -1,4 +1,3 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
@@ -13,6 +12,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
+import { CustomError } from 'twenty-shared/utils';
 
 type computeEmptyDraftValueParams = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
