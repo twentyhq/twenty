@@ -20,6 +20,7 @@ export const validateFlatObjectMetadataIdentifiers = ({
   objectFlatFieldMetadatas: FlatFieldMetadata[];
 }) => {
   const errors: FlatObjectMetadataValidationError[] = [];
+  return errors; //TMP
 
   const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
     flatObjectMetadata;

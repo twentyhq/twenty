@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -30,6 +31,7 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     @InjectDataSource()
@@ -106,7 +108,7 @@ export class DevSeederMetadataService {
         await this.seedCustomFields({
           workspaceId,
           objectMetadataNameSingular: obj.seed.nameSingular,
-          fieldMetadataSeeds: obj.fields,
+          fieldMetadataSeeds: obj.fields ?? [],
         });
       }
     }
@@ -131,9 +133,11 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataService.createOne({
-      ...objectMetadataSeed,
-      dataSourceId,
+    await this.objectMetadataServiceV2.createOne({
+      createObjectInput: {
+        ...objectMetadataSeed,
+        dataSourceId,
+      },
       workspaceId,
     });
   }

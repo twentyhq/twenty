@@ -86,8 +86,8 @@ export class FlatViewFieldValidatorService {
     flatViewFieldToValidate,
     optimisticFlatViewFieldMaps,
     dependencyOptimisticFlatEntityMaps: {
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       flatViewMaps: optimisticFlatViewMaps,
+      flatFieldMetadataMaps
     },
   }: {
     flatViewFieldToValidate: FlatViewField;
@@ -110,7 +110,7 @@ export class FlatViewFieldValidatorService {
 
     const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: optimisticFlatObjectMetadataMaps,
+      flatEntityMaps: flatFieldMetadataMaps,
     });
 
     if (!isDefined(relatedFlatFieldMetadata)) {

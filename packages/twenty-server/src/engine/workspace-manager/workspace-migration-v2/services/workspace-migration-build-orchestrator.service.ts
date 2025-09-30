@@ -225,8 +225,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewFieldMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: {
-              flatObjectMetadataMaps:
-                optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
               flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
             },
             workspaceId,
