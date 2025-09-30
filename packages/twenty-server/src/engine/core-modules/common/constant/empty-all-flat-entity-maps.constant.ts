@@ -10,4 +10,6 @@ export const EMPTY_ALL_FLAT_ENTITY_MAPS = {
   flatViewFieldMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatViewMaps: EMPTY_FLAT_ENTITY_MAPS,
   flatServerlessFunctionMaps: EMPTY_FLAT_ENTITY_MAPS,
+  flatCronTriggerMaps: EMPTY_FLAT_ENTITY_MAPS,
+  flatDatabaseEventTriggerMaps: EMPTY_FLAT_ENTITY_MAPS,
 } as const satisfies AllFlatEntityMaps;
