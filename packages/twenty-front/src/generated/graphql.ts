@@ -57,7 +57,7 @@ export type Agent = {
   id: Scalars['UUID'];
   isCustom: Scalars['Boolean'];
   label: Scalars['String'];
-  modelCapabilities?: Maybe<Scalars['JSON']>;
+  modelCofinguration?: Maybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -486,7 +486,7 @@ export type ClientAiModelConfig = {
   inputCostPer1kTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
-  nativeCapabilities?: Maybe<ModelCapabilities>;
+  nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
 };
@@ -699,7 +699,7 @@ export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
-  modelCapabilities?: InputMaybe<Scalars['JSON']>;
+  modelCofinguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name?: InputMaybe<Scalars['String']>;
   prompt: Scalars['String'];
@@ -1516,14 +1516,6 @@ export enum MessageChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
 }
-
-export type ModelCapabilities = {
-  __typename?: 'ModelCapabilities';
-  codeExecution?: Maybe<Scalars['Boolean']>;
-  imageGeneration?: Maybe<Scalars['Boolean']>;
-  realTimeData?: Maybe<Scalars['Boolean']>;
-  webSearch?: Maybe<Scalars['Boolean']>;
-};
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
@@ -2467,6 +2459,12 @@ export type MutationVerifyEmailingDomainArgs = {
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
+};
+
+export type NativeModelCapabilities = {
+  __typename?: 'NativeModelCapabilities';
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
 };
 
 export type NumberChartConfiguration = {
@@ -3555,7 +3553,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label: Scalars['String'];
-  modelCapabilities?: InputMaybe<Scalars['JSON']>;
+  modelCofinguration?: InputMaybe<Scalars['JSON']>;
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];

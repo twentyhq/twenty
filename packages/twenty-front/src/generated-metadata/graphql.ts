@@ -486,7 +486,7 @@ export type ClientAiModelConfig = {
   inputCostPer1kTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
-  nativeCapabilities?: Maybe<ModelCapabilities>;
+  nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPer1kTokensInCredits: Scalars['Float'];
   provider: ModelProvider;
 };
@@ -1560,15 +1560,6 @@ export enum MessageChannelVisibility {
   SUBJECT = 'SUBJECT'
 }
 
-export type ModelCapabilities = {
-  __typename?: 'ModelCapabilities';
-  codeExecution?: Maybe<Scalars['Boolean']>;
-  imageGeneration?: Maybe<Scalars['Boolean']>;
-  realTimeData?: Maybe<Scalars['Boolean']>;
-  twitterSearch?: Maybe<Scalars['Boolean']>;
-  webSearch?: Maybe<Scalars['Boolean']>;
-};
-
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
   NONE = 'NONE',
@@ -2557,6 +2548,12 @@ export type MutationVerifyEmailingDomainArgs = {
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String'];
+};
+
+export type NativeModelCapabilities = {
+  __typename?: 'NativeModelCapabilities';
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
 };
 
 export type NumberChartConfiguration = {
