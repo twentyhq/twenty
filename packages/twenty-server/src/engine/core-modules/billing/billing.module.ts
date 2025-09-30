@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
-import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
@@ -35,6 +34,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
+import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 
 @Module({
   imports: [
@@ -72,8 +72,8 @@ import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing
     BillingSyncCustomerDataCommand,
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
-    BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
+    BillingPriceService,
   ],
   exports: [
     BillingSubscriptionService,

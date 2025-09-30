@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { CurrencyCode } from '../CurrencyCode';
+import { CurrencyCode } from 'twenty-shared/constants';
 import { type FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({

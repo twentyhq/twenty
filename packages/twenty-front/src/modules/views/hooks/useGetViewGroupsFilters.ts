@@ -1,8 +1,7 @@
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 export const useGetViewGroupsFilters = (): RecordFilter[] => {
   const { currentView } = useGetCurrentViewOnly();
@@ -15,7 +14,7 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
           id: recordGroup.id,
           fieldMetadataId: recordGroup.fieldMetadataId,
           value: JSON.stringify([recordGroup.fieldValue]),
-          operand: ViewFilterOperand.IsNot,
+          operand: ViewFilterOperand.IS_NOT,
           displayValue: '',
           type: getFilterTypeFromFieldType(FieldMetadataType.SELECT),
           label: '',

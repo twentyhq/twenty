@@ -8,6 +8,7 @@ export const objectMetadataEntityRelationProperties = [
   'indexMetadatas',
   'targetRelationFields',
   'dataSource',
+  'application',
   'objectPermissions',
   'fieldPermissions',
 ] as const satisfies ObjectMetadataRelationProperties[];

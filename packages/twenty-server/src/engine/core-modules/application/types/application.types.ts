@@ -3,6 +3,11 @@ export type PackageJson = {
   standardId: string;
   label: string;
   description?: string;
+  engines: {
+    node: string;
+    npm: string;
+    yarn: string;
+  };
   icon?: string;
   version: string;
   dependencies?: object;

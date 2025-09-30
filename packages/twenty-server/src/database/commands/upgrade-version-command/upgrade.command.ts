@@ -28,6 +28,7 @@ import { AddPositionsToWorkflowVersionsAndWorkflowRunsCommand } from 'src/databa
 import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-migrate-views-to-core.command';
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
+import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -79,6 +80,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.6 Commands
     protected readonly fixLabelIdentifierPositionAndVisibilityCommand: FixLabelIdentifierPositionAndVisibilityCommand,
+
+    // 1.7 Commands
+    protected readonly backfillWorkflowManualTriggerAvailabilityCommand: BackfillWorkflowManualTriggerAvailabilityCommand,
   ) {
     super(
       workspaceRepository,
@@ -165,6 +169,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_170: VersionCommands = {
+      beforeSyncMetadata: [
+        this.backfillWorkflowManualTriggerAvailabilityCommand,
+      ],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -177,6 +188,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.4.0': commands_140,
       '1.5.0': commands_150,
       '1.6.0': commands_160,
+      '1.7.0': commands_170,
     };
   }
 

@@ -76,6 +76,14 @@ export const searchVariableThroughIteratorOutputSchema = ({
 
   if (iteratorResultKey === 'currentItem') {
     const schema = iteratorOutputSchema.currentItem.value;
+
+    if (!isDefined(schema)) {
+      return {
+        variableLabel: undefined,
+        variablePathLabel: undefined,
+      };
+    }
+
     if (isRecordOutputSchemaV2(schema) && isDefined(fieldName)) {
       return searchRecordOutputSchema({
         stepName: `${stepName} > Current Item`,

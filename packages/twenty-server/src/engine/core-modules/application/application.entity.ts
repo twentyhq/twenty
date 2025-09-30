@@ -6,12 +6,18 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
@@ -47,6 +53,38 @@ export class ApplicationEntity {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  serverlessFunctionLayerId: string;
+
+  @OneToOne(
+    () => ServerlessFunctionLayerEntity,
+    (serverlessFunctionLayer) => serverlessFunctionLayer.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({ name: 'serverlessFunctionLayerId' })
+  serverlessFunctionLayer: Relation<ServerlessFunctionLayerEntity>;
+
+  @OneToMany(() => AgentEntity, (agent) => agent.application, {
+    onDelete: 'CASCADE',
+  })
+  agents: Relation<AgentEntity[]>;
+
+  @OneToMany(
+    () => ServerlessFunctionEntity,
+    (serverlessFunction) => serverlessFunction.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  serverlessFunctions: Relation<ServerlessFunctionEntity[]>;
+
+  @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
+    onDelete: 'CASCADE',
+  })
+  objects: Relation<ObjectMetadataEntity[]>;
 
   @ManyToOne(() => Workspace, {
     onDelete: 'CASCADE',

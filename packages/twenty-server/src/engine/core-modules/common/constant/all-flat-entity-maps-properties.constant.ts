@@ -6,4 +6,6 @@ export const ALL_FLAT_ENTITY_MAPS_PROPERTIES = [
   'flatViewMaps',
   'flatIndexMaps',
   'flatServerlessFunctionMaps',
+  'flatDatabaseEventTriggerMaps',
+  'flatCronTriggerMaps',
 ] as const satisfies (keyof AllFlatEntityMaps)[];
