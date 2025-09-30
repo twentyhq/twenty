@@ -54,7 +54,7 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionLayerId: string;
 
   @OneToOne(

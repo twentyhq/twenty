@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import {
   type ApiResponse,
   type AppManifest,
-  PackageJson,
+  type PackageJson,
 } from '../types/config.types';
 import { ConfigService } from './config.service';
 

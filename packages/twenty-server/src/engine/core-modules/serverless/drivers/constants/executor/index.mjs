@@ -2,7 +2,8 @@ import { promises as fs } from 'fs';
 import { randomBytes } from 'crypto';
 
 export const handler = async (event) => {
-  const randomId = randomBytes(16).toString('hex').slice(0, 32);
+  const randomId = randomBytes(16).toString('hex');
+
   const mainPath = `/tmp/${randomId}.mjs`;
 
   try {

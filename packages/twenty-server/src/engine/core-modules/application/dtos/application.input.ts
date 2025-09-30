@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import graphqlTypeJson from 'graphql-type-json';
+import GraphQLJSON from 'graphql-type-json';
 
 import {
   AppManifest,
@@ -9,12 +9,12 @@ import {
 
 @ArgsType()
 export class ApplicationInput {
-  @Field(() => graphqlTypeJson)
+  @Field(() => GraphQLJSON, { nullable: false })
   manifest: AppManifest;
 
-  @Field(() => graphqlTypeJson)
+  @Field(() => GraphQLJSON, { nullable: false })
   packageJson: PackageJson;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: false })
   yarnLock: string;
 }

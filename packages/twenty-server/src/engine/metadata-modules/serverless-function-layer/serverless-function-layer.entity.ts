@@ -18,13 +18,13 @@ export class ServerlessFunctionLayerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: false })
   packageJson: PackageJson;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: false })
   yarnLock: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: false })
   checksum: string;
 
   @OneToMany(

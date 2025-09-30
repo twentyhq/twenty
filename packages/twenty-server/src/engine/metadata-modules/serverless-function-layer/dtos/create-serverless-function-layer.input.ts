@@ -11,6 +11,6 @@ export class CreateServerlessFunctionLayerInput {
   packageJson: PackageJson;
 
   @IsString()
-  @Field()
+  @Field(() => String, { nullable: false })
   yarnLock: string;
 }

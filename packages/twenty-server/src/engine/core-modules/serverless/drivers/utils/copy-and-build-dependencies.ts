@@ -40,7 +40,7 @@ export const copyAndBuildDependencies = async (
       'utf8',
     );
 
-    await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock);
+    await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock, 'utf8');
   }
 
   await fs.cp(getLayerDependenciesDirName('engine'), buildDirectory, {

@@ -20,7 +20,6 @@ import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/util
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { APPLICATION_LAYER_FOLDER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/application-layer-folder-name';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -46,7 +45,6 @@ export class LocalDriver implements ServerlessDriver {
 
     return join(
       SERVERLESS_TMPDIR_FOLDER,
-      APPLICATION_LAYER_FOLDER_NAME,
       serverlessFunction.serverlessFunctionLayer?.checksum,
     );
   };

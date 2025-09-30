@@ -13,9 +13,6 @@ export class ServerlessFunctionLayerDTO {
   @IDField(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  workspaceId: string;
-
   @IsDateString()
   @Field()
   createdAt: Date;
