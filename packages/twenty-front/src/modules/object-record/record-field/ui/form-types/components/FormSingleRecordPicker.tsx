@@ -16,7 +16,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -78,8 +77,6 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
-  const { t } = useLingui();
-
   const theme = useTheme();
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,

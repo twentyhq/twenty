@@ -32,7 +32,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
     useUpdateMultipleRecordsManyToOneObjects();
 
   const persistFieldForMorphRelationManyToOne = useRecoilCallback(
-    ({ set, snapshot }) =>
+    () =>
       (
         singleRecordPickerRecord: SingleRecordPickerRecord | null | undefined,
       ) => {
@@ -52,27 +52,6 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
         if (!isDefined(recordFromPicker?.id)) {
           return;
         }
-
-        // todo @guillim
-        // const fieldName = fieldDefinition.metadata.fieldName;
-
-        // const currentValue: any = snapshot
-        //   .getLoadable(
-        //     recordStoreFamilySelector({
-        //       recordId: recordFromPicker.id,
-        //       fieldName,
-        //     }),
-        //   )
-        //   .getValue();
-        // console.log('currentValue', currentValue);
-        // if (isDeeplyEqual(valueToPersist, currentValue)) {
-        //   return;
-        // }
-
-        // set(
-        //   recordStoreFamilySelector({ recordId:  recordFromPicker.id, fieldName }),
-        //    recordFromPicker,
-        // );
 
         const updatedManyRecordsArgs = [
           {
