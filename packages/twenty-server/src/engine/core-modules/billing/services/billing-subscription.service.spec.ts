@@ -36,9 +36,7 @@ function repoMock<T extends ObjectLiteral>() {
   return {
     find: jest.fn(),
     findOne: jest.fn(),
-    findOneBy: jest.fn(),
     findOneOrFail: jest.fn(),
-    findOneByOrFail: jest.fn(),
     upsert: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -106,7 +104,7 @@ describe('BillingSubscriptionService', () => {
     ],
   } as BillingSubscription;
 
-  const arrangeBillingPriceRepositoryFindOneByOrFail = () => {
+  const arrangeBillingPriceRepositoryFindOneOrFail = () => {
     const resolvePrice = (criteria: any) => {
       const priceId =
         criteria?.stripePriceId ?? criteria?.where?.stripePriceId ?? criteria;
@@ -498,60 +496,6 @@ describe('BillingSubscriptionService', () => {
           },
         } as unknown as SubscriptionWithSchedule);
 
-  const arrangeBillingSubscriptionRepositoryFindOneByOrFail = ({
-    planKey = BillingPlanKey.PRO,
-    interval = SubscriptionInterval.Month,
-    licensedPriceId = LICENSE_PRICE_PRO_MONTH_ID,
-    meteredPriceId = METER_PRICE_PRO_MONTH_ID,
-    seats = 7,
-    workspaceId = 'ws_1',
-    stripeSubscriptionId = 'sub_1',
-  }: {
-    planKey?: BillingPlanKey;
-    interval?: SubscriptionInterval;
-    licensedPriceId?: string;
-    meteredPriceId?: string;
-    seats?: number;
-    workspaceId?: string;
-    stripeSubscriptionId?: string;
-  } = {}) =>
-    jest
-      .spyOn(billingSubscriptionRepository, 'findOneByOrFail')
-      .mockResolvedValue({
-        id: 'sub_db_param_by',
-        workspaceId,
-        stripeSubscriptionId,
-        status: SubscriptionStatus.Active,
-        interval,
-        billingSubscriptionItems: [
-          {
-            stripeSubscriptionItemId: 'si_licensed',
-            stripeProductId: 'prod_base',
-            stripePriceId: licensedPriceId,
-            quantity: seats,
-            billingProduct: {
-              metadata: {
-                planKey,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
-              },
-            },
-          },
-          {
-            stripeSubscriptionItemId: 'si_metered',
-            stripeProductId: 'prod_metered',
-            stripePriceId: meteredPriceId,
-            billingProduct: {
-              metadata: {
-                planKey,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
-              },
-            },
-          },
-        ],
-      } as BillingSubscription);
-
   const arrangeBillingSubscriptionPhaseServiceToSnapshot = (
     licensedPriceId: string,
     meteredPriceId: string,
@@ -620,13 +564,6 @@ describe('BillingSubscriptionService', () => {
 
     return spy;
   };
-
-  const arrangeBillingSubscriptionPhaseServiceBuildSnapshot = (
-    result: Stripe.SubscriptionScheduleUpdateParams.Phase,
-  ) =>
-    jest
-      .spyOn(billingSubscriptionPhaseService, 'buildSnapshot')
-      .mockResolvedValueOnce(result);
 
   const arrangeServiceSyncSubscriptionToDatabase = () =>
     jest
@@ -839,8 +776,8 @@ describe('BillingSubscriptionService', () => {
             } as Partial<BillingPrice>,
           ]);
 
-        const spyBillingPriceFindOneByOrFail =
-          arrangeBillingPriceRepositoryFindOneByOrFail();
+        const spyBillingPriceFindOneOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
         const spySubFindOneOrFail =
           arrangeBillingSubscriptionRepositoryFindOneOrFail();
         const spyUpdateSubscription =
@@ -879,7 +816,7 @@ describe('BillingSubscriptionService', () => {
         // verify arrange calls were useful
         expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
         expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(2);
-        expect(spyBillingPriceFindOneByOrFail).toHaveBeenCalledTimes(1);
+        expect(spyBillingPriceFindOneOrFail).toHaveBeenCalledTimes(1);
         expect(spyGetDetailsFromPhase).toHaveBeenCalledTimes(1);
         expect(spyGetEditablePhases).toHaveBeenCalledTimes(2);
         expect(spyGetProductPrices).toHaveBeenCalledTimes(1);
@@ -979,17 +916,19 @@ describe('BillingSubscriptionService', () => {
           METER_PRICE_ENTERPRISE_YEAR_ID,
         );
         const spyPriceFindByOrFail2 =
-          arrangeBillingPriceRepositoryFindOneByOrFail();
+          arrangeBillingPriceRepositoryFindOneOrFail();
         const spySubFindByOrFail2 =
-          arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
 
         const spyBuildSnapshot2 =
-          arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-            items: [
-              { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_ENTERPRISE_MONTH_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
         const spyGetSubWithSchedule2 =
           arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
         const spySubFindOneOrFail2 =
@@ -1047,10 +986,10 @@ describe('BillingSubscriptionService', () => {
         expect(spyGetEditablePhasesSeq2).toHaveBeenCalledTimes(2);
         expect(spyGetProductPrices2).toHaveBeenCalledTimes(2);
         expect(spyToSnapshot2).toHaveBeenCalledTimes(1);
-        expect(spySubFindByOrFail2).toHaveBeenCalledTimes(1);
+        expect(spySubFindByOrFail2).toHaveBeenCalledTimes(2);
         expect(spyBuildSnapshot2).toHaveBeenCalledTimes(1);
         expect(spyGetSubWithSchedule2).toHaveBeenCalledTimes(3);
-        expect(spySubFindOneOrFail2).toHaveBeenCalledTimes(1);
+        expect(spySubFindOneOrFail2).toHaveBeenCalledTimes(2);
         expect(spyUpdateSubscription2).toHaveBeenCalledTimes(1);
         expect(spySyncDB2).toHaveBeenCalledTimes(2);
         expect(spyPriceFindByOrFail2).toHaveBeenCalledTimes(2);
@@ -1182,20 +1121,22 @@ describe('BillingSubscriptionService', () => {
             METER_PRICE_ENTERPRISE_MONTH_ID,
           );
         const spyBuildSnapshotD1 =
-          arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-            items: [
-              { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_PRO_MONTH_ID },
-            ],
-            proration_behavior: 'none',
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
         const spyPriceFindByOrFailD1 =
-          arrangeBillingPriceRepositoryFindOneByOrFail();
+          arrangeBillingPriceRepositoryFindOneOrFail();
         const spyGetSubWithScheduleD1 =
           arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
         const spySubFindByOrFailD1 =
-          arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
 
         const spySyncDBD1 = arrangeServiceSyncSubscriptionToDatabase();
 
@@ -1369,19 +1310,21 @@ describe('BillingSubscriptionService', () => {
             METER_PRICE_ENTERPRISE_YEAR_ID,
           );
         const spyBuildSnapshotD2 =
-          arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-            items: [
-              { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_PRO_MONTH_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
         const spyPriceFindByOrFailD2 =
-          arrangeBillingPriceRepositoryFindOneByOrFail();
+          arrangeBillingPriceRepositoryFindOneOrFail();
         const spyGetSubWithScheduleD2 =
           arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
         const spySubFindByOrFailD2 =
-          arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
 
         const spySyncDBD2 = arrangeServiceSyncSubscriptionToDatabase();
 
@@ -1427,56 +1370,67 @@ describe('BillingSubscriptionService', () => {
   describe('changeInterval', () => {
     describe('upgrade', () => {
       it('MONTHLY -> YEARLY without existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind();
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-        });
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind();
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
+        const spyGetDetailsFromPhase1 =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Month,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          });
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
+              },
             },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
+              },
             },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
+              },
             },
-          },
-        ]);
-        arrangeBillingProductServiceGetProductPrices();
-        arrangeBillingPriceRepositoryFindOneByOrFail();
-        arrangeBillingSubscriptionRepositoryFindOneOrFail();
-        arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+          ]);
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices();
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
+        const spySubFindOneOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
+        const spyUpdateSubscription =
+          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spySubFindByOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
 
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-          quantity: 7,
-        });
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetDetailsFromPhase2 =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Month,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+            quantity: 7,
+          });
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           METER_PRICE_ENTERPRISE_YEAR_ID,
         );
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeInterval({ id: 'ws_1' } as Workspace);
 
@@ -1496,129 +1450,156 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(3);
+        expect(spyGetDetailsFromPhase1).toHaveBeenCalledTimes(1);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(3);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(1);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(1);
+        expect(spySubFindOneOrFail).toHaveBeenCalledTimes(1);
+        expect(spyUpdateSubscription).toHaveBeenCalledTimes(1);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(3);
+        expect(spySubFindByOrFail).toHaveBeenCalledTimes(1);
+        expect(spyGetDetailsFromPhase2).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(1);
       });
       it('MONTHLY -> YEARLY with existing phases', async () => {
-        arrangeBillingSubscriptionRepositoryFind();
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
-          [{}, {}],
-        );
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind();
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
+            [{}, {}],
+          );
 
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-          quantity: 7,
-        });
+        const spyGetDetailsFromPhase1 =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Month,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+            quantity: 7,
+          });
 
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-            interval: SubscriptionInterval.Year,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
+              },
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-            interval: SubscriptionInterval.Year,
-            tiers: [
-              {
-                up_to: 12000,
-                flat_amount: 12000,
-                unit_amount: null,
-                flat_amount_decimal: '1200000',
-                unit_amount_decimal: null,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
               },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '1200',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+                quantity: 7,
+              },
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
+              },
+            },
+          ]);
 
-        arrangeBillingPriceRepositoryFindOneByOrFail();
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
-            { price: METER_PRICE_ENTERPRISE_YEAR_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+              interval: SubscriptionInterval.Year,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+              interval: SubscriptionInterval.Year,
+              tiers: [
+                {
+                  up_to: 12000,
+                  flat_amount: 12000,
+                  unit_amount: null,
+                  flat_amount_decimal: '1200000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '1200',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
+
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spySubFindByOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_YEAR_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_YEAR_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_ID,
         );
-        arrangeServiceSyncSubscriptionToDatabase();
-        arrangeBillingSubscriptionRepositoryFindOneOrFail({
-          planKey: BillingPlanKey.ENTERPRISE,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-        });
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
+        const spySubFindOneOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail({
+            planKey: BillingPlanKey.ENTERPRISE,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+          });
 
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Year,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-          quantity: 7,
-        });
+        const spyGetDetailsFromPhase2 =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Year,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            quantity: 7,
+          });
 
         await service.changeInterval({ id: 'ws_1' } as Workspace);
 
@@ -1643,110 +1624,136 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(3);
+        expect(spyGetDetailsFromPhase1).toHaveBeenCalledTimes(2);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(3);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(2);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(4);
+        expect(spySubFindByOrFail).toHaveBeenCalledTimes(2);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(2);
+        expect(spySubFindOneOrFail).toHaveBeenCalledTimes(2);
+        expect(spyGetDetailsFromPhase2).toHaveBeenCalledTimes(2);
       });
     });
     describe('downgrade', () => {
       it('YEARLY -> MONTHLY without existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          interval: SubscriptionInterval.Year,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-        });
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
+            interval: SubscriptionInterval.Year,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            planKey: BillingPlanKey.ENTERPRISE,
+          });
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
 
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Year,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-          quantity: 7,
-        });
+        const spyGetDetailsFromPhase =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Year,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            quantity: 7,
+          });
 
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
+              },
+            },
+          ]);
 
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spySubFindByOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
+
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           METER_PRICE_ENTERPRISE_YEAR_ID,
           7,
         );
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-            { price: METER_PRICE_ENTERPRISE_MONTH_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeInterval({ id: 'ws_1' } as Workspace);
 
@@ -1770,125 +1777,149 @@ describe('BillingSubscriptionService', () => {
           }),
         });
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(3);
+        expect(spyGetDetailsFromPhase).toHaveBeenCalledTimes(1);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(3);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(2);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(4);
+        expect(spySubFindByOrFail).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(1);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(1);
       });
       it('YEARLY -> MONTHLY with existing phases', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          interval: SubscriptionInterval.Year,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-        });
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
-          [{}, {}],
-        );
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
+            interval: SubscriptionInterval.Year,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            planKey: BillingPlanKey.ENTERPRISE,
+          });
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
+            [{}, {}],
+          );
 
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Year,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-          quantity: 7,
-        });
+        const spyGetDetailsFromPhase =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
+            interval: SubscriptionInterval.Year,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            quantity: 7,
+          });
 
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-              meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-              meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-              meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
+              },
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
+                meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
               },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
+                meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+                quantity: 7,
+              },
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
+                meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+                quantity: 7,
+              },
+            },
+          ]);
 
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spySubFindByOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
+
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_YEAR_ID,
           METER_PRICE_ENTERPRISE_YEAR_ID,
           7,
         );
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-            { price: METER_PRICE_ENTERPRISE_MONTH_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeInterval({ id: 'ws_1' } as Workspace);
 
@@ -1912,6 +1943,19 @@ describe('BillingSubscriptionService', () => {
           }),
         });
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(3);
+        expect(spyGetDetailsFromPhase).toHaveBeenCalledTimes(2);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(3);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(2);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(4);
+        expect(spySubFindByOrFail).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(1);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -1919,67 +1963,22 @@ describe('BillingSubscriptionService', () => {
   describe('changeMeteredPrice', () => {
     describe('upgrade', () => {
       it('without existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          planKey: BillingPlanKey.ENTERPRISE,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-        });
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-          quantity: 7,
-          meteredTiers: [
-            {
-              up_to: 1000,
-              flat_amount: 1000,
-              unit_amount: null,
-              flat_amount_decimal: '100000',
-              unit_amount_decimal: null,
-            },
-            {
-              up_to: null,
-              flat_amount: null,
-              unit_amount: null,
-              flat_amount_decimal: null,
-              unit_amount_decimal: '100',
-            },
-          ],
-        });
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
+            planKey: BillingPlanKey.ENTERPRISE,
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+          });
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
+        const spyGetDetailsFromPhase =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhase({
+            planKey: BillingPlanKey.ENTERPRISE,
             interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
-              },
-            },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
+            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+            quantity: 7,
+            meteredTiers: [
               {
                 up_to: 1000,
                 flat_amount: 1000,
@@ -1995,53 +1994,107 @@ describe('BillingSubscriptionService', () => {
                 unit_amount_decimal: '100',
               },
             ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+          });
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 5000,
-                flat_amount: 5000,
-                unit_amount: null,
-                flat_amount_decimal: '500000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '500',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+          ]);
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 5000,
+                  flat_amount: 5000,
+                  unit_amount: null,
+                  flat_amount_decimal: '500000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '500',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-        arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spySubFindByOrFail =
+          arrangeBillingSubscriptionRepositoryFindOneOrFail();
+        const spyUpdateSubscription =
+          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_ID,
           7,
         );
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
           { id: 'ws_1' } as Workspace,
@@ -2072,193 +2125,216 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(2);
+        expect(spyGetDetailsFromPhase).toHaveBeenCalledTimes(1);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(2);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(3);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(3);
+        expect(spyUpdateSubscription).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(2);
       });
       it('with existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          planKey: BillingPlanKey.ENTERPRISE,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-        });
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
-          [{}, {}],
-        );
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
-          {
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
             planKey: BillingPlanKey.ENTERPRISE,
-            interval: SubscriptionInterval.Month,
             licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
             meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            quantity: 7,
-            meteredTiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-          },
-          {
-            planKey: BillingPlanKey.PRO,
-            interval: SubscriptionInterval.Month,
-            licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-            meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-            quantity: 7,
-            meteredTiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-          },
-        ]);
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
+          });
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
+            [{}, {}],
+          );
+        const spyGetDetailsFromPhaseSeq =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
+            {
+              planKey: BillingPlanKey.ENTERPRISE,
+              interval: SubscriptionInterval.Month,
               licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               quantity: 7,
+              meteredTiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
             },
-            nextEditable: {
+            {
+              planKey: BillingPlanKey.PRO,
+              interval: SubscriptionInterval.Month,
               licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
               meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
               quantity: 7,
+              meteredTiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
             },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-              meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
+          ]);
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
-            },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+                meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 5000,
-                flat_amount: 5000,
-                unit_amount: null,
-                flat_amount_decimal: '500000',
-                unit_amount_decimal: null,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '500',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+                meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+          ]);
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 5000,
+                  flat_amount: 5000,
+                  unit_amount: null,
+                  flat_amount_decimal: '500000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '500',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-        arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spyUpdateSubscription =
+          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
 
         // Snapshot courant (phase actuelle)
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
           7,
         );
 
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
-          {
-            items: [
-              { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-          {
-            items: [
-              { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-        ]);
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-            { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+        const spyBuildSnapshotSeq =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
           { id: 'ws_1' } as Workspace,
@@ -2286,137 +2362,161 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(2);
+        expect(spyGetDetailsFromPhaseSeq).toHaveBeenCalledTimes(3);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(2);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(3);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(3);
+        expect(spyUpdateSubscription).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(2);
+        expect(spyBuildSnapshotSeq).toHaveBeenCalledTimes(2);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(2);
+        expect(spySyncDB).toHaveBeenCalledTimes(2);
       });
     });
     describe('downgrade', () => {
       it('without existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          planKey: BillingPlanKey.ENTERPRISE,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-        });
-
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
-          {
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
             planKey: BillingPlanKey.ENTERPRISE,
-            interval: SubscriptionInterval.Month,
             licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
             meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            quantity: 7,
-            meteredTiers: [
-              {
-                up_to: 120_000_000,
-                flat_amount: 10_000,
-                unit_amount: null,
-                flat_amount_decimal: '1000000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-          },
-        ]);
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-            { price: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
+          });
+
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule();
+        const spyGetDetailsFromPhaseSeq =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
+            {
+              planKey: BillingPlanKey.ENTERPRISE,
+              interval: SubscriptionInterval.Month,
               licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
               quantity: 7,
+              meteredTiers: [
+                {
+                  up_to: 120_000_000,
+                  flat_amount: 10_000,
+                  unit_amount: null,
+                  flat_amount_decimal: '1000000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
             },
-          },
-        ]);
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
-              },
-            },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 120_000_000,
-                flat_amount: 10_000,
-                unit_amount: null,
-                flat_amount_decimal: '1000000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+          ]);
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 5000,
-                flat_amount: 5000,
-                unit_amount: null,
-                flat_amount_decimal: '500000',
-                unit_amount_decimal: null,
+          ]);
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
               },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '500',
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 120_000_000,
+                  flat_amount: 10_000,
+                  unit_amount: null,
+                  flat_amount_decimal: '1000000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
               },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 5000,
+                  flat_amount: 5000,
+                  unit_amount: null,
+                  flat_amount_decimal: '500000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '500',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
               },
-            },
-          } as Partial<BillingPrice>,
-        ]);
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+            } as Partial<BillingPrice>,
+          ]);
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-        arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spyUpdateSubscription =
+          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
           7,
         );
 
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
           { id: 'ws_1' } as Workspace,
@@ -2443,193 +2543,216 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(1);
+        expect(spyGetDetailsFromPhaseSeq).toHaveBeenCalledTimes(1);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(1);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(1);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(3);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(2);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(1);
+        expect(spySyncDB).toHaveBeenCalledTimes(1);
       });
       it('with existing phase', async () => {
-        arrangeBillingSubscriptionRepositoryFind({
-          planKey: BillingPlanKey.ENTERPRISE,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-        });
-        arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
-          [{}, {}],
-        );
-        arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
-          {
+        const spyBillingSubscriptionRepositoryFind =
+          arrangeBillingSubscriptionRepositoryFind({
             planKey: BillingPlanKey.ENTERPRISE,
-            interval: SubscriptionInterval.Month,
             licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
             meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            quantity: 7,
-            meteredTiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-          },
-          {
-            planKey: BillingPlanKey.PRO,
-            interval: SubscriptionInterval.Month,
-            licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-            meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-            quantity: 7,
-            meteredTiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-          },
-        ]);
-        arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
-          {
-            currentEditable: {
+          });
+        const spyFindOrCreateSchedule =
+          arrangeStripeSubscriptionScheduleServiceFindOrCreateSubscriptionSchedule(
+            [{}, {}],
+          );
+        const spyGetDetailsFromPhaseSeq =
+          arrangeBillingSubscriptionPhaseServiceGetDetailsFromPhaseSequences([
+            {
+              planKey: BillingPlanKey.ENTERPRISE,
+              interval: SubscriptionInterval.Month,
               licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
               quantity: 7,
+              meteredTiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
             },
-            nextEditable: {
+            {
+              planKey: BillingPlanKey.PRO,
+              interval: SubscriptionInterval.Month,
               licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
               meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
               quantity: 7,
+              meteredTiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
             },
-          },
-          {
-            currentEditable: {
-              licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-            nextEditable: {
-              licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-              meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-              quantity: 7,
-            },
-          },
-        ]);
-        arrangeBillingProductServiceGetProductPrices([
-          {
-            stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            interval: SubscriptionInterval.Month,
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.BASE_PRODUCT,
-                priceUsageBased: BillingUsageType.LICENSED,
+          ]);
+        const spyGetEditablePhases =
+          arrangeStripeSubscriptionScheduleServiceGetEditablePhasesSequences([
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
-            },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 1000,
-                flat_amount: 1000,
-                unit_amount: null,
-                flat_amount_decimal: '100000',
-                unit_amount_decimal: null,
-              },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '100',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+                meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-          {
-            stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            interval: SubscriptionInterval.Month,
-            tiers: [
-              {
-                up_to: 5000,
-                flat_amount: 5000,
-                unit_amount: null,
-                flat_amount_decimal: '500000',
-                unit_amount_decimal: null,
+            {
+              currentEditable: {
+                licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+                meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
-              {
-                up_to: null,
-                flat_amount: null,
-                unit_amount: null,
-                flat_amount_decimal: null,
-                unit_amount_decimal: '500',
-              },
-            ],
-            billingProduct: {
-              metadata: {
-                planKey: BillingPlanKey.ENTERPRISE,
-                productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-                priceUsageBased: BillingUsageType.METERED,
+              nextEditable: {
+                licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
+                meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
+                quantity: 7,
               },
             },
-          } as Partial<BillingPrice>,
-        ]);
-        arrangeBillingPriceRepositoryFindOneByOrFail();
+          ]);
+        const spyGetProductPrices =
+          arrangeBillingProductServiceGetProductPrices([
+            {
+              stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
+              interval: SubscriptionInterval.Month,
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.BASE_PRODUCT,
+                  priceUsageBased: BillingUsageType.LICENSED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 1000,
+                  flat_amount: 1000,
+                  unit_amount: null,
+                  flat_amount_decimal: '100000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '100',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+            {
+              stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
+              interval: SubscriptionInterval.Month,
+              tiers: [
+                {
+                  up_to: 5000,
+                  flat_amount: 5000,
+                  unit_amount: null,
+                  flat_amount_decimal: '500000',
+                  unit_amount_decimal: null,
+                },
+                {
+                  up_to: null,
+                  flat_amount: null,
+                  unit_amount: null,
+                  flat_amount_decimal: null,
+                  unit_amount_decimal: '500',
+                },
+              ],
+              billingProduct: {
+                metadata: {
+                  planKey: BillingPlanKey.ENTERPRISE,
+                  productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+                  priceUsageBased: BillingUsageType.METERED,
+                },
+              },
+            } as Partial<BillingPrice>,
+          ]);
+        const spyPriceFindByOrFail =
+          arrangeBillingPriceRepositoryFindOneOrFail();
 
-        arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
-        arrangeBillingSubscriptionRepositoryFindOneByOrFail();
-        arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
+        const spyGetSubWithSchedule =
+          arrangeStripeSubscriptionScheduleServiceGetSubscriptionWithSchedule();
+        const spyUpdateSubscription =
+          arrangeStripeSubscriptionServiceUpdateSubscriptionAndSync();
 
         // Snapshot courant (phase actuelle)
-        arrangeBillingSubscriptionPhaseServiceToSnapshot(
+        const spyToSnapshot = arrangeBillingSubscriptionPhaseServiceToSnapshot(
           LICENSE_PRICE_ENTERPRISE_MONTH_ID,
           METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
           7,
         );
 
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
-          {
-            items: [
-              { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-          {
-            items: [
-              { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-              { price: METER_PRICE_PRO_MONTH_TIER_LOW_ID },
-            ],
-          } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-        ]);
-        arrangeBillingSubscriptionPhaseServiceBuildSnapshot({
-          items: [
-            { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
-            { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
-          ],
-          proration_behavior: 'none',
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase);
+        const spyBuildSnapshotSeq =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_TIER_LOW_ID },
+              ],
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
+        const spyBuildSnapshot =
+          arrangeBillingSubscriptionPhaseServiceBuildSnapshotSequences([
+            {
+              items: [
+                { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 7 },
+                { price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
+              ],
+              proration_behavior: 'none',
+            } as Stripe.SubscriptionScheduleUpdateParams.Phase,
+          ]);
 
-        arrangeServiceSyncSubscriptionToDatabase();
+        const spySyncDB = arrangeServiceSyncSubscriptionToDatabase();
 
         await service.changeMeteredPrice(
           { id: 'ws_1' } as Workspace,
@@ -2656,6 +2779,20 @@ describe('BillingSubscriptionService', () => {
           }),
         );
         expect(service.syncSubscriptionToDatabase).toHaveBeenCalled();
+
+        // verify arrange calls were useful
+        expect(spyBillingSubscriptionRepositoryFind).toHaveBeenCalledTimes(1);
+        expect(spyFindOrCreateSchedule).toHaveBeenCalledTimes(2);
+        expect(spyGetDetailsFromPhaseSeq).toHaveBeenCalledTimes(3);
+        expect(spyGetEditablePhases).toHaveBeenCalledTimes(2);
+        expect(spyGetProductPrices).toHaveBeenCalledTimes(2);
+        expect(spyPriceFindByOrFail).toHaveBeenCalledTimes(3);
+        expect(spyGetSubWithSchedule).toHaveBeenCalledTimes(3);
+        expect(spyUpdateSubscription).toHaveBeenCalledTimes(1);
+        expect(spyToSnapshot).toHaveBeenCalledTimes(2);
+        expect(spyBuildSnapshotSeq).toHaveBeenCalledTimes(2);
+        expect(spyBuildSnapshot).toHaveBeenCalledTimes(2);
+        expect(spySyncDB).toHaveBeenCalledTimes(2);
       });
     });
   });

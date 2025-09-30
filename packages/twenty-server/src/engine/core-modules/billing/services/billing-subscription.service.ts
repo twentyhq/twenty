@@ -1349,8 +1349,10 @@ export class BillingSubscriptionService {
         subscription.id,
       );
     const workspaceId = (
-      await this.billingSubscriptionRepository.findOneByOrFail({
-        stripeSubscriptionId: refreshed.id,
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: {
+          stripeSubscriptionId: refreshed.id,
+        },
       })
     ).workspaceId;
 
