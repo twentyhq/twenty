@@ -25,8 +25,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
-    relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[]
-    flatFieldMetadataToCreateOnObject: FlatFieldMetadata[]
+    relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[];
+    flatFieldMetadataToCreateOnObject: FlatFieldMetadata[];
     flatIndexMetadataToCreate: FlatIndexMetadata[];
   } => {
     const createObjectInput =

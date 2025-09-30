@@ -293,7 +293,7 @@ export class FlatFieldMetadataValidatorService {
         ...validateFlatFieldMetadataNameAvailability({
           flatFieldMetadata: flatFieldMetadataToValidate,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate
+          otherFlatFieldMetadataMapsToValidate,
         }),
       );
     }
