@@ -12,6 +12,9 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
+import { useRecordCalendarSelection } from '../../states/selectors/useRecordCalendarSelection';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '../states/isRecordCalendarCardSelectedComponentFamilyState';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
@@ -46,6 +49,15 @@ export const RecordCalendarCardHeader = ({
 
   const dragState = useRecordDragState('calendar', viewBarInstanceId);
 
+  const { checkIfLastUnselectAndCloseDropdown } =
+    useRecordCalendarSelection(viewBarInstanceId);
+
+  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+    useRecoilComponentFamilyState(
+      isRecordCalendarCardSelectedComponentFamilyState,
+      recordId,
+    );
+
   const handleChipClick = () => {
     if (dragState.isDragging) {
       return;
@@ -75,8 +87,11 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={false}
-            onChange={() => {}}
+            checked={isCurrentCardSelected}
+            onChange={(value) => {
+              setIsCurrentCardSelected(value.target.checked);
+              checkIfLastUnselectAndCloseDropdown();
+            }}
             variant={CheckboxVariant.Secondary}
           />
         </StopPropagationContainer>

@@ -40,6 +40,7 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { useRecordCalendarSelection } from '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -82,6 +83,8 @@ export const PageChangeEffect = () => {
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordIndexId);
+  const { resetRecordSelection: resetCalendarSelection } =
+    useRecordCalendarSelection(recordIndexId);
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordIndexId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordIndexId);
 
@@ -129,6 +132,7 @@ export const PageChangeEffect = () => {
       }
       if (contextStoreCurrentViewType === ContextStoreViewType.Kanban) {
         resetRecordSelection();
+        resetCalendarSelection();
         deactivateBoardCard();
         unfocusBoardCard();
       }
@@ -296,6 +300,7 @@ export const PageChangeEffect = () => {
     unfocusBoardCard,
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
+    resetCalendarSelection,
   ]);
 
   useEffect(() => {
