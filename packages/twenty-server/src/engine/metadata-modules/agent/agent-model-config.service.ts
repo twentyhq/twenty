@@ -6,19 +6,14 @@ import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import {
-  AiModelRegistryService,
-  RegisteredAIModel,
-} from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { RegisteredAIModel } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 
 import { AgentEntity } from './agent.entity';
 
 @Injectable()
 export class AgentModelConfigService {
-  constructor(
-    private readonly aiModelRegistryService: AiModelRegistryService,
-  ) {}
+  constructor() {}
 
   getProviderOptions(
     model: RegisteredAIModel,
@@ -59,8 +54,9 @@ export class AgentModelConfigService {
 
   private getXaiProviderOptions(agent: AgentEntity): ProviderOptions {
     if (
-      !agent.modelConfiguration.webSearch?.enabled &&
-      !agent.modelConfiguration.twitterSearch?.enabled
+      !agent.modelConfiguration ||
+      (!agent.modelConfiguration.webSearch?.enabled &&
+        !agent.modelConfiguration.twitterSearch?.enabled)
     ) {
       return {};
     }
