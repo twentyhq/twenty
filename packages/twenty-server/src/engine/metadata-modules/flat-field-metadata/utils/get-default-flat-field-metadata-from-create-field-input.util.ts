@@ -46,8 +46,6 @@ export const getDefaultFlatFieldMetadata = ({
     type: createFieldInput.type,
     universalIdentifier: fieldMetadataId,
     workspaceId,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
     settings: settings ?? null,

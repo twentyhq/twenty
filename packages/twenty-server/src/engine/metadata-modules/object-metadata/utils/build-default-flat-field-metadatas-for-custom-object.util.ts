@@ -45,8 +45,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -77,8 +75,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -109,8 +105,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -141,8 +135,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -173,8 +165,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -205,8 +195,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -237,8 +225,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
@@ -269,8 +255,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
     createdAt,
     updatedAt: createdAt,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
