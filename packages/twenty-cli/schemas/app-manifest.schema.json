@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["standardId", "label", "version", "license"],
+  "required": ["standardId", "label", "version", "license", "engines"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -35,6 +35,11 @@
       "const": "MIT",
       "title": "The application's license",
       "description": "Currently only MIT is accepted, although more licenses will probably be available in the future."
+    },
+    "engines": {
+      "type": "object",
+      "title": "The application's engines",
+      "description": "Define engines here"
     },
     "version": {
       "type": "string",
@@ -77,7 +82,12 @@
       "description": "Comprehensive customer support application with AI agents",
       "icon": "🎧",
       "version": "1.0.0",
-      "license": "MIT"
+      "license": "MIT",
+      "engines": {
+        "node": "^24.5.0",
+        "npm": "please-use-yarn",
+        "yarn": ">=4.0.2"
+      }
     }
   ]
 }
