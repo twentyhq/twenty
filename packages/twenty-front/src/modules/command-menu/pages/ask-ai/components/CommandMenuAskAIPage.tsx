@@ -1,4 +1,5 @@
 import { AIChatTab } from '@/ai/components/AIChatTab';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -52,12 +53,14 @@ export const CommandMenuAskAIPage = () => {
 
   const isLoading = loading || !currentThreadId || threadsLoading;
 
-  if (!agentId || isLoading) {
+  if (isLoading) {
+    return <AIChatSkeletonLoader />;
+  }
+
+  if (!agentId) {
     return (
       <StyledContainer>
-        <StyledEmptyState>
-          {isLoading ? t`Loading...` : t`No AI Agent found.`}
-        </StyledEmptyState>
+        <StyledEmptyState>{t`No AI Agent found.`}</StyledEmptyState>
       </StyledContainer>
     );
   }
