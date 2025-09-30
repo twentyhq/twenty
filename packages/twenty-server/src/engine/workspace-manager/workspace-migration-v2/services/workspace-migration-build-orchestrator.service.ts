@@ -369,18 +369,30 @@ export class WorkspaceMigrationBuildOrchestratorService {
         }
 
         const createFieldOccurence =
-          acc.createFieldActions[createFieldAction.objectMetadataId] ?? {};
+          acc.createFieldActions[createFieldAction.objectMetadataId];
+
+        if (isDefined(createFieldOccurence)) {
+          return {
+            ...acc,
+            createFieldActions: {
+              ...acc.createFieldActions,
+              [createFieldAction.objectMetadataId]: {
+                ...createFieldOccurence,
+                flatFieldMetadatas: [
+                  ...createFieldOccurence.flatFieldMetadatas,
+                  ...createFieldAction.flatFieldMetadatas,
+                ],
+              },
+            },
+          };
+        }
 
         return {
           ...acc,
           createFieldActions: {
             ...acc.createFieldActions,
             [createFieldAction.objectMetadataId]: {
-              ...createFieldOccurence,
-              flatFieldMetadatas: [
-                ...createFieldOccurence.flatFieldMetadatas,
-                ...createFieldAction.flatFieldMetadatas,
-              ],
+              ...createFieldAction,
             },
           },
         };
