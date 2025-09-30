@@ -107,7 +107,7 @@ export class AgentExecutionService {
 
       return {
         system,
-        tools: tools,
+        tools,
         model: registeredModel.model,
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
