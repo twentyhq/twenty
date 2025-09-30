@@ -64,6 +64,13 @@ const StyledLightIconButton = styled(LightIconButton)<{
         : 'transparent'};
 `;
 
+const StyledLoadingMore = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px; /* enough to separate it from icons */
+  font-size: 14px;
+`;
 const StyledMatrixItem = styled.div`
   width: 32px;
   height: 32px;
@@ -157,6 +164,26 @@ export const IconPicker = ({
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
+
+  const totalMatchingIconsCount = useMemo(() => {
+    if (!icons) return 0;
+    return Object.keys(icons).filter((iconKey) => {
+      const iconLabel = convertIconKeyToLabel(iconKey)
+        .toLowerCase()
+        .replace('icon ', '')
+        .replace(/\s/g, '');
+      const searchLower = searchString.toLowerCase().trim().replace(/\s/g, '');
+      return (
+        iconKey === searchLower ||
+        iconLabel === searchLower ||
+        iconKey.startsWith(searchLower) ||
+        iconLabel.startsWith(searchLower) ||
+        iconKey.includes(searchLower) ||
+        iconLabel.includes(searchLower)
+      );
+    }).length;
+  }, [icons, searchString]);
+
   const matchingSearchIconKeys = useMemo(() => {
     if (icons == null) return [];
     const scoreIconMatch = (iconKey: string, searchString: string) => {
@@ -215,6 +242,10 @@ export const IconPicker = ({
       selectedItemIdComponentState,
       selectableListInstanceId,
     ) ?? undefined;
+
+  const isLoadingMore =
+    visibleCountState !== undefined &&
+    visibleCountState < totalMatchingIconsCount;
 
   return (
     <div className={className}>
@@ -280,7 +311,9 @@ export const IconPicker = ({
                       sentinelId="icon-picker-scroll-sentinel"
                       dropdownId={dropdownId}
                     />
-                    <div id="icon-picker-scroll-sentinel"></div>
+                    <StyledLoadingMore id="icon-picker-scroll-sentinel">
+                      {isLoadingMore ? t`Loading more...` : null}
+                    </StyledLoadingMore>
                   </DropdownMenuItemsContainer>
                 </div>
               </SelectableList>
