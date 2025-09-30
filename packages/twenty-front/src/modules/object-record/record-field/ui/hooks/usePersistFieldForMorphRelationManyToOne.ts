@@ -73,8 +73,6 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
         //    recordFromPicker,
         // );
 
-        console.log('objectNameSingulars', objectNameSingulars);
-
         const updatedManyRecordsArgs = [
           {
             idToUpdate: recordId,
