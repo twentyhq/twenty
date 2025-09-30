@@ -10,6 +10,9 @@ import { useContext } from 'react';
 import { IconEye, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
+// FIX 1: Import utility function
+import { truncateFieldLabel } from '~/utils/string/truncateText';
+
 export const ViewFieldsHiddenDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
     ObjectOptionsDropdownContext,
@@ -50,25 +53,13 @@ export const ViewFieldsHiddenDropdownSection = () => {
 
   const { getIcon } = useIcons();
 
-  // --- New Helper Function for Truncation ---
-  const truncateFieldLabel = (label: string, maxLength = 15): string => {
-    if (label.length <= maxLength) {
-      return label;
-    }
-    const trimmedString = label.substring(0, maxLength);
-    const lastSpace = trimmedString.lastIndexOf(' ');
-    const finalString = lastSpace > 0 ? trimmedString.substring(0, lastSpace) : trimmedString;
-
-    return finalString + '...';
-  };
-
   return (
     <>
       <DropdownMenuItemsContainer>
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             
-            // Apply the truncation here
+            // Apply truncation
             const displayLabel = truncateFieldLabel(fieldMetadataItem.label);
             
             return (
@@ -85,7 +76,9 @@ export const ViewFieldsHiddenDropdownSection = () => {
                       }),
                   },
                 ]}
-                text={displayLabel}
+                text={displayLabel} 
+                // The 'title' prop has been intentionally removed here and from 
+                // the original version of this fix to resolve the TypeScript/Lint conflict.
               />
             );
           })}
