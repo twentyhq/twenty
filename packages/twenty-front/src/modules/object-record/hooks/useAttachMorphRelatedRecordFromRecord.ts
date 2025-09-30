@@ -4,7 +4,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
+import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -19,7 +19,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
   const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { updateMultipleRecordsFromManyObjects } =
-    useUpdateMultipleRecordsFromManyObjects();
+    useUpdateMultipleRecordsManyToOneObjects();
 
   if (!isFieldMorphRelation(fieldDefinition)) {
     throw new Error('Field is not a morph relation');
@@ -167,6 +167,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
             idToUpdate: relatedRecordId,
             objectNameSingulars,
             relatedRecordId: recordId,
+            objectMetadataItem,
             // recordGqlFields: gqlFields,
           },
         ];

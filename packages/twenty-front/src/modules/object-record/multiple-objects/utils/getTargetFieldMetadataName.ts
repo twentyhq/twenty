@@ -20,6 +20,6 @@ export const getTargetFieldMetadataName = ({
     return fieldDefinition.metadata.morphRelations.find(
       (morphRelation) =>
         morphRelation.targetObjectMetadata.nameSingular === objectNameSingular,
-    )?.targetFieldMetadata.name;
+    )?.sourceFieldMetadata.name;
   }
 };

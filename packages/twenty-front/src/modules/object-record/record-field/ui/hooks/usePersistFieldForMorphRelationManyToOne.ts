@@ -1,16 +1,24 @@
 import { useRecoilCallback } from 'recoil';
 
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-
-import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useUpdateMultipleRecordsManyToOneObjects } from '@/object-record/hooks/useUpdateMultipleRecordsManyToOneObjects';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistFieldForMorphRelationManyToOne = () => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext); // ba1 pet tob2
+  if (!isFieldMorphRelation(fieldDefinition)) {
+    throw new Error('Field is not a morph relation');
+  }
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular:
+      fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
+        .nameSingular,
+  });
 
   if (!isFieldMorphRelationManyToOne(fieldDefinition)) {
     throw new Error('Field is not a morph relation many to one');
@@ -21,7 +29,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
   );
 
   const { updateMultipleRecordsFromManyObjects } =
-    useUpdateMultipleRecordsFromManyObjects();
+    useUpdateMultipleRecordsManyToOneObjects();
 
   const persistFieldForMorphRelationManyToOne = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -29,47 +37,57 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
         singleRecordPickerRecord: SingleRecordPickerRecord | null | undefined,
       ) => {
         if (!isDefined(singleRecordPickerRecord)) {
-          console.log(
-            'record is null we must unseelct the record (todo @guillim)',
-          );
+          updateMultipleRecordsFromManyObjects?.([
+            {
+              idToUpdate: recordId,
+              objectNameSingulars,
+              relatedRecordId: null,
+              objectMetadataItem,
+            },
+          ]);
+        }
+        const recordFromPicker = singleRecordPickerRecord?.record; // be0f rocket2
+
+        if (!isDefined(recordFromPicker?.id)) {
           return;
         }
-        const { record } = singleRecordPickerRecord;
-        // const fieldIsMorphRelationManyToOneObject =
-        //   isFieldMorphRelationManyToOne(fieldDefinition) &&
-        //   isFieldRelationToOneValue(valueToPersist);
 
-        const fieldName = fieldDefinition.metadata.fieldName;
+        // todo @guillim
+        // const fieldName = fieldDefinition.metadata.fieldName;
 
-        const currentValue: any = snapshot
-          .getLoadable(
-            recordStoreFamilySelector({ recordId: record.id, fieldName }),
-          )
-          .getValue();
-
+        // const currentValue: any = snapshot
+        //   .getLoadable(
+        //     recordStoreFamilySelector({
+        //       recordId: recordFromPicker.id,
+        //       fieldName,
+        //     }),
+        //   )
+        //   .getValue();
+        // console.log('currentValue', currentValue);
         // if (isDeeplyEqual(valueToPersist, currentValue)) {
         //   return;
         // }
 
-        set(
-          recordStoreFamilySelector({ recordId: record.id, fieldName }),
-          record,
-        );
+        // set(
+        //   recordStoreFamilySelector({ recordId:  recordFromPicker.id, fieldName }),
+        //    recordFromPicker,
+        // );
 
-        console.log('recordId', recordId);
-        console.log('record.id', record.id);
+        console.log('objectNameSingulars', objectNameSingulars);
+
         const updatedManyRecordsArgs = [
           {
             idToUpdate: recordId,
             objectNameSingulars,
-            relatedRecordId: record.id,
+            relatedRecordId: recordFromPicker.id,
+            objectMetadataItem,
           },
         ];
 
         updateMultipleRecordsFromManyObjects?.(updatedManyRecordsArgs);
       },
     [
-      fieldDefinition.metadata.fieldName,
+      objectMetadataItem,
       objectNameSingulars,
       recordId,
       updateMultipleRecordsFromManyObjects,

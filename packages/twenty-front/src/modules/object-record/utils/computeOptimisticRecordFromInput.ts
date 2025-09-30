@@ -9,6 +9,7 @@ import {
 import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -39,17 +40,28 @@ export const computeOptimisticRecordFromInput = ({
         (field) => field.name === recordKey,
       );
 
-      const potentialJoinColumnNameFieldMetadataItem =
+      const potentialRelationJoinColumnNameFieldMetadataItem =
         objectMetadataItem.fields.find(
           (field) =>
-            (field.type === FieldMetadataType.RELATION ||
-              field.type === FieldMetadataType.MORPH_RELATION) &&
+            field.type === FieldMetadataType.RELATION &&
             field.settings?.joinColumnName === recordKey,
         );
 
+      const potentialMorphRelationJoinColumnNameFieldMetadataItem =
+        objectMetadataItem.fields.find((field) => {
+          if (!isFieldMorphRelation(field)) return false;
+
+          return field.morphRelations?.some(
+            (morphRelation) =>
+              morphRelation.sourceFieldMetadata.name ===
+              recordKey.replace('Id', ''),
+          );
+        });
+
       const isUnknownField =
         !isDefined(correspondingFieldMetadataItem) &&
-        !isDefined(potentialJoinColumnNameFieldMetadataItem);
+        !isDefined(potentialRelationJoinColumnNameFieldMetadataItem) &&
+        !isDefined(potentialMorphRelationJoinColumnNameFieldMetadataItem);
 
       const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
       return isUnknownField && !isTypenameField;
