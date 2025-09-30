@@ -3587,7 +3587,6 @@ export type ServerlessFunctionLayer = {
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['UUID'];
 };
 
 export type SetupOidcSsoInput = {
