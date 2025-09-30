@@ -17,6 +17,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     role: '',
     prompt: '',
     isCustom: true,
+    modelConfiguration: {},
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +51,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         role: '',
         prompt: '',
         isCustom: true,
+        modelConfiguration: {},
       });
     }
   };

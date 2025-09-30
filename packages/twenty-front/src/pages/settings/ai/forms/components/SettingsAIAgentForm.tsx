@@ -9,6 +9,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { SettingsAgentModelCapabilities } from '../../components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
@@ -121,6 +122,19 @@ export const SettingsAIAgentForm = ({
           </StyledErrorMessage>
         )}
       </StyledFormContainer>
+
+      {formValues.modelId && (
+        <StyledFormContainer>
+          <SettingsAgentModelCapabilities
+            selectedModelId={formValues.modelId}
+            modelConfiguration={formValues.modelConfiguration || {}}
+            onConfigurationChange={(configuration) =>
+              onFieldChange('modelConfiguration', configuration)
+            }
+            disabled={disabled}
+          />
+        </StyledFormContainer>
+      )}
 
       <StyledFormContainer>
         <Select
