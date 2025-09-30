@@ -61,14 +61,28 @@ export class AgentModelConfigService {
   }
 
   private getXaiProviderOptions(agent: AgentEntity): ProviderOptions {
-    if (!agent.modelCofinguration.webSearch) {
+    if (
+      !agent.modelCofinguration.webSearch?.enabled &&
+      !agent.modelCofinguration.twitterSearch?.enabled
+    ) {
       return {};
+    }
+
+    const sources: Array<{ type: string }> = [];
+
+    if (agent.modelCofinguration.webSearch?.enabled) {
+      sources.push({ type: 'web' });
+    }
+
+    if (agent.modelCofinguration.twitterSearch?.enabled) {
+      sources.push({ type: 'x' });
     }
 
     return {
       xai: {
         searchParameters: {
           mode: 'auto',
+          ...(sources.length > 0 && { sources }),
         },
       },
     };
