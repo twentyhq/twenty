@@ -9,11 +9,9 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
     key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelector',
     get:
       ({
-        fieldName,
         recordId,
         morphRelations,
       }: {
-        fieldName: string;
         recordId: string;
         morphRelations: FieldMetadataItemRelation[];
       }) =>
@@ -23,8 +21,9 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
             return {
               objectNameSingular:
                 morphRelation.targetObjectMetadata.nameSingular,
-              value: (get(recordStoreFamilyState(recordId))?.[fieldName] ||
-                []) as ObjectRecord[],
+              value: (get(recordStoreFamilyState(recordId))?.[
+                morphRelation.sourceFieldMetadata.name
+              ] || []) as ObjectRecord[],
             };
           },
         );
