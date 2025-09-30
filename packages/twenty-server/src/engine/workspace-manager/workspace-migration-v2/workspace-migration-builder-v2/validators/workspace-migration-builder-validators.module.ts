@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatCronTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
@@ -10,6 +12,7 @@ import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/work
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
 
 @Module({
+  imports: [FeatureFlagModule],
   providers: [
     FlatViewValidatorService,
     FlatViewFieldValidatorService,
@@ -19,6 +22,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatServerlessFunctionValidatorService,
     FlatDatabaseEventTriggerValidatorService,
     FlatCronTriggerValidatorService,
+    FlatFieldMetadataTypeValidatorService
   ],
   exports: [
     FlatViewValidatorService,
@@ -29,6 +33,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatServerlessFunctionValidatorService,
     FlatDatabaseEventTriggerValidatorService,
     FlatCronTriggerValidatorService,
+    FlatFieldMetadataTypeValidatorService
   ],
 })
 export class WorkspaceMigrationBuilderValidatorsModule {}
