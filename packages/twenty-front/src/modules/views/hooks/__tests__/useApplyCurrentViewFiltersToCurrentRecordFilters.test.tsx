@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -11,7 +10,7 @@ import { type View } from '@/views/types/View';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { act } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import {
   type CoreViewFilter,
   ViewFilterOperand as CoreViewFilterOperand,

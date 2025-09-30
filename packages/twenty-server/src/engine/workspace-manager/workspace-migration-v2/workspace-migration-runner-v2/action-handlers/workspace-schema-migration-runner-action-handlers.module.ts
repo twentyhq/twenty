@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
+import { CreateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/create-cron-trigger-action-handler.service';
+import { DeleteCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/delete-cron-trigger-action-handler.service';
+import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/update-cron-trigger-action-handler.service';
+import { CreateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/create-database-event-trigger-action-handler.service';
+import { DeleteDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/delete-database-event-trigger-action-handler.service';
+import { UpdateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/update-database-event-trigger-action-handler.service';
 import { CreateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/create-field-action-handler.service';
 import { DeleteFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/delete-field-action-handler.service';
 import { UpdateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/update-field-action-handler.service';
@@ -44,6 +50,14 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateServerlessFunctionActionHandlerService,
     DeleteServerlessFunctionActionHandlerService,
     UpdateServerlessFunctionActionHandlerService,
+
+    CreateDatabaseEventTriggerActionHandlerService,
+    DeleteDatabaseEventTriggerActionHandlerService,
+    UpdateDatabaseEventTriggerActionHandlerService,
+
+    CreateCronTriggerActionHandlerService,
+    DeleteCronTriggerActionHandlerService,
+    UpdateCronTriggerActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

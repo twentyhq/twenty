@@ -10,10 +10,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
@@ -80,13 +76,6 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
-
-    if (!isDefined(subscription)) {
-      throw new BillingException(
-        `No subscription found for workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
 
     const subscriptionItemToUpdate = subscription.billingSubscriptionItems.find(
       (item) => item.stripePriceId === this.stripePriceIdToUpdate,
