@@ -45,7 +45,6 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
       code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       message: 'Relation target object metadata not found',
       userFriendlyMessage: t`Object targeted by the relation not found`,
-      value: relationTargetObjectMetadataId,
     });
   }
 
@@ -63,7 +62,6 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
         ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
         : 'Relation field target metadata not found',
       userFriendlyMessage: t`Relation field target metadata not found`,
-      value: relationTargetFieldMetadataId,
     });
   }
 

@@ -103,7 +103,6 @@ export class FlatObjectMetadataValidatorService {
         code: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: t`Object to delete not found`,
         userFriendlyMessage: t`Object to delete not found`,
-        value: objectMetadataToDeleteId,
       });
     } else {
       validationResult.flatEntityMinimalInformation = {
