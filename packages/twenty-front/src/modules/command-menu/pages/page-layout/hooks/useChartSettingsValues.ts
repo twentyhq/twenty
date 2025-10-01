@@ -1,11 +1,12 @@
-import { useGraphSortOptions } from '@/command-menu/pages/page-layout/hooks/useGraphSortOptions';
+import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layout/hooks/useGraphAggregateSortOptionLabels';
+import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -20,9 +21,12 @@ export const useChartSettingsValues = ({
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
   );
 
-  const graphSortOptions = useGraphSortOptions({
+  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
     objectMetadataId,
-    configuration,
+  });
+
+  const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
+    objectMetadataId,
   });
 
   if (!configuration) {
@@ -57,9 +61,34 @@ export const useChartSettingsValues = ({
   const xAxisOrderBy =
     'orderByX' in configuration ? configuration.orderByX : undefined;
 
-  const xAxisOrderByLabel = graphSortOptions.sortOptions.find(
-    (option) => option.value === xAxisOrderBy,
-  )?.label;
+  const xAxisOrderByLabel =
+    isDefined(xAxisOrderBy) && 'groupByFieldMetadataIdX' in configuration
+      ? getXSortOptionLabel({
+          graphOrderBy: xAxisOrderBy,
+          groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
+          aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+          aggregateOperation: configuration.aggregateOperation,
+        })
+      : undefined;
+
+  const groupByOrderBy =
+    'orderByY' in configuration
+      ? configuration.orderByY
+      : 'orderBy' in configuration
+        ? configuration.orderBy
+        : undefined;
+
+  const groupByOrderByLabel =
+    isDefined(groupByOrderBy) &&
+    getGroupBySortOptionLabel({
+      graphOrderBy: groupByOrderBy,
+      groupByFieldMetadataId:
+        'groupByFieldMetadataIdY' in configuration
+          ? configuration.groupByFieldMetadataIdY
+          : 'groupByFieldMetadataId' in configuration
+            ? configuration.groupByFieldMetadataId
+            : undefined,
+    });
 
   const getChartSettingsValues = (
     itemId: CHART_CONFIGURATION_SETTING_IDS,
@@ -83,6 +112,10 @@ export const useChartSettingsValues = ({
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
         return xAxisOrderByLabel;
+      case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
+        return groupByOrderByLabel;
+      case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
+        return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel;
       default:

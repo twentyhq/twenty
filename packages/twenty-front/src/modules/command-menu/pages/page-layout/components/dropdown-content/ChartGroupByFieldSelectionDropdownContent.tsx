@@ -21,7 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
+export const ChartGroupByFieldSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -34,7 +34,7 @@ export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentYAxisGroupByFieldMetadataId =
+  const currentGroupByFieldMetadataId =
     widgetInEditMode.configuration.groupByFieldMetadataIdY;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
@@ -116,7 +116,7 @@ export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
               <MenuItemSelect
                 text={fieldMetadataItem.label}
                 selected={
-                  currentYAxisGroupByFieldMetadataId === fieldMetadataItem.id
+                  currentGroupByFieldMetadataId === fieldMetadataItem.id
                 }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}

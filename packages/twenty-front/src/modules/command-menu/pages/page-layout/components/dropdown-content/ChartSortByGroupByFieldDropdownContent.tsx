@@ -1,5 +1,5 @@
-import { X_SORT_BY_OPTIONS } from '@/command-menu/pages/page-layout/constants/XSortByOptions';
-import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels';
+import { AGGREGATE_SORT_BY_OPTIONS } from '@/command-menu/pages/page-layout/constants/AggregateSortByOptions';
+import { useGraphGroupBySortOptionLabels } from '@/command-menu/pages/page-layout/hooks/useGraphAggregateSortOptionLabels';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
@@ -12,24 +12,36 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { Trans } from '@lingui/react/macro';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type GraphOrderBy } from '~/generated/graphql';
+import {
+  type BarChartConfiguration,
+  type GraphOrderBy,
+  type LineChartConfiguration,
+  type NumberChartConfiguration,
+} from '~/generated/graphql';
 
-export const ChartXAxisSortBySelectionDropdownContent = () => {
+type ChartSortByGroupByFieldDropdownContentProps = {
+  title: string;
+};
+
+export const ChartSortByGroupByFieldDropdownContent = ({
+  title,
+}: ChartSortByGroupByFieldDropdownContentProps) => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
-  ) {
-    throw new Error('Invalid configuration type');
-  }
+  const configuration = widgetInEditMode?.configuration as
+    | BarChartConfiguration
+    | LineChartConfiguration
+    | NumberChartConfiguration;
 
-  const configuration = widgetInEditMode?.configuration;
-  const currentOrderByX = configuration.orderByX;
+  const currentOrderBy =
+    'orderByY' in configuration
+      ? configuration.orderByY
+      : 'orderBy' in configuration
+        ? configuration.orderBy
+        : undefined;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -45,33 +57,33 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectSortOption = (orderByX: GraphOrderBy) => {
+  const orderByKey = 'orderByY' in configuration ? 'orderByY' : 'orderBy';
+
+  const handleSelectSortOption = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        orderByX,
+        [orderByKey]: orderBy,
       },
     });
     closeDropdown();
   };
 
-  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
+  const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode?.objectMetadataId,
   });
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>X-Axis Sort By</Trans>
-      </DropdownMenuHeader>
+      <DropdownMenuHeader>{title}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={X_SORT_BY_OPTIONS.map(
+          selectableItemIdArray={AGGREGATE_SORT_BY_OPTIONS.map(
             (option) => option.value,
           )}
         >
-          {X_SORT_BY_OPTIONS.map((sortOption) => (
+          {AGGREGATE_SORT_BY_OPTIONS.map((sortOption) => (
             <SelectableListItem
               key={sortOption.value}
               itemId={sortOption.value}
@@ -80,15 +92,16 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
               }}
             >
               <MenuItemSelect
-                text={getXSortOptionLabel({
+                text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
-                  groupByFieldMetadataIdX:
-                    configuration.groupByFieldMetadataIdX,
-                  aggregateFieldMetadataId:
-                    configuration.aggregateFieldMetadataId,
-                  aggregateOperation: configuration.aggregateOperation,
+                  groupByFieldMetadataId:
+                    'groupByFieldMetadataIdY' in configuration
+                      ? configuration.groupByFieldMetadataIdY
+                      : 'groupByFieldMetadataId' in configuration
+                        ? configuration.groupByFieldMetadataId
+                        : undefined,
                 })}
-                selected={currentOrderByX === sortOption.value}
+                selected={currentOrderBy === sortOption.value}
                 focused={selectedItemId === sortOption.value}
                 LeftIcon={sortOption.icon}
                 onClick={() => {

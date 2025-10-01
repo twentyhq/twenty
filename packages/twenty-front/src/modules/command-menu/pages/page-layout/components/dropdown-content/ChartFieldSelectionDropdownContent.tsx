@@ -1,13 +1,8 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { mapToGraphQLExtendedAggregateOperation } from '@/command-menu/pages/page-layout/utils/mapToGraphQLExtendedAggregateOperation';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -18,20 +13,15 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
-  currentYAxisFieldMetadataId,
-  setIsSubMenuOpen,
-}: {
-  currentYAxisFieldMetadataId: string;
-  setIsSubMenuOpen: (isSubMenuOpen: boolean) => void;
-}) => {
+export const ChartFieldSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -44,15 +34,11 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
     throw new Error('Invalid configuration type');
   }
 
-  const currentYAxisAggregateOperation =
-    widgetInEditMode.configuration.aggregateOperation;
+  const currentXAxisFieldMetadataId =
+    widgetInEditMode.configuration.groupByFieldMetadataIdX;
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
-  );
-
-  const selectedYAxisField = sourceObjectMetadataItem?.fields.find(
-    (field) => field.id === currentYAxisFieldMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -64,40 +50,35 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
     dropdownId,
   );
 
-  const availableAggregateOperations = selectedYAxisField
-    ? getAvailableAggregateOperationsForFieldMetadataType({
-        fieldMetadataType: selectedYAxisField.type,
-      })
-    : [];
-
-  const filteredAggregateOperations = availableAggregateOperations.filter(
-    (operation) => {
-      const operationLabel = getAggregateOperationLabel(operation);
+  const availableFieldMetadataItems =
+    sourceObjectMetadataItem?.fields.filter((fieldMetadataItem) => {
       const matchesSearch =
         !isNonEmptyString(searchQuery) ||
-        operationLabel.toLowerCase().includes(searchQuery.toLowerCase());
+        fieldMetadataItem.label
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        fieldMetadataItem.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
       return matchesSearch;
-    },
-  );
+    }) || [];
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
-  if (!isDefined(sourceObjectMetadataItem) || !isDefined(selectedYAxisField)) {
+  const { getIcon } = useIcons();
+
+  if (!isDefined(sourceObjectMetadataItem)) {
     return;
   }
 
-  const handleSelectAggregateOperation = (
-    aggregateOperation: ExtendedAggregateOperations,
-  ) => {
+  const handleSelectField = (fieldMetadataId: string) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        aggregateFieldMetadataId: currentYAxisFieldMetadataId,
-        aggregateOperation:
-          mapToGraphQLExtendedAggregateOperation(aggregateOperation),
+        groupByFieldMetadataIdX: fieldMetadataId,
       },
     });
     closeDropdown();
@@ -105,20 +86,13 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
 
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => setIsSubMenuOpen(false)}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        <Trans>Y-Axis Aggregate Operation</Trans>
+      <DropdownMenuHeader>
+        <Trans>X-Axis Field</Trans>
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        placeholder="Search operations"
+        placeholder={t`Search fields`}
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
@@ -127,27 +101,25 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={filteredAggregateOperations.map(
-            (operation) => operation,
+          selectableItemIdArray={availableFieldMetadataItems.map(
+            (item) => item.id,
           )}
         >
-          {filteredAggregateOperations.map((aggregateOperation) => (
+          {availableFieldMetadataItems.map((fieldMetadataItem) => (
             <SelectableListItem
-              key={aggregateOperation}
-              itemId={aggregateOperation}
+              key={fieldMetadataItem.id}
+              itemId={fieldMetadataItem.id}
               onEnter={() => {
-                handleSelectAggregateOperation(aggregateOperation);
+                handleSelectField(fieldMetadataItem.id);
               }}
             >
               <MenuItemSelect
-                text={getAggregateOperationLabel(aggregateOperation)}
-                selected={
-                  currentYAxisAggregateOperation ===
-                  mapToGraphQLExtendedAggregateOperation(aggregateOperation)
-                }
-                focused={selectedItemId === aggregateOperation}
+                text={fieldMetadataItem.label}
+                selected={currentXAxisFieldMetadataId === fieldMetadataItem.id}
+                focused={selectedItemId === fieldMetadataItem.id}
+                LeftIcon={getIcon(fieldMetadataItem.icon)}
                 onClick={() => {
-                  handleSelectAggregateOperation(aggregateOperation);
+                  handleSelectField(fieldMetadataItem.id);
                 }}
               />
             </SelectableListItem>

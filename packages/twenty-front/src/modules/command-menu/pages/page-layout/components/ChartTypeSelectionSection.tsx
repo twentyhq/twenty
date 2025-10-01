@@ -2,6 +2,7 @@ import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constan
 import styled from '@emotion/styled';
 import { GraphType } from '~/generated-metadata/graphql';
 
+import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
 
 const graphTypeOptions = [
@@ -32,12 +33,12 @@ export const ChartTypeSelectionSection = ({
       {graphTypeOptions.map((graphType) => (
         <MenuPicker
           selected={currentGraphType === graphType}
-          key={GRAPH_TYPE_INFORMATION[graphType].label}
+          key={t(GRAPH_TYPE_INFORMATION[graphType].label)}
           icon={GRAPH_TYPE_INFORMATION[graphType].icon}
           onClick={() => {
             setCurrentGraphType(graphType);
           }}
-          label={GRAPH_TYPE_INFORMATION[graphType].label}
+          label={t(GRAPH_TYPE_INFORMATION[graphType].label)}
           showLabel={false}
         />
       ))}

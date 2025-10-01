@@ -1,4 +1,4 @@
-import { ChartYAxisAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartYAxisAggregateOperationSelectionDropdownContent';
+import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartYAxisFieldSelectionDropdownContent = () => {
+export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,11 +35,12 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentYAxisFieldMetadataId =
+  const currentFieldMetadataId =
     widgetInEditMode.configuration.groupByFieldMetadataIdY;
 
-  const [selectedYAxisFieldMetadataId, setSelectedYAxisFieldMetadataId] =
-    useState(currentYAxisFieldMetadataId);
+  const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
+    currentFieldMetadataId,
+  );
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
@@ -76,8 +77,8 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
 
   if (isSubMenuOpen) {
     return (
-      <ChartYAxisAggregateOperationSelectionDropdownContent
-        currentYAxisFieldMetadataId={selectedYAxisFieldMetadataId}
+      <ChartAggregateOperationSelectionDropdownContent
+        currentFieldMetadataId={selectedFieldMetadataId}
         setIsSubMenuOpen={setIsSubMenuOpen}
       />
     );
@@ -110,18 +111,18 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
               itemId={fieldMetadataItem.id}
               onEnter={() => {
                 setIsSubMenuOpen(true);
-                setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
+                setSelectedFieldMetadataId(fieldMetadataItem.id);
               }}
             >
               <MenuItemSelect
                 text={fieldMetadataItem.label}
-                selected={selectedYAxisFieldMetadataId === fieldMetadataItem.id}
+                selected={selectedFieldMetadataId === fieldMetadataItem.id}
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
                 hasSubMenu={true}
                 onClick={() => {
                   setIsSubMenuOpen(true);
-                  setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
+                  setSelectedFieldMetadataId(fieldMetadataItem.id);
                 }}
               />
             </SelectableListItem>
