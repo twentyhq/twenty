@@ -71,8 +71,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       replaceFlatEntityInFlatEntityMapsOrThrow({
         flatEntity: {
           ...flatObjectMetadata,
-          indexMetadatasIds: [
-            ...flatObjectMetadata.indexMetadatasIds,
+          indexMetadataIds: [
+            ...flatObjectMetadata.indexMetadataIds,
             flatIndexToValidate.id,
           ],
         },
@@ -130,7 +130,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       ? replaceFlatEntityInFlatEntityMapsOrThrow({
           flatEntity: {
             ...flatObjectMetadata,
-            indexMetadatasIds: flatObjectMetadata.indexMetadatasIds.filter(
+            indexMetadataIds: flatObjectMetadata.indexMetadataIds.filter(
               (id) => id !== flatIndexToValidate.id,
             ),
           },

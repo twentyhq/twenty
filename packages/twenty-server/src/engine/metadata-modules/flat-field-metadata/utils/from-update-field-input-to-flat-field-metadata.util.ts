@@ -209,7 +209,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   if (!isDefined(flatObjectMetadata)) {
     throw new FieldMetadataException(
-      'Field to delete object metadata not found',
+      'Field to update object metadata not found',
       FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
     );
   }

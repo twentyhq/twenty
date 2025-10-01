@@ -54,7 +54,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const createdAt = new Date();
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldMetadataIds: [],
-      indexMetadatasIds: [],
+      indexMetadataIds: [],
       createdAt,
       updatedAt: createdAt,
       duplicateCriteria: null,

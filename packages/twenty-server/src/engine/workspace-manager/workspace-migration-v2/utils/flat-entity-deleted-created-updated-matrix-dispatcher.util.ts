@@ -57,7 +57,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     const toFlatEntity = toMap.get(universalIdentifier);
 
     // TODO Perf improvement compare directly here to avoid mapping the whole workspaces + avoid compare duplication
-    // Would not have FromTo anymoe but an PropertyUpdates[]
+    // Would not have FromTo anymore but an PropertyUpdates[]
     if (toFlatEntity) {
       initialDispatcher.updatedFlatEntityMaps.from =
         addFlatEntityToFlatEntityMapsOrThrow({

@@ -12,8 +12,10 @@ export const aggregateOrchestratorActionsReport = ({
     aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions,
     aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions,
   ].reduce(
-    (orchestratorActionsReport, aggregator) =>
-      aggregator({ orchestratorActionsReport }),
+    (currentOrchestratorActionsReport, aggregator) =>
+      aggregator({
+        orchestratorActionsReport: currentOrchestratorActionsReport,
+      }),
     orchestratorActionsReport,
   );
 

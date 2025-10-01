@@ -243,7 +243,7 @@ export class DevSeederDataService {
           );
 
           if (!objectMetadata) {
-            // TODO this continue is hacky we should a record seed config per workspace
+            // TODO this continue is hacky, we should have a record seed config per workspace  
             continue;
           }
 

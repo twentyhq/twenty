@@ -206,14 +206,14 @@ export class FlatFieldMetadataValidatorService {
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
-    const parentObjectMetadataHasbeenDeleted = !isDefined(
+    const parentObjectMetadataHasBeenDeleted = !isDefined(
       flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId],
     );
 
     if (
       isStandardMetadata(flatFieldMetadataToDelete) &&
       !relationTargetObjectMetadataHasBeenDeleted &&
-      !parentObjectMetadataHasbeenDeleted
+      !parentObjectMetadataHasBeenDeleted
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -225,7 +225,7 @@ export class FlatFieldMetadataValidatorService {
     if (
       flatFieldMetadataToDelete.isActive &&
       !relationTargetObjectMetadataHasBeenDeleted &&
-      !parentObjectMetadataHasbeenDeleted
+      !parentObjectMetadataHasBeenDeleted
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

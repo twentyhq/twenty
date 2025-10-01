@@ -23,5 +23,5 @@ export type FlatObjectMetadata = Omit<
 > & {
   universalIdentifier: string;
   fieldMetadataIds: string[];
-  indexMetadatasIds: string[];
+  indexMetadataIds: string[];
 };
