@@ -78,34 +78,6 @@ const LoadingSkeleton = () => {
   );
 };
 
-export const FieldCardSkeleton = ({
-  isInRightDrawer,
-}: {
-  isInRightDrawer?: boolean;
-}) => {
-  const theme = useTheme();
-
-  return (
-    <StyledGreyBox isInRightDrawer={isInRightDrawer}>
-      <StyledLoadingSkeletonContainer>
-        <SkeletonTheme
-          baseColor={theme.background.tertiary}
-          highlightColor={theme.background.transparent.lighter}
-          borderRadius={theme.border.radius.sm}
-        >
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-            width="60%"
-          />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        </SkeletonTheme>
-      </StyledLoadingSkeletonContainer>
-    </StyledGreyBox>
-  );
-};
-
 const WorkflowVisualizer = lazy(() =>
   import('@/workflow/workflow-diagram/components/WorkflowVisualizer').then(
     (module) => ({

@@ -1,7 +1,7 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { Section } from 'twenty-ui/layout';
 import React, { Suspense } from 'react';
-import { FieldCardSkeleton } from '@/object-record/record-show/components/CardComponents';
+import { FieldCardSkeleton } from '@/object-record/record-show/components/FieldCardSkeleton';
 
 const LazyFieldCard = React.lazy(() =>
   import('@/object-record/record-show/components/CardComponents').then(
