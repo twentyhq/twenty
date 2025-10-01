@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["standardId", "universalIdentifier", "label", "version", "license", "engines"],
+  "required": ["universalIdentifier", "label", "version", "license", "engines"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -14,11 +14,6 @@
       "type": "string",
       "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-    },
-    "standardId": {
-      "type": "string",
-      "const": { "$data": "1/universalIdentifier" },
-      "description": "Should be the same as universalIdentifier"
     },
     "label": {
       "type": "string",

@@ -10,7 +10,7 @@ export const createBasePackageJson = (
 
   return {
     $schema: schemas.appManifest,
-    standardId: randomUUID(),
+    universalIdentifier: randomUUID(),
     label: appName
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

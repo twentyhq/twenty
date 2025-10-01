@@ -2,7 +2,7 @@ import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverl
 
 export type PackageJson = {
   $schema?: string;
-  standardId: string;
+  universalIdentifier: string;
   label: string;
   description?: string;
   engines: {
