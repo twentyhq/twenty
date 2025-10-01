@@ -57,6 +57,7 @@ export type MenuItemProps = {
   focused?: boolean;
   hotKeys?: string[];
   isSubMenuOpened?: boolean;
+  showGrip?: boolean;
 };
 
 const StyledSubMenuIcon = styled(motion.div)`
@@ -87,6 +88,7 @@ export const MenuItem = ({
   focused = false,
   hotKeys,
   isSubMenuOpened = false,
+  showGrip = false,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -121,6 +123,7 @@ export const MenuItem = ({
             contextualTextPosition === 'left' ? contextualText : null
           }
           disabled={disabled}
+          showGrip={showGrip}
         />
       </StyledMenuItemLeftContent>
       <StyledMenuItemRightContent>
