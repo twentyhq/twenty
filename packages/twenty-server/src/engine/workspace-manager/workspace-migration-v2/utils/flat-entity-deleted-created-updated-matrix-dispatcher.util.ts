@@ -33,8 +33,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
   const toMap = new Map(to.map((obj) => [obj.universalIdentifier, obj]));
 
-  for (const [identifier, fromEntity] of fromMap) {
-    if (!toMap.has(identifier)) {
+  for (const [universalIdentifier, fromEntity] of fromMap) {
+    if (!toMap.has(universalIdentifier)) {
       initialDispatcher.deletedFlatEntityMaps =
         addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: fromEntity,
@@ -43,8 +43,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     }
   }
 
-  for (const [identifier, toFlatEntity] of toMap) {
-    if (!fromMap.has(identifier)) {
+  for (const [universalIdentifier, toFlatEntity] of toMap) {
+    if (!fromMap.has(universalIdentifier)) {
       initialDispatcher.createdFlatEntityMaps =
         addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: toFlatEntity,
@@ -53,8 +53,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     }
   }
 
-  for (const [identifier, fromFlatEntity] of fromMap) {
-    const toFlatEntity = toMap.get(identifier);
+  for (const [universalIdentifier, fromFlatEntity] of fromMap) {
+    const toFlatEntity = toMap.get(universalIdentifier);
 
     // TODO Perf improvement compare directly here to avoid mapping the whole workspaces + avoid compare duplication
     // Would not have FromTo anymoe but an PropertyUpdates[]

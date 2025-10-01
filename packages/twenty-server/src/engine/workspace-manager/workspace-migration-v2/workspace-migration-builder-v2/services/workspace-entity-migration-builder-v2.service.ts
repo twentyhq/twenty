@@ -160,13 +160,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       createdFlatEntityMaps,
     );
 
-    for (const flatEntityToCreateId in createdFlatEntityMaps) {
+    for (const flatEntityToCreateId in createdFlatEntityMaps.byId) {
       const flatEntityToCreate =
         createdFlatEntityMaps.byId[flatEntityToCreateId];
 
       if (!isDefined(flatEntityToCreate)) {
         throw new FlatEntityMapsException(
-          'TMP',
+          'Could not find flat entity to create in maps should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
@@ -208,14 +208,14 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     );
 
     for (const flatEntityToDeleteId in buildOptions.inferDeletionFromMissingEntities
-      ? deletedFlatEntityMaps
+      ? deletedFlatEntityMaps.byId
       : {}) {
       const flatEntityToDelete =
         deletedFlatEntityMaps.byId[flatEntityToDeleteId];
 
       if (!isDefined(flatEntityToDelete)) {
         throw new FlatEntityMapsException(
-          'TMP',
+          'Could not find flat entity to delete in maps should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
@@ -255,8 +255,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let remainingFlatEntityMapsToUpdate = structuredClone(
       updatedFlatEntityMaps,
     );
-
-    for (const flatEntityToUpdateId in updatedFlatEntityMaps) {
+    for (const flatEntityToUpdateId in updatedFlatEntityMaps.to.byId) {
       const flatEntityToUpdateFrom =
         updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
       const flatEntityToUpdateTo =
@@ -267,7 +266,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         !isDefined(flatEntityToUpdateFrom)
       ) {
         throw new FlatEntityMapsException(
-          'TMP',
+          'Could not find flat entity to update in maps should never occur',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
