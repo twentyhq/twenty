@@ -222,12 +222,7 @@ export const TabList = ({
             {onAddTab && (
               <NodeDimension onDimensionChange={handleAddButtonWidthChange}>
                 <StyledAddButton>
-                  <IconButton
-                    Icon={IconPlus}
-                    size="small"
-                    variant="tertiary"
-                    onClick={onAddTab}
-                  />
+                  <IconButton Icon={IconPlus} size="small" variant="tertiary" />
                 </StyledAddButton>
               </NodeDimension>
             )}
@@ -280,7 +275,7 @@ export const TabList = ({
                   Icon={IconPlus}
                   size="small"
                   variant="tertiary"
-                  onClick={onAddTab}
+                  onClick={() => onAddTab()}
                 />
               </StyledAddButton>
             )}

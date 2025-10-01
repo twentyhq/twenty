@@ -14,10 +14,8 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/input';
@@ -60,25 +58,22 @@ const StyledButtonsContainer = styled.div`
 
 export const AIChatTab = ({
   agentId,
-  isWorkflowAgentNodeChat,
+  uiMessages,
 }: {
   agentId: string;
-  isWorkflowAgentNodeChat?: boolean;
+  uiMessages: UIMessageWithMetadata[];
 }) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-
   const {
-    messages,
     isLoading,
     input,
     handleInputChange,
-    agentStreamingMessage,
     scrollWrapperId,
-  } = useAgentChat(agentId);
+    messages,
+    handleSendMessage,
+    isStreaming,
+  } = useAgentChat(agentId, uiMessages);
   const { uploadFiles } = useAIChatFileUpload({ agentId });
 
   const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
@@ -101,14 +96,17 @@ export const AIChatTab = ({
             <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
               {messages.map((message) => (
                 <AIChatMessage
-                  agentStreamingMessage={agentStreamingMessage}
+                  isLastMessageStreaming={
+                    isStreaming &&
+                    message.id === messages[messages.length - 1].id
+                  }
                   message={message}
                   key={message.id}
                 />
               ))}
             </StyledScrollWrapper>
           )}
-          {messages.length === 0 && !isLoading && <AIChatEmptyState />}
+          {messages.length === 0 && <AIChatEmptyState />}
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
           <StyledInputArea>
@@ -122,34 +120,31 @@ export const AIChatTab = ({
               maxRows={20}
             />
             <StyledButtonsContainer>
-              {!isWorkflowAgentNodeChat && (
-                <>
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    Icon={IconHistory}
-                    onClick={() =>
-                      navigateCommandMenu({
-                        page: CommandMenuPages.ViewPreviousAIChats,
-                        pageTitle: t`View Previous AI Chats`,
-                        pageIcon: IconHistory,
-                      })
-                    }
-                  />
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    Icon={IconMessageCirclePlus}
-                    onClick={() => createAgentChatThread()}
-                  />
-                </>
-              )}
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconHistory}
+                onClick={() =>
+                  navigateCommandMenu({
+                    page: CommandMenuPages.ViewPreviousAIChats,
+                    pageTitle: t`View Previous AI Chats`,
+                    pageIcon: IconHistory,
+                  })
+                }
+              />
+              <Button
+                variant="secondary"
+                size="small"
+                Icon={IconMessageCirclePlus}
+                onClick={() => createAgentChatThread()}
+              />
               <AgentChatFileUploadButton agentId={agentId} />
-              {contextStoreCurrentObjectMetadataItemId ? (
-                <SendMessageWithRecordsContextButton agentId={agentId} />
-              ) : (
-                <SendMessageButton agentId={agentId} />
-              )}
+              <SendMessageButton
+                agentId={agentId}
+                handleSendMessage={handleSendMessage}
+                input={input}
+                isLoading={isLoading}
+              />
             </StyledButtonsContainer>
           </StyledInputArea>
         </>

@@ -8,7 +8,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { ViewFilterOperand } from 'twenty-shared/types';
 
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
 import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
@@ -19,7 +18,7 @@ import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/consta
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId: string;
@@ -43,20 +42,20 @@ export const ObjectFilterDropdownFilterInput = ({
   const isOperandWithFilterValue =
     selectedOperandInDropdown &&
     [
-      ViewFilterOperand.Is,
-      ViewFilterOperand.IsNotNull,
-      ViewFilterOperand.IsNot,
-      ViewFilterOperand.LessThanOrEqual,
-      ViewFilterOperand.GreaterThanOrEqual,
-      ViewFilterOperand.IsBefore,
-      ViewFilterOperand.IsAfter,
-      ViewFilterOperand.Contains,
-      ViewFilterOperand.DoesNotContain,
-      ViewFilterOperand.IsRelative,
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT_NULL,
+      ViewFilterOperand.IS_NOT,
+      ViewFilterOperand.LESS_THAN_OR_EQUAL,
+      ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+      ViewFilterOperand.IS_BEFORE,
+      ViewFilterOperand.IS_AFTER,
+      ViewFilterOperand.CONTAINS,
+      ViewFilterOperand.DOES_NOT_CONTAIN,
+      ViewFilterOperand.IS_RELATIVE,
     ].includes(selectedOperandInDropdown);
 
   const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   if (isVectorSearchFilter && isDefined(filterDropdownId)) {
     return <ObjectFilterDropdownVectorSearchInput />;

@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import { DataSource, type EntityManager, Repository } from 'typeorm';
+import { type DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 } from 'uuid';
 
 import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';

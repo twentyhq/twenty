@@ -1,3 +1,9 @@
+import {
+  type BulkRecordsAvailability,
+  type GlobalAvailability,
+  type SingleRecordAvailability,
+} from 'twenty-shared/workflow';
+
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 export enum WorkflowTriggerType {
@@ -8,7 +14,6 @@ export enum WorkflowTriggerType {
 }
 
 type BaseWorkflowTriggerSettings = {
-  input?: object;
   outputSchema: OutputSchema;
 };
 
@@ -35,6 +40,10 @@ export type WorkflowManualTrigger = BaseTrigger & {
   settings: BaseWorkflowTriggerSettings & {
     objectType?: string;
     icon?: string;
+    availability?:
+      | GlobalAvailability
+      | SingleRecordAvailability
+      | BulkRecordsAvailability;
   };
 };
 

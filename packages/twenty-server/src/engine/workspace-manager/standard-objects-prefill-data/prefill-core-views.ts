@@ -1,5 +1,4 @@
 import { isString } from '@sniptt/guards';
-import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -29,7 +28,6 @@ import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objec
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -176,9 +174,7 @@ const createCoreViews = async (
         viewDefinition.filters.map((filter) => ({
           fieldMetadataId: filter.fieldMetadataId,
           viewId: viewDefinition.id,
-          operand: convertViewFilterOperandToCoreOperand(
-            filter.operand as SharedViewFilterOperand,
-          ),
+          operand: filter.operand,
           value: filter.value,
           workspaceId,
         }));

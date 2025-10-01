@@ -253,9 +253,9 @@ export class WorkspaceResolver {
       return;
     }
 
-    return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId: workspace.id },
-    );
+    return this.billingSubscriptionService.getCurrentBillingSubscription({
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => Number)

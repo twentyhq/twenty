@@ -13,7 +13,8 @@ describe('app-template', () => {
   describe('createBasePackageJson', () => {
     it('should create a valid app package.json with correct structure', () => {
       const appName = 'my-test-app';
-      const basePackageJson = createBasePackageJson(appName);
+      const description = 'A Twenty application for my-test-app';
+      const basePackageJson = createBasePackageJson(appName, description);
 
       expect(basePackageJson).toEqual({
         $schema:
@@ -22,12 +23,18 @@ describe('app-template', () => {
         label: 'My Test App',
         description: 'A Twenty application for my-test-app',
         version: '0.0.1',
+        engines: {
+          node: '^24.5.0',
+          npm: 'please-use-yarn',
+          yarn: '>=4.0.2',
+        },
+        license: 'MIT',
       });
     });
 
     it('should handle single word app names', () => {
       const appName = 'calculator';
-      const basePackageJson = createBasePackageJson(appName);
+      const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('Calculator');
       expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
@@ -35,14 +42,14 @@ describe('app-template', () => {
 
     it('should handle kebab-case app names correctly', () => {
       const appName = 'user-management-system';
-      const basePackageJson = createBasePackageJson(appName);
+      const basePackageJson = createBasePackageJson(appName, '');
 
       expect(basePackageJson.label).toBe('User Management System');
       expect(basePackageJson.standardId).toBe('mocked-uuid-12345');
     });
 
     it('should generate unique standardIds', () => {
-      const basePackageJson = createBasePackageJson('test-app');
+      const basePackageJson = createBasePackageJson('test-app', '');
 
       expect(basePackageJson.standardId).toBeDefined();
       expect(typeof basePackageJson.standardId).toBe('string');

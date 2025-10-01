@@ -1,6 +1,6 @@
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } from '@/views/utils/mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 describe('mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator', () => {
   it('should map correctly for AND', () => {

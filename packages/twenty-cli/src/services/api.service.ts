@@ -1,6 +1,10 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
-import { type ApiResponse, type AppManifest } from '../types/config.types';
+import {
+  type ApiResponse,
+  type AppManifest,
+  type PackageJson,
+} from '../types/config.types';
 import { ConfigService } from './config.service';
 
 export class ApiService {
@@ -79,16 +83,26 @@ export class ApiService {
     }
   }
 
-  async syncApplication(manifest: AppManifest): Promise<ApiResponse> {
+  async syncApplication({
+    packageJson,
+    yarnLock,
+    manifest,
+  }: {
+    packageJson: PackageJson;
+    yarnLock: string;
+    manifest: AppManifest;
+  }): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest)
+        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
+          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
         }
       `;
 
       const variables = {
         manifest,
+        yarnLock,
+        packageJson,
       };
 
       const response: AxiosResponse = await this.client.post(

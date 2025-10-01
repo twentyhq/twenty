@@ -3,15 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
   PublicDomainException,
   PublicDomainExceptionCode,
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class PublicDomainService {
@@ -90,7 +91,9 @@ export class PublicDomainService {
     });
 
     try {
-      await this.publicDomainRepository.insert(publicDomain);
+      await this.publicDomainRepository.insert(
+        publicDomain as QueryDeepPartialEntity<PublicDomain>,
+      );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
         isPublicDomain: true,

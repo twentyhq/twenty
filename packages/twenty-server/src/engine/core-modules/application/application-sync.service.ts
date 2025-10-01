@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   AgentManifest,
-  AppManifest,
   ObjectManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -17,6 +16,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -24,17 +25,27 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly agentService: AgentService,
   ) {}
 
-  public async synchronizeFromManifest(
-    workspaceId: string,
-    manifest: AppManifest,
-  ) {
-    const applicationId = await this.syncApplication(manifest, workspaceId);
+  public async synchronizeFromManifest({
+    workspaceId,
+    manifest,
+    packageJson,
+    yarnLock,
+  }: ApplicationInput & {
+    workspaceId: string;
+  }) {
+    const applicationId = await this.syncApplication({
+      workspaceId,
+      manifest,
+      packageJson,
+      yarnLock,
+    });
 
     await this.syncAgents({
       agentsToSync: manifest.agents,
@@ -51,32 +62,53 @@ export class ApplicationSyncService {
     this.logger.log('✅ Application sync from manifest completed');
   }
 
-  private async syncApplication(
-    applicationToSync: AppManifest,
-    workspaceId: string,
-  ): Promise<string> {
+  private async syncApplication({
+    workspaceId,
+    manifest,
+    packageJson,
+    yarnLock,
+  }: ApplicationInput & {
+    workspaceId: string;
+  }): Promise<string> {
     const application = await this.applicationService.findByStandardId(
-      applicationToSync.standardId,
+      manifest.standardId,
       workspaceId,
     );
 
     if (!isDefined(application)) {
+      const serverlessFunctionLayer =
+        await this.serverlessFunctionLayerService.create(
+          {
+            packageJson,
+            yarnLock,
+          },
+          workspaceId,
+        );
       const createdApplication = await this.applicationService.create({
-        standardId: applicationToSync.standardId,
-        label: applicationToSync.label,
-        description: applicationToSync.description,
-        version: applicationToSync.version,
+        standardId: manifest.standardId,
+        label: manifest.label,
+        description: manifest.description,
+        version: manifest.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
+        serverlessFunctionLayerId: serverlessFunctionLayer.id,
         workspaceId,
       });
 
       return createdApplication.id;
     }
 
+    await this.serverlessFunctionLayerService.update(
+      application.serverlessFunctionLayerId,
+      {
+        packageJson,
+        yarnLock,
+      },
+    );
+
     await this.applicationService.update(application.id, {
-      label: applicationToSync.label,
-      description: applicationToSync.description,
-      version: applicationToSync.version,
+      label: manifest.label,
+      description: manifest.description,
+      version: manifest.version,
     });
 
     return application.id;

@@ -19,6 +19,7 @@ import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-a
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { useLingui } from '@lingui/react/macro';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -230,8 +231,20 @@ export const WorkflowEditActionFindRecords = ({
           label="Limit"
           defaultValue={formData.limit}
           placeholder="Enter limit"
-          onChange={() => {}}
-          readonly
+          onChange={(limit) => {
+            if (isFormDisabled === true || !isNumber(limit)) {
+              return;
+            }
+
+            const newFormData: FindRecordsFormData = {
+              ...formData,
+              limit,
+            };
+
+            setFormData(newFormData);
+
+            saveAction(newFormData);
+          }}
         />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
