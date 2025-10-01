@@ -90,16 +90,15 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     } = context;
     const { objectMetadataId, updates } = action;
 
-    const flatObjectMetadataWithFlatFieldMaps =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: objectMetadataId,
-      });
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: objectMetadataId,
+    });
 
     const { schemaName, tableName: currentTableName } =
       getWorkspaceSchemaContextForMigration({
         workspaceId,
-        flatObjectMetadata: flatObjectMetadataWithFlatFieldMaps,
+        flatObjectMetadata: flatObjectMetadata,
       });
 
     for (const update of updates) {
@@ -108,7 +107,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       }
 
       const updatedObjectMetadata = {
-        ...flatObjectMetadataWithFlatFieldMaps,
+        ...flatObjectMetadata,
         [update.property]: update.to,
       };
 

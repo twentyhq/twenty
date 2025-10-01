@@ -81,7 +81,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatEntities?: T;
   }): Promise<void> {
-    // Temporarely invalidation old cache too until it's deprecated
+    // Temporarily invalidation old cache too until it's deprecated
     if (
       !isDefined(flatEntities) ||
       flatEntities.includes('flatObjectMetadataMaps') ||

@@ -4,7 +4,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
@@ -26,8 +25,6 @@ export type ValidateOneObjectMetadataArgs = {
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
-  constructor() {}
-
   public validateFlatObjectMetadataUpdate({
     optimisticFlatObjectMetadataMaps,
     flatObjectMetadataToValidate: updatedFlatObjectMetadata,
@@ -149,17 +146,16 @@ export class FlatObjectMetadataValidatorService {
   }: ValidateOneObjectMetadataArgs): Promise<
     FailedFlatEntityValidation<FlatObjectMetadata>
   > {
-    const objectValidationResult: FailedFlatEntityValidation<
-      FlatObjectMetadata | FlatFieldMetadata
-    > = {
-      type: 'create_object',
-      errors: [],
-      flatEntityMinimalInformation: {
-        id: flatObjectMetadataToValidate.id,
-        namePlural: flatObjectMetadataToValidate.namePlural,
-        nameSingular: flatObjectMetadataToValidate.nameSingular,
-      },
-    };
+    const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
+      {
+        type: 'create_object',
+        errors: [],
+        flatEntityMinimalInformation: {
+          id: flatObjectMetadataToValidate.id,
+          namePlural: flatObjectMetadataToValidate.namePlural,
+          nameSingular: flatObjectMetadataToValidate.nameSingular,
+        },
+      };
 
     if (
       isDefined(
