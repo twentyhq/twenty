@@ -1,0 +1,178 @@
+import { type FieldMetadataTypeToTest } from 'test/integration/graphql/suites/args/types/field-metadata-type-to-test';
+import {
+  FieldMetadataType,
+  RelationType,
+  type RelationCreationPayload,
+} from 'twenty-shared/types';
+
+import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+
+type fieldMetadataCreationInput = {
+  name: string;
+  label: string;
+  type: FieldMetadataType;
+  objectMetadataId: string;
+  options?: FieldMetadataComplexOption[];
+  relationCreationPayload?: RelationCreationPayload;
+};
+
+export const getFieldMetadataCreationInputs = (
+  objectMetadataId: string,
+  targetObjectMetadataId: string,
+) => {
+  const fieldInputsMap: {
+    [K in FieldMetadataTypeToTest]:
+      | fieldMetadataCreationInput
+      | fieldMetadataCreationInput[];
+  } = {
+    [FieldMetadataType.TEXT]: {
+      name: 'textField',
+      label: 'textField',
+      type: FieldMetadataType.TEXT,
+      objectMetadataId,
+    },
+    [FieldMetadataType.PHONES]: {
+      name: 'phonesField',
+      label: 'phonesField',
+      type: FieldMetadataType.PHONES,
+      objectMetadataId,
+    },
+    [FieldMetadataType.EMAILS]: {
+      name: 'emailsField',
+      label: 'emailsField',
+      type: FieldMetadataType.EMAILS,
+      objectMetadataId,
+    },
+    [FieldMetadataType.DATE_TIME]: {
+      name: 'dateTimeField',
+      label: 'dateTimeField',
+      type: FieldMetadataType.DATE_TIME,
+      objectMetadataId,
+    },
+    [FieldMetadataType.DATE]: {
+      name: 'dateField',
+      label: 'dateField',
+      type: FieldMetadataType.DATE,
+      objectMetadataId,
+    },
+    [FieldMetadataType.BOOLEAN]: {
+      name: 'booleanField',
+      label: 'booleanField',
+      type: FieldMetadataType.BOOLEAN,
+      objectMetadataId,
+    },
+    [FieldMetadataType.NUMBER]: {
+      name: 'numberField',
+      label: 'numberField',
+      type: FieldMetadataType.NUMBER,
+      objectMetadataId,
+    },
+    [FieldMetadataType.LINKS]: {
+      name: 'linksField',
+      label: 'linksField',
+      type: FieldMetadataType.LINKS,
+      objectMetadataId,
+    },
+    [FieldMetadataType.CURRENCY]: {
+      name: 'currencyField',
+      label: 'currencyField',
+      type: FieldMetadataType.CURRENCY,
+      objectMetadataId,
+    },
+    [FieldMetadataType.FULL_NAME]: {
+      name: 'fullNameField',
+      label: 'fullNameField',
+      type: FieldMetadataType.FULL_NAME,
+      objectMetadataId,
+    },
+    [FieldMetadataType.RATING]: {
+      name: 'ratingField',
+      label: 'ratingField',
+      type: FieldMetadataType.RATING,
+      objectMetadataId,
+    },
+    [FieldMetadataType.SELECT]: {
+      name: 'selectField',
+      label: 'selectField',
+      type: FieldMetadataType.SELECT,
+      options: [
+        {
+          label: 'Option 1',
+          value: 'OPTION_1',
+          color: 'green',
+          position: 1,
+          id: '26c602c3-cba9-4d83-92d4-4ba7dbae2f31',
+        },
+      ],
+      objectMetadataId,
+    },
+    [FieldMetadataType.MULTI_SELECT]: {
+      name: 'multiSelectField',
+      label: 'multiSelectField',
+      type: FieldMetadataType.MULTI_SELECT,
+      options: [
+        {
+          label: 'Option 1',
+          value: 'OPTION_1',
+          color: 'green',
+          position: 1,
+          id: '26c602c3-cba9-4d83-92d4-4ba7dbae2f31',
+        },
+      ],
+      objectMetadataId,
+    },
+
+    [FieldMetadataType.ADDRESS]: {
+      name: 'addressField',
+      label: 'addressField',
+      type: FieldMetadataType.ADDRESS,
+      objectMetadataId,
+    },
+    [FieldMetadataType.RAW_JSON]: {
+      name: 'rawJsonField',
+      label: 'rawJsonField',
+      type: FieldMetadataType.RAW_JSON,
+      objectMetadataId,
+    },
+    [FieldMetadataType.ARRAY]: {
+      name: 'arrayField',
+      label: 'arrayField',
+      type: FieldMetadataType.ARRAY,
+      objectMetadataId,
+    },
+    [FieldMetadataType.UUID]: {
+      name: 'uuidField',
+      label: 'uuidField',
+      type: FieldMetadataType.UUID,
+      objectMetadataId,
+    },
+    [FieldMetadataType.RELATION]: [
+      {
+        name: 'manyToOneRelationField',
+        label: 'manyToOneRelationField',
+        type: FieldMetadataType.RELATION,
+        objectMetadataId,
+        relationCreationPayload: {
+          targetObjectMetadataId: targetObjectMetadataId,
+          targetFieldLabel: 'oneToManyTargetRelationField',
+          targetFieldIcon: 'IconListOpportunity',
+          type: RelationType.MANY_TO_ONE,
+        },
+      },
+      {
+        name: 'oneToManyRelationField',
+        label: 'oneToManyRelationField',
+        type: FieldMetadataType.RELATION,
+        objectMetadataId,
+        relationCreationPayload: {
+          targetObjectMetadataId: targetObjectMetadataId,
+          targetFieldLabel: 'manyToOneTargetRelationField',
+          targetFieldIcon: 'IconListOpportunity',
+          type: RelationType.ONE_TO_MANY,
+        },
+      },
+    ],
+  };
+
+  return Object.values(fieldInputsMap).flat();
+};
