@@ -1,18 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/app-manifest.schema.json",
+  "$id": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["standardId", "label", "version", "license", "engines"],
+  "required": ["universalIdentifier", "label", "version", "license", "engines", "packageManager"],
   "properties": {
     "$schema": {
       "type": "string",
       "description": "JSON Schema reference for validation and IDE support"
     },
-    "standardId": {
+    "universalIdentifier": {
       "type": "string",
-      "description": "Unique identifier for the application (UUID format recommended)",
+      "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
     },
     "label": {
@@ -40,6 +40,10 @@
       "type": "object",
       "title": "The application's engines",
       "description": "Define engines here"
+    },
+    "packageManager": {
+      "const": "yarn@4.9.2",
+      "title": "Package manager of the application"
     },
     "version": {
       "type": "string",

@@ -3,21 +3,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  AgentManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+} from 'src/engine/core-modules/application/types/application.types';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import {
-  AgentManifest,
-  ObjectManifest,
-} from 'src/engine/core-modules/application/types/application.types';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -27,6 +31,7 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly agentService: AgentService,
@@ -40,7 +45,7 @@ export class ApplicationSyncService {
   }: ApplicationInput & {
     workspaceId: string;
   }) {
-    const applicationId = await this.syncApplication({
+    const application = await this.syncApplication({
       workspaceId,
       manifest,
       packageJson,
@@ -50,13 +55,20 @@ export class ApplicationSyncService {
     await this.syncAgents({
       agentsToSync: manifest.agents,
       workspaceId,
-      applicationId,
+      applicationId: application.id,
     });
 
     await this.syncObjects({
       objectsToSync: manifest.objects,
       workspaceId,
-      applicationId,
+      applicationId: application.id,
+    });
+
+    await this.syncServerlessFunctions({
+      serverlessFunctionsToSync: manifest.serverlessFunctions,
+      workspaceId,
+      applicationId: application.id,
+      serverlessFunctionLayerId: application.serverlessFunctionLayerId,
     });
 
     this.logger.log('✅ Application sync from manifest completed');
@@ -69,9 +81,9 @@ export class ApplicationSyncService {
     yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
-  }): Promise<string> {
+  }): Promise<ApplicationEntity> {
     const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.standardId,
+      manifest.universalIdentifier,
       workspaceId,
     );
 
@@ -84,8 +96,9 @@ export class ApplicationSyncService {
           },
           workspaceId,
         );
-      const createdApplication = await this.applicationService.create({
-        universalIdentifier: manifest.standardId,
+
+      return await this.applicationService.create({
+        universalIdentifier: manifest.universalIdentifier,
         label: manifest.label,
         description: manifest.description,
         version: manifest.version,
@@ -93,8 +106,6 @@ export class ApplicationSyncService {
         serverlessFunctionLayerId: serverlessFunctionLayer.id,
         workspaceId,
       });
-
-      return createdApplication.id;
     }
 
     await this.serverlessFunctionLayerService.update(
@@ -111,7 +122,7 @@ export class ApplicationSyncService {
       version: manifest.version,
     });
 
-    return application.id;
+    return application;
   }
 
   private async syncAgents({
@@ -263,6 +274,118 @@ export class ApplicationSyncService {
         createObjectInput,
         workspaceId,
       });
+    }
+  }
+
+  private async syncServerlessFunctions({
+    serverlessFunctionsToSync,
+    workspaceId,
+    applicationId,
+    serverlessFunctionLayerId,
+  }: {
+    serverlessFunctionsToSync: ServerlessFunctionManifest[];
+    workspaceId: string;
+    applicationId: string;
+    serverlessFunctionLayerId: string;
+  }) {
+    const { flatServerlessFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatEntities: ['flatServerlessFunctionMaps'],
+        },
+      );
+
+    const applicationServerlessFunctions = Object.values(
+      flatServerlessFunctionMaps.byId,
+    ).filter(
+      (serverlessFunction) =>
+        isDefined(serverlessFunction) &&
+        serverlessFunction.applicationId === applicationId,
+    ) as FlatServerlessFunction[];
+
+    const serverlessFunctionsToSyncUniversalIdentifiers =
+      serverlessFunctionsToSync.map(
+        (serverlessFunction) => serverlessFunction.universalIdentifier,
+      );
+
+    const applicationServerlessFunctionsUniversalIdentifiers =
+      applicationServerlessFunctions.map(
+        (serverlessFunction) => serverlessFunction.universalIdentifier,
+      );
+
+    const serverlessFunctionsToDelete = applicationServerlessFunctions.filter(
+      (serverlessFunction) =>
+        isDefined(serverlessFunction.universalIdentifier) &&
+        !serverlessFunctionsToSyncUniversalIdentifiers.includes(
+          serverlessFunction.universalIdentifier,
+        ),
+    );
+
+    const serverlessFunctionsToUpdate = applicationServerlessFunctions.filter(
+      (serverlessFunction) =>
+        isDefined(serverlessFunction.universalIdentifier) &&
+        serverlessFunctionsToSyncUniversalIdentifiers.includes(
+          serverlessFunction.universalIdentifier,
+        ),
+    );
+
+    const serverlessFunctionsToCreate = serverlessFunctionsToSync.filter(
+      (serverlessFunctionToSync) =>
+        !applicationServerlessFunctionsUniversalIdentifiers.includes(
+          serverlessFunctionToSync.universalIdentifier,
+        ),
+    );
+
+    for (const serverlessFunctionToDelete of serverlessFunctionsToDelete) {
+      await this.serverlessFunctionV2Service.destroyOne({
+        destroyServerlessFunctionInput: { id: serverlessFunctionToDelete.id },
+        workspaceId,
+        isSystemBuild: true,
+      });
+    }
+
+    for (const serverlessFunctionToUpdate of serverlessFunctionsToUpdate) {
+      const serverlessFunctionToSync = serverlessFunctionsToSync.find(
+        (serverlessFunction) =>
+          serverlessFunction.universalIdentifier ===
+          serverlessFunctionToUpdate.universalIdentifier,
+      );
+
+      if (!serverlessFunctionToSync) {
+        throw new ApplicationException(
+          `Failed to find serverlessFunction to sync with universalIdentifier ${serverlessFunctionToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const updateServerlessFunctionInput = {
+        id: serverlessFunctionToUpdate.id,
+        name: serverlessFunctionToSync.name,
+        timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
+        code: serverlessFunctionToSync.code,
+      };
+
+      await this.serverlessFunctionV2Service.updateOne(
+        updateServerlessFunctionInput,
+        workspaceId,
+      );
+    }
+
+    for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
+      const createServerlessFunctionInput = {
+        name: serverlessFunctionToCreate.name,
+        code: serverlessFunctionToCreate.code,
+        universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
+        timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
+        applicationId,
+        serverlessFunctionLayerId,
+      };
+
+      await this.serverlessFunctionV2Service.createOne(
+        createServerlessFunctionInput,
+        workspaceId,
+      );
     }
   }
 }
