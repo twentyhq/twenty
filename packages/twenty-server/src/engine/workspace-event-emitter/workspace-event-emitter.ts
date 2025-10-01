@@ -160,15 +160,13 @@ export class WorkspaceEventEmitter {
           let updatedFields;
           let diff;
 
-          if (isDefined(before)) {
-            diff = objectRecordChangedValues(
-              before,
-              after,
-              objectMetadataItem,
-            ) as Partial<ObjectRecordDiff<T>>;
+          diff = objectRecordChangedValues(
+            before ?? {},
+            after,
+            objectMetadataItem,
+          ) as Partial<ObjectRecordDiff<T>>;
 
-            updatedFields = Object.keys(diff);
-          }
+          updatedFields = Object.keys(diff);
 
           event.properties = {
             after,
