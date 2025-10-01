@@ -2,8 +2,8 @@ import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/comman
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
 import { isDefined } from 'twenty-shared/utils';
+import { getStepInfoHistoryItem } from '../utils/getStepInfoHistoryItem';
 
 export const useWorkflowRunStepInfo = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
@@ -15,11 +15,14 @@ export const useWorkflowRunStepInfo = ({ stepId }: { stepId: string }) => {
 
   const stepInfo = workflowRun?.state?.stepInfos[stepId];
 
-  if (!isDefined(stepInfo)) {
+  if (!isDefined(stepInfo) || !isDefined(workflowRun?.state?.flow)) {
     return undefined;
   }
 
-  const allStepInfoHistory = getWorkflowRunAllStepInfoHistory({ stepInfo });
-
-  return allStepInfoHistory[workflowRunIteratorSubStepIterationIndex];
+  return getStepInfoHistoryItem({
+    stepInfo,
+    steps: workflowRun.state.flow.steps,
+    stepId,
+    iterationIndex: workflowRunIteratorSubStepIterationIndex,
+  });
 };
