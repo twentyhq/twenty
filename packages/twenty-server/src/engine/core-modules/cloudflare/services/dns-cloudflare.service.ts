@@ -6,6 +6,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class DnsCloudflareService {
   constructor(
     private readonly workspaceService: WorkspaceService,
