@@ -71,6 +71,10 @@ export const useListenClickOutside = <T extends Element>({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
+        if (event.defaultPrevented) {
+          return;
+        }
+
         const clickOutsideListenerIsActivated = snapshot
           .getLoadable(clickOutsideListenerIsActivatedState)
           .getValue();
