@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import {
@@ -43,7 +45,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadata
+      FlatFieldMetadata,
+      FieldMetadataRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -62,12 +65,33 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          fieldMetadataIds: [
+            ...flatObjectMetadata.indexMetadatasIds,
+            flatFieldMetadataToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
         type: 'create_field',
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
         flatFieldMetadatas: [flatFieldMetadataToValidate],
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
   }
@@ -83,7 +107,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationFieldActionV2,
-      FlatFieldMetadata
+      FlatFieldMetadata,
+      FieldMetadataRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -101,12 +126,32 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
+            (id) => id !== flatFieldMetadataToValidate.id,
+          ),
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
         type: 'delete_field',
         fieldMetadataId: flatFieldMetadataToValidate.id,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
   }
@@ -122,7 +167,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
   >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationFieldActionV2,
-        FlatFieldMetadata
+        FlatFieldMetadata,
+        FieldMetadataRelatedFlatEntityMaps
       >
     | undefined
   > {
@@ -160,6 +206,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: updateFieldAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

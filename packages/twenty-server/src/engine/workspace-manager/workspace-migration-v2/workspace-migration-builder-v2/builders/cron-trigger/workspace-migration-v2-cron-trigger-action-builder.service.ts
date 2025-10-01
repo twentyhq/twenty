@@ -28,6 +28,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
   protected async validateFlatEntityCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
@@ -55,12 +56,14 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'create_cron_trigger',
         cronTrigger: flatCronTriggerToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityDeletion({
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatCronTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationCronTriggerActionV2,
@@ -86,12 +89,14 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'delete_cron_trigger',
         cronTriggerId: flatCronTriggerToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityUpdate({
     flatEntityUpdate: { from: fromFlatCronTrigger, to: toFlatCronTrigger },
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<FlatCronTrigger>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationCronTriggerActionV2,
@@ -130,6 +135,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: updateCronTriggerAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

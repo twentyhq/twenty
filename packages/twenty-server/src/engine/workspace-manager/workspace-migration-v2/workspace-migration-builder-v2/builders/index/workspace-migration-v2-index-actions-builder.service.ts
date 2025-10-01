@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { compareTwoFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/compare-two-flat-index-metadata.util';
 import {
@@ -39,7 +41,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationIndexActionV2,
-      FlatIndexMetadata
+      FlatIndexMetadata,
+      IndexRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -56,11 +59,33 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatIndexToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          indexMetadatasIds: [
+            ...flatObjectMetadata.indexMetadatasIds,
+            flatIndexToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
         type: 'create_index',
         flatIndexMetadata: flatIndexToValidate,
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        ...dependencyOptimisticFlatEntityMaps,
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
   }
@@ -75,7 +100,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationIndexActionV2,
-      FlatIndexMetadata
+      FlatIndexMetadata,
+      IndexRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -92,11 +118,32 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       };
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatIndexToValidate.objectMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
+
+    const updatedFlatObjectMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          indexMetadatasIds: flatObjectMetadata.indexMetadatasIds.filter(
+            (id) => id !== flatIndexToValidate.id,
+          ),
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
         type: 'delete_index',
         flatIndexMetadataId: flatIndexToValidate.id,
+      },
+      dependencyOptimisticFlatEntityMaps: {
+        ...dependencyOptimisticFlatEntityMaps,
+        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
       },
     };
   }
@@ -111,7 +158,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
   >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationIndexActionV2,
-        FlatIndexMetadata
+        FlatIndexMetadata,
+        IndexRelatedFlatEntityMaps
       >
     | undefined
   > {
@@ -167,6 +215,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
           flatIndexMetadata: toFlatIndex,
         },
       ],
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

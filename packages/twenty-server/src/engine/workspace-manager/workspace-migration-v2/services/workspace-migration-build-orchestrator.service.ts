@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import {
@@ -111,11 +110,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
         await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuild(
           {
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {
-              // TODO That's hacky also not reliable ?
-              flatFieldMetadataMaps:
-                flatFieldMetadataMaps?.to ?? EMPTY_FLAT_ENTITY_MAPS,
-            },
+            dependencyOptimisticFlatEntityMaps: undefined,
+            // TODO That's hacky also not reliable ?
+            // dependencyOptimisticFlatEntityMaps: {
+            //   flatFieldMetadataMaps:
+            //     flatFieldMetadataMaps?.to ?? EMPTY_FLAT_ENTITY_MAPS,
+            // },
             from: fromFlatObjectMetadataMaps,
             to: toFlatObjectMetadataMaps,
             workspaceId,
@@ -151,6 +151,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
       optimisticAllFlatEntityMaps.flatFieldMetadataMaps =
         fieldResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
+        fieldResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
       if (fieldResult.status === 'fail') {
         orchestratorFailureReport.fieldMetadata.push(...fieldResult.errors);
@@ -179,6 +181,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
       optimisticAllFlatEntityMaps.flatIndexMaps =
         indexResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
+        indexResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
       if (indexResult.status === 'fail') {
         orchestratorFailureReport.index.push(...indexResult.errors);
@@ -233,6 +237,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
 
       optimisticAllFlatEntityMaps.flatViewFieldMaps =
         viewFieldResult.optimisticFlatEntityMaps;
+      optimisticAllFlatEntityMaps.flatViewMaps =
+        viewFieldResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
 
       if (viewFieldResult.status === 'fail') {
         orchestratorFailureReport.viewField.push(...viewFieldResult.errors);

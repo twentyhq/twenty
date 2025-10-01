@@ -31,18 +31,26 @@ export type CreatedDeletedUpdatedActions<
 export type SuccessfulEntityMigrationBuildResult<
   TActions extends WorkspaceMigrationActionV2,
   TFlatEntity extends AllFlatEntities,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > = {
   status: 'success';
   actions: CreatedDeletedUpdatedActions<TActions>;
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 };
 
 export type FailedEntityMigrationBuildResult<
   TFlatEntity extends AllFlatEntities,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > = {
   status: 'fail';
   errors: FailedFlatEntityValidation<TFlatEntity>[];
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
 };
 
 export type ValidateAndBuildArgs<
@@ -57,9 +65,16 @@ export type ValidateAndBuildArgs<
 export type ValidateAndBuildReturnType<
   TActions extends WorkspaceMigrationActionV2,
   TFlatEntity extends AllFlatEntities,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > =
-  | SuccessfulEntityMigrationBuildResult<TActions, TFlatEntity>
-  | FailedEntityMigrationBuildResult<TFlatEntity>;
+  | SuccessfulEntityMigrationBuildResult<
+      TActions,
+      TFlatEntity,
+      TRelatedFlatEntityMaps
+    >
+  | FailedEntityMigrationBuildResult<TFlatEntity, TRelatedFlatEntityMaps>;
 
 export type ValidateAndBuildActionsArgs<
   T extends AllFlatEntities,
@@ -104,15 +119,20 @@ export type FlatEntityUpdateValidationArgs<
 export type FlatEntityValidationReturnType<
   TActions extends WorkspaceMigrationActionV2,
   TFlatEntity extends AllFlatEntities,
+  TRelatedFlatEntityMaps extends
+    | Partial<AllFlatEntityMaps>
+    | undefined = undefined,
 > =
   | {
       status: 'success';
       action: TActions | TActions[];
+      dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
     }
   | ({
       status: 'fail';
     } & FailedFlatEntityValidation<TFlatEntity>);
 
+// TODO prastoin refactor the builder to building a selection of flatEntityMaps => simplify
 export abstract class WorkspaceEntityMigrationBuilderV2Service<
   TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
@@ -127,7 +147,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     to: toFlatEntityMaps,
     workspaceId,
   }: ValidateAndBuildArgs<TFlatEntity, TRelatedFlatEntityMaps>): Promise<
-    ValidateAndBuildReturnType<TActions, TFlatEntity>
+    ValidateAndBuildReturnType<TActions, TFlatEntity, TRelatedFlatEntityMaps>
   > {
     const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
       isDefined,
@@ -195,6 +215,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntity: flatEntityToCreate,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
+      dependencyOptimisticFlatEntityMaps =
+        validationResult.dependencyOptimisticFlatEntityMaps;
 
       validateAndBuildResult.created.push(
         ...(Array.isArray(validationResult.action)
@@ -244,6 +266,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         entityToDeleteId: flatEntityToDelete.id,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
+      dependencyOptimisticFlatEntityMaps =
+        validationResult.dependencyOptimisticFlatEntityMaps;
 
       validateAndBuildResult.deleted.push(
         ...(Array.isArray(validationResult.action)
@@ -308,6 +332,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntity: flatEntityToUpdateTo,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
+      dependencyOptimisticFlatEntityMaps =
+        validationResult.dependencyOptimisticFlatEntityMaps;
 
       validateAndBuildResult.updated.push(
         ...(Array.isArray(validationResult.action)
@@ -321,6 +347,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         status: 'fail',
         errors: validateAndBuildResult.failed,
         optimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMaps,
       };
     }
 
@@ -332,18 +359,38 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         updated: validateAndBuildResult.updated,
       },
       optimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
+  ): Promise<
+    FlatEntityValidationReturnType<
+      TActions,
+      TFlatEntity,
+      TRelatedFlatEntityMaps
+    >
+  >;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity>>;
+  ): Promise<
+    FlatEntityValidationReturnType<
+      TActions,
+      TFlatEntity,
+      TRelatedFlatEntityMaps
+    >
+  >;
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  ): Promise<FlatEntityValidationReturnType<TActions, TFlatEntity> | undefined>;
+  ): Promise<
+    | FlatEntityValidationReturnType<
+        TActions,
+        TFlatEntity,
+        TRelatedFlatEntityMaps
+      >
+    | undefined
+  >;
 }

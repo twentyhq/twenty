@@ -28,6 +28,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
   protected async validateFlatEntityCreation({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatDatabaseEventTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationDatabaseEventTriggerActionV2,
@@ -55,12 +56,14 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'create_database_event_trigger',
         databaseEventTrigger: flatDatabaseEventTriggerToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityDeletion({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatDatabaseEventTrigger>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationDatabaseEventTriggerActionV2,
@@ -88,6 +91,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'delete_database_event_trigger',
         databaseEventTriggerId: flatDatabaseEventTriggerToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -97,6 +101,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
       to: toFlatDatabaseEventTrigger,
     },
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<FlatDatabaseEventTrigger>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationDatabaseEventTriggerActionV2,
@@ -138,6 +143,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     return {
       status: 'success',
       action: updateDatabaseEventTriggerAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

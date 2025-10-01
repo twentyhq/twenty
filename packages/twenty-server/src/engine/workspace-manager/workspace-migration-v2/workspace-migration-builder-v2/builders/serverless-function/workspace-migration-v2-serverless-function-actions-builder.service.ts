@@ -28,6 +28,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
   protected async validateFlatEntityCreation({
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
@@ -55,12 +56,14 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'create_serverless_function',
         serverlessFunction: flatServerlessFunctionToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
   protected async validateFlatEntityDeletion({
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<FlatServerlessFunction>): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationServerlessFunctionActionV2,
@@ -88,6 +91,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'delete_serverless_function',
         serverlessFunctionId: flatServerlessFunctionToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -97,6 +101,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       to: toFlatServerlessFunction,
     },
     optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<FlatServerlessFunction>): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationServerlessFunctionActionV2,
@@ -139,6 +144,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: updateServerlessFunctionAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

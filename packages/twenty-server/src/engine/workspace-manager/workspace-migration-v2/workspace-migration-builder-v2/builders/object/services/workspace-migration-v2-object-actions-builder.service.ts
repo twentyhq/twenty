@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import {
@@ -14,16 +13,19 @@ import {
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
-export type FieldMetadataRelatedFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  'flatFieldMetadataMaps'
->;
+// export type ObjectMetadataRelatedFlatEntityMaps = Pick<
+//   AllFlatEntityMaps,
+//   'flatFieldMetadataMaps'
+// >;
+
+// TODO find a solution in order to handle label indentifier validation
+export type ObjectMetadataRelatedFlatEntityMaps = undefined;
 
 @Injectable()
 export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
   FlatObjectMetadata,
   WorkspaceMigrationObjectActionV2,
-  FieldMetadataRelatedFlatEntityMaps
+  ObjectMetadataRelatedFlatEntityMaps
 > {
   constructor(
     private readonly flatObjectValidatorService: FlatObjectMetadataValidatorService,
@@ -38,11 +40,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     FlatObjectMetadata,
-    FieldMetadataRelatedFlatEntityMaps
+    ObjectMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadata
+      FlatObjectMetadata,
+      ObjectMetadataRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -65,8 +68,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       action: {
         type: 'create_object',
         flatFieldMetadatas: [],
-        flatObjectMetadata: flatObjectMetadataToValidate, // We will need to make some aggreg here afterwards if necessary
+        flatObjectMetadata: flatObjectMetadataToValidate,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -77,11 +81,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     FlatObjectMetadata,
-    FieldMetadataRelatedFlatEntityMaps
+    ObjectMetadataRelatedFlatEntityMaps
   >): Promise<
     FlatEntityValidationReturnType<
       WorkspaceMigrationObjectActionV2,
-      FlatObjectMetadata
+      FlatObjectMetadata,
+      ObjectMetadataRelatedFlatEntityMaps
     >
   > {
     const validationResult =
@@ -105,6 +110,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         type: 'delete_object',
         objectMetadataId: flatObjectMetadataToValidate.id,
       },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -118,11 +124,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     FlatObjectMetadata,
-    FieldMetadataRelatedFlatEntityMaps
+    ObjectMetadataRelatedFlatEntityMaps
   >): Promise<
     | FlatEntityValidationReturnType<
         WorkspaceMigrationObjectActionV2,
-        FlatObjectMetadata
+        FlatObjectMetadata,
+        ObjectMetadataRelatedFlatEntityMaps
       >
     | undefined
   > {
@@ -159,6 +166,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: updateObjectAction,
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 }
