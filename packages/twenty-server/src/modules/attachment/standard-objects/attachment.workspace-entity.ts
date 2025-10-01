@@ -102,6 +102,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
       { value: 'VIDEO', label: 'Video', position: 6, color: 'purple' },
       { value: 'OTHER', label: 'Other', position: 7, color: 'gray' },
     ],
+    defaultValue: "'OTHER'",
   })
   @WorkspaceIsFieldUIReadOnly()
   type: string;

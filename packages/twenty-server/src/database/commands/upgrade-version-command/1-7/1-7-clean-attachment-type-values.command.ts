@@ -82,6 +82,23 @@ export class CleanAttachmentTypeValuesCommand extends ActiveOrSuspendedWorkspace
       return;
     }
 
+    // Check if column is already an enum (migration already ran)
+    const columnDataType = (await this.coreDataSource.query(`
+      SELECT data_type
+      FROM information_schema.columns
+      WHERE table_schema = '${schemaName}'
+        AND table_name = 'attachment'
+        AND column_name = 'type';
+    `)) as Array<{ data_type: string }>;
+
+    if (columnDataType[0]?.data_type === 'USER-DEFINED') {
+      this.logger.log(
+        `Type column is already an enum in workspace ${workspaceId}, skipping data cleanup (already migrated)`,
+      );
+
+      return;
+    }
+
     try {
       // Get current attachment type values to see what needs to be cleaned
       const currentTypes = (await this.coreDataSource.query(`
@@ -142,11 +159,13 @@ export class CleanAttachmentTypeValuesCommand extends ActiveOrSuspendedWorkspace
         WHERE UPPER("type") IN ('VIDEO', 'MP4', 'AVI', 'MOV', 'WMV', 'MPG', 'MPEG');
       `);
 
-      // Set any remaining unrecognized types to 'OTHER'
+      // Set any remaining unrecognized types to 'OTHER' (including NULL and empty strings)
       await this.coreDataSource.query(`
         UPDATE "${schemaName}"."attachment"
         SET "type" = 'OTHER'
-        WHERE "type" NOT IN ('ARCHIVE', 'AUDIO', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'TEXT_DOCUMENT', 'VIDEO', 'OTHER');
+        WHERE "type" IS NULL 
+          OR "type" = '' 
+          OR "type" NOT IN ('ARCHIVE', 'AUDIO', 'IMAGE', 'PRESENTATION', 'SPREADSHEET', 'TEXT_DOCUMENT', 'VIDEO', 'OTHER');
       `);
 
       // Get final count of updated records
