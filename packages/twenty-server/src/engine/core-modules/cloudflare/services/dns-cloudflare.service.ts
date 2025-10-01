@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
@@ -12,18 +11,14 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 @Injectable()
 export class DnsCloudflareService {
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceService: WorkspaceService,
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
+    private readonly workspaceService: WorkspaceService,
     private readonly publicDomainService: PublicDomainService,
   ) {}
 
   async checkHostname(hostname: string) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      customDomain: hostname,
-    });
+    const workspace = await this.workspaceService.findByCustomDomain(hostname);
 
     if (isDefined(workspace)) {
       await this.workspaceService.checkCustomDomainValidRecords(workspace);

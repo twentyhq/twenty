@@ -541,4 +541,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     return customDomainWithRecords;
   }
+
+  async findByCustomDomain(customDomain: string) {
+    return this.workspaceRepository.findOne({ where: { customDomain } });
+  }
 }
