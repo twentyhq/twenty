@@ -580,7 +580,9 @@ export class ApplicationSyncService {
     const triggersToUpdate = existingCronTriggers.filter(
       (trigger) =>
         isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(trigger.universalIdentifier),
+        triggersToSyncUniversalIdentifiers.includes(
+          trigger.universalIdentifier,
+        ),
     );
 
     const triggersToCreate = cronTriggersToSync.filter(
