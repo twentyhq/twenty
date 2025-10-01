@@ -18,25 +18,27 @@ export const convertUpdateViewInputToCore = (
     ? convertViewTypeToCore(view.type)
     : undefined;
 
-  return {
+  const output = {
     id: view.id,
-    ...(view.name && { name: view.name }),
-    ...(view.icon && { icon: view.icon }),
-    ...(view.position && { position: view.position }),
+    ...(isDefined(view.name) && { name: view.name }),
+    ...(isDefined(view.icon) && { icon: view.icon }),
+    ...(isDefined(view.position) && { position: view.position }),
     ...(isDefined(view.isCompact) && { isCompact: view.isCompact }),
-    ...(view.kanbanAggregateOperation && {
+    ...(isDefined(view.kanbanAggregateOperation) && {
       kanbanAggregateOperation: view.kanbanAggregateOperation,
     }),
-    ...(view.kanbanAggregateOperationFieldMetadataId && {
+    ...(isDefined(view.kanbanAggregateOperationFieldMetadataId) && {
       kanbanAggregateOperationFieldMetadataId:
         view.kanbanAggregateOperationFieldMetadataId,
     }),
-    ...(view.anyFieldFilterValue && {
+    ...(isDefined(view.anyFieldFilterValue) && {
       anyFieldFilterValue: view.anyFieldFilterValue,
     }),
-    ...(convertedKey && { key: convertedKey }),
-    ...(convertedOpenRecordIn && { openRecordIn: convertedOpenRecordIn }),
-    ...(convertedType && { type: convertedType }),
+    ...(isDefined(convertedKey) && { key: convertedKey }),
+    ...(isDefined(convertedOpenRecordIn) && {
+      openRecordIn: convertedOpenRecordIn,
+    }),
+    ...(isDefined(convertedType) && { type: convertedType }),
     ...(isDefined(view.calendarLayout) && {
       calendarLayout: view.calendarLayout,
     }),
@@ -44,4 +46,6 @@ export const convertUpdateViewInputToCore = (
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
   };
+
+  return output;
 };
