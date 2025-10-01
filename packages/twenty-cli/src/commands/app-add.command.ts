@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import { resolveAppPath } from '../utils/app-path-resolver';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import { v4 } from 'uuid';
 import path from 'path';
-import { getSchemaUrls } from '../utils/schema-validator';
+import { v4 } from 'uuid';
+import { resolveAppPath } from '../utils/app-path-resolver';
 import { writeJsoncFile } from '../utils/jsonc-parser';
+import { getSchemaUrls } from '../utils/schema-validator';
 
 type SyncableEntity = 'agent' | 'object';
 
@@ -22,7 +22,7 @@ const getFolderName = (entity: SyncableEntity) => {
 
 export class AppAddCommand {
   async execute(options: { path?: string }): Promise<void> {
-    const entity = await this.getEntity();
+    const entity = 'object';
 
     try {
       const appPath = await resolveAppPath(options.path);
