@@ -4,7 +4,7 @@
   "title": "Twenty App Manifest",
   "description": "Schema for Twenty application manifest files",
   "type": "object",
-  "required": ["universalIdentifier", "label", "version", "license", "engines"],
+  "required": ["universalIdentifier", "label", "version", "license", "engines", "packageManager"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -40,6 +40,10 @@
       "type": "object",
       "title": "The application's engines",
       "description": "Define engines here"
+    },
+    "packageManager": {
+      "const": "yarn@4.9.2",
+      "title": "Package manager of the application"
     },
     "version": {
       "type": "string",

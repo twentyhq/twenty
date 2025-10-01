@@ -15,6 +15,7 @@ export type PackageJson = {
     npm: string;
     yarn: string;
   };
+  packageManager: string;
   icon?: string;
   version: string;
   dependencies?: object;
