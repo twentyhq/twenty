@@ -3,21 +3,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  AgentManifest,
-  ObjectManifest,
-} from 'src/engine/core-modules/application/types/application.types';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
-import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import {
+  AgentManifest,
+  ObjectManifest,
+} from 'src/engine/core-modules/application/types/application.types';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service.';
+import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import type { FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -70,7 +70,7 @@ export class ApplicationSyncService {
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<string> {
-    const application = await this.applicationService.findByStandardId(
+    const application = await this.applicationService.findByUniversalIdentifier(
       manifest.standardId,
       workspaceId,
     );
@@ -85,7 +85,7 @@ export class ApplicationSyncService {
           workspaceId,
         );
       const createdApplication = await this.applicationService.create({
-        standardId: manifest.standardId,
+        universalIdentifier: manifest.universalIdentifier,
         label: manifest.label,
         description: manifest.description,
         version: manifest.version,
