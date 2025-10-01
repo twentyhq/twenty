@@ -11,8 +11,6 @@ import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
@@ -24,35 +22,11 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
-    private workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
 
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {
     super(cacheStorageService);
-  }
-
-  override async beforeInvalidateCache({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
-    // Temporarily invalidating old cache too
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
-    ///
-  }
-
-  override async afterInvalidateCache({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-    });
   }
 
   protected async computeFlatMap({

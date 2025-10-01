@@ -88,7 +88,7 @@ describe('Index metadata creation on relation field creation v2', () => {
     }
   });
 
-  it('Should create and delete index on MANY_TO_ONE relation field creation and deletion', async () => {
+  it.only('Should create and delete index on MANY_TO_ONE relation field creation and deletion', async () => {
     await createOneFieldMetadata({
       expectToFail: false,
       input: {

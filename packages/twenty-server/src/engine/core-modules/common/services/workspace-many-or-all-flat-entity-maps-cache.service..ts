@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/core-modules/common/constant/all-flat-entity-maps-properties.constant';
 import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import {
   WorkspaceFlatMapCacheException,
   WorkspaceFlatMapCacheExceptionCode,
@@ -19,6 +21,8 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
 
   constructor(
     private readonly cacheRegistry: WorkspaceFlatMapCacheRegistryService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
   public async getOrRecomputeManyOrAllFlatEntityMaps<
@@ -77,6 +81,22 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatEntities?: T;
   }): Promise<void> {
+    // Temporarely invalidation old cache too until it's deprecated
+    if (
+      !isDefined(flatEntities) ||
+      flatEntities.includes('flatObjectMetadataMaps') ||
+      flatEntities.includes('flatFieldMetadataMaps')
+    ) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
+        {
+          workspaceId,
+        },
+      );
+    }
+
     for (const flatEntityName of ALL_FLAT_ENTITY_MAPS_PROPERTIES) {
       if (isDefined(flatEntities) && !flatEntities.includes(flatEntityName)) {
         continue;
