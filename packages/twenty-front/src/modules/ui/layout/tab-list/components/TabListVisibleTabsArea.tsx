@@ -1,10 +1,10 @@
+import { TabListDraggableTab } from '@/ui/layout/tab-list/components/TabListDraggableTab';
 import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { TabButton } from 'twenty-ui/input';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListDraggableTab } from './TabListDraggableTab';
 
 const StyledTabContainer = styled.div`
   display: flex;
@@ -23,7 +23,7 @@ export const TabListVisibleTabsArea = () => {
     behaveAsLinks,
     onTabSelect,
     isDragAndDropEnabled,
-  } = useTabListStateContextOrThrow();
+  } = useTabListContextOrThrow();
 
   if (isDragAndDropEnabled) {
     return (

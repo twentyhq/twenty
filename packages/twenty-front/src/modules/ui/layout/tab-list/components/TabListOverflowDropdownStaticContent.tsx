@@ -1,7 +1,7 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListDropdownMenuItem } from './TabListDropdownMenuItem';
+import { TabListDropdownMenuItem } from '@/ui/layout/tab-list/components/TabListDropdownMenuItem';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 
 type TabListOverflowDropdownStaticContentProps = {
   onSelect: (tabId: string) => void;
@@ -10,8 +10,7 @@ type TabListOverflowDropdownStaticContentProps = {
 export const TabListOverflowDropdownStaticContent = ({
   onSelect,
 }: TabListOverflowDropdownStaticContentProps) => {
-  const { overflowTabs, activeTabId, loading } =
-    useTabListStateContextOrThrow();
+  const { overflowTabs, activeTabId, loading } = useTabListContextOrThrow();
 
   return (
     <DropdownContent>

@@ -1,10 +1,10 @@
+import { TabListContentBody } from '@/ui/layout/tab-list/components/TabListContentBody';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { isDefined } from 'twenty-shared/utils';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListContentBody } from './TabListContentBody';
 
 export const TabListContent = () => {
-  const { isDragAndDropEnabled, onDragEnd } = useTabListStateContextOrThrow();
+  const { isDragAndDropEnabled, onDragEnd } = useTabListContextOrThrow();
 
   if (isDragAndDropEnabled && isDefined(onDragEnd)) {
     return (

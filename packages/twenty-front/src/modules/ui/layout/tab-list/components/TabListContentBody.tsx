@@ -4,9 +4,10 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListDropdown } from './TabListDropdown';
-import { TabListVisibleTabsArea } from './TabListVisibleTabsArea';
+
+import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
+import { TabListVisibleTabsArea } from '@/ui/layout/tab-list/components/TabListVisibleTabsArea';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -35,15 +36,15 @@ const StyledAddButton = styled.div`
 `;
 
 export const TabListContentBody = () => {
-  const { className, onContainerWidthChange, hasOverflowTabs, onAddTab } =
-    useTabListStateContextOrThrow();
+  const { className, onContainerWidthChange, hasOverflowingTabs, onAddTab } =
+    useTabListContextOrThrow();
 
   return (
     <NodeDimension onDimensionChange={onContainerWidthChange}>
       <StyledContainer className={className}>
         <TabListVisibleTabsArea />
 
-        {hasOverflowTabs && <TabListDropdown />}
+        {hasOverflowingTabs && <TabListDropdown />}
 
         {isDefined(onAddTab) && (
           <StyledAddButton>

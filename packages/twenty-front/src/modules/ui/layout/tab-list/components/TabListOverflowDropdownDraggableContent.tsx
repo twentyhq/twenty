@@ -1,6 +1,8 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { TabListDropdownMenuItem } from '@/ui/layout/tab-list/components/TabListDropdownMenuItem';
 import { TAB_LIST_DROPPABLE_IDS } from '@/ui/layout/tab-list/constants/TabListDroppableIds';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -10,8 +12,6 @@ import {
   type DraggableStateSnapshot,
   Droppable,
 } from '@hello-pangea/dnd';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListDropdownMenuItem } from './TabListDropdownMenuItem';
 
 type TabListOverflowDropdownDraggableContentProps = {
   onSelect: (tabId: string) => void;
@@ -30,7 +30,7 @@ export const TabListOverflowDropdownDraggableContent = ({
 }: TabListOverflowDropdownDraggableContentProps) => {
   const theme = useTheme();
   const { overflowTabs, activeTabId, loading, visibleTabCount } =
-    useTabListStateContextOrThrow();
+    useTabListContextOrThrow();
 
   const renderClone = (
     provided: DraggableProvided,

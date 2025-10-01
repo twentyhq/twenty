@@ -12,12 +12,12 @@ type TablistDimensions = {
   height: number;
 };
 
-export type TabListStateContextValue = {
+export type TabListContextValue = {
   visibleTabs: SingleTabProps[];
   visibleTabCount: number;
   overflowTabs: SingleTabProps[];
   overflowCount: number;
-  hasOverflowTabs: boolean;
+  hasOverflowingTabs: boolean;
   overflow: TabOverflowState;
   activeTabId: string | null;
   loading?: boolean;
@@ -35,5 +35,5 @@ export type TabListStateContextValue = {
   onDragEnd?: OnDragEndResponder;
 };
 
-export const [TabListStateContextProvider, useTabListStateContextOrThrow] =
-  createRequiredContext<TabListStateContextValue>('TabListStateContext');
+export const [TabListContextProvider, useTabListContextOrThrow] =
+  createRequiredContext<TabListContextValue>('TabListContext');

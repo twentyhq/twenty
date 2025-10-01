@@ -1,10 +1,10 @@
+import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton, TabButton } from 'twenty-ui/input';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabMoreButton } from './TabMoreButton';
 
 const StyledHiddenMeasurement = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ export const TabListMeasurements = () => {
     onTabWidthChange,
     onMoreButtonWidthChange,
     onAddButtonWidthChange,
-  } = useTabListStateContextOrThrow();
+  } = useTabListContextOrThrow();
 
   if (visibleTabs.length <= 1) {
     return null;

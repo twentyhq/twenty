@@ -1,12 +1,12 @@
 import { type ReactNode } from 'react';
 
+import { TabListInitialActiveTabEffect } from '@/ui/layout/tab-list/components/TabListInitialActiveTabEffect';
+import { TabListContextProvider } from '@/ui/layout/tab-list/contexts/TabListContext';
+import { useTabList } from '@/ui/layout/tab-list/hooks/useTabList';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { TabListStateContextProvider } from '../contexts/TabListStateContext';
-import { useTabListState } from '../hooks/useTabListState';
-import { TabListInitialActiveTabEffect } from './TabListInitialActiveTabEffect';
 
-export type TabListStateProviderProps = {
+export type TabListProviderProps = {
   visibleTabs: SingleTabProps[];
   loading?: boolean;
   behaveAsLinks: boolean;
@@ -19,7 +19,7 @@ export type TabListStateProviderProps = {
   children: ReactNode;
 };
 
-export const TabListStateProvider = ({
+export const TabListProvider = ({
   visibleTabs,
   loading,
   behaveAsLinks,
@@ -30,13 +30,13 @@ export const TabListStateProvider = ({
   isDraggable,
   onDragEnd,
   children,
-}: TabListStateProviderProps) => {
+}: TabListProviderProps) => {
   const {
     contextValue,
     initialActiveTabId,
     syncActiveTabId,
     onChangeTab: onChangeTabCallback,
-  } = useTabListState({
+  } = useTabList({
     visibleTabs,
     loading,
     behaveAsLinks,
@@ -49,13 +49,13 @@ export const TabListStateProvider = ({
   });
 
   return (
-    <TabListStateContextProvider value={contextValue}>
+    <TabListContextProvider value={contextValue}>
       <TabListInitialActiveTabEffect
         initialActiveTabId={initialActiveTabId}
         onSyncActiveTabId={syncActiveTabId}
         onChangeTab={onChangeTabCallback}
       />
       {children}
-    </TabListStateContextProvider>
+    </TabListContextProvider>
   );
 };

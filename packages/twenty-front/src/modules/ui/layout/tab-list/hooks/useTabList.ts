@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { type TabListContextValue } from '@/ui/layout/tab-list/contexts/TabListContext';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { activeTabIdComponentState } from '../states/activeTabIdComponentState';
-import { type TabListStateContextValue } from '../contexts/TabListStateContext';
-import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 
-export type UseTabListStateArgs = {
+export type UseTabListProps = {
   visibleTabs: SingleTabProps[];
   loading?: boolean;
   behaveAsLinks: boolean;
@@ -21,14 +21,14 @@ export type UseTabListStateArgs = {
   onDragEnd?: OnDragEndResponder;
 };
 
-export type UseTabListStateResult = {
-  contextValue: TabListStateContextValue;
+export type UseTabListResult = {
+  contextValue: TabListContextValue;
   initialActiveTabId: string | null;
   syncActiveTabId: (tabId: string | null) => void;
   onChangeTab?: (tabId: string) => void;
 };
 
-export const useTabListState = ({
+export const useTabList = ({
   visibleTabs,
   loading,
   behaveAsLinks,
@@ -38,7 +38,7 @@ export const useTabListState = ({
   onAddTab,
   isDraggable,
   onDragEnd,
-}: UseTabListStateArgs): UseTabListStateResult => {
+}: UseTabListProps): UseTabListResult => {
   const navigate = useNavigate();
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
@@ -69,7 +69,7 @@ export const useTabListState = ({
 
   const overflowTabs = visibleTabs.slice(visibleTabCount);
   const overflowCount = overflowTabs.length;
-  const hasOverflowTabs = overflowCount > 0;
+  const hasOverflowingTabs = overflowCount > 0;
   const isActiveTabInOverflow =
     activeTabId !== null && overflowTabs.some((tab) => tab.id === activeTabId);
 
@@ -150,12 +150,12 @@ export const useTabListState = ({
     return activeTabExists ? activeTabId : (visibleTabs[0]?.id ?? null);
   })();
 
-  const contextValue: TabListStateContextValue = {
+  const contextValue: TabListContextValue = {
     visibleTabs,
     visibleTabCount,
     overflowTabs,
     overflowCount,
-    hasOverflowTabs,
+    hasOverflowingTabs,
     overflow: {
       overflowCount,
       isActiveTabInOverflow,

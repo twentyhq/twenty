@@ -1,10 +1,10 @@
+import { TabListContent } from '@/ui/layout/tab-list/components/TabListContent';
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
+import { TabListMeasurements } from '@/ui/layout/tab-list/components/TabListMeasurements';
+import { TabListProvider } from '@/ui/layout/tab-list/components/TabListProvider';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { useMemo } from 'react';
-import { TabListContent } from './TabListContent';
-import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
-import { TabListMeasurements } from './TabListMeasurements';
-import { TabListStateProvider } from './TabListStateProvider';
 
 export const TabList = ({
   tabs,
@@ -35,7 +35,7 @@ export const TabList = ({
         tabListIds={tabs.map((tab) => tab.id)}
       />
 
-      <TabListStateProvider
+      <TabListProvider
         visibleTabs={visibleTabs}
         loading={loading}
         behaveAsLinks={behaveAsLinks}
@@ -48,7 +48,7 @@ export const TabList = ({
       >
         <TabListMeasurements />
         <TabListContent />
-      </TabListStateProvider>
+      </TabListProvider>
     </TabListComponentInstanceContext.Provider>
   );
 };

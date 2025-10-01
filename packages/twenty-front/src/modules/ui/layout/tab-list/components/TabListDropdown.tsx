@@ -1,9 +1,9 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TabListOverflowDropdownDraggableContent } from '@/ui/layout/tab-list/components/TabListOverflowDropdownDraggableContent';
+import { TabListOverflowDropdownStaticContent } from '@/ui/layout/tab-list/components/TabListOverflowDropdownStaticContent';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
-import { useTabListStateContextOrThrow } from '../contexts/TabListStateContext';
-import { TabListOverflowDropdownDraggableContent } from './TabListOverflowDropdownDraggableContent';
-import { TabListOverflowDropdownStaticContent } from './TabListOverflowDropdownStaticContent';
+import { useTabListContextOrThrow } from '@/ui/layout/tab-list/contexts/TabListContext';
 
 export const TabListDropdown = () => {
   const {
@@ -11,7 +11,7 @@ export const TabListDropdown = () => {
     overflow,
     onTabSelectFromDropdown,
     isDragAndDropEnabled,
-  } = useTabListStateContextOrThrow();
+  } = useTabListContextOrThrow();
 
   const { overflowCount, isActiveTabInOverflow } = overflow;
 
