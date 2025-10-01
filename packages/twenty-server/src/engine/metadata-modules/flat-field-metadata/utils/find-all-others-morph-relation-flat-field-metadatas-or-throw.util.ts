@@ -21,10 +21,10 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
   if (
     !isDefined(flatFieldMetadataMaps.byId[morphRelationFlatFieldMetadata.id])
   ) {
-    throw new FlatEntityMapsException(  
-      'Morph relation field not found in flat field metadata maps',  
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,  
-    );  
+    throw new FlatEntityMapsException(
+      'Morph relation field not found in flat field metadata maps',
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
   }
 
   const { objectFlatFieldMetadatas } = findObjectFieldsInFlatFieldMetadataMaps({
