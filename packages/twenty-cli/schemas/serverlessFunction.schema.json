@@ -5,7 +5,6 @@
   "description": "Schema for Twenty AI serverless function configuration files",
   "type": "object",
   "required": [
-    "standardId",
     "universalIdentifier",
     "name"
   ],
@@ -18,10 +17,6 @@
       "type": "string",
       "description": "Unique identifier (UUID format recommended)",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-    },
-    "standardId": {
-      "const": { "$data": "1/universalIdentifier" },
-      "description": "Should be the same as universalIdentifier"
     },
     "name": {
       "type": "string",

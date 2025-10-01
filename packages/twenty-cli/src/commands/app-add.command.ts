@@ -138,9 +138,12 @@ export class AppAddCommand {
 
     const entityToCreateData: Record<string, string> = {
       $schema: schemas[entity],
-      standardId: uuid,
       universalIdentifier: uuid,
     };
+
+    if (entity === SyncableEntity.OBJECT || entity === SyncableEntity.AGENT) {
+      entityToCreateData.standardId = uuid;
+    }
 
     const schemasDir = path.join(__dirname, '../../schemas');
 
