@@ -68,11 +68,10 @@ describe('getIsDescendantOfIterator', () => {
     ).toBe(true);
   });
 
-  it('returns true for indirect descendant', () => {
-    // step3 is pointed to by iterator1.nextStepIds
+  it('returns false for indirect descendant', () => {
     expect(
       getIsDescendantOfIterator({ stepId: codeStep3.id, steps: workflow }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('returns false for iterator itself', () => {
@@ -109,5 +108,3 @@ describe('getIsDescendantOfIterator', () => {
     ).toBe(false);
   });
 });
-
-// ...existing test code...

@@ -1,6 +1,37 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { isParentStep } from '@/workflow/workflow-diagram/utils/isParentStep';
+import { isLastStepOfLoop } from '@/workflow/workflow-diagram/utils/isLastStepOfLoop';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
+const isParentStep = ({
+  currentStep,
+  potentialParentStep,
+  steps,
+}: {
+  currentStep: WorkflowStep;
+  potentialParentStep: WorkflowStep;
+  steps: WorkflowStep[];
+}): boolean => {
+  if (potentialParentStep.type === 'ITERATOR') {
+    return (
+      potentialParentStep.settings.input.initialLoopStepIds?.includes(
+        currentStep.id,
+      ) === true
+    );
+  }
+
+  if (currentStep.type === 'ITERATOR') {
+    return (
+      potentialParentStep.nextStepIds?.includes(currentStep.id) === true &&
+      !isLastStepOfLoop({
+        iterator: currentStep,
+        stepId: potentialParentStep.id,
+        steps,
+      })
+    );
+  }
+
+  return potentialParentStep.nextStepIds?.includes(currentStep.id) === true;
+};
 
 export const getIsDescendantOfIterator = ({
   stepId,
