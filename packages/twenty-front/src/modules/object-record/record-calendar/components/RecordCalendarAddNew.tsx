@@ -56,7 +56,6 @@ export const RecordCalendarAddNew = ({
     return null;
   }
 
-
   return (
     <StyledButton
       onClick={() => {
