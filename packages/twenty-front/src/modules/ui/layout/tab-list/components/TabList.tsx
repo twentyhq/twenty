@@ -13,6 +13,7 @@ export const TabList = ({
   isInRightDrawer,
   className,
   componentInstanceId,
+  onChangeTab,
   onAddTab,
   isDraggable,
   onDragEnd,
@@ -40,6 +41,7 @@ export const TabList = ({
         behaveAsLinks={behaveAsLinks}
         className={className}
         componentInstanceId={componentInstanceId}
+        onChangeTab={onChangeTab}
         onAddTab={onAddTab}
         isDraggable={isDraggable}
         onDragEnd={onDragEnd}

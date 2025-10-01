@@ -15,6 +15,7 @@ export type UseTabListStateArgs = {
   behaveAsLinks: boolean;
   className?: string;
   componentInstanceId: string;
+  onChangeTab?: (tabId: string) => void;
   onAddTab?: () => void;
   isDraggable?: boolean;
   onDragEnd?: OnDragEndResponder;
@@ -24,6 +25,7 @@ export type UseTabListStateResult = {
   contextValue: TabListStateContextValue;
   initialActiveTabId: string | null;
   syncActiveTabId: (tabId: string | null) => void;
+  onChangeTab?: (tabId: string) => void;
 };
 
 export const useTabListState = ({
@@ -32,6 +34,7 @@ export const useTabListState = ({
   behaveAsLinks,
   className,
   componentInstanceId,
+  onChangeTab,
   onAddTab,
   isDraggable,
   onDragEnd,
@@ -73,20 +76,22 @@ export const useTabListState = ({
   const handleTabSelect = useCallback(
     (tabId: string) => {
       setActiveTabId(tabId);
+      onChangeTab?.(tabId);
     },
-    [setActiveTabId],
+    [setActiveTabId, onChangeTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
     (tabId: string) => {
       if (behaveAsLinks) {
         navigate(`#${tabId}`);
+        onChangeTab?.(tabId);
         return;
       }
 
       handleTabSelect(tabId);
     },
-    [behaveAsLinks, handleTabSelect, navigate],
+    [behaveAsLinks, handleTabSelect, navigate, onChangeTab],
   );
 
   const handleTabWidthChange = useCallback(
@@ -175,5 +180,6 @@ export const useTabListState = ({
     contextValue,
     initialActiveTabId,
     syncActiveTabId: setActiveTabId,
+    onChangeTab,
   };
 };

@@ -132,10 +132,6 @@ export class LocalDriver implements ServerlessDriver {
     await fs.writeFile(compiledCodeFilePath, compiledCode, 'utf8');
 
     try {
-      if (!serverlessFunction.layerVersion) {
-        throw new Error('Layer version is not set');
-      }
-
       await fs.symlink(
         join(
           this.getInMemoryLayerFolderPath(serverlessFunction),

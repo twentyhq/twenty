@@ -15,6 +15,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
@@ -25,6 +26,7 @@ import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -144,11 +146,29 @@ export class AgentExecutionService {
         workspaceId: workspace.id,
       });
 
+    const objectMetadataMaps =
+      workspaceDataSource.internalContext.objectMetadataMaps;
+    const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
+
     const contextObject = (
       await Promise.all(
         recordIdsByObjectMetadataNameSingular.map(
           async (recordsWithObjectMetadataNameSingular) => {
             if (recordsWithObjectMetadataNameSingular.recordIds.length === 0) {
+              return [];
+            }
+
+            const objectMetadataMapItem =
+              getObjectMetadataMapItemByNameSingular(
+                objectMetadataMaps,
+                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
+              );
+
+            if (!objectMetadataMapItem) {
+              this.logger.warn(
+                `Object metadata not found for ${recordsWithObjectMetadataNameSingular.objectMetadataNameSingular}`,
+              );
+
               return [];
             }
 
@@ -158,8 +178,24 @@ export class AgentExecutionService {
               roleId,
             );
 
+            const restrictedFields =
+              objectMetadataPermissions?.[roleId]?.[objectMetadataMapItem.id]
+                ?.restrictedFields ?? {};
+
+            const hasRestrictedFields = Object.values(restrictedFields).some(
+              (field) => field.canRead === false,
+            );
+
+            const selectOptions = hasRestrictedFields
+              ? getAllSelectableFields({
+                  restrictedFields,
+                  objectMetadata: { objectMetadataMapItem },
+                })
+              : undefined;
+
             return (
               await repository.find({
+                ...(selectOptions && { select: selectOptions }),
                 where: {
                   id: In(recordsWithObjectMetadataNameSingular.recordIds),
                 },

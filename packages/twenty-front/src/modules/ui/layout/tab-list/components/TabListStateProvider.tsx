@@ -12,6 +12,7 @@ export type TabListStateProviderProps = {
   behaveAsLinks: boolean;
   className?: string;
   componentInstanceId: string;
+  onChangeTab?: (tabId: string) => void;
   onAddTab?: () => void;
   isDraggable?: boolean;
   onDragEnd?: OnDragEndResponder;
@@ -24,29 +25,35 @@ export const TabListStateProvider = ({
   behaveAsLinks,
   className,
   componentInstanceId,
+  onChangeTab,
   onAddTab,
   isDraggable,
   onDragEnd,
   children,
 }: TabListStateProviderProps) => {
-  const { contextValue, initialActiveTabId, syncActiveTabId } = useTabListState(
-    {
-      visibleTabs,
-      loading,
-      behaveAsLinks,
-      className,
-      componentInstanceId,
-      onAddTab,
-      isDraggable,
-      onDragEnd,
-    },
-  );
+  const {
+    contextValue,
+    initialActiveTabId,
+    syncActiveTabId,
+    onChangeTab: onChangeTabCallback,
+  } = useTabListState({
+    visibleTabs,
+    loading,
+    behaveAsLinks,
+    className,
+    componentInstanceId,
+    onChangeTab,
+    onAddTab,
+    isDraggable,
+    onDragEnd,
+  });
 
   return (
     <TabListStateContextProvider value={contextValue}>
       <TabListInitialActiveTabEffect
         initialActiveTabId={initialActiveTabId}
         onSyncActiveTabId={syncActiveTabId}
+        onChangeTab={onChangeTabCallback}
       />
       {children}
     </TabListStateContextProvider>
