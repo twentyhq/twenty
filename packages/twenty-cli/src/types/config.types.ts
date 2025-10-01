@@ -8,7 +8,13 @@ export type PackageJson = {
   $schema?: string;
   standardId: string;
   label: string;
+  license: string;
   description?: string;
+  engines: {
+    node: string;
+    npm: string;
+    yarn: string;
+  };
   icon?: string;
   version: string;
   dependencies?: object;

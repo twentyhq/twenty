@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
 
-type SearchResultKey = 'first' | 'last' | 'totalCount';
+type SearchResultKey = 'first' | 'all' | 'totalCount';
 
 /**
  * Parses a variable name to extract its components for SearchRecord outputs
@@ -68,15 +68,7 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
     };
   }
 
-  if (searchResultKey === 'totalCount') {
-    return {
-      variableLabel: 'Total Count',
-      variablePathLabel: `${stepName} > Total Count`,
-      variableType: FieldMetadataType.NUMBER,
-    };
-  }
-
-  if (searchResultKey === 'first' || searchResultKey === 'last') {
+  if (searchResultKey === 'first') {
     const recordSchema = searchRecordOutputSchema[searchResultKey]?.value;
 
     if (!isDefined(recordSchema) || !isDefined(fieldName)) {
@@ -87,12 +79,30 @@ export const searchVariableThroughFindRecordsOutputSchema = ({
     }
 
     return searchRecordOutputSchemaUtil({
-      stepName: `${stepName} > ${searchResultKey === 'first' ? 'First' : 'Last'}`,
+      stepName: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'First'}`,
       recordOutputSchema: recordSchema,
       selectedField: fieldName,
       path: pathSegments,
       isFullRecord,
     });
+  }
+
+  if (searchResultKey === 'totalCount') {
+    return {
+      variableLabel:
+        searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count',
+      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'Total Count'}`,
+      variableType: FieldMetadataType.NUMBER,
+    };
+  }
+
+  if (searchResultKey === 'all') {
+    return {
+      variableLabel:
+        searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records',
+      variablePathLabel: `${stepName} > ${searchRecordOutputSchema[searchResultKey]?.label ?? 'All Records'}`,
+      variableType: FieldMetadataType.ARRAY,
+    };
   }
 
   return {

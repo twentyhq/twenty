@@ -12,9 +12,9 @@ export const checkIfShouldSkipFiltering = ({
   const isAnEmptinessOperand = isEmptinessOperand(recordFilter.operand);
 
   const isDateOperandWithoutValue = [
-    RecordFilterOperand.IsInPast,
-    RecordFilterOperand.IsInFuture,
-    RecordFilterOperand.IsToday,
+    RecordFilterOperand.IS_IN_PAST,
+    RecordFilterOperand.IS_IN_FUTURE,
+    RecordFilterOperand.IS_TODAY,
   ].includes(recordFilter.operand);
 
   const isFilterValueEmpty =

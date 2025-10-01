@@ -1,41 +1,43 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { createAnyFieldRecordFilterBaseProperties } from '@/object-record/record-filter/utils/createAnyFieldRecordFilterBaseProperties';
-import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { CURRENCY_CODE_LABELS } from '@/constants';
+import { type CurrencyCode } from '@/constants/CurrencyCode';
+import { FieldMetadataType, ViewFilterOperand, type PartialFieldMetadataItem, type RecordGqlOperationFilter } from '@/types';
+import { filterSelectOptionsOfFieldMetadataItem, type RecordFilter } from '@/utils';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { createAnyFieldRecordFilterBaseProperties } from '@/utils/filter/utils/createAnyFieldRecordFilterBaseProperties';
+import { isDefined } from '@/utils/validation';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import {
-  isDefined,
-  turnRecordFilterIntoRecordGqlOperationFilter,
-} from 'twenty-shared/utils';
+
 import { z } from 'zod';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+
+const currencies: { value: CurrencyCode; label: string }[] = Object.entries(
+  CURRENCY_CODE_LABELS,
+).map(([key, { label }]) => ({
+  value: key as CurrencyCode,
+  label: `${label} (${key})`,
+}));
 
 export const turnAnyFieldFilterIntoRecordGqlFilter = ({
   filterValue,
-  objectMetadataItem,
+  fields,
 }: {
   filterValue: string;
-  objectMetadataItem: ObjectMetadataItem;
+  fields: PartialFieldMetadataItem[];
 }) => {
-  const fieldMetadataItems = objectMetadataItem.fields;
 
   const anyFieldRecordFilters: RecordFilter[] = [];
 
   const isFilterValueANumber = z.coerce.number().safeParse(filterValue).success;
 
-  for (const fieldMetadataItem of fieldMetadataItems) {
-    switch (fieldMetadataItem.type) {
+  for (const field of fields) {
+    switch (field.type) {
       case FieldMetadataType.TEXT: {
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'TEXT',
         } satisfies RecordFilter);
         break;
@@ -44,9 +46,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'ADDRESS',
         } satisfies RecordFilter);
         break;
@@ -55,9 +57,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'LINKS',
         } satisfies RecordFilter);
         break;
@@ -66,9 +68,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'FULL_NAME',
         } satisfies RecordFilter);
         break;
@@ -77,9 +79,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'ARRAY',
         } satisfies RecordFilter);
         break;
@@ -88,9 +90,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'EMAILS',
         } satisfies RecordFilter);
         break;
@@ -99,9 +101,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
             filterValue,
-            fieldMetadataItem,
+            fieldMetadataItem: field,
           }),
-          operand: RecordFilterOperand.Contains,
+          operand: ViewFilterOperand.CONTAINS,
           type: 'PHONES',
         } satisfies RecordFilter);
         break;
@@ -111,9 +113,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
           anyFieldRecordFilters.push({
             ...createAnyFieldRecordFilterBaseProperties({
               filterValue,
-              fieldMetadataItem,
+              fieldMetadataItem: field,
             }),
-            operand: RecordFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             type: 'NUMBER',
           } satisfies RecordFilter);
         }
@@ -124,16 +126,14 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
           anyFieldRecordFilters.push({
             ...createAnyFieldRecordFilterBaseProperties({
               filterValue,
-              fieldMetadataItem,
+              fieldMetadataItem: field,
             }),
-            operand: RecordFilterOperand.Is,
+            operand: ViewFilterOperand.IS,
             type: 'CURRENCY',
-            subFieldName: 'amountMicros',
           } satisfies RecordFilter);
         }
-
         if (isNonEmptyString(filterValue)) {
-          const foundCorrespondingCurrencies = CURRENCIES.filter(
+          const foundCorrespondingCurrencies = currencies.filter(
             (currency) =>
               currency.label.includes(filterValue) ||
               currency.value.includes(filterValue),
@@ -147,9 +147,9 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             anyFieldRecordFilters.push({
               ...createAnyFieldRecordFilterBaseProperties({
                 filterValue: arrayOfCurrenciesStringified,
-                fieldMetadataItem,
+                fieldMetadataItem: field,
               }),
-              operand: RecordFilterOperand.Is,
+              operand: ViewFilterOperand.IS,
               type: 'CURRENCY',
               subFieldName: 'currencyCode',
             } satisfies RecordFilter);
@@ -161,7 +161,7 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         if (isNonEmptyString(filterValue)) {
           const { foundCorrespondingSelectOptions } =
             filterSelectOptionsOfFieldMetadataItem({
-              fieldMetadataItem,
+              fieldMetadataItem: field,
               filterValue,
             });
 
@@ -174,10 +174,10 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
 
             anyFieldRecordFilters.push({
               ...createAnyFieldRecordFilterBaseProperties({
-                fieldMetadataItem,
+                fieldMetadataItem: field,
                 filterValue: arrayOfSelectValues,
               }),
-              operand: RecordFilterOperand.Is,
+              operand: ViewFilterOperand.IS,
               type: 'SELECT',
             } satisfies RecordFilter);
           }
@@ -188,7 +188,7 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         if (isNonEmptyString(filterValue)) {
           const { foundCorrespondingSelectOptions } =
             filterSelectOptionsOfFieldMetadataItem({
-              fieldMetadataItem,
+              fieldMetadataItem: field,
               filterValue,
             });
 
@@ -201,10 +201,10 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
 
             anyFieldRecordFilters.push({
               ...createAnyFieldRecordFilterBaseProperties({
-                fieldMetadataItem,
+                fieldMetadataItem: field,
                 filterValue: arrayOfSelectValues,
               }),
-              operand: RecordFilterOperand.Contains,
+              operand: ViewFilterOperand.CONTAINS,
               type: 'MULTI_SELECT',
             } satisfies RecordFilter);
           }
@@ -218,7 +218,7 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
     .map((recordFilter) =>
       turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {},
-        fieldMetadataItems: objectMetadataItem.fields,
+        fieldMetadataItems: fields,
         recordFilter,
       }),
     )

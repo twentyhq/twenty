@@ -163,7 +163,7 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
-  if (isDateField && stepFilter.operand === ViewFilterOperand.IsRelative) {
+  if (isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE) {
     return (
       <FormRelativeDatePicker
         defaultValue={stepFilter.value}

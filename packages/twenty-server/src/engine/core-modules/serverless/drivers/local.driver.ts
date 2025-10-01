@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import ts, { transpileModule } from 'typescript';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ServerlessDriver,
@@ -31,25 +32,43 @@ export class LocalDriver implements ServerlessDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryLayerFolderPath = (version: number) => {
-    return join(SERVERLESS_TMPDIR_FOLDER, COMMON_LAYER_NAME, `${version}`);
+  private getInMemoryLayerFolderPath = (
+    serverlessFunction: ServerlessFunctionEntity,
+  ) => {
+    if (!isDefined(serverlessFunction?.serverlessFunctionLayer?.checksum)) {
+      return join(
+        SERVERLESS_TMPDIR_FOLDER,
+        COMMON_LAYER_NAME,
+        `${serverlessFunction.layerVersion}`,
+      );
+    }
+
+    return join(
+      SERVERLESS_TMPDIR_FOLDER,
+      serverlessFunction.serverlessFunctionLayer?.checksum,
+    );
   };
 
-  private async createLayerIfNotExists(version: number) {
-    const inMemoryLastVersionLayerFolderPath =
-      this.getInMemoryLayerFolderPath(version);
+  private async createLayerIfNotExists(
+    serverlessFunction: ServerlessFunctionEntity,
+  ) {
+    const inMemoryLayerFolderPath =
+      this.getInMemoryLayerFolderPath(serverlessFunction);
 
     try {
-      await fs.access(inMemoryLastVersionLayerFolderPath);
+      await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await copyAndBuildDependencies(inMemoryLastVersionLayerFolderPath);
+      await copyAndBuildDependencies(
+        inMemoryLayerFolderPath,
+        serverlessFunction,
+      );
     }
   }
 
   async delete() {}
 
   private async build(serverlessFunction: ServerlessFunctionEntity) {
-    await this.createLayerIfNotExists(serverlessFunction.layerVersion ?? 0);
+    await this.createLayerIfNotExists(serverlessFunction);
   }
 
   private async executeWithTimeout<T>(
@@ -119,7 +138,7 @@ export class LocalDriver implements ServerlessDriver {
 
       await fs.symlink(
         join(
-          this.getInMemoryLayerFolderPath(serverlessFunction.layerVersion),
+          this.getInMemoryLayerFolderPath(serverlessFunction),
           'node_modules',
         ),
         join(compiledCodeFolderPath, 'node_modules'),

@@ -78,7 +78,7 @@ export const ObjectFilterDropdownDateInput = () => {
   };
 
   const isRelativeOperand =
-    selectedOperandInDropdown === ViewFilterOperand.IsRelative;
+    selectedOperandInDropdown === ViewFilterOperand.IS_RELATIVE;
 
   const handleClear = () => {
     isRelativeOperand

@@ -84,6 +84,7 @@ export class DevSeederService {
       this.coreDataSource.getRepository(ObjectMetadataEntity);
     const objectMetadataItems = await objectMetadataRepository.find({
       where: { workspaceId },
+      relations: { fields: true },
     });
 
     await seedPageLayoutWidgets(

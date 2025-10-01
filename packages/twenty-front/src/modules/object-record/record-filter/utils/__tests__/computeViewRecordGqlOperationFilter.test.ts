@@ -46,7 +46,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
       displayValue: companiesMock[0].name,
-      operand: RecordFilterOperand.Contains,
+      operand: RecordFilterOperand.CONTAINS,
       type: 'TEXT',
       label: 'Name',
     };
@@ -89,7 +89,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       value: companiesMock[0].name,
       fieldMetadataId: companyMockNameFieldMetadataId.id,
       displayValue: companiesMock[0].name,
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       type: FieldMetadataType.TEXT,
       label: 'Name',
     };
@@ -99,7 +99,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.GreaterThanOrEqual,
+      operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
       type: FieldMetadataType.NUMBER,
       label: 'Employees',
     };
@@ -144,7 +144,7 @@ describe('should work as expected for the different field types', () => {
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId.id,
       displayValue: '123 Main St',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       type: FieldMetadataType.ADDRESS,
       label: 'Address',
     };
@@ -154,7 +154,7 @@ describe('should work as expected for the different field types', () => {
       value: '123 Main St',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '123 Main St',
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
       type: FieldMetadataType.ADDRESS,
       label: 'Address',
     };
@@ -164,7 +164,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsEmpty,
+      operand: ViewFilterOperand.IS_EMPTY,
       type: FieldMetadataType.ADDRESS,
       label: 'Address',
     };
@@ -174,7 +174,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockAddressFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       label: 'Address',
       type: FieldMetadataType.ADDRESS,
     };
@@ -608,7 +608,7 @@ describe('should work as expected for the different field types', () => {
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId.id,
       displayValue: '1234567890',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       label: 'Phones',
       type: FieldMetadataType.PHONES,
     };
@@ -618,7 +618,7 @@ describe('should work as expected for the different field types', () => {
       value: '1234567890',
       fieldMetadataId: personMockPhonesFieldMetadataId.id,
       displayValue: '1234567890',
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
       label: 'Phones',
       type: FieldMetadataType.PHONES,
     };
@@ -628,7 +628,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsEmpty,
+      operand: ViewFilterOperand.IS_EMPTY,
       label: 'Phones',
       type: FieldMetadataType.PHONES,
     };
@@ -638,7 +638,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: personMockPhonesFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       label: 'Phones',
       type: FieldMetadataType.PHONES,
     };
@@ -833,7 +833,7 @@ describe('should work as expected for the different field types', () => {
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId.id,
       displayValue: 'test@test.com',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       label: 'Emails',
       type: FieldMetadataType.EMAILS,
     };
@@ -843,7 +843,7 @@ describe('should work as expected for the different field types', () => {
       value: 'test@test.com',
       fieldMetadataId: personMockEmailFieldMetadataId.id,
       displayValue: 'test@test.com',
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
       label: 'Emails',
       type: FieldMetadataType.EMAILS,
     };
@@ -853,7 +853,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsEmpty,
+      operand: ViewFilterOperand.IS_EMPTY,
       label: 'Emails',
       type: FieldMetadataType.EMAILS,
     };
@@ -863,7 +863,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: personMockEmailFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       label: 'Emails',
       type: FieldMetadataType.EMAILS,
     };
@@ -1034,7 +1034,7 @@ describe('should work as expected for the different field types', () => {
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
-      operand: ViewFilterOperand.IsAfter,
+      operand: ViewFilterOperand.IS_AFTER,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
     };
@@ -1044,7 +1044,7 @@ describe('should work as expected for the different field types', () => {
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
-      operand: ViewFilterOperand.IsBefore,
+      operand: ViewFilterOperand.IS_BEFORE,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
     };
@@ -1054,7 +1054,7 @@ describe('should work as expected for the different field types', () => {
       value: '2024-09-17T20:46:58.922Z',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '2024-09-17T20:46:58.922Z',
-      operand: ViewFilterOperand.Is,
+      operand: ViewFilterOperand.IS,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
     };
@@ -1064,7 +1064,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsEmpty,
+      operand: ViewFilterOperand.IS_EMPTY,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
     };
@@ -1074,7 +1074,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
     };
@@ -1147,7 +1147,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.GreaterThanOrEqual,
+      operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1157,7 +1157,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '1000',
-      operand: ViewFilterOperand.LessThanOrEqual,
+      operand: ViewFilterOperand.LESS_THAN_OR_EQUAL,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1167,7 +1167,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsEmpty,
+      operand: ViewFilterOperand.IS_EMPTY,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1177,7 +1177,7 @@ describe('should work as expected for the different field types', () => {
       value: '',
       fieldMetadataId: companyMockEmployeesFieldMetadataId?.id,
       displayValue: '',
-      operand: ViewFilterOperand.IsNotEmpty,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       label: 'Employees',
       type: FieldMetadataType.NUMBER,
     };
@@ -1233,7 +1233,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId?.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.GreaterThanOrEqual,
+      operand: RecordFilterOperand.GREATER_THAN_OR_EQUAL,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'
@@ -1247,7 +1247,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.LessThanOrEqual,
+      operand: RecordFilterOperand.LESS_THAN_OR_EQUAL,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'
@@ -1261,7 +1261,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.Is,
+      operand: RecordFilterOperand.IS,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'
@@ -1275,7 +1275,7 @@ describe('should work as expected for the different field types', () => {
       value: '1000',
       fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: '1000',
-      operand: RecordFilterOperand.IsNot,
+      operand: RecordFilterOperand.IS_NOT,
       subFieldName: 'amountMicros' satisfies Extract<
         keyof FieldCurrencyValue,
         'amountMicros'
@@ -1343,7 +1343,7 @@ describe('should work as expected for the different field types', () => {
       value: '["USD"]',
       fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: 'USD',
-      operand: RecordFilterOperand.Is,
+      operand: RecordFilterOperand.IS,
       subFieldName: 'currencyCode' satisfies Extract<
         keyof FieldCurrencyValue,
         'currencyCode'
@@ -1357,7 +1357,7 @@ describe('should work as expected for the different field types', () => {
       value: '["USD"]',
       fieldMetadataId: companyMockARRFieldMetadataId.id,
       displayValue: 'Not USD',
-      operand: RecordFilterOperand.IsNot,
+      operand: RecordFilterOperand.IS_NOT,
       subFieldName: 'currencyCode' satisfies Extract<
         keyof FieldCurrencyValue,
         'currencyCode'
@@ -1411,7 +1411,7 @@ describe('should work as expected for the different field types', () => {
       value: '["DOG",""]',
       fieldMetadataId: selectFieldMetadata?.id,
       displayValue: '["Dog",""]',
-      operand: ViewFilterOperand.Is,
+      operand: ViewFilterOperand.IS,
       label: 'Select',
       type: FieldMetadataType.SELECT,
     };
@@ -1421,7 +1421,7 @@ describe('should work as expected for the different field types', () => {
       value: '["DOG",""]',
       fieldMetadataId: selectFieldMetadata.id,
       displayValue: '["Dog",""]',
-      operand: ViewFilterOperand.IsNot,
+      operand: ViewFilterOperand.IS_NOT,
       label: 'Select',
       type: FieldMetadataType.SELECT,
     };
@@ -1481,7 +1481,7 @@ describe('should work as expected for the different field types', () => {
       value: '["option1",""]',
       fieldMetadataId: multiSelectFieldMetadata.id,
       displayValue: '["option1",""]',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       label: 'MultiSelect',
       type: FieldMetadataType.MULTI_SELECT,
     };
@@ -1491,7 +1491,7 @@ describe('should work as expected for the different field types', () => {
       value: '["option1",""]',
       fieldMetadataId: multiSelectFieldMetadata.id,
       displayValue: '["option1",""]',
-      operand: ViewFilterOperand.DoesNotContain,
+      operand: ViewFilterOperand.DOES_NOT_CONTAIN,
       label: 'MultiSelect',
       type: FieldMetadataType.MULTI_SELECT,
     };
