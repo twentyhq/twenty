@@ -186,6 +186,7 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain,
       loadMockedObjectMetadataItems,
       navigate,
+      isCaptchaScriptLoaded,
     ],
   );
 
