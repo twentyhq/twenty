@@ -185,37 +185,34 @@ export class FlatFieldMetadataValidatorService {
     const relatedFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId];
 
-    if (!isDefined(relatedFlatObjectMetadata)) {
-      validationResult.errors.push({
-        code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        message: 'field to delete object metadata not found',
-        userFriendlyMessage: t`Object related to field to delete not found`,
-      });
-    } else {
-      if (
-        relatedFlatObjectMetadata.labelIdentifierFieldMetadataId ===
+    if (
+      isDefined(relatedFlatObjectMetadata) &&
+      relatedFlatObjectMetadata.labelIdentifierFieldMetadataId ===
         flatFieldMetadataToDelete.id
-      ) {
-        validationResult.errors.push({
-          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-          message:
-            'Cannot delete, please update the label identifier field first',
-          userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
-        });
-      }
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        message:
+          'Cannot delete, please update the label identifier field first',
+        userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+      });
     }
 
-    const isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted =
+    const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
         flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
+    const parentObjectMetadataHasbeenDeleted = !isDefined(
+      flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId],
+    );
 
     if (
       isStandardMetadata(flatFieldMetadataToDelete) &&
-      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
+      !relationTargetObjectMetadataHasBeenDeleted &&
+      !parentObjectMetadataHasbeenDeleted
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -226,7 +223,8 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToDelete.isActive &&
-      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
+      !relationTargetObjectMetadataHasBeenDeleted &&
+      !parentObjectMetadataHasbeenDeleted
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
