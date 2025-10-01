@@ -7,8 +7,9 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { type ToolInput } from '@/ai/types/ToolInput';
-import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -73,7 +74,7 @@ export const ToolStepRenderer = ({
   toolName,
 }: {
   input: ToolInput;
-  output: ToolOutput;
+  output: ToolUIPart['output'];
   toolName: string;
 }) => {
   const theme = useTheme();
@@ -86,7 +87,9 @@ export const ToolStepRenderer = ({
       <StyledContainer>
         <StyledLoadingContainer>
           <ShimmeringText>
-            <StyledDisplayMessage>{input?.loadingMessage}</StyledDisplayMessage>
+            <StyledDisplayMessage>
+              {getToolDisplayMessage(input, toolName, false)}
+            </StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
       </StyledContainer>
@@ -94,9 +97,12 @@ export const ToolStepRenderer = ({
   }
 
   const displayMessage =
-    output && typeof output === 'object' && 'message' in output
-      ? (output as { message: string }).message
-      : undefined;
+    output &&
+    typeof output === 'object' &&
+    'message' in output &&
+    typeof output.message === 'string'
+      ? output.message
+      : getToolDisplayMessage(input, toolName, true);
 
   const result =
     output && typeof output === 'object' && 'result' in output
