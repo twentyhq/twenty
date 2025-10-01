@@ -73,19 +73,7 @@ export class AppAddCommand {
 
         await fs.writeFile(
           path.join(srcPath, 'index.ts'),
-          `export const main = async (params: {
-  a: string;
-  b: number;
-}): Promise<object> => {
-  const { a, b } = params;
-
-  // Rename the parameters and code below with your own logic
-  // This is just an example
-  const message = \`Hello, input: \${a} and \${b}\`;
-
-  return { message };
-};
-`,
+          'export const main = async (params: {\n  a: string;\n  b: number;\n}): Promise<object> => {\n  const { a, b } = params;\n\n  // Rename the parameters and code below with your own logic\n  // This is just an example\n  const message = `Hello, input: ${a} and ${b}`;\n\n\n\n  return { message };\n};',
         );
 
         return;
