@@ -41,6 +41,7 @@ import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -64,12 +65,15 @@ import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
 
   const { origin } = useOrigin();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
@@ -162,6 +166,7 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
+          set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
           return undefined;
         });
 
@@ -491,7 +496,8 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-  }, [clearSession]);
+    if (isCaptchaScriptLoaded) await requestFreshCaptchaToken();
+  }, [clearSession, isCaptchaScriptLoaded, requestFreshCaptchaToken]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({
