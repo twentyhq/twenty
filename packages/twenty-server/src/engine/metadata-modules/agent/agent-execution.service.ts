@@ -12,7 +12,7 @@ import {
   UITools,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -29,7 +29,6 @@ import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metad
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
@@ -50,7 +49,6 @@ export class AgentExecutionService {
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly aiBillingService: AIBillingService,
@@ -148,36 +146,9 @@ export class AgentExecutionService {
         workspaceId: workspace.id,
       });
 
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
-
-    if (!isDefined(currentCacheVersion)) {
-      throw new AgentException(
-        'Metadata cache version not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        workspace.id,
-        currentCacheVersion,
-      );
-
-    if (!objectMetadataMaps) {
-      throw new AgentException(
-        'Object metadata maps not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const objectMetadataPermissions =
-      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-        {
-          workspaceId: workspace.id,
-          roleIds: [roleId],
-        },
-      );
+      workspaceDataSource.internalContext.objectMetadataMaps;
+    const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
 
     const contextObject = (
       await Promise.all(
