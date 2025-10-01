@@ -37,7 +37,9 @@ export type SuccessfulEntityMigrationBuildResult<
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
 
-export type FailedEntityMigrationBuildResult<TFlatEntity extends AllFlatEntities> = {
+export type FailedEntityMigrationBuildResult<
+  TFlatEntity extends AllFlatEntities,
+> = {
   status: 'fail';
   errors: FailedFlatEntityValidation<TFlatEntity>[];
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
@@ -157,6 +159,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let remainingFlatEntityMapsToCreate = structuredClone(
       createdFlatEntityMaps,
     );
+
     for (const flatEntityToCreateId in createdFlatEntityMaps) {
       const flatEntityToCreate =
         createdFlatEntityMaps.byId[flatEntityToCreateId];
@@ -203,6 +206,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let remainingFlatEntityMapsToDelete = structuredClone(
       deletedFlatEntityMaps,
     );
+
     for (const flatEntityToDeleteId in buildOptions.inferDeletionFromMissingEntities
       ? deletedFlatEntityMaps
       : {}) {
@@ -251,11 +255,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let remainingFlatEntityMapsToUpdate = structuredClone(
       updatedFlatEntityMaps,
     );
+
     for (const flatEntityToUpdateId in updatedFlatEntityMaps) {
       const flatEntityToUpdateFrom =
         updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
       const flatEntityToUpdateTo =
         updatedFlatEntityMaps.to.byId[flatEntityToUpdateId];
+
       if (
         !isDefined(flatEntityToUpdateTo) ||
         !isDefined(flatEntityToUpdateFrom)

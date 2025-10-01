@@ -1,8 +1,9 @@
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
-import { AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FromTo } from 'twenty-shared/types';
+
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
+import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
+import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllFlatEntities> = {
   createdFlatEntityMaps: FlatEntityMaps<T>;
