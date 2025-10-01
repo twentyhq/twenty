@@ -7,9 +7,9 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { type ToolInput } from '@/ai/types/ToolInput';
-import { type ToolOutput } from '@/ai/types/ToolOutput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getWebSearchToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -73,15 +73,14 @@ export const ToolStepRenderer = ({
   output,
   toolName,
 }: {
-  input?: ToolInput;
-  output?: ToolOutput;
+  input: ToolInput;
+  output: ToolUIPart['output'];
   toolName: string;
 }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isExpandable = isDefined(output);
-  const isWebSearchTool = toolName === 'web_search';
 
   if (!output) {
     return (
@@ -89,9 +88,7 @@ export const ToolStepRenderer = ({
         <StyledLoadingContainer>
           <ShimmeringText>
             <StyledDisplayMessage>
-              {isWebSearchTool
-                ? getWebSearchToolDisplayMessage(input, false)
-                : input?.loadingMessage}
+              {getToolDisplayMessage(input, toolName, false)}
             </StyledDisplayMessage>
           </ShimmeringText>
         </StyledLoadingContainer>
@@ -99,11 +96,13 @@ export const ToolStepRenderer = ({
     );
   }
 
-  const displayMessage = isWebSearchTool
-    ? getWebSearchToolDisplayMessage(input, true)
-    : output && typeof output === 'object' && 'message' in output
-      ? (output as { message: string }).message
-      : undefined;
+  const displayMessage =
+    output &&
+    typeof output === 'object' &&
+    'message' in output &&
+    typeof output.message === 'string'
+      ? output.message
+      : getToolDisplayMessage(input, toolName, true);
 
   const result =
     output && typeof output === 'object' && 'result' in output
