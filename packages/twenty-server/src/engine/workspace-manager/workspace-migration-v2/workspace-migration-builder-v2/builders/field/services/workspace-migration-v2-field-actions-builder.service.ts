@@ -75,7 +75,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         flatEntity: {
           ...flatObjectMetadata,
           fieldMetadataIds: [
-            ...flatObjectMetadata.indexMetadatasIds,
+            ...flatObjectMetadata.fieldMetadataIds,
             flatFieldMetadataToValidate.id,
           ],
         },
