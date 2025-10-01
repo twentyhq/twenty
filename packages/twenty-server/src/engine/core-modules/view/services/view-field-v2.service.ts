@@ -35,16 +35,16 @@ export class ViewFieldV2Service {
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
     const {
-      flatObjectMetadataMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
+      flatViewMaps,
+      flatFieldMetadataMaps
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatEntities: [
-          'flatObjectMetadataMaps',
           'flatViewFieldMaps',
           'flatViewMaps',
+          'flatFieldMetadataMaps'
         ],
       },
     );
@@ -70,8 +70,8 @@ export class ViewFieldV2Service {
             },
           },
           dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps,
-            flatViewMaps: existingFlatViewMaps,
+            flatFieldMetadataMaps,
+            flatViewMaps,
           },
           buildOptions: {
             isSystemBuild: false,
