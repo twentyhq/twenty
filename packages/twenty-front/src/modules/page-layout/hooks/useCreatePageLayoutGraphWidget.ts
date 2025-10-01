@@ -17,7 +17,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type GraphType } from '~/generated-metadata/graphql';
-import { type PageLayoutWidget, type WidgetType } from '~/generated/graphql';
+import { WidgetType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,
@@ -51,7 +51,7 @@ export const useCreatePageLayoutGraphWidget = (
 
   const createPageLayoutGraphWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetType: WidgetType, graphType: GraphType): PageLayoutWidget => {
+      (graphType: GraphType): PageLayoutWidget => {
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
 
         if (!activeTabId) {
@@ -75,7 +75,7 @@ export const useCreatePageLayoutGraphWidget = (
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const existingWidgetCount = allWidgets.filter(
           (w) =>
-            w.type === widgetType &&
+            w.type === WidgetType.GRAPH &&
             w.configuration &&
             'graphType' in w.configuration &&
             w.configuration.graphType === graphType,
@@ -89,18 +89,18 @@ export const useCreatePageLayoutGraphWidget = (
           defaultSize,
         );
 
-        const newWidget = createDefaultGraphWidget(
-          widgetId,
-          activeTabId,
+        const newWidget = createDefaultGraphWidget({
+          id: widgetId,
+          pageLayoutTabId: activeTabId,
           title,
           graphType,
-          {
+          gridPosition: {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
-        );
+        });
 
         const newLayout = {
           i: widgetId,

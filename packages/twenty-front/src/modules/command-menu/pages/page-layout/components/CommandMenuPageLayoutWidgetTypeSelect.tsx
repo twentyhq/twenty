@@ -12,7 +12,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChartPie, IconFrame } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
-import { WidgetType } from '~/generated/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -30,10 +29,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const handleNavigateToGraphTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
-      const newWidget = createPageLayoutGraphWidget(
-        WidgetType.GRAPH,
-        GraphType.BAR,
-      );
+      const newWidget = createPageLayoutGraphWidget(GraphType.BAR);
 
       setPageLayoutEditingWidgetId(newWidget.id);
     }
