@@ -16,7 +16,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type DnsManagerOptions = {
   isPublicDomain?: boolean;
@@ -131,13 +130,11 @@ export class DnsManagerService {
     return this.registerHostname(toHostname, options);
   }
 
-  async refreshHostname(workspace: Workspace, options?: DnsManagerOptions) {
+  async refreshHostname(hostname: string, options?: DnsManagerOptions) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    assertIsDefinedOrThrow(workspace.customDomain);
-
     const publicDomainWithRecords = await this.getHostnameWithRecords(
-      workspace.customDomain,
+      hostname,
       options,
     );
 

@@ -88,7 +88,7 @@ export class PublicDomainResolver {
     );
 
     const domainValidRecords = await this.dnsManagerService.refreshHostname(
-      workspace,
+      domain,
       {
         isPublicDomain: true,
       },
