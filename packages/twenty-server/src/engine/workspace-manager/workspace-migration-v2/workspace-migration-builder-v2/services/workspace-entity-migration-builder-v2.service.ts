@@ -255,6 +255,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     let remainingFlatEntityMapsToUpdate = structuredClone(
       updatedFlatEntityMaps,
     );
+
     for (const flatEntityToUpdateId in updatedFlatEntityMaps.to.byId) {
       const flatEntityToUpdateFrom =
         updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
