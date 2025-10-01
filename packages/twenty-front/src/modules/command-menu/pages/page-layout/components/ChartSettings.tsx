@@ -9,9 +9,11 @@ import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/u
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartSettingsDropdownContent } from '@/command-menu/pages/page-layout/utils/getChartSettingsDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -63,8 +65,12 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       />
       {chartSettings.map((group) => (
         <CommandGroup key={group.heading} heading={group.heading}>
-          {group.items.map((item) =>
-            item.isBoolean ? (
+          {group.items.map((item) => {
+            const isDisabled =
+              !isNonEmptyString(widget.objectMetadataId) &&
+              item?.dependsOn?.includes(CHART_CONFIGURATION_SETTING_IDS.SOURCE);
+
+            return item.isBoolean ? (
               <CommandMenuItemToggle
                 key={item.id}
                 LeftIcon={item.Icon}
@@ -95,9 +101,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 description={getChartSettingsValues(item.id) as string}
                 contextualTextPosition={'right'}
                 hasSubMenu
+                disabled={isDisabled}
               />
-            ),
-          )}
+            );
+          })}
         </CommandGroup>
       ))}
     </CommandMenuList>

@@ -19,6 +19,7 @@ export type CommandMenuItemProps = {
   contextualTextPosition?: 'left' | 'right';
   hasSubMenu?: boolean;
   isSubMenuOpened?: boolean;
+  disabled?: boolean;
 };
 
 export const CommandMenuItem = ({
@@ -33,6 +34,7 @@ export const CommandMenuItem = ({
   RightComponent,
   hasSubMenu = false,
   isSubMenuOpened = false,
+  disabled = false,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
 
@@ -66,6 +68,7 @@ export const CommandMenuItem = ({
       RightComponent={RightComponent}
       hasSubMenu={hasSubMenu}
       isSubMenuOpened={isSubMenuOpened}
+      disabled={disabled}
     />
   );
 };

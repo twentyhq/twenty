@@ -27,6 +27,7 @@ export const CommandMenuItemDropdown = ({
   dropdownPlacement,
   dropdownOffset,
   dropdownId,
+  disabled = false,
 }: CommandMenuItemDropdownProps) => {
   const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
@@ -46,12 +47,14 @@ export const CommandMenuItemDropdown = ({
           RightComponent={RightComponent}
           hasSubMenu
           isSubMenuOpened={isDropdownOpen}
+          disabled={disabled}
         />
       }
       dropdownComponents={dropdownComponents}
       dropdownId={dropdownId}
       dropdownPlacement={dropdownPlacement}
       dropdownOffset={dropdownOffset}
+      disableClickForClickableComponent={disabled}
     />
   );
 };
