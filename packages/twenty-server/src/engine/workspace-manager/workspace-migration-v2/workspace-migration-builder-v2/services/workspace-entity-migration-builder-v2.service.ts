@@ -1,17 +1,20 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/core-modules/common/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntities } from 'src/engine/core-modules/common/types/all-flat-entities.type';
 import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/core-modules/common/types/flat-entity.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import {
   type DeletedCreatedUpdatedMatrix,
-  deletedCreatedUpdatedMatrixDispatcher,
-} from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
+  flatEntityDeletedCreatedUpdatedMatrixDispatcher,
+} from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
@@ -27,21 +30,21 @@ export type CreatedDeletedUpdatedActions<
 
 export type SuccessfulEntityMigrationBuildResult<
   TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
 > = {
   status: 'success';
   actions: CreatedDeletedUpdatedActions<TActions>;
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
 
-export type FailedEntityMigrationBuildResult<TFlatEntity extends FlatEntity> = {
+export type FailedEntityMigrationBuildResult<TFlatEntity extends AllFlatEntities> = {
   status: 'fail';
   errors: FailedFlatEntityValidation<TFlatEntity>[];
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
 };
 
 export type ValidateAndBuildArgs<
-  T extends FlatEntity,
+  T extends AllFlatEntities,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps> | undefined,
 > = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -51,26 +54,26 @@ export type ValidateAndBuildArgs<
 
 export type ValidateAndBuildReturnType<
   TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
 > =
   | SuccessfulEntityMigrationBuildResult<TActions, TFlatEntity>
   | FailedEntityMigrationBuildResult<TFlatEntity>;
 
 export type ValidateAndBuildActionsArgs<
-  T extends FlatEntity,
+  T extends AllFlatEntities,
   TRelatedFlatEntityMaps extends Partial<AllFlatEntityMaps>,
 > = ValidateAndBuildArgs<T, TRelatedFlatEntityMaps> &
   DeletedCreatedUpdatedMatrix<T>;
 
 export type ValidateAndBuilActionsReturnType<
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
   TActions extends WorkspaceMigrationActionV2,
 > = {
   failed: FailedFlatEntityValidation<TFlatEntity>[];
 } & CreatedDeletedUpdatedActions<TActions>;
 
 export type FlatEntityValidationArgs<
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
   TRelatedFlatEntityMaps extends
     | Partial<AllFlatEntityMaps>
     | undefined = undefined,
@@ -79,26 +82,26 @@ export type FlatEntityValidationArgs<
   optimisticFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
   dependencyOptimisticFlatEntityMaps: TRelatedFlatEntityMaps;
   workspaceId: string;
-  otherFlatEntitiesToValidate: TFlatEntity[];
+  remainingFlatEntityMapsToValidate: FlatEntityMaps<TFlatEntity>;
   buildOptions: WorkspaceMigrationBuilderOptions;
 };
 
 export type FlatEntityUpdateValidationArgs<
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
   TRelatedFlatEntityMaps extends
     | Partial<AllFlatEntityMaps>
     | undefined = undefined,
 > = Omit<
   FlatEntityValidationArgs<TFlatEntity, TRelatedFlatEntityMaps>,
-  'flatEntityToValidate' | 'otherFlatEntitiesToValidate'
+  'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
   flatEntityUpdate: FromTo<TFlatEntity>;
-  otherFlatEntitiesToValidate: FromTo<TFlatEntity>[];
+  remainingFlatEntityMapsToValidate: FromTo<FlatEntityMaps<TFlatEntity>>;
 };
 
 export type FlatEntityValidationReturnType<
   TActions extends WorkspaceMigrationActionV2,
-  TFlatEntity extends FlatEntity,
+  TFlatEntity extends AllFlatEntities,
 > =
   | {
       status: 'success';
@@ -131,14 +134,16 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       isDefined,
     );
 
-    const { created, deleted, updated } = deletedCreatedUpdatedMatrixDispatcher(
-      {
-        from: fromFlatEntities,
-        to: toFlatEntities,
-      },
-    );
-    let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
+    const {
+      createdFlatEntityMaps,
+      deletedFlatEntityMaps,
+      updatedFlatEntityMaps,
+    } = flatEntityDeletedCreatedUpdatedMatrixDispatcher({
+      from: fromFlatEntities,
+      to: toFlatEntities,
+    });
 
+    let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
     const validateAndBuildResult: ValidateAndBuilActionsReturnType<
       TFlatEntity,
       TActions
@@ -149,13 +154,32 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       updated: [],
     };
 
-    for (const [index, flatEntityToCreate] of created.entries()) {
+    let remainingFlatEntityMapsToCreate = structuredClone(
+      createdFlatEntityMaps,
+    );
+    for (const flatEntityToCreateId in createdFlatEntityMaps) {
+      const flatEntityToCreate =
+        createdFlatEntityMaps.byId[flatEntityToCreateId];
+
+      if (!isDefined(flatEntityToCreate)) {
+        throw new FlatEntityMapsException(
+          'TMP',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      remainingFlatEntityMapsToCreate =
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatEntityToCreateId,
+          flatEntityMaps: remainingFlatEntityMapsToCreate,
+        });
+
       const validationResult = await this.validateFlatEntityCreation({
         dependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: created.slice(index + 1),
+        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
         buildOptions,
       });
 
@@ -176,18 +200,34 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
-    for (const [
-      index,
-      flatEntityToDelete,
-    ] of buildOptions.inferDeletionFromMissingEntities
-      ? deleted.entries()
-      : []) {
+    let remainingFlatEntityMapsToDelete = structuredClone(
+      deletedFlatEntityMaps,
+    );
+    for (const flatEntityToDeleteId in buildOptions.inferDeletionFromMissingEntities
+      ? deletedFlatEntityMaps
+      : {}) {
+      const flatEntityToDelete =
+        deletedFlatEntityMaps.byId[flatEntityToDeleteId];
+
+      if (!isDefined(flatEntityToDelete)) {
+        throw new FlatEntityMapsException(
+          'TMP',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      remainingFlatEntityMapsToDelete =
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatEntityToDeleteId,
+          flatEntityMaps: remainingFlatEntityMapsToDelete,
+        });
+
       const validationResult = await this.validateFlatEntityDeletion({
         dependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: deleted.slice(index + 1),
+        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToDelete,
         buildOptions,
       });
 
@@ -208,13 +248,44 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       );
     }
 
-    for (const [index, flatEntityUpdate] of updated.entries()) {
+    let remainingFlatEntityMapsToUpdate = structuredClone(
+      updatedFlatEntityMaps,
+    );
+    for (const flatEntityToUpdateId in updatedFlatEntityMaps) {
+      const flatEntityToUpdateFrom =
+        updatedFlatEntityMaps.from.byId[flatEntityToUpdateId];
+      const flatEntityToUpdateTo =
+        updatedFlatEntityMaps.to.byId[flatEntityToUpdateId];
+      if (
+        !isDefined(flatEntityToUpdateTo) ||
+        !isDefined(flatEntityToUpdateFrom)
+      ) {
+        throw new FlatEntityMapsException(
+          'TMP',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      remainingFlatEntityMapsToUpdate.from =
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatEntityToUpdateId,
+          flatEntityMaps: remainingFlatEntityMapsToUpdate.from,
+        });
+      remainingFlatEntityMapsToUpdate.to =
+        deleteFlatEntityFromFlatEntityMapsOrThrow({
+          entityToDeleteId: flatEntityToUpdateId,
+          flatEntityMaps: remainingFlatEntityMapsToUpdate.to,
+        });
+
       const validationResult = await this.validateFlatEntityUpdate({
         dependencyOptimisticFlatEntityMaps,
-        flatEntityUpdate,
+        flatEntityUpdate: {
+          from: flatEntityToUpdateFrom,
+          to: flatEntityToUpdateTo,
+        },
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: updated.slice(index + 1),
+        remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToUpdate,
         buildOptions,
       });
 
@@ -228,7 +299,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       }
 
       optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: flatEntityUpdate.to,
+        flatEntity: flatEntityToUpdateTo,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
 

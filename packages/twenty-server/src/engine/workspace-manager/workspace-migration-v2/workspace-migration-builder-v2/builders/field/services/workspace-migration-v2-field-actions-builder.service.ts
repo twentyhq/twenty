@@ -36,7 +36,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
     workspaceId,
-    otherFlatEntitiesToValidate: otherFlatFieldMetadataMapsToValidate,
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityValidationArgs<
     FlatFieldMetadata,
     FieldMetadataRelatedFlatEntityMaps
@@ -52,7 +52,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
         workspaceId,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
       });
 
     if (validationResult.errors.length > 0) {

@@ -26,7 +26,7 @@ export type ValidateOneFieldMetadataArgs<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps'
   >;
-  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadata[];
+  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
   flatFieldMetadataToValidate: FlatFieldMetadata<T>;
   optimisticFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
@@ -245,7 +245,7 @@ export class FlatFieldMetadataValidatorService {
     flatFieldMetadataToValidate,
     optimisticFlatFieldMetadataMaps,
     workspaceId,
-    otherFlatFieldMetadataMapsToValidate,
+    remainingFlatEntityMapsToValidate,
   }: ValidateOneFieldMetadataArgs<T>): Promise<
     FailedFlatEntityValidation<FlatFieldMetadata>
   > {
@@ -293,7 +293,7 @@ export class FlatFieldMetadataValidatorService {
         ...validateFlatFieldMetadataNameAvailability({
           flatFieldMetadata: flatFieldMetadataToValidate,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
         }),
       );
     }
@@ -321,7 +321,7 @@ export class FlatFieldMetadataValidatorService {
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
           workspaceId,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
         },
       )),
     );

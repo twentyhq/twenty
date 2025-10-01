@@ -52,7 +52,7 @@ export class FlatFieldMetadataTypeValidatorService {
         dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
         workspaceId,
       }) => {
         const isMorphRelationEnabled =
@@ -75,7 +75,7 @@ export class FlatFieldMetadataTypeValidatorService {
           dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
           workspaceId,
         });
       },
@@ -83,14 +83,14 @@ export class FlatFieldMetadataTypeValidatorService {
         dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
         workspaceId,
       }) =>
         validateEnumSelectFlatFieldMetadata({
           dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
           workspaceId,
         }),
 
@@ -110,14 +110,14 @@ export class FlatFieldMetadataTypeValidatorService {
         dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
         workspaceId,
       }) =>
         validateEnumSelectFlatFieldMetadata({
           dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
           workspaceId,
         }),
       RAW_JSON: async (_args) => {
@@ -127,14 +127,14 @@ export class FlatFieldMetadataTypeValidatorService {
         dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
         workspaceId,
       }) =>
         validateMorphOrRelationFlatFieldMetadata({
           dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
           workspaceId,
         }),
       RICH_TEXT: async (_args) => {
@@ -147,14 +147,14 @@ export class FlatFieldMetadataTypeValidatorService {
         dependencyOptimisticFlatEntityMaps,
         flatFieldMetadataToValidate,
         optimisticFlatFieldMetadataMaps,
-        otherFlatFieldMetadataMapsToValidate,
+        remainingFlatEntityMapsToValidate,
         workspaceId,
       }) =>
         validateEnumSelectFlatFieldMetadata({
           dependencyOptimisticFlatEntityMaps,
           flatFieldMetadataToValidate,
           optimisticFlatFieldMetadataMaps,
-          otherFlatFieldMetadataMapsToValidate,
+          remainingFlatEntityMapsToValidate,
           workspaceId,
         }),
       TEXT: async (_args) => {
@@ -174,7 +174,7 @@ export class FlatFieldMetadataTypeValidatorService {
     dependencyOptimisticFlatEntityMaps,
     flatFieldMetadataToValidate,
     optimisticFlatFieldMetadataMaps,
-    otherFlatFieldMetadataMapsToValidate,
+    remainingFlatEntityMapsToValidate,
     workspaceId,
   }: ValidateOneFieldMetadataArgs<T> & { workspaceId: string }): Promise<
     FlatFieldMetadataValidationError[]
@@ -201,7 +201,7 @@ export class FlatFieldMetadataTypeValidatorService {
       dependencyOptimisticFlatEntityMaps,
       flatFieldMetadataToValidate,
       optimisticFlatFieldMetadataMaps,
-      otherFlatFieldMetadataMapsToValidate,
+      remainingFlatEntityMapsToValidate,
       workspaceId,
     });
   }

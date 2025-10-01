@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { writeFileSync } from 'node:fs';
+
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
@@ -11,6 +13,7 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration.exception';
 
+// TODO: replace build logic by orchestrator service
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
   private readonly logger = new Logger(
@@ -37,6 +40,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
+      writeFileSync('tmp.json', JSON.stringify(validateAndBuildResult));
+
       return validateAndBuildResult;
     }
 

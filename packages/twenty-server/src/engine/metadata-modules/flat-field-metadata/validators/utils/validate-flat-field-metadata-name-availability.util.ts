@@ -37,15 +37,14 @@ const getReservedCompositeFieldNames = (
   });
 };
 
-// Should implement Morph relation nameObjectId col availability
 export const validateFlatFieldMetadataNameAvailability = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
-  otherFlatFieldMetadataMapsToValidate,
+  remainingFlatEntityMapsToValidate,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  otherFlatFieldMetadataMapsToValidate?: FlatFieldMetadata[];
+  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const { objectFlatFieldMetadatas } = findObjectFieldsInFlatFieldMetadataMaps({
@@ -76,11 +75,9 @@ export const validateFlatFieldMetadataNameAvailability = ({
       }
 
       const targetFlatFieldMetadata =
-        otherFlatFieldMetadataMapsToValidate?.find(
-          (flatField) =>
-            flatField.id ===
-            existingFlatFieldMetadata.relationTargetFieldMetadataId,
-        ) ??
+        remainingFlatEntityMapsToValidate?.byId[
+          existingFlatFieldMetadata.relationTargetFieldMetadataId
+        ] ??
         findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: existingFlatFieldMetadata.relationTargetFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,

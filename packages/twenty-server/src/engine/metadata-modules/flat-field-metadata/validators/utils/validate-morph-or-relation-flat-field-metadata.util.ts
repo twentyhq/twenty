@@ -10,7 +10,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
   flatFieldMetadataToValidate,
   optimisticFlatFieldMetadataMaps,
-  otherFlatFieldMetadataMapsToValidate,
+  remainingFlatEntityMapsToValidate,
 }: ValidateOneFieldMetadataArgs<MorphOrRelationFieldMetadataType>): Promise<
   FlatFieldMetadataValidationError[]
 > => {
@@ -50,9 +50,8 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   }
 
   const targetRelationFlatFieldMetadata =
-    otherFlatFieldMetadataMapsToValidate?.find(
-      (field) => field.id === relationTargetFieldMetadataId,
-    ) ?? optimisticFlatFieldMetadataMaps?.byId[relationTargetFieldMetadataId];
+    remainingFlatEntityMapsToValidate?.byId[relationTargetFieldMetadataId] ??
+    optimisticFlatFieldMetadataMaps.byId[relationTargetFieldMetadataId];
 
   if (
     isDefined(targetRelationFlatObjectMetadata) &&
@@ -60,7 +59,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      message: isDefined(otherFlatFieldMetadataMapsToValidate)
+      message: isDefined(remainingFlatEntityMapsToValidate)
         ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
         : 'Relation field target metadata not found',
       userFriendlyMessage: t`Relation field target metadata not found`,
