@@ -6,7 +6,7 @@ import {
   type CustomHostnameCreateParams,
   type CustomHostnameListResponse,
 } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   DnsManagerException,
@@ -16,6 +16,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type DnsManagerOptions = {
   isPublicDomain?: boolean;
@@ -130,16 +131,29 @@ export class DnsManagerService {
     return this.registerHostname(toHostname, options);
   }
 
-  async refreshHostname(
-    domainValidRecords: DomainValidRecords,
-    options?: DnsManagerOptions,
-  ) {
+  async refreshHostname(workspace: Workspace, options?: DnsManagerOptions) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
-    await this.cloudflareClient.customHostnames.edit(domainValidRecords.id, {
-      zone_id: this.getZoneId(options),
-      ssl: this.sslParams,
-    });
+    assertIsDefinedOrThrow(workspace.customDomain);
+
+    const publicDomainWithRecords = await this.getHostnameWithRecords(
+      workspace.customDomain,
+      {
+        isPublicDomain: true,
+      },
+    );
+
+    assertIsDefinedOrThrow(publicDomainWithRecords);
+
+    await this.cloudflareClient.customHostnames.edit(
+      publicDomainWithRecords.id,
+      {
+        zone_id: this.getZoneId(options),
+        ssl: this.sslParams,
+      },
+    );
+
+    return publicDomainWithRecords;
   }
 
   async deleteHostnameSilently(hostname: string, options?: DnsManagerOptions) {

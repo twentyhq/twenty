@@ -66,6 +66,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
@@ -94,6 +95,7 @@ export class WorkspaceResolver {
     private readonly roleService: RoleService,
     private readonly agentService: AgentService,
     private readonly viewService: ViewService,
+    private readonly dnsManagerService: DnsManagerService,
   ) {}
 
   @Query(() => Workspace)
@@ -388,6 +390,12 @@ export class WorkspaceResolver {
   async checkCustomDomainValidRecords(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<DomainValidRecords | undefined> {
-    return this.workspaceService.checkCustomDomainValidRecords(workspace);
+    const domainValidRecords =
+      await this.dnsManagerService.refreshHostname(workspace);
+
+    return this.workspaceService.checkCustomDomainValidRecords(
+      workspace,
+      domainValidRecords,
+    );
   }
 }

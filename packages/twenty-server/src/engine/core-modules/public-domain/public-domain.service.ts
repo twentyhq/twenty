@@ -13,6 +13,7 @@ import {
   PublicDomainExceptionCode,
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 export class PublicDomainService {
@@ -105,17 +106,20 @@ export class PublicDomainService {
     return publicDomain;
   }
 
-  async checkPublicDomainValidRecords(publicDomain: PublicDomain) {
+  async checkPublicDomainValidRecords(
+    publicDomain: PublicDomain,
+    domainValidRecords?: DomainValidRecords,
+  ): Promise<DomainValidRecords | undefined> {
     const publicDomainWithRecords =
-      await this.dnsManagerService.getHostnameWithRecords(publicDomain.domain, {
-        isPublicDomain: true,
-      });
+      domainValidRecords ??
+      (await this.dnsManagerService.getHostnameWithRecords(
+        publicDomain.domain,
+        {
+          isPublicDomain: true,
+        },
+      ));
 
     if (!publicDomainWithRecords) return;
-
-    await this.dnsManagerService.refreshHostname(publicDomainWithRecords, {
-      isPublicDomain: true,
-    });
 
     const isCustomDomainWorking =
       await this.dnsManagerService.isHostnameWorking(publicDomain.domain, {

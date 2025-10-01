@@ -1,8 +1,9 @@
-import { Query, Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -15,6 +16,11 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import {
+  PublicDomainException,
+  PublicDomainExceptionCode,
+} from 'src/engine/core-modules/public-domain/public-domain.exception';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -28,6 +34,7 @@ export class PublicDomainResolver {
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly publicDomainService: PublicDomainService,
+    private readonly dnsManagerService: DnsManagerService,
   ) {}
 
   @Query(() => [PublicDomainDTO])
@@ -72,10 +79,20 @@ export class PublicDomainResolver {
       where: { workspaceId: workspace.id, domain },
     });
 
-    if (!publicDomain) {
-      return;
-    }
+    assertIsDefinedOrThrow(
+      publicDomain,
+      new PublicDomainException(
+        `Public domain ${domain} not found`,
+        PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND,
+      ),
+    );
 
-    return this.publicDomainService.checkPublicDomainValidRecords(publicDomain);
+    const domainValidRecords =
+      await this.dnsManagerService.refreshHostname(workspace);
+
+    return this.publicDomainService.checkPublicDomainValidRecords(
+      publicDomain,
+      domainValidRecords,
+    );
   }
 }
