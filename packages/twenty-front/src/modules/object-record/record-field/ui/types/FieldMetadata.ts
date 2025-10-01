@@ -6,6 +6,7 @@ import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
 } from 'twenty-shared/types';
+import { type FieldMetadataMultipleValuesSettings } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
@@ -82,7 +83,7 @@ export type FieldLinkMetadata = BaseFieldMetadata & {
 };
 
 export type FieldLinksMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultipleValuesSettings | null;
 };
 
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
@@ -104,7 +105,7 @@ export type FieldEmailMetadata = BaseFieldMetadata & {
 };
 
 export type FieldEmailsMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultipleValuesSettings | null;
 };
 
 export type FieldPhoneMetadata = BaseFieldMetadata & {
@@ -176,11 +177,11 @@ export type FieldActorMetadata = BaseFieldMetadata & {
 
 export type FieldArrayMetadata = BaseFieldMetadata & {
   values: { label: string; value: string }[];
-  settings?: null;
+  settings?: FieldMetadataMultipleValuesSettings | null;
 };
 
 export type FieldPhonesMetadata = BaseFieldMetadata & {
-  settings?: null;
+  settings?: FieldMetadataMultipleValuesSettings | null;
 };
 
 export type FieldTsVectorMetadata = BaseFieldMetadata & {
@@ -193,14 +194,16 @@ export type FieldMetadata =
   | FieldDateTimeMetadata
   | FieldDateMetadata
   | FieldEmailMetadata
+  | FieldEmailsMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
+  | FieldLinksMetadata
   | FieldNumberMetadata
   | FieldPhoneMetadata
+  | FieldPhonesMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldMorphRelationMetadata
-  | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata
   | FieldTextMetadata
