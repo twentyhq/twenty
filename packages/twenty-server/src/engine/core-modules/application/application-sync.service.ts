@@ -85,7 +85,7 @@ export class ApplicationSyncService {
           workspaceId,
         );
       const createdApplication = await this.applicationService.create({
-        universalIdentifier: manifest.universalIdentifier,
+        universalIdentifier: manifest.standardId,
         label: manifest.label,
         description: manifest.description,
         version: manifest.version,

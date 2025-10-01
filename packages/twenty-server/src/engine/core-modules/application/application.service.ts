@@ -32,7 +32,7 @@ export class ApplicationService {
   }
 
   async create(data: {
-    standardId?: string;
+    universalIdentifier?: string;
     label: string;
     description?: string;
     version?: string;
