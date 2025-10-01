@@ -34,7 +34,7 @@ export const getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow =
         targetFlatFieldMetadata,
         FieldMetadataType.MORPH_RELATION,
       )
-        ? targetFlatFieldMetadata
+        ? [targetFlatFieldMetadata]
         : [];
     });
   };

@@ -194,7 +194,7 @@ export class FieldMetadataServiceV2 {
       flatIndexMetadatasToUpdate,
     } = inputTranspilationResult.result;
 
-    const toFlatObjectMetadataMaps =
+    const toFlatFieldMetadataMaps =
       optimisticallyUpdatedFlatFieldMetadatas.reduce(
         (flatFieldMaps, flatFieldMetadata) =>
           replaceFlatEntityInFlatEntityMapsOrThrow({
@@ -219,7 +219,7 @@ export class FieldMetadataServiceV2 {
           fromToAllFlatEntityMaps: {
             flatFieldMetadataMaps: {
               from: existingFlatFieldMetadataMaps,
-              to: toFlatObjectMetadataMaps,
+              to: toFlatFieldMetadataMaps,
             },
             flatIndexMaps: {
               from: existingFlatIndexMaps,

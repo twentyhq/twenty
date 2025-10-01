@@ -155,7 +155,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: created.slice(index),
+        otherFlatEntitiesToValidate: created.slice(index + 1),
         buildOptions,
       });
 
@@ -187,7 +187,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: deleted.slice(index),
+        otherFlatEntitiesToValidate: deleted.slice(index + 1),
         buildOptions,
       });
 
@@ -214,7 +214,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityUpdate,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
-        otherFlatEntitiesToValidate: updated.slice(index),
+        otherFlatEntitiesToValidate: updated.slice(index + 1),
         buildOptions,
       });
 

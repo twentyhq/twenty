@@ -103,7 +103,7 @@ const generateTargetFlatFieldMetadata = ({
   sourceFlatObjectMetadata: FlatObjectMetadata;
   targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
-}): FlatFieldMetadata => {
+}): FlatFieldMetadata<FieldMetadataType.RELATION> => {
   const customStandardFieldId =
     STANDARD_OBJECT_FIELD_IDS[
       targetFlatObjectMetadata.nameSingular as (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number]

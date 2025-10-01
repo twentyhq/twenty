@@ -223,10 +223,10 @@ export class ObjectMetadataServiceV2 {
     });
 
     const toFlatFieldMetadataMaps = flatFieldMetadatasToDelete.reduce(
-      (flatFielMaps, flatField) =>
+      (flatFieldMaps, flatField) =>
         deleteFlatEntityFromFlatEntityMapsOrThrow({
           entityToDeleteId: flatField.id,
-          flatEntityMaps: flatFielMaps,
+          flatEntityMaps: flatFieldMaps,
         }),
       fromFlatFieldMetadataMaps,
     );
@@ -319,7 +319,7 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    const toFlatFielMetadatadMaps = [
+    const toFlatFieldMetadataMaps = [
       ...flatFieldMetadataToCreateOnObject,
       ...relationTargetFlatFieldMetadataToCreate,
     ].reduce(
@@ -348,7 +348,7 @@ export class ObjectMetadataServiceV2 {
 
     const { objectFlatFieldMetadatas } =
       findObjectFieldsInFlatFieldMetadataMaps({
-        flatFieldMetadataMaps: toFlatFielMetadatadMaps,
+        flatFieldMetadataMaps: toFlatFieldMetadataMaps,
         objectMetadataId: flatObjectMetadataToCreate.id,
       });
     const flatDefaultViewFieldsToCreate =
@@ -394,7 +394,7 @@ export class ObjectMetadataServiceV2 {
             },
             flatFieldMetadataMaps: {
               from: existingFlatFieldMetadataMaps,
-              to: toFlatFielMetadatadMaps,
+              to: toFlatFieldMetadataMaps,
             },
             flatIndexMaps: {
               from: existingFlatIndexMaps,

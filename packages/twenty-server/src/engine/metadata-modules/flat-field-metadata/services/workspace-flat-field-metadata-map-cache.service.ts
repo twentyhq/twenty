@@ -10,7 +10,7 @@ import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/
 import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromFieldMetadataEntityToFlatFieldMetadataSecond } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata-second.util';
+import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
@@ -41,11 +41,11 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
       relations: [],
     });
 
-    const flatFielMetadatadMaps = fieldMetadatas.reduce<
+    const flatFieldMetadataMaps = fieldMetadatas.reduce<
       FlatEntityMaps<FlatFieldMetadata>
     >((flatEntityMaps, field) => {
       const flatFieldMetadata =
-        fromFieldMetadataEntityToFlatFieldMetadataSecond(field);
+        fromFieldMetadataEntityToFlatFieldMetadata(field);
 
       return {
         byId: {
@@ -59,6 +59,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
       };
     }, EMPTY_FLAT_ENTITY_MAPS);
 
-    return flatFielMetadatadMaps;
+    return flatFieldMetadataMaps;
   }
 }

@@ -108,7 +108,7 @@ export class DevSeederMetadataService {
         await this.seedCustomFields({
           workspaceId,
           objectMetadataNameSingular: obj.seed.nameSingular,
-          fieldMetadataSeeds: obj.fields ?? [],
+          fieldMetadataSeeds: obj.fields,
         });
       }
     }

@@ -28,7 +28,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   deleteOneFieldInput: rawDeleteOneInput,
   flatIndexMaps: existingFlatIndexMaps,
-  flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
+  flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
 }: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
   flatFieldMetadatasToDelete: FlatFieldMetadata[];
   flatIndexesToUpdate: FlatIndexMetadata[];
@@ -42,7 +42,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
 
   const flatFieldMetadataToDelete = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldMetadataToDeleteId,
-    flatEntityMaps: existingFlatfieldMetadataMaps,
+    flatEntityMaps: existingFlatFieldMetadataMaps,
   });
 
   if (!isDefined(flatFieldMetadataToDelete)) {
@@ -55,7 +55,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   const relatedFlatFieldMetadataToDelete =
     computeFlatFieldMetadataRelatedFlatFieldMetadata({
       flatFieldMetadata: flatFieldMetadataToDelete,
-      flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
     });
 
   const flatFieldMetadatasToDelete = [
@@ -129,7 +129,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       });
       const { objectFlatFieldMetadatas } =
         findObjectFieldsInFlatFieldMetadataMaps({
-          flatFieldMetadataMaps: existingFlatfieldMetadataMaps,
+          flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           objectMetadataId: flatIndex.objectMetadataId,
         });
 
