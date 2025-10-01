@@ -493,8 +493,7 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-    await requestFreshCaptchaToken();
-  }, [clearSession, requestFreshCaptchaToken]);
+  }, [clearSession]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({
