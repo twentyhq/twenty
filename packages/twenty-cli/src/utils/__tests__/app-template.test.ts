@@ -31,6 +31,7 @@ describe('app-template', () => {
           npm: 'please-use-yarn',
           yarn: '>=4.0.2',
         },
+        packageManager: 'yarn@4.9.2',
         license: 'MIT',
       });
     });

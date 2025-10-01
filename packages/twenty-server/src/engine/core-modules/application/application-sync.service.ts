@@ -83,7 +83,7 @@ export class ApplicationSyncService {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
     const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.standardId,
+      manifest.universalIdentifier,
       workspaceId,
     );
 
@@ -98,7 +98,7 @@ export class ApplicationSyncService {
         );
 
       return await this.applicationService.create({
-        universalIdentifier: manifest.standardId,
+        universalIdentifier: manifest.universalIdentifier,
         label: manifest.label,
         description: manifest.description,
         version: manifest.version,
@@ -288,19 +288,11 @@ export class ApplicationSyncService {
     applicationId: string;
     serverlessFunctionLayerId: string;
   }) {
-    const {
-      flatServerlessFunctionMaps,
-      flatCronTriggerMaps,
-      flatDatabaseEventTriggerMaps,
-    } =
+    const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatEntities: [
-            'flatServerlessFunctionMaps',
-            'flatCronTriggerMaps',
-            'flatDatabaseEventTriggerMaps',
-          ],
+          flatEntities: ['flatServerlessFunctionMaps'],
         },
       );
 
