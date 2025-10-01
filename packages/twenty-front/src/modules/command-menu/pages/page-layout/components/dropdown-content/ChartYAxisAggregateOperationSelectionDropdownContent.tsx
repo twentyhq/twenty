@@ -10,6 +10,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -17,6 +18,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -111,7 +113,7 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
           />
         }
       >
-        Y-Axis Aggregate Operation
+        <Trans>Y-Axis Aggregate Operation</Trans>
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
@@ -120,6 +122,7 @@ export const ChartYAxisAggregateOperationSelectionDropdownContent = ({
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}

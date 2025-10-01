@@ -11,6 +11,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { Trans } from '@lingui/react/macro';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
@@ -59,7 +60,9 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>X-Axis Sort By</DropdownMenuHeader>
+      <DropdownMenuHeader>
+        <Trans>X-Axis Sort By</Trans>
+      </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}

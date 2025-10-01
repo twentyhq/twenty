@@ -1,10 +1,9 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -12,17 +11,22 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/display';
+import { Trans } from '@lingui/react/macro';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import { AxisNameDisplay } from '~/generated/graphql';
 
-export const ChartColorSelectionDropdownContent = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+export const ChartAxisNameSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+
+  if (
+    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+  ) {
+    throw new Error('Invalid configuration type');
+  }
+
+  const currentAxisNameDisplay = widgetInEditMode.configuration.axisNameDisplay;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -33,41 +37,22 @@ export const ChartColorSelectionDropdownContent = () => {
     dropdownId,
   );
 
+  const axisOptions: AxisNameDisplay[] = [
+    AxisNameDisplay.NONE,
+    AxisNameDisplay.X,
+    AxisNameDisplay.Y,
+    AxisNameDisplay.BOTH,
+  ];
+
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
-  if (!isDefined(widgetInEditMode)) {
-    return;
-  }
-
-  if (widgetInEditMode.configuration?.__typename === 'IframeConfiguration') {
-    throw new Error('Invalid configuration type');
-  }
-
-  const configuration = widgetInEditMode.configuration as ChartConfiguration;
-
-  const currentColor = configuration.color;
-
-  const colorOptions = MAIN_COLOR_NAMES.map((colorName) => ({
-    id: colorName,
-    name: capitalize(colorName),
-    colorName: colorName as ThemeColor,
-  }));
-
-  const filteredColorOptions = colorOptions.filter((colorOption) => {
-    const matchesSearch =
-      !isNonEmptyString(searchQuery) ||
-      colorOption.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesSearch;
-  });
-
-  const handleSelectColor = (colorName: ThemeColor) => {
+  const handleSelectAxisNameOption = (axisNameOption: AxisNameDisplay) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        color: colorName,
+        axisNameDisplay: axisNameOption,
       },
     });
     closeDropdown();
@@ -75,39 +60,29 @@ export const ChartColorSelectionDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>Colors</DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
-        placeholder="Search colors"
-        onChange={(event) => setSearchQuery(event.target.value)}
-        value={searchQuery}
-      />
+      <DropdownMenuHeader>
+        <Trans>Axis Name</Trans>
+      </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={filteredColorOptions.map(
-            (colorOption) => colorOption.id,
-          )}
+          selectableItemIdArray={axisOptions}
         >
-          {filteredColorOptions.map((colorOption) => (
+          {axisOptions.map((option) => (
             <SelectableListItem
-              key={colorOption.id}
-              itemId={colorOption.id}
+              key={option}
+              itemId={option}
               onEnter={() => {
-                handleSelectColor(colorOption.colorName);
+                handleSelectAxisNameOption(option);
               }}
             >
               <MenuItemSelect
-                text={colorOption.name}
-                selected={currentColor === colorOption.id}
-                focused={selectedItemId === colorOption.id}
-                LeftIcon={() => (
-                  <ColorSample colorName={colorOption.colorName} />
-                )}
+                text={getChartAxisNameDisplayOptions(option)}
+                selected={currentAxisNameDisplay?.toUpperCase() === option}
+                focused={selectedItemId === option}
                 onClick={() => {
-                  handleSelectColor(colorOption.colorName);
+                  handleSelectAxisNameOption(option);
                 }}
               />
             </SelectableListItem>

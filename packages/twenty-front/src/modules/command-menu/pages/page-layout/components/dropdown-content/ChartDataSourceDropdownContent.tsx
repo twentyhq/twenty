@@ -6,6 +6,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -13,6 +14,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -75,14 +78,17 @@ export const ChartDataSourceDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>Source</DropdownMenuHeader>
+      <DropdownMenuHeader>
+        <Trans>Source</Trans>
+      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        placeholder="Search objects"
+        placeholder={t`Search objects`}
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}

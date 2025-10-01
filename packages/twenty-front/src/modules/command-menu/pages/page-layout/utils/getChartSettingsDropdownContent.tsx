@@ -1,10 +1,10 @@
-import { ChartAxisNameSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartAxisNameSelectionDropdownContent';
-import { ChartColorSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartColorSelectionDropdownContent';
-import { ChartDataSourceDropdownContent } from '@/command-menu/pages/page-layout/components/ChartDataSourceDropdownContent';
-import { ChartXAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartXAxisFieldSelectionDropdownContent';
-import { ChartXAxisSortBySelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartXAxisSortBySelectionDropdownContent';
-import { ChartYAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisFieldSelectionDropdownContent';
-import { ChartYAxisGroupByFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisGroupByFieldSelectionDropdownContent';
+import { ChartAxisNameSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent';
+import { ChartColorSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent';
+import { ChartDataSourceDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent';
+import { ChartXAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisFieldSelectionDropdownContent';
+import { ChartXAxisSortBySelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartXAxisSortBySelectionDropdownContent';
+import { ChartYAxisFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartYAxisFieldSelectionDropdownContent';
+import { ChartYAxisGroupByFieldSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartYAxisGroupByFieldSelectionDropdownContent';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 
 export const getChartSettingsDropdownContent = (itemId: string) => {

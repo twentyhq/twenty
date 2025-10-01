@@ -15,6 +15,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -30,7 +31,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { openDropdown } = useOpenDropdown();
 
   if (widget.configuration?.__typename === 'IframeConfiguration') {
-    throw new Error('IframeConfiguration is not supported');
+    throw new Error(t`IframeConfiguration is not supported`);
   }
 
   const configuration = widget.configuration as ChartConfiguration;
@@ -98,7 +99,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               >
                 <CommandMenuItemToggle
                   LeftIcon={item.Icon}
-                  text={item.label}
+                  text={t(item.label)}
                   id={item.id}
                   toggled={getChartSettingsValues(item.id) as boolean}
                   onToggleChange={handleToggleChange}
@@ -112,7 +113,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               >
                 <CommandMenuItemDropdown
                   Icon={item.Icon}
-                  label={item.label}
+                  label={t(item.label)}
                   id={item.id}
                   dropdownId={item.id}
                   dropdownComponents={

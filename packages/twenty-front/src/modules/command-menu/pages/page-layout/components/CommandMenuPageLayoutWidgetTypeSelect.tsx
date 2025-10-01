@@ -7,6 +7,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChartPie, IconFrame } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -28,10 +29,10 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   return (
     <CommandMenuList commandGroups={[]} selectableItemIds={['chart', 'iframe']}>
-      <CommandGroup heading="Widget type">
+      <CommandGroup heading={t`Widget type`}>
         <CommandMenuItem
           Icon={IconChartPie}
-          label="Chart"
+          label={t`Chart`}
           id="chart"
           onClick={() => {
             if (!isDefined(pageLayoutEditingWidgetId)) {

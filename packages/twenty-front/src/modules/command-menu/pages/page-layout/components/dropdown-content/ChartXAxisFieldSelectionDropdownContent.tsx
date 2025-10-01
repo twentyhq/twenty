@@ -1,9 +1,11 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -11,10 +13,17 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { AxisNameDisplay } from '~/generated/graphql';
 
-export const ChartAxisNameSelectionDropdownContent = () => {
+export const ChartXAxisFieldSelectionDropdownContent = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -25,7 +34,12 @@ export const ChartAxisNameSelectionDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentAxisNameDisplay = widgetInEditMode.configuration.axisNameDisplay;
+  const currentXAxisFieldMetadataId =
+    widgetInEditMode.configuration.groupByFieldMetadataIdX;
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === widgetInEditMode.objectMetadataId,
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -36,22 +50,35 @@ export const ChartAxisNameSelectionDropdownContent = () => {
     dropdownId,
   );
 
-  const axisOptions: AxisNameDisplay[] = [
-    AxisNameDisplay.NONE,
-    AxisNameDisplay.X,
-    AxisNameDisplay.Y,
-    AxisNameDisplay.BOTH,
-  ];
+  const availableFieldMetadataItems =
+    sourceObjectMetadataItem?.fields.filter((fieldMetadataItem) => {
+      const matchesSearch =
+        !isNonEmptyString(searchQuery) ||
+        fieldMetadataItem.label
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        fieldMetadataItem.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+      return matchesSearch;
+    }) || [];
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectAxisNameOption = (axisNameOption: AxisNameDisplay) => {
+  const { getIcon } = useIcons();
+
+  if (!isDefined(sourceObjectMetadataItem)) {
+    return;
+  }
+
+  const handleSelectField = (fieldMetadataId: string) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        axisNameDisplay: axisNameOption,
+        groupByFieldMetadataIdX: fieldMetadataId,
       },
     });
     closeDropdown();
@@ -59,27 +86,40 @@ export const ChartAxisNameSelectionDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>Axis Name</DropdownMenuHeader>
+      <DropdownMenuHeader>
+        <Trans>X-Axis Field</Trans>
+      </DropdownMenuHeader>
+      <DropdownMenuSearchInput
+        autoFocus
+        type="text"
+        placeholder={t`Search fields`}
+        onChange={(event) => setSearchQuery(event.target.value)}
+        value={searchQuery}
+      />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={axisOptions}
+          selectableItemIdArray={availableFieldMetadataItems.map(
+            (item) => item.id,
+          )}
         >
-          {axisOptions.map((option) => (
+          {availableFieldMetadataItems.map((fieldMetadataItem) => (
             <SelectableListItem
-              key={option}
-              itemId={option}
+              key={fieldMetadataItem.id}
+              itemId={fieldMetadataItem.id}
               onEnter={() => {
-                handleSelectAxisNameOption(option);
+                handleSelectField(fieldMetadataItem.id);
               }}
             >
               <MenuItemSelect
-                text={getChartAxisNameDisplayOptions(option)}
-                selected={currentAxisNameDisplay?.toUpperCase() === option}
-                focused={selectedItemId === option}
+                text={fieldMetadataItem.label}
+                selected={currentXAxisFieldMetadataId === fieldMetadataItem.id}
+                focused={selectedItemId === fieldMetadataItem.id}
+                LeftIcon={getIcon(fieldMetadataItem.icon)}
                 onClick={() => {
-                  handleSelectAxisNameOption(option);
+                  handleSelectField(fieldMetadataItem.id);
                 }}
               />
             </SelectableListItem>

@@ -6,6 +6,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphTypeSelect = () => {
@@ -41,8 +42,8 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
       <SidePanelHeader
         Icon={GRAPH_TYPE_INFORMATION[currentGraphType].icon}
         iconColor={theme.font.color.tertiary}
-        initialTitle="Chart"
-        headerType={GRAPH_TYPE_INFORMATION[currentGraphType].label}
+        initialTitle={t`Chart`}
+        headerType={t(GRAPH_TYPE_INFORMATION[currentGraphType].label)}
         onTitleChange={() => {}}
       />
 

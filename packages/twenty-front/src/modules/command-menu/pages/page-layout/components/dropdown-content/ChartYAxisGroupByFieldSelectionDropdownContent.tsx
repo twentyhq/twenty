@@ -1,25 +1,27 @@
-import { ChartYAxisAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/ChartYAxisAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const ChartYAxisFieldSelectionDropdownContent = () => {
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-
+export const ChartYAxisGroupByFieldSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -32,11 +34,8 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
-  const currentYAxisFieldMetadataId =
+  const currentYAxisGroupByFieldMetadataId =
     widgetInEditMode.configuration.groupByFieldMetadataIdY;
-
-  const [selectedYAxisFieldMetadataId, setSelectedYAxisFieldMetadataId] =
-    useState(currentYAxisFieldMetadataId);
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
@@ -65,31 +64,39 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
       return matchesSearch;
     }) || [];
 
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const { closeDropdown } = useCloseDropdown();
+
   const { getIcon } = useIcons();
 
   if (!isDefined(sourceObjectMetadataItem)) {
     return;
   }
 
-  if (isSubMenuOpen) {
-    return (
-      <ChartYAxisAggregateOperationSelectionDropdownContent
-        currentYAxisFieldMetadataId={selectedYAxisFieldMetadataId}
-        setIsSubMenuOpen={setIsSubMenuOpen}
-      />
-    );
-  }
+  const handleSelectField = (fieldMetadataId: string) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        groupByFieldMetadataIdY: fieldMetadataId,
+      },
+    });
+    closeDropdown();
+  };
 
   return (
     <>
-      <DropdownMenuHeader>Y-Axis Field</DropdownMenuHeader>
+      <DropdownMenuHeader>
+        <Trans>Y-Axis Group By Field</Trans>
+      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        placeholder="Search fields"
+        placeholder={t`Search fields`}
         onChange={(event) => setSearchQuery(event.target.value)}
         value={searchQuery}
       />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={dropdownId}
@@ -103,19 +110,18 @@ export const ChartYAxisFieldSelectionDropdownContent = () => {
               key={fieldMetadataItem.id}
               itemId={fieldMetadataItem.id}
               onEnter={() => {
-                setIsSubMenuOpen(true);
-                setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
+                handleSelectField(fieldMetadataItem.id);
               }}
             >
               <MenuItemSelect
                 text={fieldMetadataItem.label}
-                selected={selectedYAxisFieldMetadataId === fieldMetadataItem.id}
+                selected={
+                  currentYAxisGroupByFieldMetadataId === fieldMetadataItem.id
+                }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
-                hasSubMenu={true}
                 onClick={() => {
-                  setIsSubMenuOpen(true);
-                  setSelectedYAxisFieldMetadataId(fieldMetadataItem.id);
+                  handleSelectField(fieldMetadataItem.id);
                 }}
               />
             </SelectableListItem>
