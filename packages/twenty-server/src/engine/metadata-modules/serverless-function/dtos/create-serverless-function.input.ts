@@ -41,7 +41,7 @@ export class CreateServerlessFunctionInput {
   @HideField()
   serverlessFunctionLayerId?: string;
 
-  @Field(() => graphqlTypeJson)
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
   code?: ServerlessFunctionCode;
