@@ -4,7 +4,7 @@ import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/wor
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 
-type AggregateOrchestratorActionsReportCreateObjectAndCreateFieldActionsArgs = {
+type AggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActionsArgs = {
   orchestratorActionsReport: OrchestratorActionsReport;
 };
 
@@ -14,7 +14,7 @@ type AggregatedActions = {
 export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions =
   ({
     orchestratorActionsReport,
-  }: AggregateOrchestratorActionsReportCreateObjectAndCreateFieldActionsArgs): OrchestratorActionsReport => {
+  }: AggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActionsArgs): OrchestratorActionsReport => {
     const deleteObjectActionByObjectMetadataId = (
       orchestratorActionsReport.objectMetadata.deleted as DeleteObjectAction[]
     ).reduce<Record<string, DeleteObjectAction>>(
@@ -40,7 +40,6 @@ export const aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions
         if (isDefined(fieldParentObjectDeleteObjectAction)) {
           return {
             deleteFieldActionByFieldMetadataId,
-            deleteObjectActionByObjectMetadataId,
           };
         }
 
