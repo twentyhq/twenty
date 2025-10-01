@@ -29,7 +29,7 @@ export const TabListOverflowDropdownDraggableContent = ({
   onSelect,
 }: TabListOverflowDropdownDraggableContentProps) => {
   const theme = useTheme();
-  const { overflowTabs, activeTabId, loading, visibleTabCount } =
+  const { overflowingTabs, activeTabId, loading, visibleTabCount } =
     useTabListContextOrThrow();
 
   const renderClone = (
@@ -38,7 +38,7 @@ export const TabListOverflowDropdownDraggableContent = ({
     rubric: DraggableRubric,
   ) => {
     const overflowIndex = rubric.source.index - visibleTabCount;
-    const tab = overflowTabs[overflowIndex];
+    const tab = overflowingTabs[overflowIndex];
     if (!tab) return null;
 
     return (
@@ -77,7 +77,7 @@ export const TabListOverflowDropdownDraggableContent = ({
             {...provided.droppableProps}
           >
             <DropdownMenuItemsContainer>
-              {overflowTabs.map((tab, index) => {
+              {overflowingTabs.map((tab, index) => {
                 const globalIndex = visibleTabCount + index;
 
                 return (

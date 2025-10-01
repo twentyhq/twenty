@@ -15,7 +15,7 @@ type TablistDimensions = {
 export type TabListContextValue = {
   visibleTabs: SingleTabProps[];
   visibleTabCount: number;
-  overflowTabs: SingleTabProps[];
+  overflowingTabs: SingleTabProps[];
   overflowCount: number;
   hasOverflowingTabs: boolean;
   overflow: TabOverflowState;

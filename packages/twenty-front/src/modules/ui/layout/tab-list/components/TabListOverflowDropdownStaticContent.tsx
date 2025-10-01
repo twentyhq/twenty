@@ -10,12 +10,12 @@ type TabListOverflowDropdownStaticContentProps = {
 export const TabListOverflowDropdownStaticContent = ({
   onSelect,
 }: TabListOverflowDropdownStaticContentProps) => {
-  const { overflowTabs, activeTabId, loading } = useTabListContextOrThrow();
+  const { overflowingTabs, activeTabId, loading } = useTabListContextOrThrow();
 
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        {overflowTabs.map((tab) => (
+        {overflowingTabs.map((tab) => (
           <TabListDropdownMenuItem
             key={tab.id}
             tab={tab}

@@ -67,11 +67,12 @@ export const useTabList = ({
     onAddTab,
   ]);
 
-  const overflowTabs = visibleTabs.slice(visibleTabCount);
-  const overflowCount = overflowTabs.length;
+  const overflowingTabs = visibleTabs.slice(visibleTabCount);
+  const overflowCount = overflowingTabs.length;
   const hasOverflowingTabs = overflowCount > 0;
   const isActiveTabInOverflow =
-    activeTabId !== null && overflowTabs.some((tab) => tab.id === activeTabId);
+    activeTabId !== null &&
+    overflowingTabs.some((tab) => tab.id === activeTabId);
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
@@ -153,7 +154,7 @@ export const useTabList = ({
   const contextValue: TabListContextValue = {
     visibleTabs,
     visibleTabCount,
-    overflowTabs,
+    overflowingTabs,
     overflowCount,
     hasOverflowingTabs,
     overflow: {
