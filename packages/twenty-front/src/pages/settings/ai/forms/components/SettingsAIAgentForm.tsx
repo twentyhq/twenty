@@ -53,13 +53,18 @@ export const SettingsAIAgentForm = ({
   const modelOptions = useAiModelOptions();
   const { data: rolesData } = useGetRolesQuery();
 
-  const rolesOptions =
-    rolesData?.getRoles
+  const rolesOptions = [
+    {
+      label: t`None`,
+      value: null,
+    },
+    ...(rolesData?.getRoles
       ?.filter((role) => role.canBeAssignedToAgents)
       .map((role) => ({
         label: role.label,
         value: role.id,
-      })) || [];
+      })) || []),
+  ];
 
   const noModelsAvailable = modelOptions.length === 0;
 
@@ -143,10 +148,6 @@ export const SettingsAIAgentForm = ({
           value={formValues.role || ''}
           onChange={(value) => onFieldChange('role', value)}
           options={rolesOptions}
-          emptyOption={{
-            label: t`Select a role`,
-            value: '',
-          }}
           disabled={disabled}
         />
       </StyledFormContainer>

@@ -14,7 +14,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     description: '',
     icon: 'IconRobot',
     modelId: mode === 'edit' ? '' : 'auto',
-    role: '',
+    role: null,
     prompt: '',
     isCustom: true,
     modelConfiguration: {},
