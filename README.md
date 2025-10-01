@@ -1,3 +1,93 @@
+# Twenty - Guia de Instalação e Alterações
+
+## 📌 Alterações
+
+- **AppPath.ts**  
+  Adiciona nova rota `/workspace-data`  
+  `packages/twenty-shared/src/types/AppPath.ts`
+
+- **WorkspaceDataPage.tsx**  
+  Nova página que exibe as informações do workspace  
+  `packages/twenty-front/src/pages/WorkspaceDataPage.tsx`
+
+- **useCreateAppRouter.tsx**  
+  Registra a nova rota no router  
+  `packages/twenty-front/src/modules/app/hooks/useCreateAppRouter.tsx`
+
+- **MainNavigationDrawerFixedItems.tsx**  
+  Adiciona o botão na navegação  
+  `packages/twenty-front/src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx`
+
+- **seed-workspaces.utils.ts**  
+  Alterado `displayName` e `logo`  
+  `packages/twenty-server/src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util.ts`
+
+---
+
+## 🚀 Passos de Instalação
+
+1 - Clonar repositório  
+```bash
+git clone git@github.com:thiago-papim/twenty.git
+cd twenty
+```
+
+2 - Alterar branch para "teste-kvoip"  
+```bash
+git checkout teste-kvoip
+```
+
+3 - Alterar branch para "teste-kvoip"  
+```bash
+psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Se não der certo por conta de permissão
+```bash
+sudo -u psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+4 - Instalação do Redis
+📚 [Documentação](https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-redis/install-redis-on-linux/)
+
+5 - Copiar os env
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+E alterar o .env do db
+```bash
+PG_DATABASE_URL=postgres://postgres:123456@localhost:5432/default
+```
+
+6 - Verificar a versão do node, tem que ser superior a 24.5
+Caso não seja, executar o código abaixo
+```bash
+nvm install 24
+nvm use 24
+```
+
+7 - Instalar as dependencias
+```bash
+yarn
+```
+
+8 - Configure seu banco de dados
+```bash
+npx nx database:reset twenty-server
+```
+
+9 - Iniciar todos os serviços de uma vez
+```bash
+npx nx start
+```
+
+Caso tenha erro de limite de watchers
+```bash
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+echo fs.inotify.max_user_instances=512 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
 <br />
 
 <p align="center">
