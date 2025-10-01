@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatViewField } from 'src/engine/core-modules/view/flat-view/types/flat-view-field.type';
 import { compareTwoFlatViewField } from 'src/engine/core-modules/view/flat-view/utils/compare-two-flat-view-field.util';
@@ -16,6 +17,7 @@ import {
   WorkspaceMigrationViewFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-field-action-v2.type';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
@@ -111,20 +113,22 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
-    const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.viewId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewFields = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: {
-        ...flatView,
-        viewFieldIds: flatView.viewFieldIds.filter(
-          (id) => id !== flatViewFieldToValidate.id,
-        ),
-      },
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-    });
+    const updatedFlatViewFields = isDefined(flatView)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatView,
+            viewFieldIds: flatView.viewFieldIds.filter(
+              (id) => id !== flatViewFieldToValidate.id,
+            ),
+          },
+          flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatViewMaps;
 
     return {
       status: 'success',

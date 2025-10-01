@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { compareTwoFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/compare-two-flat-index-metadata.util';
@@ -14,6 +15,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type IndexRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
@@ -118,22 +120,23 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       };
     }
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
-    const updatedFlatObjectMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: {
-          ...flatObjectMetadata,
-          indexMetadatasIds: flatObjectMetadata.indexMetadatasIds.filter(
-            (id) => id !== flatIndexToValidate.id,
-          ),
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-      });
+    const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatObjectMetadata,
+            indexMetadatasIds: flatObjectMetadata.indexMetadatasIds.filter(
+              (id) => id !== flatIndexToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
     return {
       status: 'success',

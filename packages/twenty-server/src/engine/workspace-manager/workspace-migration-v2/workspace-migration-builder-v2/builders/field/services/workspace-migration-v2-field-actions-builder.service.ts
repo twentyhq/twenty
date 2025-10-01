@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
@@ -16,6 +17,7 @@ import {
   WorkspaceMigrationFieldActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FieldMetadataRelatedFlatEntityMaps = Pick<
   AllFlatEntityMaps,
@@ -126,22 +128,23 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       };
     }
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
-    const updatedFlatObjectMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: {
-          ...flatObjectMetadata,
-          fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
-            (id) => id !== flatFieldMetadataToValidate.id,
-          ),
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-      });
+    const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
+      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...flatObjectMetadata,
+            fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
+              (id) => id !== flatFieldMetadataToValidate.id,
+            ),
+          },
+          flatEntityMaps:
+            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+        })
+      : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
 
     return {
       status: 'success',
