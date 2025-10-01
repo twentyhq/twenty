@@ -1,37 +1,3 @@
-# Twenty - Alterações e Setup
-
-## 📌 Alterações Realizadas
-
-- **AppPath.ts**  
-  Adicionada nova rota `/workspace-data`  
-  Arquivo: `packages/twenty-shared/src/types/AppPath.ts`
-
-- **WorkspaceDataPage.tsx**  
-  Criada nova página que exibe as informações do workspace  
-  Arquivo: `packages/twenty-front/src/pages/WorkspaceDataPage.tsx`
-
-- **useCreateAppRouter.tsx**  
-  Registrada a nova rota no router  
-  Arquivo: `packages/twenty-front/src/modules/app/hooks/useCreateAppRouter.tsx`
-
-- **MainNavigationDrawerFixedItems.tsx**  
-  Adicionado botão de navegação para a nova página  
-  Arquivo: `packages/twenty-front/src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx`
-
-- **seed-workspaces.utils.ts**  
-  Alterado `displayName` e `logo` dos workspaces seedados  
-  Arquivo: `packages/twenty-server/src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util.ts`
-
----
-
-## 🚀 Passo a Passo para Rodar o Projeto
-
-### 1️⃣ Clonar o repositório
-```bash
-git clone <url-do-repo>
-cd twenty
-
-
 <br />
 
 <p align="center">
