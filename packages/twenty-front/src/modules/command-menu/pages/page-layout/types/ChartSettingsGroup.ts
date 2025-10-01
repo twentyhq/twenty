@@ -13,4 +13,5 @@ export type ChartSettingsItem = {
   id: CHART_CONFIGURATION_SETTING_IDS;
   description?: string;
   isBoolean: boolean;
+  dependsOn?: CHART_CONFIGURATION_SETTING_IDS[];
 };
